@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_white"
+    android:fitsSystemWindows="true">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/note_unlock_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/me_note_unlock_enter_password"
+        app:left_type="text"
+        app:left_text="@string/common_cancel"
+        app:left_text_color="@color/common_color_black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:fill_status_bar="false"
+        tools:visibility="gone"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/note_unlock_scroll_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/note_unlock_title_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <View
+                android:id="@+id/me_note_lock_background"
+                android:layout_width="0dp"
+                android:layout_height="158dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/me_note_lock_pwd_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <View
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/me_vault_lock_background"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/me_vault_lock_pin_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/me_note_lock_background"/>
+
+            <ImageView
+                android:id="@+id/me_note_lock_icon"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/me_vault_lock_pin_lock"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/me_note_lock_background"
+                />
+
+            <com.bcm.messenger.common.ui.ClearButtonEditText
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:id="@+id/me_note_unlock_password_edit"
+                android:layout_marginTop="99dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/me_note_unlock_password_background"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="left|center_vertical"
+                android:hint="@string/me_enter_password_hint"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:singleLine="true"
+                android:textColor="@color/common_color_white"
+                android:textColorHint="#7fffffff"
+                android:textCursorDrawable="@drawable/common_white_color_cursor"
+                android:textSize="14sp"
+                app:clearButtonHeight="12dp"
+                app:clearButtonPadding="10dp"
+                app:clearButtonResource="@drawable/common_input_clear_icon"
+                app:clearButtonWidth="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/me_note_lock_background"
+                app:paddingEnd="15dp"
+                app:showClearButton="true"/>
+
+            <Button
+                android:id="@+id/me_note_unlock_do"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="45dp"
+                android:layout_marginEnd="45dp"
+                android:layout_marginBottom="24dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/common_button_blue_background"
+                android:text="@string/common_done"
+                android:textAllCaps="false"
+                android:textColor="@color/common_color_white"
+                android:textSize="14sp"
+                app:layout_constraintVertical_bias="1.0"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/me_note_lock_background"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/me_note_unlock_doing"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@id/me_note_unlock_do"
+                app:layout_constraintEnd_toEndOf="@id/me_note_unlock_do"
+                app:layout_constraintTop_toTopOf="@id/me_note_unlock_do"
+                app:layout_constraintBottom_toBottomOf="@id/me_note_unlock_do"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="0dip"/>
+            <solid android:color="@color/common_background_color"/>
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <!--<clip>-->
+        <!--<shape>-->
+        <!--<corners android:radius="0dip"/>-->
+        <!--<gradient-->
+        <!--android:angle="180"-->
+        <!--android:centerX="0.5"-->
+        <!--android:endColor="#68EAFF"-->
+        <!--android:startColor="#379BFF"/>-->
+        <!--</shape>-->
+        <!--</clip>-->
+        <bitmap android:src="@drawable/wallet_progress_drawable"/>
+    </item>
+
+</layer-list>

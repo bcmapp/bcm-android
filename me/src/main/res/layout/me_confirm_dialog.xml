@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="315dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/common_popup_small_bg"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/confirm_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:gravity="center"
+        android:textColor="@color/common_content_primary_color"
+        android:textSize="17sp"
+        tools:text="@string/me_confirm_dialog_title_placeholder"/>
+
+    <TextView
+        android:id="@+id/confirm_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="13dp"
+        android:gravity="center"
+        android:textColor="#303030"
+        android:textSize="14sp"
+        tools:text="@string/me_confirm_dialog_tip_placeholder"/>
+
+    <com.bcm.messenger.common.ui.CommonPasswordInputLayout
+        android:id="@+id/confirm_password"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"/>
+
+    <com.bcm.messenger.common.ui.CommonPasswordInputLayout
+        android:id="@+id/confirm_password2"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"/>
+
+    <EditText
+        android:id="@+id/confirm_edit"
+        style="@style/CommonImportantEditStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:inputType="text"
+        tools:hint="@string/me_confirm_dialog_tip_placeholder"/>
+
+    <com.bcm.messenger.common.ui.StateButton
+        android:id="@+id/confirm_main_button"
+        style="@style/CommonPrimaryBigTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"
+        android:textAllCaps="false"
+        tools:text="@string/me_confirm_dialog_button_placeholder_1"/>
+
+    <com.bcm.messenger.common.ui.StateButton
+        android:id="@+id/confirm_second_button"
+        style="@style/CommonPrimaryThinBigTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"
+        android:textAllCaps="false"
+        tools:text="@string/me_confirm_dialog_button_placeholder_2"/>
+
+
+    <LinearLayout
+        android:id="@+id/confirm_four_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/common_horizontal_gap">
+
+        <com.bcm.messenger.common.ui.StateButton
+            android:id="@+id/confirm_cancel"
+            style="@style/CommonPrimaryThinBigTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_weight="1"
+            android:textAllCaps="false"
+            tools:text="@string/me_confirm_dialog_button_placeholder_1"/>
+
+        <com.bcm.messenger.common.ui.StateButton
+            android:id="@+id/confirm_ok"
+            style="@style/CommonPrimaryBigTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="19dp"
+            android:layout_weight="1"
+            android:textAllCaps="false"
+            tools:text="@string/me_confirm_dialog_button_placeholder_2"/>
+
+    </LinearLayout>
+
+</LinearLayout>

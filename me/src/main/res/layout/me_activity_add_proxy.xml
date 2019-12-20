@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/add_proxy_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/me_add_proxy_title"
+        app:right_type="text"
+        app:right_text="@string/me_setting_proxy_action_add"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="15dp"
+        android:textColor="#A8A8A8"
+        android:textSize="13sp"
+        android:text="@string/me_add_proxy_name"/>
+
+    <com.bcm.messenger.common.ui.ClearButtonEditText
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:id="@+id/add_proxy_name_edit"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/common_gray_12_bg"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="left|center_vertical"
+        android:imeOptions="actionDone"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:singleLine="true"
+        android:textColor="@color/common_color_black"
+        android:textColorHint="#7fffffff"
+        android:textCursorDrawable="@drawable/common_edit_cursor_shape"
+        android:textSize="14sp"
+        app:clearButtonHeight="12dp"
+        app:clearButtonPadding="10dp"
+        app:clearButtonResource="@drawable/common_clear_circle_icon"
+        app:clearButtonWidth="12dp"
+        app:paddingEnd="15dp"
+        app:showClearButton="false"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="15dp"
+        android:textColor="#A8A8A8"
+        android:textSize="13sp"
+        android:text="@string/me_add_proxy_uri_scheme_url"/>
+
+    <com.bcm.messenger.common.ui.ClearButtonEditText
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:id="@+id/add_proxy_content_edit"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/common_gray_12_bg"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="left|center_vertical"
+        android:imeOptions="actionDone"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:singleLine="true"
+        android:textColor="@color/common_color_black"
+        android:textColorHint="#7fffffff"
+        android:textCursorDrawable="@drawable/common_edit_cursor_shape"
+        android:textSize="14sp"
+        app:clearButtonHeight="12dp"
+        app:clearButtonPadding="10dp"
+        app:clearButtonResource="@drawable/common_clear_circle_icon"
+        app:clearButtonWidth="12dp"
+        app:paddingEnd="15dp"
+        app:showClearButton="false"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:textColor="#A8A8A8"
+        android:textSize="10sp"
+        android:text="Shadowsocks (ss://…), ShadowsocksR (ssr://…) and OFBS4 (obfs4://…) URLs are supported."/>
+</LinearLayout>

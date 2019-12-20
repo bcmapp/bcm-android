@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="com.bcm.messenger.me"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <application>
+        <activity
+            android:name="com.bcm.messenger.me.ui.login.RegistrationActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnchanged|adjustPan"/>
+
+        <activity
+            android:name="com.bcm.messenger.me.ui.setting.SettingActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnchanged|adjustResize"/>
+        <activity
+            android:name="com.bcm.messenger.me.ui.profile.ImageViewActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/BcmActivityTheme.Transparent.Full"/>
+        <activity
+            android:name="com.bcm.messenger.me.ui.setting.AboutActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnchanged|adjustResize"/>
+        <activity
+            android:name="com.bcm.messenger.me.ui.login.backup.BackupAccountKeyActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.bcm.messenger.me.ui.login.backup.AccountSecurityActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.bcm.messenger.me.ui.login.ChangePasswordActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.bcm.messenger.me.ui.feedback.AmeFeedbackActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysVisible"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity
+            android:name="com.bcm.messenger.me.ui.qrcode.BcmMyQRCodeActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.bcm.messenger.me.ui.qrcode.ShowQRCodeActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.bcm.messenger.me.ui.keybox.KeyboxGuideActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.bcm.messenger.me.ui.keybox.KeyBoxControlActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.bcm.messenger.me.ui.keybox.VerifyKeyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BcmActivityTheme.Basic"/>
+        <activity android:name=".ui.profile.ProfileActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".ui.login.backup.VerifyFingerprintActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".ui.destroy.DestroyAccountActivity"
+                  android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                  android:launchMode="singleTask"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateUnchanged|adjustPan"/>
+        <activity android:name=".ui.profile.EditNameActivity"
+                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.pinlock.PinInputActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".ui.pinlock.PinLockInitActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".ui.pinlock.PinLockSettingActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".ui.language.LanguageSelectActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.setting.NotificationSettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.block.BlockUsersActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.scan.NewScanActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.note.AmeNoteActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.note.AmeNoteEditorActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".ui.note.AmeNoteUnlockActivity"
+            android:launchMode="singleTask"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.proxy.AddProxyActivity"
+            android:launchMode="singleTask"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.proxy.ProxySettingActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.bcm.messenger.me.fingerprint.BiometricVerifyActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/BcmActivityTheme.Transparent" />
+
+    </application>
+
+</manifest>

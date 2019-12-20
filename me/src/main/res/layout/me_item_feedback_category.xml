@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/feedback_category_item"
+    android:layout_width="wrap_content"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
+    android:layout_height="28dp"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:gravity="center"
+    android:background="@drawable/common_blue_bg"
+    android:textColor="@color/common_color_white"
+    android:textSize="15sp"
+    android:text="@string/me_feedback_bug" />

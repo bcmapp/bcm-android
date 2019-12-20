@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/common_item_ripple_bg"
+    android:paddingBottom="@dimen/contacts_item_vertical_gap"
+    android:paddingTop="@dimen/contacts_item_vertical_gap">
+
+    <ImageView
+        android:id="@+id/contacts_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:contentDescription=""
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible"
+        tools:src="@drawable/common_select_box"/>
+
+    <com.bcm.messenger.common.ui.CommonLoadingView
+        android:id="@+id/contacts_selecting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:circle_size="small"
+        app:circle_color="black"
+        app:layout_constraintTop_toTopOf="@id/contacts_select"
+        app:layout_constraintBottom_toBottomOf="@id/contacts_select"
+        app:layout_constraintStart_toStartOf="@id/contacts_select"
+        app:layout_constraintEnd_toEndOf="@id/contacts_select"
+        tools:visibility="visible"
+        tools:src="@drawable/common_select_box"/>
+
+    <com.bcm.messenger.common.ui.RecipientAvatarView
+        android:id="@+id/contacts_logo_iv"
+        android:layout_width="@dimen/contacts_item_photo_size"
+        android:layout_height="@dimen/contacts_item_photo_size"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        app:layout_constraintStart_toEndOf="@id/contacts_select"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/contacts_name_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/contacts_item_horizontal_gap"
+        android:layout_marginEnd="30dp"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textColor="@color/common_color_black"
+        android:textSize="17sp"
+        android:gravity="left"
+        app:layout_constraintStart_toEndOf="@id/contacts_logo_iv"
+        app:layout_constraintEnd_toStartOf="@+id/contacts_add_iv"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ImageView
+        android:id="@+id/contacts_add_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/contacts_add_friend_icon"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"
+        android:contentDescription=""
+        android:scaleType="fitCenter"
+        android:padding="3dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

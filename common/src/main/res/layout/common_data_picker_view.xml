@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/common_color_white"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/data_picker_title"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:background="@color/common_color_white"
+        android:gravity="center"
+        android:textColor="@color/common_color_606060"
+        android:textSize="15sp"
+        tools:text="Title" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/common_background_F2F3F4"/>
+
+    <com.bcm.messenger.common.ui.DataPicker
+        android:id="@+id/data_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/common_color_white"
+        app:dividerColor="@color/common_color_379BFF"
+        app:dividerHeight="1dp"
+        app:textColor="@color/common_color_black"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/common_background_F2F3F4"/>
+
+    <TextView
+        android:id="@+id/data_picker_done"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:background="@color/common_color_white"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:gravity="center"
+        android:text="@string/common_done"
+        android:textColor="@color/common_color_379BFF"
+        android:textSize="15sp" />
+
+</LinearLayout>

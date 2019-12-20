@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="netswitchy_app_name">BCM</string>
+    <string name="vpn_ssr_not_support_warning">Failed to enable Privacy-enhanced Connection</string>
+    <string name="vpn_ssr_time_wrong_warning">Failed to enable Privacy-enhanced Connection</string>
+</resources>

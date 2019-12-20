@@ -1,0 +1,32 @@
+android {
+    buildTypes {
+        debug {
+            minifyEnabled false
+        }
+
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    '../proguard/proguard-appcompat-v7.pro',
+                    '../proguard/proguard-automation.pro',
+                    '../proguard/proguard-glide.pro',
+                    '../proguard/proguard-google-play-services.pro',
+                    '../proguard/proguard-klinker.pro',
+                    '../proguard/proguard-okhttp.pro',
+                    '../proguard/proguard-push.pro',
+                    '../proguard/proguard-retrolambda.pro',
+                    '../proguard/proguard-rules-app.pro',
+                    '../proguard/proguard-rules-common.pro',
+                    '../proguard/proguard-rules-me.pro',
+                    '../proguard/proguard-rules-root.pro',
+                    '../proguard/proguard-shortcutbadger.pro',
+                    '../proguard/proguard-spongycastle.pro',
+                    '../proguard/proguard-sqlite.pro',
+                    '../proguard/proguard-square-okhttp.pro',
+                    '../proguard/proguard-square-okio.pro',
+                    '../proguard/proguard-webrtc.pro',
+                    '../proguard/proguard-adhoc.pro',
+                    '../proguard/proguard-thirdparty.pro'
+        }
+    }
+}

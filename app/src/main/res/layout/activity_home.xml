@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.bcm.messenger.common.ui.NoScrollViewPager
+        android:id="@+id/home_viewpager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/home_line"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:id="@+id/home_line"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_line_color"
+        app:layout_constraintBottom_toTopOf="@+id/home_bottom_navigator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/home_bottom_navigator"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="50dp"
+        android:paddingEnd="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.bcm.messenger.common.ui.BadgeLayout
+            android:id="@+id/tab_chat_badge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:locate_pos_id="@+id/tab_chat">
+
+            <ImageView
+                android:id="@+id/tab_chat"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/tab_chat_selected_icon"
+                android:scaleType="fitXY"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </com.bcm.messenger.common.ui.BadgeLayout>
+
+        <com.bcm.messenger.common.ui.BadgeLayout
+            android:id="@+id/tab_contacts_badge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:locate_pos_id="@+id/tab_contacts">
+
+            <ImageView
+                android:id="@+id/tab_contacts"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/tab_contacts_icon"
+                android:scaleType="fitXY"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </com.bcm.messenger.common.ui.BadgeLayout>
+
+        <com.bcm.messenger.common.ui.BadgeLayout
+            android:id="@+id/tab_me_badge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:locate_pos_id="@+id/tab_me">
+
+            <ImageView
+                android:id="@+id/tab_me"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/tab_me_icon"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:scaleType="fitXY"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </com.bcm.messenger.common.ui.BadgeLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/home_adhoc_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

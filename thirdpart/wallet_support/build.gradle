@@ -1,0 +1,53 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'maven'
+
+
+android {
+    compileSdkVersion compile_sdk_version as int
+
+
+    defaultConfig {
+        minSdkVersion min_sdk_version as int
+        targetSdkVersion target_sdk_version as int
+        versionCode 1
+        versionName "1.0"
+
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+            assets.srcDirs = ['assets']
+        }
+
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.lambdaworks:scrypt:1.4.0'
+    implementation 'com.google.guava:guava:24.1-android'
+    implementation 'net.jcip:jcip-annotations:1.0'
+    compileOnly 'org.fusesource.leveldbjni:leveldbjni-all:1.8'
+
+    api ('org.web3j:core-android:2.2.1') {
+        exclude group: 'com.squareup', module: 'javapoet'
+        exclude group: 'io.reactivex', module: 'rxjava'
+    }
+}
+
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: uri('../repo'))
+        pom.groupId = "com.bcm.messenger.wallet"
+        pom.artifactId = "wallet-support"
+        pom.version = "1.0.0"
+    }
+}

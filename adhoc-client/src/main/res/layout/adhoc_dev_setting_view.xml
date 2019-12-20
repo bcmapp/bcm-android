@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_white"
+    android:orientation="vertical">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/adhoc_dev_setting_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="Debug Center"
+        app:left_image="@drawable/common_24_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/adhoc_dev_setting_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setting_item_line="false"
+                app:setting_item_name="Enable adhoc search"
+                app:setting_item_sub_name="Search devices around and provide adhoc service when enabled"
+                app:setting_item_right="none"
+                app:setting_item_switch="off" />
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/adhoc_dev_setting_start_server"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setting_item_line="false"
+                app:setting_item_name="Enable my adhoc service"
+                app:setting_item_sub_name="Create a hotspot and provide my adhoc service when enabled"
+                app:setting_item_right="none"
+                app:setting_item_switch="off" />
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/adhoc_dev_setting_broadcast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setting_item_line="false"
+                app:setting_item_name="Broadcast my adhoc service"
+                app:setting_item_sub_name="Broadcast my service to devices around when enabled. Other devices can connect to my service."
+                app:setting_item_right="none"
+                app:setting_item_switch="off" />
+
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/adhoc_dev_setting_conn_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setting_item_line="false"
+                app:setting_item_name="My connection state"
+                app:setting_item_sub_name=""
+                app:setting_item_right="none"
+                app:setting_item_switch="none" />
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/adhoc_dev_setting_log"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setting_item_line="false"
+                app:setting_item_name="Debug log"
+                app:setting_item_right="arrow"
+                app:setting_item_switch="none" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

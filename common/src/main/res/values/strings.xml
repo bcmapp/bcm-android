@@ -1,0 +1,439 @@
+<resources>
+
+    <!-- DraftDatabase -->
+    <string name="common_draft_image_snippet">(image)</string>
+    <string name="common_draft_audio_snippet">(audio)</string>
+    <string name="common_draft_video_snippet">(video)</string>
+    <string name="common_draft_location_snippet">(location)</string>
+
+    <!-- AudioSlidePlayer -->
+    <string name="common_playing_audio_error">Error playing audio!</string>
+
+
+    <!-- ContactsDatabase -->
+    <string name="ContactsDatabase_message_s">Message %s</string>
+    <string name="ContactsDatabase_signal_call_s">BCM Call %s</string>
+
+    <!-- ConversationItem -->
+    <string name="common_conversation_received_key_exchange_message_tap_to_process">Received key exchange messageDetail, tap to process.</string>
+    <string name="common_conversation_group_action_left">%1$s has left the group.</string>
+
+    <string name="common_thread_key_exchange_message">Key exchange messageDetail</string>
+
+    <!--- webrtc notification -->
+    <string name="common_webrtc_call_in_progress">BCM call in progress</string>
+    <string name="common_webrtc_establishing_call">Establishing BCM call</string>
+    <string name="common_webrtc_incoming_call">Incoming BCM call</string>
+    <string name="common_webrtc_deny_call">Deny call</string>
+    <string name="common_webrtc_answer_call">Answer call</string>
+    <string name="common_webrtc_end_call">End call</string>
+    <string name="common_webrtc_cancel_call">Cancel call</string>
+
+    <!-- MessageNotifier -->
+    <string name="common_locked_message_description">Locked messageDetail</string>
+
+    <!-- MessageRecord -->
+    <string name="MessageRecord_message_encrypted_with_a_legacy_protocol_version_that_is_no_longer_supported">Received a messageDetail encrypted using an old version of BCM that is no longer supported. Please ask the sender to update to the most recent version and resend the messageDetail.</string>
+    <string name="MessageRecord_left_group">You have left the group.</string>
+    <string name="MessageRecord_you_updated_group">You updated the group.</string>
+    <string name="MessageRecord_s_updated_group">%s updated the group.</string>
+    <string name="MessageRecord_s_called_you">%s called you</string>
+    <string name="MessageRecord_called_s">Called %s</string>
+    <string name="MessageRecord_missed_call_from">Missed call from %s</string>
+    <string name="MessageRecord_s_joined_signal">%s is on BCM!</string>
+    <string name="MessageRecord_you_set_disappearing_message_time_to_s">You set disappearing messageDetail time to %1$s.</string>
+    <string name="MessageRecord_s_set_disappearing_message_time_to_s">%1$s set disappearing messageDetail time to %2$s.</string>
+    <string name="MessageRecord_your_safety_number_with_s_has_changed">Your safety number with %s has changed.</string>
+    <string name="MessageRecord_you_marked_your_safety_number_with_s_verified">You marked your safety number with %s verified</string>
+    <string name="MessageRecord_you_marked_your_safety_number_with_s_verified_from_another_device">You marked your safety number with %s verified from another device</string>
+    <string name="MessageRecord_you_marked_your_safety_number_with_s_unverified">You marked your safety number with %s unverified</string>
+    <string name="MessageRecord_you_marked_your_safety_number_with_s_unverified_from_another_device">You marked your safety number with %s unverified from another device</string>
+
+    <!-- webrtc phone call -->
+    <string name="common_phone_answering">Answering</string>
+    <string name="common_phone_ending_call">Ending call</string>
+    <string name="common_phone_dialing">Dialing</string>
+    <string name="common_phone_ringing">Ringing</string>
+    <string name="common_phone_busy">Busy</string>
+    <string name="common_phone_connected">Connected</string>
+    <string name="common_phone_recipient_unavailable">Recipient unavailable</string>
+    <string name="common_phone_network_failed">Network failed!</string>
+    <string name="common_phone_number_not_registered">Number not registered!</string>
+    <string name="common_phone_the_number_you_dialed_does_not_support_secure_voice">The number you dialed does not support secure voice!</string>
+    <string name="common_phone_got_it">Got it</string>
+
+    <!-- Slide -->
+    <string name="common_slide_image">Image</string>
+    <string name="common_slide_audio">Audio</string>
+    <string name="common_slide_video">Video</string>
+
+    <!-- SmsMessageRecord -->
+    <string name="common_record_received_corrupted_key_exchange_message">Received corrupted key exchange messageDetail!
+    </string>
+    <string name="common_record_received_key_exchange_message_for_invalid_protocol_version">Received key exchange messageDetail for invalid protocol version.</string>
+
+    <string name="common_record_received_message_with_new_safety_number_tap_to_process">Received messageDetail with new safety number. Tap to process and display.</string>
+    <string name="common_record_secure_session_reset">You reset the secure session.</string>
+    <string name="common_record_secure_session_reset_s">%s reset the secure session.</string>
+    <string name="common_record_duplicate_message">Duplicate messageDetail.</string>
+
+    <!-- ThreadRecord -->
+    <string name="common_thread_group_updated">Group updated</string>
+    <string name="common_thread_left_the_group">Left the group</string>
+    <string name="common_thread_secure_session_reset">Secure session reset.</string>
+    <string name="common_thread_draft">[Draft]</string>
+    <string name="common_thread_called">You called</string>
+    <string name="common_thread_called_you">Called you</string>
+    <string name="common_thread_missed_call">Missed call</string>
+    <string name="common_thread_media_message">Media messageDetail</string>
+    <string name="common_thread_s_is_on_signal">%s is on BCM!</string>
+    <string name="common_thread_disappearing_message_time_updated_to_s">Disappearing messageDetail time set to %s</string>
+    <string name="common_thread_safety_number_changed">Safety number changed</string>
+    <string name="common_thread_your_safety_number_with_s_has_changed">Your safety number with %s has changed.</string>
+    <string name="common_thread_you_marked_verified">You marked verified</string>
+    <string name="common_thread_you_marked_unverified">You marked unverified</string>
+
+    <!-- MessageDisplayHelper -->
+    <string name="MessageDisplayHelper_bad_encrypted_message">Bad encrypted messageDetail</string>
+    <string name="MessageDisplayHelper_decrypting_please_wait">Decrypting, please wait…</string>
+    <string name="MessageDisplayHelper_message_encrypted_for_non_existing_session">Message encrypted for non-existing session</string>
+
+    <!-- EncryptingSmsDatabase -->
+    <string name="EncryptingSmsDatabase_error_decrypting_message">Error decrypting messageDetail.</string>
+
+    <!-- ThreadDatabase -->
+    <string name="ThreadDatabase_error_decrypting_message">Error decrypting messageDetail.</string>
+
+    <!-- MmsDatabase -->
+    <string name="MmsDatabase_error_decrypting_message">Error decrypting messageDetail.</string>
+
+    <!-- MmsMessageRecord -->
+    <string name="MmsMessageRecord_decrypting_mms_please_wait">Decrypting MMS, please wait…</string>
+    <string name="MmsMessageRecord_bad_encrypted_mms_message">Bad encrypted MMS messageDetail</string>
+    <string name="MmsMessageRecord_mms_message_encrypted_for_non_existing_session">MMS messageDetail encrypted for non-existing session</string>
+
+    <!-- audio_view -->
+    <string name="common_audio_play_accessibility_description">Play</string>
+    <string name="common_audio_pause_accessibility_description">Pause</string>
+    <string name="common_audio_download_accessibility_description">Download</string>
+
+    <!-- expiration -->
+    <string name="expiration_off">Off</string>
+
+    <plurals name="expiration_seconds">
+        <item quantity="one">1 second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
+
+    <string name="expiration_seconds_abbreviated">%ds</string>
+
+    <plurals name="expiration_minutes">
+        <item quantity="one">1 minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+
+    <string name="expiration_minutes_abbreviated">%dm</string>
+
+    <plurals name="expiration_hours">
+        <item quantity="one">1 hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+
+    <string name="expiration_hours_abbreviated">%dh</string>
+
+    <plurals name="expiration_days">
+        <item quantity="one">1 day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+
+    <string name="expiration_days_abbreviated">%dd</string>
+
+    <plurals name="expiration_weeks">
+        <item quantity="one">1 week</item>
+        <item quantity="other">%d weeks</item>
+    </plurals>
+
+    <string name="expiration_weeks_abbreviated">%dw</string>
+
+    <!-- unverified safety numbers -->
+    <string name="IdentityUtil_unverified_banner_one">Your safety number with %s has changed and is no longer verified</string>
+    <string name="IdentityUtil_unverified_banner_two">Your safety numbers with %1$s and %2$s are no longer verified</string>
+    <string name="IdentityUtil_unverified_banner_many">Your safety numbers with %1$s, %2$s, and %3$s are no longer verified</string>
+
+    <string name="IdentityUtil_unverified_dialog_one">Your safety number with %1$s has changed and is no longer verified. This could either mean that someone is trying to intercept your communication, or that %1$s simply reinstalled BCM.</string>
+    <string name="IdentityUtil_unverified_dialog_two">Your safety numbers with %1$s and %2$s are no longer verified. This could either mean that someone is trying to intercept your communication, or that they simply reinstalled BCM.</string>
+    <string name="IdentityUtil_unverified_dialog_many">Your safety numbers with %1$s, %2$s, and %3$s are no longer verified. This could either mean that someone is trying to intercept your communication, or that they simply reinstalled BCM.</string>
+
+    <string name="IdentityUtil_untrusted_dialog_one">Your safety number with %s just changed.</string>
+    <string name="IdentityUtil_untrusted_dialog_two">Your safety numbers with %1$s and %2$s just changed.</string>
+    <string name="IdentityUtil_untrusted_dialog_many">Your safety numbers with %1$s, %2$s, and %3$s just changed.</string>
+
+    <plurals name="identity_others">
+        <item quantity="one">%d other</item>
+        <item quantity="other">%d others</item>
+    </plurals>
+
+    <string name="common_notification_message_content_format">You have new message(s) from 1 conversation.</string>
+    <string name="common_notification_message_contents_format">You have new messages from %d conversations.</string>
+    <string name="common_chats_group_kick_me">You were removed from the group chat by %s</string>
+    <string name="common_group_invite_stranger_notice">Failed to add %s into the group, please add as friend(s) first</string>
+    <string name="common_group_name_update_format">Group name changed to %s</string>
+
+    <!--Invite Message-->
+    <string name="common_invite_user_message">Let\'s chat on BCM. It\'s much more private and secure here. Here\'s the link \n(%s )</string>
+
+
+    <!-- APK安装相关 -->
+    <string name="common_apk_install_notice_description">This APK file might contain unsafe content. Make sure you trust the sender before you open and install it.</string>
+
+
+    <string name="common_app_prefix">BCM_</string>
+    <string name="common_yesterday_text">Yesterday</string>
+    <string name="common_morning_text">AM</string>
+    <string name="common_afternoon_text">PM</string>
+
+    <string name="common_password_format_error">Password format error</string>
+    <string name="common_password_too_short_warning">Password should be at least 8 character</string>
+    <string name="common_new_password_too_short_warning">The new password should be at least 8-character long.</string>
+
+    <string name="common_appellation_text">You</string>
+
+    <string name="common_delete">Delete</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_send">Send</string>
+    <string name="common_done">Done</string>
+    <string name="common_understood">Understood</string>
+    <string name="common_later">Later</string>
+    <string name="common_copied">Copied</string>
+    <string name="common_open">Open</string>
+    <string name="common_connection_lost">Connecting&#8230;</string>
+    <string name="common_group_get_member_fail">Chat Group Get Members Fail</string>
+    <string name="common_save_to_album">Save to Album</string>
+
+    <string name="common_search_hint">Search</string>
+    <string name="common_title_hint">Title</string>
+    <string name="common_content_hint">Content</string>
+    <string name="common_back_description">back</string>
+
+    <string name="common_add_contact_notice">Add to contacts</string>
+    <string name="common_invite_action_text">Invite</string>
+    <string name="common_sms_invite_sample">Yo, I am using BCM - Blockchain Messenger. Experience the freedom of communication. Nail it here: </string>
+    <string name="common_sms_invite_fail">Invite Fail</string>
+
+    <string name="common_choose_photo">Choose Photo</string>
+    <string name="common_delete_photo">Delete Photo</string>
+    <string name="common_popup_ok">OK</string>
+    <string name="common_confirm_ok_text">Confirm</string>
+    <string name="common_confirm_detail">Details</string>
+    <string name="common_confirm_password_hint">Enter Password</string>
+    <string name="common_confirm_password_repeat_hint">Re-enter Password</string>
+
+    <!-- 扫一扫-->
+    <string name="common_scan_activity_default_title">Scan</string>
+    <string name="common_scan_other_title">Scan Code</string>
+    <string name="common_scan_my_title">My Code</string>
+    <string name="common_scan_title">Scan QR Code</string>
+    <string name="common_scan">Scan</string>
+    <string name="common_scan_album">Album</string>
+    <string name="common_scan_from_album_text">From Album</string>
+    <string name="common_scan_choose_qr_title">Choose QR Image</string>
+    <string name="common_scan_parse_qr_fail">Find QR Code Fail</string>
+    <string name="common_scan_flash_button">Flash</string>
+    <string name="common_scan_qr_button">My Code</string>
+
+
+    <string name="common_retrieval_service_content">Background connection enabled</string>
+
+    <!-- GCM -->
+    <string name="common_gcm_service_fail">BCM communication fails continuously!</string>
+    <string name="common_register_with_Google_Play_Services_fail">BCM was unable to register with Google Play Services.</string>
+
+    <string name="common_chat">Chat</string>
+    <string name="common_call">Call</string>
+
+    <string name="common_notification_channel_name">IM</string>
+    <string name="common_notification_channel_description">Incoming message notifications</string>
+
+    <string name="common_new_version_tip">Version %1$s available</string>
+
+    <string name="common_transfer_title">Notice</string>
+    <string name="common_transfer_from_old_package">A formal version is detected to have been installed on this device, tap “Proceed” to log into the formal version. </string>
+    <string name="common_transfer_detect_new_package">This is a Beta version, a formal version is detected to have been installed on this device, we recommend you to use the formal version instead. </string>
+    <string name="common_transfer_button">Proceed</string>
+    <string name="common_transfer_launch">Confirm</string>
+    <string name="common_download_origin">Downloading original file.</string>
+    <string name="common_transfer_error_title">Error</string>
+    <string name="common_transfer_data_error">Account data transfer error</string>
+
+    <!-- 会话页面消息简述 -->
+    <string name="common_video_message_description">[Video]</string>
+    <string name="common_audio_message_description">[Audio]</string>
+    <string name="common_location_message_description">[Location]</string>
+    <string name="common_image_message_description">[Image]</string>
+    <string name="common_link_message_description">[Link]</string>
+    <string name="common_share_channel_message_description">[Broadcasting Group]</string>
+    <string name="common_system_message_description">[System Message]</string>
+    <string name="common_file_message_description">[Attachment]</string>
+    <string name="common_contact_message_description">[Name Card]</string>
+    <string name="common_screenshot_message_description">[Screenshot Message]</string>
+    <string name="common_history_message_description">[History Message]</string>
+    <string name="common_pin_message_description">[Pin Message]</string>
+    <string name="common_group_share_message_description">[Join-group Invitation]</string>
+    <string name="common_adhoc_channel_invite_description">[AirChat Invitation]</string>
+
+
+    <!-- bcm好友变更消息类型描述 -->
+    <string name="common_friend_add_message_description">[Add Friend]</string>
+    <string name="common_friend_added_message_description">[Added Friend]</string>
+    <string name="common_friend_delete_message_description">[Delete Friend]</string>
+
+
+    <string name="common_system_notification_notice">System push notification is off. Turn it on to receive message notifications.</string>
+    <string name="common_system_notification_button">Turn On</string>
+
+    <!-- 消息快照 -->
+    <string name="common_unsupport_type_message_snapshot">This messages is not supported by this version, please update your BCM.</string>
+    <string name="common_decrypt_message_error">decrypt error message</string>
+    <string name="common_error_decrypting_message_snapshot">Error decrypting messageDetail</string>
+
+
+    <string name="common_chats_system_tip_you">You</string>
+    <string name="common_chats_system_tip_you_lower_case">you</string>
+    <string name="common_chats_group_update">group update</string>
+    <string name="common_chats_group_owner_change">%s is the new group owner</string>
+    <string name="common_chats_group_invite">%1$s invited %2$s to join the group chat</string>
+    <string name="common_chats_group_join">%s join the group</string>
+    <string name="common_chats_group_remove_member">%1$s removed %2$s from the group chat</string>
+    <string name="common_chats_leave_group">%s left group</string>
+    <string name="common_chats_group_you_recall_message">You\'ve recalled a message</string>
+    <string name="common_chats_peer_recall_message">%s has recalled a message</string>
+    <string name="common_chats_subscribe_group">%s subscribed this group</string>
+    <string name="common_chats_group_remove_subscriber">%1$s removed %2$s from the group chat</string>
+    <string name="common_chats_unsubscribe_group">%s unsubscribed the group chat</string>
+    <string name="common_chats_message_add_friend_description">You\'ve added %s</string>
+    <string name="common_chats_message_delete_friend_description">You\'ve deleted %s from your BCM contact</string>
+    <string name="common_chats_you_recalled_message">You have unsent a message</string>
+    <string name="common_chats_partner_clear_history_tip">%s has cleared chat history</string>
+    <string name="common_chats_you_clear_history_tip">Clearation sucessed</string>
+    <string name="common_chats_you_clearing_history_tip">The chat history are being cleared on both of your devices</string>
+    <string name="common_chats_you_clear_history_fail_tip">Clearation failed</string>
+    <string name="common_chats_he_recalled_message">%s has unsent a message</string>
+
+    <string name="common_chats_user_block_system_notice">You have blocked %s</string>
+    <string name="common_chats_user_unblock_system_notice">You unblocked messages from "%s"</string>
+
+    <string name="common_dialog_hidden">Hide</string>
+
+    <string name="common_live_start_live_tip">%s started streaming sync video.</string>
+    <string name="common_live_stop_live_tip">%s stopped streaming sync video.</string>
+    <string name="common_live_start_live_tip_by_you">You started streaming sync video.</string>
+    <string name="common_live_stop_live_tip_by_you">You stopped streaming sync video.</string>
+    <string name="common_illegal_group_notice">You are not a member of this group</string>
+
+    <string name="common_live_end_tip">Sync video streaming ended.</string>
+    <string name="common_error_failed">Failed</string>
+    <string name="common_chats_network_connecting">Connecting…</string>
+
+    <!--image picker-->
+    <string name="common_piece">Piece(s)</string>
+    <string name="common_you_have_a_select_limit">%1$s images limited</string>
+    <string name="common_select_complete">Done(%1$s/%2$s)</string>
+    <string name="common_all_images">All Images</string>
+    <string name="common_string_select">Select</string>
+    <string name="common_string_preview">Preview</string>
+    <string name="common_string_save">Save</string>
+    <string name="common_album">Album</string>
+    <string name="common_all_photos">All Photos</string>
+    <string name="common_take_photo">Take Photo</string>
+    <string name="common_pick_photo_size_limit">%d images limited</string>
+
+
+    <!-- webRTC notification -->
+    <string name="common_webrtc_call_default_description">Call message notifications</string>
+    <string name="common_webrtc_call_channel_description">Call message notifications</string>
+
+    <!-- friend -->
+    <string name="common_chats_stranger_disturb_notice">%s does not accept messages from strangers. </string>
+
+    <!-- group share-->
+    <string name="common_chats_group_join_request_description">%s requests to join the group. </string>
+    <string name="common_chats_group_invite_single_description">%s invites %s to join the group. </string>
+    <string name="common_chats_group_invite_multi_description">%s invites %d members to join the group. </string>
+    <string name="common_chats_group_request_detail_description">Details</string>
+    <string name="common_chats_group_request_handled_description">Confirmed</string>
+    <string name="common_chats_group_default_name">Unnamed Group</string>
+    <string name="common_chats_group_default_display_name">Group Chat</string>
+
+    <!--notification channel id-->
+    <string name="common_notification_default_id" translatable="false">bcm chat</string>
+    <string name="common_notification_update_id" translatable="false">bcm update</string>
+    <string name="common_notification_friend_id" translatable="false">bcm friend</string>
+    <string name="common_notification_adhoc_id" translatable="false">bcm air chat</string>
+    <string name="common_notification_wallet_id" translatable="false">bcm wallet</string>
+
+    <!--notification-->
+    <string name="common_notification_friend_single">You have 1 friend request</string>
+    <string name="common_notification_friend_multiple">You have %d friend requests</string>
+
+    <string name="common_network_connection_error">Network connection failed, please try again later</string>
+
+    <!-- Search -->
+    <string name="common_search_display_title">Search</string>
+    <string name="common_recent_search_title">Recent Searches</string>
+    <string name="common_current_search_contact_title">Contacts</string>
+    <string name="common_current_search_contact_more">More Contacts</string>
+    <string name="common_current_search_group_title">Groups</string>
+    <string name="common_current_search_group_more">More Groups</string>
+    <string name="common_current_search_adhoc_title">Air Chat</string>
+    <string name="common_current_search_adhoc_more">More Air Chat</string>
+    <string name="common_go_setting_wifi">To use AirChat, please turn on Wi-Fi</string>
+    <string name="common_ble_go_setting">To use AirChat, please turn on Bluetooth</string>
+    <string name="common_gps_go_setting">To use AirChat, please turn on GPS</string>
+    <string name="common_alert_tip">Warning</string>
+    <string name="common_alert_go_setting">Set</string>
+
+    <!--invite share-->
+    <string name="common_invite_share_title">Send invitation via &#8230;</string>
+    <string name="common_invite_share_copy_invitation">Copy the Invitation</string>
+    <string name="common_invite_share_more">More</string>
+    <string name="common_invite_share_sms">SMS</string>
+    <string name="common_invite_share_email">Email</string>
+    <string name="common_invite_share_copy">Copy</string>
+    <string name="common_invite_share_wechat">WeChat</string>
+    <string name="common_invite_share_weibo">Weibo</string>
+    <string name="common_invite_share_twitter_tweet">Tweet</string>
+    <string name="common_invite_share_twitter_direct_message">Direct Message</string>
+
+    <!--database migrate-->
+    <string name="common_database_migrate_title">Updating Database</string>
+    <string name="common_database_migrate_content">Please wait till it\'s finished</string>
+    <string name="common_database_migrate_finish_login">Update success! Logging in</string>
+    <string name="common_database_migrate_failed">Update failed</string>
+    <string name="common_database_migrate_failed_content">Failed to upgrade the database, chat history may not show properly. We apologize for the inconvenience caused, and we will resolve this problem as soon as possible.</string>
+
+
+    <!-- 基层服务提示 -->
+    <string name="common_too_low_version_notice">Current App version is too low to complete the operation, please upgrade</string>
+    <string name="common_server_request_fail_description">Server request failed, response code is %d</string>
+    <string name="common_server_request_cancel_description">Server request canceled</string>
+    <string name="common_server_request_fail_no_code_description">Server request failed</string>
+
+    <!-- 权限弹窗提示 -->
+    <string name="common_permission_rationale_notice">you had denied the permission, you should goto setting page to grant permission</string>
+    <string name="common_request_basic_permission_title">Request Permission</string>
+    <string name="common_request_basic_permission_message">BCM needs storage permissions to work normally.</string>
+    <string name="common_request_basic_permission_grant">Permit</string>
+    <string name="common_service_unreachable">Servers Unreachable</string>
+    <string name="common_service_unreachable_tip">Can\'t reach BCM servers via the current network. Please check and try again, or try proxy.</string>
+    <string name="common_service_unreachable_try_proxy">Try Proxy</string>
+    <string name="common_ignore">Ignore</string>
+
+    <!-- 二维码相关 -->
+    <string name="common_unsupported_qr_code_description">unsupported qr code</string>
+
+    <string name="common_message_decrypted_fail_error">Unable to decrypt %s messages due to your expired decryption code</string>
+
+    <string name="common_save_success">Saved</string>
+    <string name="common_save_fail">Save Fail</string>
+
+</resources>

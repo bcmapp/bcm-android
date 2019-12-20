@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="315dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/common_popup_small_bg"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/confirm_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
+        android:textColor="#030303"
+        android:textSize="18sp"
+        tools:text="Title"/>
+
+    <TextView
+        android:id="@+id/confirm_notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textColor="@color/wallet_content_second_color"
+        android:textSize="14sp"
+        tools:text="Tip"/>
+
+    <TextView
+        android:id="@+id/confirm_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/wallet_import_content_bg"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="@color/wallet_content_main_color"
+        android:textSize="13sp"
+        android:visibility="gone"
+        tools:text="Content"/>
+
+    <com.bcm.messenger.common.ui.CommonPasswordInputLayout
+        android:id="@+id/confirm_password_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"/>
+
+    <com.bcm.messenger.common.ui.CommonPasswordInputLayout
+        android:id="@+id/confirm_password_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/confirm_edit_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginEnd="@dimen/common_horizontal_gap">
+
+        <EditText
+            android:id="@+id/confirm_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="5dp"
+            android:paddingEnd="40dp"
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:background="@drawable/wallet_import_content_bg"
+            android:inputType="text"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+        <ImageView
+            android:id="@+id/confirm_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/common_clear_circle_icon"
+            android:contentDescription=""
+            android:scaleType="centerInside"
+            android:padding="5dp"
+            android:layout_marginEnd="10dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintTop_toTopOf="@id/confirm_edit"
+            app:layout_constraintRight_toRightOf="@id/confirm_edit"
+            app:layout_constraintBottom_toBottomOf="@id/confirm_edit"/>
+
+        <TextView
+            android:id="@+id/confirm_warning"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:drawableStart="@drawable/wallet_warning_icon"
+            android:drawablePadding="5dp"
+            android:layout_marginTop="5dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintTop_toBottomOf="@id/confirm_edit"
+            app:layout_constraintLeft_toLeftOf="@id/confirm_edit"
+            app:layout_constraintRight_toRightOf="@id/confirm_edit"
+            tools:text="testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/common_horizontal_gap">
+
+        <com.bcm.messenger.common.ui.StateButton
+            android:id="@+id/confirm_cancel"
+            style="@style/CommonDarkThinBigTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_weight="1"
+            android:text="@string/wallet_transaction_transfer_action"
+            android:textAllCaps="false"/>
+
+        <com.bcm.messenger.common.ui.StateButton
+            android:id="@+id/confirm_ok"
+            style="@style/CommonDarkBigTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="19dp"
+            android:layout_weight="1"
+            android:text="@string/wallet_transaction_receive_action"
+            android:textAllCaps="false"/>
+
+    </LinearLayout>
+
+</LinearLayout>

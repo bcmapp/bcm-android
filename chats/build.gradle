@@ -1,0 +1,44 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+apply from: '../proguard/proguardconfig.gradle'
+
+android {
+    compileSdkVersion compile_sdk_version as int
+
+    defaultConfig {
+        minSdkVersion min_sdk_version as int
+        targetSdkVersion target_sdk_version as int
+        versionCode 1
+        versionName "1.0"
+
+        resourcePrefix "chats_"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    androidExtensions {
+        experimental = true
+    }
+}
+
+kapt {
+    generateStubs = true
+    arguments {
+        arg("MODULE_NAME", project.getName())
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    api project(':login')
+
+    kapt 'com.bcm.router:processor:1.0.0'
+    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_compiler_version"
+
+}

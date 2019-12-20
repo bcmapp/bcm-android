@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_dev_settings">开发设置</string>
+    <string name="app_name">BCM</string>
+    <string-array name="pref_server_mode_list_titles">
+        <item>Online Server</item>
+        <item>Test Server</item>
+        <item>Dev Server</item>
+    </string-array>
+    <string-array name="pref_server_mode_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string name="pref_header_general">通用</string>
+    <string name="pref_title_social_recommendations">开启社交推荐</string>
+    <string name="pref_description_social_recommendations">根据你的消息历史推荐朋友</string>
+    <string name="pref_title_dev_server_url">开发服务器Url</string>
+    <string name="pref_default_server_url">不配置</string>
+    <string name="pref_title_server_mode">服务器模式</string>
+    <string name="pref_header_data_sync">数据和同步</string>
+    <string name="pref_title_sync_frequency">同步间隔</string>
+    <string name="pref_title_system_sync_settings">系统同步设置</string>
+    <string name="pref_header_notifications">通知</string>
+    <string name="pref_title_new_message_notifications">新信息通知</string>
+    <string name="pref_title_ringtone">铃声</string>
+    <string name="pref_ringtone_silent">静音</string>
+    <string name="pref_title_vibrate">震动</string>
+    <string name="hint_pick_nickname">请选择昵称</string>
+    <string name="hint_input_nickname">请输入昵称</string>
+    <string name="str_later">以后</string>
+    <string name="str_confirm">确认</string>
+    <string name="tips_empty_name">用户名为空</string>
+    <string name="tips_nickname_saved">已保存昵称</string>
+    <string name="tips_retry">请重试</string>
+    <string name="title_update_info">更新信息(v%s)</string>
+    <string name="OK">OK</string>
+    <string name="upgrade">更新</string>
+
+
+</resources>

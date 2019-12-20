@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="83dp"
+                android:gravity="center_horizontal"
+                android:background="@drawable/common_item_ripple_transparent_bg">
+
+    <ImageView
+        android:id="@+id/group_control_option"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        />
+</RelativeLayout>

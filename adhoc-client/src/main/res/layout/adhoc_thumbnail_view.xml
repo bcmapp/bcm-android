@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+    android:maxWidth="@dimen/chats_conversation_thumbnail_item_width"
+    android:maxHeight="@dimen/chats_conversation_thumbnail_item_width">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/thumbnail_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="@dimen/chats_conversation_thumbnail_item_width"
+        android:maxHeight="@dimen/chats_conversation_thumbnail_item_width"
+        app:cardElevation="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/thumbnail_holder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:background="@color/common_10_transparent"/>
+
+        <ImageView
+            android:id="@+id/thumbnail_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            tools:src="@drawable/common_image_place_img"/>
+
+        <ProgressBar
+            android:id="@+id/thumbnail_progress"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:visibility="gone"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:max="100"
+            android:indeterminate="false"
+            android:progressDrawable="@drawable/chats_horizontal_progress_bg"
+            android:indeterminateDrawable="@drawable/chats_horizontal_progress_bg"
+            android:layout_gravity="bottom"
+            tools:visibility="visible"/>
+
+    </androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:id="@+id/thumbnail_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_download_circle_fill_white_48dp"
+        android:longClickable="false"
+        android:padding="15dp"
+        android:visibility="gone"
+        android:contentDescription=""
+        app:layout_constraintStart_toStartOf="@id/thumbnail_card"
+        app:layout_constraintEnd_toEndOf="@id/thumbnail_card"
+        app:layout_constraintTop_toTopOf="@id/thumbnail_card"
+        app:layout_constraintBottom_toBottomOf="@id/thumbnail_card"
+        tools:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/thumbnail_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/common_video_play"
+        android:contentDescription=""
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/thumbnail_card"
+        app:layout_constraintEnd_toEndOf="@id/thumbnail_card"
+        app:layout_constraintTop_toTopOf="@id/thumbnail_card"
+        app:layout_constraintBottom_toBottomOf="@id/thumbnail_card"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/thumbnail_size"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/chats_thumbnail_time_bg"
+        android:textColor="@color/common_color_white"
+        android:textSize="12sp"
+        android:padding="5dp"
+        android:textAlignment="textEnd"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/thumbnail_card"
+        app:layout_constraintStart_toStartOf="@id/thumbnail_card"
+        app:layout_constraintBottom_toBottomOf="@id/thumbnail_card"
+        tools:text="00:01"
+        tools:visibility="visible"/>
+
+</merge>

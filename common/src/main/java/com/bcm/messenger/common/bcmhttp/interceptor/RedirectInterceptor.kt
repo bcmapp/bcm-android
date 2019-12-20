@@ -1,0 +1,140 @@
+package com.bcm.messenger.common.bcmhttp.interceptor
+
+import com.bcm.messenger.common.bcmhttp.configure.IMServerUrl
+import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSFetcher
+import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSManager
+import com.bcm.messenger.common.bcmhttp.imserver.DevIMServerIterator
+import com.bcm.messenger.common.bcmhttp.imserver.DevMetricsServerIterator
+import com.bcm.messenger.common.bcmhttp.imserver.IMServerIterator
+import com.bcm.messenger.common.bcmhttp.imserver.IServerIterator
+import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
+import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.utility.network.NetworkUtil
+import okhttp3.Interceptor
+import okhttp3.Response
+import java.util.concurrent.atomic.AtomicInteger
+
+/**
+ * ip迭代拦截器
+ */
+class RedirectInterceptor(private val lbsType: String, private val defaultServer: IMServerUrl) : Interceptor {
+    private var lbsFetchIndex = 0
+    private var serverIterator: IServerIterator
+    private var currentServer: IMServerUrl
+    private val failedTimes = AtomicInteger(0)
+
+    init {
+        serverIterator = if (AppUtil.isReleaseBuild() || AppUtil.isLbsEnable()) {
+            IMServerIterator(LBSManager.getServerList(lbsType), defaultServer)
+        } else {
+            if (lbsType == LBSManager.metricsServerLbsType()) {
+                DevMetricsServerIterator()
+            } else {
+                DevIMServerIterator()
+            }
+        }
+        currentServer = serverIterator.next()
+    }
+
+    private val listener = object : LBSFetcher.ILBSFetchResult {
+        override fun onLBSFetchResult(succeed: Boolean, fetchIndex: Int) {
+            if (AppUtil.isReleaseBuild() || AppUtil.isLbsEnable()) {
+                if (succeed) {
+                    serverIterator = IMServerIterator(LBSManager.getServerList(lbsType), defaultServer)
+                    currentServer = serverIterator.next()
+                }
+            }
+            lbsFetchIndex = fetchIndex
+        }
+    }
+
+    init {
+        LBSManager.query(lbsType, lbsFetchIndex, listener)
+    }
+
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val server = getCurrentServer()
+
+        val request = chain.request()
+        val redirectUrlBuilder = request.url()
+                .newBuilder()
+                .host(server.ip)
+
+        if (server.port > 0) {
+            redirectUrlBuilder.port(server.port)
+        }
+
+        val redirectUrl = redirectUrlBuilder.build().url().toString()
+        ALog.logForSecret("RedirectInterceptor", redirectUrl)
+
+        val newRequestBuilder = request.newBuilder().url(redirectUrlBuilder.build())
+
+        var exception: Throwable? = null
+        val response = try {
+            chain.proceed(newRequestBuilder.build())
+        } catch (e: Throwable) {
+            exception = e
+            null
+        }
+
+        if (response?.isSuccessful == true) {
+            failedTimes.set(0)
+        } else if (serverOrNetWorkFailed(response)) {
+            //达到3次接口请求失败，切换服务器
+            val times = failedTimes.get()
+            if (times >= 3) {
+                failedTimes.set(0)
+                getNextServer()
+            } else {
+                failedTimes.set(times+1)
+            }
+        }
+
+        if (null != exception) {
+            ALog.e("RedirectInterceptor", redirectUrl, exception)
+            throw exception
+        }
+
+        ALog.logForSecret("RedirectInterceptor", "$redirectUrl resp ${response!!.code()}")
+
+        return response
+    }
+
+    private fun serverOrNetWorkFailed(response: Response?): Boolean {
+        if (!NetworkUtil.isConnected()) {
+            //网络断开了，不统计到网络不正常的情况
+            return false
+        }
+
+        if (null == response) {
+            return true
+        }
+
+        if (response.code() == ServerCodeUtil.CODE_SERVICE_460
+                || response.code() > ServerCodeUtil.CODE_SERVICE_500) {
+            return true
+        }
+
+        return false
+    }
+
+
+    fun getCurrentServer(): IMServerUrl {
+        //如果迭代器失效，刷新lbs
+        if (!serverIterator.isValid()) {
+            LBSManager.query(lbsType, lbsFetchIndex, listener)
+        }
+        return currentServer
+    }
+
+    private fun getNextServer(): IMServerUrl {
+        currentServer = serverIterator.next()
+
+        //如果迭代器失效，刷新lbs
+        if (!serverIterator.isValid()) {
+            LBSManager.query(lbsType, lbsFetchIndex, listener)
+        }
+        return currentServer
+    }
+}

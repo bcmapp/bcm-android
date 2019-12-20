@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:id="@+id/input_pin_layout"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             android:background="@color/common_color_transparent"
+                                             android:visibility="visible"
+                                             tools:background="@drawable/me_login_bg">
+
+    <ImageView
+        android:id="@+id/input_pin_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:padding="8dp"
+        android:src="@drawable/common_back_arrow_white_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/generate_key_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:text="@string/me_encrypt_your_keys"
+        android:textColor="@color/common_color_white"
+        android:textSize="20sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/pin_input_layout"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/me_private_key_bg"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="15dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/generate_key_header">
+
+        <TextView
+            android:id="@+id/private_key_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/me_private_key"
+            android:textColor="@color/common_app_primary_color"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/private_key_content"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/me_key_generator_button_bg"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:maxLines="1"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:scrollbars="horizontal"
+            android:singleLine="true"
+            android:text="@string/me_default_private_key"
+            android:textColor="@color/common_app_primary_color"
+            android:textSize="10sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/private_key_title" />
+
+        <TextView
+            android:id="@+id/public_key_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/me_public_key"
+            android:textColor="@color/common_app_primary_color"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/private_key_content" />
+
+        <EditText
+            android:id="@+id/public_key_content"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/me_key_generator_button_bg"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:maxLines="1"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:scrollbars="horizontal"
+            android:singleLine="true"
+            android:text="@string/me_default_public_key"
+            android:textColor="@color/common_app_primary_color"
+            android:textSize="10sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/public_key_title" />
+
+
+        <EditText
+            android:id="@+id/input_pin_editText"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/common_blue_round_bg"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="left|center_vertical"
+            android:hint="@string/me_pin_hint"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textColor="@color/common_color_white"
+            android:textColorHint="#7fffffff"
+            android:textCursorDrawable="@drawable/common_white_color_cursor"
+            android:textSize="14sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/public_key_content" />
+
+        <EditText
+            android:id="@+id/input_pin_confirm_editText"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/common_blue_round_bg"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="left|center_vertical"
+            android:hint="@string/me_re_enter_pin_hint"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textColor="@color/common_color_white"
+            android:textColorHint="#7fffffff"
+            android:textCursorDrawable="@drawable/common_white_color_cursor"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_pin_editText" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <ImageView
+        android:id="@+id/pin_input_done_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:src="@drawable/me_next_white_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pin_input_layout" />
+</androidx.constraintlayout.widget.ConstraintLayout>

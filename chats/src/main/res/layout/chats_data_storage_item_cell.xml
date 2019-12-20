@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="52dp"
+    android:background="@color/common_color_white">
+
+    <TextView
+        android:id="@+id/clear_conversation_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_alignStart="@id/clear_conversation_photo"
+        android:layout_alignEnd="@id/clear_conversation_size"
+        android:background="@color/common_color_white"
+        android:gravity="left|center_vertical"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:text="@string/chats_clear_all_text"
+        android:textColor="@color/common_color_black"
+        android:textSize="17sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintEnd_toStartOf="@+id/clear_conversation_size"
+        app:layout_constraintStart_toEndOf="@+id/clear_conversation_photo" />
+
+    <com.bcm.messenger.common.ui.RecipientAvatarView
+        android:id="@+id/clear_conversation_photo"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/clear_conversation_size"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:gravity="center_vertical"
+        android:paddingStart="0dp"
+        android:paddingEnd="15dp"
+        android:textColor="@color/common_color_A8A8A8"
+        android:textSize="15sp"
+        android:drawableEnd="@drawable/common_right_arrow_icon"
+        app:layout_constraintBottom_toTopOf="@+id/chats_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/chats_view"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="61dp"
+        android:background="#E8E8E8"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

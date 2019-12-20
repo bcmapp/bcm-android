@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="chats_conversation_item_photo_description">写真の連絡先</string>
+    <string name="chats_conversation_item_pin_description">メッセージを上部に固定する</string>
+
+    <!-- ConversationActivity -->
+    <string name="chats_unable_to_record_audio_warning">音声を録音できませんでした！</string>
+    <string name="chats_sending_voice_message_error">ボイスメッセージ送信エラー</string>
+    <string name="chats_there_is_no_app_available_to_handle_this_link_on_your_device">お使いのデバイスでこのリンクを処理するための利用可能なアプリはありません.</string>
+
+    <!-- DocumentView -->
+    <string name="chats_unknown_file_name">不明なファイル</string>
+
+    <string name="chats_item_delete">削除</string>
+    <string name="chats_item_pin">ピン留め</string>
+    <string name="chats_item_cancel_pin">ピン留め解除</string>
+    <string name="chats_item_confirm">確認</string>
+    <string name="chats_item_confirm_delete">確認</string>
+    <string name="chats_item_confirm_delete_title">削除確認</string>
+    <string name="chats_item_confirm_delete_message">この会話を削除しますか？</string>
+    <string name="chats_title">チャット</string>
+    <string name="chats_no_conversation_main">まだ何も会話がありません</string>
+    <string name="chats_no_conversation_sub">チャットを開始すると、ここに表示されます</string>
+    <string name="chats_no_nickname_set">あなたはまだニックネームを設定していません。</string>
+    <string name="chats_no_nickname_set_btn">今すぐ設定</string>
+    <string name="chats_network_connecting">接続中…</string>
+    <string name="chats_network_disconnected">オフライン</string>
+
+    <string name="chats_conversation_input_hint">&#160;ここに入力</string>
+
+    <string name="chats_private_lock_description">チャットをロック</string>
+    <string name="chats_private_verified_description">チャットの検証状態</string>
+    <string name="chats_private_mute_description">チャットをミュートにする</string>
+    <string name="chats_private_not_contact_text">%1$s はBCMの連絡先に存在しません。</string>
+    <string name="chats_private_add_contact_later_button">あとで</string>
+    <string name="chats_private_add_contact_now_button">追加</string>
+    <string name="chats_private_lock_notice">この会話は終端間で暗号化されています。</string>
+    <string name="chats_private_verified_notice">このユーザーの安全コードが検証されました。</string>
+    <string name="chats_private_not_verified_notice">このユーザーの安全コードはまだ検証されていません。</string>
+    <string name="chats_private_verified_title_button">検証</string>
+
+    <string name="chats_private_mute_notice">の間ミュート %1$s</string>
+
+    <string name="chats_user_edit">編集</string>
+    <string name="chats_user_stick">上部にピン留めする</string>
+    <string name="chats_user_invite">Invite</string>
+    <string name="chats_user_phone_head">電話</string>
+    <string name="chats_user_add">追加</string>
+    <string name="chats_user_clear_history">ローカルのチャット履歴をクリア</string>
+    <string name="chats_user_delete">連絡先を削除</string>
+    <string name="chats_user_block">ユーザーをブロック</string>
+    <string name="chats_user_unblock">ブロック解除</string>
+    <string name="chats_user_no_name_text">名無しさん</string>
+    <string name="chats_user_verification_head">セーフティナンバーを検証する</string>
+    <string name="chats_user_verified_value">検証済み</string>
+    <string name="chats_user_not_verified_value">未検証</string>
+    <string name="chats_user_mute_head">ミュート</string>
+    <string name="chats_user_not_mute_value">ミュートされていません</string>
+    <string name="chats_user_mute_value">まで %1$s</string>
+    <string name="chats_user_mute_setted_text">ミュート中</string>
+    <string name="chats_user_mute_canceled_text">ミュートされていません</string>
+    <string name="chats_user_delete_text">ユーザーを削除</string>
+    <string name="chats_user_delete_and_block_text">削除してまたブラックリストに追加する</string>
+    <string name="chats_delete_friend_second_confirm_title">削除してまたブロックします\"%s\" </string>
+    <string name="chats_user_delete_from_contact_text">連絡先を削除する</string>
+    <string name="chats_delete_from_contact_confirm_title">連絡先\"%s\"、またその人とのチャット記録を削除する</string>
+    <string name="chats_user_setting_chat_actions_title">チャット操作</string>
+    <string name="chats_user_setting_data_title">データ</string>
+    <string name="chats_user_setting_clear_history_title">歴史の記録をクリアする</string>
+
+    <string name="chats_user_clear_command_sent">コマンドが送信されました</string>
+    <string name="chats_user_clearing_notice">チャット履歴を消去しています</string>
+    <string name="chats_user_blocking_notice">このユーザーはブロック中です</string>
+    <string name="chats_user_clear_success">チャット履歴はクリアされました</string>
+    <string name="chats_user_block_success">ユーザーはブロックされました</string>
+    <string name="chats_user_unblock_success">ユーザーがブロック解除されました</string>
+    <string name="chats_user_set_pin_success">ピン留めに成功しました</string>
+    <string name="chats_user_set_pin_fail">ピン留めに失敗しました</string>
+    <string name="chats_user_clear_fail">チャット履歴のクリアに失敗しました</string>
+    <string name="chats_user_block_fail">ユーザーのブロックに失敗</string>
+    <string name="chats_user_unblock_fail">ユーザーのブロック解除に失敗しました</string>
+    <string name="chats_user_delete_success">消去成功</string>
+    <string name="chats_user_delete_fail">消去失敗</string>
+    <string name="chats_user_add_success">追加済み</string>
+    <string name="chats_user_add_fail">追加失敗</string>
+
+    <string name="chats_user_mute_dialog_title">このユーザーをミュートにする</string>
+    <string name="chats_user_mute_dialog_tip">ミュートにしている間通知は送信されません</string>
+    <string name="chats_user_mute_dialog_hour">1 時間</string>
+    <string name="chats_user_mute_dialog_day">1 日</string>
+    <string name="chats_user_mute_dialog_week">1 週間</string>
+    <string name="chats_user_mute_dialog_year">1 年</string>
+
+
+    <string name="chats_identity_verify_title">セーフティナンバーを検証</string>
+    <string name="chats_identity_verify_notice">QRコードをスキャンするか、セーフティナンバーを比較して、%1$sによるエンドツーエンド暗号化を検証します。</string>
+    <string name="chats_verify_number_title">セーフティナンバー</string>
+    <string name="chats_verify_qr_title">セーフティナンバー</string>
+    <string name="chats_verify_mark_btn">検証済みとしてマーク</string>
+    <string name="chats_verify_scan_btn">確認のためにスキャン</string>
+    <string name="chats_verify_clear_btn">検証をクリアする</string>
+    <string name="chats_verify_mark_success">セーフティナンバーは検証済みとしてマークされました</string>
+    <string name="chats_verify_scan_success">安全コードを確認済み</string>
+    <string name="chats_verify_scan_fail">セーフティナンバーの検証に失敗しました</string>
+    <string name="chats_verify_mark_cancel">セーフティナンバーは未検証としてマークされました</string>
+
+    <string name="chats_user_verification_dialog_yes_title">%1$s は検証されました</string>
+    <string name="chats_user_verification_dialog_no_title">%1$s は検証されていません</string>
+    <string name="chats_user_verification_dialog_tip">おたがいの検証コードが同じであることを確認して、連絡先のIDを確認します。以下のいずれかの方法を選択できます。</string>
+    <string name="chats_user_verification_dialog_scan">スキャン</string>
+    <string name="chats_user_verification_dialog_mark">検証済みにする</string>
+    <string name="chats_user_verification_dialog_clear">検証を取り消し</string>
+    <string name="chats_user_verification_dialog_qr_fail">確認QRの取得に失敗する</string>
+    <string name="chats_user_verification_dialog_mark_fail">マーク検証が失敗する</string>
+    <string name="chats_user_verification_dialog_clear_fail">検証取り消しに失敗しました</string>
+    <string name="chats_user_verification_dialog_check_success">同じアイデンティティ</string>
+    <string name="chats_user_verification_dialog_check_fail">同一性が同じではありません</string>
+
+    <string name="chats_audio_permission_notice_title">お知らせ</string>
+    <string name="chats_audio_permission_notice_content">マイクへのアクセス許可が必要です</string>
+
+    <string name="chats_audio_permission_setting">設定</string>
+    <string name="chats_audio_permission_cancel">キャンセル</string>
+    <string name="chats_resend">再送信</string>
+    <string name="chats_cancel">キャンセル</string>
+    <string name="chats_delete">削除</string>
+    <string name="chats_group_create">作成</string>
+    <string name="chats_save">保存</string>
+    <string name="chats_forward">よこす</string>
+    <string name="chats_select">選択</string>
+    <string name="chats_pin">ピン留め</string>
+    <string name="chats_reply">返信</string>
+    <string name="chats_change">更换</string>
+    <string name="chats_reply_can_not_locate">メッセージを見つけることができません</string>
+
+    <string name="chats_select_mode_cancel_btn">キャンセル</string>
+    <string name="chats_select_mode_delete_empty">メッセージを選択してください</string>
+    <string name="chats_create_group_title">グループ作成</string>
+
+    <string name="chats_select_contact_title">連絡先を選択</string>
+    <string name="chats_select_contact_done">完了</string>
+    <string name="chats_default_group_name">グループ名</string>
+    <string name="chats_group_edit">編集</string>
+    <string name="chats_group_leave_ask">本当にこのグループから脱退してもよろしいですか？</string>
+    <string name="chats_group_leave">グループから脱退</string>
+    <string name="chats_group_name">グループ名</string>
+
+    <string name="chats_group_short_name" translatable="false">%1$s(%2$d)</string>
+
+    <string name="chats_call_activity_title">呼び出し中</string>
+    <string name="chats_call_photo_description">現在の通話受信者の写真</string>
+    <string name="chats_call_voice_title">音声通話</string>
+    <string name="chats_call_video_title">ビデオ通話</string>
+    <string name="chats_call_mute_text">ミュート</string>
+    <string name="chats_call_cancel_text">キャンセル</string>
+    <string name="chats_call_hang_up_text">通話終了</string>
+    <string name="chats_call_speaker_text">スピーカー</string>
+    <string name="chats_call_accept_text">承諾</string>
+    <string name="chats_call_decline_text">拒否</string>
+    <string name="chats_call_video_text">ビデオ</string>
+    <string name="chats_call_camera_switch_text">カメラを切り替える</string>
+    <string name="chats_call_no_permission_error_title">エラ</string>
+    <string name="chats_call_no_permission_error_message">BCMはマイクや/またはカメラの権限を取得していない。今回の通話は拒否される。</string>
+    <string name="chats_call_no_overlay_permission_message">音声通話の最小化にはフローティング・ウィンドウの権限が必要である。すぐに権限を申請したい場合は、“処理”ボタンをクリックします。少々お待ちになりたい場合は、“少々お待ちください”ボタンをクリックし、そうでないと現在の通話を終了します。</string>
+    <string name="chats_call_no_overlay_permission_handle">処理</string>
+    <string name="chats_call_no_overlay_permission_wait">少々お待ちください</string>
+    <string name="chats_call_no_overlay_permission_cancel">キャンセル</string>
+
+    <string name="chats_call_finish_message_holder">期間 %1$s</string>
+    <string name="chats_call_missed_message_holder">不在通話</string>
+
+    <string name="chats_call_unanswer_message_description">不在通話</string>
+    <string name="chats_call_untook_message_description">不在通話</string>
+
+
+    <!-- 私聊或群聊状态消息的描述 -->
+    <string name="chats_message_target_recipient_unknown">未知</string>
+    <string name="chats_group_create_description">%1$s が %2$s をグループに招待しました</string>
+    <string name="chats_group_update_description">グループが更新されました</string>
+    <string name="chats_group_title_changed_description">グループ名は%1$sに変更されました</string>
+    <string name="chats_group_avatar_changed_description">グループのアイコンが変更されました</string>
+    <string name="chats_message_joined_description">BCMに参加しました</string>
+    <string name="chats_set_message_expiration_description">%1$s がメッセージの消滅時間を %2$s に設定しました</string>
+    <string name="chats_message_group_update_description">グループが更新されました</string>
+    <string name="chats_message_verification_change_description" formatted="false">%s のセーフティナンバーが変更されました</string>
+    <string name="chats_message_verified_description">あなたが%sを検証済みとしてマークしました</string>
+    <string name="chats_message_unverified_description">あなたが%sを未検証としてマークしました</string>
+    <string name="chats_message_send_fail_description">メッセージの送信に失敗しました</string>
+    <string name="chats_message_media_description">メディアメッセージ</string>
+    <string name="chats_message_call_description">電話のメッセージ</string>
+    <string name="chats_message_call_miss_description">不在着信メッセージ</string>
+    <string name="chats_message_end_session_description">セキュアセッションがリセットされました</string>
+    <string name="chats_message_decrypting_description">復号中…暫くお待ちください</string>
+    <string name="chats_message_decrypt_fail_description">正しくない暗号化がされたメッセージ</string>
+    <string name="chats_message_is_not_remote_description">存在しないセッションに対して暗号化されたメッセージ</string>
+    <string name="chats_message_locked_description">ロックされたメッセージ</string>
+    <string name="chats_message_disappeared_description">消滅したメッセージ</string>
+    <string name="chats_message_add_friend_description">あなたが %s を追加しました</string>
+    <string name="chats_message_delete_friend_description">あなたは%sをBCM連絡先から削除しました</string>
+    <string name="chats_message_contact_registration_description">%sがBCMに参加しました</string>
+    <string name="chats_message_decrypt_fail_change_device_title">お知らせ</string>
+    <string name="chats_message_decrypt_fail_change_device">送信先のユーザーが端末を変更したためメッセージは正常に送信されませんでした。</string>
+    <string name="chats_message_decrypt_fail_not_found">受信機器の切り替えのため、%2$s（%3$s）の後に送信した%1$dメッセージを復号化できませんでした。もう一度送信してください。</string>
+
+    <string name="chats_group_setting">新規グループ</string>
+    <string name="chats_group_setting_name">グループ名</string>
+    <string name="chats_group_members">グループのメンバー</string>
+    <string name="chats_group_name_null">先にグループ名を設定してください。</string>
+    <string name="chats_group_avatar_null">グループのアイコンを最初に設定してください。</string>
+
+    <!--<string name="chats_group_invate">邀请了</string>-->
+    <!--<string name="chats_group_enter_group">进群</string>-->
+    <string name="chats_group_create_group">グループを作成。</string>
+    <string name="chats_group_leave_group">退出团体。</string>
+    <string name="chats_group_enter_group">グループに参加。</string>
+    <string name="chats_group_have_in_group">こちらがグループのリンクです。</string>
+    <string name="chats_group_have_no_url">このグループのURLは無効です。</string>
+    <string name="chats_group_setting_members">メンバー</string>
+    <string name="chats_group_setting_leave_succeed">脱退されました</string>
+    <string name="chats_group_setting_leave">脱退</string>
+    <string name="chats_group_setting_leave_title">グループから脱退</string>
+    <string name="chats_group_setting_leave_content">このグループを削除してこのグループから脱退してもよろしいですか？</string>
+    <string name="chats_group_create_channel">チャンネルを作成</string>
+    <string name="chats_group_create_lack_description">グループチャットを作成するには最低3人のメンバーを追加する必要があります。</string>
+
+    <string name="chats_media_preview_save_description">メディア保存ボタン</string>
+    <string name="chats_media_preview_save_success">アルバムに保存されました</string>
+    <string name="chats_media_preview_save_fail">保存失敗</string>
+    <string name="chats_location_message_decription">[位置情報]</string>
+    <string name="chats_listen_tap">[購読]</string>
+    <string name="chats_map_search_none">このキーワードの結果はありません。</string>
+    <string name="chats_check_gps_network">GPLから位置情報の取得に失敗しました。設定からGPSサービスを有効にしてください。</string>
+
+    <string name="chats_group_setting_subscribe_head">予約者</string>
+    <string name="chats_group_setting_notification_head">ミュート</string>
+    <string name="chats_group_setting_notification_success">設置成功</string>
+    <string name="chats_group_setting_notification_fail">設置失敗</string>
+    <string name="chats_group_setting_stick_head">上部にピン留め</string>
+    <string name="chats_group_setting_clear_head">チャット履歴をクリア</string>
+    <string name="chats_group_setting_leave_head">脱退して削除</string>
+    <string name="chats_group_setting_save_to_album">アルバムに保存する</string>
+    <string name="chats_group_setting_admin_actions_title">管理員操作</string>
+    <string name="chats_group_setting_chat_actions_title">チャット操作</string>
+    <string name="chats_group_setting_footprint_title">記録</string>
+    <string name="chats_group_setting_other_title">ほか</string>
+
+    <string name="chats_search">検索</string>
+    <string name="chats_member_name">名前</string>
+    <string name="chats_done">完了</string>
+    <string name="chats_new_chat">新しいチャット</string>
+    <string name="chats_new_channel">新しいチャンネル</string>
+    <string name="chats_slide_to_cancel">スライドしてキャンセル</string>
+    <string name="chats_group_id">グループID</string>
+    <string name="chats_hint_register_group_id">グループIDを登録</string>
+    <string name="chats_group_change_owner">変更</string>
+    <string name="chats_share_to">共有</string>
+    <string name="chats_hint_add_a_comment">コメントを追加&#8230;</string>
+    <string name="chats_send">送信</string>
+    <string name="chats_copy_link">リンクをコピー</string>
+    <string name="chats_group_show_all_members">全てのメンバーを表示</string>
+    <string name="chats_group_description">詳細</string>
+    <string name="chats_group_channel_info_tips">チャンネルについてさらに情報を入力してください。</string>
+    <string name="chats_group_create_congratulations">おめでとう！</string>
+    <string name="chats_group_created">グループチャットチャンネルが作成されました。</string>
+    <string name="chats_group_create_link_tips">これがリンクです: </string>
+    <string name="chats_group_create_share">リンクを共有</string>
+    <string name="chats_group_create_later">あとで</string>
+    <string name="chats_group_create_splash_title">グループチャットをトークショーにする</string>
+    <string name="chats_group_create_splash_content">グループチャットを配信しましょう！トークショーのように他のユーザーがグループで話している内容で検索し、読むことができます。</string>
+    <string name="chats_group_create_splash_do">チャンネルを作成</string>
+    <string name="chats_group_create_channel_name_description">チャンネル名</string>
+    <string name="chats_group_create_channel_splash_title">あなたのチャンネルを作成！</string>
+    <string name="chats_group_create_channel_splash_content">あなたのチャンネルを作成することによって、非会員ユーザーはトークショーを見るのと同じようにあなたのグループチャットを見つけ、購読し、見ることができます。</string>
+    <string name="chats_group_name_is_empty">グループ名が空です</string>
+    <string name="chats_save_name">保存</string>
+    <string name="chats_remove_member">削除</string>
+    <string name="chats_group_add_member">グループメンバーを追加</string>
+    <string name="chats_group_invite_member">リンク経由で招待</string>
+    <string name="chats_group_broadcast">配信</string>
+    <string name="chats_group_actor_creator">クリエイター</string>
+    <string name="chats_group_setting_mute">通知をミュート</string>
+    <string name="chats_new_group_chat">新しいグループチャット</string>
+    <string name="chats_group_member_add_success">追加成功</string>
+    <string name="chats_group_member_invite_wating_review">申請送信成功、管理人の同意を待つ</string>
+    <string name="chats_contact_add_time" formatted="false">あなたは %s に %s を追加します</string>
+    <string name="chats_new_messages" formatted="false">%s 件の新たなメッセージ</string>
+    <string name="chats_choose_location">どこか場所を選択します</string>
+    <string name="chats_tips">ヒント</string>
+    <string name="chats_audio_record_permission_needed">マイクへのアクセス許可が必要です。</string>
+    <string name="chats_goto_setting">設定</string>
+    <string name="chats_group_name_suffix">"%s's のグループチャット "</string>
+    <string name="chats_members">メンバー</string>
+    <string name="chats_unknown">不明</string>
+    <string name="chats_downloading">ダウンロード中！</string>
+    <string name="chats_group_info_edit_save_failed">保存失敗</string>
+    <string name="chats_group_info_edit_save_success">保存成功</string>
+    <string name="chats_group_info_edit_portrait_size_exceeded">グループのアイコンサイズは10MBまでです。他のを選択してください。</string>
+    <string name="chats_group_remove_user_confirm_content">このグループからメンバーを削除してもよろしいですか？</string>
+    <string name="chats_group_remove_users_confirm_content">このグループからメンバーを削除してもよろしいですか？</string>
+    <string name="chats_clear_history_confirm_content">チャット履歴を消去してよろしいですか？全てのメッセージ及びメディアは消滅します。</string>
+    <string name="chats_clear">クリア</string>
+    <string name="chats_group_channel_share_linked_copied">リンクをコピーしました</string>
+    <string name="chats_group_channel_share_sent">送信</string>
+    <string name="chats_group_channel_link_tip">ユーザーはこのリンクでチャンネルに閲覧者として登録できます。</string>
+
+    <string name="chats_group_removed_notice_title">あなた既に\"%s\"クループから削除された</string>
+    <string name="chats_group_visitor_ban">あなたもうそのグループのメンバーではありません</string>
+    <string name="chats_group_subscribers_ban">閲覧者はメッセージを送信できません</string>
+    <string name="chats_delete_member_succeed">削除成功</string>
+    <string name="chats_group_remove_option_text">削除</string>
+    <string name="chats_group_change_owner_content">グループのオーナーは現在あなたのみです。あなたがこのグループから抜ける前に別の誰かをオーナーに設定する必要があります。</string>
+
+
+    <string name="chats_preview_init_fail_text">未対応のメディアタイプ</string>
+    <string name="chats_save_image_failed">画像の保存に失敗しました</string>
+
+    <string name="chats_copy">コピーする</string>
+    <string name="chats_contact_card_title">名刺</string>
+    <string name="chats_contact_card_add_action">追加</string>
+    <string name="chats_contact_card_chat_action">チャット</string>
+    <string name="chats_share_sending">送信中</string>
+    <string name="chats_share_data_problem">データはサポートされていません</string>
+    <string name="chats_share_files_number">%d 個のファイル</string>
+
+
+    <string name="chats_text_illegal_group_tip">あなたのアカウントキーが変更されたため、グループメッセージを受信することができません。また受信できるようにするには一度グループから抜けて再度入り直す必要があります。</string>
+    <string name="chats_channel_share_describe">生中継グループ</string>
+    <string name="chats_system_tip_you">あなた</string>
+    <string name="chats_system_message">システムメッセージ</string>
+    <string name="chats_you_screenshot_tip">あなたがスクリーンショットを撮影しました</string>
+    <string name="chats_partner_screenshot_tip">%1$s がスクリーンショットを撮影しました</string>
+    <string name="chats_message_send_to">〜に送信</string>
+    <string name="chats_message_chat_string">チャット</string>
+    <string name="chats_message_add_contact">連絡先に追加</string>
+
+    <!--forward-->
+    <string name="chats_forward_add_comment">コメントを残す</string>
+    <string name="chats_forward_notice">お知らせ</string>
+    <string name="chats_forward_cannot_send">まだ連絡先をグループに転送することはできません。</string>
+    <string name="chats_forward_confirm_text">転送して宜しいですか？</string>
+    <string name="chats_forward_select_title">送信先を選択</string>
+    <string name="chats_forward_recent_chats">最近のチャット</string>
+    <string name="chats_forward_select_contacts">連絡先を選択</string>
+    <string name="chats_forward_select_group">グループを選択</string>
+    <string name="chats_forward_send_to">〜に送信&#8230;</string>
+    <string name="chats_forward_no_such_message_title">エラ</string>
+    <string name="chats_forward_no_such_message_content">転送したいメッセ時を見つからない</string>
+
+    <!-- @ -->
+    <string name="chats_at_me_description">\@Me&#160;</string>
+
+    <!-- auto delete-->
+    <string name="chats_auto_delete_title">チャット履歴を自動消去</string>
+    <string name="chats_auto_delete_tips">メッセージはあなたの端末のみから削除されます</string>
+    <string name="chats_auto_delete_off">オフ</string>
+    <string name="chats_auto_delete_30_S">30 秒</string>
+    <string name="chats_auto_delete_24_H">24 時間</string>
+    <string name="chats_auto_delete_detail">ローカル履歴の自動消去: オン （%s）</string>
+    <string name="chats_auto_delete_detail_close">ローカル履歴の自動消去:閉じる</string>
+    <string name="chats_auto_delete_countdown">メッセージ自動消去のカウントダウン</string>
+    <string name="chats_auto_delete_countdown_detail">設定した時間で、ニュースメッセージは自動的に削除されます。</string>
+    <string name="chats_text_recall">送信取り消し</string>
+    <string name="chats_send_empty_message">メッセージ内容が空です</string>
+    <string name="chats_text_reedit">送信取り消し</string>
+    <string name="chats_reedit_the_selected_text_message">選択したメッセージを送信取り消ししますか？</string>
+    <string name="chats_reedit_the_selected_message">選択したメッセージを送信取り消ししますか？</string>
+    <string name="chats_recall_message_fail_description">送信取り消しに失敗</string>
+    <string name="chats_reedit_message_fail_description">送信取り消しに失敗</string>
+    <string name="chats_recall_message_fail_offline">相手はオフラインなので、撤回失敗</string>
+    <string name="chats_delete_selected_message_title">%1$dの選択されたメッセージを消去します</string>
+    <string name="chats_delete_selected_message_button">削除</string>
+
+    <!-- location-->
+    <string name="chats_map_send_location">位置情報を共有</string>
+    <string name="chats_map_preview_title">位置情報</string>
+    <string name="chats_map_camera_mark_location_title">位置をマークします</string>
+
+    <!--destroy message and auto clear-->
+    <string name="chats_destroy_message_popup_title">メッセージの自動消滅タイマーを設定します。</string>
+    <string name="chats_destroy_message_30_sec">30 秒</string>
+    <string name="chats_destroy_message_2_min">2 分</string>
+    <string name="chats_destroy_message_5_min">5 分</string>
+    <string name="chats_destroy_message_1_hour">1時間</string>
+    <string name="chats_destroy_message_1_day">1日</string>
+    <string name="chats_destroy_message_1_week">1週間</string>
+    <string name="chats_destroy_message_2_weeks">2週間</string>
+    <string name="chats_auto_clear_popup_title">チャット履歴を毎日次の時間にクリアします。&#8230;</string>
+    <string name="chats_auto_clear_title">ローカルの履歴を自動クリーニング: オン（%s）</string>
+    <string name="chats_auto_clear_off">オフ</string>
+    <string name="chats_auto_clear_once">日に一回</string>
+    <string name="chats_auto_clear_twice">日に二回</string>
+    <string name="chats_auto_clear_next">次へ</string>
+    <string name="chats_read_burn_detail">%s が自動消滅タイマーを %sに設定しました。</string>
+    <string name="chats_read_burn_detail_by_you">あなたが自動消滅タイマーを %sに設定しました。</string>
+    <string name="chats_read_burn_detail_close">自動消滅タイマーの設定が解除されました。</string>
+    <string name="chats_group_you_recall_message">"あなたはメッセージを思い出しました
+"</string>
+    <string name="chats_peer_recall_message"> %s がメッセージをリコールしました</string>
+    <string name="chats_read_burn_choose_same">自動消滅タイマーが設定されました。</string>
+    <string name="chats_user_clear_history_title">%sのチャット履歴はこのデバイスから消去されます。</string>
+
+    <!--  qr discern -->
+    <string name="chats_qr_discern_button">QRコードを読み込み</string>
+    <string name="chats_qr_display_title">QRコード情報</string>
+    <string name="chats_qr_copy_button">コピー</string>
+    <string name="chats_qr_copy_description">QRコードがコピーされました</string>
+
+    <!-- media browser-->
+    <string name="chats_browser_media_title">メディア</string>
+    <string name="chats_browser_file_title">ファイル</string>
+    <string name="chats_save_success">保存しました</string>
+    <string name="chats_delete_success">削除されました</string>
+    <string name="chats_save_fail">保存失敗</string>
+    <string name="chats_delete_fail">削除失敗</string>
+    <string name="chats_select_file_first">先に項目を選択してください。</string>
+    <string name="chats_media_and_files">メディア &amp; ファイル</string>
+    <string name="chats_media_browser_delete_fromat">%1$d個の選択されたアイテムを削除しますか？</string>
+    <string name="chats_media_browser_delete_title">選択したアイテムを削除</string>
+    <string name="chats_media_browser_delete">削除</string>
+    <string name="chats_media_browser_no_content">コンテンツがありません</string>
+    <string name="chats_media_do_not_download">ファイルは正常にダウンロードされませんでした。</string>
+    <string name="chats_media_select_all">全て選択</string>
+    <string name="chats_media_deselect_all">全て選択解除</string>
+
+    <string name="chats_invalid_user_in_create_list">招待リストに無効なユーザーが含まれています。キックしてやり直してみてください</string>
+
+    <string name="chats_unread_click_tips">ダブルタップして全ての通知をクリアします</string>
+
+    <!--Forward multiple-->
+    <string name="chats_forward_multiple_notice">お知らせ</string>
+    <string name="chats_forward_multiple_contains_ban_messages">ボイスメッセージ/チャット履歴は転送できません</string>
+    <string name="chats_history_title">過去ログ</string>
+    <string name="chats_history_view_full_history">さらに表示</string>
+    <string name="chats_history_message_image">[画像]</string>
+    <string name="chats_history_message_video">[動画]</string>
+    <string name="chats_history_message_file">[ファイル]</string>
+    <string name="chats_history_message_location">[位置]</string>
+    <string name="chats_history_message_contact">[連絡先]</string>
+    <string name="chats_history_message_link">[リンク]</string>
+    <string name="chats_history_message_channel">[チャンネル]</string>
+    <string name="chats_unable_invite_expired_accounts">期限切れのアカウントを招待できません</string>
+    <string name="chats_forward_result_fail">送信エラー</string>
+    <string name="chats_keep_senders_names">送信者の名前を記憶する</string>
+    <string name="chats_max_forward_error">上限リミットに到達しました</string>
+    <string name="chats_media_link_title">リンク</string>
+
+    <string name="chats_setting_title">設定</string>
+    <string name="chats_tts_not_support">未対応の言語が検出されました。設定からこの言語を有効にしてください。</string>
+    <string name="chats_channel_link">チャンネルリンク</string>
+    <string name="chats_data_storage_title">データーとストレージ</string>
+    <string name="chats_clear_all_text">すべてクリア</string>
+    <string name="chats_clear_conversation_title">チャット</string>
+    <string name="chats_clean_pop_photos">画像</string>
+    <string name="chats_clean_pop_videos">動画</string>
+    <string name="chats_clean_pop_files">ファイル</string>
+    <string name="chats_clear_size_format">クリア (%s)</string>
+    <string name="chats_clean_succeed">キャッシュが消去されました</string>
+    <string name="chats_clean_calculating">計算中…</string>
+
+    <string name="chats_unread_message">[1 件のメッセージ]&#160;</string>
+    <string name="chats_unread_messages">[%d 件のメッセージ]&#160;</string>
+    <string name="chats_unread_full_messages">[99+ メッセージ]&#160;</string>
+    <string name="chats_clear_selection_storage">選択されたデータを消去しますか？</string>
+    <string name="chats_clean_clear">クリア</string>
+
+    <string name="chats_pin_title">ピン留めされたメッセージ</string>
+    <string name="chats_pin_audio">[ボイスメッセージ]</string>
+    <string name="chats_pin_image">[画像]</string>
+    <string name="chats_pin_file">ドキュメント</string>
+    <string name="chats_pin_video">[動画]</string>
+    <string name="chats_pin_link">リンク</string>
+    <string name="chats_pin_location">位置</string>
+    <string name="chats_pin_channel">チャンネル</string>
+    <string name="chats_pin_contact">名刺</string>
+    <string name="chats_pin_history">[過去ログ]</string>
+    <string name="chats_group_notice">新しいメンバーへのお願い</string>
+    <string name="chats_got_it">了解</string>
+    <string name="chats_receive_pin_text">%s が %s をピン留めしました</string>
+    <string name="chats_receive_pin_link">%s がリンクをピン留めしました</string>
+    <string name="chats_receive_pin_audio">%s がボイスメッセージをピン留めしました</string>
+    <string name="chats_receive_pin_photo">%s が写真をピン留めしました</string>
+    <string name="chats_receive_pin_video">%s が動画をピン留めしました</string>
+    <string name="chats_receive_pin_file">%s がファイルをピン留めしました</string>
+    <string name="chats_receive_pin_location">%s が位置情報をピン留めしました</string>
+    <string name="chats_receive_pin_contact">%s が名刺をピン留めしました</string>
+    <string name="chats_receive_pin_history">%s が過去ログをピン留めしました</string>
+    <string name="chats_receive_pin_channel">%s がチャンネルをピン留めしました</string>
+    <string name="chats_receive_pin_unknown">%s が未知のメッセージをピン留めしました</string>
+    <string name="chats_receive_unpin_message">%s がメッセージのピン留めを解除しました</string>
+    <string name="chats_receive_pin_share_card">%sはグループ加入の招待をスティッキーポストにした</string>
+    <string name="chats_send_pin_text">をピン留めしました "%s"</string>
+    <string name="chats_send_pin_link">リンクをピン留めしました</string>
+    <string name="chats_send_pin_audio">あなたが音声をピン留めしました</string>
+    <string name="chats_send_pin_photo">画像をピン留めしました</string>
+    <string name="chats_send_pin_video">動画をピン留めしました</string>
+    <string name="chats_send_pin_file">あなたがファイルをピン留めしました</string>
+    <string name="chats_pin_a_message">%s がメッセージをピン留めしました</string>
+    <string name="chats_send_pin_location">位置情報をピン留めしました</string>
+    <string name="chats_send_pin_contact">あなたが名刺をピン留めしました</string>
+    <string name="chats_send_pin_history">過去ログをピン留めしました</string>
+    <string name="chats_send_pin_channel">あなたがチャンネルをピン留めしました</string>
+    <string name="chats_send_pin_share_card">あなたはグループ加入の招待をスティッキーポストにした</string>
+    <string name="chats_send_pin_unknown">未知のメッセージをピン留めしました</string>
+    <string name="chats_send_unpin_message">メッセージのピン留めを解除しました</string>
+    <string name="chats_unpin">ピン留めを解除</string>
+    <string name="chats_collecting_wait_text">計算中…</string>
+    <string name="chats_new_note">新たなノート</string>
+    <string name="chats_no_note_for_new_members">メモなし</string>
+    <string name="chats_edit">編集</string>
+    <string name="chats_add">追加</string>
+    <string name="chats_pin_check_title">このメッセージをグループにピン留めする。</string>
+    <string name="chats_unpin_check_title">グループのこのメッセージの固定を解除します。</string>
+    <string name="chats_group_name_too_long">グループ名が長すぎます</string>
+    <string name="chats_group_pin_dialog_content">グループからこのメッセージのピン留めを解除してもいいですか？</string>
+    <string name="chats_send_too_fast">送信が早すぎます。しばらくしたらやり直してください。</string>
+
+    <!--Conversation Input More Options-->
+    <string name="chats_more_option_camera">カメラ</string>
+    <string name="chats_more_option_album">アルバム</string>
+    <string name="chats_more_option_file">ファイル</string>
+    <string name="chats_more_option_call">通話</string>
+    <string name="chats_more_option_location">位置</string>
+    <string name="chats_more_option_namecard">名刺</string>
+    <string name="chats_more_option_tv">動画を同期中</string>
+    <string name="chats_more_option_shredder">シュレッダー</string>
+    <string name="chats_text_recipient_not_online">\"%s\" は現在オフラインです。</string>
+
+    <!--TV live-->
+    <string name="chats_live_settings_title">オンライン動画を追加</string>
+    <string name="chats_live_settings_tv_title">ビデオシェアリング</string>
+    <string name="chats_live_settings_tv_tip">このグループチャット内でオンライン動画でビデオシェアリングを開始してストリーミングします。</string>
+    <string name="chats_live_settings_preview_title">動画プレビュー</string>
+    <string name="chats_live_settings_link_warn">このリンクから有効な動画が検出されませんでした。</string>
+    <string name="chats_live_settings_publish">共有</string>
+    <string name="chats_live_flow_start_title">グループ全体でビデオシェアリングを開始します。</string>
+    <string name="chats_live_flow_start_start">共有して再生を開始する</string>
+    <string name="chats_live_flow_stop_title">ストリーミングを停止してビデオを削除する。</string>
+    <string name="chats_live_flow_stop_stop">停止して削除</string>
+    <string name="chats_live_flow_remove_title">ビデオシェアリングのリンクを削除する。</string>
+    <string name="chats_live_flow_remove_remove">削除</string>
+    <string name="chats_live_member_tip">このグループでビデオシェアリングは、オーナーのみが使用できます。</string>
+    <string name="chats_live_using_mobile_network_toast">携帯データを使用してビデオを再生しています。</string>
+    <string name="chats_live_start_live_tip">%s がビデオシェアリングを開始しました。</string>
+    <string name="chats_live_stop_live_tip">%s 同期ビデオのストリーミングを停止しました。</string>
+    <string name="chats_live_remove_live_tip">%s がビデオシェアリングのリンクを削除しました。</string>
+    <string name="chats_live_start_live_tip_by_you">あなたがビデオシェアリングを開始しました。</string>
+    <string name="chats_live_stop_live_tip_by_you">同期ビデオのストリーミングを停止しました。</string>
+    <string name="chats_live_remove_live_tip_by_you">あなたがビデオシェアリングのリンクを削除しました。</string>
+    <string name="chats_live_flow_video_end">ビデオシェアリングは終了しました。</string>
+    <string name="chats_live_settings_empty_url">先にURLを入力してください。</string>
+    <string name="chats_live_settings_not_url">有効なURLを入力してください。</string>
+    <string name="chats_record_time_too_short">録音時間が少なすぎます。</string>
+    <string name="chats_live_is_living_tip">グループ内でビデオがストリーミングされています。新しいビデオを開始するには、まず現在のビデオを停止してください。</string>
+    <string name="chats_live_pause_live_title">グループ全体で動画を一時停止します。</string>
+    <string name="chats_live_pause_pause">一時停止</string>
+    <string name="chats_live_been_paused">一時停止</string>
+    <string name="chats_live_pause_by_group_owner">グループのオーナーによって</string>
+    <string name="chats_live_replay_title">リプレイ</string>
+    <string name="chats_live_stop_delete">停止 &amp; 削除</string>
+    <string name="chats_live_input_hint">なにか言ってください</string>
+    <string name="chats_live_replay_link_removed">エラー: 動画は削除されました</string>
+    <string name="chats_live_unsupported_link">未対応のメディアタイプです。アプリを更新してください。</string>
+
+
+    <!--mine deleted much -->
+    <string name="chats_no_comment_toast">最初にコメントを入力してください。</string>
+
+    <!-- block -->
+    <string name="chats_block_confirm_title">\"%s\"のメッセージをブロックして受けしません</string>
+    <string name="chats_block_confirm_action">ブロック</string>
+    <string name="chats_blocked_next_cofirm_content">あなたはこの会話をブロックしています。解除しますか？</string>
+    <string name="chats_blocked_next_confirm_cancel">キャンセル</string>
+    <string name="chats_blocked_next_confirm_unblock">ブロック解除</string>
+
+    <!-- 资源相关 -->
+    <string name="chats_photo_over_size">アバターが10MBを超えています。別のものを選択してください。</string>
+    <string name="chats_resources_save_fail">保存できませんでした</string>
+
+    <!-- 置顶特殊消息通知 -->
+    <string name="chats_stick_group_notify_secure_text">このグループ内のメッセージはすでに暗号化されている</string>
+    <string name="chats_stick_notify_secure_text">この会話中のメッセージと通話は、すでに暗号化されており、保護される</string>
+    <string name="chats_stick_notify_relation_temp_text">あなたはまだ\"%s\"をフレンドに追加してない为好友。この窓口は臨時チャットの窓口です</string>
+    <string name="chats_stick_notify_relation_friend_text">\"%s\"をフレンドに追加済み</string>
+    <string name="chats_relation_add_friend_action">フレンドに追加する</string>
+
+    <!-- relationship -->
+    <string name="chats_recipient_stranger_role">ストレンジャー</string>
+
+
+    <!-- 群分享和进群相关 -->
+    <string name="chats_group_new_join_request_description">[グループ加入申請]</string>
+    <string name="chats_group_setting_invite_join_title">グループ加入の招待</string>
+    <string name="chats_group_setting_joining_request_title">グループ加入申請</string>
+    <string name="chats_group_setting_joining_approval_title">グループ加入確認</string>
+    <string name="chats_group_setting_joining_approval_subtitle">開いた後、すべてのグループ加入申請は手で確認する必要があります。</string>
+    <string name="chats_group_setting_default_name">グループチャット</string>
+    <string name="chats_group_share_setting_enable_title">グループ加入招待</string>
+    <string name="chats_group_share_setting_enable_subtitle">このリンクやQRコードで直接グループ加入ことができますので、慎重にシェアしてください。</string>
+    <string name="chats_group_share_activity_title">グループ加入申請</string>
+    <string name="chats_group_share_revoke_action">撤回</string>
+    <string name="chats_group_share_revoke_confirm_title">このリンクを削除しますか？ユーザは削除されたリンクでグループ加入することができません。</string>
+    <string name="chats_group_share_revoke_confirm_content">撤回してもう一度作成</string>
+    <string name="chats_group_share_revoke_pending_request_confirm_title">未処置のグループ加入申請がある</string>
+    <string name="chats_group_share_revoke_pending_request_confirm_approve">すべての申請を同意してそして撤回</string>
+    <string name="chats_group_share_revoke_pending_request_confirm_reject">すべての申請を拒否してそして撤回</string>
+    <string name="chats_group_share_disable_confirm_title">シェアページ閉じますか？ユーザーはリンク/QRコードでグループに加入ことができません。</string>
+    <string name="chats_group_share_disable_confirm_content">閉じますか</string>
+    <string name="chats_group_share_disable_pending_request_confirm_title">未処置のグループ加入申請がある</string>
+    <string name="chats_group_share_disable_pending_request_confirm_approve">すべての申請を同意してそして閉じます</string>
+    <string name="chats_group_share_disable_pending_request_confirm_reject">すべての申請を拒否してそして閉じます</string>
+    <string name="chats_group_share_noapproval_pending_request_confirm_title">未処置のグループ加入申請がある</string>
+    <string name="chats_group_share_noapproval_pending_request_confirm_approve">すべての申請を同意してそして閉じます</string>
+    <string name="chats_group_share_noapproval_pending_request_confirm_reject">すべての申請を拒否してそして閉じます</string>
+    <string name="chats_group_scan_qr_join_notice">QRコードをスキャンしてグループに加入する</string>
+    <string name="chats_group_share_forward_button">リンク転送</string>
+    <string name="chats_group_share_copy_button">リンクをコピー</string>
+    <string name="chats_group_share_save_button">写真を保存</string>
+    <string name="chats_group_share_revoke_success">撤回完成また交換済み</string>
+    <string name="chats_group_share_save_success">保存済み</string>
+    <string name="chats_group_share_copy_success">コピー済み</string>
+    <string name="chats_group_share_revoke_fail">撤回完成また交換済み</string>
+    <string name="chats_group_share_save_fail">保存失敗</string>
+    <string name="chats_group_share_copy_fail">コピー失敗</string>
+    <string name="chats_group_share_forward_success">転送済み</string>
+    <string name="chats_group_share_forward_fail">転送失敗</string>
+    <string name="chats_group_join_request_activity_title">グループ加入申請</string>
+    <string name="chats_group_join_request_action">送信</string>
+    <string name="chats_group_join_request_success">送信成功</string>
+    <string name="chats_group_join_request_fail">送信失敗</string>
+    <string name="chats_group_join_request_notice">向群管理员发送入群请求。</string>
+    <string name="chats_group_join_comment_hint">わたしは\"%s\"。 </string>
+    <string name="chats_group_share_join_action_fail">グループ加入失敗</string>
+    <string name="chats_group_joining_check_activity_title">グループ加入申請</string>
+    <string name="chats_group_all_joining_entrance_name">すべてのグループ加入申請</string>
+    <string name="chats_group_joining_check_list_empty">申請なし</string>
+    <string name="chats_group_join_approve_all_action">全部同意</string>
+    <string name="chats_group_join_approved_state">同意済み</string>
+    <string name="chats_group_join_rejected_state">拒否済み</string>
+    <string name="chats_group_join_approve_success">同意成功</string>
+    <string name="chats_group_join_approve_fail">同意失敗</string>
+    <string name="chats_group_join_reject_success">拒否成功</string>
+    <string name="chats_group_join_reject_fail">拒否失敗</string>
+    <string name="chats_group_join_check_invited_comment">\"%s\"グループに招待する。 </string>
+    <string name="chats_group_share_card_action">グループに加入</string>
+    <string name="chats_group_invite_confirm_title">新メンバーを追加するには管理者の同意が必要ですが、追加申請を送信しますか？</string>
+    <string name="chats_group_member_null_key_restriction_description">初めてグループに加入、グループのメンバーがオンラインしてから発言できる</string>
+    <string name="chats_group_setting_join_need_review_success">設置成功</string>
+    <string name="chats_group_setting_join_need_review_fail">設置失敗</string>
+    <string name="chats_group_setting_share_enable_success">設置成功</string>
+    <string name="chats_group_setting_share_enable_fail">設置失敗</string>
+    <string name="chats_group_share_leave_pending_request_confirm_title">未処理の入群申請があります</string>
+    <string name="chats_group_share_leave_pending_request_confirm_approve">すべての申請を同意</string>
+    <string name="chats_group_share_leave_pending_request_confirm_reject">すべての申請を拒否</string>
+    <string name="chats_group_share_description_activity_title">我々を加入する！</string>
+    <string name="chats_group_share_description_action">グループに加入</string>
+    <string name="chats_group_share_description_notice">BCMをインストールすれば、すぐにグループに加入できる。</string>
+    <string name="chats_group_share_description_invalid_text">当該リンクもう無効になる。管理員と連絡して、新たなリンクを獲得</string>
+    <string name="chats_this_link_revoked_text">当該リンクもう無効になる</string>
+
+    <!--Group Profile-->
+    <string name="chats_group_profile_title">グループ詳細</string>
+    <string name="chats_group_profile_avatar">グループアバター</string>
+    <string name="chats_group_profile_name">グループ名前</string>
+    <string name="chats_group_profile_link">招待リンク</string>
+    <string name="chats_group_subscriber_upgrade_tip">グループ購読機能は2019年7月30日に終了し、このグループのすべての購読者が自動的にクリアされることになる。当グループの購読者をすべてグループメンバーにアップグレードしますか？</string>
+    <string name="chats_group_subscriber_upgrade">アップグレード</string>
+    <string name="chats_group_subscriber_not_upgrade">アップグレードしない</string>
+    <string name="chats_group_subscriber_upgrade_succeed">アップグレード成功</string>
+    <string name="chats_group_subscriber_upgrade_failed">アップグレード失敗、再試行してください</string>
+    <string name="chats_group_subscriber_upgrade_retry">再試行</string>
+    <string name="chats_create_failed_daily_limit">単日グループ作成数もう上限に達した</string>
+    <string name="chats_try_airchat">\nエアチャットを試す</string>
+    <string name="chats_group_key_refreshing_description">Refreshing the Group Key…</string>
+    <string name="chats_network_try_proxy">\nTry Proxy</string>
+    <string name="chats_server_can_not_reach">Can\'t Reach Servers</string>
+    <string name="chats_try_proxy_doing">Trying Proxies…</string>
+
+</resources>

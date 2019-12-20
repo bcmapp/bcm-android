@@ -1,0 +1,676 @@
+<resources>
+
+    <string name="chats_conversation_item_photo_description">Contact Photo Image</string>
+    <string name="chats_conversation_item_pin_description">Message top pin</string>
+
+    <string name="chats_unable_to_record_audio_warning">Unable to record audio!</string>
+    <string name="chats_sending_voice_message_error">Error sending voice messageDetail</string>
+    <string name="chats_there_is_no_app_available_to_handle_this_link_on_your_device">There is no app available to handle this link on your device.</string>
+
+    <!-- DocumentView -->
+    <string name="chats_unknown_file_name">Unknown file</string>
+
+    <!--message list fragment-->
+    <string name="chats_item_delete">Delete</string>
+    <string name="chats_item_pin">Pin</string>
+    <string name="chats_item_cancel_pin">Unpin</string>
+    <string name="chats_item_confirm">Confirm</string>
+    <string name="chats_item_confirm_delete">Confirm</string>
+    <string name="chats_item_confirm_delete_title">Delete Confirm</string>
+    <string name="chats_item_confirm_delete_message">Are you sure to delete this conversation?</string>
+    <string name="chats_title">Chats</string>
+    <string name="chats_no_conversation_main">No conversations yet</string>
+    <string name="chats_no_conversation_sub">strike up a chat and it will show up here</string>
+    <string name="chats_no_nickname_set">You haven\'t set your nickname yet.</string>
+    <string name="chats_no_nickname_set_btn">Set Now</string>
+    <string name="chats_network_connecting">Connecting…</string>
+    <string name="chats_network_disconnected">Offline</string>
+
+    <string name="chats_conversation_input_hint">&#160;Type Here</string>
+
+    <string name="chats_private_lock_description">chat lock</string>
+    <string name="chats_private_verified_description">chat verify status</string>
+    <string name="chats_private_mute_description">chat mute</string>
+    <string name="chats_private_not_contact_text">%1$s is not in your BCM contacts list.</string>
+    <string name="chats_private_add_contact_later_button">Later</string>
+    <string name="chats_private_add_contact_now_button">Add Now</string>
+    <string name="chats_private_lock_notice">This chat is end-to-end encrypted.</string>
+    <string name="chats_private_verified_notice">This user\'s Safety Code is verified.</string>
+    <string name="chats_private_not_verified_notice">This user\'s safety code is not yet to be verified.</string>
+    <string name="chats_private_verified_title_button">Verify</string>
+
+    <string name="chats_private_mute_notice">Mute until %1$s</string>
+
+    <!--user setting-->
+    <string name="chats_user_edit">Edit</string>
+    <string name="chats_user_stick">Pin to the Top</string>
+    <string name="chats_user_invite">Invite</string>
+    <string name="chats_user_phone_head">Phone</string>
+    <string name="chats_user_add">Add</string>
+    <string name="chats_user_clear_history">Clear Local Chat History</string>
+    <string name="chats_user_delete">Delete Contact</string>
+    <string name="chats_user_block">Block User</string>
+    <string name="chats_user_unblock">Unblock User</string>
+    <string name="chats_user_no_name_text">No Name</string>
+    <string name="chats_user_verification_head">Verify Safety Code</string>
+    <string name="chats_user_verified_value">Verified</string>
+    <string name="chats_user_not_verified_value">Not Verified</string>
+    <string name="chats_user_mute_head">Mute</string>
+    <string name="chats_user_not_mute_value">Not Muted</string>
+    <string name="chats_user_mute_value">Until %1$s</string>
+    <string name="chats_user_mute_setted_text">Muted</string>
+    <string name="chats_user_mute_canceled_text">Not Muted</string>
+    <string name="chats_user_delete_text">Delete Friend</string>
+    <string name="chats_user_delete_and_block_text">Delete and Block</string>
+    <string name="chats_delete_friend_second_confirm_title">Delete and block %s </string>
+    <string name="chats_user_delete_from_contact_text">Delete Contact</string>
+    <string name="chats_delete_from_contact_confirm_title">Delete "%s" and the corresponding chat history.</string>
+    <string name="chats_user_setting_chat_actions_title">CHAT ACTIONS</string>
+    <string name="chats_user_setting_data_title">DATA</string>
+    <string name="chats_user_setting_clear_history_title">CLEAR HISTORY</string>
+
+    <string name="chats_user_clear_command_sent">Command Sent</string>
+    <string name="chats_user_clearing_notice">Chat History is clearing</string>
+    <string name="chats_user_blocking_notice">Chat User is blocking</string>
+    <string name="chats_user_clear_success">Chat History is cleared</string>
+    <string name="chats_user_block_success">Chat User is Blocked</string>
+    <string name="chats_user_unblock_success">Chat User is Unblock</string>
+    <string name="chats_user_set_pin_success">Set Pin Success</string>
+    <string name="chats_user_set_pin_fail">Set Pin failed</string>
+    <string name="chats_user_clear_fail">Chat History failed</string>
+    <string name="chats_user_block_fail">Chat User Block failed</string>
+    <string name="chats_user_unblock_fail">Chat User Unblock failed</string>
+    <string name="chats_user_delete_success">Deleted</string>
+    <string name="chats_user_delete_fail">Delete Fail</string>
+    <string name="chats_user_add_success">Added</string>
+    <string name="chats_user_add_fail">Add Fail</string>
+
+    <string name="chats_user_mute_dialog_title">Mute this user</string>
+    <string name="chats_user_mute_dialog_tip">You will not receive notifications during the muted period</string>
+    <string name="chats_user_mute_dialog_hour">1 Hour</string>
+    <string name="chats_user_mute_dialog_day">1 Day</string>
+    <string name="chats_user_mute_dialog_week">1 Week</string>
+    <string name="chats_user_mute_dialog_year">1 Year</string>
+
+
+    <string name="chats_identity_verify_title">Verify Safety Code</string>
+    <string name="chats_identity_verify_notice">Verify the end-to-end encryption with %1$s by scanning the QR code or comparing the Safety Number. </string>
+    <string name="chats_verify_number_title">Safety Code</string>
+    <string name="chats_verify_qr_title">Safety Code</string>
+    <string name="chats_verify_mark_btn">Mark as Verified</string>
+    <string name="chats_verify_scan_btn">Scan to Verify</string>
+    <string name="chats_verify_clear_btn">Clear Verification</string>
+    <string name="chats_verify_mark_success">Safety Code marked as Verified</string>
+    <string name="chats_verify_scan_success">Safety Code verified</string>
+    <string name="chats_verify_scan_fail">Safety Code verify failed</string>
+    <string name="chats_verify_mark_cancel">Safety Code mark as Unverified</string>
+
+    <string name="chats_user_verification_dialog_yes_title">%1$s is Verified</string>
+    <string name="chats_user_verification_dialog_no_title">%1$s is NOT Verified</string>
+    <string name="chats_user_verification_dialog_tip">Verify contact\'s identity by making sure the safety codes on both sides are the same. You can choose either way below.</string>
+    <string name="chats_user_verification_dialog_scan">Scan</string>
+    <string name="chats_user_verification_dialog_mark">Mark as Verified</string>
+    <string name="chats_user_verification_dialog_clear">Clear Verification</string>
+    <string name="chats_user_verification_dialog_qr_fail">Get Verification Qr fail</string>
+    <string name="chats_user_verification_dialog_mark_fail">Mark Verification fail</string>
+    <string name="chats_user_verification_dialog_clear_fail">Clear Verification fail</string>
+    <string name="chats_user_verification_dialog_check_success">Identity same</string>
+    <string name="chats_user_verification_dialog_check_fail">Identity not same</string>
+
+    <string name="chats_audio_permission_notice_title">Notice</string>
+    <string name="chats_audio_permission_notice_content">use audio record need permission</string>
+
+    <string name="chats_audio_permission_setting">setting</string>
+    <string name="chats_audio_permission_cancel">cancel</string>
+    <string name="chats_resend">Resend</string>
+    <string name="chats_cancel">Cancel</string>
+    <string name="chats_delete">Delete</string>
+    <string name="chats_group_create">Create</string>
+    <string name="chats_save">Save</string>
+    <string name="chats_forward">Forward</string>
+    <string name="chats_select">Select</string>
+    <string name="chats_pin">Pin</string>
+    <string name="chats_reply">Reply</string>
+    <string name="chats_change">Change</string>
+    <string name="chats_reply_can_not_locate">Uable to locate the message</string>
+
+    <string name="chats_select_mode_cancel_btn">Cancel</string>
+    <string name="chats_select_mode_delete_empty">Please select message</string>
+
+    <string name="chats_create_group_title">Create a Group</string>
+    <string name="chats_select_contact_title">Select Contacts</string>
+    <string name="chats_select_contact_done">Done</string>
+    <string name="chats_default_group_name">Group Name</string>
+    <string name="chats_group_edit">Edit</string>
+    <string name="chats_group_leave_ask">Are you sure to delete and leave this group?</string>
+    <string name="chats_group_leave">Leave</string>
+    <string name="chats_group_name">Group Name</string>
+
+    <string name="chats_group_short_name" translatable="false">%1$s(%2$d)</string>
+
+    <!-- phone call -->
+    <string name="chats_call_activity_title">Calling</string>
+    <string name="chats_call_photo_description">Current Call Recipient Photo</string>
+    <string name="chats_call_voice_title">Voice Call</string>
+    <string name="chats_call_video_title">Video Call</string>
+    <string name="chats_call_mute_text">Mute</string>
+    <string name="chats_call_cancel_text">Cancel</string>
+    <string name="chats_call_hang_up_text">Hang up</string>
+    <string name="chats_call_speaker_text">Speaker</string>
+    <string name="chats_call_accept_text">Accept</string>
+    <string name="chats_call_decline_text">Decline</string>
+    <string name="chats_call_video_text">Video</string>
+    <string name="chats_call_camera_switch_text">Switch Camera</string>
+    <string name="chats_call_no_permission_error_title">Error</string>
+    <string name="chats_call_no_permission_error_message">BCM have not granted audio and/or camera permission. Call will be declined.</string>
+    <string name="chats_call_no_overlay_permission_message">Web Call Screen minimize need overlay permission. if you want to handle, click "handle" button. if you want to wait a minute, just click "wait" button, else you will finish Web Call.</string>
+    <string name="chats_call_no_overlay_permission_handle">handle</string>
+    <string name="chats_call_no_overlay_permission_wait">wait</string>
+    <string name="chats_call_no_overlay_permission_cancel">cancel</string>
+    <string name="chats_call_finish_message_holder">Duration %1$s</string>
+    <string name="chats_call_missed_message_holder">Missed Call</string>
+
+    <string name="chats_call_unanswer_message_description">Missed Call</string>
+    <string name="chats_call_untook_message_description">Missed Call</string>
+
+
+    <!-- private chat and group chat -->
+    <string name="chats_message_target_recipient_unknown">unknown</string>
+    <string name="chats_group_create_description">%1$s invited %2$s to join the group</string>
+    <string name="chats_group_update_description">group updated</string>
+    <string name="chats_group_title_changed_description">group name change to %1$s</string>
+    <string name="chats_group_avatar_changed_description">group avatar changed</string>
+    <string name="chats_message_joined_description">Joined BCM</string>
+    <string name="chats_set_message_expiration_description">%1$s set disappearing messageDetail time to %2$s</string>
+    <string name="chats_message_group_update_description">Group updated</string>
+    <string name="chats_message_verification_change_description">Your safety number with %s has changed</string>
+    <string name="chats_message_verified_description">You marked %s verified</string>
+    <string name="chats_message_unverified_description">You marked %s unverified</string>
+    <string name="chats_message_send_fail_description">Message send failed</string>
+    <string name="chats_message_media_description">Media Message</string>
+    <string name="chats_message_call_description">Call Message</string>
+    <string name="chats_message_call_miss_description">Missed Call</string>
+    <string name="chats_message_end_session_description">Secure session reset</string>
+    <string name="chats_message_decrypting_description">Decrypting, please wait…</string>
+    <string name="chats_message_decrypt_fail_description">Bad encrypted messageDetail</string>
+    <string name="chats_message_is_not_remote_description">Message encrypted for non-existing session</string>
+    <string name="chats_message_locked_description">Locked messageDetail</string>
+    <string name="chats_message_disappeared_description">Disappeared messageDetail</string>
+    <string name="chats_message_add_friend_description">You\'ve added %s as your BCM contact</string>
+    <string name="chats_message_delete_friend_description">You\'ve deleted %s from your BCM contact</string>
+    <string name="chats_message_contact_registration_description">%s joined BCM</string>
+    <string name="chats_message_decrypt_fail_change_device_title">Notice</string>
+    <string name="chats_message_decrypt_fail_change_device">Message(s) not sent due to receiver\'s switch of device.</string>
+    <string name="chats_message_decrypt_fail_not_found">Failed to decrypt the %1$d message(s) you sent after %2$s (%3$s) due to the switch of receiving device, please send again.</string>
+
+    <string name="chats_group_setting">New Group</string>
+    <string name="chats_group_setting_name">Group Name</string>
+    <string name="chats_group_members">Group Members</string>
+    <string name="chats_group_name_null">Please set group Name First.</string>
+    <string name="chats_group_avatar_null">Please set group avatar first.</string>
+
+    <string name="chats_group_create_group">Create group.</string>
+    <string name="chats_group_leave_group">leave group.</string>
+    <string name="chats_group_enter_group">enter group.</string>
+    <string name="chats_group_have_in_group">This group is this link.</string>
+    <string name="chats_group_have_no_url">This group url error.</string>
+
+    <!--group setting-->
+    <string name="chats_group_setting_members">members</string>
+    <string name="chats_group_setting_leave_succeed">Leave Successfully</string>
+    <string name="chats_group_setting_leave">Leave</string>
+    <string name="chats_group_setting_leave_title">Leave Group</string>
+    <string name="chats_group_setting_leave_content">Are you sure you want to delete and leave this group?</string>
+    <string name="chats_group_setting_admin_actions_title">ADMIN\'S ACTIONS</string>
+    <string name="chats_group_setting_chat_actions_title">CHAT ACTIONS</string>
+    <string name="chats_group_setting_footprint_title">FOOTPRINT</string>
+    <string name="chats_group_setting_other_title">OTHERS</string>
+
+    <string name="chats_group_create_channel">Create Channel</string>
+    <string name="chats_group_create_lack_description">You need to add at least 3 people to create a group chat</string>
+
+    <string name="chats_media_preview_save_description">Media Save Button</string>
+    <string name="chats_media_preview_save_success">Saved to Album</string>
+    <string name="chats_media_preview_save_fail">Save fail</string>
+    <string name="chats_location_message_decription">[Location Message]</string>
+    <string name="chats_listen_tap">[Subscribe]</string>
+    <string name="chats_map_search_none">No any result for this keyword.</string>
+
+    <string name="chats_group_setting_subscribe_head">Subscribers</string>
+    <string name="chats_group_setting_notification_head">Mute</string>
+    <string name="chats_group_setting_notification_success">Set Successfully</string>
+    <string name="chats_group_setting_notification_fail">Set Failed</string>
+    <string name="chats_group_setting_stick_head">Pin to the Top</string>
+    <string name="chats_group_setting_clear_head">Clear Chat History</string>
+    <string name="chats_group_setting_leave_head">Delete and Leave</string>
+    <string name="chats_group_setting_save_to_album">Save to Album</string>
+
+    <string name="chats_search">Search</string>
+    <string name="chats_member_name">name</string>
+    <string name="chats_done">Done</string>
+    <string name="chats_new_chat">New Chat</string>
+    <string name="chats_new_channel">New Channel</string>
+    <string name="chats_slide_to_cancel">slide to cancel</string>
+    <string name="chats_group_id">Group ID</string>
+    <string name="chats_hint_register_group_id">Register your group ID</string>
+    <string name="chats_group_change_owner">Change</string>
+    <string name="chats_share_to">Share To</string>
+    <string name="chats_hint_add_a_comment">Add a comment&#8230;</string>
+    <string name="chats_send">Send</string>
+    <string name="chats_copy_link">Copy Link</string>
+    <string name="chats_group_show_all_members">Show All Members</string>
+    <string name="chats_group_description">Description</string>
+    <string name="chats_group_channel_info_tips">Provide more information about your Channel.</string>
+    <string name="chats_group_create_congratulations">Congratulations!</string>
+    <string name="chats_group_created">Your Group Chat Channel is Created.</string>
+    <string name="chats_group_create_link_tips">Here is the link: </string>
+    <string name="chats_group_create_share">Share the Link</string>
+    <string name="chats_group_create_later">Maybe Later</string>
+    <string name="chats_group_create_splash_title">Make your group chat a talk show</string>
+    <string name="chats_group_create_splash_content">Broadcast your group chat now! People can find, subscribe and read what you are talking about, just like a talk show.</string>
+    <string name="chats_group_create_splash_do">Create Channel</string>
+    <string name="chats_group_create_channel_name_description">Channel Name</string>
+    <string name="chats_group_create_channel_splash_title">Create Your Own Channel Now!</string>
+    <string name="chats_group_create_channel_splash_content">By creating your channel, non-member\n users can find, subscribe and see\n your group chat, just like\n watching a talk show.</string>
+    <string name="chats_group_name_is_empty">Group Name is Empty</string>
+    <string name="chats_save_name">save</string>
+    <string name="chats_remove_member">Remove</string>
+    <string name="chats_group_add_member">Add Group Member</string>
+    <string name="chats_group_invite_member">Invite Via Link</string>
+    <string name="chats_group_broadcast">Broadcast</string>
+    <string name="chats_group_actor_creator">Owner</string>
+    <string name="chats_group_setting_mute">Mute Notifications</string>
+    <string name="chats_new_group_chat">New Group Chat</string>
+    <string name="chats_group_member_add_success">Add Complete</string>
+    <string name="chats_group_member_invite_wating_review">Request Sent, Waiting for Admin\'s Approval</string>
+    <string name="chats_contact_add_time">You add %s on %s</string>
+    <string name="chats_new_messages">%s new messages</string>
+    <string name="chats_choose_location">please choose one location</string>
+    <string name="chats_tips">tips</string>
+    <string name="chats_audio_record_permission_needed">Audio record permission needed.</string>
+    <string name="chats_goto_setting">Goto Settings</string>
+    <string name="chats_group_name_suffix">"%s's group chat "</string>
+    <string name="chats_members"> Members</string>
+    <string name="chats_unknown">Unknown</string>
+    <string name="chats_downloading">Downloading!</string>
+    <string name="chats_group_info_edit_save_failed">save failed</string>
+    <string name="chats_group_info_edit_save_success">save successfully</string>
+    <string name="chats_group_info_edit_portrait_size_exceeded">The avatar size is larger than 10MB, please choose another.</string>
+    <string name="chats_group_remove_user_confirm_content">Are you sure you want to remove the member from this group? </string>
+    <string name="chats_group_remove_users_confirm_content">Are you sure you want to remove the members from this group? </string>
+    <string name="chats_clear_history_confirm_content">Are you sure to clear chat history? All messages and media will be deleted</string>
+    <string name="chats_clear">Clear</string>
+    <string name="chats_group_channel_share_linked_copied">Link Copied</string>
+    <string name="chats_group_channel_share_sent">Sent</string>
+    <string name="chats_group_channel_link_tip">Users can subscribe group channel using this link.</string>
+
+    <string name="chats_group_removed_notice_title">You are removed from the group \"%s\" </string>
+    <string name="chats_group_visitor_ban">You are not a member of this group</string>
+    <string name="chats_group_subscribers_ban">Subscribers are not allowed to send messages</string>
+    <string name="chats_delete_member_succeed">delete succeed</string>
+    <string name="chats_group_remove_option_text">Remove</string>
+    <string name="chats_group_change_owner_content">You are the owner of this group，you will need to appoint another member as the new owner before leaving.</string>
+
+    <string name="chats_preview_init_fail_text">Unsupported media type</string>
+    <string name="chats_save_image_failed">Save Image failed</string>
+
+    <string name="chats_copy">Copy</string>
+    <string name="chats_contact_card_title">Name Card</string>
+    <string name="chats_contact_card_add_action">Add</string>
+    <string name="chats_contact_card_chat_action">Chat</string>
+
+    <string name="chats_share_sending">Sending</string>
+    <string name="chats_share_data_problem">Data is not supported</string>
+    <string name="chats_share_files_number">%d file(s)</string>
+
+    <string name="chats_text_illegal_group_tip">Cannot receive group messages due to the change of your Account Key. To reset this, you need to leave and rejoin this group.</string>
+    <string name="chats_channel_share_describe">Broadcasting Group</string>
+    <string name="chats_system_tip_you">You</string>
+    <string name="chats_system_message">System Message</string>
+    <string name="chats_you_screenshot_tip">You took a screenshot</string>
+    <string name="chats_partner_screenshot_tip">%1$s took a screenshot</string>
+    <string name="chats_message_send_to">Send to</string>
+    <string name="chats_message_chat_string">Chat</string>
+    <string name="chats_message_add_contact">Add Contact</string>
+
+    <!--forward-->
+    <string name="chats_forward_add_comment">Leave a comment</string>
+    <string name="chats_forward_notice">Notice</string>
+    <string name="chats_forward_cannot_send">Contact cannot send to group yet.</string>
+    <string name="chats_forward_confirm_text">Make sure to forward?</string>
+    <string name="chats_forward_select_title">Select Receiver</string>
+    <string name="chats_forward_recent_chats">Recent Chats</string>
+    <string name="chats_forward_select_contacts">Select Contacts</string>
+    <string name="chats_forward_select_group">Select Groups</string>
+    <string name="chats_forward_send_to">Send To&#8230;</string>
+    <string name="chats_forward_no_such_message_title">Error</string>
+    <string name="chats_forward_no_such_message_content">Cannot find message to be forwarded.</string>
+
+    <!-- @ -->
+    <string name="chats_at_me_description">\@Me&#160;</string>
+
+    <!-- auto delete-->
+    <string name="chats_auto_delete_title">Auto-clear Chat History</string>
+    <string name="chats_auto_delete_tips">Messages will be deleted on your side only</string>
+    <string name="chats_auto_delete_off">Off</string>
+    <string name="chats_auto_delete_30_S">30 Seconds</string>
+    <string name="chats_auto_delete_24_H">24 Hours</string>
+    <string name="chats_auto_delete_detail">Auto-clearing Local History: On(%s)</string>
+    <string name="chats_auto_delete_detail_close">Auto-clearing Local History: Close</string>
+    <string name="chats_auto_delete_countdown">AUTO-CLEARING MESSAGES COUNTDOWN</string>
+    <string name="chats_auto_delete_countdown_detail">News messages will be automatically deleted after the time set.</string>
+    <string name="chats_text_recall">Unsend</string>
+    <string name="chats_send_empty_message">message content is empty</string>
+    <string name="chats_text_reedit">Unsend</string>
+    <string name="chats_reedit_the_selected_text_message">Unsend the selected message?</string>
+    <string name="chats_reedit_the_selected_message">Unsend the selected message?</string>
+    <string name="chats_recall_message_fail_description">Recall failed</string>
+    <string name="chats_recall_message_fail_offline">Failed to delete message, the other user is offline.</string>
+    <string name="chats_reedit_message_fail_description">Unsend failed</string>
+    <string name="chats_delete_selected_message_title">Delete the %1$d selected messages</string>
+    <string name="chats_delete_selected_message_button">Delete</string>
+
+    <!-- location-->
+    <string name="chats_map_send_location">Send Location</string>
+    <string name="chats_map_preview_title">Location</string>
+    <string name="chats_check_gps_network">Failed to get GPS location, please enable GPS service in the settings.</string>
+    <string name="chats_map_camera_mark_location_title">Pinned location</string>
+
+    <!--destroy message and auto clear-->
+    <string name="chats_destroy_message_popup_title">Set a self-destructing timer for messages.</string>
+    <string name="chats_destroy_message_30_sec">30 Seconds</string>
+    <string name="chats_destroy_message_2_min">2 Minutes</string>
+    <string name="chats_destroy_message_5_min">5 Minutes</string>
+    <string name="chats_destroy_message_1_hour">1 Hour</string>
+    <string name="chats_destroy_message_1_day">1 Day</string>
+    <string name="chats_destroy_message_1_week">1 Week</string>
+    <string name="chats_destroy_message_2_weeks">2 Weeks</string>
+    <string name="chats_auto_clear_popup_title">Auto-clear chat history everyday at&#8230;</string>
+    <string name="chats_auto_clear_title">Auto-clearing Local History: On(%s).</string>
+    <string name="chats_auto_clear_off">Off</string>
+    <string name="chats_auto_clear_once">Once a Day</string>
+    <string name="chats_auto_clear_twice">Twice a Day</string>
+    <string name="chats_auto_clear_next">Next</string>
+    <string name="chats_read_burn_detail">%s sets the self-destruct timer to %s.</string>
+    <string name="chats_read_burn_detail_by_you">You set the self-destruct timer to %s.</string>
+    <string name="chats_read_burn_detail_close">The self-destruct timer to close.</string>
+    <string name="chats_group_you_recall_message">"You've recalled a message"</string>
+    <string name="chats_peer_recall_message"> has recalled a message</string>
+    <string name="chats_read_burn_choose_same">Self-destruct timer has been set as chosen.</string>
+    <string name="chats_user_clear_history_title">Chat history with %s will be erased from this device</string>
+
+    <!--  qr discern -->
+    <string name="chats_qr_discern_button">Read QR Code</string>
+    <string name="chats_qr_display_title">QR Code Info</string>
+    <string name="chats_qr_copy_button">Copy</string>
+    <string name="chats_qr_copy_description">QR Code Copied</string>
+
+    <!-- media browser-->
+    <string name="chats_browser_media_title">Media</string>
+    <string name="chats_browser_file_title">Files</string>
+    <string name="chats_save_success">Saved</string>
+    <string name="chats_delete_success">Deleted</string>
+    <string name="chats_save_fail">Save Fail</string>
+    <string name="chats_delete_fail">Delete Fail</string>
+    <string name="chats_select_file_first">Please select item first.</string>
+    <string name="chats_media_and_files">Media &amp; Files</string>
+    <string name="chats_media_browser_delete_fromat">Delete the %1$d selected item(s)</string>
+    <string name="chats_media_browser_delete_title">Delete the selected item</string>
+    <string name="chats_media_browser_delete">Delete</string>
+    <string name="chats_media_browser_no_content">No content</string>
+    <string name="chats_media_do_not_download">This file has not been downloaded.</string>
+    <string name="chats_media_select_all">Select All</string>
+    <string name="chats_media_deselect_all">Deselect Select</string>
+
+    <string name="chats_invalid_user_in_create_list">Failed to create group. Please make sure that all invitees are added as friends.</string>
+
+    <string name="chats_unread_click_tips">Double tap here to clear all red dots</string>
+    
+    <!--Forward multiple-->
+    <string name="chats_forward_multiple_notice">Notice</string>
+    <string name="chats_forward_multiple_contains_ban_messages">Voice message/Chat history cannot be forwarded</string>
+    <string name="chats_history_title">Chat History</string>
+    <string name="chats_history_view_full_history">View More</string>
+    <string name="chats_history_message_image">[Image]</string>
+    <string name="chats_history_message_video">[Video]</string>
+    <string name="chats_history_message_file">[File]</string>
+    <string name="chats_history_message_location">[Location]</string>
+    <string name="chats_history_message_contact">[Contact]</string>
+    <string name="chats_history_message_link">[Link]</string>
+    <string name="chats_history_message_channel">[Channel]</string>
+    <string name="chats_unable_invite_expired_accounts">Unable to invite expired accounts</string>
+    <string name="chats_forward_result_fail">Send Fail</string>
+    <string name="chats_keep_senders_names">Keep senders\' names</string>
+    <string name="chats_max_forward_error">Exceeded the upper limit</string>
+    <string name="chats_media_link_title">Link</string>
+
+    <string name="chats_setting_title">Settings</string>
+    <string name="chats_tts_not_support">Unsupported language detected, please enable this language in settings.</string>
+    <string name="chats_channel_link">Channel Link</string>
+    <string name="chats_data_storage_title">Data And Storage</string>
+    <string name="chats_clear_all_text">Clear All</string>
+    <string name="chats_clear_conversation_title">CHATS</string>
+    <string name="chats_clean_pop_photos">Photos</string>
+    <string name="chats_clean_pop_videos">Videos</string>
+    <string name="chats_clean_pop_files">Files</string>
+    <string name="chats_clear_size_format">Clear (%s)</string>
+    <string name="chats_clean_succeed">Cache Cleared</string>
+    <string name="chats_clean_calculating">Calculating…</string>
+
+    <string name="chats_unread_message">[1 message]&#160;</string>
+    <string name="chats_unread_messages">[%d messages]&#160;</string>
+    <string name="chats_unread_full_messages">[99+ messages]&#160;</string>
+    <string name="chats_clear_selection_storage">Clear the selected data?</string>
+    <string name="chats_clean_clear">Clear</string>
+
+    <!--pin-->
+    <string name="chats_pin_title">Pinned Message</string>
+    <string name="chats_pin_audio">[Voice Message]</string>
+    <string name="chats_pin_image">[Image]</string>
+    <string name="chats_pin_file">Document</string>
+    <string name="chats_pin_video">[Video]</string>
+    <string name="chats_pin_link">Link</string>
+    <string name="chats_pin_location">Location</string>
+    <string name="chats_pin_channel">Channel</string>
+    <string name="chats_pin_contact">NameCard</string>
+    <string name="chats_pin_history">[Chat History]</string>
+    <string name="chats_group_notice">Group Notice</string>
+    <string name="chats_got_it">Got it</string>
+    <string name="chats_receive_pin_text">%s pinned \"%s\"</string>
+    <string name="chats_receive_pin_link">%s pinned a link</string>
+    <string name="chats_receive_pin_audio">%s pinned a voice message</string>
+    <string name="chats_receive_pin_photo">%s pinned a photo</string>
+    <string name="chats_receive_pin_video">%s pinned a video</string>
+    <string name="chats_receive_pin_file">%s pinned a file</string>
+    <string name="chats_receive_pin_location">%s pinned a location</string>
+    <string name="chats_receive_pin_contact">%s pinned a namecard</string>
+    <string name="chats_receive_pin_history">%s pinned a history</string>
+    <string name="chats_receive_pin_channel">%s pinned a channel</string>
+    <string name="chats_receive_pin_unknown">%s pinned a unknown message</string>
+    <string name="chats_receive_unpin_message">%s unpinned a message</string>
+    <string name="chats_receive_pin_share_card">%s pinned a join group invitation</string>
+    <string name="chats_send_pin_text">You pinned \"%s\"</string>
+    <string name="chats_send_pin_link">You pinned a link</string>
+    <string name="chats_send_pin_audio">You pinned a audio</string>
+    <string name="chats_send_pin_photo">You pinned a photo</string>
+    <string name="chats_send_pin_video">You pinned a video</string>
+    <string name="chats_send_pin_file">You pinned a file</string>
+    <string name="chats_pin_a_message">%s pin a message</string>
+    <string name="chats_send_pin_location">You pinned a location</string>
+    <string name="chats_send_pin_contact">You pinned a namecard</string>
+    <string name="chats_send_pin_history">You pinned a history</string>
+    <string name="chats_send_pin_channel">You pinned a channel</string>
+    <string name="chats_send_pin_share_card">You pinned a join group invitation</string>
+    <string name="chats_send_pin_unknown">You pinned a unknown message</string>
+    <string name="chats_send_unpin_message">You unpinned a message</string>
+    <string name="chats_unpin">Unpin</string>
+    <string name="chats_collecting_wait_text">Calculating…</string>
+    <string name="chats_new_note">New Note</string>
+    <string name="chats_no_note_for_new_members">No Note</string>
+    <string name="chats_edit">Edit</string>
+    <string name="chats_add">Add</string>
+    <string name="chats_pin_check_title">Pin this message for the group.</string>
+    <string name="chats_unpin_check_title">Unpin this message for the group.</string>
+    <string name="chats_group_name_too_long">Group name too long</string>
+    <string name="chats_group_pin_dialog_content">Are you sure to unpin this message for the group?</string>
+    <string name="chats_send_too_fast">Chats send too fast. Please send later.</string>
+
+    <!--Conversation Input More Options-->
+    <string name="chats_more_option_camera">Camera</string>
+    <string name="chats_more_option_album">Album</string>
+    <string name="chats_more_option_file">File</string>
+    <string name="chats_more_option_call">Call</string>
+    <string name="chats_more_option_location">Location</string>
+    <string name="chats_more_option_namecard">Name Card</string>
+    <string name="chats_more_option_tv">Sync Video</string>
+    <string name="chats_more_option_shredder">Shredder</string>
+    <string name="chats_text_recipient_not_online">\"%s\" is currently offline</string>
+
+    <!--TV live-->
+    <string name="chats_live_settings_title">Add Online Video</string>
+    <string name="chats_live_settings_tv_title">Sync Video</string>
+    <string name="chats_live_settings_tv_tip">Synchronously stream online video within this group chat.</string>
+    <string name="chats_live_settings_preview_title">Video Preview</string>
+    <string name="chats_live_settings_link_warn">Unable to detect video file from this link.</string>
+    <string name="chats_live_settings_publish">Publish</string>
+    <string name="chats_live_flow_start_title">Start streaming video synchronously for the whole group now.</string>
+    <string name="chats_live_flow_start_start">Publish and Start Playing</string>
+    <string name="chats_live_flow_stop_title">Stop streaming and delete the video.</string>
+    <string name="chats_live_flow_stop_stop">Stop and Delete</string>
+    <string name="chats_live_flow_remove_title">Delete the replay link of sync video.</string>
+    <string name="chats_live_flow_remove_remove">Delete</string>
+    <string name="chats_live_member_tip">Sync video in this group is only available for the owner.</string>
+    <string name="chats_live_using_mobile_network_toast">You are now playing video using cellular data.</string>
+    <string name="chats_live_start_live_tip">%s started streaming sync video.</string>
+    <string name="chats_live_stop_live_tip">%s stopped streaming sync video.</string>
+    <string name="chats_live_remove_live_tip">%s deleted the replay link of sync video.</string>
+    <string name="chats_live_start_live_tip_by_you">You started streaming sync video.</string>
+    <string name="chats_live_stop_live_tip_by_you">You stopped streaming sync video.</string>
+    <string name="chats_live_remove_live_tip_by_you">You deleted the replay link of sync video.</string>
+    <string name="chats_live_flow_video_end">Sync video streaming ended.</string>
+    <string name="chats_live_settings_empty_url">Please input a url first.</string>
+    <string name="chats_live_settings_not_url">Please input a valid url.</string>
+    <string name="chats_record_time_too_short">Record time is too short.</string>
+    <string name="chats_live_is_living_tip">A video is streaming in the group now, to start a new one, please stop the current one first.</string>
+    <string name="chats_live_pause_live_title">Pause video streaming for the whole group.</string>
+    <string name="chats_live_pause_pause">Pause</string>
+    <string name="chats_live_been_paused">Paused</string>
+    <string name="chats_live_pause_by_group_owner">by group owner</string>
+    <string name="chats_live_replay_title">Replay</string>
+    <string name="chats_live_stop_delete">Stop &amp; Delete</string>
+    <string name="chats_live_input_hint">Say something</string>
+    <string name="chats_live_replay_link_removed">Error: video removed</string>
+    <string name="chats_live_unsupported_link">Unsupported media type.\nPlease update your app.</string>
+
+    <string name="chats_no_comment_toast">please input your comment first.</string>
+
+    <!-- block -->
+    <string name="chats_block_confirm_title">Block and stop receiving messages from %s </string>
+    <string name="chats_block_confirm_action">Block</string>
+    <string name="chats_blocked_next_cofirm_content">You have blocked this conversation, unblock now?</string>
+    <string name="chats_blocked_next_confirm_cancel">Cancel</string>
+    <string name="chats_blocked_next_confirm_unblock">Unblock</string>
+
+    <!-- 资源相关 -->
+    <string name="chats_photo_over_size">The avatar is larger than 10MB, please choose another.</string>
+    <string name="chats_resources_save_fail">Save failed</string>
+
+    <!-- 置顶特殊消息通知 -->
+    <string name="chats_stick_group_notify_secure_text">Messages to this group are secured with end-to-end encryption</string>
+    <string name="chats_stick_notify_secure_text">Messages and calls to this chat are secured with end-to-end encryption</string>
+    <string name="chats_stick_notify_relation_temp_text">%s is not your friend yet. This chat is temporary</string>
+    <string name="chats_stick_notify_relation_friend_text">%s is now added as your friend</string>
+    <string name="chats_relation_add_friend_action">Add Now</string>
+
+    <!-- relationship -->
+    <string name="chats_recipient_stranger_role">Stranger</string>
+
+    <!-- 群分享和进群相关 -->
+    <string name="chats_group_new_join_request_description">[Joining Request]</string>
+    <string name="chats_group_setting_invite_join_title">Invite to Join Group</string>
+    <string name="chats_group_setting_joining_request_title">Joining Requests</string>
+    <string name="chats_group_setting_joining_approval_title">Approval of Joining</string>
+    <string name="chats_group_setting_joining_approval_subtitle">Turn on to manually approve all join-group applications. </string>
+    <string name="chats_group_setting_default_name">Group Chat</string>
+    <string name="chats_group_share_setting_enable_title">Invite to Join Group</string>
+    <string name="chats_group_share_setting_enable_subtitle">People can join this group instantly with this link or QR code, please share it with caution. </string>
+    <string name="chats_group_share_activity_title">Invite to Join</string>
+    <string name="chats_group_share_revoke_action">Revoke</string>
+    <string name="chats_group_share_revoke_confirm_title">Are you sure to revoke the link? Users can no longer join this group by the revoked link.</string>
+    <string name="chats_group_share_revoke_confirm_content">Revoke and Regenerate</string>
+    <string name="chats_group_share_revoke_pending_request_confirm_title">There are pending joining requests</string>
+    <string name="chats_group_share_revoke_pending_request_confirm_approve">Approve All and Revoke</string>
+    <string name="chats_group_share_revoke_pending_request_confirm_reject">Reject All and Revoke</string>
+    <string name="chats_group_share_disable_confirm_title">Are you sure to turn it off? Users can no longer join this group by link/QR code.</string>
+    <string name="chats_group_share_disable_confirm_content">Turn off</string>
+    <string name="chats_group_share_disable_pending_request_confirm_title">There are pending joining requests</string>
+    <string name="chats_group_share_disable_pending_request_confirm_approve">Approve All and Turn off</string>
+    <string name="chats_group_share_disable_pending_request_confirm_reject">Reject All and Turn off</string>
+    <string name="chats_group_share_noapproval_pending_request_confirm_title">There are pending joining requests</string>
+    <string name="chats_group_share_noapproval_pending_request_confirm_approve">Approve All and Turn off</string>
+    <string name="chats_group_share_noapproval_pending_request_confirm_reject">Reject All and Turn off</string>
+    <string name="chats_group_scan_qr_join_notice">Scan QR code to join group</string>
+    <string name="chats_group_share_forward_button">Forward Link</string>
+    <string name="chats_group_share_copy_button">Copy Link</string>
+    <string name="chats_group_share_save_button">Save Image</string>
+    <string name="chats_group_share_revoke_success">Revoked and Renewed</string>
+    <string name="chats_group_share_save_success">Saved</string>
+    <string name="chats_group_share_copy_success">Copied</string>
+    <string name="chats_group_share_revoke_fail">Revoked and Renewed</string>
+    <string name="chats_group_share_save_fail">Save Failed</string>
+    <string name="chats_group_share_copy_fail">Copy Failed</string>
+    <string name="chats_group_share_forward_success">Forward Successfully</string>
+    <string name="chats_group_share_forward_fail">Forward Failed</string>
+    <string name="chats_group_join_request_activity_title">Joining Request</string>
+    <string name="chats_group_join_request_action">Send</string>
+    <string name="chats_group_join_request_success">Send Successfully</string>
+    <string name="chats_group_join_request_fail">Send Failed</string>
+    <string name="chats_group_join_request_notice">Send a joining request to the group owner.</string>
+    <string name="chats_group_join_comment_hint">I\'m %s. </string>
+    <string name="chats_group_share_join_action_fail">Join Failed</string>
+    <string name="chats_group_joining_check_activity_title">Joining Request</string>
+    <string name="chats_group_all_joining_entrance_name">All Joining Requests</string>
+    <string name="chats_group_joining_check_list_empty">No Requests</string>
+    <string name="chats_group_join_approve_all_action">Approve All</string>
+    <string name="chats_group_join_approved_state">Approved</string>
+    <string name="chats_group_join_rejected_state">Rejected</string>
+    <string name="chats_group_join_approve_success">Approve Successfully</string>
+    <string name="chats_group_join_approve_fail">Approve Failed</string>
+    <string name="chats_group_join_reject_success">Reject Successfully</string>
+    <string name="chats_group_join_reject_fail">Reject Failed</string>
+    <string name="chats_group_join_check_invited_comment">Invited by %s. </string>
+    <string name="chats_group_share_card_action">Join Group</string>
+    <string name="chats_group_invite_confirm_title">Admin\'s approval is required to add a new member, would you like to send a request? </string>
+    <string name="chats_group_member_null_key_restriction_description">Waiting for an online member to automatically initialize group chatting for you</string>
+    <string name="chats_group_setting_join_need_review_success">Set Successfully</string>
+    <string name="chats_group_setting_join_need_review_fail">Set Failed</string>
+    <string name="chats_group_setting_share_enable_success">Set Successfully</string>
+    <string name="chats_group_setting_share_enable_fail">Set Failed</string>
+    <string name="chats_group_share_leave_pending_request_confirm_title">There are pending joining requests</string>
+    <string name="chats_group_share_leave_pending_request_confirm_approve">Approve All</string>
+    <string name="chats_group_share_leave_pending_request_confirm_reject">Reject All</string>
+    <string name="chats_group_share_description_activity_title">Join Us!</string>
+    <string name="chats_group_share_description_action">Join Group</string>
+    <string name="chats_group_share_description_notice">If you have installed BCM, you can join the group right away.</string>
+    <string name="chats_group_share_description_invalid_text">This link has been revoked. Please contact group admin for a new link</string>
+    <string name="chats_this_link_revoked_text">This link has been revoked</string>
+
+    <!--Group Profile-->
+    <string name="chats_group_profile_title">Group Profile</string>
+    <string name="chats_group_profile_avatar">Group Avatar</string>
+    <string name="chats_group_profile_name">Group Name</string>
+    <string name="chats_group_profile_link">Group Link</string>
+    <string name="chats_group_subscriber_upgrade_tip">The group subscription feature will be disabled on July 30, 2019, and all subscribers will be deleted. Would you like to upgrade them all to group members?</string>
+    <string name="chats_group_subscriber_upgrade">Upgrade</string>
+    <string name="chats_group_subscriber_not_upgrade">Do Not Upgrade</string>
+    <string name="chats_group_subscriber_upgrade_succeed">Upgraded Successfully</string>
+    <string name="chats_group_subscriber_upgrade_failed">Failed to upgrade, please try again.</string>
+    <string name="chats_group_subscriber_upgrade_retry">Try Again</string>
+    <string name="chats_create_failed_daily_limit">You\'ve reached the daily limit of creating groups</string>
+    <string name="chats_try_airchat">\nTry AirChat</string>
+    <string name="chats_network_try_proxy">\nProxy</string>
+    <string name="chats_group_key_refreshing_description">Refreshing the Group Key…</string>
+    <string name="chats_server_can_not_reach">Can\'t Reach Servers</string>
+    <string name="chats_try_proxy_doing">Trying Proxies…</string>
+
+</resources>

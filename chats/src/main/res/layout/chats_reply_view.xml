@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/common_vertical_gap"
+    android:paddingBottom="@dimen/common_vertical_gap"
+    android:paddingStart="@dimen/common_horizontal_gap"
+    android:paddingEnd="@dimen/common_horizontal_gap">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/reply_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.bcm.messenger.common.ui.IndividualAvatarView
+            android:id="@+id/reply_image"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:recipient_photo_custom_img="@drawable/common_image_place_img"
+            android:visibility="invisible" />
+
+        <com.bcm.messenger.common.ui.IndividualAvatarView
+            android:id="@+id/reply_photo"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/reply_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/chats_message_file_icon"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:visibility="invisible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="PDF" />
+
+        <com.bcm.messenger.common.ui.emoji.EmojiTextView
+            android:id="@+id/reply_to"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/common_title_color"
+            android:textSize="16sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/reply_image"
+            tools:text="john wick" />
+
+        <TextView
+            android:id="@+id/reply_source_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/common_content_second_color"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:layout_constraintTop_toBottomOf="@id/reply_to"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/reply_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="reply content" />
+
+        <com.bcm.messenger.common.ui.emoji.EmojiTextView
+            android:id="@+id/reply_source_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/common_content_second_color"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:layout_constraintTop_toBottomOf="@id/reply_to"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/reply_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="reply content" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/reply_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_line_height"
+        android:layout_marginTop="9dp"
+        app:layout_constraintTop_toBottomOf="@id/reply_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/reply_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/common_color_black"
+        android:autoLink="all"
+        android:maxWidth="260dp"
+        android:textSize="@dimen/chats_conversation_item_body_text_size"
+        android:gravity="left"
+        android:layout_marginTop="9dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reply_line"
+        tools:text="fee" />
+
+</merge>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/common_search_tips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible"
+        tools:text="Test"/>
+
+    <EditText
+        android:id="@+id/common_search_text"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:drawableStart="@drawable/common_search_bar_icon"
+        android:drawablePadding="6dp"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="30dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:lines="1"
+        android:background="@drawable/common_search_bar_bg"
+        android:textSize="14sp"
+        android:textCursorDrawable="@drawable/common_edit_cursor_shape"
+        android:imeOptions="actionSearch"
+        android:focusableInTouchMode="true"
+        android:focusable="false"
+        android:singleLine="true"
+        android:gravity="left"
+        app:layout_constraintTop_toBottomOf="@id/common_search_tips"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <ImageView
+        android:id="@+id/common_search_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:src="@drawable/common_clear_icon"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/common_search_text"
+        app:layout_constraintBottom_toBottomOf="@+id/common_search_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/common_searching_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/common_loading_icon"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/common_search_text"
+        app:layout_constraintBottom_toBottomOf="@+id/common_search_text"
+        app:layout_constraintEnd_toStartOf="@id/common_search_close"
+        tools:visibility="visible"/>
+
+</merge>

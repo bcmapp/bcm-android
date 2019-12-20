@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_white"
+    android:orientation="vertical">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/adhoc_setting_title_bar"
+        style="@style/CommonTitleBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+
+    <ImageView
+        android:id="@+id/adhoc_setting_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="65dp"
+        android:scaleType="center"
+        android:src="@drawable/adhoc_setting_describe_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/adhoc_setting_title_bar" />
+
+    <TextView
+        android:id="@+id/adhoc_setting_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:paddingStart="45dp"
+        android:paddingEnd="45dp"
+        android:text="@string/adhoc_setting_airchat_title"
+        android:textColor="@color/common_color_black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/adhoc_setting_icon"/>
+
+    <TextView
+        android:id="@+id/adhoc_setting_describe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:paddingStart="45dp"
+        android:paddingEnd="45dp"
+        android:textColor="#606060"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:text="@string/adhoc_chat_with_friends_via_device_to_device"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/adhoc_setting_title"/>
+
+    <Button
+        android:id="@+id/adhoc_setting_mode_enable"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginBottom="64dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginEnd="45dp"
+        android:textSize="14sp"
+        android:textColor="@color/common_color_white"
+        android:textAllCaps="false"
+        android:text="@string/adhoc_setting_enable_airchat"
+        android:background="@drawable/common_button_blue_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/adhoc_setting_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/common_content_second_color"
+        android:textSize="13sp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginEnd="45dp"
+        android:text=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/adhoc_setting_mode_enable"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/detail_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:right_type="image"
+        app:right_image="@drawable/common_more_black_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/detail_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/transaction_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/detail_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/common_horizontal_gap"
+        android:paddingRight="@dimen/common_horizontal_gap"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp">
+
+        <com.bcm.messenger.common.ui.StateButton
+            android:id="@+id/detail_transfer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/wallet_transaction_transfer_action"
+            android:textAllCaps="false"
+            style="@style/CommonDarkThinBigTextStyle"/>
+
+        <com.bcm.messenger.common.ui.StateButton
+            android:id="@+id/detail_receive"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/wallet_transaction_receive_action"
+            android:textAllCaps="false"
+            android:layout_marginStart="19dp"
+            style="@style/CommonDarkBigTextStyle"/>
+
+    </LinearLayout>
+
+</LinearLayout>

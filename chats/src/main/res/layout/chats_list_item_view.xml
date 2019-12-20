@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bcm.messenger.chats.bean.MessageListItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/common_item_ripple_bg">
+
+    <com.bcm.messenger.common.ui.RecipientAvatarView
+        android:id="@+id/contact_photo_image"
+        android:layout_width="@dimen/chats_conversation_photo_size"
+        android:layout_height="@dimen/chats_conversation_photo_size"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginBottom="6dp"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"
+        android:layout_marginTop="6dp"
+        android:contentDescription="@string/chats_conversation_item_photo_description" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_line_height"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/contact_photo_image"
+        android:background="@color/common_division_color"/>
+
+    <ImageView
+        android:id="@+id/chats_pin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/contact_photo_image"
+        android:layout_alignEnd="@id/contact_photo_image"
+        android:contentDescription="@string/chats_conversation_item_pin_description"
+        android:src="@drawable/chats_14_stick_on_top"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+
+    <LinearLayout
+        android:id="@+id/message_list_subject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left|center_vertical"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/contact_photo_image"
+        android:layout_toStartOf="@+id/date">
+
+        <com.bcm.messenger.common.ui.emoji.EmojiTextView
+            android:id="@+id/from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/common_color_black"
+            android:textSize="17sp"
+            android:drawablePadding="5dp"
+            tools:text="big juju" />
+
+        <ImageView
+            android:id="@+id/group_live_icon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="5dp"
+            android:src="@drawable/chats_16_tv"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textColor="@color/common_content_second_color"
+        android:textSize="12sp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="4dp"
+        tools:text="30 mins"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"
+        android:layout_below="@id/message_list_subject"
+        android:layout_alignStart="@id/message_list_subject">
+
+        <com.bcm.messenger.common.ui.emoji.EmojiTextView
+            android:id="@+id/subject"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/common_content_second_color"
+            android:textSize="15sp"
+            android:lineSpacingExtra="0dp"
+            android:layout_marginEnd="@dimen/common_horizontal_gap"
+            android:gravity="left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/indicators_parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="Wheels arrive at 3pm flat. This is a somewhat longer messageDetail."/>
+
+        <com.bcm.messenger.chats.components.AlertView
+            android:id="@+id/indicators_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.bcm.messenger.chats.bean.MessageListItem>

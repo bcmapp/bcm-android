@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:id="@+id/generate_register_layout"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             android:background="@color/common_color_transparent"
+                                             android:paddingLeft="15dp"
+                                             android:paddingRight="15dp"
+                                             android:visibility="visible"
+                                             tools:background="@drawable/me_login_bg">
+
+    <TextView
+        android:id="@+id/generate_key_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:text="@string/me_keys_generated"
+        android:textColor="@color/common_color_white"
+        android:textSize="20sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pin_generated_layout"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="51dp"
+        android:background="@drawable/me_private_key_bg"
+        android:paddingBottom="15dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="15dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/generate_key_header">
+
+        <TextView
+            android:id="@+id/private_key_generated_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/me_private_key"
+            android:textColor="@color/common_app_primary_color"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/private_key_generated_content"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/me_key_generator_button_bg"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:maxLines="1"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:scrollbars="horizontal"
+            android:singleLine="true"
+            android:text="@string/me_default_private_key"
+            android:textColor="@color/common_app_primary_color"
+            android:textSize="10sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/private_key_generated_title" />
+
+        <TextView
+            android:id="@+id/public_key_generated_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/me_public_key"
+            android:textColor="@color/common_app_primary_color"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/private_key_generated_content" />
+
+        <EditText
+            android:id="@+id/public_key_generated_content"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/me_key_generator_button_bg"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:maxLines="1"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:scrollbars="horizontal"
+            android:singleLine="true"
+            android:text="@string/me_default_public_key"
+            android:textColor="@color/common_app_primary_color"
+            android:textSize="10sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/public_key_generated_title" />
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+
+    <ImageView
+        android:id="@+id/generate_key_done_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:src="@drawable/me_register_success_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pin_generated_layout" />
+</androidx.constraintlayout.widget.ConstraintLayout>

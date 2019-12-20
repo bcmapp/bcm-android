@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="@dimen/chats_conversation_thumbnail_conner"/>
+    <solid android:color="@color/chats_thumbnail_send_color"/>
+</shape>

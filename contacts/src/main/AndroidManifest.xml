@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.bcm.messenger.contacts">
+
+    <application>
+
+
+        <activity android:name=".RequestAddFriendActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".FriendRequestsListActivity"
+                  android:launchMode="singleTop"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".FriendRequestHandleActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".BcmUserCardActivity"
+                  android:launchMode="singleTop"
+                  android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+
+        <activity android:name=".GroupContactActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"/>
+
+        <provider
+            android:exported="false"
+            android:name=".util.DefaultAmeProvider"
+            android:authorities="${ApplicationId}_secure"/>
+    </application>
+
+</manifest>

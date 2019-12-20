@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_white">
+
+    <ImageView
+        android:id="@+id/chats_link_tv_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="41dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/chats_80_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/chats_link_tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/chats_live_settings_tv_title"
+        android:textStyle="bold"
+        android:textColor="@color/common_color_black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chats_link_tv_img" />
+
+    <TextView
+        android:id="@+id/chats_link_tv_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center"
+        android:textSize="15sp"
+        android:text="@string/chats_live_settings_tv_tip"
+        android:textColor="@color/common_color_616161"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chats_link_tv_title"
+        tools:text="Synchronously stream online video within this group chat. " />
+
+    <com.bcm.messenger.common.ui.ClearButtonEditText
+        android:id="@+id/chats_link_tv_link"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/chats_f2f3f4_radius_4dp_bg"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="left|center_vertical"
+        android:imeOptions="actionDone"
+        android:maxLines="1"
+        android:paddingStart="5dp"
+        android:textColor="@color/common_color_black"
+        android:textSize="14sp"
+        android:singleLine="true"
+        app:clearButtonHeight="12dp"
+        app:clearButtonPadding="10dp"
+        app:clearButtonResource="@drawable/chats_12_delete_input_blk"
+        app:clearButtonWidth="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chats_link_tv_content"
+        app:paddingEnd="12dp"
+        app:showClearButton="false"
+        tools:text="qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"/>
+
+    <TextView
+        android:id="@+id/chats_link_tv_warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/common_color_ff3737"
+        android:visibility="gone"
+        android:textSize="11sp"
+        android:text="@string/chats_live_settings_link_warn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chats_link_tv_link"
+        tools:text="Invalid video link." />
+
+    <ImageView
+        android:id="@+id/chats_live_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/chats_48_next_grey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chats_link_tv_link" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

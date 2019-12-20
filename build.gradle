@@ -1,0 +1,100 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'architecture-lint'
+buildscript {
+    ext.kotlin_version = '1.3.41'
+
+    repositories {
+        maven { url uri('./thirdpart/repo') }
+        maven { url 'http://repo.yypm.com:8181/nexus/content/groups/public' }
+        maven { url 'http://storage.googleapis.com/r8-releases/raw' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.1'
+        classpath 'com.novoda:bintray-release:0.8.1'
+        classpath 'com.bcm.plugin.fcm:analytics_disable:1.0.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+//        classpath files('app/libs/gradle-witness.jar')
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+//        classpath 'com.google.gms:google-services:4.3.2'
+//        classpath 'io.fabric.tools:gradle:1.25.1'
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.6'
+
+        classpath "tv.athena:api-gradle-plugin:2.2.3"
+        classpath "de.undercouch:gradle-download-task:3.2.0"
+    }
+}
+
+allprojects {
+    repositories {
+        maven { url uri('../thirdpart/repo') }
+        maven { url 'http://repo.yypm.com:8181/nexus/content/groups/public' }
+    }
+
+    subprojects {
+        afterEvaluate { project ->
+            if (project.hasProperty("android")) {
+                android {
+                    defaultConfig {
+                        manifestPlaceholders = [ApplicationId: getAppId()]
+                        buildConfigField "String", "BCM_APPLICATION_ID", "\"${getAppId()}\""
+                    }
+                }
+            }
+        }
+    }
+
+    configurations {
+        compile.resolutionStrategy {
+            eachDependency { DependencyResolveDetails details ->
+                def requested = details.requested
+                //specifying a fixed version for all libraries with 'com.android.support' group
+                if (requested.group == 'com.android.support') {
+                    if (!requested.name.startsWith("multidex")) {
+                        details.useVersion '26.1.0'
+                    }
+                } else if (requested.group == 'androidx.appcompat') {
+                    if (requested.name == 'appcompat') {
+                        details.useVersion '1.1.0'
+                    }
+                } else if (requested.group == 'androidx.core') {
+                    if (requested.name == 'core') {
+                        details.useVersion '1.1.0'
+                    } else if (requested.name == 'core-ktx') {
+                        details.useVersion '1.1.0'
+                    }
+                } else if (requested.group == 'androidx.arch.core') {
+                    details.useVersion '2.1.0'
+                } else if (requested.group == 'androidx.lifecycle') {
+                    details.useVersion '2.1.0'
+                } else if (requested.group == 'androidx.fragment') {
+                    details.useVersion '1.1.0'
+                } else if (requested.group == 'androidx.activity') {
+                    details.useVersion '1.0.0'
+                }
+            }
+        }
+    }
+
+}
+
+static def getAppId() {
+    if (branch() == "origin/master" || branch() == "master" ||
+            branch() == "origin/ame-android_bugfix_feature" || branch() == "ame-android_bugfix_feature" ||
+            branch().contains("bcm_open_source_feature")) {
+        return "com.bcm.messenger"
+    } else if (branch().length() == 0) {
+        return "com.bcm.messenger.local"
+    } else {
+        return "com.bcm.messenger.dev"
+    }
+}
+
+static def branch() {
+    return System.getenv("GIT_BRANCH") ?: ""
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

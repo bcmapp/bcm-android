@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="10dp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/share_logo_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp">
+
+        <ImageView
+            android:id="@+id/share_logo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerCrop"
+            android:contentDescription=""
+            android:layout_gravity="center"
+            tools:src="@drawable/common_group_default_logo"/>
+
+    </androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:id="@+id/share_arrow_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="center"
+        android:src="@drawable/common_right_arrow_white_icon"
+        android:contentDescription=""
+        app:layout_constraintTop_toTopOf="@id/share_logo_layout"
+        app:layout_constraintBottom_toBottomOf="@id/share_logo_layout"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/share_name_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/common_color_white"
+        android:textSize="16sp"
+        android:singleLine="false"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:gravity="left|center_vertical"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintTop_toTopOf="@id/share_logo_layout"
+        app:layout_constraintBottom_toBottomOf="@id/share_logo_layout"
+        app:layout_constraintStart_toEndOf="@id/share_logo_layout"
+        app:layout_constraintEnd_toStartOf="@id/share_arrow_iv"
+        tools:text="Group name"/>
+
+    <TextView
+        android:id="@+id/share_action_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@color/common_color_white"
+        android:text="@string/chats_group_share_card_action"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/share_logo_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="Join us"/>
+
+</merge>

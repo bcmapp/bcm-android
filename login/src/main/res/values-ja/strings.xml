@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_account_unsupported_qr_warning_title">無効アカウントキー</string>
+    <string name="login_account_unsupported_qr_warning_description">このQRコードは有効なアカウントキーではありませんので、チェックして再試行してください</string>
+
+    <string name="login_account_not_exist">アカウントは存在しません</string>
+    <string name="login_destroy_other_client_response_fail">アカウントの破壊に失敗しました</string>
+    <string name="login_login_failed">ログイン失敗</string>
+    <string name="login_password_error">パスワードエラー</string>
+
+    <string name="login_loading_connecting_server">サーバーと接続中…</string>
+    <string name="login_try_user_proxy_using_xxx">ユーザエージェント“%s”を試します</string>
+    <string name="login_try_official_proxy_using_xxx">プリセットエージェントを試します</string>
+
+    <string name="login_account_qr_exist_notice">このアカウントキーはバックアップされている</string>
+
+</resources>

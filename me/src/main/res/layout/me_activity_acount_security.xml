@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/me_login_bg"
+    android:clipToPadding="true"
+    android:fitsSystemWindows="false">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/account_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/me_backup_head"
+        app:center_text_color="@color/common_color_white"
+        app:left_image="@drawable/common_back_arrow_white_icon"
+        app:right_image="@drawable/common_info_icon"
+        app:right_type="image"
+        app:title_bar_background="@color/common_color_transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/text_active_account_key"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#7fFFFFFF"
+        android:text="@string/me_current_account_key"
+        android:textSize="14sp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="12dp"
+        android:gravity="left"
+        app:layout_constraintTop_toBottomOf="@+id/account_title_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintTop_toBottomOf="@+id/text_active_account_key"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/me_account_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/me_keybox_account_item_now">
+
+            <com.bcm.messenger.common.ui.IndividualAvatarView
+                android:id="@+id/me_account_img"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:src="@drawable/me_48_account_key_active"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.bcm.messenger.common.ui.emoji.EmojiTextView
+                android:id="@+id/me_account_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginEnd="15dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textSize="17sp"
+                android:textColor="@color/common_color_white"
+                android:gravity="left"
+                app:layout_constraintEnd_toStartOf="@+id/me_account_qrcode"
+                app:layout_constraintStart_toEndOf="@+id/me_account_img"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Chan" />
+
+            <TextView
+                android:id="@+id/me_account_openid"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="8dp"
+                android:textSize="14sp"
+                android:textColor="@color/common_color_white"
+                android:gravity="left"
+                app:layout_constraintEnd_toStartOf="@+id/me_account_qrcode"
+                app:layout_constraintStart_toEndOf="@+id/me_account_img"
+                app:layout_constraintTop_toBottomOf="@+id/me_account_name"
+                tools:text="havownopawcvnaownvowanavownoavnweovnaownevoawnevonwaeo" />
+
+            <ImageView
+                android:id="@+id/me_account_qrcode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:padding="5dp"
+                android:src="@drawable/me_self_qr_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/me_backup_red_dot"
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                android:background="@drawable/common_red_dot"
+                app:layout_constraintStart_toStartOf="@+id/me_account_qrcode"
+                app:layout_constraintTop_toTopOf="@+id/me_account_qrcode" />
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/change_psw_head"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="18dp"
+                app:setting_item_body_background="@color/common_color_white_10"
+                app:setting_item_name="@string/me_change_password"
+                app:setting_item_right="arrow_white"
+                app:setting_item_line="false"
+                app:setting_item_name_color="@color/common_color_white"
+                app:setting_item_padding_top="12dp"
+                app:setting_item_padding_bottom="12dp"
+                app:layout_constraintTop_toBottomOf="@id/me_account_openid"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/key_generate_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:textSize="11sp"
+                android:textColor="@color/common_color_white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/change_psw_head"
+                tools:text="Date of Key" />
+
+            <TextView
+                android:id="@+id/key_backup_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/common_horizontal_gap"
+                android:layout_marginEnd="@dimen/common_horizontal_gap"
+                android:layout_marginBottom="10dp"
+                android:textSize="11sp"
+                android:gravity="left"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/key_generate_date"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="Date of Backup" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/me_account_backup_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="47dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="48dp"
+            android:text="@string/me_account_backup_tips"
+            android:textSize="15sp"
+            android:textColor="@color/common_color_black"
+            android:paddingTop="14dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="7dp"
+            android:background="@drawable/me_account_tip_bubble"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/me_account_item" />
+
+        <View
+            android:id="@+id/keybox_top_divider_view"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:background="@color/common_color_dark_background"
+            app:layout_constraintTop_toBottomOf="@id/me_account_item"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.bcm.messenger.common.ui.CommonSettingItem
+            android:id="@+id/me_keybox"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            app:setting_item_body_background="@color/common_color_white_10"
+            app:setting_item_name="@string/me_keybox"
+            app:setting_item_right="arrow"
+            app:setting_item_line="false"
+            app:setting_item_name_color="@color/common_color_white"
+            app:setting_item_padding_top="12dp"
+            app:setting_item_padding_bottom="12dp"
+            app:layout_constraintTop_toBottomOf="@id/keybox_top_divider_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <View
+            android:id="@+id/logout_top_divider_view"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:background="@color/common_color_dark_background"
+            app:layout_constraintTop_toBottomOf="@id/me_keybox"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/logout_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:text="@string/me_log_out"
+            android:textSize="17sp"
+            android:background="@color/common_color_white_10"
+            android:textColor="@color/common_content_warning_color"
+            app:layout_constraintTop_toBottomOf="@id/logout_top_divider_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Log Out" />
+
+        <View
+            android:id="@+id/logout_bottom_divider_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/common_color_dark_background"
+            app:layout_constraintTop_toBottomOf="@+id/logout_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

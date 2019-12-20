@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_black"
+    android:elevation="10dp"
+    tools:context="com.bcm.messenger.chats.components.VideoFlowWindow">
+
+    <com.bcm.messenger.common.video.LiveVideoPlayer
+        android:id="@+id/flow_video_player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/flow_pause_cover_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/common_30_transparent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/flow_pause_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/chats_live_been_paused"
+            android:textColor="@color/common_color_white"
+            android:textSize="27sp"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/flow_pause_owner_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:text="@string/chats_live_pause_by_group_owner"
+            android:textColor="@color/common_color_white"
+            android:textSize="13sp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/flow_loading_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/chats_flow_loading_white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.bcm.messenger.chats.components.FlowWindowCoverLayout
+        android:id="@+id/flow_cover_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/flow_close"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="center"
+            android:src="@drawable/chats_flow_close_shadowed"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/flow_small"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginStart="0dp"
+            android:scaleType="center"
+            android:src="@drawable/chats_flow_zoom_small_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/flow_remove"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginTop="0dp"
+            android:scaleType="center"
+            android:src="@drawable/chats_flow_remove_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:id="@+id/flow_mute"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:elevation="5dp"
+            android:scaleType="center"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/chats_flow_mute_icon" />
+
+        <ImageView
+            android:id="@+id/flow_mute_large"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            android:elevation="5dp"
+            android:scaleType="center"
+            android:shadowColor="@color/common_color_black_50_translucent"
+            android:shadowDy="3.0"
+            android:shadowRadius="3.0"
+            android:src="@drawable/chats_flow_mute_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.bcm.messenger.chats.components.FlowChatLayout
+            android:id="@+id/flow_chats_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/flow_position" />
+
+        <TextView
+            android:id="@+id/flow_position"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:shadowColor="@color/common_color_black_50_translucent"
+            android:shadowDy="3.0"
+            android:shadowRadius="3.0"
+            android:textColor="@color/common_color_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="1:13" />
+
+        <ImageView
+            android:id="@+id/flow_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="15dp"
+            android:src="@drawable/chats_flow_chat_icon"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/flow_mute_large"
+            app:layout_constraintStart_toEndOf="@id/flow_message_switch"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/flow_message_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="15dp"
+            android:src="@drawable/chats_flow_message_on"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/flow_chat"
+            app:layout_constraintStart_toEndOf="@+id/flow_position"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/flow_unsupport_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/chats_live_unsupported_link"
+            android:textColor="@color/common_color_white_70"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </com.bcm.messenger.chats.components.FlowWindowCoverLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_account_unsupported_qr_warning_title">مفتاح حساب غير صالح</string>
+    <string name="login_account_unsupported_qr_warning_description">رمز QR هذا ليس مفتاح حساب صالح، يرجى التحقق والمحاولة مرة أخرى</string>
+
+    <string name="login_account_not_exist">الحساب غير موجود</string>
+    <string name="login_destroy_other_client_response_fail">فشل تدمير الحساب</string>
+
+    <string name="login_login_failed">فشل تسجيل الدخول</string>
+    <string name="login_password_error">خطأ في كلمة السر</string>
+
+    <string name="login_loading_connecting_server">جاري الاتصال بالخادم…</string>
+    <string name="login_try_user_proxy_using_xxx">تجريب وكيل المستخدم %s</string>
+    <string name="login_try_official_proxy_using_xxx">تجريب الوكيل الجاهز</string>
+
+    <string name="login_account_qr_exist_notice">تم النسخ الاحتياطي لهذا المفتاح من قبل</string>
+
+</resources>

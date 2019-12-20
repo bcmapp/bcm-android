@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="503dp"
+    android:layout_margin="10dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@drawable/common_center_popup_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="10dp">
+
+        <com.bcm.messenger.chats.components.AddressSearchBar
+            android:id="@+id/channel_share_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="gone"
+            />
+
+        <Button
+            android:id="@+id/channel_share_search_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            android:text="@string/chats_cancel"/>
+
+        <ImageView
+            android:id="@+id/channel_share_search_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/common_search_bar_icon"/>
+
+        <TextView
+            android:id="@+id/channel_share_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/common_color_black"
+            android:text="@string/chats_share_to"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/channel_share_close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/chats_close_more_send_options"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/channel_share_member_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="10dp"
+        android:background="@drawable/chats_create_channel_describe_background"
+        />
+
+    <EditText
+        android:id="@+id/channel_share_describe"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:background="@drawable/chats_create_channel_describe_background"
+        android:layout_marginTop="15dp"
+        android:text=""
+        android:textColor="#131313"
+        android:textColorHint="#C2C2C2"
+        android:hint="@string/chats_hint_add_a_comment"
+        android:textSize="16sp"
+        android:visibility="gone"/>
+
+
+    <LinearLayout
+        android:id="@+id/channel_share_send"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="13dp"
+        android:visibility="gone"
+        android:background="@drawable/common_center_popup_ok_background">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:paddingStart="10dp"
+            android:paddingEnd="15dp"
+            android:text="@string/chats_send"
+            android:textSize="16sp"
+            android:textAllCaps="false"
+            android:textColor="@color/common_color_white"
+            />
+
+        <TextView
+            android:id="@+id/channel_share_send_count"
+            android:gravity="center"
+            android:background="@drawable/chats_group_selection_background"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:paddingStart="7dp"
+            android:paddingEnd="7dp"
+            android:layout_marginEnd="10dp"
+            android:textSize="14sp"
+            android:text="16"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/channel_share_copy_link"
+        android:layout_width="180dp"
+        android:layout_height="30dp"
+        android:text="@string/chats_copy_link"
+        android:textColor="#379BFF"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="10dp"
+        />
+</LinearLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:top="@dimen/contacts_line_height_negative"
+        android:left="@dimen/contacts_line_height_negative"
+          android:right="@dimen/contacts_line_height_negative">
+        <shape>
+            <solid android:color="@android:color/white"/>
+            <stroke android:width="@dimen/contacts_line_height" android:color="@color/contacts_line_color"/>
+        </shape>
+    </item>
+</layer-list>

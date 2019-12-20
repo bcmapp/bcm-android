@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CommonWindowStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/common_color_transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+    </style>
+
+    <style name="common_popwindow_anim_style" parent="CommonWindowStyle">
+        <item name="android:windowEnterAnimation">@anim/common_popup_drop_in</item>
+        <item name="android:windowExitAnimation">@anim/common_popup_drop_out</item>
+    </style>
+
+    <style name="CommonLoadingStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/common_color_transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+
+    <style name="CommonTipStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/common_color_transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="CommonBottomPopupWindow" parent="CommonLoadingStyle">
+        <item name="android:windowEnterAnimation">@anim/common_slide_from_bottom_fast</item>
+        <item name="android:windowExitAnimation">@anim/common_slide_to_bottom_fast</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="CommonBottomAnimPopupWindow" parent="CommonLoadingStyle">
+        <item name="android:windowEnterAnimation">@anim/common_slide_from_bottom_fast</item>
+        <item name="android:windowExitAnimation">@anim/common_slide_to_bottom_fast</item>
+        <item name="android:windowFullscreen">false</item>
+    </style>
+
+    <style name="CommonPickerPopupWindow" parent="Base.Theme.AppCompat.Dialog">
+        <item name="android:windowEnterAnimation">@anim/common_slide_from_bottom_fast</item>
+        <item name="android:windowExitAnimation">@anim/common_slide_to_bottom_fast</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/common_color_transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:editTextColor">@color/common_color_black</item>
+    </style>
+
+    <style name="CommonCenterPopupWindow" parent="CommonLoadingStyle">
+        <item name="android:windowEnterAnimation">@anim/common_popup_drop_in</item>
+        <item name="android:windowExitAnimation">@anim/common_popup_drop_out</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="CommonDropWindowAnimation" >
+        <item name="android:windowEnterAnimation">@anim/common_popup_drop_in</item>
+        <item name="android:windowExitAnimation">@anim/common_popup_drop_out</item>
+    </style>
+
+    <style name="CommonAlphaWindowAnimation">
+        <item name="android:windowEnterAnimation">@anim/common_popup_alpha_in</item>
+        <item name="android:windowExitAnimation">@anim/common_popup_alpha_out</item>
+    </style>
+
+    <style name="CommonToolbarTitleStyle">
+        <item name="android:textSize">@dimen/common_title_bar_text_size</item>
+        <item name="android:textColor">@color/common_title_bar_text_color</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="CommonToolbarRightTitleStyle">
+        <item name="android:textSize">@dimen/common_title_bar_right_text_size</item>
+        <item name="android:textColor">@color/common_title_bar_right_text_color</item>
+        <item name="android:layout_gravity">right|center_vertical</item>
+        <item name="android:layout_marginRight">15dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="CommonPrimaryTextBgStyle">
+        <item name="android:background">@drawable/common_primary_thick_round_selector</item>
+        <item name="android:textColor">@color/common_color_white</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CommonPrimaryBlueText">
+        <item name="android:background">@drawable/common_white_bg_selector</item>
+        <item name="android:textColor">@color/common_color_379BFF</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CommonPrimaryRedText">
+        <item name="android:background">@drawable/common_white_bg_selector</item>
+        <item name="android:textColor">@color/common_content_warning_color</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CommonPrimaryThinTextBgStyle">
+        <item name="android:background">@drawable/common_primary_thin_round_selector</item>
+        <item name="android:textColor">@color/common_app_primary_color</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CommonBlackThinTextBgStyle">
+        <item name="android:background">@drawable/common_black_thin_round_selector</item>
+        <item name="android:textColor">@color/common_color_black</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CommonSecondTextButtonStyle">
+        <item name="android:background">@drawable/common_second_radius_bg</item>
+        <item name="android:textColor">@color/common_app_green_color</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CommonSwitchStyle">
+        <!--Colour switch on-->
+        <item name="colorControlActivated">@color/common_app_primary_color</item>
+        <!--Colour switch off-->
+        <item name="colorSwitchThumbNormal">@color/common_color_F1F2F3</item>
+        <!--Forground colour-->
+        <item name="android:colorForeground">@color/common_color_F1F2F3</item>
+    </style>
+
+    <style name="CommonDarkTextBgStyle">
+        <item name="android:background">@drawable/common_dark_thick_round_selector</item>
+        <item name="android:textColor">@color/common_color_white</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CommonPrimaryBigTextStyle" parent="CommonPrimaryTextBgStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">11dp</item>
+        <item name="android:paddingBottom">11dp</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
+    </style>
+
+    <style name="CommonDarkThinTextBgStyle">
+        <item name="android:background">@drawable/common_dark_thin_round_selector</item>
+        <item name="android:textColor">@color/common_content_primary_color</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CommonPrimaryThinBigTextStyle" parent="CommonPrimaryThinTextBgStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">11dp</item>
+        <item name="android:paddingBottom">11dp</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
+    </style>
+
+    <style name="CommonDarkBigTextStyle" parent="CommonDarkTextBgStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">11dp</item>
+        <item name="android:paddingBottom">11dp</item>
+    </style>
+
+    <style name="CommonDarkThinBigTextStyle" parent="CommonDarkThinTextBgStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">11dp</item>
+        <item name="android:paddingBottom">11dp</item>
+    </style>
+
+    <!-- Password style -->
+    <style name="CommonImportantEditStyle">
+        <item name="android:textColor">@color/common_color_606060</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColorHint">#C2C2C2</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">@drawable/common_password_bg</item>
+    </style>
+
+    <style name="WebTitle" parent="@android:style/TextAppearance">
+        <item name="android:textSize">18sp</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+    <style name="AnchorDialogStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/common_color_transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="ForwardDialogStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowSoftInputMode">adjustPan</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/common_color_transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="CommonTitleBarStyle">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="fill_status_bar">true</item>
+        <item name="show_bottom_line">false</item>
+        <item name="title_bar_background">@color/common_color_white</item>
+        <item name="title_bar_height">52dp</item>
+
+        <item name="left_type">image</item>
+        <item name="left_image">@drawable/common_back_arrow_black_icon</item>
+        <item name="left_text_size">17sp</item>
+        <item name="left_text_color">@color/common_color_black</item>
+
+        <item name="right_type">none</item>
+        <item name="right_text_size">17sp</item>
+        <item name="right_text_color">@color/common_color_black</item>
+
+        <item name="center_type">text</item>
+        <item name="center_text_color">@color/common_color_black</item>
+        <item name="center_text_size">17sp</item>
+    </style>
+
+</resources>

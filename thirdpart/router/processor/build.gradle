@@ -1,0 +1,40 @@
+group 'com.bcm.router'
+version '1.0.0'
+
+apply plugin: 'java-library'
+
+apply plugin: 'maven'
+apply plugin: 'com.novoda.bintray-release'
+
+compileJava {
+    sourceCompatibility = "1.7"
+    targetCompatibility = "1.7"
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.squareup:javapoet:1.11.1'
+    implementation 'com.bcm.router:annotation:1.0.0'
+}
+
+publish {
+    userOrg = 'router'
+    groupId = 'com.bcm.router'
+    artifactId = 'processor'
+    publishVersion = version
+    desc = 'BCM Router Processor'
+    website = ''
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: uri('../../../thirdpart/repo'))
+        pom.groupId = 'com.bcm.router'
+        pom.artifactId = 'processor'
+        pom.version = version
+    }
+}
+
+repositories {
+    mavenCentral()
+}

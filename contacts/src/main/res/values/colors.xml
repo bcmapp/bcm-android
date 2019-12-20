@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="contacts_line_color">#E8E8E8</color>
+
+    <color name="contacts_decoration_text_color">#999999</color>
+    <color name="contacts_decoration_text_color_second">#95989b</color>
+
+    <color name="contacts_content_text_color">#131313</color>
+
+    <color name="contacts_text_hint_color">#999999</color>
+
+    <color name="contacts_edit_cursor_color">#4562FF</color>
+    
+    <color name="contacts_request_add_color">#FFFFFF</color>
+    <color name="contacts_request_added_color">#C2C2C2</color>
+
+    <color name="contacts_invite_add_color">#FFFFFF</color>
+
+    <color name="contacts_filter_color">#379BFF</color>
+</resources>

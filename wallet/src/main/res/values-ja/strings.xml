@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="wallet_name_main">メインアカウント</string>
+    <string name="wallet_name_child">子_%s</string>
+
+    <string name="wallet_service_activate_title">ウォレットを準備中</string>
+    <string name="wallet_service_import_title">ウォレットをインポート中</string>
+    <string name="wallet_service_sync_success_title">ウォレットが同期されました</string>
+    <string name="wallet_service_activate_success_title">ウォレット開始完了</string>
+    <string name="wallet_service_create_success_title">子ウォレットの作成に成功しました</string>
+    <string name="wallet_service_import_success_title">インポート成功</string>
+    <string name="wallet_service_activate_fail_title">ウォレット開始失敗</string>
+    <string name="wallet_service_create_fail_title">子ウォレットの作成に失敗しました</string>
+    <string name="wallet_service_import_fail_title">インポート失敗</string>
+
+    <string name="wallet_service_create_with_name_title">%1$sのウォレットを作成しています</string>
+    <string name="wallet_service_import_with_name_title">%1$sの財布をインポートしています</string>
+    <string name="wallet_service_create_with_name_success_title">%1$ssのウォレットの作成に成功しました</string>
+    <string name="wallet_service_import_with_name_success_title">%1$sのウォレットのインポートに成功しました</string>
+    <string name="wallet_service_create_with_name_fail_title">%1$sのウォレットの作成に失敗しました</string>
+    <string name="wallet_service_import_with_name_fail_title">%1$sのウォレットのインポートに失敗しました</string>
+
+    <string name="wallet_service_build_content">これは少し時間がかかります</string>
+
+    <string name="wallet_service_result_unknown_description">未知のエラー</string>
+
+    <string name="wallet_service_unknown_error_description">未知のエラー</string>
+
+    <string name="wallet_active_home_description">BCMウォレットで安全に暗号通貨を送金、受信して管理することができます。</string>
+
+    <string name="wallet_notification_btc_sync_title">%1$s のブロックの同期が開始されました</string>
+    <string name="wallet_notification_btc_sync_content">これには少し時間がかかります</string>
+    <string name="wallet_notification_btc_sync_done">%1$sの同期が完了しました</string>
+
+    <string name="wallet_confirm_password_title">パスワードを入力</string>
+    <string name="wallet_confirm_cancel_button">キャンセル</string>
+    <string name="wallet_confirm_ok_button">確認</string>
+
+    <string name="wallet_active_password_title">ウォレットのパスワード</string>
+    <string name="wallet_active_confirm_action">確認</string>
+
+    <string name="wallet_confirm_backup_title">バックアップする</string>
+    <string name="wallet_backup_notice">ウォレットは作成されました。資金を安全に保つため、バックアップを作成してください</string>
+    <string name="wallet_backup_title">ウォレットをバックアップ</string>
+    <string name="wallet_backup_keystore_copy_text">キーストアがコピーされました</string>
+    <string name="wallet_backup_fail_text">バックアップ失敗</string>
+
+    <string name="wallet_active_notice_one">あなたのウォレットを安全に保つため、強力なパスワードを利用するのが重要です</string>
+    <string name="wallet_active_notice_two">パスワードを回復できません。慎重にバックアップしてください</string>
+    <string name="wallet_password_hint">パスワードを入力</string>
+    <string name="wallet_password_confirm_hint">パスワードを再入力</string>
+
+    <string name="wallet_password_empty_warning">パスワードは空にすることはできません</string>
+    <string name="wallet_password_not_match_warning">パスワードが一致しません</string>
+    <string name="wallet_password_error_description">パスワードエラー</string>
+    <string name="wallet_edit_null_warning">なにか入力してください</string>
+
+    <string name="wallet_change_password_title">パスワードを設定</string>
+    <string name="wallet_change_password_notice">暗号通貨のアカウントキーとトランザクションを暗号化するためのパスワードを設定します。</string>
+    <string name="wallet_change_password_cancel">キャンセル</string>
+    <string name="wallet_change_password_confirm">完了</string>
+
+    <string name="wallet_import_title">ウォレットをインポート</string>
+    <string name="wallet_import_button">インポート</string>
+    <string name="wallet_import_hint">プライベートキーを貼り付け</string>
+
+    <string name="wallet_export_confirm_title">プライベートキーをエクスポート</string>
+    <string name="wallet_export_confirm_notice">警告: プライベートキーのエクスポートは非常に危険です。ニーモニックまたはキーストアを使用してバックアップすることをお勧めします</string>
+    <string name="wallet_export_confirm_button">コピー</string>
+    <string name="wallet_export_copy_tip">プライベートキーをコピーしました</string>
+    <string name="wallet_export_button">キーストアをコピー</string>
+    <string name="wallet_export_fail_description">プライベートキーの出力に失敗しました</string>
+
+    <string name="wallet_delete_success_text">削除成功</string>
+    <string name="wallet_delete_fail_text">削除に失敗しました</string>
+
+    <string name="wallet_welcome_active_button">有効にする</string>
+    <string name="wallet_welcome_import_button">インポート</string>
+    <string name="wallet_home_total_title">総資産</string>
+    <string name="wallet_home_total_balance">%1$s %2$s</string>
+    <string name="wallet_logo_description">このタイプの財布のロゴ</string>
+    <string name="wallet_balance_text">%1$f</string>
+    <string name="wallet_money_text">≈%1$s %2$s</string>
+    <string name="wallet_secret_text">******</string>
+    <string name="wallet_syncing_text">------</string>
+    <string name="wallet_home_popup_description">ウォレットホームポップアップ</string>
+    <string name="wallet_home_import_confirm_title">パスワードを入力してください</string>
+    <string name="wallet_home_backup_confirm_title">パスワードを入力してください</string>
+
+    <string name="wallet_coin_edit_description">ウォレット名を変更</string>
+    <string name="wallet_name_edit_confirm_title">ウォレット名</string>
+    <string name="wallet_name_hint">ウォレット名を入力</string>
+
+    <string name="wallet_list_title">財布リスト</string>
+    <string name="wallet_list_eth_title">Ethereum</string>
+    <string name="wallet_list_btc_title">Bitcoin</string>
+
+    <string name="wallet_detail_popup_description">ウォレット情報詳細</string>
+    <string name="wallet_transaction_pending_description">保留中</string>
+    <string name="wallet_transaction_confirms_description">%1$d/12</string>
+    <string name="wallet_transaction_btc_confirms_description">%1$d/6</string>
+    <string name="wallet_transaction_success_description">成功</string>
+    <string name="wallet_transaction_fail_description">失敗</string>
+    <string name="wallet_transaction_transfer_action">送金</string>
+    <string name="wallet_transaction_receive_action">受け取り</string>
+    <string name="wallet_transaction_header_title">トランザクション</string>
+    <string name="wallet_transaction_money_text">≈%1$s%2$s</string>
+    <string name="wallet_transaction_empty_description">まだトランザクションがありません</string>
+    <string name="wallet_transaction_load_more_description">更に読み込み&#8230;</string>
+    <string name="wallet_transaction_no_more_description">もう何もありません</string>
+
+    <string name="wallet_transfer_title">送金</string>
+    <string name="wallet_available_assets">有効なアセット</string>
+    <string name="wallet_transfer_to_address_head">送金先</string>
+    <string name="wallet_transfer_to_address_hint">ウォレットアドレスを入力するか貼り付けます</string>
+    <string name="wallet_address_paste_description">送金先アドレスを貼り付け</string>
+    <string name="wallet_address_scan_description">送金先アドレスをスキャンして読み込み</string>
+    <string name="wallet_amount_choose_all">全て</string>
+    <string name="wallet_transfer_amount_head">額</string>
+    <string name="wallet_transfer_amount_hint">額を入力</string>
+    <string name="wallet_transfer_fee_head">手数料</string>
+    <string name="wallet_transfer_fee_switch">上げる</string>
+    <string name="wallet_transfer_memo_head">メモ</string>
+    <string name="wallet_transfer_memo_hint">入力メモ</string>
+    <string name="wallet_transfer_btc_fee_hint">入力された手数料</string>
+    <string name="wallet_transfer_gas_head">手数料を指定</string>
+    <string name="wallet_transfer_gas_hint">手数料を入力</string>
+    <string name="wallet_transfer_gas_unit">gwei</string>
+    <string name="wallet_transfer_limit_head">手数料を指定</string>
+    <string name="wallet_transfer_limit_hint">手数料を入力</string>
+    <string name="wallet_transfer_data_head">データー</string>
+    <string name="wallet_transfer_data_hint">データーを入力</string>
+    <string name="wallet_transfer_fee_choose_title">手数料を選択</string>
+    <string name="wallet_transfer_fee_high_description">高い優先度</string>
+    <string name="wallet_transfer_fee_middle_description">通常</string>
+    <string name="wallet_transfer_fee_low_description">経済的</string>
+
+    <string name="wallet_transfer_type_transfer">転送</string>
+    <string name="wallet_transfer_confirm_title">支払い情報</string>
+    <string name="wallet_transfer_confirm_close_description">送金確認を閉じる</string>
+    <string name="wallet_transfer_confirm_amount_head">額</string>
+    <string name="wallet_transfer_confirm_item_head">項目</string>
+    <string name="wallet_transfer_confirm_to_head">に</string>
+    <string name="wallet_transfer_confirm_from_head">から</string>
+    <string name="wallet_transfer_confirm_fee_head">手数料</string>
+    <string name="wallet_transfer_confirm_action_text">支払う</string>
+    <string name="wallet_transfer_to_address_warning">宛先のアドレスを入力するようにしてください</string>
+    <string name="wallet_transfer_to_same_address_warning">あなたのアドレスを入力しないでください</string>
+    <string name="wallet_transfer_amount_waning">額を指定してください</string>
+    <string name="wallet_transfer_amount_not_enough_warning">残高が十分ではありません</string>
+
+    <string name="wallet_service_transfer_title">%1$s を送金中</string>
+    <string name="wallet_service_transfer_content">これは少し時間がかかります</string>
+    <string name="wallet_service_transfer_success_title">%1$s の送金に成功</string>
+    <string name="wallet_service_transfer_fail_title">%1$s の送金に失敗しました</string>
+
+    <string name="wallet_receive_title">受信</string>
+    <string name="wallet_receive_amount_input">額</string>
+    <string name="wallet_receive_amount_hint">金額を入力してください</string>
+    <string name="wallet_receive_save_qr_tip">QRコードを保存</string>
+    <string name="wallet_receive_copy_address_tip">ウォレットアドレスをコピー</string>
+    <string name="wallet_receive_qr_description">金額情報を受信</string>
+    <string name="wallet_receive_qr_save_success">QR コードが保存されました</string>
+    <string name="wallet_receive_qr_save_fail">QRコードは作成されていません</string>
+    <string name="wallet_receive_address_save_success">アドレスをコピーしました</string>
+    <string name="wallet_receive_address_save_fail">アドレスのコピーに失敗しました</string>
+
+
+    <string name="wallet_transaction_detail_title">トランザクション履歴</string>
+    <string name="wallet_transaction_detail_status_head">状態</string>
+
+    <string name="wallet_transaction_detail_from_head">から</string>
+    <string name="wallet_transaction_detail_to_head">に</string>
+    <string name="wallet_transaction_detail_btc_fee_head">手数料</string>
+    <string name="wallet_transaction_detail_eth_fee_head">手数料</string>
+    <string name="wallet_transaction_detail_memo_head">メモ</string>
+    <string name="wallet_transaction_detail_hash_head">トランザクション</string>
+    <string name="wallet_transaction_detail_block_head">区画</string>
+    <string name="wallet_transaction_detail_time_head">トランザクション時間</string>
+    <string name="wallet_transaction_detail_copy_url_description">URLをコピー</string>
+    <string name="wallet_transaction_record_qr_description">取引記録QR</string>
+    <string name="wallet_transaction_qr_copy_success">記録URLをコピーしました</string>
+
+    <string name="wallet_popup_backup_description">ウォレットをバックアップ</string>
+    <string name="wallet_popup_import_description">ウォレットをインポート</string>
+    <string name="wallet_popup_setting_description">ウォレット設定</string>
+    <string name="wallet_popup_create_description">新規ウォレットを作成</string>
+    <string name="wallet_popup_import_private_description">秘密鍵をインポートする</string>
+    <string name="wallet_popup_export_private_description">秘密鍵のエクスポート</string>
+    <string name="wallet_popup_delete_description">ウォレットを削除</string>
+    <string name="wallet_popup_cancel_description">キャンセル</string>
+
+    <string name="wallet_scan_title">QRコードをスキャン</string>
+
+    <string name="wallet_settings_title">ウォレット設定</string>
+    <string name="wallet_currency_entrance_title">通貨単位</string>
+
+    <string name="wallet_currency_title">通貨単位</string>
+    <string name="wallet_currency_edit_save_text">保存</string>
+    <string name="wallet_currency_select_description">通貨が選択されました</string>
+    <string name="wallet_currency_change_success_text">通貨単位の設定に成功しました</string>
+    <string name="wallet_currency_change_fail_text">通貨単位の変換に失敗しましたインターネットの接続状況をご確認ください</string>
+
+    <string name="wallet_reminder_description">備忘</string>
+    <string name="wallet_policy_first_part">同意する&#160;</string>
+    <string name="wallet_policy_second_part">利用規約とプライバシーポリシー</string>
+
+    <string name="wallet_reminder_title">備忘</string>
+    <string name="wallet_reminder_first_title">オフラインで保存</string>
+    <string name="wallet_reminder_first_content">キーストアをUSBメモリなどの安全な場所に保管してください。決してインターネット上には保存しなくでください。</string>
+    <string name="wallet_reminder_second_title">インターネットツール経由で転送しない</string>
+    <string name="wallet_reminder_second_content">ハッキングされる可能性が高まるため、キーストアの送信にメールやクラウドストレージ、メッセンジャーなどを利用しないでください。</string>
+    <string name="wallet_reminder_third_title">パスワードを保存</string>
+    <string name="wallet_reminder_third_content">オンラインでパスワードを保存する場合は1PasswordやKeepassなどのパスワードマネージャを利用してください。</string>
+
+    <string name="wallet_permission_title">ヒント</string>
+    <string name="wallet_permission_tips">ストレージへのアクセスと端末の状態の読み込みの権限が必要です。</string>
+    <string name="wallet_permission_goto_settings">設定を開く</string>
+
+    <string name="wallet_account_backup_title">アカウントキーをバックアップ</string>
+    <string name="wallet_account_backup_notice">あなたのアカウントと資産の安全のために、あなたのアカウントキーをバックアップしてください。</string>
+    <string name="wallet_account_backup_cancel">あとで</string>
+    <string name="wallet_account_backup_confirm">バックアップする</string>
+
+
+    <!-- 支持旧版本升级 -->
+    <string name="wallet_not_init_notice">ウォレットの前回の起動失敗またはバージョンが古すぎます。クリックして起動してください</string>
+    <string name="wallet_eth_support_notice">今ETHをサポート、クリックして作成</string>
+    <string name="wallet_btc_support_notice">今BTCをサポートして、クリックして作成します</string>
+
+    <!-- 加载钱包失败 -->
+    <string name="wallet_accounts_load_error_title">財布ローディング失敗</string>
+    <string name="wallet_accounts_load_error_content">このエリアで電子財布を使用できません。</string>
+    <string name="wallet_accounts_load_error_action">再試行</string>
+
+</resources>

@@ -1,0 +1,72 @@
+<!--
+  ~ /*
+  ~  * Copyright (C) 2015 Eason.Lai (easonline7@gmail.com)
+  ~  *
+  ~  * Licensed under the Apache License, Version 2.0 (the "License");
+  ~  * you may not use this file except in compliance with the License.
+  ~  * You may obtain a copy of the License at
+  ~  *
+  ~  *      http://www.apache.org/licenses/LICENSE-2.0
+  ~  *
+  ~  * Unless required by applicable law or agreed to in writing, software
+  ~  * distributed under the License is distributed on an "AS IS" BASIS,
+  ~  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  * See the License for the specific language governing permissions and
+  ~  * limitations under the License.
+  ~  */
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/common_color_black">
+
+    <View
+        android:id="@+id/photo_preview_fill"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/photo_preview_dock"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_bcm_app_title_bar_height"
+        android:layout_below="@id/photo_preview_fill">
+
+        <TextView
+            android:id="@+id/btn_pic_rechoose"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:paddingRight="15dp"
+            android:paddingLeft="15dp"
+            android:gravity="center"
+            android:text="@string/common_cancel"
+            android:textColor="@color/common_color_white"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/btn_pic_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:paddingRight="15dp"
+            android:paddingLeft="15dp"
+            android:gravity="center"
+            android:text="@string/common_string_save"
+            android:textColor="@color/common_app_primary_color"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/photo_preview_dock" />
+
+</RelativeLayout>

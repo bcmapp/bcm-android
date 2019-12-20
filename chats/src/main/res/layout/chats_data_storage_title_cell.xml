@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingTop="20dp"
+    android:background="@color/common_background_color">
+
+    <TextView
+        android:id="@+id/text_clear_all"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:background="@color/common_color_white"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:text="@string/chats_clear_all_text"
+        android:textColor="@color/common_color_black"
+        android:textSize="17sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/clear_conversation_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/clear_conversation_size"/>
+
+    <TextView
+        android:id="@+id/clear_conversation_size"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@color/common_color_white"
+        android:textSize="15sp"
+        android:textColor="@color/common_color_A8A8A8"
+        android:paddingEnd="@dimen/common_horizontal_gap"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:gravity="center_vertical"
+        android:drawablePadding="10dp"
+        android:drawableEnd="@drawable/common_right_arrow_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/clear_conversation_title"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/clear_conversation_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/chats_clear_conversation_title"
+        android:textSize="13sp"
+        android:textColor="@color/common_color_606060"
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_dark_background">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/about_title"
+        style="@style/CommonTitleBarStyle"
+        android:layout_marginBottom="8dp"
+        app:center_text="@string/me_str_my_account_key"
+        app:center_text_color="@color/common_color_white"
+        app:left_image="@drawable/common_back_arrow_white_icon"
+        app:title_bar_background="@color/common_color_dark_background"
+        app:right_type="image"
+        app:right_image="@drawable/common_info_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:id="@+id/view5"
+        android:layout_width="0dp"
+        android:layout_height="350dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/common_white_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/about_title"/>
+
+    <ImageView
+        android:id="@+id/account_qr"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/me_switch_device_qr_description"
+        android:layout_marginBottom="76dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintTop_toTopOf="@id/view5"
+        app:layout_constraintLeft_toLeftOf="@id/view5"
+        app:layout_constraintRight_toRightOf="@id/view5"
+        app:layout_constraintBottom_toBottomOf="@id/view5"/>
+
+    <ImageView
+        android:id="@+id/account_key_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/me_64_account_key_qr_code_tag"
+        app:layout_constraintBottom_toBottomOf="@+id/account_qr"
+        app:layout_constraintEnd_toEndOf="@+id/account_qr"
+        app:layout_constraintStart_toStartOf="@+id/account_qr"
+        app:layout_constraintTop_toTopOf="@+id/account_qr"/>
+
+    <TextView
+        android:id="@+id/text_account_time"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center"
+        android:lines="2"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:textSize="11sp"
+        tools:text="Date of Key Generation: 2017-Aug-12\nDate of Backup: 2017-Aug-25 "
+        android:background="@drawable/me_account_backup_time_background"
+        app:layout_constraintBottom_toBottomOf="@id/view5"/>
+
+    <ImageView
+        android:id="@+id/keybox_qr_into_img"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/me_keybox_illustration3"
+        app:layout_constraintTop_toBottomOf="@+id/text_account_time"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/common_color_white"
+        android:textSize="12sp"
+        android:lines="2"
+        android:gravity="center"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="60dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/me_scan_qr_code_to_login_to_another_device"
+        app:layout_constraintTop_toBottomOf="@+id/keybox_qr_into_img"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

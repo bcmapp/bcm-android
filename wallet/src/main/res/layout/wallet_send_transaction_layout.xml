@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/assets_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/wallet_available_assets"
+            android:textColor="@color/common_color_606060"
+            android:textSize="15sp"
+            android:gravity="left"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+        <TextView
+            android:id="@+id/assets_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="#303030"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="left"
+            app:layout_constraintTop_toBottomOf="@+id/assets_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="------" />
+
+        <View
+            android:id="@+id/assets_division"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/common_line_height"
+            android:layout_marginLeft="-15dp"
+            android:layout_marginRight="-15dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/common_division_color"
+            app:layout_constraintTop_toBottomOf="@id/assets_count"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp">
+
+        <TextView
+            android:id="@+id/to_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/wallet_transfer_to_address_head"
+            android:textColor="@color/common_color_606060"
+            android:textSize="15sp"
+            android:gravity="left"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText
+            android:id="@+id/to_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            android:ellipsize="middle"
+            android:hint="@string/wallet_transfer_to_address_hint"
+            android:singleLine="true"
+            android:textColor="#303030"
+            android:textColorHint="#c2c2c2"
+            android:textSize="15sp"
+            android:gravity="left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/paste_btn"
+            app:layout_constraintTop_toBottomOf="@+id/to_title" />
+
+        <ImageView
+            android:id="@+id/paste_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:padding="4dp"
+            android:src="@drawable/wallet_address_paste"
+            android:contentDescription="@string/wallet_address_paste_description"
+            app:layout_constraintBottom_toBottomOf="@id/to_content"
+            app:layout_constraintEnd_toStartOf="@+id/qr_scan_btn"
+            app:layout_constraintTop_toTopOf="@id/to_content" />
+
+        <ImageView
+            android:id="@+id/qr_scan_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:src="@drawable/wallet_address_scan"
+            android:contentDescription="@string/wallet_address_scan_description"
+            app:layout_constraintBottom_toBottomOf="@id/to_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/to_content" />
+
+        <View
+            android:id="@+id/to_division"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/common_line_height"
+            android:layout_marginTop="10dp"
+            android:background="@color/common_division_color"
+            app:layout_constraintTop_toBottomOf="@id/to_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp">
+
+        <TextView
+            android:id="@+id/amount_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/wallet_transfer_amount_head"
+            android:textColor="@color/common_color_606060"
+            android:textSize="15sp"
+            android:gravity="left"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText
+            android:id="@+id/amount_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            android:hint="@string/wallet_transfer_amount_hint"
+            android:inputType="numberDecimal"
+            android:maxLength="10"
+            android:textColor="#303030"
+            android:textColorHint="#c2c2c2"
+            android:textSize="15sp"
+            android:gravity="left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/amount_unit"
+            app:layout_constraintTop_toBottomOf="@+id/amount_title" />
+
+        <TextView
+            android:id="@+id/amount_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:textColor="@color/wallet_content_main_color"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@+id/amount_content"
+            app:layout_constraintEnd_toStartOf="@+id/amount_all_division"
+            app:layout_constraintTop_toTopOf="@+id/amount_content"
+            tools:text="BTC"/>
+
+        <View
+            android:id="@+id/amount_all_division"
+            android:layout_width="@dimen/common_line_height"
+            android:layout_height="15dp"
+            android:layout_marginEnd="15dp"
+            android:background="@color/common_division_color"
+            app:layout_constraintBottom_toBottomOf="@+id/amount_content"
+            app:layout_constraintEnd_toStartOf="@+id/amount_all_btn"
+            app:layout_constraintTop_toTopOf="@+id/amount_content" />
+
+        <TextView
+            android:id="@+id/amount_all_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wallet_amount_choose_all"
+            android:textColor="#303030"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@+id/amount_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/amount_content" />
+
+        <View
+            android:id="@+id/amount_division"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/common_line_height"
+            android:layout_marginTop="10dp"
+            android:background="@color/common_division_color"
+            app:layout_constraintTop_toBottomOf="@id/amount_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingTop="20dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/wallet_transfer_fee_head"
+            android:textColor="@color/common_color_606060"
+            android:textSize="15sp"
+            android:gravity="left"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/advance_switch"/>
+
+        <Switch
+            android:id="@+id/advance_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="4dp"
+            android:text="@string/wallet_transfer_fee_switch"
+            android:textColor="@color/common_color_A8A8A8"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/simple_fee_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        tools:visibility="gone">
+
+        <TextView
+            android:id="@+id/fee_suggest_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="#303030"
+            android:textSize="15sp"
+            android:lineSpacingExtra="3dp"
+            android:gravity="left"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/fee_suggest_type"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="0.0004BTC"/>
+
+        <TextView
+            android:id="@+id/fee_suggest_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="4dp"
+            android:drawableEnd="@drawable/wallet_arrow_right"
+            android:gravity="center_vertical"
+            android:textColor="@color/common_color_606060"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="general" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/common_line_height"
+            android:layout_marginTop="10dp"
+            android:background="@color/common_division_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/advance_layout_btc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        tools:visibility="visible">
+
+        <EditText
+            android:id="@+id/btc_memo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:inputType="text"
+            android:hint="@string/wallet_transfer_memo_hint"
+            android:textColor="@color/wallet_content_main_color"
+            android:textColorHint="#c2c2c2"
+            android:textSize="15sp"
+            android:gravity="left"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_line_height"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/common_division_color"/>
+
+        <EditText
+            android:id="@+id/btc_fee_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:inputType="numberDecimal"
+            android:hint="@string/wallet_transfer_btc_fee_hint"
+            android:textColor="@color/wallet_content_main_color"
+            android:textColorHint="#c2c2c2"
+            android:textSize="15sp"
+            android:gravity="left"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_line_height"
+            android:layout_marginTop="10dp"
+            android:background="@color/common_division_color"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/advance_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/wallet_transfer_gas_head"
+            android:textColor="@color/common_color_606060"
+            android:textSize="15sp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <EditText
+                android:id="@+id/gas_price_content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:inputType="numberDecimal"
+                android:hint="@string/wallet_transfer_gas_hint"
+                android:textColor="#303030"
+                android:textColorHint="#c2c2c2"
+                android:textSize="15sp"
+                android:gravity="left"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/gas_price_unit"/>
+
+            <TextView
+                android:id="@+id/gas_price_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/wallet_transfer_gas_unit"
+                android:textColor="#303030"
+                android:textColorHint="#c2c2c2"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_line_height"
+            android:layout_marginTop="10dp"
+            android:background="@color/common_division_color" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/wallet_transfer_limit_head"
+            android:textColor="@color/common_color_606060"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/gas_count_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:inputType="numberSigned"
+            android:background="@null"
+            android:hint="@string/wallet_transfer_limit_hint"
+            android:textColor="#303030"
+            android:textColorHint="#c2c2c2"
+            android:textSize="15sp"
+            android:gravity="left"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_line_height"
+            android:layout_marginTop="10dp"
+            android:background="@color/common_division_color" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/wallet_transfer_data_head"
+            android:textColor="@color/common_color_606060"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/data_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            android:hint="@string/wallet_transfer_data_hint"
+            android:textColor="#303030"
+            android:textColorHint="#c2c2c2"
+            android:textSize="15sp"
+            android:gravity="left"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_line_height"
+            android:layout_marginTop="10dp"
+            android:background="@color/common_division_color" />
+
+    </LinearLayout>
+
+</LinearLayout>

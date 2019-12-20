@@ -1,0 +1,402 @@
+package com.bcm.messenger.common.finder
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
+import com.bcm.messenger.common.R
+import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.utility.Base64
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import com.bcm.messenger.utility.AppContextHolder
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+
+/**
+ * Created by bcm.social.01 on 2019/4/8.
+ * 检索管理器
+ * eg
+ *  检索联系人和群
+ *  val resultMap = BcmFinderManager.get().find("abc", listOf(BcmFinderType.ADDRESS_BOOK, BcmFinderType.GROUP))
+ *
+ *  for( (type, result) in resultMap ) {
+ *      val top10List = result.topN(10) //读取type检索器的前10个检索结果
+ *
+ *      val allList = result.toList() //读取type检索器的所有的检索结果
+ *
+ *      if(result.count > 0) {
+ *          val top1 = result.get(0)  //读取type检索器的第一个检索结果
+ *      }
+ *  }
+ */
+class BcmFinderManager {
+
+    interface SearchRecordChecker {
+        fun isValid(record: SearchRecordDetail): Boolean
+    }
+
+     companion object {
+         private const val TAG = "BcmFinderManager"
+
+         private const val SEARCH_TABLE = "table_search_whole_"
+         private const val RECORD_KEY = "key_record"
+         private const val mSearchLimit: Int = 3//目前限制显示的结果数，如果是0表示不限制
+         private const val mRecentLimit: Int = 10//目前最近搜索条件的top数目
+
+
+         private val manager:BcmFinderManager = BcmFinderManager()
+
+         /**
+          * Finder管理对象
+          */
+         fun get(): BcmFinderManager {
+             return manager
+         }
+     }
+
+    private val finderMap = HashMap<BcmFinderType, IBcmFinder>()
+    private var mRecordMap: MutableMap<String, SearchRecord>? = null
+
+    /**
+     * 注册检索器
+     * @param finder 检索器
+     */
+    fun registerFinder(finder: IBcmFinder) {
+        ALog.d(TAG, "registerFinder: ${finder.type()}")
+        finderMap[finder.type()] = finder
+    }
+
+    /**
+     * 注销检索器
+     */
+    fun unRegisterFinder(finder: IBcmFinder) {
+        if (finder == finderMap[finder.type()]) {
+            finderMap[finder.type()]?.cancel()
+            finderMap.remove(finder.type())
+        }
+    }
+
+    fun getFinder(finderType: BcmFinderType): IBcmFinder? {
+        return finderMap[finderType]
+    }
+
+    /**
+     * @param key 要检索的关键字
+     * @param fromTypes 要从哪些Finder中检索
+     * @return 匹配结果列表
+     */
+    fun find(key:String, fromTypes: Array<BcmFinderType>): Map<BcmFinderType, IBcmFindResult> {
+        val resultMap = HashMap<BcmFinderType, IBcmFindResult>()
+
+        for (type in fromTypes) {
+            val finder = finderMap[type]
+            if (null != finder) {
+                resultMap[type] =  finder.find(key)
+            } else {
+                ALog.e(TAG, "no finder $type")
+            }
+        }
+
+        return resultMap
+    }
+
+    /**
+     * @param key 要检索的关键字
+     * @param fromTypes 要从哪些Finder中检索
+     * @return 匹配结果列表
+     */
+    fun findWithTarget(key:String, targetAddress:Address, fromTypes:Array<BcmFinderType>) :Map<BcmFinderType, IBcmFindResult> {
+        val resultMap = HashMap<BcmFinderType, IBcmFindResult>()
+
+        for (type in fromTypes) {
+            val finder = finderMap[type]
+            if (null != finder) {
+                resultMap[type] =  finder.findWithTarget(key, targetAddress)
+            } else {
+                ALog.e(TAG, "no finder $type")
+            }
+        }
+
+        return resultMap
+    }
+
+    fun cancel() {
+        val list = finderMap.values
+        for (finder in list) {
+            finder.cancel()
+        }
+    }
+
+    /**
+     * 清理所有最近搜索记录
+     */
+    fun clearRecord() {
+        getAccountPreferences(AppContextHolder.APP_CONTEXT).edit().clear().commit()
+    }
+
+    /**
+     * 查找最近搜索记录
+     */
+    @SuppressLint("CheckResult")
+    fun querySearchRecord(checker: SearchRecordChecker, callback: (result: List<SearchRecordDetail>) -> Unit) {
+        ALog.d(TAG, "querySearchRecord")
+        Observable.create(ObservableOnSubscribe<List<SearchRecordDetail>> {
+
+            val map = getRecordMap()
+            val resultList = map.mapNotNull {
+                var r = transform(it.key, it.value)
+                if (r != null) {
+                    if (!checker.isValid(r)) {
+                        r = null
+                    }
+                }
+                r
+            }.sortedWith(Comparator<SearchRecordDetail> { o1, o2 ->
+                when {
+                    // 目前只按最近的来搜素
+                    o2.date < o1.date -> -1
+                    o2.date > o1.date -> 1
+                    else -> 0
+                }
+            })
+            if (resultList.size >= mRecentLimit) {
+                it.onNext(resultList.subList(0, mRecentLimit))
+            }else {
+                it.onNext(resultList)
+            }
+            it.onComplete()
+
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({resultList ->
+                    callback.invoke(resultList)
+                }, {
+                    ALog.e(TAG, "querySearchRecord error", it)
+                    callback.invoke(listOf())
+                })
+
+    }
+
+    /**
+     * 查找搜索结果
+     */
+    @SuppressLint("CheckResult")
+    fun querySearchResultLimit(keyword: String, types: Array<BcmFinderType>, callback: (result: List<SearchItemData>) -> Unit) {
+        ALog.d(TAG, "querySearchResultLimit keyword: $keyword types: ${types.joinToString()}")
+        Observable.create(ObservableOnSubscribe<List<SearchItemData>> {
+            val resultList = mutableListOf<SearchItemData>()
+            val hasTop = types.isNotEmpty()
+            val bcmFindResultMap = BcmFinderManager.get().find(keyword, types)
+            for (type in types) {
+                val l = findSearchResult(true, type, bcmFindResultMap[type]
+                        ?: continue)
+                if (hasTop && l.isNotEmpty()) {
+                    l.first().isTop = true
+                }
+                resultList.addAll(l)
+            }
+            it.onNext(resultList)
+            it.onComplete()
+
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    callback.invoke(it)
+                }, {
+                    ALog.e(TAG, "querySearchResultLimit error", it)
+                    callback.invoke(listOf())
+                })
+
+    }
+
+    /**
+     * 查找搜索结果
+     */
+    @SuppressLint("CheckResult")
+    fun querySearchResult(keyword: String, types: Array<BcmFinderType>, callback: (result: List<SearchItemData>) -> Unit) {
+        ALog.d(TAG, "querySearchResult keyword: $keyword, types: ${types.joinToString()}")
+
+        Observable.create(ObservableOnSubscribe<List<SearchItemData>> {
+            val resultList = mutableListOf<SearchItemData>()
+            val hasTop = types.isNotEmpty()
+            val bcmFindResultMap = BcmFinderManager.get().find(keyword, types)
+            for (type in types) {
+                val l = findSearchResult(false, type, bcmFindResultMap[type]
+                        ?: continue)
+                if (hasTop && l.isNotEmpty()) {
+                    l.first().isTop = true
+                }
+                resultList.addAll(l)
+            }
+            it.onNext(resultList)
+            it.onComplete()
+
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    callback.invoke(it)
+                }, {
+                    ALog.e(TAG, "querySearchResult error", it)
+                    callback.invoke(listOf())
+                })
+
+    }
+
+    /**
+     * 查找对应类型的搜索结果
+     */
+    private fun findSearchResult(isLimit: Boolean, type: BcmFinderType, findResult: IBcmFindResult): List<SearchItemData> {
+        ALog.d(TAG, "findSearchResult isLimit: $isLimit type: $type")
+        var hasMore = false
+        val resultList = if (isLimit) {
+            val list = findResult.topN(mSearchLimit + 1)
+            if (list.size > mSearchLimit) {
+                hasMore = true
+                list.subList(0, mSearchLimit)
+            }else {
+                list
+            }
+        }else {
+            findResult.toList()
+
+        }.mapNotNull {
+            transform(type, it)
+        }
+
+        if (hasMore && resultList.isNotEmpty()) {
+            resultList.last().hasMore = true
+        }
+        ALog.d(TAG, "findSearchResult isLimit: $isLimit type: $type result: ${resultList.size}")
+        return resultList
+    }
+
+    /**
+     * bcmFindData转化为SearchData
+     */
+    private fun transform(type: BcmFinderType, data: BcmFindData<*>): SearchItemData? {
+        return when(type) {
+            BcmFinderType.ADDRESS_BOOK -> {
+                val result = SearchItemData()
+                result.tag = data.source
+                result.type = type
+                result.moreDescription = AppContextHolder.APP_CONTEXT.getString(R.string.common_current_search_contact_more)
+                result.title = AppContextHolder.APP_CONTEXT.getString(R.string.common_current_search_contact_title)
+                result
+            }
+            BcmFinderType.GROUP -> {
+                val result = SearchItemData()
+                result.tag = data.source
+                result.type = type
+                result.moreDescription = AppContextHolder.APP_CONTEXT.getString(R.string.common_current_search_group_more)
+                result.title = AppContextHolder.APP_CONTEXT.getString(R.string.common_current_search_group_title)
+                result
+            }
+            BcmFinderType.AIR_CHAT -> {
+                val result = SearchItemData()
+                result.tag = data.source
+                result.type = type
+                result.moreDescription = AppContextHolder.APP_CONTEXT.getString(R.string.common_current_search_adhoc_more)
+                result.title = AppContextHolder.APP_CONTEXT.getString(R.string.common_current_search_adhoc_title)
+                result
+            }
+            else -> null
+        }
+    }
+
+    /**
+     * 保存当前的搜索记录
+     */
+    @SuppressLint("CheckResult")
+    fun saveRecord(type: BcmFinderType, key: String) {
+
+        Observable.create(ObservableOnSubscribe<Boolean> {
+            val map = getRecordMap()
+            val nk = type.name + "_" + key
+            var record = map[nk]
+            if (record == null) {
+                record = SearchRecord()
+                record.type = type
+                record.times++
+                record.date = System.currentTimeMillis()
+                map[nk] = record
+            }else {
+                // 只按最近搜索，所以需要更新时间
+                record.date = System.currentTimeMillis()
+                record.times++
+            }
+            try {
+                val bios = ByteArrayOutputStream()
+                ObjectOutputStream(bios).use {
+                    it.writeObject(map)
+                }
+                val body = Base64.encodeBytes(bios.toByteArray())
+                getAccountPreferences(AppContextHolder.APP_CONTEXT).edit().putString(RECORD_KEY, body).apply()
+
+            }catch (ex: Exception) {
+                ALog.e(TAG, "saveRecord error", ex)
+            }
+            it.onNext(true)
+            it.onComplete()
+
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+
+                }, {
+                    ALog.e(TAG, "saveRecord type: $type key: $key error", it)
+                })
+
+    }
+
+    private fun transform(key: String, innerRecord: SearchRecord): SearchRecordDetail? {
+        val record = SearchRecordDetail(innerRecord)
+        val tag = key.removePrefix(record.type.name + "_")
+        if (tag == key || tag.isNullOrEmpty()) {
+            return null
+        }
+        record.tag = tag
+        return record
+    }
+
+    @Synchronized
+    private fun getRecordMap(): MutableMap<String, SearchRecord> {
+        var map: MutableMap<String, SearchRecord>? = mRecordMap
+        if (map == null) {
+            val pref = getAccountPreferences(AppContextHolder.APP_CONTEXT)
+            val body = pref.getString(RECORD_KEY, "")
+            if (body.isEmpty()) {
+
+            } else {
+                try {
+                    ObjectInputStream(ByteArrayInputStream(Base64.decode(body))).use {
+                        map = it.readObject() as HashMap<String, SearchRecord>
+                    }
+                }catch (ex: Exception) {
+                    ALog.e(TAG, "getRecordMap error", ex)
+                    pref.edit().putString(RECORD_KEY, "").apply()
+                }
+            }
+        }
+        if (map == null) {
+            map = HashMap<String, SearchRecord>()
+        }
+        mRecordMap = map
+        return map!!
+
+    }
+
+    /**
+     * 基于当前登录账号的pref
+     */
+    private fun getAccountPreferences(context: Context): SharedPreferences {
+        ALog.d(TAG, "getAccountPreferences table: $SEARCH_TABLE${AMESelfData.uid}")
+        return context.getSharedPreferences("$SEARCH_TABLE${AMESelfData.uid}", Context.MODE_PRIVATE)
+    }
+
+}

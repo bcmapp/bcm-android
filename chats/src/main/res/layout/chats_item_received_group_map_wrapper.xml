@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bcm.messenger.chats.components.MapShareView xmlns:android="http://schemas.android.com/apk/res/android"
+                                          xmlns:app="http://schemas.android.com/apk/res-auto"
+                                          xmlns:tools="http://schemas.android.com/tools"
+                                          android:id="@+id/new_group_share_map_view"
+                                          android:layout_width="235dp"
+                                          android:layout_height="135dp"
+                                          android:layout_marginStart="8dp"
+                                          android:layout_marginTop="8dp"
+                                          app:layout_constraintStart_toEndOf="@+id/conversation_recipient_photo"
+                                          app:layout_constraintTop_toBottomOf="@+id/conversation_recipient_name"
+                                          tools:visibility="visible"/>
+

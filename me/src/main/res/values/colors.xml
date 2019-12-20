@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="me_verify_fingerprint_background">#E6182331</color>
+    <color name="me_pin_input_color">#C3E1FF</color>
+    <color name="me_pin_input_round">#9BCDFF</color>
+    <color name="me_pin_input_gray">#1AD8D8D8</color>
+</resources>

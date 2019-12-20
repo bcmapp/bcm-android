@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/currency_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/wallet_currency_title"
+        app:right_type="text"
+        app:right_text="@string/wallet_currency_edit_save_text"
+        app:right_text_size="16sp"
+        app:right_text_color="@color/common_app_primary_color" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/currency_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never"/>
+
+</LinearLayout>

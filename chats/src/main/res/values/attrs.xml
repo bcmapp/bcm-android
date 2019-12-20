@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="chats_BubbleLayout">
+        <attr name="chats_lookAt">
+            <enum name="left" value="1"/>
+            <enum name="top" value="2"/>
+            <enum name="right" value="3"/>
+            <enum name="bottom" value="4"/>
+        </attr>
+
+        <attr name="chats_lookPosition" format="dimension"/>
+        <attr name="chats_lookWidth" format="dimension"/>
+        <attr name="chats_lookLength" format="dimension"/>
+        <attr name="chats_bubbleColor" format="color"/>
+        <attr name="chats_bubbleRadius" format="dimension"/>
+        <attr name="chats_bubblePadding" format="dimension"/>
+        <attr name="chats_shadowRadius" format="dimension"/>
+        <attr name="chats_shadowX" format="dimension"/>
+        <attr name="chats_shadowY" format="dimension"/>
+        <attr name="chats_shadowColor" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="chats_conversationInputPanelStyle">
+        <attr name="chats_isGroup" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="chats_historyInnerViewStyle">
+        <attr name="chats_inView">
+            <enum name="forward" value="1" />
+            <enum name="chat_send" value="2" />
+            <enum name="chat_receive" value="3" />
+        </attr>
+        <attr name="chats_textSize" format="dimension" />
+    </declare-styleable>
+</resources>

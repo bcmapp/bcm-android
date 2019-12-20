@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package groupmsg;
+
+option java_package = "org.whispersystems.signalservice.internal.websocket";
+option java_outer_classname = "GroupMessageProtos";
+
+message GroupMessage {
+    int32 type = 1; // 【1】GroupChatMessage【2】GroupPubMessage 【3】GroupInfoUpdate【4】GroupMemberUpdate 【5】GroupGameMessage 【6】GroupRecallMessage
+    bytes body = 2; // Message structures below
+
+}
+
+message GroupChatMessage {
+    int64 gid = 1;
+    int64 mid = 2;
+    string from_uid = 3;
+
+    string text = 4;
+    int64 type = 5;
+    int64 create_time = 6;
+
+    message ExtensionContent {
+        repeated string at_list = 1;
+        bool at_all = 2;
+    }
+    ExtensionContent content = 7;
+    string source_extra = 8;
+}
+
+message GroupPubMessage {
+    int64 gid = 1;
+    int64 mid = 2;
+    string from_uid = 3;
+
+    string text = 4;
+    int64 type = 5;
+    int64 create_time = 6;
+}
+
+message GroupInfoUpdate {
+    int64 gid = 1;
+    int64 mid = 2;
+    string from_uid = 3;
+
+    string name = 4;
+    string icon = 5;
+    int64 last_mid = 6;
+    int64 create_time = 7;
+    int64 update_time = 8;
+    int64 owner = 9;
+    int64 broadcast = 10;
+    string intro = 11;
+    int64 encrypted = 12;
+    string channel = 13;
+}
+
+message GroupMemberUpdate {
+    int64 gid = 1;
+    int64 mid = 2;
+    string from_uid = 3;
+
+    int64 action = 4;
+    message GroupMember {
+        string uid = 1;
+        string nick = 2;
+        int64 role = 3;
+    }
+    repeated GroupMember members = 5;
+    string comment = 6;
+}
+
+
+message GroupGameMessage {
+    int64 gid = 1;
+    string from_uid = 2; // maybe = "", example game end and balance.
+    int64 mid = 3; // maybe = 0, example count down for game start or end.
+    int64 type = 4; // = [5]GroupExtMessage
+    string text = 5; // {type: lucky_draw, action:xx, content: {}} or {'type' = x(other ext message), content = {}}
+    int64 create_time = 6;
+}
+
+message GroupRecallMessage {
+    int64 gid = 1;
+    int64 mid = 2;
+    string from_uid = 3;
+    int64 recalled_mid = 4;
+    string source_extra = 5;
+}

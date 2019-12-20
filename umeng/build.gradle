@@ -1,0 +1,63 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply from: '../proguard/proguardconfig.gradle'
+
+
+android {
+    compileSdkVersion compile_sdk_version as int
+
+    defaultConfig {
+        minSdkVersion min_sdk_version as int
+        targetSdkVersion target_sdk_version as int
+        versionCode 1
+        versionName "1.0"
+
+    }
+
+
+    flavorDimensions "channels"
+    productFlavors {
+
+        official {
+            dimension "channels"
+        }
+
+        releaseOfficial {
+            dimension "channels"
+        }
+
+        releaseGoogle {
+            dimension "channels"
+        }
+
+        dev {
+            dimension "channels"
+        }
+
+    }
+}
+
+kapt {
+    generateStubs = true
+    arguments {
+        arg("MODULE_NAME", project.getName())
+    }
+}
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    api project(':common')
+
+    api  'com.umeng.umsdk:analytics:8.0.0@jar'
+    api  'com.umeng.umsdk:common:2.0.0'
+    api 'com.umeng.umsdk:utdid:1.1.5.3'
+    //PushSDK
+    api 'com.umeng.umsdk:push:6.0.1'
+    api 'com.umeng.sdk:push-xiaomi:1.0.0'
+    api 'com.umeng.sdk:push-huawei:1.0.0'
+    kapt 'com.bcm.router:processor:1.0.0'
+}

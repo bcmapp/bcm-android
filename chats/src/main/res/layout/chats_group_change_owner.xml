@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:orientation="horizontal"
+    android:background="@drawable/chats_group_change_owner_background"
+    android:gravity="center_vertical">
+
+    <com.bcm.messenger.common.ui.GroupMemberPhotoView
+        android:id="@+id/new_owner_avatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="10dp"
+        />
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:layout_marginStart="10dp"
+        android:id="@+id/new_owner_name_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textSize="15sp"
+        android:layout_marginEnd="10dp"
+        android:layout_weight="1"
+        />
+
+    <Button
+        android:id="@+id/change_new_owner"
+        android:layout_marginEnd="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/common_color_transparent"
+        android:textAllCaps="false"
+        android:textSize="12sp"
+        android:textColor="#379BFF"
+        android:text="@string/chats_group_change_owner"/>
+</LinearLayout>

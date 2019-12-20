@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contacts_fragment_title">連絡先</string>
+    <string name="contacts_requests_title">リクエスト</string>
+
+    <string name="contacts_fragment_individual_title">連絡先</string>
+    <string name="contacts_fragment_group_title">グループ</string>
+    <string name="contacts_fragment_friends_title">フレンド</string>
+
+    <string name="contacts_fragment_menu_title">友達を追加</string>
+    <string name="contacts_invites_title">友達を招待</string>
+    <string name="contacts_invites_local_title">システムの連絡先を追加</string>
+
+    <string name="contacts_add_friend_title">暗号化されたクラウドベースのBCM連絡先リストに %s を追加します。</string>
+    <string name="contacts_add_action_button">追加</string>
+    <string name="contacts_edit_action_button">編集</string>
+    <string name="contacts_delete_friend_title">%s をBCMの連絡先から削除します</string>
+    <string name="contacts_delete_action_button">削除</string>
+
+    <string name="contacts_header_scan_text">スキャン</string>
+    <string name="contacts_header_add_text">追加</string>
+    <string name="contacts_header_invite_text">招待</string>
+    <string name="contacts_header_group_text">グループを作成</string>
+
+    <string name="contacts_footer_contact_title">システムの連絡先</string>
+    <string name="contacts_footer_contact_notice">BCMがあなたの連絡先にアクセスして、BCMで友達を見つけてチャットすることを許可します。</string>
+    <string name="contacts_footer_contact_button">アクセスを許可</string>
+
+    <string name="contacts_empty_title_text">連絡先はありません</string>
+    <string name="contacts_empty_notice_one_text">お話しますか？タップしてください&#160;&#160;</string>
+    <string name="contacts_empty_notice_two_text">&#160;&#160;&#160;新しい連絡先を追加</string>
+    <string name="contacts_group_empty_text">グループはありません</string>
+
+    <string name="contacts_friend_not_in_ame_decoration">BCMに連絡先がありません</string>
+    <string name="contacts_local_phone_decoration">システムの連絡先</string>
+
+    <string name="contacts_requests_empty_title_text">結果がありません</string>
+    <string name="contacts_requests_empty_notice_text">新しい友達リクエストはここに表示されます</string>
+
+    <string name="contacts_invites_empty_text">結果がありません</string>
+
+    <string name="contacts_invites_action_text">招待</string>
+    <string name="contacts_requests_action_to_text">追加</string>
+    <string name="contacts_requests_action_done_text">追加済み</string>
+    <string name="contacts_invites_action_to_text">追加</string>
+    <string name="contacts_invites_action_done_text">追加済み</string>
+
+    <string name="contacts_invites_search_hint">電話番号を入力</string>
+
+    <string name="contacts_invites_add_friend_success">友達の招待に成功しました！</string>
+    <string name="contacts_invites_add_friend_fail">友達の招待に失敗しました！</string>
+    <string name="contacts_requests_add_friend_success">追加済み</string>
+    <string name="contacts_requests_add_friend_fail">追加失敗</string>
+    <string name="contacts_requests_yourself_description">送信先はあなたです</string>
+
+    <string name="contacts_select_search_tips">*連絡先にないメンバーを番号で追加することができます</string>
+    <string name="contacts_select_search_hint">名前で検索</string>
+
+    <string name="contacts_local_invite_confirm_text">%1$dを招待します</string>
+    <string name="contacts_local_invite_cancel_text">キャンセル</string>
+
+    <string name="contacts_invite_local_search_hint">名前で検索</string>
+    <string name="contacts_result_from_remote_title">サーバーからの結果</string>
+
+    <string name="contacts_result_from_remote_empty">結果がありません</string>
+    <string name="contacts_result_from_remote_empty_second">番号が正しいか確認してください</string>
+
+    <string name="contacts_scan_code_tip">QRコードをスキャンして連絡先に追加</string>
+
+    <string name="contacts_new_channel">新しいチャンネル</string>
+    <string name="contacts_new_group_chat">新しいグループチャット</string>
+
+    <!-- フレンド申請 -->
+    <string name="contacts_request_friend_title">フレンド申請</string>
+    <string name="contacts_request_friend_action">送信</string>
+    <string name="contacts_request_friend_notice">%sにフレンド申請を送信する</string>
+    <string name="contacts_request_friend_memo_hint">わたしは%s。 </string>
+    <string name="contacts_friend_request_title">フレンド申請</string>
+    <string name="contacts_friend_decline">拒否</string>
+    <string name="contacts_friend_accept">同意してフレンドに追加する</string>
+    <string name="contacts_friend_decline_title"> %s からのフレンド申請を拒否する</string>
+    <string name="contacts_request_friend_success">送信成功</string>
+    <string name="contacts_request_friend_fail">送信失敗</string>
+    <string name="contacts_add_friend_success">フレンド追加成功</string>
+    <string name="contacts_add_friend_failed">フレンド追加失敗</string>
+    <string name="contacts_add_friend_reject_failed">フレンド申請拒否失敗</string>
+    <string name="contacts_user_card_chat">チャット</string>
+    <string name="contacts_user_card_stranger">ストレンジャー</string>
+    <string name="contacts_request_friend_empty">申請なし</string>
+
+    <!--invite and scan-->
+    <string name="contacts_main_scan_and_add">スキャンして、追加する</string>
+    <string name="contacts_main_invite_friend">フレンド招待</string>
+
+    <!-- BcmUserCard -->
+    <string name="contacts_user_card_forward_title">転送</string>
+    <string name="contacts_user_card_block_title">ブロックする</string>
+    <string name="contacts_user_card_unblock_title">ブロック解除</string>
+    <string name="contacts_user_block_success">ブロック済み</string>
+    <string name="contacts_user_unblock_success">ブロックをアンロック</string>
+    <string name="contacts_user_block_fail">ブロック失敗</string>
+    <string name="contacts_user_unblock_fail">ブロック解除失敗</string>
+
+</resources>

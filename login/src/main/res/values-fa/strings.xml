@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="login_account_unsupported_qr_warning_title">کلید حساب نامعتبر است</string>
+    <string name="login_account_unsupported_qr_warning_description">این کد QR بعنوان کلید حساب اعتبار ندارد؛ لطفا بررسی کرده و دوباره تلاش کنید</string>
+
+    <string name="login_account_not_exist">حساب وجود ندارد</string>
+    <string name="login_destroy_other_client_response_fail">ناموفق در از بین بردن حساب</string>
+    <string name="login_login_failed">ورود ناموفق</string>
+    <string name="login_password_error">خطا در رمزعبور</string>
+
+    <string name="login_loading_connecting_server">در حال اتصال به سرور…</string>
+    <string name="login_try_user_proxy_using_xxx">در حال امتحان پراکسی کاربر %s</string>
+    <string name="login_try_official_proxy_using_xxx">در حال امتحان پراکسی پیش فرض</string>
+
+    <string name="login_account_qr_exist_notice">از این کلید قبلا پشتیبان‌گیری شده است</string>
+
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/pick_photo_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:left_type="text"
+        app:left_text="@string/common_cancel"
+        app:right_type="text"
+        app:right_text_color="@color/common_app_primary_color"/>
+
+    <FrameLayout
+        android:id="@+id/pick_photo_content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

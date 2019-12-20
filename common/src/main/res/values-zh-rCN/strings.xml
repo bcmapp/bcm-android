@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!--DraftDatabase-->
+    <string name="common_draft_image_snippet">（图片）</string>
+    <string name="common_draft_audio_snippet">（音频）</string>
+    <string name="common_draft_video_snippet">（视频）</string>
+    <string name="common_draft_location_snippet">（位置）</string>
+
+    <!--AudioSlidePlayer-->
+    <string name="common_playing_audio_error">播放音频时出现错误！</string>
+
+    <!--ConfirmIdentityDialog-->
+    <string name="ConfirmIdentityDialog_you_may_wish_to_verify_your_safety_number_with_this_contact">你可能希望验证这个联系人的安全码。</string>
+    <string name="ConfirmIdentityDialog_accept">接受</string>
+
+    <!--ContactsDatabase-->
+    <string name="ContactsDatabase_message_s">消息 %s</string>
+    <string name="ContactsDatabase_signal_call_s">暗号呼叫 %s</string>
+
+    <!--ConversationItem-->
+    <string name="common_conversation_received_key_exchange_message_tap_to_process">已收到密钥交换信息，点击以开始处理。</string>
+    <string name="common_conversation_group_action_left">%1$s 离开了该群聊。</string>
+
+    <!--ConversationListItem-->
+    <string name="common_thread_key_exchange_message">密钥交换消息</string>
+
+    <!--- NotificationBarManager-->
+    <string name="common_webrtc_call_in_progress">正在处理BCM呼叫</string>
+    <string name="common_webrtc_establishing_call">正在建立BCM呼叫</string>
+    <string name="common_webrtc_incoming_call">BCM来电</string>
+    <string name="common_webrtc_deny_call">拒绝接听</string>
+    <string name="common_webrtc_answer_call">接听</string>
+    <string name="common_webrtc_end_call">结束呼叫</string>
+    <string name="common_webrtc_cancel_call">取消呼叫</string>
+
+    <!--MessageRecord-->
+    <string name="MessageRecord_message_encrypted_with_a_legacy_protocol_version_that_is_no_longer_supported">已收到的信息使用了旧版本的BCM进行加密，并且已经不再被支持。请联系发送者升级BCM到最新版本然后再次发送该信息。</string>
+    <string name="MessageRecord_left_group">你已经离开了此群聊。</string>
+    <string name="MessageRecord_you_updated_group">你更新了此群聊</string>
+    <string name="MessageRecord_s_updated_group">%s 更新了此群聊。</string>
+    <string name="MessageRecord_s_called_you">%s 呼叫过你</string>
+    <string name="MessageRecord_called_s">已呼叫 %s</string>
+    <string name="MessageRecord_missed_call_from">来自 %s 的未接来电</string>
+    <string name="MessageRecord_s_joined_signal">%s 在 BCM 上！</string>
+    <string name="MessageRecord_you_set_disappearing_message_time_to_s">你将信息销毁时间设置为 %1$s</string>
+    <string name="MessageRecord_s_set_disappearing_message_time_to_s">%1$s 将消息销毁时间设置为 %2$s</string>
+    <string name="MessageRecord_your_safety_number_with_s_has_changed">你与 %s 的安全代码已经改变</string>
+    <string name="MessageRecord_you_marked_your_safety_number_with_s_verified">你已将安全号码 %s 标记为已验证</string>
+    <string name="MessageRecord_you_marked_your_safety_number_with_s_verified_from_another_device">已在另一台设备上将安全号码 %s 标记为已验证</string>
+    <string name="MessageRecord_you_marked_your_safety_number_with_s_unverified">你已将安全号码 %s 标记为未验证</string>
+    <string name="MessageRecord_you_marked_your_safety_number_with_s_unverified_from_another_device">你已在另一台设备上将安全号码 %s 标记为未验证</string>
+
+    <!--RedPhone-->
+    <string name="common_phone_answering">正在应答</string>
+    <string name="common_phone_ending_call">正在挂断</string>
+    <string name="common_phone_dialing">拨号中</string>
+    <string name="common_phone_ringing">响铃中</string>
+    <string name="common_phone_busy">忙</string>
+    <string name="common_phone_connected">已连接</string>
+    <string name="common_phone_recipient_unavailable">接受失败</string>
+    <string name="common_phone_network_failed">网络失败！</string>
+    <string name="common_phone_number_not_registered">号码没有注册！</string>
+    <string name="common_phone_the_number_you_dialed_does_not_support_secure_voice">你输入的号码不支持加密语音！</string>
+    <string name="common_phone_got_it">收到</string>
+
+    <!--Slide-->
+    <string name="common_slide_image">图片</string>
+    <string name="common_slide_audio">音频</string>
+    <string name="common_slide_video">视频</string>
+    <!--SmsMessageRecord-->
+    <string name="common_record_received_corrupted_key_exchange_message">收到损坏的密钥交换消息！</string>
+    <string name="common_record_received_key_exchange_message_for_invalid_protocol_version">收到来自不正确协议版本的密钥交换信息。</string>
+    <string name="common_record_received_message_with_new_safety_number_tap_to_process">接受到了使用新的安全码的信息。点击以处理和显示。</string>
+    <string name="common_record_secure_session_reset">你重置了安全会话。</string>
+    <string name="common_record_secure_session_reset_s">%s 重置了安全会话</string>
+    <string name="common_record_duplicate_message">重复的信息。</string>
+    <!--ThreadRecord-->
+    <string name="common_thread_group_updated">群聊已更新</string>
+    <string name="common_thread_left_the_group">离开此群聊</string>
+    <string name="common_thread_secure_session_reset">安全会话已重设。</string>
+    <string name="common_thread_draft">[草稿]</string>
+    <string name="common_thread_called">你呼叫过</string>
+    <string name="common_thread_called_you">呼叫过你</string>
+    <string name="common_thread_missed_call">未接来电</string>
+    <string name="common_thread_media_message">多媒体信息</string>
+    <string name="common_thread_s_is_on_signal">%s 在 BCM 上！</string>
+    <string name="common_thread_disappearing_message_time_updated_to_s">信息销毁时间设置为 %s</string>
+    <string name="common_thread_safety_number_changed">安全代码已改变</string>
+    <string name="common_thread_your_safety_number_with_s_has_changed">你与 %s 的安全码已经改变</string>
+    <string name="common_thread_you_marked_verified">你被标识为已验证</string>
+    <string name="common_thread_you_marked_unverified">你被标记为未验证</string>
+
+    <!--MessageDisplayHelper-->
+    <string name="MessageDisplayHelper_bad_encrypted_message">已损坏的加密消息</string>
+    <string name="MessageDisplayHelper_decrypting_please_wait">正在解密，请稍后…</string>
+    <string name="MessageDisplayHelper_message_encrypted_for_non_existing_session">已为不存在的会话加密其中的信息</string>
+    <!--EncryptingSmsDatabase-->
+    <string name="EncryptingSmsDatabase_error_decrypting_message">解密信息时遇到错误。</string>
+    <!--ThreadDatabase-->
+    <string name="ThreadDatabase_error_decrypting_message">解密消息时遇到错误。</string>
+    <!--MmsDatabase-->
+    <string name="MmsDatabase_error_decrypting_message">解密消息时遇到错误</string>
+    <!--MmsMessageRecord-->
+    <string name="MmsMessageRecord_decrypting_mms_please_wait">正在解密彩信，请稍后…</string>
+    <string name="MmsMessageRecord_bad_encrypted_mms_message">已损坏的加密彩信</string>
+    <string name="MmsMessageRecord_mms_message_encrypted_for_non_existing_session">已为不存在的会话加密其中的彩信</string>
+
+    <!--MessageNotifier-->
+    <string name="common_locked_message_description">锁定的消息</string>
+
+    <!--audio_view-->
+    <string name="common_audio_play_accessibility_description">播放</string>
+    <string name="common_audio_pause_accessibility_description">暂停</string>
+    <string name="common_audio_download_accessibility_description">下载</string>
+
+    <!--expiration-->
+    <string name="expiration_off">关</string>
+    <plurals name="expiration_seconds">
+        <item quantity="other">%d 秒</item>
+    </plurals>
+    <string name="expiration_seconds_abbreviated">%d 秒</string>
+    <plurals name="expiration_minutes">
+        <item quantity="other">%d 分钟</item>
+    </plurals>
+    <string name="expiration_minutes_abbreviated">%d 分</string>
+    <plurals name="expiration_hours">
+        <item quantity="other">%d 小时</item>
+    </plurals>
+    <string name="expiration_hours_abbreviated">%d 小时</string>
+    <plurals name="expiration_days">
+        <item quantity="other">%d 天</item>
+    </plurals>
+    <string name="expiration_days_abbreviated">%d 天</string>
+    <plurals name="expiration_weeks">
+        <item quantity="other">%d 周</item>
+    </plurals>
+    <string name="expiration_weeks_abbreviated">%d 周</string>
+    <!--unverified safety numbers-->
+    <string name="IdentityUtil_unverified_banner_one">你的安全号码 %s 已经改变并且不再被验证</string>
+    <string name="IdentityUtil_unverified_banner_two">你的安全号码 %1$s 和 %2$s 已经不再被验证</string>
+    <string name="IdentityUtil_unverified_banner_many">你的安全号码 %1$s ， %2$s 和 %3$s 已经不再被验证</string>
+    <string name="IdentityUtil_unverified_dialog_one">你与 %1$s 的安全号码已经改变并且不再被验证。这意味着可能有人正在尝试拦截你的通信，或者只是 %1$s 重装了BCM 。</string>
+    <string name="IdentityUtil_unverified_dialog_two">你与 %1$s 和 %2$s 的安全号码已经改变并且不再被验证。这意味着可能有人正在尝试拦截你的通信，或是他们重装了BCM 。</string>
+    <string name="IdentityUtil_unverified_dialog_many">你与 %1$s ， %2$s 和 %3$s 的安全号码已经改变并且不再被验证。这意味着可能有人正在尝试拦截你的通信，或是他们重装了BCM 。</string>
+    <string name="IdentityUtil_untrusted_dialog_one">你与 %s 的安全号码刚刚被改变。</string>
+    <string name="IdentityUtil_untrusted_dialog_two">你与 %1$s 和 %2$s 的安全号码刚刚被改变。</string>
+    <string name="IdentityUtil_untrusted_dialog_many">你与 %1$s ， %2$s 和 %3$s 的安全号码刚刚被改变。</string>
+    <plurals name="identity_others">
+        <item quantity="other">%d 个其他人</item>
+    </plurals>
+
+    <string name="common_notification_message_contents_format">你有%d个会话收到新消息。</string>
+    <string name="common_notification_message_content_format">你有1个会话收到新消息。</string>
+    <string name="common_chats_group_kick_me">你被%s移出群聊</string>
+    <string name="common_group_invite_stranger_notice">邀请%s进群失败，请先加为好友</string>
+    <string name="common_group_name_update_format">群名更改为%s</string>
+
+
+    <!--Invite Message-->
+    <string name="common_invite_user_message">嘿，让我们在BCM上聊天吧，那里更隐私和安全。打开链接 \n(%s )</string>
+    <!--EOF-->
+
+    <!-- APK安装相关 -->
+    <string name="common_apk_install_notice_description">此APK档案可能包含不安全的内容，请确保您充分信任发送者才打开并安装该APK档案。</string>
+
+
+    <string name="common_yesterday_text">昨天</string>
+    <string name="common_morning_text">上午</string>
+    <string name="common_afternoon_text">下午</string>
+
+    <string name="common_popup_ok">确定</string>
+    <string name="common_password_format_error">密码格式不正确</string>
+    <string name="common_password_too_short_warning">密码不能少于8位</string>
+    <string name="common_new_password_too_short_warning">新密码长度不能少于8位</string>
+    <string name="common_app_prefix">BCM_</string>
+    <string name="common_appellation_text">你</string>
+
+    <string name="common_delete">删除</string>
+    <string name="common_cancel">取消</string>
+    <string name="common_send">发送</string>
+    <string name="common_done">完成</string>
+    <string name="common_open">打开</string>
+    <string name="common_understood">我知道了</string>
+    <string name="common_later">稍后处理</string>
+    <string name="common_copied">已复制</string>
+    <string name="common_save_to_album">保存到相册</string>
+
+
+    <string name="common_connection_lost">连接中&#8230;</string>
+    <string name="common_group_get_member_fail">获取群聊成员失败</string>
+    <string name="common_search_hint">搜索</string>
+    <string name="common_title_hint">标题</string>
+    <string name="common_content_hint">内容</string>
+    <string name="common_back_description">返回</string>
+    <string name="common_add_contact_notice">添加到联系人</string>
+    <string name="common_invite_action_text">邀请</string>
+    <string name="common_sms_invite_sample">我正在使用BCM，一款充满无限可能的即时通讯软件，区块链加持，端对端加密，点击下载BCM加我为好友吧：</string>
+    <string name="common_sms_invite_fail">邀请失败</string>
+    <string name="common_choose_photo">选择照片</string>
+    <string name="common_delete_photo">删除照片</string>
+    <string name="common_confirm_ok_text">确认</string>
+    <string name="common_confirm_detail">查看详情</string>
+    <string name="common_confirm_password_hint">输入密码</string>
+    <string name="common_confirm_password_repeat_hint">再次输入密码</string>
+
+    <!-- 扫一扫-->
+    <string name="common_scan_activity_default_title">扫一扫</string>
+    <string name="common_scan_other_title">扫描二维码</string>
+    <string name="common_scan_my_title">我的二维码</string>
+    <string name="common_scan_title">扫描二维码</string>
+    <string name="common_scan">扫描</string>
+    <string name="common_scan_album">相册</string>
+    <string name="common_scan_from_album_text">从相册选取</string>
+    <string name="common_scan_choose_qr_title">选择二维码图片</string>
+    <string name="common_scan_parse_qr_fail">查找二维码失败</string>
+    <string name="common_scan_flash_button">闪光灯</string>
+    <string name="common_scan_qr_button">我的二维码</string>
+
+    <string name="common_retrieval_service_content">后台连接已启用</string>
+    <string name="common_gcm_service_fail">BCM通信持续失败</string>
+    <string name="common_register_with_Google_Play_Services_fail">BCM无法在Google Play服务上注册</string>
+    <string name="common_chat">聊天</string>
+    <string name="common_call">通话</string>
+
+    <string name="common_notification_channel_name">聊天</string>
+    <string name="common_notification_channel_description">展示未读的聊天信息</string>
+    <string name="common_new_version_tip">新版本 %1$s 可用</string>
+    <string name="common_transfer_title">提示</string>
+    <string name="common_transfer_from_old_package">检测到本设备已安装正式版本，点击“继续”登录到正式版本。</string>
+    <string name="common_transfer_detect_new_package">此版本是Beta版，检测到本设备已安装正式版本，建议切换到正式版本。</string>
+    <string name="common_transfer_button">继续</string>
+    <string name="common_transfer_launch">确认</string>
+    <string name="common_download_origin">正在下载原文件。</string>
+    <string name="common_transfer_error_title">错误</string>
+    <string name="common_transfer_data_error">账户数据传输错误，请重试</string>
+
+    <string name="common_video_message_description">[视频]</string>
+    <string name="common_audio_message_description">[语音]</string>
+    <string name="common_location_message_description">[位置]</string>
+    <string name="common_image_message_description">[图片]</string>
+    <string name="common_link_message_description">[链接]</string>
+    <string name="common_share_channel_message_description">[广播群]</string>
+    <string name="common_system_message_description">[系统消息]</string>
+    <string name="common_file_message_description">[文件]</string>
+    <string name="common_contact_message_description">[名片]</string>
+    <string name="common_screenshot_message_description">[截图]</string>
+    <string name="common_history_message_description">[聊天记录]</string>
+    <string name="common_pin_message_description">[置顶消息]</string>
+    <string name="common_group_share_message_description">[入群邀请]</string>
+    <string name="common_adhoc_channel_invite_description">[隔空聊天邀请]</string>
+
+
+    <!-- bcm好友变更消息类型描述 -->
+    <string name="common_friend_add_message_description">[添加好友]</string>
+    <string name="common_friend_added_message_description">[被加为好友]</string>
+    <string name="common_friend_delete_message_description">[删除好友]</string>
+
+
+    <string name="common_system_notification_notice">系统的推送通知处于关闭状态。请打开以收取新消息通知。</string>
+    <string name="common_system_notification_button">开启</string>
+
+    <!-- 消息快照 -->
+    <string name="common_unsupport_type_message_snapshot">当前版本不支持查看此消息,请升级</string>
+    <string name="common_decrypt_message_error">解密失败的消息</string>
+    <string name="common_error_decrypting_message_snapshot">解密失败的消息详情</string>
+
+    <string name="common_chats_system_tip_you">你</string>
+    <string name="common_chats_system_tip_you_lower_case">你</string>
+    <string name="common_chats_group_update">群聊已更新</string>
+    <string name="common_chats_group_owner_change">%s成为新群主</string>
+    <string name="common_chats_group_invite">%1$s邀请%2$s加入群聊</string>
+    <string name="common_chats_group_join">%s加入了群聊</string>
+    <string name="common_chats_group_remove_member">%1$s将%2$s移出了群聊</string>
+    <string name="common_chats_leave_group">%s离开了群聊</string>
+    <string name="common_chats_group_remove_subscriber">%1$s将%2$s移出了群聊</string>
+    <string name="common_chats_unsubscribe_group">%s取消订阅群聊</string>
+    <string name="common_chats_group_you_recall_message">你撤回了一条消息</string>
+    <string name="common_chats_peer_recall_message">\"%s\"撤回了一条消息</string>
+    <string name="common_chats_subscribe_group">%s订阅了群聊</string>
+
+    <string name="common_chats_message_add_friend_description">你已添加\"%s\"</string>
+    <string name="common_chats_message_delete_friend_description">你已从BCM联系人中删除\"%s\"</string>
+
+    <string name="common_chats_you_recalled_message">你撤回了一条消息</string>
+    <string name="common_chats_he_recalled_message">\"%s\"撤回了一条消息</string>
+    <string name="common_chats_you_clear_history_tip">成功清理双方聊天记录</string>
+    <string name="common_chats_you_clearing_history_tip">正在尝试清理双方聊天记录</string>
+    <string name="common_chats_you_clear_history_fail_tip">清理失败</string>
+    <string name="common_chats_partner_clear_history_tip">\"%s\"清空了聊天记录</string>
+
+    <string name="common_chats_user_block_system_notice">你已屏蔽\"%s\"的会话</string>
+    <string name="common_chats_user_unblock_system_notice">你已允许接收来自\"%s\"的消息</string>
+
+    <string name="common_dialog_hidden">隐藏</string>
+
+    <string name="common_live_start_live_tip_by_you">你开始放映视频。</string>
+    <string name="common_live_stop_live_tip_by_you">你停止放映视频。</string>
+    <string name="common_live_start_live_tip">\"%s\"开始放映视频。</string>
+    <string name="common_live_stop_live_tip">\"%s\"停止放映视频。</string>
+    <string name="common_live_end_tip">视频放映结束。</string>
+    <string name="common_illegal_group_notice">你已不是本群成员</string>
+    <string name="common_error_failed">失败</string>
+    <string name="common_chats_network_connecting">连接中…</string>
+
+    <!--image picker-->
+    <string name="common_piece">张</string>
+    <string name="common_you_have_a_select_limit">最多选择%1$s张图片</string>
+    <string name="common_select_complete">完成(%1$s/%2$s)</string>
+    <string name="common_all_images">全部图片</string>
+    <string name="common_string_select">选择</string>
+    <string name="common_string_preview">预览</string>
+    <string name="common_string_save">保存</string>
+    <string name="common_album">相册</string>
+    <string name="common_all_photos">全部照片</string>
+    <string name="common_take_photo">拍摄照片</string>
+    <string name="common_pick_photo_size_limit">最多选择%d张图片</string>
+
+    <!-- Search -->
+    <string name="common_search_display_title">搜索</string>
+
+    <!-- webRTC notification -->
+    <string name="common_webrtc_call_default_description">展示未处理的通话通知</string>
+    <string name="common_webrtc_call_channel_description">展示未处理的通话通知</string>
+
+    <!-- friend -->
+    <string name="common_chats_stranger_disturb_notice">%s 不接收陌生人消息。 </string>
+
+    <!-- group share-->
+    <string name="common_chats_group_join_request_description">%s请求加入群组。 </string>
+    <string name="common_chats_group_invite_single_description">%s邀请%s加入群组。 </string>
+    <string name="common_chats_group_invite_multi_description">%s邀请%d个成员加入群组。 </string>
+    <string name="common_chats_group_request_detail_description">详情</string>
+    <string name="common_chats_group_request_handled_description">已处理</string>
+    <string name="common_chats_group_default_name">未命名群组</string>
+    <string name="common_chats_group_default_display_name">群聊</string>
+    <string name="common_network_connection_error">网络连接失败,请稍后再试</string>
+
+    <!--notification-->
+    <string name="common_notification_friend_single">你有1条好友请求</string>
+    <string name="common_notification_friend_multiple">你有%d条好友请求</string>
+
+    <!-- Search -->
+    <string name="common_recent_search_title">最近搜索</string>
+    <string name="common_current_search_contact_title">联系人</string>
+    <string name="common_current_search_contact_more">更多联系人</string>
+    <string name="common_current_search_group_title">群聊</string>
+    <string name="common_current_search_group_more">更多群聊</string>
+    <string name="common_current_search_adhoc_title">隔空聊天</string>
+    <string name="common_current_search_adhoc_more">更多隔空聊天</string>
+    <string name="common_go_setting_wifi">使用隔空聊天功能需要打开手机Wi-Fi</string>
+    <string name="common_ble_go_setting">使用隔空聊天功能需要打开手机蓝牙</string>
+    <string name="common_gps_go_setting">使用隔空聊天功能需要打开手机定位</string>
+    <string name="common_alert_tip">提示</string>
+    <string name="common_alert_go_setting">去设置</string>
+
+    <!--invite share-->
+    <string name="common_invite_share_title">发送邀请到&#8230;</string>
+    <string name="common_invite_share_copy_invitation">复制邀请</string>
+    <string name="common_invite_share_more">更多</string>
+    <string name="common_invite_share_sms">短信</string>
+    <string name="common_invite_share_email">电子邮件</string>
+    <string name="common_invite_share_copy">复制</string>
+    <string name="common_invite_share_wechat">微信</string>
+    <string name="common_invite_share_weibo">微博</string>
+    <string name="common_invite_share_twitter_tweet">推文</string>
+    <string name="common_invite_share_twitter_direct_message">私信</string>
+
+    <!--database migrate-->
+    <string name="common_database_migrate_title">数据库升级</string>
+    <string name="common_database_migrate_content">请耐心等待数据库升级完成</string>
+    <string name="common_database_migrate_finish_login">升级成功。正在登录</string>
+    <string name="common_database_migrate_failed">升级失败</string>
+    <string name="common_database_migrate_failed_content">数据库升级失败，历史聊天内容可能无法正常查看。造成的不便我们深感歉意，我们将尽快解决此问题。</string>
+
+    <!-- 基层服务提示 -->
+    <string name="common_too_low_version_notice">当前App版本过低，升级后才能完成此操作</string>
+    <string name="common_server_request_fail_description">服务请求失败，返回状态码 %d</string>
+    <string name="common_server_request_cancel_description">服务请求被取消</string>
+    <string name="common_server_request_fail_no_code_description">服务请求失败</string>
+
+    <!-- 权限弹窗提示 -->
+    <string name="common_permission_rationale_notice">您拒绝了此权限，该功能将无法正常使用，请到设置页授予权限</string>
+    <string name="common_request_basic_permission_title">权限请求</string>
+    <string name="common_request_basic_permission_message">BCM需要储存权限才能正常使用。</string>
+    <string name="common_request_basic_permission_grant">授予权限</string>
+    <string name="common_service_unreachable">无法访问服务器</string>
+    <string name="common_service_unreachable_tip">无法通过当前网络访问BCM服务器</string>
+    <string name="common_service_unreachable_try_proxy">使用代理</string>
+    <string name="common_ignore">忽略</string>
+    <string name="common_message_decrypted_fail_error">解密密钥已过期，%s条历史消息无法解密</string>
+
+    <!-- 二维码相关 -->
+    <string name="common_unsupported_qr_code_description">不支持的二维码</string>
+
+    <string name="common_save_success">保存成功</string>
+    <string name="common_save_fail">保存失败</string>
+</resources>

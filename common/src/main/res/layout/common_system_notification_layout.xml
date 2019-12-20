@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/system_notification_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerInside"
+        android:paddingTop="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:paddingStart="0dp"
+        android:src="@drawable/common_tag_close"
+        android:contentDescription=""
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <com.bcm.messenger.common.ui.StateButton
+        android:id="@+id/system_notification_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:text="@string/common_system_notification_button"
+        android:textSize="12sp"
+        style="@style/CommonBlackThinTextBgStyle"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <TextView
+        android:id="@+id/system_notification_notice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="left|top"
+        android:text="@string/common_system_notification_notice"
+        android:textColor="@color/common_color_black"
+        android:textSize="14sp"
+        android:layout_marginEnd="10dp"
+        android:lineSpacingExtra="0dp"
+        tools:text="Test Test"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/system_notification_close"
+        app:layout_constraintRight_toLeftOf="@id/system_notification_btn"/>
+
+</merge>

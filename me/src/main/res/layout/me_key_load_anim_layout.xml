@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/key_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/me_generate_account_key_result_bg_9"
+        android:padding="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/account_key_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:text="@string/me_account_key"
+            android:textColor="@color/common_color_white"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/public_key_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/me_public_key"
+            android:textColor="@color/common_color_white"
+            android:textSize="14sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/account_key_tv" />
+
+        <FrameLayout
+            android:id="@+id/anim_text_layout_one"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/me_bg_color_genkey_radius_4dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/public_key_tv">
+
+            <EditText
+                android:id="@+id/anim_text_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@null"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:padding="5dp"
+                android:scrollbars="horizontal"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textColor="@color/common_color_white"
+                android:textSize="15sp" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/private_key_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/me_private_key"
+            android:textColor="@color/common_color_white"
+            android:textSize="14sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/anim_text_layout_one" />
+
+        <FrameLayout
+            android:id="@+id/anim_text_layout_two"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/me_bg_color_genkey_radius_4dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/private_key_tv">
+
+            <EditText
+                android:id="@+id/anim_text_two"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_gravity="center_vertical"
+                android:background="@null"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:padding="5dp"
+                android:text=""
+                android:scrollbars="horizontal"
+                android:singleLine="true"
+                android:textColor="@color/common_color_white"
+                android:textSize="15sp" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/anim_key_gen_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:maxLines="1"
+            android:textColor="@color/common_color_white"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/anim_text_layout_two" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <TextView
+        android:id="@+id/account_key_anim_tips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:alpha="0"
+        android:gravity="center"
+        android:text="@string/me_account_key_anim_tips"
+        android:textColor="@color/common_color_white"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/key_layout" />
+
+    <ImageView
+        android:id="@+id/key_link_next"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="150dp"
+        android:scaleX="0"
+        android:scaleY="0"
+        android:src="@drawable/me_next_black_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/account_key_anim_tips" />
+
+    <ImageView
+        android:id="@+id/startup_back_btn"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:src="@drawable/common_back_arrow_white_icon"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/account_info_btn"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:src="@drawable/common_info_icon"
+        android:visibility="gone"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

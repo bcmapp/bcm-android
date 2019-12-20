@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#182231">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/receive_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:title_bar_background="@color/common_color_transparent"
+        app:center_text="@string/wallet_receive_title"
+        app:center_text_color="@color/common_color_white"
+        app:left_image="@drawable/common_back_arrow_white_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/receive_bg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="55dp"
+        android:contentDescription="@string/wallet_receive_qr_description"
+        android:scaleType="fitXY"
+        android:src="@drawable/wallet_receive_bg"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/receive_title_bar"/>
+
+
+    <TextView
+        android:id="@+id/receive_address"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center"
+        android:textColor="@color/common_color_white"
+        android:textSize="13sp"
+        android:singleLine="true"
+        android:ellipsize="middle"
+        android:drawableEnd="@drawable/wallet_receive_paste_icon"
+        android:drawablePadding="10dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintLeft_toLeftOf="@id/receive_bg"
+        app:layout_constraintRight_toRightOf="@id/receive_bg"
+        app:layout_constraintTop_toTopOf="@id/receive_bg"
+        tools:text="ACTMqPU4DDeez93cj6wFy5DdAWbeK1gP91os"/>
+
+
+    <ImageView
+        android:id="@+id/receive_qr"
+        android:layout_width="255dp"
+        android:layout_height="255dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
+        android:contentDescription="@string/wallet_receive_qr_description"
+        app:layout_constraintLeft_toLeftOf="@id/receive_bg"
+        app:layout_constraintRight_toRightOf="@id/receive_bg"
+        app:layout_constraintBottom_toBottomOf="@id/receive_bg" />
+
+
+    <ImageView
+        android:id="@+id/receive_qr_save"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/wallet_receive_save_icon"
+        android:scaleType="center"
+        android:layout_marginTop="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

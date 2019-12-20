@@ -1,0 +1,32 @@
+group 'com.bcm.plugin.fcm'
+version '1.0.0'
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'com.novoda.bintray-release'
+plugin_version = "1.0.0"
+publish {
+    userOrg = 'fcm-analytics'
+    groupId = 'com.bcm.plugin.fcm'
+    artifactId = 'analytics_disable'
+    publishVersion = plugin_version
+    desc = 'FCM analytics disable plugin'
+    website = ''
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile 'com.android.tools.build:gradle-api:3.0.0'
+    compile 'org.ow2.asm:asm:5.1'
+    compile 'commons-io:commons-io:2.6'
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: uri('../repo'))
+        pom.groupId = 'com.bcm.plugin.fcm'
+        pom.artifactId = 'analytics_disable'
+        pom.version = plugin_version
+    }
+}

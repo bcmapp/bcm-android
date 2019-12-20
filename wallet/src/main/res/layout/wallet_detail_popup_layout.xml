@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/common_popup_bg"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/popup_new"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/common_horizontal_gap"
+        android:text="@string/wallet_popup_create_description"
+        android:textColor="@color/common_content_primary_color"
+        android:textSize="16sp"/>
+
+    <View
+        android:id="@+id/popup_new_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_line_color"/>
+
+    <TextView
+        android:id="@+id/popup_import"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/common_horizontal_gap"
+        android:text="@string/wallet_popup_import_private_description"
+        android:textColor="@color/common_content_primary_color"
+        android:textSize="16sp"/>
+
+    <View
+        android:id="@+id/popup_import_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_line_color"/>
+
+    <TextView
+        android:id="@+id/popup_export"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/common_horizontal_gap"
+        android:text="@string/wallet_popup_export_private_description"
+        android:textColor="@color/common_content_primary_color"
+        android:textSize="16sp"/>
+
+    <View
+        android:id="@+id/popup_export_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_line_color"/>
+
+    <TextView
+        android:id="@+id/popup_delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/common_horizontal_gap"
+        android:text="@string/wallet_popup_delete_description"
+        android:textColor="@color/common_color_ff3737"
+        android:textSize="16sp"/>
+
+    <View
+        android:id="@+id/popup_delete_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_line_color"/>
+
+    <TextView
+        android:id="@+id/popup_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/common_horizontal_gap"
+        android:text="@string/wallet_popup_cancel_description"
+        android:textColor="@color/common_color_999999"
+        android:textSize="16sp"/>
+
+    <!--<View-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="@dimen/common_line_height"-->
+    <!--android:background="@color/common_line_color"/>-->
+
+</LinearLayout>

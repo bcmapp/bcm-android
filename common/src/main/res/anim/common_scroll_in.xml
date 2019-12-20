@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- push_buttom_out.xml-->
+<set xmlns:android="http://schemas.android.com/apk/res/android" >
+    <translate
+        android:duration="250"
+        android:fromYDelta="-100%p"
+        android:toYDelta="0" />
+</set>

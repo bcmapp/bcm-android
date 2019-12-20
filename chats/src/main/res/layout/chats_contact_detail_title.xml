@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_white"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <com.bcm.messenger.common.ui.IndividualAvatarView
+        android:id="@+id/contact_detail_photo_image"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="15dp"
+        android:clickable="false"
+        android:cropToPadding="true"
+        android:transitionName="contact_photo"/>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/contact_detail_photo_image"
+        android:layout_marginLeft="14dp">
+        <TextView
+            android:id="@+id/tv_contact_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textSize="21sp"
+            android:textColor="#131313"
+            tools:text="wphgwpgpwjgpowejgp"
+            />
+        <TextView
+            android:id="@+id/tv_add_contact_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/tv_contact_name"
+            android:layout_marginTop="13dp"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="#999999"
+            android:textSize="12sp"
+            tools:text="weoiwejglwng"/>
+    </RelativeLayout>
+</RelativeLayout>

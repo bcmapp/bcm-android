@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_background_color">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/chats_group_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.bcm.messenger.common.ui.CommonGradientLayout
+                android:id="@+id/chats_group_header_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/common_contacts_dialog_top_bg">
+
+                <com.bcm.messenger.common.ui.RecipientAvatarView
+                    android:id="@+id/chats_group_control_avatar"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="80dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.bcm.messenger.common.ui.emoji.EmojiTextView
+                    android:id="@+id/group_control_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="40dp"
+                    android:drawableEnd="@drawable/common_right_arrow_white_icon"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxWidth="300dp"
+                    android:maxLines="1"
+                    android:textColor="@color/common_color_white"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chats_group_control_avatar"
+                    tools:text="Tom Bostae" />
+
+            </com.bcm.messenger.common.ui.CommonGradientLayout>
+
+            <LinearLayout
+                android:id="@+id/chats_group_members_item"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="-10dp"
+                android:background="@drawable/chats_group_control_circle_background"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:includeFontPadding="false"
+                    android:lines="1"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="0dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/chats_group_members"
+                    android:textColor="@color/common_color_black"
+                    android:textSize="17sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/chats_group_member_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:includeFontPadding="false"
+                    android:textSize="17sp"
+                    android:textColor="@color/common_content_second_color"
+                    tools:text="40 members " />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/common_right_arrow_icon" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/group_member_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/common_color_white" />
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/chats_group_notice_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chats_setting_item_height"
+                app:setting_item_line="false"
+                app:setting_item_name="@string/chats_group_notice"
+                app:setting_item_right="arrow"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/invite_join_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setting_item_line="true"
+                app:setting_item_name="@string/chats_group_setting_invite_join_title"
+                app:setting_item_head="@string/chats_group_setting_admin_actions_title"
+                app:setting_item_right="none"
+                app:setting_item_right_custom="@drawable/chats_group_setting_invite_icon"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/approval_joining_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setting_item_line="true"
+                app:setting_item_name="@string/chats_group_setting_joining_approval_title"
+                app:setting_item_sub_name="@string/chats_group_setting_joining_approval_subtitle"
+                app:setting_item_right="none"
+                app:setting_item_switch="off" />
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/joining_request_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chats_setting_item_height"
+                app:setting_item_line="false"
+                app:setting_item_name="@string/chats_group_setting_joining_request_title"
+                app:setting_item_right="arrow" />
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/stick_on_top_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setting_item_line="true"
+                app:setting_item_name="@string/chats_group_setting_stick_head"
+                app:setting_item_right="none"
+                app:setting_item_switch="off"
+                app:setting_item_head="@string/chats_group_setting_chat_actions_title" />
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/chats_group_notification_switch"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chats_setting_item_height"
+                app:setting_item_line="true"
+                app:setting_item_name="@string/chats_group_setting_notification_head"
+                app:setting_item_right="none"
+                app:setting_item_switch="off" />
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/chats_group_media_browser"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chats_setting_item_height"
+                app:setting_item_line="false"
+                app:setting_item_name="@string/chats_media_and_files"
+                app:setting_item_right="arrow" />
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/clear_history_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setting_item_head="@string/chats_group_setting_footprint_title"
+                app:setting_item_line="false"
+                app:setting_item_name="@string/chats_user_clear_history"
+                app:setting_item_right="none"
+                app:setting_item_right_custom="@drawable/chats_group_setting_clear_history_icon"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/leave_group_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setting_item_head="@string/chats_group_setting_other_title"
+                app:setting_item_line="false"
+                app:setting_item_name="@string/chats_group_setting_leave_head"
+                app:setting_item_name_color="@color/common_content_warning_color"
+                app:setting_item_right="none"
+                app:setting_item_right_custom="@drawable/chats_group_setting_delete_icon"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/chats_group_setting_title"
+        style="@style/CommonTitleBarStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

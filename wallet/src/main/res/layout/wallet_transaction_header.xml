@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/common_horizontal_gap"
+    android:paddingRight="@dimen/common_horizontal_gap"
+    android:paddingBottom="@dimen/common_vertical_gap">
+
+    <ImageView
+        android:id="@+id/coin_top_bg"
+        android:layout_width="0dp"
+        android:layout_height="140dp"
+        android:background="@drawable/wallet_assets_bg"
+        android:contentDescription=""
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/coin_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:drawableStart="@drawable/wallet_eth_white_icon"
+        android:drawablePadding="11dp"
+        android:textColor="@color/common_color_white"
+        android:textSize="15sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintTop_toTopOf="@id/coin_top_bg"
+        app:layout_constraintLeft_toLeftOf="@id/coin_top_bg"
+        tools:text="Bitcoin No1"/>
+
+    <ImageView
+        android:id="@+id/coin_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:scaleType="center"
+        android:src="@drawable/wallet_name_edit_icon"
+        android:contentDescription="@string/wallet_coin_edit_description"
+        app:layout_constraintTop_toTopOf="@id/coin_name"
+        app:layout_constraintBottom_toBottomOf="@id/coin_name"
+        app:layout_constraintRight_toRightOf="@id/coin_top_bg"/>
+
+    <TextView
+        android:id="@+id/coin_balance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/common_color_white"
+        android:textSize="15sp"
+        android:gravity="end"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:lineSpacingExtra="11dp"
+        app:layout_constraintRight_toRightOf="@id/coin_top_bg"
+        app:layout_constraintBottom_toBottomOf="@id/coin_top_bg"
+        tools:text="100 BTC"/>
+
+    <TextView
+        android:id="@+id/transaction_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:text="@string/wallet_transaction_header_title"
+        android:textColor="@color/common_content_primary_color"
+        android:textSize="16sp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintStart_toStartOf="@id/coin_top_bg"
+        app:layout_constraintEnd_toEndOf="@id/coin_top_bg"
+        app:layout_constraintTop_toBottomOf="@id/coin_top_bg"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

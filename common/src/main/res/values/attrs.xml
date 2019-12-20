@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="theme_type" format="string"/>
+
+
+    <attr name="emoji_tab_strip_background" format="color"/>
+    <attr name="emoji_tab_indicator" format="color"/>
+    <attr name="emoji_tab_underline" format="color"/>
+    <attr name="emoji_tab_seperator" format="color"/>
+    <attr name="emoji_background" format="color"/>
+    <attr name="emoji_text_color" format="color"/>
+
+    <attr name="emoji_category_recent" format="reference"/>
+    <attr name="emoji_category_people" format="reference"/>
+    <attr name="emoji_category_nature" format="reference"/>
+    <attr name="emoji_category_foods" format="reference"/>
+    <attr name="emoji_category_activity" format="reference"/>
+    <attr name="emoji_category_places" format="reference"/>
+    <attr name="emoji_category_objects" format="reference"/>
+    <attr name="emoji_category_symbol" format="reference"/>
+    <attr name="emoji_category_flags" format="reference"/>
+    <attr name="emoji_category_emoticons" format="reference"/>
+
+
+    <attr name="conversation_icon_attach_audio" format="reference"/>
+    <attr name="conversation_icon_attach_video" format="reference"/>
+
+
+    <declare-styleable name="EmojiTextView">
+        <attr name="scaleEmojis" format="boolean"/>
+    </declare-styleable>
+
+    <string-array name="pref_media_download_mobile_data_default">
+        <item>image</item>
+        <item>audio</item>
+    </string-array>
+
+    <string-array name="pref_media_download_wifi_default">
+        <item>image</item>
+        <item>audio</item>
+        <item>video</item>
+        <item>documents</item>
+    </string-array>
+
+    <string-array name="pref_media_download_roaming_default"/>
+
+
+    <!--Public References-->
+    <attr name="common_list_item_divider" format="reference|color"/>
+    <attr name="common_list_item_selector" format="reference|color"/>
+
+    <declare-styleable name="CommonScrollTitleLayoutStyle">
+        <attr name="common_title_text_color" format="reference|color" />
+        <attr name="common_bigtitle_text_color" format="reference|color" />
+        <attr name="common_title_text_size" format="reference|dimension" />
+        <attr name="common_bigtitle_text_size" format="reference|dimension" />
+        <attr name="common_notice_text_color" format="reference|color" />
+        <attr name="common_notice_text_size" format="reference|dimension" />
+        <attr name="common_notice_background_color" format="reference|color" />
+
+    </declare-styleable>
+
+    <!-- Common SearchBar -->
+    <declare-styleable name="CommonSearchBarStyle">
+        <attr name="common_show_title" format="boolean"/>
+        <attr name="common_show_mode">
+            <enum name="edit" value="0"/>
+            <enum name="display" value="1"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="CommonShadeViewStyle">
+        <attr name="common_shade_title_color" format="reference|color"/>
+        <attr name="common_shade_title_size" format="reference|dimension"/>
+        <attr name="common_shade_subtitle_size" format="reference|dimension"/>
+        <attr name="common_shade_subtitle_color" format="reference|color"/>
+    </declare-styleable>
+
+    <declare-styleable name="CommonRecipientPhotoViewStyle">
+        <attr name="recipient_photo_name_size" format="reference|dimension" />
+        <attr name="recipient_photo_name_color" format="reference|color" />
+        <attr name="recipient_photo_radius" format="dimension"/>
+        <attr name="recipient_photo_oval" format="boolean"/>
+        <attr name="recipient_photo_custom_img" format="reference"/>
+    </declare-styleable>
+
+    <!--Verify code-->
+    <declare-styleable name="VerCodeEditText">
+        <attr name="figures" format="integer" />
+        <attr name="verCodeMargin" format="dimension" />
+        <attr name="figureBackground" format="reference" />
+        <attr name="figureSize" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="CommonSidebarStyle">
+        <attr name="sidebar_text_color" format="reference|color"/>
+        <attr name="sidebar_text_selected_color" format="reference|color"/>
+        <attr name="sidebar_text_size" format="reference|dimension"/>
+        <attr name="sidebar_hint_size" format="dimension" />
+        <attr name="sidebar_hint_font" format="dimension"/>
+        <attr name="sidebar_hint_gap" format="dimension"/>
+        <attr name="sidebar_hint_background" format="reference|color"/>
+        <attr name="sidebar_hint_color" format="reference|color"/>
+    </declare-styleable>
+
+    <declare-styleable name="CommonTitleBar2">
+        <attr name="fill_status_bar" format="reference|boolean" />
+        <attr name="title_bar_background" format="reference" />
+        <attr name="title_bar_height" format="reference|dimension" />
+        <attr name="show_bottom_line" format="reference|boolean" />
+        <attr name="bottom_line_color" format="reference|color" />
+        <attr name="bottom_line_height" format="reference|dimension" />
+        <attr name="title_bar_elevation" format="reference|dimension" />
+
+        <attr name="left_type" format="reference|enum">
+            <!--hide will set center text left alligment，Use none if center aliigment.-->
+            <enum name="hide" value="-1" />
+            <enum name="none" value="0" />
+            <enum name="text" value="1" />
+            <enum name="image" value="2" />
+            <enum name="custom" value="3" />
+        </attr>
+        <attr name="left_text" format="string" />
+        <attr name="left_text_color" format="reference|color" />
+        <attr name="left_text_size" format="reference|dimension" />
+        <attr name="left_text_image" format="reference" />
+        <attr name="left_image" format="reference" />
+        <attr name="left_custom_view" format="reference" />
+
+        <attr name="right_type" format="reference|enum">
+            <enum name="none" value="0" />
+            <enum name="text" value="1" />
+            <enum name="image" value="2" />
+            <enum name="custom" value="3" />
+        </attr>
+        <attr name="right_text" format="string" />
+        <attr name="right_text_color" format="reference|color" />
+        <attr name="right_text_size" format="reference|dimension" />
+        <attr name="right_text_image" format="reference" />
+        <attr name="right_image" format="reference" />
+        <attr name="right_custom_view" format="reference" />
+
+        <attr name="center_type" format="reference|enum">
+            <enum name="none" value="0" />
+            <enum name="text" value="1" />
+            <enum name="custom" value="3" />
+        </attr>
+        <attr name="center_text_align" format="reference|enum">
+            <enum name="center" value="0" />
+            <enum name="left" value="1" />
+            <enum name="right" value="2" />
+        </attr>
+        <attr name="center_text_style" format="reference|enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+        </attr>
+        <attr name="center_text" format="string" />
+        <attr name="center_text_color" format="reference|color" />
+        <attr name="center_text_size" format="reference|dimension" />
+        <attr name="center_custom_view" format="reference" />
+
+    </declare-styleable>
+
+    <declare-styleable name="StateButton">
+
+        <!--text color-->
+        <attr name="normalTextColor" format="color|reference"/>
+        <attr name="pressedTextColor" format="color|reference"/>
+        <attr name="unableTextColor" format="color|reference"/>
+
+        <!--stroke width and color, dash width, dash gap-->
+        <attr name="strokeDashWidth" format="dimension|reference"/>
+        <attr name="strokeDashGap" format="dimension|reference"/>
+        <attr name="normalStrokeWidth" format="dimension|reference"/>
+        <attr name="pressedStrokeWidth" format="dimension|reference"/>
+        <attr name="unableStrokeWidth" format="dimension|reference"/>
+        <attr name="normalStrokeColor" format="color|reference"/>
+        <attr name="pressedStrokeColor" format="color|reference"/>
+        <attr name="unableStrokeColor" format="color|reference"/>
+
+        <!--background color-->
+        <attr name="normalBackgroundColor" format="color|reference"/>
+        <attr name="pressedBackgroundColor" format="color|reference"/>
+        <attr name="unableBackgroundColor" format="color|reference"/>
+
+        <!--background radius-->
+        <attr name="backgroundRadius" format="dimension|reference"/>
+        <attr name="backgroundRound" format="boolean|reference"/>
+
+        <!--animation duration-->
+        <attr name="animationDuration" format="integer|reference"/>
+
+    </declare-styleable>
+
+    <!-- Common SettingItem -->
+    <declare-styleable name="CommonSettingItemStyle">
+        <attr name="setting_item_logo" format="reference"/>
+        <attr name="setting_item_logo_size" format="dimension"/>
+        <attr name="setting_item_logo_margin" format="dimension"/>
+        <attr name="setting_item_head_background" format="reference|color"/>
+        <attr name="setting_item_head_padding_top" format="dimension"/>
+        <attr name="setting_item_head_padding_bottom" format="dimension"/>
+        <attr name="setting_item_head_color" format="reference|color"/>
+        <attr name="setting_item_head" format="string"/>
+        <attr name="setting_item_body_background" format="reference|color"/>
+        <attr name="setting_item_name_color" format="reference|color"/>
+        <attr name="setting_item_sub_name_color" format="reference|color" />
+        <attr name="setting_item_name" format="string"/>
+        <attr name="setting_item_sub_name" format="string" />
+        <attr name="setting_item_tip_text" format="string"/>
+        <attr name="setting_item_tip_color" format="color"/>
+        <attr name="setting_item_tip_icon" format="reference"/>
+        <attr name="setting_item_line" format="boolean"/>
+        <attr name="setting_item_padding_top" format="dimension"/>
+        <attr name="setting_item_padding_bottom" format="dimension"/>
+        <attr name="setting_item_switch">
+            <enum name="none" value="0"/>
+            <enum name="on" value="1"/>
+            <enum name="off" value="2"/>
+        </attr>
+        <attr name="setting_item_right">
+            <enum name="none" value="0"/>
+            <enum name="loading" value="1"/>
+            <enum name="arrow" value="2"/>
+            <enum name="yes" value="3" />
+            <enum name="arrow_white" value="4" />
+        </attr>
+        <attr name="setting_item_right_custom" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="DataPicker">
+        <attr name="textColor" format="color" />
+        <attr name="dividerColor" format="color" />
+        <attr name="dividerHeight" format="dimension" />
+    </declare-styleable>
+    <!--EditText with clear button-->
+    <declare-styleable name="ClearButtonEditText">
+        <attr name="showClearButton" format="boolean" />
+        <attr name="clearButtonResource" format="reference" />
+        <attr name="clearButtonWidth" format="dimension" />
+        <attr name="clearButtonHeight" format="dimension" />
+        <attr name="clearButtonPadding" format="dimension" />
+        <attr name="paddingEnd" format="dimension" />
+
+    </declare-styleable>
+
+    <declare-styleable name="BadgeLayoutStyle">
+        <attr name="locate_pos_id" format="integer|reference"/>
+        <attr name="locate_pos_gap" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="CommonLoadingView">
+        <attr name="circle_size" format="enum">
+            <enum name="small" value="1" />
+            <enum name="middle" value="2" />
+            <enum name="large" value="3" />
+        </attr>
+        <attr name="circle_color" format="enum">
+            <enum name="black" value="1" />
+            <enum name="white" value="2" />
+        </attr>
+        <attr name="auto_start" format="boolean" />
+    </declare-styleable>
+
+</resources>

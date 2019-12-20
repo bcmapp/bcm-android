@@ -1,0 +1,247 @@
+import com.bcm.plugin.fcm.FCMAnalyticsDisable
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply from: '../proguard/proguardconfig.gradle'
+apply plugin: FCMAnalyticsDisable
+
+android {
+    compileSdkVersion compile_sdk_version as int
+    defaultConfig {
+        applicationId getAppId()
+        minSdkVersion min_sdk_version as int
+        targetSdkVersion target_sdk_version as int
+
+        versionCode System.getenv("BUILD_NUMBER") as Integer ?: 2000
+        versionName version_name
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
+
+        buildConfigField "long", "BUILD_TIMESTAMP", getLastCommitTimestamp() + "L"
+
+        dimension "none"
+        ext.websiteUpdateUrl = "null"
+        buildConfigField "String", "NOPLAY_UPDATE_URL", "$ext.websiteUpdateUrl"
+
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
+    }
+
+    signingConfigs {
+        releasesign
+
+        devsign {
+            storeFile file("../keystore/android.jks")
+            storePassword "123456"
+            keyAlias "android"
+            keyPassword "123456"
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.devsign
+            manifestPlaceholders = [
+                    gdkey: "35d0aa0460cbeff768b94afd5d9aa6cb"
+            ]
+            jniDebuggable = true
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.releasesign
+            manifestPlaceholders = [
+                    gdkey: "9e62bcadd945dc41a9d195bd5ae01838"
+            ]
+        }
+    }
+
+    flavorDimensions "channels"
+    productFlavors {
+
+        official {
+            dimension "channels"
+        }
+
+        releaseOfficial {
+            dimension "channels"
+        }
+
+        releaseGoogle {
+            dimension "channels"
+        }
+
+        release9apps {
+            dimension "channels"
+        }
+
+        releaseApkpure {
+            dimension "channels"
+        }
+
+        dev {
+            dimension "channels"
+        }
+
+        productFlavors.all { flavor ->
+            if (name == 'release9apps') {
+                flavor.manifestPlaceholders = [
+                        af_media_source: "9apps_int",
+                        channels_name: name
+                ]
+            }
+            else if (name == 'releaseApkpure') {
+                flavor.manifestPlaceholders = [
+                        af_media_source: "apkpurebcm",
+                        channels_name: name
+                ]
+            }else {
+                flavor.manifestPlaceholders = [
+                        af_media_source: "",
+                        channels_name: name
+                ]
+            }
+
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def abiName = output.getFilter(com.android.build.OutputFile.ABI)
+            if (abiName == null) {
+                abiName = ""
+            } else {
+                abiName = "-" + abiName
+            }
+            def buildTypeName = variant.buildType.name == "debug" ? "-${variant.buildType.name}" : ""
+            outputFileName = "bcm-${variant.versionName}-${variant.versionCode}-${variant.flavorName}${buildTypeName}${abiName}.apk"
+        }
+
+        delete "target/"
+        variant.assemble.doLast { assemble ->
+            copy {
+                from variant.outputs*.outputFile
+                into "target/"
+            }
+            copy {
+                from 'build/outputs/mapping/official/release'
+                into 'target/proguard'
+            }
+        }
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        /*exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'*/
+        exclude 'lib/x86_64/darwin/libscrypt.dylib'
+    }
+
+
+    lintOptions {
+        abortOnError false
+    }
+
+    splits {
+        abi {
+            enable true
+            reset()
+            universalApk true
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    api project(':chats')
+    api project(':me')
+    api project(':wallet')
+    api project(':contacts')
+    api project(':netswitchy')
+    api project(':adhoc-client')
+
+    officialImplementation project(':umeng')
+    releaseOfficialImplementation project(':umeng')
+    officialImplementation project(':amap')
+    releaseOfficialImplementation project(':amap')
+    releaseGoogleImplementation project(':appsflyer')
+    release9appsImplementation project(':appsflyer')
+    releaseApkpureImplementation project(':appsflyer')
+
+
+    api('cn.hikyson.rocket:rocket-core:2.4.0') {
+        exclude group: 'androidx.appcompat', module: 'appcompat'
+    }
+
+    kapt 'com.bcm.router:processor:1.0.0'
+    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_compiler_version"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+kapt {
+    generateStubs = true
+    arguments {
+        arg("MODULE_NAME", project.getName())
+    }
+}
+
+File signFile = file(System.getenv('HOME') + "/.android/sign.properties")
+if (signFile.canRead()) {
+    Properties p = new Properties()
+    p.load(new FileInputStream(signFile))
+
+    if (p != null
+            && p.containsKey('key.store')
+            && p.containsKey('key.store.password')
+            && p.containsKey('key.alias')
+            && p.containsKey('key.alias.password')
+    ) {
+        println "RELEASE_BUILD: Signing..."
+
+        android.signingConfigs.releasesign.storeFile = file(p['key.store'])
+        android.signingConfigs.releasesign.storePassword = p['key.store.password']
+        android.signingConfigs.releasesign.keyAlias = p['key.alias']
+        android.signingConfigs.releasesign.keyPassword = p['key.alias.password']
+
+    } else {
+        println "RELEASE_BUILD: Required properties in signing.properties are missing"
+        android.buildTypes.release.signingConfig = null
+    }
+} else {
+    println "RELEASE_BUILD: signing.properties not found"
+    android.buildTypes.release.signingConfig = null
+}
+
+def getLastCommitTimestamp() {
+    new ByteArrayOutputStream().withStream { os ->
+        def result = exec {
+            executable = 'git'
+            args = ['log', '-1', '--pretty=format:%ct']
+            standardOutput = os
+        }
+
+        return os.toString() + "000"
+    }
+}
+

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/qr_display_title"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/chats_qr_display_title"
+        app:right_text="@string/chats_qr_copy_button"
+        app:right_type="text" />
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/qr_display_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textColor="@color/common_color_black"
+        android:textSize="18sp"
+        android:padding="@dimen/common_horizontal_gap"
+        tools:text="New Message New Message New Message New Message New Message"/>
+
+</LinearLayout>

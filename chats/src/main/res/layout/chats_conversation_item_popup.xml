@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/chats_conversation_pop_top_bg"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+
+    <!--<TextView-->
+        <!--android:id="@+id/chat_text_copy"-->
+        <!--android:layout_width="55dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="?android:selectableItemBackground"-->
+        <!--android:gravity="center"-->
+        <!--android:drawableTop="@drawable/chats_conversation_pop_copy_icon"-->
+        <!--android:drawablePadding="2dp"-->
+        <!--android:text="@string/chats_copy"-->
+        <!--android:textColor="@color/common_color_white"-->
+        <!--android:textSize="10sp" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/chat_text_reply"-->
+        <!--android:layout_width="55dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="?android:selectableItemBackground"-->
+        <!--android:gravity="center"-->
+        <!--android:drawableTop="@drawable/chats_conversation_pop_reply_icon"-->
+        <!--android:drawablePadding="2dp"-->
+        <!--android:text="@string/chats_reply"-->
+        <!--android:textColor="@color/common_color_white"-->
+        <!--android:textSize="10sp" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/chat_text_forward"-->
+        <!--android:layout_width="55dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="?android:selectableItemBackground"-->
+        <!--android:gravity="center"-->
+        <!--android:drawableTop="@drawable/chats_conversation_pop_forward_icon"-->
+        <!--android:drawablePadding="2dp"-->
+        <!--android:text="@string/chats_forward"-->
+        <!--android:textColor="@color/common_color_white"-->
+        <!--android:textSize="10sp" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/chat_text_recall"-->
+        <!--android:layout_width="55dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="?android:selectableItemBackground"-->
+        <!--android:gravity="center"-->
+        <!--android:drawableTop="@drawable/chats_conversation_pop_unsend_icon"-->
+        <!--android:drawablePadding="2dp"-->
+        <!--android:text="@string/chats_text_recall"-->
+        <!--android:textColor="@color/common_color_white"-->
+        <!--android:textSize="10sp" />-->
+
+
+    <!--<TextView-->
+        <!--android:id="@+id/chat_text_delete"-->
+        <!--android:layout_width="55dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="?android:selectableItemBackground"-->
+        <!--android:gravity="center"-->
+        <!--android:drawableTop="@drawable/chats_conversation_pop_delete_icon"-->
+        <!--android:drawablePadding="2dp"-->
+        <!--android:text="@string/chats_delete"-->
+        <!--android:textColor="@color/common_color_white"-->
+        <!--android:textSize="10sp" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/chat_text_pin"-->
+        <!--android:layout_width="55dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="?android:selectableItemBackground"-->
+        <!--android:gravity="center"-->
+        <!--android:drawableTop="@drawable/chats_20_stick_on_top"-->
+        <!--android:drawablePadding="2dp"-->
+        <!--android:text="@string/chats_pin"-->
+        <!--android:textColor="@color/common_color_white"-->
+        <!--android:textSize="10sp" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/chat_text_select"-->
+        <!--android:layout_width="55dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="?android:selectableItemBackground"-->
+        <!--android:gravity="center"-->
+        <!--android:drawableTop="@drawable/chats_conversation_pop_select_icon"-->
+        <!--android:drawablePadding="2dp"-->
+        <!--android:text="@string/chats_select"-->
+        <!--android:textColor="@color/common_color_white"-->
+        <!--android:textSize="10sp" />-->
+
+
+</LinearLayout>

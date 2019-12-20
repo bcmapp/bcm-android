@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="wallet_content_main_color">#303030</color>
+    <color name="wallet_content_second_color">@color/common_color_606060</color>
+
+    <color name="wallet_transaction_input_color">#379BFF</color>
+    <color name="wallet_transaction_output_color">#191919</color>
+</resources>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="124dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:background="@drawable/common_center_popup_background">
+
+        <TextView
+            android:id="@+id/common_popup_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:gravity="center"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/common_color_black"
+            android:text="@string/common_title_hint"/>
+
+        <FrameLayout
+            android:id="@+id/common_popup_custom_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/common_popup_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/common_color_606060"
+            android:text="@string/common_content_hint"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="-7.5dp"
+            android:layout_marginEnd="-7.5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/common_popup_cancel"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:textSize="17sp"
+                android:maxWidth="135dp"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:textColor="#379BFF"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:text="@string/common_cancel"
+                android:textAllCaps="false"
+                android:layout_marginEnd="7.5dp"
+                android:layout_marginStart="7.5dp"
+                android:background="@drawable/common_primary_thin_round_selector"
+                android:layout_weight="1"
+                />
+
+            <Button
+                android:id="@+id/common_popup_warning"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:textSize="17sp"
+                android:textColor="#FF0000"
+                android:text="Warning"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:textAllCaps="false"
+                android:minWidth="135dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:visibility="visible"
+                android:layout_marginEnd="7.5dp"
+                android:layout_marginStart="7.5dp"
+                android:background="@drawable/common_red_round_selector"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/common_popup_ok"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:textSize="17sp"
+                android:textColor="@color/common_color_white"
+                android:text="@string/common_popup_ok"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:visibility="visible"
+                android:textAllCaps="false"
+                android:minWidth="125dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_marginEnd="7.5dp"
+                android:layout_marginStart="7.5dp"
+                android:background="@drawable/common_primary_thick_round_selector"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

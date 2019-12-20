@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/share_title"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@drawable/common_item_ripple_top_8_bg"
+        android:gravity="center"
+        android:text="@string/common_invite_share_title"
+        android:textColor="@color/common_color_606060"
+        android:textSize="14sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/common_line_color" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/share_app_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/common_color_white"
+        android:paddingStart="20dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="20dp" />
+
+    <com.bcm.messenger.common.ui.CommonIndicatorView
+        android:id="@+id/share_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="37dp"
+        android:background="@color/common_color_white"
+        android:gravity="center"
+        android:orientation="horizontal" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="7dp"
+        android:background="@color/common_line_color" />
+
+    <TextView
+        android:id="@+id/share_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@drawable/common_item_ripple_bg"
+        android:gravity="center"
+        android:text="@string/common_cancel"
+        android:textColor="@color/common_color_black"
+        android:textSize="17sp" />
+</LinearLayout>

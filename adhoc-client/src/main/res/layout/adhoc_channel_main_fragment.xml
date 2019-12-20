@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/common_color_white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/adhoc_main_toolbar"
+        style="@style/CommonTitleBarStyle"
+        app:center_type="custom"
+        app:center_custom_view="@layout/adhoc_channel_main_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:left_type="hide"
+        app:right_image="@drawable/adhoc_add_channel"
+        app:right_type="image"
+        app:title_bar_height="64dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/adhoc_main_channel_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@id/adhoc_main_toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/adhoc_main_device_error"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:background="@drawable/common_item_red_ripple_bg"
+        android:gravity="left|center_vertical"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:textSize="14sp"
+        android:textColor="@color/common_color_white"
+        android:visibility="gone"
+        android:drawableEnd="@drawable/adhoc_main_device_error_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/adhoc_main_toolbar"
+        tools:text="error"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chats_pin_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/blue_view"
+        android:layout_width="5dp"
+        android:layout_height="52dp"
+        android:background="@color/common_color_379BFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="5dp"
+        android:background="@color/common_color_white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/blue_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.bcm.messenger.common.ui.IndividualAvatarView
+            android:id="@+id/chat_pin_recipient_photo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:cropToPadding="true"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/chats_pin_image"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:scaleType="centerInside"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/chats_pin_video_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/chats_14_video"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/chats_pin_image"
+            app:layout_constraintEnd_toEndOf="@+id/chats_pin_image"
+            app:layout_constraintStart_toStartOf="@+id/chats_pin_image"
+            app:layout_constraintTop_toTopOf="@+id/chats_pin_image" />
+
+        <TextView
+            android:id="@+id/chat_pin_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/chats_pin_title"
+            android:textColor="@color/common_color_379BFF"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/chat_pin_recipient_photo"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Pinned Message" />
+
+        <TextView
+            android:id="@+id/chat_pin_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/common_color_606060"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/pin_close"
+            app:layout_constraintStart_toEndOf="@+id/chat_pin_recipient_photo"
+            app:layout_constraintTop_toBottomOf="@+id/chat_pin_title"
+            app:layout_constraintHorizontal_bias="0"
+            tools:text="somenoanvsavawvawvawvawvawvwevawwvowe" />
+
+        <ImageView
+            android:id="@+id/pin_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginEnd="10dp"
+            android:scaleType="center"
+            android:src="@drawable/common_close_black_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:background="@drawable/common_item_ripple_bg"
+    tools:context=".FriendRequestsListActivity">
+
+    <com.bcm.messenger.common.ui.IndividualAvatarView
+        android:id="@+id/friend_req_avatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/friend_req_new"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/friend_req_detail"
+        app:layout_constraintStart_toEndOf="@+id/friend_req_avatar"
+        app:layout_constraintTop_toTopOf="@+id/friend_req_avatar"
+        app:srcCompat="@drawable/contacts_new_friend_request" />
+
+    <ImageView
+        android:id="@+id/friend_req_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/friend_req_detail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/friend_req_avatar"
+        app:srcCompat="@drawable/common_right_arrow_icon" />
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/friend_req_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:includeFontPadding="false"
+        android:textColor="@color/common_color_black"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toTopOf="@+id/friend_req_detail"
+        app:layout_constraintEnd_toStartOf="@+id/friend_req_arrow"
+        app:layout_constraintStart_toEndOf="@+id/friend_req_new"
+        app:layout_constraintTop_toTopOf="@+id/friend_req_avatar"
+        tools:text="Name" />
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/friend_req_detail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="15dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/common_color_A8A8A8"
+        android:textSize="13sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/friend_req_avatar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/friend_req_avatar"
+        tools:text="Request data" />
+
+    <View
+        android:id="@+id/friend_req_bottom_line"
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@color/common_line_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

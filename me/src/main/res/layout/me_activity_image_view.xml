@@ -1,0 +1,30 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/image_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/photo_preview_dock"
+        style="@style/CommonTitleBarStyle"
+        app:title_bar_background="@color/common_color_transparent"
+        app:left_image="@drawable/common_back_arrow_white_icon"
+        app:right_type="image"
+        app:right_image="@drawable/common_more_white_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.bcm.messenger.common.ui.IndividualAvatarView
+        android:id="@+id/avatar_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_below="@id/photo_preview_dock"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/photo_preview_dock"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

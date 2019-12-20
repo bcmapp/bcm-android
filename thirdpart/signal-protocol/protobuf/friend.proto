@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option java_package = "org.whispersystems.signalservice.internal.websocket";
+option java_outer_classname = "FriendProtos";
+
+package bcm;
+
+message FriendRequest {
+    string proposer = 1;      // Applicant encrypted uid
+    uint64 timestamp = 2;     // Api timestamp
+    string payload = 3;       // Api payload
+    string signature = 4;     // Applicant signature
+}
+
+message FriendReply {
+    bool approved = 1;           // true = agree, false = reject
+    string target = 2;           // Applicant uid
+    uint64 timestamp = 3;        // Timestamp in request
+    string payload = 4;          // Payload in request
+    string signature = 5;        // Reply signature
+    string requestSignature = 6; // Applicant signature
+}
+
+message DeleteFriend {
+    string proposer = 1;      // User uid will be deleted
+    uint64 timestamp = 2;     // Request time, ms
+    string signature = 3;     // Delete request signature
+}
+
+message FriendMessage {
+    repeated FriendRequest requests = 1;
+    repeated FriendReply replies = 2;
+    repeated DeleteFriend deletes = 3;
+}

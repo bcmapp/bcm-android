@@ -1,0 +1,62 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply from: '../proguard/proguardconfig.gradle'
+
+android {
+    compileSdkVersion compile_sdk_version as int
+
+    defaultConfig {
+        minSdkVersion min_sdk_version as int
+        targetSdkVersion target_sdk_version as int
+        versionCode 1
+        versionName "1.0"
+
+        resourcePrefix "me_"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "POLICY_HOST", "\"https://bcm.social/license/policy.html\""
+        buildConfigField "String", "DONATE_ADDRESS", "\"https://bcm.social/donate.html\""
+        buildConfigField "String", "BCM_KEY_ZH_ADDRESS", "\"https://bcm.social/keys_description/zh-cn.html\""
+        buildConfigField "String", "BCM_KEY_EN_ADDRESS", "\"https://bcm.social/keys_description/en.html\""
+
+        buildConfigField "String", "BCM_BACKUP_ZH_ADDRESS", "\"https://bcm.social/keys_backup_tutorial/zh-cn.html\""
+        buildConfigField "String", "BCM_BACKUP_EN_ADDRESS", "\"https://bcm.social/keys_backup_tutorial/en.html\""
+        buildConfigField "String", "BCM_FAQ_ZH_ADDRESS", "\"https://bcm.social/keys_faq/zh-cn.html\""
+        buildConfigField "String", "BCM_FAQ_EN_ADDRESS", "\"https://bcm.social/keys_faq/en.html\""
+        buildConfigField "String", "BCM_COOPERATION_ZH_ADDRESS", "\"https://bcm.social/keys_security/zh-cn.html\""
+        buildConfigField "String", "BCM_COOPERATION_EN_ADDRESS", "\"https://bcm.social/keys_security/en.html\""
+
+        buildConfigField "String", "BCM_OPEN_SOURCE_LICENSE_ADDRESS", "\"https://bcm.social/license/notice.html\""
+
+//        javaCompileOptions {
+//            annotationProcessorOptions {
+//                arguments = [MODULE_NAME: 'me']
+//            }
+//        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    androidExtensions {
+        experimental = true
+    }
+}
+
+kapt {
+    generateStubs = true
+    arguments {
+        arg("MODULE_NAME", project.getName())
+    }
+}
+
+dependencies {
+    api project(':login')
+    kapt 'com.bcm.router:processor:1.0.0'
+
+    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_compiler_version"
+    implementation 'org.jsoup:jsoup:1.12.1'
+}

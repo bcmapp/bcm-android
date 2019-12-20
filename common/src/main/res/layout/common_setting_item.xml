@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/item_head"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:textColor="@color/common_content_second_color"
+        android:textSize="14sp"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"
+        android:paddingTop="26dp"
+        android:paddingBottom="10dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="header"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_content_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"
+        app:layout_constraintTop_toBottomOf="@id/item_head"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <FrameLayout
+            android:id="@+id/item_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingStart="0dp"
+            android:paddingEnd="15dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/item_left_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription=""
+                android:scaleType="fitXY"
+                tools:src="@drawable/common_message_icon" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/item_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingStart="10dp"
+            android:paddingEnd="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/item_right_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription=""
+                android:scaleType="fitCenter"
+                tools:src="@drawable/common_right_arrow_icon"/>
+
+        </FrameLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_center"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintStart_toEndOf="@id/item_left"
+            app:layout_constraintEnd_toStartOf="@id/item_right"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <com.bcm.messenger.common.ui.emoji.EmojiTextView
+                android:id="@+id/item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textColor="@color/common_color_black"
+                android:textSize="17sp"
+                android:lineSpacingExtra="3dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="About"/>
+
+            <com.bcm.messenger.common.ui.emoji.EmojiTextView
+                android:id="@+id/item_sub_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="left"
+                android:textColor="@color/common_content_primary_color"
+                android:textSize="13sp"
+                app:layout_constraintTop_toBottomOf="@id/item_name"
+                app:layout_constraintStart_toStartOf="@id/item_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="About"
+                tools:visibility="gone"/>
+
+            <FrameLayout
+                android:id="@+id/item_center_right"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                app:layout_constraintTop_toTopOf="@id/item_name"
+                app:layout_constraintBottom_toBottomOf="@id/item_name"
+                app:layout_constraintStart_toEndOf="@id/item_name"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.bcm.messenger.common.ui.emoji.EmojiTextView
+                    android:id="@+id/item_tip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:textColor="@color/common_content_warning_color"
+                    android:textSize="17sp"
+                    android:visibility="gone"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:drawablePadding="5dp"
+                    android:drawableStart="@drawable/common_not_backup_icon"
+                    android:lineSpacingExtra="0dp"
+                    tools:text="testtesttesttesttesttest"
+                    tools:visibility="visible"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/item_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:visibility="gone"
+                    app:thumbTint="@color/common_color_white"
+                    tools:visibility="gone"/>
+
+            </FrameLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/item_line"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/common_line_height"
+            android:background="@color/common_line_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/item_center"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</merge>

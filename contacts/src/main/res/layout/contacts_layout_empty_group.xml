@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/header_channel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:drawableTop="@drawable/contacts_group_empty_icon"
+    android:drawablePadding="10dp"
+    android:gravity="center"
+    android:paddingTop="60dp"
+    android:paddingBottom="@dimen/common_vertical_gap"
+    android:paddingStart="@dimen/common_horizontal_gap"
+    android:paddingEnd="@dimen/common_horizontal_gap"
+    android:text="@string/contacts_group_empty_text"
+    android:textColor="#999999"
+    android:textSize="12sp" />
+

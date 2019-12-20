@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WalletWarningLayout">
+        <attr name="wallet_warning_modeType">
+            <enum name="reminder" value="1"/>
+            <enum name="agreement" value="2"/>
+        </attr>
+    </declare-styleable>
+</resources>

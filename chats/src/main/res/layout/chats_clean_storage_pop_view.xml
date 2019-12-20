@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_white"
+    android:orientation="vertical">
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/clean_all_photos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:setting_item_logo="@drawable/common_tick_green_icon"
+        app:setting_item_name="@string/chats_clean_pop_photos"
+        app:setting_item_right="none"
+        app:setting_item_switch="none"
+        app:setting_item_tip_color="@color/common_color_A8A8A8"
+        app:setting_item_line="true" />
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/clean_all_videos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:setting_item_logo="@drawable/common_tick_green_icon"
+        app:setting_item_name="@string/chats_clean_pop_videos"
+        app:setting_item_right="none"
+        app:setting_item_switch="none"
+        app:setting_item_tip_color="@color/common_color_A8A8A8"
+        app:setting_item_line="true"/>
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/clean_all_files"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:setting_item_logo="@drawable/common_tick_green_icon"
+        app:setting_item_name="@string/chats_clean_pop_files"
+        app:setting_item_right="none"
+        app:setting_item_switch="none"
+        app:setting_item_tip_color="@color/common_color_A8A8A8"
+        app:setting_item_line="true"/>
+
+    <TextView
+        android:id="@+id/clean_clear_view"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:textColor="#379BFF"
+        android:textSize="17sp"
+        android:gravity="center" />
+</LinearLayout>

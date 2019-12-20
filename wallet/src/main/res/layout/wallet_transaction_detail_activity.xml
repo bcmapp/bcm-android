@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/record_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/wallet_transaction_detail_title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:paddingStart="@dimen/common_horizontal_gap"
+            android:paddingEnd="@dimen/common_horizontal_gap"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/record_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="20dp"
+                android:gravity="center"
+                android:textColor="@color/common_content_primary_color"
+                android:textSize="24sp"/>
+
+            <LinearLayout
+                android:id="@+id/record_status_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/WalletTransactionRecordLayoutStyle"
+                android:layout_marginTop="40dp">
+
+                <TextView
+                    style="@style/WalletTransactionRecordHeadStyle"
+                    android:text="@string/wallet_transaction_detail_status_head"
+                    tools:text="status"/>
+
+                <TextView
+                    android:id="@+id/record_status"
+                    style="@style/WalletTransactionRecordValueStyle"
+                    tools:text="13vqRgdfdfdfdfdfdfwewefefefefejLHyZv"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/common_line_height"
+                android:background="@color/common_line_color"/>
+
+            <LinearLayout
+                android:id="@+id/record_from_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/WalletTransactionRecordLayoutStyle">
+
+                <TextView
+                    style="@style/WalletTransactionRecordHeadStyle"
+                    android:text="@string/wallet_transaction_detail_from_head"
+                    tools:text="from"/>
+
+                <TextView
+                    android:id="@+id/record_from"
+                    style="@style/WalletTransactionRecordValueStyle"
+                    tools:text="13vqRgdfdfdfdfdfdfwewefefefefejLHyZv"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/common_line_height"
+                android:background="@color/common_line_color"/>
+
+            <LinearLayout
+                android:id="@+id/record_to_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/WalletTransactionRecordLayoutStyle">
+
+                <TextView
+                    style="@style/WalletTransactionRecordHeadStyle"
+                    android:text="@string/wallet_transaction_detail_to_head"/>
+
+                <TextView
+                    android:id="@+id/record_to"
+                    style="@style/WalletTransactionRecordValueStyle"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/common_line_height"
+                android:background="@color/common_line_color"/>
+
+            <LinearLayout
+                android:id="@+id/record_fee_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/WalletTransactionRecordLayoutStyle">
+
+                <TextView
+                    android:id="@+id/record_fee_head"
+                    style="@style/WalletTransactionRecordHeadStyle"
+                    android:text="@string/wallet_transaction_detail_btc_fee_head"/>
+
+                <TextView
+                    android:id="@+id/record_fee"
+                    style="@style/WalletTransactionRecordValueStyle"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/common_line_height"
+                android:background="@color/common_line_color"/>
+
+            <LinearLayout
+                android:id="@+id/record_tx_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/WalletTransactionRecordLayoutStyle">
+
+                <TextView
+                    style="@style/WalletTransactionRecordHeadStyle"
+                    android:text="@string/wallet_transaction_detail_hash_head"/>
+
+                <TextView
+                    android:id="@+id/record_tx"
+                    style="@style/WalletTransactionRecordValueStyle"/>
+
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/common_line_height"
+                android:background="@color/common_line_color"/>
+
+            <LinearLayout
+                android:id="@+id/record_block_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/WalletTransactionRecordLayoutStyle">
+
+                <TextView
+                    style="@style/WalletTransactionRecordHeadStyle"
+                    android:text="@string/wallet_transaction_detail_block_head"/>
+
+                <TextView
+                    android:id="@+id/record_block"
+                    style="@style/WalletTransactionRecordValueStyle"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/common_line_height"
+                android:background="@color/common_line_color"/>
+
+            <LinearLayout
+                android:id="@+id/record_time_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/WalletTransactionRecordLayoutStyle">
+
+                <TextView
+                    style="@style/WalletTransactionRecordHeadStyle"
+                    android:text="@string/wallet_transaction_detail_time_head"/>
+
+                <TextView
+                    android:id="@+id/record_time"
+                    style="@style/WalletTransactionRecordValueStyle"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/common_line_height"
+                android:background="@color/common_line_color"/>
+
+
+            <ImageView
+                android:id="@+id/record_qr"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:contentDescription="@string/wallet_transaction_record_qr_description"
+                android:scaleType="fitXY"
+                android:layout_marginTop="30dp" />
+
+            <TextView
+                android:id="@+id/record_qr_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/wallet_transaction_detail_copy_url_description"
+                android:textColor="@color/common_app_primary_color"
+                android:textSize="15sp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="adhoc_verbose">#bbbbbb</color>
+    <color name="adhoc_debug">#0070bb</color>
+    <color name="adhoc_info">#48bb31</color>
+    <color name="adhoc_warn">#bbbb23</color>
+    <color name="adhoc_error">#ff0006</color>
+</resources>

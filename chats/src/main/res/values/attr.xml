@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <declare-styleable name="CountDownView">
+        <attr name="ringColor" format="color" />
+        <attr name="progressTextSize" format="dimension" />
+        <attr name="ringWidth" format="float" />
+        <attr name="progressTextColor" format="color" />
+        <attr name="countdownTime" format="integer" />
+        <attr name="centerImg" format="reference" />
+    </declare-styleable>
+
+
+</resources>

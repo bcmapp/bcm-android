@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/home_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/wallet_status_fill"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <ImageView
+            android:id="@+id/home_top_bg"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="@drawable/wallet_home_top_bg"
+            android:contentDescription=""
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ProgressBar
+            android:id="@+id/home_init_progress"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:progressDrawable="@drawable/wallet_progress_horizontal"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/home_top_bg"/>
+
+        <ImageView
+            android:id="@+id/home_popup"
+            android:layout_width="40dp"
+            android:layout_height="35dp"
+            android:contentDescription="@string/wallet_home_popup_description"
+            android:paddingEnd="@dimen/common_horizontal_gap"
+            android:paddingStart="0dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/wallet_home_popup_icon"
+            app:layout_constraintRight_toRightOf="@id/home_top_bg"
+            app:layout_constraintTop_toBottomOf="@id/wallet_status_fill"/>
+
+        <View
+            android:id="@+id/home_backup_dot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginEnd="7dp"
+            android:layout_marginTop="7dp"
+            android:background="@drawable/common_figure_badge_bg"
+            android:visibility="gone"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/wallet_status_fill"/>
+
+        <TextView
+            android:id="@+id/home_total_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="52dp"
+            android:drawablePadding="6dp"
+            android:drawableRight="@drawable/wallet_assets_open_icon"
+            android:text="@string/wallet_home_total_title"
+            android:textColor="@color/common_color_white"
+            android:textSize="14sp"
+            android:padding="6dp"
+            app:layout_constraintLeft_toLeftOf="@id/home_top_bg"
+            app:layout_constraintRight_toRightOf="@id/home_top_bg"
+            app:layout_constraintTop_toBottomOf="@id/wallet_status_fill"/>
+
+        <TextView
+            android:id="@+id/home_total_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/common_color_white"
+            android:textSize="22sp"
+            app:layout_constraintLeft_toLeftOf="@id/home_top_bg"
+            app:layout_constraintRight_toRightOf="@id/home_top_bg"
+            app:layout_constraintTop_toBottomOf="@id/home_total_title"
+            tools:text="$ 2400.12"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/home_wallet_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/home_init_progress"/>
+
+        <com.bcm.messenger.common.ui.ContentShadeView
+            android:id="@+id/home_wallet_shade"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            android:background="@color/common_color_white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/home_init_progress"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <View
+            android:id="@+id/pop_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#40000000"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/popup_full_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="@dimen/common_horizontal_gap"
+            android:paddingEnd="20dp"
+            android:paddingStart="20dp"
+            android:layout_marginEnd="15dp"
+            android:paddingTop="@dimen/common_horizontal_gap"
+            android:text="@string/wallet_popup_setting_description"
+            android:textColor="@color/common_content_primary_color"
+            android:textSize="14sp"
+            android:drawableStart="@drawable/wallet_setting_icon"
+            android:drawablePadding="8dp"
+            android:background="@drawable/common_popup_small_bg"
+            app:layout_constraintEnd_toEndOf="@id/home_popup"
+            app:layout_constraintTop_toBottomOf="@id/home_popup"
+            android:visibility="gone"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

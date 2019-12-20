@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/common_color_white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BcmUserCardActivity">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        style="@style/CommonTitleBarStyle"
+        android:id="@+id/title_bar"
+        app:right_type="image"
+        app:right_image="@drawable/common_more_black_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.bcm.messenger.common.ui.IndividualAvatarView
+        android:id="@+id/anchor_img"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_bar"/>
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/anchor_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="5dp"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textColor="@color/common_color_black"
+        android:textSize="17sp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/anchor_img"/>
+
+        <TextView
+            android:id="@+id/anchor_friend_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="15dp"
+            android:paddingEnd="@dimen/common_horizontal_gap"
+            android:textSize="14sp"
+            android:textColor="#A8A8A8"
+            android:gravity="center"
+            android:text="@string/contacts_user_card_stranger"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/anchor_name"/>
+
+    <Button
+        android:id="@+id/friend_add"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/contacts_friend_card_add_bg"
+        android:text="@string/contacts_add_action_button"
+        android:textAllCaps="false"
+        android:textColor="@color/common_color_white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/friend_chat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/friend_chat"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/contacts_friend_card_chat_bg"
+        android:text="@string/contacts_user_card_chat"
+        android:textAllCaps="false"
+        android:textColor="@color/common_color_white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

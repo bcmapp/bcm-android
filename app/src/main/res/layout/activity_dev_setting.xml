@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bcm.messenger.common.ui.InputAwareLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/toolbar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/title_activity_dev_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:right_text="Save"
+        app:right_type="text"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/dev_setting_dev_crash"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                app:setting_item_name="Test crash log"
+                app:setting_item_name_color="#379BFF"
+                app:setting_item_right="none"
+                app:setting_item_switch="none"
+                app:setting_item_line="true"
+                android:layout_marginTop="20dp"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/dev_setting_dev_anr"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                app:setting_item_name="Test ANR"
+                app:setting_item_name_color="#379BFF"
+                app:setting_item_right="none"
+                app:setting_item_switch="none"
+                app:setting_item_line="true"
+                android:layout_marginTop="20dp"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/dev_setting_dev_conn_test"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                app:setting_item_name="Test connection"
+                app:setting_item_name_color="#379BFF"
+                app:setting_item_right="none"
+                app:setting_item_switch="none"
+                app:setting_item_line="true"
+                android:layout_marginTop="20dp"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/dev_setting_dev_pull_data"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                app:setting_item_name="Export data"
+                app:setting_item_name_color="#379BFF"
+                app:setting_item_right="none"
+                app:setting_item_switch="none"
+                app:setting_item_line="true"
+                android:layout_marginTop="20dp"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/dev_setting_dev_wallet"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                app:setting_item_name="Wallet test chain"
+                app:setting_item_name_color="#379BFF"
+                app:setting_item_right="none"
+                app:setting_item_switch="off"
+                app:setting_item_line="true"
+                android:layout_marginTop="20dp"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/dev_setting_dev_sign"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                app:setting_item_name="App signature"
+                app:setting_item_name_color="#379BFF"
+                app:setting_item_right="none"
+                app:setting_item_switch="none"
+                app:setting_item_line="true"
+                android:layout_marginTop="20dp"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/dev_setting_dev_https"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                app:setting_item_name="Enable HTTPS"
+                app:setting_item_name_color="#379BFF"
+                app:setting_item_right="none"
+                app:setting_item_switch="on"
+                app:setting_item_line="true"
+                android:layout_marginTop="20dp"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/dev_setting_dev_lbs"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                app:setting_item_name="Enable LBS"
+                app:setting_item_name_color="#379BFF"
+                app:setting_item_right="none"
+                app:setting_item_switch="on"
+                app:setting_item_line="true"
+                android:layout_marginTop="20dp"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/dev_setting_dev_vpn"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:visibility="gone"
+                app:setting_item_name="Enable VPN"
+                app:setting_item_name_color="#379BFF"
+                app:setting_item_right="none"
+                app:setting_item_switch="off"
+                app:setting_item_line="true"
+                android:layout_marginTop="20dp"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/dev_setting_dev_enable"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                app:setting_item_name="Enable test enviornment"
+                app:setting_item_name_color="#379BFF"
+                app:setting_item_right="none"
+                app:setting_item_switch="off"
+                app:setting_item_line="true"
+                android:layout_marginTop="20dp"/>
+
+            <LinearLayout
+                android:id="@+id/dev_host_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/dev_host_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:hint="Customize(e.g.:127.0.0.1:8888)"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/edit_selection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="Select"
+                    android:background="@drawable/common_blue_bg"/>
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/common_color_black"
+                android:text="WebView Test："/>
+
+            <LinearLayout
+                android:id="@+id/dev_webpage_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/dev_webpage_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:hint="Enter URL(e.g.:https://www.bcm.social)"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/edit_go_webpage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="GO!"
+                    android:background="@drawable/common_blue_bg"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</com.bcm.messenger.common.ui.InputAwareLayout>

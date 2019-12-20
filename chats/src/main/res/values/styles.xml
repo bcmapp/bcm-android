@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Chats_WebRTC_Photo_Style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:drawablePadding">15dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/common_color_white</item>
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="Chats_WebRTC_Control_Style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_alignParentBottom">true</item>
+    </style>
+
+    <style name="Chats_WebRTC_Small_Control_Style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:background">#4CFF3737</item>
+        <item name="android:gravity">center_vertical|right</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/common_color_white</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:paddingLeft">@dimen/common_horizontal_gap</item>
+        <item name="android:paddingRight">@dimen/common_horizontal_gap</item>
+    </style>
+
+    <style name="Chats_WebRTC_Control_Item_Style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/common_color_white</item>
+
+    </style>
+
+    <style name="Chats_QR_Discern_PopupWindow">
+        <item name="android:windowEnterAnimation">@anim/chats_qr_discern_popup_in</item>
+        <item name="android:windowExitAnimation">@anim/chats_qr_discern_popup_out</item>
+    </style>
+
+    <style name="ChatsConversationPopupStyle">
+        <item name="android:windowEnterAnimation">@anim/chats_popup_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/chats_popup_fade_out</item>
+    </style>
+
+</resources>

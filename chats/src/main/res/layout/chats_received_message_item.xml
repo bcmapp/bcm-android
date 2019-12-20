@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bcm.messenger.common.ui.emoji.EmojiTextView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:autoLink="all"
+    android:background="@drawable/chats_conversation_received_bubble_bg"
+    android:textColor="@color/common_color_black"
+    android:textColorLink="@color/common_app_primary_color"
+    android:textSize="@dimen/chats_conversation_item_body_text_size"
+    android:paddingBottom="@dimen/chats_conversation_item_vertical_gap"
+    android:paddingEnd="@dimen/chats_conversation_item_horizontal_gap"
+    android:paddingStart="@dimen/chats_conversation_item_horizontal_gap"
+    android:paddingTop="@dimen/chats_conversation_item_vertical_gap"
+    android:letterSpacing="0.01"
+    android:ellipsize="end"
+    tools:text="fee" />
+
+

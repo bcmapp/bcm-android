@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/adhoc_invite_join_title"
+        app:right_type="image"
+        app:right_image="@drawable/common_more_black_icon" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/adhoc_invite_join_room_title"
+        android:textSize="13sp"
+        android:textColor="@color/common_content_second_color"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="left"/>
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/invite_room_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:textColor="@color/common_color_black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="@null"
+        android:gravity="left"
+        android:editable="false"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/adhoc_invite_join_password_title"
+        android:textSize="13sp"
+        android:textColor="@color/common_content_second_color"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="left"/>
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/invite_password_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:textColor="@color/common_color_black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="@null"
+        android:gravity="left"
+        android:editable="false"
+        />
+
+</LinearLayout>

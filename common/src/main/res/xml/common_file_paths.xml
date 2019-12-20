@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <paths>
+        <root-path
+            name="root_path"
+            path="/" />
+
+        <external-path
+            name="headIcon"
+            path="external_files"
+            />
+
+        <external-path
+            name="beta_external_files_path"
+            path="Android/data/" />
+
+        <files-path name="files_path" path="/" />
+        <external-cache-path name="external_cache" path="/" />
+        <external-files-path name="external_files" path="/" />
+
+        <external-path name="external_storage_root" path="/"/>
+        <external-path name="external_path" path="/" />
+        <external-path name="external_pictures" path="Pictures"/>
+        <external-path name="external_video" path="Movies"/>
+        <external-path name="external_audio" path="Music"/>
+        <external-path name="external_download" path="Download"/>
+
+    </paths>
+
+</resources>

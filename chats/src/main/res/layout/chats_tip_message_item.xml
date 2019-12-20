@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="wrap_content"
+                                             android:paddingEnd="50dp"
+                                             android:paddingStart="50dp"
+                                             android:paddingTop="@dimen/chats_conversation_tip_gap"
+                                             android:paddingBottom="@dimen/chats_conversation_tip_gap">
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/chats_tips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/common_content_second_color"
+        android:textSize="13sp"
+        android:singleLine="false"
+        android:ellipsize="end"
+        android:textAllCaps="false"
+        android:lineSpacingExtra="2sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="oanvbaonvownaovnsovnawonvw"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

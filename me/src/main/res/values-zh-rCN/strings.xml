@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="me_title_my_qr_code">我的二维码</string>
+    <string name="me_my_qr_code_content">用BCM扫描二维码加我为好友。</string>
+    <string name="me_my_qr_code_save">保存图片</string>
+    <string name="me_forward">转发</string>
+    <string name="me_share">分享</string>
+
+    <string name="me_str_login">登录</string>
+    <string name="me_str_create_account">创建账号</string>
+    <string name="me_str_switch_account">更换账号</string>
+    <string name="me_more_options_btn">更多选项</string>
+    <string name="me_str_succeed">成功</string>
+    <string name="me_str_failed">失败</string>
+
+    <string name="me_scan_code_add_contact">扫描二维码来添加联系人</string>
+    <string name="me_scan_code_add_me">扫码加我为好友</string>
+    <string name="me_login_scan_to_add_me">扫码加我为好友</string>
+
+    <string name="me_notification_head">通知</string>
+    <string name="me_backup_head">账户</string>
+    <string name="me_security_head">安全与隐私</string>
+    <string name="me_help_head">常见问题</string>
+    <string name="me_support_head">反馈</string>
+    <string name="me_about_head">关于</string>
+    <string name="me_device_switch_head">更换设备</string>
+    <string name="me_logout_head">注销</string>
+    <string name="me_backup_notice_description">未被备份</string>
+    <string name="me_new_version_description">有新版本可用</string>
+
+    <string name="me_more_title">更多</string>
+    <string name="me_more_account_title">账户</string>
+    <string name="me_more_data_vault_title">数据保险箱</string>
+    <string name="me_more_wallet_title">钱包</string>
+    <string name="me_more_settings_title">设置</string>
+    <string name="me_more_feedback_title">反馈</string>
+    <string name="me_more_about_title">关于</string>
+    <string name="me_more_scan">扫描</string>
+
+    <string name="me_take_phone">拍摄照片</string>
+    <string name="me_choose_phone">选择照片</string>
+    <string name="me_delete_phone">删除照片</string>
+
+    <string name="me_edit_save_fail_description">保存失败</string>
+    <string name="me_edit_save_success_description">保存成功</string>
+
+    <string name="me_confirm_logout_title">注销</string>
+    <string name="me_confirm_logout_notice">你的历史记录会被清空。你确定要退出登录吗？</string>
+    <string name="me_confirm_logout_ok_text">注销</string>
+
+    <string name="me_backup_title">账户</string>
+
+    <string name="me_nick_name_set_title">请设置昵称</string>
+    <string name="me_nick_name_set_hint">请输入你的昵称</string>
+    <string name="me_nick_name_set_later">以后再说</string>
+    <string name="me_nick_name_set_save">保存</string>
+    <string name="me_nick_name_set_success">昵称已保存</string>
+    <string name="me_nick_name_set_fail">昵称保存失败</string>
+
+    <string name="me_confirm_password_title">设置密码</string>
+    <string name="me_confirm_password_notice">默认密码为注册手机号的后6位</string>
+
+    <string name="me_switch_title">更换设备</string>
+    <string name="me_switch_device_qr_description">账户二维码</string>
+    <string name="me_switch_device_qr_fail_description">创建账户二维码失败</string>
+    <string name="me_switch_head">扫描二维码以登录</string>
+    <string name="me_switch_notice">用新设备扫描二维码并输入密码来登录。完成后此设备将会被注销。</string>
+
+    <string name="me_default_password_content">此密码（至少8位字符）用于账户密钥的加密。请注意，如果你忘记密码，此密码无法被重置。</string>
+
+    <string name="me_version_head">BCM %1$s</string>
+    <string name="me_problem_describe">问题描述</string>
+    <string name="me_submit">提交</string>
+
+    <string name="me_version">版本</string>
+
+    <string name="me_nickname_placeholder">昵称</string>
+
+    <string name="me_name_title">名称</string>
+    <string name="me_name_content">请输入新名称</string>
+
+    <string name="me_id_title">ID</string>
+    <string name="me_id_content">请输入新ID</string>
+    <string name="me_register_id">注册你的ID</string>
+
+    <string name="me_keys_generated">密钥已被生成</string>
+    <string name="me_private_key">私钥</string>
+    <string name="me_public_key">公钥</string>
+
+    <string name="me_encrypt_your_keys">加密你的密钥</string>
+    <string name="me_keys_encrypted">密钥加密成功</string>
+    <string name="me_pin_hint">密码</string>
+    <string name="me_re_enter_pin_hint">再次输入密码</string>
+    <string name="me_input_pin_hint">请输入密码</string>
+
+    <string name="me_login_successful">登录成功</string>
+
+    <string name="me_pick_an_id">选择一个ID</string>
+    <string name="me_type_id_hint">输入你的ID</string>
+
+    <string name="me_confirm_dialog_title_placeholder">标题</string>
+    <string name="me_confirm_dialog_tip_placeholder">提示</string>
+    <string name="me_confirm_dialog_button_placeholder_1">第一</string>
+    <string name="me_confirm_dialog_button_placeholder_2">第二</string>
+
+    <string name="me_avatar_size_too_big">上传头像大小超过10M，请重新选择</string>
+
+    <string name="me_unsupported_rq_code">不支持的二维码</string>
+    <string name="me_account_unsupported_qr_warning_title">无效的账户密钥</string>
+    <string name="me_account_unsupported_qr_warning_description">此二维码不是有效的账户密钥，请检查后重试</string>
+    <string name="me_account_import_qr_warning_title">导入账户密钥</string>
+    <string name="me_account_import_qr_warning_description">此二维码为账户密钥，非用于添加好友。如果你需要导入此账户密钥，请到“更多”页的“账户”中操作</string>
+
+    <!--about-->
+    <string name="me_about_new_version_status">升级</string>
+    <string name="me_about_latest_version_status">最新版本</string>
+    <string name="me_about_security_support">安全支持</string>
+    <string name="me_about_open_source_licenses">开放源代码许可</string>
+
+    <string name="me_change_password">更改密码</string>
+
+    <string name="me_account_key">账户密钥</string>
+    <string name="me_log_out">登出</string>
+
+    <string name="me_enter_original_password">请输入原密码</string>
+    <string name="me_original_password">原密码</string>
+    <string name="me_new_password">新密码</string>
+    <string name="me_enter_new_password">请输入新密码</string>
+    <string name="me_confirm_new_password">确认密码</string>
+    <string name="me_re_enter_new_password">再次输入密码</string>
+
+    <string name="me_self_edit_button">编辑</string>
+    <string name="me_set_new_password">设置新密码</string>
+    <string name="me_enter_password_hint">请输入密码</string>
+    <string name="me_re_enter_password_hint">再次输入密码</string>
+
+    <string name="me_save_success">保存成功</string>
+    <string name="me_save_fail">保存失败</string>
+    <string name="me_reset_password">重置密码</string>
+    <string name="me_forget_password">忘记密码</string>
+
+    <string name="me_input_password_can_not_empty">密码不能为空</string>
+
+    <string name="me_save">保存</string>
+    <string name="me_psw_not_equals_confirm_psw">两次输入的密码不一致</string>
+    <string name="me_copyright">隐私声明</string>
+    <string name="me_change_password_success">修改密码成功</string>
+    <string name="me_input_origin_password_error">原密码错误</string>
+    <string name="me_account_key_anim_tips">你的账户密钥是在BCM里的唯一凭证</string>
+
+    <string name="me_generating_key">密钥更替生成中\n点击“停止”获取你的账户密钥</string>
+    <string name="me_generated_key">账户密钥已生成</string>
+    <string name="me_stop_generate">停止</string>
+    <string name="me_donate_us">捐赠</string>
+    <string name="me_str_scan_account_key">扫描账户密钥</string>
+    <string name="me_str_scan_to_login">扫码登录</string>
+    <string name="me_str_scan_account_key_content">扫描你的账户密钥来备份</string>
+    <string name="me_str_scan_to_login_content">扫描你的账户密钥来登录</string>
+    <string name="me_str_delete_account_key">删除账户密钥</string>
+    <string name="me_str_delete_account_key_success">账户密钥删除成功</string>
+    <string name="me_str_show_account_key">显示账户密钥</string>
+    <string name="me_scan_qr_code_to_login_to_another_device">扫描二维码以登录/备份至另一个设备。</string>
+
+    <string name="me_str_generation_key_date">密钥生成日期: %s</string>
+    <string name="me_str_backup_date">密钥备份日期: %s</string>
+    <string name="me_str_backup_export_date">密钥备份日期(输出): %s</string>
+    <string name="me_str_backup_date_export">密钥备份日期(输出):&#160;</string>
+    <string name="me_str_backup_date_import">密钥备份日期(输入): %s</string>
+    <string name="me_str_my_account_key">我的账户密钥</string>
+
+    <string name="me_setting_feedback">反馈</string>
+    <string name="me_not_backed_up">未备份</string>
+
+    <string name="me_update_dialog_title">新版本%s可用</string>
+    <string name="me_update_dialog_content">新版本%s已可用，现在下载？</string>
+    <string name="me_update_dialog_downloading">正在下载新版本，下载完成后会启动安装</string>
+    <string name="me_update_dialog_ok">升级</string>
+    <string name="me_update_dialog_cancel">退出</string>
+    <string name="me_update_notification_downloading">正在下载更新: %d%%已下载</string>
+    <string name="me_update_notification_success">更新下载成功</string>
+    <string name="me_update_notification_failed">更新下载失败</string>
+    <string name="me_update_notification_canceled">更新下载已被取消</string>
+    <string name="me_update_install">安装</string>
+
+    <string name="me_backup_notice">提示</string>
+    <string name="me_backup_have_no_notes_app">检测不到系统备忘录/便签。</string>
+    <string name="me_backup_share_to">分享到</string>
+    <string name="me_backup_cannot_copy_qr_code">Android 7.0版本以下不支持复制二维码</string>
+    <string name="me_backup_str_copy">复制</string>
+    <string name="me_backup_copy_content">此二维码将被复制并自动粘贴到系统备忘录/便签。</string>
+    <string name="me_confirm_clear_history_title">销毁聊天记录</string>
+    <string name="me_confirm_clear_history_notice">所有消息和多媒体都将被从你和对方的聊天记录中删除</string>
+    <string name="me_confirm_clear_history_ok_text">销毁</string>
+    <string name="me_str_version_update">版本升级</string>
+    <string name="me_text_register_failed">注册失败</string>
+    <!--keybox-->
+    <string name="me_keybox">密钥盒子</string>
+    <string name="me_keybox_qr_into">请扫描账户密钥的二维码以导入密钥至密钥盒子。</string>
+    <string name="me_keybox_qr_upload">密钥盒子不会上传服务器仅存储于设备中。</string>
+    <string name="me_keybox_scan_and_import">扫描与添加</string>
+    <string name="me_keybox_delete_account_key">删除账号</string>
+    <string name="me_keybox_delete_detail">若删除此账号，你的聊天记录会被一并清除。</string>
+    <string name="me_keybox_delete_btn">清除并切换</string>
+    <string name="me_keybox_delete_success">成功删除</string>
+    <string name="me_keybox_logged">你已登录此账号。</string>
+    <string name="me_keybox_reach_limit">达到容量限制</string>
+    <string name="me_keybox_reach_limit_detail">已达到密钥盒子的密钥存储最大容量</string>
+    <string name="me_show_qr_code">显示二维码</string>
+    <string name="me_keybox_current_item">当前账号密钥</string>
+    <string name="me_keybox_inactive_item">未激活账号密钥</string>
+    <string name="me_keybox_long_click_delete">删除</string>
+
+    <!--generate key-->
+    <string name="me_login_generate_hash_calculation">开始哈希运算</string>
+    <string name="me_login_generate_target">目标数值</string>
+    <string name="me_login_generate_account_key">账号密钥已生成</string>
+    <string name="me_login_generate_result">运算结果</string>
+    <string name="me_text_set_password">设置密码</string>
+    <string name="me_login_account_key_null_warning">账号密钥对为空</string>
+
+    <!--my profile-->
+    <string name="me_profile_title">个人资料</string>
+    <string name="me_profile_picture">头像</string>
+    <string name="me_profile_nickname">昵称</string>
+    <string name="me_profile_add_me">添加我为好友</string>
+
+    <string name="me_text_account_created">帐号创建成功</string>
+
+    <!--Ban password reset-->
+    <string name="me_ban_reset_password_title">密码无法被重置</string>
+    <string name="me_ban_reset_password_content">出于账户安全的考虑，每一个账户密钥都是本地加密并储存于本地，不会上传服务器。因此，你的账户密码均无法重置。</string>
+    <string name="me_ban_reset_password_back">你可以退出到上一页继续尝试，或者创建一个新的账号。</string>
+    <string name="me_create_account">创建账号</string>
+
+    <!--fingerprint-->
+    <string name="me_fingerprint_verify_title">识别指纹以展示账户密钥</string>
+    <string name="me_fingerprint_change_to_password">使用密码</string>
+    <string name="me_fingerprint_password_title">展示账户密钥</string>
+    <string name="me_fingerprint_password_hint">账户密钥密码</string>
+    <string name="me_fingerprint_password_try_again">重试</string>
+    <string name="me_fingerprint_not_match">指纹识别失败</string>
+    <string name="me_fingerprint_lockout">尝试次数过多，指纹识别被暂时禁用</string>
+    <string name="me_fingerprint_scan_timeout">识别指纹超时</string>
+    <string name="me_fingerprint_unknown_error">未知错误</string>
+    <string name="me_fingerprint_fail_cancel">用户取消识别</string>
+    <string name="me_fingerprint_wrong_password">密码错误</string>
+
+    <!-- local profile -->
+    <string name="me_other_local_display_title">备注</string>
+    <string name="me_other_local_display_clear">清除</string>
+    <string name="me_local_profile_title">联系人详情</string>
+    <string name="me_local_profile_reset_button">清理</string>
+    <string name="me_local_profile_all_reset_notice">清理\"%s\"的备注</string>
+    <string name="me_other_local_display_name">备注昵称</string>
+    <string name="me_other_local_display_avatar">备注头像</string>
+    <string name="me_other_local_empty_action">点击设置</string>
+    <string name="me_other_local_display_comment">备注头像和备注昵称将取代原来的头像和昵称优先展示。</string>
+    <string name="me_other_profile_avatar_reset_notice">清理\"%s\"的备注头像</string>
+
+
+    <!--Destroy Account-->
+    <string name="me_destroy_force_logout_title">强制登出</string>
+    <string name="me_destroy_force_logout_content">另一个设备（显示如下）已成功登陆此账号。</string>
+    <string name="me_destroy_force_logout_tips">若这不是你的操作，你的账户密钥及密码可能已被泄漏。</string>
+    <string name="me_destroy_account_str">销毁账户</string>
+    <string name="me_destroy_account_content">注销账户后，你账户的一切，包括聊天记录、联系人、个人资料以及钱包里的虚拟资产等，都将被一并销毁，无法恢复。请确认知悉销毁后果。</string>
+    <string name="me_destroy_account_notice">我知晓后果并同意相关法律条款。</string>
+    <string name="me_destroy_other_client_unknown">未知</string>
+    <string name="me_destroy_other_client_name">&quot;%s&quot;</string>
+    <string name="me_destroy_other_client_command_sent">指令已发送</string>
+    <string name="me_destroy_other_client_response_success">账户已被销毁</string>
+    <string name="me_destroy_account_password_hint">输入密码</string>
+    <string name="me_destroy_account_confirm_title">账户已被销毁</string>
+    <string name="me_destroy_account_confirm_notice">此账户已被销毁，无法再次登录。</string>
+    <string name="me_destroy_account_confirm_button">知道了</string>
+    <string name="me_destroy_account_warning_notice">此账户已被销毁，你现被强制退出。</string>
+    <string name="me_logout_with_expire">你的帐号登录状态已过期，请重新登录</string>
+    <string name="me_destroy_account_success">账户已被销毁</string>
+
+    <!--Settings-->
+    <string name="me_settings_notification_disabled">通知栏通知已关闭。你想开启消息通知吗？</string>
+    <string name="me_setting_title">设置</string>
+    <string name="me_setting_notifications_head">通知</string>
+    <string name="me_setting_notification_title">通知</string>
+    <string name="me_setting_language_head">语言</string>
+    <string name="me_setting_language_title">语言设置</string>
+    <string name="me_setting_tts_language_title">TTS语言设置</string>
+    <string name="me_setting_tts_language_sub_title">TTS（文字转语音）的语言作用于放大显示的信息</string>
+    <string name="me_setting_tts_cannot_open">请手动打开文字转语音的设置页面更改TTS的语言。</string>
+    <string name="me_setting_block_head">屏蔽</string>
+    <string name="me_setting_blocked_user_title">屏蔽的联系人</string>
+    <string name="me_setting_block_stranger_title">屏蔽陌生人消息</string>
+    <string name="me_setting_block_stranger_error">设置失败</string>
+    <string name="me_setting_data_storage_head">数据与存储</string>
+    <string name="me_setting_data_stoarge_calulating_tip">正在统计…</string>
+    <string name="me_setting_clear_cache_title">清理缓存</string>
+    <string name="me_setting_security_head">安全</string>
+    <string name="me_setting_pin_lock_title">PIN锁</string>
+    <string name="me_setting_pin_on_tip">开</string>
+    <string name="me_setting_pin_off_tip">关</string>
+    <string name="me_setting_privacy_head">隐私增强</string>
+    <string name="me_setting_rtc_p2p_title">始终使用服务器中转通话</string>
+    <string name="me_setting_rtc_p2p_sub_title">使用BCM服务器中转所有通话，以防止对方获取你的IP，此功能会降低通话质量。</string>
+
+
+    <!--Notification Setting-->
+    <string name="me_notification_setting_title">通知</string>
+    <string name="me_notification_push_title">推送通知</string>
+    <string name="me_notification_title">消息通知</string>
+    <string name="me_notification_sound_title">声音</string>
+    <string name="me_notification_vibrate_title">震动</string>
+
+    <string name="me_pin_size_4">切换成4位数PIN码</string>
+    <string name="me_pin_size_6">切换成6位数PIN码</string>
+    <string name="me_enter_pin">输入PIN</string>
+    <string name="me_confirm_pin">确认PIN</string>
+    <string name="me_new_pin">新的PIN</string>
+    <string name="me_enter_current_pin">输入你现在的PIN</string>
+    <string name="me_set_pin_successfully">设置PIN成功</string>
+    <string name="me_pin_not_matched">PIN不匹配</string>
+    <string name="me_forget_pin_detail">使用密码修改或清除你的PIN码。</string>
+    <string name="me_wrong_pin">错误的PIN</string>
+    <string name="me_change_pin">修改PIN</string>
+    <string name="me_clear_pin">清除PIN</string>
+    <string name="me_pin_disabled">PIN已经失效。</string>
+    <string name="me_pin_clear">PIN已被清除。</string>
+    <string name="me_forget_pin"> </string>
+    <string name="me_pin_lock_entrance">PIN码锁</string>
+    <string name="me_pin_lock_instantly">立即</string>
+    <string name="me_pin_lock_5_minutes">5分钟</string>
+    <string name="me_pin_lock_one_hour">1小时</string>
+    <string name="me_pin_lock_selection_title">离开应用后多久锁定App？</string>
+    <string name="me_disable_pin_lock">停用PIN码锁</string>
+    <string name="me_change_pin_lock">修改PIN码</string>
+    <string name="me_use_6_digit_pin_lock">使用6位PIN码</string>
+    <string name="me_pin_is_for_identity_describe">PIN码用于开启App或者查看账户密钥二维码时的身份验证。</string>
+    <string name="me_pin_lock_auto_lock">自动锁定</string>
+    <string name="me_unlock_with_fingerprint">使用指纹解锁</string>
+    <string name="me_fingerprint_unlock_successful">指纹解锁成功</string>
+    <string name="me_fingerprint_unlock_fail">指纹解锁失败</string>
+    <string name="me_pin_lock_title">PIN码锁</string>
+    <string name="me_request_pin_for_identity_verification">开启App或者查看账户密钥二维码前会要求PIN码作为身份验证。</string>
+    <string name="me_enable_pin_lock">启用PIN码</string>
+    <string name="me_note_forget_the_pin">注：如果你忘记了PIN码，你需要卸载并重装此应用。所有的聊天记录会一并消失。</string>
+    <string name="me_logout_clear_tip">清除当前帐号的聊天记录</string>
+    <string name="me_logout_tip_title">确认退出此设备吗？</string>
+    <string name="me_logout_tip_out">登出</string>
+
+    <!--Backup -->
+    <string name="me_backup_account_detail">备份账户密钥（2种方式）：\n· 使用另一设备的Keybox（BCM）扫描此二维码。\n· 拷贝并粘贴此二维码至安全位置。\n \n切换设备\n· 扫码登录到其他设备以切换。</string>
+    <string name="me_mark_as_backed_up">标记已备份</string>
+    <string name="me_finish_backup">我已经完成备份</string>
+    <string name="me_account_backup_tips">请备份你的账户密钥。</string>
+    <string name="me_account_security">账户安全</string>
+    <string name="me_current_account_key">现账户</string>
+    <string name="me_mark_as_backed_up_detail">请确认你已完成备份。</string>
+    <string name="me_qr_code_copied">已复制二维码</string>
+    <string name="me_store_safely">请将其保存到合适的地方。</string>
+    <string name="me_chats_are_you_sure_to_switch">确认切换帐号登录吗?</string>
+    <string name="me_switch_action_text">切换</string>
+
+    <!--反馈-->
+    <string name="me_feedback_category">类型</string>
+    <string name="me_feedback_bug">缺陷</string>
+    <string name="me_feedback_crash">崩溃</string>
+    <string name="me_feedback_workflow">流程</string>
+    <string name="me_feedback_wording">文字</string>
+    <string name="me_feedback_suggestion">建议</string>
+    <string name="me_feedback_others">其他</string>
+    <string name="me_feedback_screenshot">截图</string>
+    <string name="me_feedback_description">描述</string>
+    <string name="me_feedback_category_select_tip">请先选择类型</string>
+
+    <string name="me_no_block_user">没有被屏蔽的用户</string>
+
+    <string name="me_scan">扫码</string>
+    <string name="me_screen_secure_describe">防止所有对BCM应用的截屏操作。</string>
+    <string name="me_screen_secure_enable_tip">切换应用时将隐藏App聊天内容，但同时截屏功能将无法在BCM内使用。\n\n你可能需要重启应用，激活该功能。</string>
+    <string name="me_screen_secure_enable_title">防止截屏</string>
+    <string name="me_force_upgrade_title">更新提示</string>
+    <string name="me_note_forward">转发</string>
+    <string name="me_note_delete">删除</string>
+    <string name="me_note_delete_note_title">删除该笔记</string>
+    <string name="me_note_list_title">数据保险箱</string>
+    <string name="me_note_item_pin">置顶</string>
+    <string name="me_note_item_cancel_pin">取消置顶</string>
+    <string name="me_note_item_delete">删除</string>
+    <string name="me_note_unlock_wrong_password">密码错误</string>
+    <string name="me_note_unlock_enter_password">输入密码</string>
+    <string name="me_note_new_note_title">新笔记</string>
+    <string name="me_all_data_in_the_vault_will_be_encrypted_and_stored_locally_in_this_device">保险箱中的所有数据将被加密并保存于本设备。</string>
+    <string name="me_create_a_note">创建笔记</string>
+    <string name="me_note_if_you_lost_your_password_or_delete_the_app_you_will_lose_all_your_data_in_the_vault">注意：如果你丢失了密码或者删除了该应用，会失去保险箱中的所有数据。</string>
+    <string name="me_setting_internet_less">离线聊天</string>
+    <string name="me_setting_internet_less_describe">离线聊天室</string>
+
+    <!--unlock-->
+    <string name="me_unlock_app">解锁BCM</string>
+    <string name="me_unlock_app_description">BCM使用你的生物识别功能来解锁</string>
+    <string name="me_unlock_account_key">解锁账户密钥</string>
+    <string name="me_unlock_account_key_description">BCM使用你的生物识别功能来解锁你的账户密钥</string>
+    <string name="me_more_airchat_title">隔空聊天</string>
+    <string name="me_proxy_setting_title">代理</string>
+    <string name="me_test_proxy_usability">测试可用性</string>
+    <string name="me_proxy_configurations">代理配置</string>
+    <string name="me_add_proxy_title">添加代理</string>
+    <string name="me_add_proxy_name">名称</string>
+    <string name="me_add_proxy_uri_scheme_url">代理参数 (URL)</string>
+    <string name="me_setting_proxy_item_unusable">不可用</string>
+    <string name="me_setting_proxy_item_usable">可用</string>
+    <string name="me_proxy_add_error_format">格式错误</string>
+    <string name="me_setting_proxy_pop_delete">删除 %s</string>
+    <string name="me_setting_proxy_item_testing">测试中…</string>
+    <string name="me_setting_proxy_action_add">添加</string>
+    <string name="me_test_proxy_usability_describe">在必要时，添加的所有代理将被用于连接BCM服务器。每个代理均需要几秒的尝试时间。</string>
+    <string name="me_setting_proxy_item_describe">当BCM服务被屏蔽时，添加的代理将自动启用。</string>
+    <string name="me_setting_connectivity_tip">连通性</string>
+    <string name="me_add_proxy_edit_title">编辑代理</string>
+    <string name="me_add_proxy_action_save">保存</string>
+    <string name="me_proxy_connecing_to_server">正在连接服务器…</string>
+
+
+</resources>

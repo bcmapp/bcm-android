@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingEnd="15dp"
+    android:paddingStart="15dp"
+    android:background="@drawable/common_item_ripple_bg">
+
+    <com.bcm.messenger.adhoc.component.AdHocSessionAvatar
+        android:id="@+id/adhoc_channel_item_avatar"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/adhoc_body_fist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="10dp"
+        android:gravity="left|center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/adhoc_channel_item_avatar"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.bcm.messenger.common.ui.emoji.EmojiTextView
+            android:id="@+id/adhoc_channel_item_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="17sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="@color/common_color_black"
+            android:layout_marginEnd="10dp"
+            android:gravity="left"/>
+
+        <ImageView
+            android:id="@+id/adhoc_channel_item_pin"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:scaleType="center"
+            android:visibility="gone"
+            android:src="@drawable/adhoc_channel_list_pin"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/adhoc_channel_item_mute"
+            tools:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/adhoc_channel_item_mute"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:scaleType="center"
+            android:visibility="gone"
+            android:layout_marginStart="5dp"
+            android:src="@drawable/adhoc_channel_list_mute_grey"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/adhoc_channel_item_unread_status" />
+
+        <ImageView
+            android:id="@+id/adhoc_channel_item_unread_status"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:scaleType="center"
+            android:visibility="gone"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/adhoc_channel_red_new_dot"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left|center_vertical"
+        android:layout_marginTop="3dp"
+        app:layout_constraintTop_toBottomOf="@id/adhoc_body_fist"
+        app:layout_constraintStart_toStartOf="@id/adhoc_body_fist"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.bcm.messenger.common.ui.emoji.EmojiTextView
+            android:id="@+id/adhoc_channel_item_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="#303030"
+            android:textSize="14sp"
+            android:layout_marginEnd="10dp"
+            android:gravity="left"/>
+
+        <TextView
+            android:id="@+id/adhoc_channel_item_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="#303030"
+            android:textSize="14sp"
+            tools:text="Yesterday"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

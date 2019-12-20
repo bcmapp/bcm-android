@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title_activity_dev_settings">開発者用設定</string>
+
+    <string name="app_name">BCM</string>
+    <!-- Example General settings -->
+    <string name="pref_header_general">通常</string>
+
+    <string name="pref_title_social_recommendations">ソーシャルリコメンデーションを有効にする</string>
+    <string name="pref_description_social_recommendations">あなたのメッセージ履歴に基づいて連絡する人へのおすすめ</string>
+
+    <string name="pref_title_dev_server_url">開発サーバーのURL</string>
+    <string name="pref_default_server_url">設定されていません</string>
+
+    <string name="pref_title_server_mode">サーバーモード</string>
+    <string-array name="pref_server_mode_list_titles">
+        <item>オンライン サーバ</item>
+        <item>テスト サーバ</item>
+        <item>開発者 サーバ</item>
+    </string-array>
+    <string-array name="pref_server_mode_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">データと同期</string>
+
+    <string name="pref_title_sync_frequency">同期周波数</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 分</item>
+        <item>30 分</item>
+        <item>1 時間</item>
+        <item>3 時間</item>
+        <item>6 時間</item>
+        <item>しない</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>エントリ 1</item>
+        <item>エントリ 2</item>
+        <item>エントリ 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_title_system_sync_settings">システムの同期設定</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">通知</string>
+
+    <string name="pref_title_new_message_notifications">新規メッセージ通知</string>
+
+    <string name="pref_title_ringtone">着信音</string>
+    <string name="pref_ringtone_silent">無音</string>
+
+    <string name="pref_title_vibrate">振動する</string>
+
+    <string name="hint_pick_nickname">ここからニックネームを選択することもできます</string>
+    <string name="hint_input_nickname">ニックネームを入力してください</string>
+    <string name="str_later">あとで</string>
+    <string name="str_confirm">確認</string>
+    <string name="tips_empty_name">ユーザー名が空白です</string>
+    <string name="tips_nickname_saved">ニックネームが保存されました</string>
+    <string name="tips_retry">やり直してください！</string>
+
+    <string name="title_update_info" formatted="false">情報をアップデート (v%s)</string>
+    <string name="OK">OK</string>
+    <string name="upgrade">アップグレード</string>
+
+
+
+</resources>

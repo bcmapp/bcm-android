@@ -1,0 +1,46 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+apply from: '../proguard/proguardconfig.gradle'
+
+android {
+    compileSdkVersion compile_sdk_version as int
+
+    defaultConfig {
+        minSdkVersion min_sdk_version as int
+        targetSdkVersion target_sdk_version as int
+        versionCode 1
+        versionName "1.0"
+
+        resourcePrefix 'adhoc_'
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    androidExtensions {
+        experimental = true
+    }
+}
+
+kapt {
+    generateStubs = true
+    arguments {
+        arg("MODULE_NAME", "adHocClient")
+    }
+}
+
+dependencies {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+
+    api project(':chats')
+    api("com.bcm.adhoc:adhoc:1.0.3") {
+        exclude group: 'androidx.appcompat', module: 'appcompat'
+        exclude group: 'androidx.core', module: 'core'
+        exclude group: 'androidx.core', module: 'core-ktx'
+        exclude group: 'com.squareup', module: 'javapoet'
+        exclude group: 'io.reactivex.rxjava2', module: 'rxandroid'
+        exclude group: 'io.reactivex.rxjava2', module: 'rxkotlin'
+    }
+
+    kapt 'com.bcm.router:processor:1.0.0'
+}

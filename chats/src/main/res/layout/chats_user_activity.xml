@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/chat_user_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/common_background_color"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.bcm.messenger.common.ui.CommonGradientLayout
+                android:id="@+id/chat_user_top_bg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/common_contacts_dialog_top_bg"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.bcm.messenger.common.ui.IndividualAvatarView
+                    android:id="@+id/chat_user_img"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="80dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.bcm.messenger.common.ui.emoji.EmojiTextView
+                    android:id="@+id/chat_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="40dp"
+                    android:layout_marginTop="@dimen/common_vertical_gap"
+                    android:layout_marginStart="@dimen/common_horizontal_gap"
+                    android:layout_marginEnd="@dimen/common_horizontal_gap"
+                    android:gravity="center"
+                    android:textColor="@color/common_color_white"
+                    android:textSize="16sp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chat_user_img"
+                    tools:text="Test" />
+
+            </com.bcm.messenger.common.ui.CommonGradientLayout>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/chat_user_stick"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-10dp"
+                app:setting_item_head_background="@drawable/chats_group_control_circle_background"
+                app:setting_item_head="@string/chats_user_setting_chat_actions_title"
+                app:setting_item_name="@string/chats_user_stick"
+                app:setting_item_right="none"
+                app:setting_item_switch="off"
+                app:setting_item_line="true" />
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/chat_user_mute"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chats_setting_item_height"
+                app:setting_item_name="@string/chats_user_mute_head"
+                app:setting_item_right="none"
+                app:setting_item_switch="off"
+                app:setting_item_line="false"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/chats_media_browser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setting_item_name="@string/chats_media_and_files"
+                app:setting_item_right="arrow"
+                app:setting_item_head="@string/chats_user_setting_data_title"
+                app:setting_item_line="false"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/chat_user_clear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setting_item_name="@string/chats_user_clear_history"
+                app:setting_item_right="none"
+                app:setting_item_right_custom="@drawable/chats_group_setting_clear_history_icon"
+                app:setting_item_head="@string/chats_user_setting_clear_history_title"
+                app:setting_item_line="false"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/chat_user_block"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chats_setting_item_height"
+                app:setting_item_name="@string/chats_user_block"
+                app:setting_item_right="none"
+                app:setting_item_switch="off"/>
+
+            <com.bcm.messenger.common.ui.CommonSettingItem
+                android:id="@+id/chat_user_delete"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chats_setting_item_height"
+                android:visibility="gone"
+                app:setting_item_name="@string/chats_user_delete_text"
+                app:setting_item_name_color="@color/common_content_warning_color"
+                app:setting_item_right="none"
+                app:setting_item_line="false"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/chat_user_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:right_type="text"
+        app:right_text_color="@color/common_color_black"
+        app:right_text_size="17sp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

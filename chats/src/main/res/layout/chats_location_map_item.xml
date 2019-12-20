@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="62dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/common_color_white">
+
+    <ImageView
+        android:id="@+id/location_confirm_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:src="@drawable/common_tick_green_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/locate_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="35dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/common_color_black"
+        android:textSize="15sp"
+        android:gravity="left|center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/location_confirm_img"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        tools:text="name"/>
+
+    <ImageView
+        android:id="@+id/mark_flag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/common_gps_icon"
+        app:layout_constraintStart_toEndOf="@id/locate_name"
+        app:layout_constraintTop_toTopOf="@id/locate_name"
+        app:layout_constraintBottom_toBottomOf="@id/locate_name"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/locate_address"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="15dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/common_content_second_color"
+        android:textSize="12sp"
+        android:gravity="left|center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/location_confirm_img"
+        app:layout_constraintTop_toBottomOf="@+id/locate_name"
+        tools:text="611615161616512"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bcm.messenger.chats">
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application>
+        <activity
+            android:name="com.bcm.messenger.chats.privatechat.AmeConversationActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name="com.bcm.messenger.chats.user.ChatUserPageActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"/>
+
+        <activity
+            android:name="com.bcm.messenger.chats.group.ChatGroupCreateActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name="com.bcm.messenger.chats.NewChatActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"/>
+
+        <activity
+            android:name="com.bcm.messenger.chats.group.setting.ChatGroupMemberListActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.bcm.messenger.chats.group.setting.ChatGroupNoticeEditActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.bcm.messenger.chats.group.setting.ChatGroupNoticeActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.bcm.messenger.chats.group.setting.ChatGroupMemberSelectionActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.bcm.messenger.chats.group.setting.ChatGroupProfileActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.bcm.messenger.chats.privatechat.ChatRtcCallActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.bcm.messenger.chats.group.ChatGroupConversationActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <activity
+            android:name="com.bcm.messenger.chats.activity.IdentityVerifyActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden" />
+        <activity
+            android:name="com.bcm.messenger.chats.group.setting.ChatGroupSettingActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.bcm.messenger.chats.map.MapActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.bcm.messenger.chats.map.MapPreviewActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnchanged" />
+
+
+        <activity
+            android:name=".mediapreview.MediaViewActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.bcm.messenger.chats.user.SendContactActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.bcm.messenger.chats.forward.ForwardActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".QRCodeDisplayActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".mediabrowser.ui.MediaBrowserActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnchanged" />
+
+        <activity
+            android:name=".clean.CleanStorageActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".history.ChatHistoryActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".group.live.ChatLiveSettingActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|fontScale"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".group.GroupShareForwardActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|adjustPan"/>
+        <activity android:name=".privatechat.ContactCardShareForwardActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|adjustPan"/>
+
+        <activity android:name=".group.setting.GroupShareSettingsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".group.GroupJoiningReviewActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".group.GroupToJoinRequestActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".group.GroupShareDescriptionActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".group.setting.ChatGroupAvatarActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".group.setting.ChatGroupEditNameActivity"
+            android:screenOrientation="portrait" />
+
+
+        <service
+            android:name="com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService"
+            android:enabled="true" />
+
+        <receiver
+            android:name="com.bcm.messenger.chats.privatechat.logic.MarkReadReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="org.thoughtcrime.securesms.notifications.CLEAR" />
+            </intent-filter>
+        </receiver>
+
+
+    </application>
+
+</manifest>

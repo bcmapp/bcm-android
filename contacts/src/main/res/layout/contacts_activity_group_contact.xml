@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/contacts_fragment_group_title"
+        app:right_type="image"
+        app:right_image="@drawable/common_titlebar_plus_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <fragment
+        android:id="@+id/group_contact_fragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:name="com.bcm.messenger.contacts.GroupContactFragment"
+        app:layout_constraintTop_toBottomOf="@id/title_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,71 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+
+android {
+    compileSdkVersion compile_sdk_version as int
+
+    defaultConfig {
+        minSdkVersion min_sdk_version as int
+        targetSdkVersion target_sdk_version as int
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        resourcePrefix "aflib_"
+    }
+
+    flavorDimensions "channels"
+    productFlavors {
+
+        official {
+            dimension "channels"
+        }
+
+        releaseOfficial {
+            dimension "channels"
+        }
+
+        releaseGoogle {
+            dimension "channels"
+        }
+
+        release9apps {
+            dimension "channels"
+        }
+
+        releaseApkpure {
+            dimension "channels"
+        }
+
+
+        dev {
+            dimension "channels"
+        }
+    }
+
+}
+
+kapt {
+    generateStubs = true
+    arguments {
+        arg("MODULE_NAME", project.getName())
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+
+    implementation 'com.appsflyer:af-android-sdk:4.9.0'
+    implementation 'com.android.installreferrer:installreferrer:1.1'
+
+    api project(':common')
+
+    kapt 'com.bcm.router:processor:1.0.0'
+}

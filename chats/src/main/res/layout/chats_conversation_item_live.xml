@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/chats_conversation_tip_gap"
+    android:paddingTop="@dimen/chats_conversation_tip_gap">
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/live_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingBottom="@dimen/chats_conversation_tip_vertical_padding"
+        android:paddingStart="@dimen/chats_conversation_tip_horizontal_padding"
+        android:paddingEnd="@dimen/chats_conversation_tip_horizontal_padding"
+        android:paddingTop="@dimen/chats_conversation_tip_vertical_padding"
+        android:lineSpacingExtra="2sp"
+        android:textAllCaps="false"
+        android:textColor="@color/common_content_second_color"
+        android:textSize="13sp"
+        tools:text="3 unread messages" />
+
+</FrameLayout>

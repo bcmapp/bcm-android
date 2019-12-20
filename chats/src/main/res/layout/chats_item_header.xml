@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="70dp">
+    <TextView
+        android:id="@+id/chats_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textSize="28sp"
+        android:paddingBottom="15dp"
+        android:paddingLeft="15dp"
+        android:textStyle="bold"
+        android:text="@string/chats_title"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_marginLeft="15dp"
+        android:layout_alignParentBottom="true"
+        android:layout_height="0.5dp"
+        android:background="#e8e8e8"/>
+</RelativeLayout>
+

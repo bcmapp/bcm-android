@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="@dimen/chats_conversation_item_radius"/>
+            <solid android:color="@color/common_color_white" />
+        </shape>
+    </item>
+
+    <item android:id="@android:id/progress">
+
+        <clip>
+            <shape>
+                <corners android:radius="@dimen/chats_conversation_item_radius"/>
+                <solid android:color="@color/chats_audio_receive_progress_color"/>
+            </shape>
+        </clip>
+
+    </item>
+
+</layer-list>

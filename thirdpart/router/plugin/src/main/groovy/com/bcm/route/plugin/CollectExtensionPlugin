@@ -1,0 +1,12 @@
+package com.bcm.route.plugin
+
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+
+class CollectExtentionPlugin implements Plugin<Project> {
+    @Override
+    void apply(Project project) {
+        def appExtension = project.properties.get('android')
+        appExtension.regeisterTransform(new CollectTransform(), Collections.EMPTY_LIST)
+    }
+}

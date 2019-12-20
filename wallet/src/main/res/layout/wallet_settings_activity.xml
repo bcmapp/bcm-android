@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/settings_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/wallet_settings_title" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/currency_entrance_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            android:id="@+id/currency_entrance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:textColor="@color/wallet_content_main_color"
+            android:text="@string/wallet_currency_entrance_title"
+            android:textSize="15sp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/currency_arrow"
+            tools:text="Currency Unit"/>
+
+        <ImageView
+            android:id="@+id/currency_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/common_right_arrow_icon"
+            android:contentDescription=""
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_line_height"
+            android:background="@color/common_line_color"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

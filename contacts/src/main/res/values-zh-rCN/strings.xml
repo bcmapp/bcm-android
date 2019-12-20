@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contacts_fragment_title">联系人</string>
+    <string name="contacts_requests_title">请求</string>
+    <string name="contacts_fragment_menu_title">添加好友</string>
+    <string name="contacts_invites_title">邀请好友</string>
+    <string name="contacts_invites_local_title">添加手机联系人</string>
+    <string name="contacts_header_scan_text">扫一扫</string>
+    <string name="contacts_header_add_text">添加联系人</string>
+    <string name="contacts_header_invite_text">邀请</string>
+    <string name="contacts_header_group_text">创建群组</string>
+
+    <string name="contacts_footer_contact_title">手机联系人</string>
+    <string name="contacts_footer_contact_notice">请在「设置」中允许BCM访问你的通讯录，以便找到更多的BCM好友。</string>
+    <string name="contacts_footer_contact_button">前往设置</string>
+
+    <string name="contacts_empty_title_text">没有好友\n点击扫描按钮来添加好友</string>
+    <string name="contacts_empty_notice_one_text">准备好聊天了吗？点击</string>
+    <string name="contacts_empty_notice_two_text">添加新联系人</string>
+    <string name="contacts_group_empty_text">没有群组\n点击“+”来创建群组</string>
+
+    <string name="contacts_friend_not_in_ame_decoration">未注册的BCM联系人</string>
+    <string name="contacts_requests_empty_title_text">暂无请求</string>
+    <string name="contacts_requests_empty_notice_text">新的好友请求会在这里显示</string>
+    <string name="contacts_invites_empty_text">无结果</string>
+    <string name="contacts_invites_action_text">邀请</string>
+    <string name="contacts_requests_action_to_text">添加</string>
+    <string name="contacts_requests_action_done_text">已添加</string>
+    <string name="contacts_invites_action_to_text">添加</string>
+    <string name="contacts_invites_action_done_text">已添加</string>
+    <string name="contacts_invites_search_hint">请输入手机号</string>
+    <string name="contacts_invites_add_friend_success">邀请朋友成功</string>
+    <string name="contacts_invites_add_friend_fail">邀请失败</string>
+    <string name="contacts_requests_add_friend_success">添加成功</string>
+    <string name="contacts_requests_add_friend_fail">添加失败</string>
+    <string name="contacts_requests_yourself_description">对方联系人是你自己</string>
+    <string name="contacts_select_search_tips">*你可以通过电话号码添加不在联系人列表的成员</string>
+    <string name="contacts_select_search_hint">通过名字搜索</string>
+    <string name="contacts_local_invite_confirm_text">邀请 %1$d 个本地联系人</string>
+    <string name="contacts_local_invite_cancel_text">取消</string>
+    <string name="contacts_invite_local_search_hint">通过号码搜索</string>
+    <string name="contacts_result_from_remote_title">远程结果</string>
+    <string name="contacts_result_from_remote_empty">暂无结果</string>
+    <string name="contacts_result_from_remote_empty_second">检查号码是否正确</string>
+    <string name="contacts_scan_code_tip">扫描二维码来添加联系人</string>
+
+    <string name="contacts_add_friend_title">添加 %s 到你的BCM通讯录，该通讯录会被加密并保存在云端。 </string>
+    <string name="contacts_add_action_button">添加</string>
+    <string name="contacts_edit_action_button">编辑</string>
+    <string name="contacts_delete_friend_title">你确定删除%s吗</string>
+    <string name="contacts_delete_action_button">删除</string>
+    <string name="contacts_fragment_individual_title">联系人</string>
+    <string name="contacts_fragment_group_title">群聊</string>
+    <string name="contacts_fragment_friends_title">朋友</string>
+    <string name="contacts_local_phone_decoration">手机联系人</string>
+    <string name="contacts_new_group_chat">新建群聊</string>
+    <string name="contacts_new_channel">新建广播</string>
+
+
+    <!-- 请求好友 -->
+    <string name="contacts_request_friend_title">好友请求</string>
+    <string name="contacts_request_friend_action">发送</string>
+    <string name="contacts_request_friend_notice">向%s发送好友请求</string>
+    <string name="contacts_request_friend_memo_hint">我是%s。 </string>
+    <string name="contacts_friend_request_title">好友请求</string>
+    <string name="contacts_friend_decline">拒绝</string>
+    <string name="contacts_friend_accept">同意并添加为好友</string>
+    <string name="contacts_friend_decline_title">拒绝 %s 的好友请求</string>
+    <string name="contacts_request_friend_success">发送成功</string>
+    <string name="contacts_request_friend_fail">发送失败</string>
+    <string name="contacts_add_friend_success">添加好友成功</string>
+    <string name="contacts_add_friend_failed">添加好友失败</string>
+    <string name="contacts_add_friend_reject_failed">拒绝好友请求失败</string>
+    <string name="contacts_user_card_chat">聊天</string>
+    <string name="contacts_user_card_stranger">陌生人</string>
+    <string name="contacts_request_friend_empty">暂无请求</string>
+
+    <!--invite and scan-->
+    <string name="contacts_main_scan_and_add">扫码添加</string>
+    <string name="contacts_main_invite_friend">邀请好友</string>
+
+    <!-- BcmUserCard -->
+    <string name="contacts_user_card_forward_title">转发</string>
+    <string name="contacts_user_card_block_title">屏蔽</string>
+    <string name="contacts_user_card_unblock_title">解除屏蔽</string>
+    <string name="contacts_user_block_success">已屏蔽</string>
+    <string name="contacts_user_unblock_success">已解除屏蔽</string>
+    <string name="contacts_user_block_fail">屏蔽失败</string>
+    <string name="contacts_user_unblock_fail">解除屏蔽失败</string>
+
+</resources>

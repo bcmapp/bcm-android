@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="contacts_app_bar_expanded_height">80dp</dimen>
+    <dimen name="contacts_app_bar_height">50dp</dimen>
+    <dimen name="contacts_item_header_height">10dp</dimen>
+    <dimen name="contacts_line_height">0.5dp</dimen>
+    <dimen name="contacts_line_height_negative">-1px</dimen>
+    <dimen name="contacts_horizontal_normal_gap">15dp</dimen>
+
+    <dimen name="contacts_item_content_font">16sp</dimen>
+    <dimen name="contacts_item_decoration_font">12sp</dimen>
+    <dimen name="contacts_item_photo_size">41dp</dimen>
+    <dimen name="contacts_item_vertical_gap">8dp</dimen>
+    <dimen name="contacts_item_horizontal_gap">10dp</dimen>
+    <dimen name="contacts_sidebar_vertical_gap">50dp</dimen>
+    <dimen name="contacts_sidebar_horizontal_gap">5dp</dimen>
+
+    <dimen name="contacts_invite_name_input_height">35dp</dimen>
+    <dimen name="contacts_invite_name_input_font">17sp</dimen>
+
+</resources>

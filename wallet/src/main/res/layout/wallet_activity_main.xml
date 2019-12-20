@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <fragment
+        android:id="@+id/wallet_main_fragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:name="com.bcm.messenger.wallet.WalletFragment"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:title_bar_background="@color/common_color_transparent"
+        app:left_image="@drawable/common_back_arrow_white_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

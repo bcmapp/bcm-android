@@ -1,0 +1,132 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'maven'
+
+//apply plugin: 'com.google.protobuf'
+
+ext.version_number = "2.6.11"
+ext.group_info = "org.whispersystems"
+ext.signal_version = "2.6.2"
+
+sourceCompatibility = 1.7
+archivesBaseName = "signal-service-java"
+version = version_number
+
+
+android {
+    compileSdkVersion compile_sdk_version as int
+
+    defaultConfig {
+        minSdkVersion min_sdk_version as int
+        targetSdkVersion target_sdk_version as int
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+//        javaCompileOptions {
+//            annotationProcessorOptions {
+//                arguments = [MODULE_NAME: 'signal-protocol']
+//            }
+//        }
+    }
+
+    androidExtensions {
+        experimental = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+//    sourceSets {
+//        main {
+//            java {
+//                srcDir 'src/main/java'
+//            }
+//            proto {
+//                srcDir 'protobuf'
+//            }
+//        }
+//    }
+
+}
+
+kapt {
+    generateStubs = true
+    arguments {
+        arg("MODULE_NAME", project.getName())
+    }
+}
+
+dependencies {
+
+    api 'com.google.protobuf:protobuf-java:3.5.1'
+    api 'com.google.code.gson:gson:2.8.5'
+    api "org.whispersystems:signal-protocol-java:${signal_version}"
+    api ('com.madgag.spongycastle:prov:1.51.0.0'){
+        exclude group:'com.madgag.spongycastle', module:'core'
+    }
+    api 'com.madgag.spongycastle:core:1.58.0.0'
+    api 'com.squareup.okhttp3:okhttp:3.13.1'
+
+    api "androidx.core:core:$androidx_core_version"
+
+    api 'org.whispersystems:jobmanager:1.0.2'
+    api('org.whispersystems:libpastelog:1.0.7') {
+        exclude group: 'androidx.core', module: 'core'
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name.equals("lint")) {
+        task.enabled = false
+    }
+}
+
+def isReleaseBuild() {
+    return version.contains("SNAPSHOT") == false
+}
+
+
+//protobuf {
+//    protoc {
+//        path = '/Users/wangjianhong/protoc-3/bin/protoc'
+//    }
+//
+//    generateProtoTasks {
+//        all().each { task ->
+//            task.builtins {
+//                remove java
+//            }
+//            task.builtins {
+//                java { }
+//                // Add cpp output without any option.
+//                // DO NOT omit the braces if you want this builtin to be added.
+//                cpp { }
+//            }
+//        }
+//    }
+//}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        // Local repo
+        repository(url: uri('../repo'))
+        // Unique id
+        pom.groupId = "org.whispersystems.signalservice"
+        // Project name
+        pom.artifactId = "signal"
+        // Version code
+        pom.version = "1.0.0"
+    }
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bcm.messenger.chats.mediapreview.DragLayout
+    android:id="@+id/preview_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.bcm.messenger.common.video.VideoPlayer
+        android:id="@+id/preview_player"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.bcm.messenger.chats.components.ZoomingImageView
+        android:id="@+id/preview_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.pnikosis.materialishprogress.ProgressWheel
+        android:id="@+id/preview_progress"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:clickable="false"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:matProg_barColor="@color/common_color_white"
+        app:matProg_linearProgress="true"
+        app:matProg_spinSpeed="0.333"
+        tools:visibility="visible" />
+
+</com.bcm.messenger.chats.mediapreview.DragLayout>

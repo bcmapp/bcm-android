@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!-- AbstractNotificationBuilder -->
+    <string name="AbstractNotificationBuilder_new_message">新規メッセージ</string>
+
+
+    <!-- DraftDatabase -->
+    <string name="common_draft_image_snippet">（画像）</string>
+    <string name="common_draft_audio_snippet">（音声）</string>
+    <string name="common_draft_video_snippet">（動画）</string>
+    <string name="common_draft_location_snippet">（位置情報）</string>
+
+    <!-- AudioSlidePlayer -->
+    <string name="common_playing_audio_error">音声の再生エラー！</string>
+
+
+    <!-- ContactsDatabase -->
+    <string name="ContactsDatabase_message_s">メッセージ %s</string>
+    <string name="ContactsDatabase_signal_call_s">BCM 通話 %s</string>
+
+    <!-- ConversationItem -->
+    <string name="common_conversation_received_key_exchange_message_tap_to_process">鍵交換メッセージを受信しました。タップして続行します。</string>
+    <string name="common_conversation_group_action_left">%1$s はグループから退会しました。</string>
+
+    <string name="common_thread_key_exchange_message">鍵交換メッセージ</string>
+
+    <!--- NotificationBarManager -->
+    <string name="common_webrtc_call_in_progress">通話中です</string>
+    <string name="common_webrtc_establishing_call">通話を確立しています</string>
+    <string name="common_webrtc_incoming_call">電話の着信</string>
+    <string name="common_webrtc_deny_call">拒否</string>
+    <string name="common_webrtc_answer_call">応答</string>
+    <string name="common_webrtc_end_call">通話終了</string>
+    <string name="common_webrtc_cancel_call">通話をキャンセル</string>
+
+    <!-- MessageRecord -->
+    <string name="MessageRecord_message_encrypted_with_a_legacy_protocol_version_that_is_no_longer_supported">古いバージョンのBCMによって暗号化メッセージを受信しました。安全のためもうこのメッセージを処理することができません。送信者にアプリをアップデートするように要求してください。</string>
+    <string name="MessageRecord_left_group">あなたはグループから退会しました。</string>
+    <string name="MessageRecord_you_updated_group">あなたがグループ情報を更新しました。</string>
+    <string name="MessageRecord_s_updated_group">%s がグループ情報を更新しました。</string>
+    <string name="MessageRecord_s_called_you">%s からの着信</string>
+    <string name="MessageRecord_called_s">からの着信 %s</string>
+    <string name="MessageRecord_missed_call_from">からの不在着信 %s</string>
+    <string name="MessageRecord_s_joined_signal">%s オンラインで BCM！</string>
+    <string name="MessageRecord_you_set_disappearing_message_time_to_s">消えるメッセージの時間を設定したto %1$s。</string>
+    <string name="MessageRecord_s_set_disappearing_message_time_to_s">%1$s 消えるメッセージの時間を設定した %2$s。</string>
+    <string name="MessageRecord_your_safety_number_with_s_has_changed">%s との安全番号が変わりました。</string>
+    <string name="MessageRecord_you_marked_your_safety_number_with_s_verified">セーフティ番号に %s の確認済みのマークを付けました。</string>
+    <string name="MessageRecord_you_marked_your_safety_number_with_s_verified_from_another_device">他の端末から確認された %s で安全番号をマークしました。</string>
+    <string name="MessageRecord_you_marked_your_safety_number_with_s_unverified">セーフティナンバーに %s 未確認のマークを付けました。</string>
+    <string name="MessageRecord_you_marked_your_safety_number_with_s_unverified_from_another_device">安全番号を他の悪魔からの未確認の %s でマークしました。</string>
+
+
+    <!-- RedPhone -->
+    <string name="common_phone_answering">応答中</string>
+    <string name="common_phone_ending_call">通話終了</string>
+    <string name="common_phone_dialing">呼び出し中</string>
+    <string name="common_phone_ringing">呼び出し中</string>
+    <string name="common_phone_busy">ビジー状態</string>
+    <string name="common_phone_connected">接続済み</string>
+    <string name="common_phone_recipient_unavailable">受信者無効</string>
+    <string name="common_phone_network_failed">ネットワーク障害！</string>
+    <string name="common_phone_number_not_registered">登録されていない番号！</string>
+    <string name="common_phone_the_number_you_dialed_does_not_support_secure_voice">ダイヤルした番号は安全な音声をサポートしていません！</string>
+    <string name="common_phone_got_it">了解</string>
+
+
+    <!-- Slide -->
+    <string name="common_slide_image">画像</string>
+    <string name="common_slide_audio">音声</string>
+    <string name="common_slide_video">動画</string>
+
+    <!-- SmsMessageRecord -->
+    <string name="common_record_received_corrupted_key_exchange_message">破損した鍵交換メッセージを受信しました！</string>
+    <string name="common_record_received_key_exchange_message_for_invalid_protocol_version">無効なプロトコルバージョンの鍵交換メッセージを受信しました。</string>
+    <string name="common_record_received_message_with_new_safety_number_tap_to_process">新しい安全番号でメッセージを受信しました。タップして処理して表示します。</string>
+    <string name="common_record_secure_session_reset">セキュアセッションをリセットする。</string>
+    <string name="common_record_secure_session_reset_s">%s セキュアセッションをリセットする.</string>
+    <string name="common_record_duplicate_message">メッセージを複製する。</string>
+
+    <!-- ThreadRecord -->
+    <string name="common_thread_group_updated">グループ情報が更新されました</string>
+    <string name="common_thread_left_the_group">グループを去った</string>
+    <string name="common_thread_secure_session_reset">セキュアセッションをリセットします。</string>
+    <string name="common_thread_draft">[下書き]</string>
+    <string name="common_thread_called">電話をかけた</string>
+    <string name="common_thread_called_you">着信電話</string>
+    <string name="common_thread_missed_call">不在着信</string>
+    <string name="common_thread_media_message">メディアメッセージ</string>
+    <string name="common_thread_s_is_on_signal">%s オンラインで BCM!</string>
+    <string name="common_thread_disappearing_message_time_updated_to_s">メッセージの自動消滅時間をあと%sに設定しました</string>
+    <string name="common_thread_safety_number_changed">安全番号が変更されました</string>
+    <string name="common_thread_your_safety_number_with_s_has_changed">安全番号 %s が変更されました。</string>
+    <string name="common_thread_you_marked_verified">身元を確認済みとしてマークする</string>
+    <string name="common_thread_you_marked_unverified">身元を未確認としてマークする</string>
+
+
+    <!-- UntrustedSendDialog -->
+    <string name="UntrustedSendDialog_send_message">メッセージを送信しますか?</string>
+    <string name="UntrustedSendDialog_send">送信</string>
+
+    <!-- UnverifiedSendDialog -->
+    <string name="UnverifiedSendDialog_send_message">メッセージを送信しますか？</string>
+    <string name="UnverifiedSendDialog_send">送信</string>
+
+
+    <!-- MessageDisplayHelper -->
+    <string name="MessageDisplayHelper_bad_encrypted_message">異常な暗号化のメッセージ</string>
+    <string name="MessageDisplayHelper_decrypting_please_wait">解読、お待ちください…</string>
+    <string name="MessageDisplayHelper_message_encrypted_for_non_existing_session">存在しないセッション用に暗号化されたメッセージ</string>
+
+    <!-- EncryptingSmsDatabase -->
+    <string name="EncryptingSmsDatabase_error_decrypting_message">メッセージの復号化エラー。</string>
+
+    <!-- ThreadDatabase -->
+    <string name="ThreadDatabase_error_decrypting_message">メッセージの復号に失敗しました。</string>
+
+    <!-- MmsDatabase -->
+    <string name="MmsDatabase_error_decrypting_message">メッセージの復号に失敗しました。</string>
+
+    <!-- MmsMessageRecord -->
+    <string name="MmsMessageRecord_decrypting_mms_please_wait">MMSを復号中です。暫くお待ちください…</string>
+    <string name="MmsMessageRecord_bad_encrypted_mms_message">暗号化されたMMSメッセージが正しくありません</string>
+    <string name="MmsMessageRecord_mms_message_encrypted_for_non_existing_session">MMSメッセージは存在しないセッションに対して暗号化されています</string>
+
+    <!-- KeyCachingService -->
+    <string name="KeyCachingService_signal_passphrase_cached">タッチして開く。</string>
+    <string name="KeyCachingService_signal_passphrase_cached_with_lock">タッチして開く, またはロックに触れて閉じる。</string>
+    <string name="KeyCachingService_passphrase_cached">BCMはアンロックされました</string>
+    <string name="KeyCachingService_lock">パスコードでロックする</string>
+
+    <!-- MediaPreviewActivity -->
+
+    <!-- MessageNotifier -->
+    <string name="common_locked_message_description">ロックされたメッセージ</string>
+    <string name="MessageNotifier_media_message_with_text">メディアメッセージ: %s</string>
+    <string name="MessageNotifier_message_delivery_failed">メッセージの送信に失敗しました。</string>
+    <string name="MessageNotifier_failed_to_deliver_message">メッセージは送信されませんでした。</string>
+    <string name="MessageNotifier_error_delivering_message">メッセージの送信中にエラーが発生しました。</string>
+    <string name="MessageNotifier_media_message">メディアメッセージ</string>
+    <string name="MessageNotifier_pending_signal_messages">待機中のBCMメッセージ</string>
+    <string name="MessageNotifier_you_have_pending_signal_messages">メッセージが保留中です。タップして開き、取得します。</string>
+
+    <!-- audio_view -->
+    <string name="common_audio_play_accessibility_description">再生</string>
+    <string name="common_audio_pause_accessibility_description">一時停止</string>
+    <string name="common_audio_download_accessibility_description">ダウンロード</string>
+
+    <!-- expiration -->
+
+    <string name="expiration_off">オフ</string>
+
+    <plurals name="expiration_seconds">
+        <item quantity="one">1 秒</item>
+        <item quantity="other">%d 秒</item>
+    </plurals>
+
+    <string name="expiration_seconds_abbreviated">%ds</string>
+
+    <plurals name="expiration_minutes">
+        <item quantity="one">1 分</item>
+        <item quantity="other">%d 分</item>
+    </plurals>
+
+    <string name="expiration_minutes_abbreviated">%dm</string>
+
+    <plurals name="expiration_hours">
+        <item quantity="one">1 時</item>
+        <item quantity="other">%d 時</item>
+    </plurals>
+
+    <string name="expiration_hours_abbreviated">%dh</string>
+
+    <plurals name="expiration_days">
+        <item quantity="one">1 日</item>
+        <item quantity="other">%d 日々</item>
+    </plurals>
+
+    <string name="expiration_days_abbreviated">%dd</string>
+
+    <plurals name="expiration_weeks">
+        <item quantity="one">1 週</item>
+        <item quantity="other">%d 週</item>
+    </plurals>
+
+    <string name="expiration_weeks_abbreviated">%dw</string>
+
+    <!-- unverified safety numbers -->
+    <string name="IdentityUtil_unverified_banner_one">%s の安全番号は変更されており、もう検証されていません</string>
+    <string name="IdentityUtil_unverified_banner_two">%1$sと%2$sの安全番号は変更されており、もう確認されていません</string>
+    <string name="IdentityUtil_unverified_banner_many">%1$sと%2$sおよび%3$sの安全番号は変更されており、もう検証されていません</string>
+
+    <string name="IdentityUtil_unverified_dialog_one">%1$sの安全番号は検証されていません。 これは通常単にユーザーがログインし直しただけですが、そうでなければ誰かがこの会話を傍受しようとしている可能性があります。</string>
+    <string name="IdentityUtil_unverified_dialog_two">%1$s, %2$sの安全番号は検証されていません。 これは通常単にユーザーがログインし直しただけですが、そうでなければ誰かがこの会話を傍受しようとしている可能性があります。</string>
+    <string name="IdentityUtil_unverified_dialog_many">%1$s, %2$s,%3$sの安全番号は検証されていません。 これは通常単にユーザーがログインし直しただけですが、そうでなければ誰かがこの会話を傍受しようとしている可能性があります。</string>
+
+    <string name="IdentityUtil_untrusted_dialog_one">%s の安全番号が変更されました。</string>
+    <string name="IdentityUtil_untrusted_dialog_two">%1$s，%2$sの安全番号が変更されました。</string>
+    <string name="IdentityUtil_untrusted_dialog_many">%1$s，%2$s，%3$sの安全番号が変更されました。</string>
+
+    <plurals name="identity_others">
+        <item quantity="one">%d その他の</item>
+        <item quantity="other">%d その他の</item>
+    </plurals>
+
+
+    <string name="common_notification_message_content_format">1件の会話から新しいメッセージを受信しました</string>
+    <string name="common_notification_message_contents_format">%d件の会話から新しいメッセージを受信しました。</string>
+    <string name="common_chats_group_kick_me">あなたは%sによってグループから追い出されました</string>
+
+    <string name="common_group_invite_stranger_notice">%sを招待失敗したので、先にフレンドに追加してください</string>
+    <string name="common_group_name_update_format">グループ名前を%sに変更</string>
+
+
+    <!--Invite Message-->
+    <string name="common_invite_user_message">
+        より安全でプライベートなBCMでチャットしよう！リンクはこちら \n(%s )
+    </string>
+
+    <!-- APKインストールに関する -->
+    <string name="common_apk_install_notice_description">このAPKプロファイルは、不安全な内容を含める可能がありますので、送信者を十分に信頼して、このAPKプロファイルを開いてインストールしてください。</string>
+
+
+    <string name="common_app_prefix">BCM_</string>
+    <string name="common_yesterday_text">昨天</string>
+    <string name="common_morning_text">午前</string>
+    <string name="common_afternoon_text">午後</string>
+
+    <string name="common_password_format_error">パスワードの形式エラー</string>
+    <string name="common_password_too_short_warning">いパスワードは最低8文字が必要です。</string>
+    <string name="common_new_password_too_short_warning">新しいパスワードは最低8文字が必要です。</string>
+
+    <string name="common_appellation_text">君は</string>
+
+    <string name="common_delete">削除</string>
+    <string name="common_cancel">キャンセル</string>
+    <string name="common_send">送信</string>
+    <string name="common_open">開け</string>
+    <string name="common_later">あとで処理する</string>
+    <string name="common_done">完了</string>
+    <string name="common_copied">コピー済み</string>
+    <string name="common_understood">理解した</string>
+
+    <string name="common_connection_lost">接続中…&#8230;</string>
+    <string name="common_group_get_member_fail">グループのメンバーの取得に失敗しました</string>
+
+    <string name="common_search_hint">検索</string>
+    <string name="common_title_hint">タイトル</string>
+    <string name="common_content_hint">コンテンツ</string>
+    <string name="common_back_description">戻る</string>
+    <string name="common_add_contact_notice">連絡先に追加されました</string>
+    <string name="common_invite_action_text">招待</string>
+    <string name="common_sms_invite_sample">こんにちは、私はBCM- ブロックチェーンメッセンジャーを使っています。私と会話しませんか: </string>
+    <string name="common_sms_invite_fail">招待失敗</string>
+    <string name="common_choose_photo">画像を選択</string>
+    <string name="common_delete_photo">画像を削除</string>
+    <string name="common_popup_ok">OK</string>
+    <string name="common_confirm_ok_text">確認</string>
+    <string name="common_confirm_detail">詳細</string>
+    <string name="common_confirm_password_hint">パスワードを入力</string>
+    <string name="common_confirm_password_repeat_hint">パスワードを再入力</string>
+
+    <!--扫一扫 -->
+    <string name="common_scan_activity_default_title">スキャンして</string>
+    <string name="common_scan_other_title">QRコードをスキャンして</string>
+    <string name="common_scan_my_title">マイQRコード</string>
+    <string name="common_scan_title">QRコードをスキャン</string>
+    <string name="common_scan">スキャン</string>
+    <string name="common_scan_album">アルバム</string>
+    <string name="common_scan_from_album_text">アルバムから選ぶ</string>
+    <string name="common_scan_choose_qr_title">QRコードを選択</string>
+    <string name="common_scan_parse_qr_fail">QRコードが見つかりませんでした</string>
+    <string name="common_scan_flash_button">フラッシュ</string>
+    <string name="common_scan_qr_button">自分のQRコード</string>
+
+    <string name="common_retrieval_service_content">バックグラウンド通信が有効です</string>
+
+    <!-- GCM -->
+    <string name="common_gcm_service_fail">連続してBCMにエラーが発生しました！</string>
+    <string name="common_register_with_Google_Play_Services_fail">BCMはPlay開発者サービスにレジストできませんでした。</string>
+
+    <string name="common_chat">チャット</string>
+    <string name="common_call">通話</string>
+
+    <string name="common_notification_channel_name">IM</string>
+    <string name="common_notification_channel_description">新規メッセージ通知。</string>
+
+    <string name="common_new_version_tip">バージョン %1$s があります</string>
+
+    <string name="common_transfer_title">お知らせ</string>
+    <string name="common_transfer_from_old_package">正式なバージョンがこのデバイスにインストールされていることが検出されたら、「続行」をタップして正式なバージョンにログインします。</string>
+    <string name="common_transfer_detect_new_package">これはベータバージョンのため、安定版に切り替えることをお勧めします。</string>
+    <string name="common_transfer_button">処理中</string>
+    <string name="common_transfer_launch">確認</string>
+    <string name="common_download_origin">元のファイルをダウンロード中。</string>
+    <string name="common_transfer_error_title">エラー</string>
+    <string name="common_transfer_data_error">アカウントデーターの転送エラー</string>
+
+    <!-- 会话页面消息简述 -->
+    <string name="common_video_message_description">[動画]</string>
+    <string name="common_audio_message_description">[音声]</string>
+    <string name="common_location_message_description">[位置]</string>
+    <string name="common_image_message_description">[画像]</string>
+    <string name="common_link_message_description">[リンク]</string>
+    <string name="common_share_channel_message_description">[放送グループ]</string>
+    <string name="common_system_message_description">[システムメッセージ]</string>
+    <string name="common_file_message_description">[添付ファイル]</string>
+    <string name="common_contact_message_description">[名刺]</string>
+    <string name="common_screenshot_message_description">[スクリーンショットメッセージ]</string>
+    <string name="common_history_message_description">[過去ログ]</string>
+    <string name="common_pin_message_description">[固定メッセージ]</string>
+    <string name="common_group_share_message_description">[グループ加入招待]</string>
+    <string name="common_adhoc_channel_invite_description">[エアチャット招待]</string>
+
+    <!-- bcm好友变更消息类型描述 -->
+    <string name="common_friend_add_message_description">[友達追加]</string>
+    <string name="common_friend_added_message_description">[友達が追加されました]</string>
+    <string name="common_friend_delete_message_description">[友達を消去]</string>
+
+
+    <string name="common_system_notification_notice">システムで通知がオフになっています。有効にしてください。</string>
+    <string name="common_system_notification_button">オンにする</string>
+
+    <!-- 消息快照 -->
+    <string name="common_unsupport_type_message_snapshot">このメッセージはこのバージョンには対応していません。アプリをアップデートしてください。</string>
+    <string name="common_decrypt_message_error">復号化エラーメッセージ</string>
+    <string name="common_error_decrypting_message_snapshot">メッセージの復号にエラーが発生しました</string>
+
+    <string name="common_chats_system_tip_you">あなた</string>
+    <string name="common_chats_system_tip_you_lower_case">あなた</string>
+    <string name="common_chats_group_update">グループをアップデート</string>
+    <string name="common_chats_group_owner_change">%sはグループの群主となる</string>
+    <string name="common_chats_group_invite">%1$s が %2$s をグループチャットに招待しました</string>
+    <string name="common_chats_group_join">%sがグループに参加しました</string>
+    <string name="common_chats_group_remove_member">%1$s は %2$sをグループから追い出しました</string>
+    <string name="common_chats_leave_group">%s がグループから抜けました</string>
+    <string name="common_chats_group_you_recall_message">あなたはメッセージを撤回する</string>
+    <string name="common_chats_peer_recall_message">%s はメッセージを撤回する</string>
+    <string name="common_chats_subscribe_group">%s はこのグループに閲覧者として登録しました</string>
+    <string name="common_chats_group_remove_subscriber">%1$s は %2$sをグループから追い出しました</string>
+    <string name="common_chats_unsubscribe_group">%s がグループから脱退しました</string>
+
+    <string name="common_chats_message_add_friend_description">%s を追加しました</string>
+    <string name="common_chats_message_delete_friend_description">BCMの連絡先から %s を削除しました</string>
+
+    <string name="common_chats_you_recalled_message">あなたが送信取り消ししました</string>
+    <string name="common_chats_partner_clear_history_tip">%s がチャット履歴を消去しました</string>
+    <string name="common_chats_you_clear_history_tip">消去成功</string>
+    <string name="common_chats_you_clearing_history_tip">このチャット履歴は双方の端末から消滅します</string>
+    <string name="common_chats_you_clear_history_fail_tip">消去失敗</string>
+    <string name="common_chats_he_recalled_message">%s が送信を取り消しました</string>
+
+    <string name="common_chats_user_block_system_notice">あなたが%sをブロックしました</string>
+    <string name="common_chats_user_unblock_system_notice">あなたが %s からのメッセージをブロック解除しました</string>
+
+    <string name="common_dialog_hidden">隠す</string>
+
+    <string name="common_live_start_live_tip">%s がビデオシェアリングを開始しました。</string>
+    <string name="common_live_stop_live_tip">%s がビデオシェアリングを停止しました。</string>
+    <string name="common_live_start_live_tip_by_you">あなたがビデオシェアリングを開始しました。</string>
+    <string name="common_live_stop_live_tip_by_you">あなたがビデオシェアリングを停止しました。</string>
+    <string name="common_illegal_group_notice">あなたはこのグループのメンバーではありません</string>
+
+    <string name="common_live_end_tip">ビデオシェアリングが終了しました。</string>
+    <string name="common_error_failed">失敗</string>
+    <string name="common_chats_network_connecting">接続中…</string>
+
+    <!--image picker-->
+    <string name="common_piece">片</string>
+    <string name="common_you_have_a_select_limit">%1$s 画像限定</string>
+    <string name="common_select_complete">完了(%1$s/%2$s)</string>
+    <string name="common_all_images">すべての画像</string>
+    <string name="common_string_select">選択する</string>
+    <string name="common_string_preview">プレビュー</string>
+    <string name="common_string_save">保存する</string>
+    <string name="common_album">アルバム</string>
+    <string name="common_all_photos">すべての写真</string>
+    <string name="common_take_photo">写真を撮る</string>
+    <string name="common_pick_photo_size_limit">%d 画像限定</string>
+
+
+    <!-- webRTC notification -->
+    <string name="common_webrtc_call_default_description">未処理の通話通知を展示する</string>
+    <string name="common_webrtc_call_channel_description">未処理の通話通知を展示する</string>
+
+    <!-- friend -->
+    <string name="common_chats_stranger_disturb_notice">%s ストレンジャーのメッセじを拒否する。 </string>
+
+    <!-- group share-->
+    <string name="common_chats_group_join_request_description">%sはグループ加入を申請する。 </string>
+    <string name="common_chats_group_invite_single_description">%sは%sをクループの加入に招待する。 </string>
+    <string name="common_chats_group_invite_multi_description">%sは%d人のメンバーをクループ加入に招待する。 </string>
+    <string name="common_chats_group_request_detail_description">詳細</string>
+    <string name="common_chats_group_request_handled_description">処理済み</string>
+    <string name="common_chats_group_default_name">名前梨グループ</string>
+    <string name="common_chats_group_default_display_name">グループチャット</string>
+    <string name="common_network_connection_error">ネットとの接続が失敗なので、暫くして再試行してください</string>
+
+    <!--notification-->
+    <string name="common_notification_friend_single">一通のフレンド申請があります</string>
+    <string name="common_notification_friend_multiple">%d通のフレンド申請があります</string>
+
+    <!-- Search -->
+    <string name="common_search_display_title">検索</string>
+    <string name="common_recent_search_title">最近の検索</string>
+    <string name="common_current_search_contact_title">連絡先</string>
+    <string name="common_current_search_contact_more">より多くの連絡先</string>
+    <string name="common_current_search_group_title">グループ</string>
+    <string name="common_current_search_group_more">より多くのグループ</string>
+    <string name="common_current_search_adhoc_title">エアチャット</string>
+    <string name="common_current_search_adhoc_more">ほかのエアチャット</string>
+    <string name="common_go_setting_wifi">エアチャット機能を使うには携帯電話のWi-Fiを開く必要があります</string>
+    <string name="common_ble_go_setting">エアチャット機能を使うには携帯電話のBluetoothを開く必要があります</string>
+    <string name="common_gps_go_setting">エアチャット機能を使うには携帯電話の位置情報サービスを開く必要があります</string>
+    <string name="common_alert_tip">提示</string>
+    <string name="common_alert_go_setting">設置へ</string>
+
+    <!--invite share-->
+    <string name="common_invite_share_title">&#8230;まで招待を送信します</string>
+    <string name="common_invite_share_copy_invitation">招待をコッピー</string>
+    <string name="common_invite_share_more">ほか</string>
+    <string name="common_invite_share_sms">ショットメッセージ</string>
+    <string name="common_invite_share_email">電子メール</string>
+    <string name="common_invite_share_copy">コッピー</string>
+    <string name="common_invite_share_wechat">WeChat</string>
+    <string name="common_invite_share_weibo">ミニブログ</string>
+    <string name="common_invite_share_twitter_tweet">ツイート</string>
+    <string name="common_invite_share_twitter_direct_message">マイメッセージ</string>
+
+    <!--database migrate-->
+    <string name="common_database_migrate_title">データベースアップグレード</string>
+    <string name="common_database_migrate_content">データベースのアップグレード完成する前に、暫くお待ち下さい</string>
+    <string name="common_database_migrate_finish_login">アップグレード成功。ログイン中</string>
+    <string name="common_database_migrate_failed">アップグレード失敗</string>
+    <string name="common_database_migrate_failed_content">データベースのアップグレードが失敗しますので、歴史メッセージがよめないこもしれません。このてんについて、申し訳ございませんが、我々は出来るだけこの問題を修復します。</string>
+
+    <string name="common_message_decrypted_fail_error">暗号鍵の期限が切れているので、%s通歴史メッセージを読めない</string>
+
+    <!-- サービス提示 -->
+    <string name="common_too_low_version_notice">当該Appのバージョンは低いなので、アップグレードしてからこの操作を完成することができます</string>
+    <string name="common_server_request_fail_description">サービス申請が失敗し，ステータスコードに戻る %d</string>
+    <string name="common_server_request_cancel_description">サービス申請がキャンセルされた</string>
+    <string name="common_server_request_fail_no_code_description">サービス申請が失敗</string>
+
+    <!-- 权限弹窗提示 -->
+    <string name="common_permission_rationale_notice">you had denied the permission, you should goto setting page to grant permission</string>
+    <string name="common_request_basic_permission_title">権限申請</string>
+    <string name="common_request_basic_permission_message">BCMを正常に使用するには、保存権限必要があります。</string>
+    <string name="common_request_basic_permission_grant">権限を与える</string>
+    <string name="common_service_unreachable">Servers Unreachable</string>
+    <string name="common_service_unreachable_tip">Can\'t reach BCM servers via the current network. Please check and try again, or try proxy.</string>
+    <string name="common_service_unreachable_try_proxy">Try Proxy</string>
+    <string name="common_ignore">Ignore</string>
+
+    <!-- 二维码相关 -->
+    <string name="common_unsupported_qr_code_description">未対応のアカウントバージョン</string>
+
+
+
+</resources>

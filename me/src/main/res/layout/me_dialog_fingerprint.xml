@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/common_white_bg">
+
+    <ImageView
+        android:id="@+id/dialog_fingerprint_icon"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="25dp"
+        app:srcCompat="@drawable/me_fingerprint_not_match_icon" />
+
+    <TextView
+        android:id="@+id/dialog_fingerprint_text"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:textColor="@color/common_color_black"
+        android:textSize="15sp"
+        tools:text="@string/me_fingerprint_not_match"/>
+
+    <com.bcm.messenger.common.ui.StateButton
+        android:id="@+id/dialog_fingerprint_positive"
+        style="@style/CommonPrimaryBigTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/me_fingerprint_password_try_again"
+        app:textAllCaps="false" />
+
+    <com.bcm.messenger.common.ui.StateButton
+        android:id="@+id/dialog_fingerprint_negative"
+        style="@style/CommonPrimaryThinBigTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:text="@string/common_cancel"
+        app:textAllCaps="false" />
+</LinearLayout>

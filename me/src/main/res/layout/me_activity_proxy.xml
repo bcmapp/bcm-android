@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/proxy_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/me_proxy_setting_title"
+        app:right_type="image"
+        app:right_image="@drawable/common_titlebar_plus_icon"/>
+
+    <TextView
+        android:id="@+id/proxy_running_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:visibility="gone"/>
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/proxy_test_run"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        app:setting_item_name="启用代理"
+        app:setting_item_name_color="#379BFF"
+        app:setting_item_right="none"
+        app:setting_item_switch="off"
+        app:setting_item_line="false"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"/>
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/proxy_setting_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:setting_item_line="false"
+        app:setting_item_name="@string/me_test_proxy_usability"
+        app:setting_item_name_color="@color/common_color_379BFF"
+        app:setting_item_sub_name="@string/me_test_proxy_usability_describe"
+        app:setting_item_right="none"
+        app:setting_item_switch="none" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="9dp"
+        android:textSize="14sp"
+        android:text="@string/me_proxy_configurations"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/proxy_server_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

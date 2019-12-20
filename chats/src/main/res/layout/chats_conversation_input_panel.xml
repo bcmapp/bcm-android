@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/panel_top_divider"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_division_color"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/panel_reply_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"
+        android:paddingTop="@dimen/common_vertical_gap"
+        android:paddingBottom="@dimen/common_vertical_gap"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/panel_reply_close_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="5dp"
+            android:src="@drawable/common_round_bg_close"
+            android:contentDescription=""
+            android:scaleType="centerInside"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+        <TextView
+            android:id="@+id/panel_reply_to_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/common_title_color"
+            android:textSize="16sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:paddingBottom="3dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/panel_reply_close_iv"
+            tools:text="john wick" />
+
+        <TextView
+            android:id="@+id/panel_reply_content_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/common_content_second_color"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:layout_constraintTop_toBottomOf="@id/panel_reply_to_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/panel_reply_close_iv"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="reply content" />
+
+        <com.bcm.messenger.common.ui.emoji.EmojiTextView
+            android:id="@+id/panel_reply_text_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/common_content_second_color"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:layout_constraintTop_toBottomOf="@id/panel_reply_to_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/panel_reply_close_iv"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="reply content" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/panel_at_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/panel_reply_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/panel_main_ban"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/common_color_white"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/panel_at_list">
+
+        <View
+            android:id="@+id/panel_divider"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/common_line_height"
+            android:background="@color/common_division_color"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:id="@+id/panel_more_options_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription=""
+            android:layout_marginBottom="6dp"
+            android:padding="8dp"
+            android:scaleType="center"
+            android:src="@drawable/chats_more_send_options"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/chats_conversation_text_bubble_bg"
+            android:layout_marginEnd="6dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/panel_more_options_iv"
+            app:layout_constraintEnd_toStartOf="@+id/panel_action_layout"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/panel_burn_toggle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/chats_destroy_msg_icon"
+                android:visibility="gone"
+                android:layout_marginStart="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:visibility="gone" />
+
+            <TextView
+                android:id="@+id/panel_burn_delay_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/common_content_second_color"
+                android:textSize="7sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/panel_burn_toggle"
+                app:layout_constraintEnd_toEndOf="@id/panel_burn_toggle"
+                app:layout_constraintStart_toStartOf="@id/panel_burn_toggle"
+                app:layout_constraintTop_toTopOf="@id/panel_burn_toggle"
+                tools:text="1h"/>
+
+            <ImageView
+                android:id="@+id/panel_emoji_toggle"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/chats_emoji"
+                android:layout_marginBottom="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
+
+            <com.bcm.messenger.common.ui.emoji.EmojiEditText
+                android:id="@+id/panel_compose_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="left|center_vertical"
+                android:hint="@string/chats_conversation_input_hint"
+                android:inputType="textMultiLine"
+                android:maxLines="5"
+                android:minHeight="36dp"
+                android:textColorHint="#cccccc"
+                android:textSize="15sp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingStart="3dp"
+                android:paddingEnd="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/panel_burn_toggle"
+                app:layout_constraintEnd_toStartOf="@+id/panel_emoji_toggle"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/panel_action_layout"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                android:id="@+id/panel_audio_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/chats_message_voice_icon"
+                android:scaleType="centerInside"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <com.bcm.messenger.chats.components.CountDownSenderView
+                android:id="@+id/panel_countdown_send_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            layout="@layout/chats_conversation_recoding"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/panel_restriction_ban"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:background="@color/common_color_white"
+        app:layout_constraintTop_toTopOf="@id/panel_main_ban"
+        app:layout_constraintBottom_toBottomOf="@id/panel_main_ban"
+        app:layout_constraintLeft_toLeftOf="@id/panel_main_ban"
+        app:layout_constraintRight_toRightOf="@id/panel_main_ban"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/restriction_ban_background"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/chats_subscribe_blur_background"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/restriction_ban_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:text="@string/chats_group_subscribers_ban"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Subscibers are not allowed to send messages"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/panel_extra_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/chats_emoji_panel_background"
+        app:layout_constraintTop_toBottomOf="@id/panel_main_ban"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/panel_option_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:visibility="gone"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp" />
+
+        <com.bcm.messenger.chats.components.EmojiPanelView
+            android:id="@+id/panel_emoji_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/panel_other_action_layout"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:orientation="horizontal"
+        android:background="@color/common_color_black"
+        android:visibility="gone"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/panel_forward_btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/chats_option_forward_icon"
+            android:scaleType="centerInside" />
+
+        <ImageView
+            android:id="@+id/panel_delete_btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/chats_option_delete_icon"
+            android:scaleType="centerInside" />
+
+    </LinearLayout>
+
+</merge>

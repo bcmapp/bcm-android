@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingStart="@dimen/common_horizontal_gap"
+    android:paddingEnd="@dimen/common_horizontal_gap"
+    android:background="@drawable/wallet_item_ripple_bg">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/wallet_main_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/wallet_logo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/common_horizontal_gap"
+            android:layout_marginBottom="@dimen/common_horizontal_gap"
+            android:contentDescription="@string/wallet_logo_description"
+            android:scaleType="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/wallet_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/wallet_content_main_color"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/wallet_logo"
+            app:layout_constraintStart_toEndOf="@id/wallet_logo"
+            app:layout_constraintTop_toTopOf="@id/wallet_logo"
+            app:layout_constraintEnd_toStartOf="@+id/wallet_balance"
+            tools:text="BTC" />
+
+        <TextView
+            android:id="@+id/wallet_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="end"
+            android:lineSpacingExtra="10dp"
+            android:textColor="@color/wallet_content_main_color"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="1.000" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/wallet_view"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_line_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

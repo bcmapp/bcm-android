@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/reminder_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/wallet_reminder_title" />
+
+    <TextView
+        android:id="@+id/reminder_first_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/wallet_content_main_color"
+        android:textSize="15sp"
+        android:text="@string/wallet_reminder_first_title"
+        android:layout_marginTop="20dp"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"/>
+
+    <TextView
+        android:id="@+id/reminder_first_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/wallet_content_second_color"
+        android:textSize="14sp"
+        android:text="@string/wallet_reminder_first_content"
+        android:layout_marginTop="5dp"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"/>
+
+    <TextView
+        android:id="@+id/reminder_second_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/wallet_content_main_color"
+        android:textSize="15sp"
+        android:text="@string/wallet_reminder_second_title"
+        android:layout_marginTop="20dp"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"/>
+
+    <TextView
+        android:id="@+id/reminder_second_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/wallet_content_second_color"
+        android:textSize="14sp"
+        android:text="@string/wallet_reminder_second_content"
+        android:layout_marginTop="5dp"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"/>
+
+    <TextView
+        android:id="@+id/reminder_third_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/wallet_content_main_color"
+        android:textSize="15sp"
+        android:text="@string/wallet_reminder_third_title"
+        android:layout_marginTop="20dp"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"/>
+
+    <TextView
+        android:id="@+id/reminder_third_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/wallet_content_second_color"
+        android:textSize="14sp"
+        android:text="@string/wallet_reminder_third_content"
+        android:layout_marginTop="5dp"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"/>
+
+</LinearLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="emoji_drawer_size">32sp</dimen>
+    <dimen name="emoji_drawer_item_padding">5dp</dimen>
+    <dimen name="conversation_item_body_text_size">16sp</dimen>
+
+    <dimen name="media_bubble_height">210dp</dimen>
+
+    <dimen name="common_titlebar_height">105dp</dimen>
+    <dimen name="common_toolbar_height">56dp</dimen>
+    <dimen name="common_bcm_app_title_bar_height">44dp</dimen>
+
+    <dimen name="common_line_height">0.5dp</dimen>
+    <dimen name="common_horizontal_gap">15dp</dimen>
+    <dimen name="common_vertical_gap">9dp</dimen>
+    <dimen name="common_horizontal_gap_20">20dp</dimen>
+
+    <dimen name="common_sidebar_width">20dp</dimen>
+    <dimen name="common_title_bar_text_size">16sp</dimen>
+    <dimen name="common_title_bar_right_text_size">14sp</dimen>
+
+    <!-- scan -->
+    <dimen name="common_scan_corner_width">5dp</dimen>
+    <dimen name="common_scan_corner_height">15dp</dimen>
+    <dimen name="common_scan_dot_width">3dp</dimen>
+
+    <dimen name="common_notification_logo_size">56dp</dimen>
+
+    <dimen name="common_match_parent">-1dp</dimen>
+    <dimen name="common_wrap_content">-2dp</dimen>
+</resources>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#182331"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/pin_input_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="80dp"
+        android:text="Confirm PIN"
+        android:textColor="@color/common_color_white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.bcm.messenger.common.ui.IndividualAvatarView
+        android:id="@+id/pin_lock_avatar"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/common_recipient_photo_default_small"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone" />
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/pin_lock_nikename"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="60dp"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/common_color_white"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pin_lock_avatar"
+        tools:text="Christiano Chen" />
+
+    <ImageView
+        android:id="@+id/pin_1"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/me_input_pin_white_bg"
+        app:layout_constraintEnd_toStartOf="@+id/pin_2"
+        app:layout_constraintTop_toBottomOf="@+id/pin_input_title" />
+
+    <ImageView
+        android:id="@+id/pin_2"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/me_input_pin_white_bg"
+        app:layout_constraintEnd_toStartOf="@+id/pin_3"
+        app:layout_constraintTop_toBottomOf="@+id/pin_input_title" />
+
+    <ImageView
+        android:id="@+id/pin_3"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/me_input_pin_white_bg"
+        app:layout_constraintEnd_toStartOf="@+id/pin_center"
+        app:layout_constraintTop_toBottomOf="@+id/pin_input_title" />
+
+    <View
+        android:id="@+id/pin_center"
+        android:layout_width="1dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/me_input_pin_white_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pin_input_title" />
+
+    <ImageView
+        android:id="@+id/pin_4"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/me_input_pin_white_bg"
+        app:layout_constraintStart_toEndOf="@+id/pin_center"
+        app:layout_constraintTop_toBottomOf="@+id/pin_input_title" />
+
+    <ImageView
+        android:id="@+id/pin_5"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/me_input_pin_white_bg"
+        app:layout_constraintStart_toEndOf="@+id/pin_4"
+        app:layout_constraintTop_toBottomOf="@+id/pin_input_title" />
+
+    <ImageView
+        android:id="@+id/pin_6"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/me_input_pin_white_bg"
+        app:layout_constraintStart_toEndOf="@+id/pin_5"
+        app:layout_constraintTop_toBottomOf="@+id/pin_input_title" />
+
+    <TextView
+        android:id="@+id/pin_word_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/common_color_379BFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pin_center"
+        tools:text="Use 6-digit PIN" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/input_keyboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="82dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pin_center">
+
+        <TextView
+            android:id="@+id/input_1"
+            android:layout_marginEnd="35dp"
+            android:text="1"
+            style="@style/PickLockInput"
+            app:layout_constraintEnd_toStartOf="@+id/input_2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/input_2"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="2"
+            style="@style/PickLockInput"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/input_3"
+            android:layout_marginStart="35dp"
+            android:text="3"
+            style="@style/PickLockInput"
+            app:layout_constraintStart_toEndOf="@+id/input_2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/input_4"
+            android:layout_marginEnd="35dp"
+            android:layout_marginTop="25dp"
+            android:text="4"
+            style="@style/PickLockInput"
+            app:layout_constraintEnd_toStartOf="@+id/input_5"
+            app:layout_constraintTop_toBottomOf="@+id/input_2" />
+
+        <TextView
+            android:id="@+id/input_5"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="25dp"
+            android:text="5"
+            style="@style/PickLockInput"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_2" />
+
+        <TextView
+            android:id="@+id/input_6"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="25dp"
+            android:text="6"
+            style="@style/PickLockInput"
+            app:layout_constraintStart_toEndOf="@+id/input_5"
+            app:layout_constraintTop_toBottomOf="@+id/input_2" />
+
+        <TextView
+            android:id="@+id/input_7"
+            android:layout_marginEnd="35dp"
+            android:layout_marginTop="25dp"
+            android:text="7"
+            style="@style/PickLockInput"
+            app:layout_constraintEnd_toStartOf="@+id/input_8"
+            app:layout_constraintTop_toBottomOf="@+id/input_5" />
+
+        <TextView
+            android:id="@+id/input_8"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="25dp"
+            android:text="8"
+            style="@style/PickLockInput"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_5" />
+
+        <TextView
+            android:id="@+id/input_9"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="25dp"
+            android:text="9"
+            style="@style/PickLockInput"
+            app:layout_constraintStart_toEndOf="@+id/input_8"
+            app:layout_constraintTop_toBottomOf="@+id/input_5" />
+
+        <ImageView
+            android:id="@+id/input_back"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginEnd="35dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/me_input_gray_bg"
+            android:scaleType="center"
+            android:src="@drawable/common_back_arrow_white_icon"
+            app:layout_constraintEnd_toStartOf="@+id/input_0"
+            app:layout_constraintTop_toBottomOf="@+id/input_8" />
+
+        <ImageView
+            android:id="@+id/input_verify"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginEnd="35dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/me_input_gray_bg"
+            android:scaleType="center"
+            android:src="@drawable/me_fingerprint_icon"
+            app:layout_constraintEnd_toStartOf="@+id/input_0"
+            app:layout_constraintTop_toBottomOf="@+id/input_8"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/input_0"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="25dp"
+            android:text="0"
+            style="@style/PickLockInput"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_8" />
+
+        <ImageView
+            android:id="@+id/input_delete"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="25dp"
+            android:scaleType="center"
+            android:src="@drawable/me_24_delete"
+            android:background="@drawable/me_input_gray_bg"
+            app:layout_constraintStart_toEndOf="@+id/input_0"
+            app:layout_constraintTop_toBottomOf="@+id/input_8" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

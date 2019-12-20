@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_account_unsupported_qr_warning_title">अमान्य खाता कुंजी</string>
+    <string name="login_account_unsupported_qr_warning_description">यह क्यूआर कोड एक मान्य खाता कुंजी नहीं है, कृपया जांचें और फिर से कोशिश करें</string>
+
+    <string name="login_account_not_exist">Аккаунт не существует</string>
+    <string name="login_destroy_other_client_response_fail">Аккаунт не уничтожен</string>
+    <string name="login_login_failed">Ошибка входа</string>
+    <string name="login_password_error">ошибка пароля</string>
+
+    <string name="login_loading_connecting_server">Подключение к серверу…</string>
+    <string name="login_try_user_proxy_using_xxx">Применение пользов. прокси %s</string>
+    <string name="login_try_official_proxy_using_xxx">Применение станд. прокси</string>
+
+    <string name="login_account_qr_exist_notice">Рез. копия этого ключа уже есть</string>
+
+</resources>

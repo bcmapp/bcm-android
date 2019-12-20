@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
+       tools:context="com.bcm.messenger.chats.components.ShareChannelView">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/share_channel_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"
+        android:paddingTop="@dimen/common_horizontal_gap"
+        android:paddingBottom="@dimen/common_horizontal_gap">
+
+        <com.bcm.messenger.common.ui.GroupMemberPhotoView
+            android:id="@+id/share_channel_avater"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/share_channel_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/common_color_black"
+            android:textSize="15sp"
+            android:lines="1"
+            app:layout_constraintStart_toEndOf="@id/share_channel_avater"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Title"/>
+
+        <TextView
+            android:id="@+id/share_channel_link"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:lines="2"
+            android:textSize="11sp"
+            android:textIsSelectable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/share_channel_avater"
+            app:layout_constraintTop_toBottomOf="@+id/share_channel_title"
+            tools:text="link" />
+
+        <TextView
+            android:id="@+id/share_channel_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/common_color_black"
+            tools:text="abcnbopawnpevnvbawevawfewanoawnvonewonavownawownoweanaonvownaonv"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/share_channel_avater"/>
+
+        <Button
+            android:id="@+id/share_channel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/chats_channel_view_blue_bg"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/share_channel_content"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="adhoc_setting_enable_title">隔空聊天</string>
+    <string name="adhoc_setting_enable_describe">通过设备间的蓝牙/Wi-Fi的连接与朋友聊天，无需连接到互联网。</string>
+    <string name="adhoc_join_channel_join">加入</string>
+    <string name="adhoc_join_channel_name">群名称</string>
+    <string name="adhoc_join_pass_code">密码</string>
+    <string name="adhoc_join_error_input_channel_name">输入隔空聊群天名称</string>
+    <string name="adhoc_join_error_input_channel_password">输入隔空聊天群密码</string>
+    <string name="adhoc_join_error_join_failed">进隔空聊天群失败</string>
+
+    <string name="adhoc_channel_settiong_action_title">聊天操作</string>
+    <string name="adhoc_channel_settiong_footprint_title">足迹</string>
+    <string name="adhoc_channel_settiong_others_title">其他</string>
+    <string name="adhoc_channel_setting_pin_title">置顶</string>
+    <string name="adhoc_channel_setting_mute_title">免打扰</string>
+    <string name="adhoc_channel_setting_clear_notice">聊天记录将会在本机上被删除。</string>
+    <string name="adhoc_channel_setting_clear_title">清理聊天记录</string>
+    <string name="adhoc_channel_setting_clear_success">清理成功</string>
+    <string name="adhoc_channel_setting_clear_fail">清理失败</string>
+    <string name="adhoc_channel_setting_leave_notice">退出隔空聊天群将不会再收到任何消息。</string>
+    <string name="adhoc_channel_setting_leave_title">退出隔空聊天群</string>
+    <string name="adhoc_channel_setting_leave_success">退出成功</string>
+    <string name="adhoc_channel_setting_leave_fail">退出失败</string>
+    <string name="adhoc_channel_setting_leave_action">退出</string>
+
+    <string name="adhoc_channel_message_sticky_secure">手机之间的连接会影响消息的发送和接收。</string>
+
+    <string name="adhoc_unread_message">[1条]&#160;</string>
+    <string name="adhoc_unread_messages">[%d条]&#160;</string>
+    <string name="adhoc_unread_full_messages">[99+条]&#160;</string>
+    <string name="adhoc_official_channel_name">全员隔空聊天</string>
+    <string name="adhoc_main_title">隔空聊天</string>
+    <string name="adhoc_create_chat_room">创建隔空聊天群</string>
+    <string name="adhoc_join_chat_room">加入隔空聊天群</string>
+    <string name="adhoc_chat_room_create">创建</string>
+    <string name="adhoc_chat_room_join">加入</string>
+    <plurals name="adhoc_main_title_device_found">
+        <item quantity="other">找到%d个设备</item>
+    </plurals>
+    <string name="adhoc_main_title_device_found_0">未找到设备</string>
+    <string name="adhoc_device_scanning">搜索设备中…</string>
+    <string name="adhoc_main_title_connecting">连接中…</string>
+    <string name="adhoc_main_title_connecting_to">连接%s中…</string>
+    <string name="adhoc_setting_airchat_title">隔空聊天</string>
+    <string name="adhoc_chat_with_friends_via_device_to_device">通过设备到设备蓝牙/ Wi-Fi连接与好友聊天，无需访问互联网。</string>
+    <string name="adhoc_the_bluetooth_and_wi_fi_connectivity_of_this_device">启用隔空聊天模式后，此设备的蓝牙和Wi-Fi连接将被占用并用于设备到设备的通信。</string>
+    <string name="adhoc_setting_enable_airchat">启用隔空聊天</string>
+    <string name="adhoc_setting_disable_airchat">关闭隔空聊天</string>
+    <string name="adhoc_amin_airchat_on">隔空聊天: 开启</string>
+
+    <!-- 邀请进群 -->
+    <string name="adhoc_invite_join_title">邀请加入隔空聊天群</string>
+    <string name="adhoc_invite_join_room_title">群名称</string>
+    <string name="adhoc_invite_join_password_title">密码</string>
+    <string name="adhoc_invite_join_action">加入隔空聊天群</string>
+    <string name="adhoc_invite_copy_item">复制</string>
+    <string name="adhoc_invite_forward_item">转发</string>
+    <string name="adhoc_invite_forward_success">转发成功</string>
+    <string name="adhoc_invite_forward_fail">转发失败</string>
+
+    <!-- 转发相关 -->
+    <string name="adhoc_session_selection_title">转发到…</string>
+    <string name="adhoc_session_search_title">查找</string>
+    <string name="adhoc_session_recent_item_title">最近隔空聊天</string>
+
+
+    <string name="adhoc_device_ble">蓝牙</string>
+    <string name="adhoc_device_wifi">Wi-Fi</string>
+    <string name="adhoc_device_gps">GPS定位</string>
+    <string name="adhoc_device_state_error">错误：%s未开启</string>
+    <string name="adhoc_airchat_setting_members">在线成员</string>
+    <string name="adhoc_channel_member_list_title">在线成员</string>
+
+    <!-- 附件大小通知 -->
+    <string name="adhoc_attachment_too_large_upload_fail">存在附件上传失败，附件大小必须小于64MB</string>
+    <string name="adhoc_session_item_unpin">取消置顶</string>
+    <string name="adhoc_session_item_pin">置顶</string>
+    <string name="adhoc_ble_not_support_error">当前设备不支持低功耗蓝牙，无法开启隔空聊天</string>
+    <string name="adhoc_wifi_not_enable_error">Wi-Fi未激活，无法开启隔空聊天</string>
+    <string name="adhoc_gps_not_enable_error">GPS定位未激活，无法开启隔空聊天</string>
+    <string name="adhoc_ble_not_enable_error">蓝牙未激活，无法开启隔空聊天</string>
+
+    <!-- 多媒体相关 -->
+    <string name="adhoc_attachment_browse_nonsupport_description">暂不支持该功能</string>
+    <string name="adhoc_main_title_connect_failed">连接失败</string>
+    <string name="adhoc_main_title_connected">连接成功</string>
+</resources>

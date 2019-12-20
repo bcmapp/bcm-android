@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="chats_conversation_photo_size">48dp</dimen>
+
+    <dimen name="chats_conversation_item_body_text_size">16sp</dimen>
+    <dimen name="chats_conversation_item_header_text_size">12sp</dimen>
+
+    <dimen name="chats_conversation_tip_vertical_padding">3dp</dimen>
+    <dimen name="chats_conversation_tip_horizontal_padding">10dp</dimen>
+    <dimen name="chats_conversation_tip_gap_top">5dp</dimen>
+    <dimen name="chats_conversation_tip_gap">5dp</dimen>
+
+    <dimen name="chats_conversation_chunk_padding">100dp</dimen>
+
+    <dimen name="chats_conversation_item_horizontal_margin">9dp</dimen>
+    <dimen name="chats_conversation_item_vertical_margin">4dp</dimen>
+    <dimen name="chats_conversation_item_horizontal_gap">12dp</dimen>
+    <dimen name="chats_conversation_item_vertical_gap">6dp</dimen>
+
+    <dimen name="chats_conversation_item_radius">10dp</dimen>
+    <dimen name="chats_conversation_item_radius_small">0dp</dimen>
+
+    <dimen name="chats_conversation_audio_item_width">150dp</dimen>
+    <dimen name="chats_conversation_audio_item_height">36dp</dimen>
+
+    <dimen name="chats_resend_button_radius">8dp</dimen>
+
+    <dimen name="chats_conversation_thumbnail_item_width">200dp</dimen>
+    <dimen name="chats_conversation_thumbnail_item_height">200dp</dimen>
+    <dimen name="chats_conversation_thumbnail_conner">22dp</dimen>
+
+    <dimen name="chats_conversation_thumbnail_loading_width">35dp</dimen>
+    <dimen name="chats_conversation_thumbnail_detail_width">150dp</dimen>
+
+    <dimen name="chats_conversation_default_bubble_width">205dp</dimen>
+    <dimen name="chats_conversation_default_bubble_height">75dp</dimen>
+    <dimen name="chats_conversation_long_bubble_width">235dp</dimen>
+
+    <dimen name="chats_webrtc_call_mini_width">147dp</dimen>
+    <dimen name="chats_webrtc_call_mini_height">192dp</dimen>
+    <dimen name="chats_webrtc_call_mini_x">15dp</dimen>
+    <dimen name="chats_webrtc_call_mini_y">71dp</dimen>
+    <dimen name="chats_webrtc_call_photo_size">120dp</dimen>
+    <dimen name="chats_webrtc_call_local_width">102dp</dimen>
+    <dimen name="chats_webrtc_call_local_height">132dp</dimen>
+    <dimen name="chats_group_avatar_size">56dp</dimen>
+    <dimen name="chats_setting_item_height">52dp</dimen>
+    <dimen name="chats_contact_conner_radius">15dp</dimen>
+</resources>

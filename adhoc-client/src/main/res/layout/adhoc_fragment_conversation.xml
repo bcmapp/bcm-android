@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_background_color">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chats_conversation_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
+
+    <include
+        layout="@layout/chats_unread_message_view"
+        android:layout_width="wrap_content"
+        android:layout_height="31dp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/message_unread_up_bubble"
+        android:layout_gravity="top|center_horizontal"
+        android:visibility="gone" />
+
+    <include
+        layout="@layout/chats_unread_message_view"
+        android:layout_width="wrap_content"
+        android:layout_height="31dp"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/message_unread_down_bubble"
+        android:layout_gravity="bottom|center_horizontal"
+        android:visibility="gone" />
+
+</FrameLayout>

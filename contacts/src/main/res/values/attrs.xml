@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ContactsRecipientPhotoStyle">
+        <attr name="contacts_photo_text_color" format="reference|color"/>
+        <attr name="contacts_photo_text_back_color" format="reference|color"/>
+        <attr name="contacts_photo_text_font" format="reference|dimension"/>
+    </declare-styleable>
+
+</resources>

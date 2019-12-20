@@ -1,0 +1,26 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.bcm.messenger.push">
+
+    <application>
+
+        <activity
+            android:name="com.bcm.messenger.push.MiPushActivity"
+            android:launchMode="singleTask"
+            android:exported="true"/>
+
+        <service android:name="com.bcm.messenger.push.UmengNotificationService" />
+        <service android:name="com.bcm.messenger.push.BcmUmengIntentService" />
+
+        <receiver
+            android:name="com.umeng.message.NotificationProxyBroadcastReceiver"
+            android:exported="false" />
+        <receiver android:name="com.umeng.message.UmengMessageBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

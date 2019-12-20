@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/input_pin_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_transparent"
+    android:visibility="visible"
+    tools:background="@drawable/me_login_bg">
+
+
+    <TextView
+        android:id="@+id/nickname_header"
+        android:layout_width="wrap_content"
+        android:layout_height="26dp"
+        android:layout_marginTop="110dp"
+        android:text="@string/me_nick_name_set_title"
+        android:textColor="@color/common_color_white"
+        android:textSize="20sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.bcm.messenger.common.ui.ClearButtonEditText
+        android:id="@+id/new_nickname"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/me_register_input_bg"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="left|center_vertical"
+        android:hint="@string/me_nickname_placeholder"
+        android:maxLength="30"
+        android:imeOptions="actionDone"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:singleLine="true"
+        android:textColor="@color/common_color_white"
+        android:textColorHint="#7fffffff"
+        android:textCursorDrawable="@drawable/common_white_color_cursor"
+        android:textSize="14sp"
+        app:clearButtonHeight="12dp"
+        app:clearButtonPadding="10dp"
+        app:clearButtonResource="@drawable/common_input_clear_icon"
+        app:clearButtonWidth="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nickname_header"
+        app:paddingEnd="15dp"
+        app:showClearButton="true" />
+
+    <ImageView
+        android:id="@+id/nick_done_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:src="@drawable/me_next_black_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_nickname" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

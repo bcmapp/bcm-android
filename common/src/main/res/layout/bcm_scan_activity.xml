@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+    <TextureView
+        android:id="@+id/scan_activity_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:keepScreenOn="true"/>
+
+    <com.bcm.messenger.common.ui.scan.ScannerView
+        android:id="@+id/scan_activity_mask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/scan_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:left_image="@drawable/common_back_arrow_white_icon"
+        app:center_text="@string/common_scan_title"
+        app:center_text_color="@color/common_color_white"
+        app:title_bar_background="@color/common_color_black" />
+
+    <LinearLayout
+        android:id="@+id/scan_tool_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="30dp"
+        android:paddingBottom="50dp"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/scan_flash_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/common_scan_flash_off"
+            android:drawablePadding="10dp"
+            android:text="@string/common_scan_flash_button"
+            android:textSize="13sp"
+            android:textColor="@color/common_color_white"
+            android:gravity="center"
+            android:enabled="false"/>
+
+        <TextView
+            android:id="@+id/scan_qr_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/common_scan_my_qr"
+            android:drawablePadding="10dp"
+            android:text="@string/common_scan_qr_button"
+            android:textSize="13sp"
+            android:textColor="@color/common_color_white"
+            android:gravity="center"/>
+
+    </LinearLayout>
+
+
+</merge>

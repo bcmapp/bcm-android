@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_F6F7F9"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/edit_name_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/me_nickname_placeholder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:left_text="@string/common_cancel"
+        app:left_text_color="@color/common_color_black"
+        app:left_type="text"
+        app:right_text="@string/me_save"
+        app:right_text_color="@color/common_color_379BFF"
+        app:right_type="text" />
+
+    <com.bcm.messenger.common.ui.emoji.EmojiEditText
+        android:id="@+id/edit_name_input"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="30dp"
+        android:background="@color/common_color_white"
+        android:ems="10"
+        android:maxLength="30"
+        android:hint="@string/me_nickname_placeholder"
+        android:inputType="textPersonName"
+        android:maxLines="1"
+        android:paddingEnd="54dp"
+        android:paddingStart="15dp"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_name_title_bar" />
+
+    <ImageView
+        android:id="@+id/edit_name_clear"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_name_input"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edit_name_input"
+        app:srcCompat="@drawable/common_clear_circle_icon" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

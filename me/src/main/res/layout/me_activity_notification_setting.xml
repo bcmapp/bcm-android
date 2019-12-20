@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/common_background_color">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/notification_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:center_text="@string/me_notification_setting_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/push_notification_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:text="@string/me_notification_push_title"
+        android:textAllCaps="true"
+        android:textColor="@color/common_color_606060"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notification_title_bar" />
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/setting_notification"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="5dp"
+        app:setting_item_line="true"
+        app:setting_item_name="@string/me_notification_title"
+        app:setting_item_right="none"
+        app:setting_item_switch="off"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/push_notification_text" />
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/setting_sound"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        app:setting_item_line="true"
+        app:setting_item_name="@string/me_notification_sound_title"
+        app:setting_item_right="none"
+        app:setting_item_switch="off"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/setting_notification" />
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/setting_vibration"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        app:setting_item_line="true"
+        app:setting_item_name="@string/me_notification_vibrate_title"
+        app:setting_item_right="none"
+        app:setting_item_switch="off"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/setting_sound" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

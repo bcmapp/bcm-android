@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/common_white_bg">
+
+    <TextView
+        android:id="@+id/forward_send_to"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginTop="@dimen/common_horizontal_gap"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"
+        android:text="@string/chats_message_send_to"
+        android:textColor="@color/common_color_black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/forward_name_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_horizontal_gap"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingEnd="@dimen/common_horizontal_gap"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/forward_send_to">
+
+        <com.bcm.messenger.common.ui.RecipientAvatarView
+            android:id="@+id/forward_single_avatar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.bcm.messenger.common.ui.emoji.EmojiTextView
+            android:id="@+id/forward_single_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/common_color_black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/forward_single_avatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/forward_single_avatar"
+            app:layout_constraintTop_toTopOf="@+id/forward_single_avatar"
+            tools:text="Christiano Chan" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/forward_multi_avatar_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/chats_linearlayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_horizontal_gap"
+        android:background="@color/common_background_F2F3F4"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/forward_name_layout">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/forward_image_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <ImageView
+                android:id="@+id/forward_image_preview"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:scaleType="fitCenter"
+                android:background="@color/common_background_F2F3F4"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/forward_image_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/common_color_white"
+                android:textSize="13sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/forward_image_preview"
+                app:layout_constraintStart_toStartOf="@+id/forward_image_preview"
+                tools:text="376KB" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/forward_video_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <ImageView
+                android:id="@+id/forward_video_preview"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:scaleType="fitCenter"
+                android:background="@color/common_background_F2F3F4"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/forward_video_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/common_color_white"
+                android:textSize="13sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/forward_video_preview"
+                app:layout_constraintStart_toStartOf="@+id/forward_video_preview"
+                tools:text="4.5MB" />
+
+            <TextView
+                android:id="@+id/forward_video_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="8dp"
+                android:textAlignment="textEnd"
+                android:textColor="@color/common_color_white"
+                android:textSize="13sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/forward_video_preview"
+                app:layout_constraintEnd_toEndOf="@+id/forward_video_preview"
+                tools:text="3:27" />
+
+            <ImageView
+                android:id="@+id/forward_video_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="5dp"
+                app:layout_constraintStart_toStartOf="@+id/forward_video_preview"
+                app:layout_constraintBottom_toBottomOf="@+id/forward_video_preview"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/forward_file_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingStart="@dimen/common_horizontal_gap"
+            android:paddingEnd="@dimen/common_horizontal_gap"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <TextView
+                android:id="@+id/forward_file_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chats_file_icon_white"
+                android:textSize="10sp"
+                android:textColor="@color/common_content_warning_color"
+                android:textStyle="bold"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="TXT"/>
+
+            <TextView
+                android:id="@+id/forward_file_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:textColor="@color/common_color_black"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@+id/forward_file_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/forward_file_icon"
+                app:layout_constraintTop_toTopOf="@+id/forward_file_icon"
+                tools:text="How to be the perfect ... Brands.pdf" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/forward_text_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingStart="@dimen/common_horizontal_gap"
+            android:paddingEnd="@dimen/common_horizontal_gap"
+            android:minHeight="54dp"
+            android:visibility="gone">
+
+            <com.bcm.messenger.common.ui.emoji.EmojiTextView
+                android:id="@+id/forward_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/common_color_black"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/forward_contact_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingStart="@dimen/common_horizontal_gap"
+            android:paddingEnd="@dimen/common_horizontal_gap"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.bcm.messenger.common.ui.emoji.EmojiTextView
+                android:id="@+id/forward_contact_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/chats_forward_dialog_contact_icon"
+                android:drawablePadding="10dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/common_color_black"
+                android:textSize="15sp"
+                android:gravity="center_vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Ben" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/forward_location_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingStart="@dimen/common_horizontal_gap"
+            android:paddingEnd="@dimen/common_horizontal_gap"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/forward_location_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/chats_forward_dialog_location_icon" />
+
+            <TextView
+                android:id="@+id/forward_location_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/common_color_black"
+                android:textSize="15sp"
+                app:layout_constraintStart_toEndOf="@+id/forward_location_icon"
+                app:layout_constraintTop_toTopOf="@+id/forward_location_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="ION Mall" />
+
+            <TextView
+                android:id="@+id/forward_location_content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/common_content_second_color"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/forward_location_title"
+                app:layout_constraintStart_toStartOf="@id/forward_location_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="24 W Somerset St 3, Singapore 560421" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.bcm.messenger.chats.components.ChatHistoryInnerView
+            android:id="@+id/forward_history_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingStart="@dimen/common_horizontal_gap"
+            android:paddingEnd="@dimen/common_horizontal_gap"
+            app:chats_inView="forward"
+            app:chats_textSize="15sp"
+            tools:visibility="visible"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/forward_mode_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/common_horizontal_gap"
+        android:paddingTop="10dp"
+        android:paddingEnd="@dimen/common_horizontal_gap"
+        android:drawableStart="@drawable/chats_forward_unchecked"
+        android:drawablePadding="5dp"
+        android:text="@string/chats_keep_senders_names"
+        android:textColor="@color/common_content_second_color"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chats_linearlayout" />
+
+    <com.bcm.messenger.common.ui.emoji.EmojiEditText
+        android:id="@+id/forward_comment_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:background="@drawable/chats_bg_forward_comment"
+        android:gravity="left|center_vertical"
+        android:hint="@string/chats_forward_add_comment"
+        android:textColorHighlight="@color/common_color_379BFF"
+        android:imeOptions="actionSend"
+        android:inputType="text"
+        android:maxLines="3"
+        android:minHeight="40dp"
+        android:textColor="@color/common_color_black"
+        android:textColorHint="@color/common_color_C2C2C2"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/forward_mode_text"
+        android:visibility="visible"/>
+
+    <View
+        android:id="@+id/gray_line"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/common_color_e8e8e8"
+        app:layout_constraintEnd_toStartOf="@id/forward_ok"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/forward_comment_text" />
+
+    <Button
+        android:id="@+id/forward_cancel"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_weight="1"
+        android:elevation="0dp"
+        android:ellipsize="middle"
+        android:maxWidth="135dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:singleLine="true"
+        android:text="@string/common_cancel"
+        android:textAllCaps="false"
+        android:textColor="@color/common_color_black"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/forward_ok"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gray_line" />
+
+    <View
+        android:id="@+id/gray_line_between"
+        android:layout_width="@dimen/common_line_height"
+        android:layout_height="44dp"
+        android:background="@color/common_color_e8e8e8"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/forward_ok"
+        app:layout_constraintStart_toEndOf="@+id/forward_cancel"
+        app:layout_constraintTop_toBottomOf="@+id/gray_line" />
+
+    <Button
+        android:id="@+id/forward_ok"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_weight="1"
+        android:elevation="0dp"
+        android:ellipsize="middle"
+        android:minWidth="125dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:singleLine="true"
+        android:text="@string/chats_send"
+        android:textAllCaps="false"
+        android:textColor="@color/common_color_379BFF"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/forward_cancel"
+        app:layout_constraintTop_toBottomOf="@+id/gray_line" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

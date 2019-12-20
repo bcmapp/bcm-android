@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relogin_input_pin_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_transparent"
+    android:visibility="visible"
+    tools:background="@drawable/me_login_bg">
+
+    <ImageView
+        android:id="@+id/relogin_input_pin_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginTop="30dp"
+        android:padding="8dp"
+        android:src="@drawable/common_back_arrow_white_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="78dp"
+        android:layout_marginRight="60dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/relogin_input_pin_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/me_str_login"
+            android:textColor="@color/common_color_white"
+            android:textSize="20sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.bcm.messenger.common.ui.IndividualAvatarView
+            android:id="@+id/relogin_input_pin_avatar"
+            android:layout_width="87dp"
+            android:layout_height="87dp"
+            android:layout_marginTop="48dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/relogin_input_pin_header" />
+
+        <com.bcm.messenger.common.ui.emoji.EmojiTextView
+            android:id="@+id/relogin_input_pin_nikename"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="@color/common_color_white"
+            android:textSize="14sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/relogin_input_pin_avatar"
+            tools:text="Christiano Chen" />
+
+        <!--<androidx.constraintlayout.widget.ConstraintLayout-->
+            <!--android:id="@+id/relogin_input_edit_layout"-->
+            <!--android:layout_width="220dp"-->
+            <!--android:layout_height="44dp"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:background="@drawable/relogin_input_pin_edit_bg"-->
+            <!--android:paddingLeft="20dp"-->
+            <!--android:paddingRight="15dp"-->
+            <!--app:layout_constraintLeft_toLeftOf="parent"-->
+            <!--app:layout_constraintRight_toRightOf="parent"-->
+            <!--app:layout_constraintTop_toBottomOf="@id/relogin_input_pin_hint">-->
+
+            <!---->
+
+        <!--</androidx.constraintlayout.widget.ConstraintLayout>-->
+
+        <com.bcm.messenger.common.ui.ClearButtonEditText
+            android:id="@+id/relogin_input_pin_editText"
+            android:layout_width="225dp"
+            android:layout_height="50dp"
+            android:background="@drawable/me_register_input_bg"
+            android:layout_marginTop="20dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="left|center_vertical"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textColor="@color/common_color_white"
+            android:textColorHint="#7fffffff"
+            android:textCursorDrawable="@drawable/common_white_color_cursor"
+            android:textSize="14sp"
+            android:paddingStart="20dp"
+            android:paddingEnd="44dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/relogin_input_pin_nikename"
+            tools:hint="slsslslsl"
+            app:showClearButton="true"
+            app:clearButtonResource="@drawable/common_input_clear_icon"
+            app:clearButtonPadding="10dp"
+            app:clearButtonHeight="12dp"
+            app:clearButtonWidth="12dp"
+            app:paddingEnd="15dp"/>
+
+        <ImageView
+            android:id="@+id/relogin_pin_input_done_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:src="@drawable/me_next_black_icon"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/relogin_input_pin_editText" />
+
+        <TextView
+            android:id="@+id/relogin_input_pin_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="8dp"
+            android:text="Hint: xxxxxxxxxxxxxx"
+            android:textColor="@color/common_color_379BFF"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/relogin_input_pin_nikename" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/forget_password_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="@string/me_forget_password"
+        android:textColor="@color/common_color_379BFF"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

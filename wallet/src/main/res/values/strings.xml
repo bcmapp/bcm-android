@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="wallet_name_main">Main Account</string>
+    <string name="wallet_name_child">Child_%s</string>
+
+    <string name="wallet_service_activate_title">Initing Wallet</string>
+    <string name="wallet_service_import_title">Importing Wallet</string>
+    <string name="wallet_service_sync_success_title">Wallet sync done</string>
+    <string name="wallet_service_activate_success_title">Wallet Init Done</string>
+    <string name="wallet_service_create_success_title">Child Wallet Create Success</string>
+    <string name="wallet_service_import_success_title">Import Success</string>
+    <string name="wallet_service_activate_fail_title">Wallet Init Fail</string>
+    <string name="wallet_service_create_fail_title">Child Wallet Create Fail</string>
+    <string name="wallet_service_import_fail_title">Import Fail</string>
+
+    <string name="wallet_service_create_with_name_title">Creating Wallet %1$s</string>
+    <string name="wallet_service_import_with_name_title">Importing Wallet %1$s</string>
+    <string name="wallet_service_create_with_name_success_title">Create Wallet %1$s Success</string>
+    <string name="wallet_service_import_with_name_success_title">Import Wallet %1$s Success</string>
+    <string name="wallet_service_create_with_name_fail_title">Create Wallet %1$s Fail</string>
+    <string name="wallet_service_import_with_name_fail_title">Import Wallet %1$s Fail</string>
+
+    <string name="wallet_service_build_content">This might take a minute</string>
+
+    <string name="wallet_service_result_unknown_description">Unknown Error</string>
+
+    <string name="wallet_service_unknown_error_description">Unknown Error</string>
+
+    <string name="wallet_active_home_description">BCM Wallet provides a safe way to transfer, receive, and manage your digital assets</string>
+
+    <string name="wallet_notification_btc_sync_title">%1$s begin sync block</string>
+    <string name="wallet_notification_btc_sync_content">This might take some time</string>
+    <string name="wallet_notification_btc_sync_done">%1$s sync done</string>
+
+    <string name="wallet_confirm_password_title">Enter Password</string>
+    <string name="wallet_confirm_cancel_button">Cancel</string>
+    <string name="wallet_confirm_ok_button">Confirm</string>
+
+    <string name="wallet_active_password_title">Wallet Password</string>
+    <string name="wallet_active_confirm_action">Confirm</string>
+
+    <string name="wallet_confirm_backup_title">Backup now</string>
+    <string name="wallet_backup_notice">Wallets are generated. For your financial safety concern, please make a backup now</string>
+    <string name="wallet_backup_title">Backup Wallet</string>
+    <string name="wallet_backup_keystore_copy_text">Keystores copied</string>
+    <string name="wallet_backup_fail_text">Backup fail</string>
+
+    <string name="wallet_active_notice_one">Password strength is critical to guard your wallet</string>
+    <string name="wallet_active_notice_two">We can\'t recover the password, please backup cautiously</string>
+    <string name="wallet_password_hint">Input password</string>
+    <string name="wallet_password_confirm_hint">Repeat password</string>
+
+    <string name="wallet_password_empty_warning">Password should not be empty</string>
+    <string name="wallet_password_not_match_warning">Password does not match</string>
+    <string name="wallet_password_error_description">Password Error</string>
+    <string name="wallet_edit_null_warning">Please input something</string>
+
+    <string name="wallet_change_password_title">Set Password</string>
+    <string name="wallet_change_password_notice">Set password for Account Key encryption and Virtual currency transaction in wallet.</string>
+    <string name="wallet_change_password_cancel">Cancel</string>
+    <string name="wallet_change_password_confirm">Done</string>
+
+    <string name="wallet_import_title">Import Wallet</string>
+    <string name="wallet_import_button">Import</string>
+    <string name="wallet_import_hint">Paste private key</string>
+
+    <string name="wallet_export_confirm_title">Export Private Key</string>
+    <string name="wallet_export_confirm_notice">Warning: Export plain private key is very  dangerous. We recommend you backup with mnemonic or keystore</string>
+    <string name="wallet_export_confirm_button">Copy</string>
+    <string name="wallet_export_copy_tip">Private Key Copied</string>
+    <string name="wallet_export_button">Copy Keystore</string>
+    <string name="wallet_export_fail_description">Export private key fail</string>
+
+    <string name="wallet_delete_success_text">Delete Successfully</string>
+    <string name="wallet_delete_fail_text">Delete Fail</string>
+
+    <string name="wallet_welcome_active_button">Activate</string>
+    <string name="wallet_welcome_import_button">Import</string>
+    <string name="wallet_home_total_title">Total Assets</string>
+    <string name="wallet_home_total_balance">%1$s %2$s</string>
+    <string name="wallet_logo_description">wallet type logo</string>
+    <string name="wallet_balance_text">%1$f</string>
+    <string name="wallet_money_text">≈%1$s %2$s</string>
+    <string name="wallet_secret_text">******</string>
+    <string name="wallet_syncing_text">------</string>
+    <string name="wallet_home_popup_description">Wallet Home Popup</string>
+    <string name="wallet_home_import_confirm_title">Enter Password</string>
+    <string name="wallet_home_backup_confirm_title">Enter Password</string>
+
+    <string name="wallet_coin_edit_description">Wallet Name Edit</string>
+    <string name="wallet_name_edit_confirm_title">Wallet Name</string>
+    <string name="wallet_name_hint">Input Wallet Name</string>
+
+    <string name="wallet_list_title">Wallet List</string>
+    <string name="wallet_list_eth_title">Ethereum</string>
+    <string name="wallet_list_btc_title">Bitcoin</string>
+
+    <string name="wallet_detail_popup_description">Wallet Detail Popup</string>
+    <string name="wallet_transaction_pending_description">Pending</string>
+    <string name="wallet_transaction_confirms_description">%1$d/12</string>
+    <string name="wallet_transaction_btc_confirms_description">%1$d/6</string>
+    <string name="wallet_transaction_success_description">Success</string>
+    <string name="wallet_transaction_fail_description">Failed</string>
+    <string name="wallet_transaction_transfer_action">Transfer</string>
+    <string name="wallet_transaction_receive_action">Receive</string>
+    <string name="wallet_transaction_header_title">Transactions</string>
+    <string name="wallet_transaction_money_text">≈%1$s%2$s</string>
+    <string name="wallet_transaction_empty_description">No transactions now</string>
+    <string name="wallet_transaction_load_more_description">loading more&#8230;</string>
+    <string name="wallet_transaction_no_more_description">no more</string>
+
+    <string name="wallet_transfer_title">Transfer</string>
+    <string name="wallet_available_assets">Available Assets</string>
+    <string name="wallet_transfer_to_address_head">To</string>
+    <string name="wallet_transfer_to_address_hint">Input or paste wallet address</string>
+    <string name="wallet_address_paste_description">Paste To Address</string>
+    <string name="wallet_address_scan_description">Scan To Address</string>
+    <string name="wallet_amount_choose_all">ALL</string>
+    <string name="wallet_transfer_amount_head">Amount</string>
+    <string name="wallet_transfer_amount_hint">Input amount</string>
+    <string name="wallet_transfer_fee_head">Fee</string>
+    <string name="wallet_transfer_fee_switch">advance</string>
+    <string name="wallet_transfer_memo_head">memo</string>
+    <string name="wallet_transfer_memo_hint">Input memo</string>
+    <string name="wallet_transfer_btc_fee_hint">Input Fee</string>
+    <string name="wallet_transfer_gas_head">Custom Gas Price</string>
+    <string name="wallet_transfer_gas_hint">Input gas price</string>
+    <string name="wallet_transfer_gas_unit">gwei</string>
+    <string name="wallet_transfer_limit_head">Custom Gas</string>
+    <string name="wallet_transfer_limit_hint">Input gas</string>
+    <string name="wallet_transfer_data_head">Data</string>
+    <string name="wallet_transfer_data_hint">Input data</string>
+    <string name="wallet_transfer_fee_choose_title">Choose A Fee</string>
+    <string name="wallet_transfer_fee_high_description">High Priority</string>
+    <string name="wallet_transfer_fee_middle_description">General</string>
+    <string name="wallet_transfer_fee_low_description">Economic</string>
+
+    <string name="wallet_transfer_type_transfer">Transfer</string>
+    <string name="wallet_transfer_confirm_title">Payment Detail</string>
+    <string name="wallet_transfer_confirm_close_description">Transfer Confirm Close</string>
+    <string name="wallet_transfer_confirm_amount_head">Amount</string>
+    <string name="wallet_transfer_confirm_item_head">Item</string>
+    <string name="wallet_transfer_confirm_to_head">To</string>
+    <string name="wallet_transfer_confirm_from_head">From</string>
+    <string name="wallet_transfer_confirm_fee_head">Fee</string>
+    <string name="wallet_transfer_confirm_action_text">Pay Now</string>
+    <string name="wallet_transfer_to_address_warning">Please input target address</string>
+    <string name="wallet_transfer_to_same_address_warning">Please not input yourself address</string>
+    <string name="wallet_transfer_amount_waning">Please input amount</string>
+    <string name="wallet_transfer_amount_not_enough_warning">You balance is not enough</string>
+
+    <string name="wallet_service_transfer_title">Transferring %1$s</string>
+    <string name="wallet_service_transfer_content">This might take a minute</string>
+    <string name="wallet_service_transfer_success_title">%1$s transfer Success</string>
+    <string name="wallet_service_transfer_fail_title">%1$s transfer fail</string>
+
+    <string name="wallet_receive_title">Receive</string>
+    <string name="wallet_receive_amount_input">Amount</string>
+    <string name="wallet_receive_amount_hint">please enter the amount</string>
+    <string name="wallet_receive_save_qr_tip">Save QR Code</string>
+    <string name="wallet_receive_copy_address_tip">Copy Wallet Address</string>
+    <string name="wallet_receive_qr_description">Receive Amount Description</string>
+    <string name="wallet_receive_qr_save_success">QR Code Saved</string>
+    <string name="wallet_receive_qr_save_fail">QR Code is not Created</string>
+    <string name="wallet_receive_address_save_success">Address Copied</string>
+    <string name="wallet_receive_address_save_fail">Address copy failed</string>
+
+
+    <string name="wallet_transaction_detail_title">Transaction Record</string>
+    <string name="wallet_transaction_detail_status_head">Status</string>
+
+    <string name="wallet_transaction_detail_from_head">From</string>
+    <string name="wallet_transaction_detail_to_head">To</string>
+    <string name="wallet_transaction_detail_btc_fee_head">Fee</string>
+    <string name="wallet_transaction_detail_eth_fee_head">Gas Fee</string>
+    <string name="wallet_transaction_detail_memo_head">Memo</string>
+    <string name="wallet_transaction_detail_hash_head">Transaction</string>
+    <string name="wallet_transaction_detail_block_head">Block</string>
+    <string name="wallet_transaction_detail_time_head">Transaction Time</string>
+    <string name="wallet_transaction_detail_copy_url_description">Copy URL</string>
+    <string name="wallet_transaction_record_qr_description">Transaction record QR</string>
+    <string name="wallet_transaction_qr_copy_success">Record url Copied</string>
+
+    <string name="wallet_popup_backup_description">Backup Wallet</string>
+    <string name="wallet_popup_import_description">Import Wallet</string>
+    <string name="wallet_popup_setting_description">Wallet Settings</string>
+    <string name="wallet_popup_create_description">Create New Wallet</string>
+    <string name="wallet_popup_import_private_description">Import Private Key</string>
+    <string name="wallet_popup_export_private_description">Export Private Key</string>
+    <string name="wallet_popup_delete_description">Delete Wallet</string>
+    <string name="wallet_popup_cancel_description">Cancel</string>
+
+    <string name="wallet_scan_title">Scan QR Code</string>
+
+    <string name="wallet_settings_title">Wallet Settings</string>
+    <string name="wallet_currency_entrance_title">Currency Unit</string>
+
+    <string name="wallet_currency_title">Currency Unit</string>
+    <string name="wallet_currency_edit_save_text">Save</string>
+    <string name="wallet_currency_select_description">Current Currency Selected</string>
+    <string name="wallet_currency_change_success_text">Currency unit changed successfully</string>
+    <string name="wallet_currency_change_fail_text">Currency unit changed fail, please check the network</string>
+
+    <string name="wallet_reminder_description">Reminders</string>
+    <string name="wallet_policy_first_part">Agree on&#160;</string>
+    <string name="wallet_policy_second_part">Term of Service and Privacy Policy</string>
+
+    <string name="wallet_reminder_title">Reminder</string>
+    <string name="wallet_reminder_first_title">Store Offline</string>
+    <string name="wallet_reminder_first_content">Please store the Keystore to a safe offline place like a USB drive. Never put it on internet.</string>
+    <string name="wallet_reminder_second_title">Don\'t Transfer via Internet Tools</string>
+    <string name="wallet_reminder_second_content">Don\'t use Email/Cloud Storage/Notepad/IM tools to transfer Keystore. It easily gets hacked and result in loss.</string>
+    <string name="wallet_reminder_third_title">Store to Password Vault</string>
+    <string name="wallet_reminder_third_content">If you like to store online please make sure some password vault apps, like 1Password/Keeppass.</string>
+
+    <string name="wallet_permission_title">Tips</string>
+    <string name="wallet_permission_tips">We need storage permission and read phone state permission.</string>
+    <string name="wallet_permission_goto_settings">Goto Settings</string>
+
+    <string name="wallet_account_backup_title">Backup Account Key</string>
+    <string name="wallet_account_backup_notice">For the safety of your account and assets, please back up your Account Key. </string>
+    <string name="wallet_account_backup_cancel">Later</string>
+    <string name="wallet_account_backup_confirm">Back up</string>
+
+
+    <!-- 支持旧版本升级 -->
+    <string name="wallet_not_init_notice">Wallet last time init fail or version too old, please click to init</string>
+    <string name="wallet_eth_support_notice">Now support ETH, click to create</string>
+    <string name="wallet_btc_support_notice">Now support BTC, click to create</string>
+
+
+    <!-- 加载钱包失败 -->
+    <string name="wallet_accounts_load_error_title">Failed to Load Wallet</string>
+    <string name="wallet_accounts_load_error_content">Wallet might be unavailable in this area.</string>
+    <string name="wallet_accounts_load_error_action">Try Again</string>
+
+</resources>

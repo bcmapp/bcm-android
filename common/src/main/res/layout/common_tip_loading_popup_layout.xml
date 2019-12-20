@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_black"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="90dp"
+        android:minHeight="90dp"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/tip_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:gravity="center"
+            android:paddingBottom="200dp">
+            <TextView
+                android:id="@+id/loading_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="15dp"
+                android:textSize="20sp"
+                android:textColor="@color/common_color_white"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/loading_sub_tip"
+                android:layout_below="@id/loading_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:textSize="13sp"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/common_white_50_transparent"
+                android:visibility="gone"
+                />
+        </RelativeLayout>
+
+        <com.bcm.messenger.common.ui.CommonLoadingView
+            android:id="@+id/pb_load"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:circle_size="large"
+            app:circle_color="white"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+</RelativeLayout>

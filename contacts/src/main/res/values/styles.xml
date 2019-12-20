@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ContactsToolbarTitleStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/contacts_content_text_color</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="ContactsDecorationStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingLeft">@dimen/common_horizontal_gap</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingRight">@dimen/common_horizontal_gap</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/common_color_909090</item>
+        <item name="android:background">#F6F7F9</item>
+    </style>
+
+    <style name="ContactsContentTextStyle">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/contacts_content_text_color</item>
+
+    </style>
+    <style name="ContactsSelectCheckBoxStyle">
+        <item name="android:button">@drawable/common_select_box</item>
+    </style>
+
+    <style name="ContactsFigureNoticeStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingLeft">6dp</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingRight">6dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:background">@drawable/contacts_figure_bg</item>
+    </style>
+    <style name="ContactsInviteActionStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingLeft">9dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingRight">9dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+</resources>

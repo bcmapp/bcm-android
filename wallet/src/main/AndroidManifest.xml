@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.bcm.messenger.wallet">
+
+    <application>
+
+        <activity android:name=".WalletActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="com.bcm.messenger.wallet.activity.WalletListActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.bcm.messenger.wallet.activity.WalletDetailActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.bcm.messenger.wallet.activity.SendTransactionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.bcm.messenger.wallet.activity.AssetsReceiveActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.bcm.messenger.wallet.activity.TransactionDetailActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.bcm.messenger.wallet.activity.WalletSettingsActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.bcm.messenger.wallet.activity.CurrencyActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.bcm.messenger.wallet.activity.WalletReminderActivity"
+            android:screenOrientation="portrait"/>
+
+    </application>
+
+</manifest>

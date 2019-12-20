@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingTop="41dp"
+    android:paddingBottom="41dp"
+    android:paddingStart="37dp"
+    android:paddingEnd="37dp">
+
+    <TextView
+        android:id="@+id/entrance_notice_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/wallet_entrance_add_icon"
+        android:drawablePadding="6dp"
+        android:textSize="16sp"
+        android:textColor="@color/common_color_999999"
+        android:gravity="center"
+        android:paddingTop="35dp"
+        android:paddingBottom="35dp"
+        android:paddingStart="60dp"
+        android:paddingEnd="60dp"
+        android:background="@drawable/wallet_entrance_body_bg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="Test"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

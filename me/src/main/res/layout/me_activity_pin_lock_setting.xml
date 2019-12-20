@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_background_color"
+    android:clipToPadding="true"
+    android:orientation="vertical"
+    android:fitsSystemWindows="false">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/title_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp">
+
+        <com.bcm.messenger.common.ui.CommonTitleBar2
+            android:id="@+id/title_bar"
+            style="@style/CommonTitleBarStyle"
+            app:center_text="@string/me_pin_lock_title" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/me_disable_pin"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        app:setting_item_name="@string/me_disable_pin_lock"
+        app:setting_item_name_color="#379BFF"
+        app:setting_item_right="arrow"
+        app:setting_item_line="true"
+        android:layout_marginTop="20dp"/>
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/me_change_pin"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        app:setting_item_name="@string/me_change_pin_lock"
+        app:setting_item_right="arrow"
+        app:setting_item_line="true"/>
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/me_switch_6_digit_pin"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        app:setting_item_name="@string/me_use_6_digit_pin_lock"
+        app:setting_item_right="none"
+        app:setting_item_switch="off"
+        app:setting_item_line="true"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="15dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="8dp"
+        android:text="@string/me_pin_is_for_identity_describe"
+        android:textColor="@color/common_color_606060"
+        android:textSize="13sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:text="@string/me_note_forget_the_pin"
+        android:textAlignment="viewStart"
+        android:textColor="@color/common_color_606060"
+        android:textSize="13sp" />
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/me_pin_lock_auto"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        app:setting_item_name="@string/me_pin_lock_auto_lock"
+        app:setting_item_tip_text=""
+        app:setting_item_tip_color="@color/common_color_A8A8A8"
+        app:setting_item_right="arrow"
+        app:setting_item_line="true"/>
+
+    <com.bcm.messenger.common.ui.CommonSettingItem
+        android:id="@+id/me_pin_unlock_with_fingerprint"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginBottom="15dp"
+        app:setting_item_name="@string/me_unlock_with_fingerprint"
+        app:setting_item_right="none"
+        app:setting_item_switch="off"
+        app:setting_item_line="true"/>
+
+
+</LinearLayout>

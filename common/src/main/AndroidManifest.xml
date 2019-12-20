@@ -1,0 +1,185 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.bcm.messenger.common">
+
+    <uses-sdk tools:overrideLibrary="android.support.v13,com.davemorrissey.labs.subscaleview,com.tomergoldst.tooltips,com.klinker.android.send_message,com.takisoft.colorpicker,android.support.v14.preference" />
+
+    <permission
+        android:name="${ApplicationId}.ACCESS_SECRETS"
+        android:label="Access to TextSecure Secrets"
+        android:protectionLevel="signature" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location.network"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.portrait"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- For sending location tiles in the future -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+
+    <!-- For fixing MMS -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+    <!-- Permissions from RedPhone -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="com.fingerprints.service.ACCESS_FINGERPRINT_MANAGER" />
+    <uses-permission android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY"/>
+    <uses-permission android:name="com.vivo.fingerprint.permission.READ_STATE" />
+
+
+    <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="AIzaSyCHdwjfuo49ONz-oxoUC9mfs5kPAWNJNVc"/>
+
+    <application>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
+
+        <activity android:name="com.bcm.messenger.common.ui.activity.SearchActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"/>
+
+
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+
+        <activity
+            android:name="com.bcm.messenger.common.ui.activity.ScanActivity"
+            android:theme="@style/CommonTransparentStatusBar"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.bcm.messenger.common.ui.activity.ApkInstallRequestActivity"
+            android:theme="@style/BcmActivityTheme.Transparent.Full" />
+
+        <activity
+            android:name="com.bcm.messenger.common.ui.activity.WebActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTask"
+            android:process=":web"
+            android:screenOrientation="portrait" />
+
+        <activity android:name="com.bcm.messenger.common.ui.activity.DatabaseMigrateActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
+
+        <activity
+            android:name="com.bcm.messenger.common.imagepicker.ui.activity.ImageCropActivity"
+            android:theme="@style/CommonTransparentStatusBar">
+
+        </activity>
+
+        <activity android:name=".imagepicker.ui.activity.PickPhotoActivity"
+            android:theme="@style/CommonTransparentStatusBar" />
+
+        <activity android:name=".imagepicker.ui.activity.PickPhotoPreviewActivity"
+            android:theme="@style/CommonTransparentStatusBar" />
+
+        <activity android:name=".imagepicker.ui.activity.PickPhotoDelegateActivity"
+            android:theme="@style/CommonTransparentStatusBar" />
+
+        <provider android:name=".providers.PartProvider"
+            android:grantUriPermissions="true"
+            android:exported="false"
+            android:authorities="${ApplicationId}.partprovider" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${ApplicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/common_file_paths" />
+        </provider>
+
+        <service android:name="com.bcm.messenger.utility.foreground.ActivityCounterService"/>
+
+        <receiver android:name="com.bcm.messenger.common.service.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="org.thoughtcrime.securesms.RESTART" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.bcm.messenger.common.service.RotateSignedPreKeyListener">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.bcm.messenger.common.service.PersistentConnectionBootListener">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+
+        <uses-library
+            android:name="com.sec.android.app.multiwindow"
+            android:required="false" />
+
+        <meta-data
+            android:name="com.sec.android.support.multiwindow"
+            android:value="true" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W"
+            android:value="632.0dip" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H"
+            android:value="598.0dip" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W"
+            android:value="632.0dip" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H"
+            android:value="598.0dip" />
+
+
+        <service android:name="com.bcm.messenger.common.push.AmeNotificationService"/>
+
+        <service android:name="com.bcm.messenger.common.ApplicationService"/>
+
+    </application>
+
+</manifest>

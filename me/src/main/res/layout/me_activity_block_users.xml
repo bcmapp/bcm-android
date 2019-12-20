@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/block_user_title_bar"
+        style="@style/CommonTitleBarStyle"
+        app:right_type="text"
+        app:right_text="@string/me_self_edit_button"
+        app:right_text_color="@color/common_color_379BFF"
+        app:center_text="@string/me_setting_blocked_user_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/block_user_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/block_user_title_bar" />
+
+    <TextView
+        android:id="@+id/no_block_users"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="@color/common_color_A8A8A8"
+        android:text="@string/me_no_block_user"
+        android:visibility="gone" />
+</androidx.constraintlayout.widget.ConstraintLayout>

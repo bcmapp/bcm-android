@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.bcm.netswitchy">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application>
+
+<!--        <activity-->
+<!--            android:name="com.bcm.netswitchy.deprecated.VpnRequestActivity"-->
+<!--            android:excludeFromRecents="true"-->
+<!--            android:launchMode="singleTask"/>-->
+
+
+<!--        <service-->
+<!--            android:name="com.bcm.netswitchy.deprecated.service.SSRVpnService"-->
+<!--            android:process=":vpn"-->
+<!--            android:permission="android.permission.BIND_VPN_SERVICE"-->
+<!--            android:exported="false">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.net.VpnService"/>-->
+<!--            </intent-filter>-->
+<!--        </service>-->
+
+
+<!--        <service-->
+<!--            android:name="com.bcm.netswitchy.deprecated.service.SSRNatService"-->
+<!--            android:exported="false">-->
+<!--        </service>-->
+
+        <service android:name="com.bcm.netswitchy.deprecated.AclSyncJob" android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+
+    </application>
+
+</manifest>

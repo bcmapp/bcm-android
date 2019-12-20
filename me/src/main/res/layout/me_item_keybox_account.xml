@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="124dp"
+    android:layout_marginStart="15dp"
+    android:layout_marginEnd="15dp"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/me_keybox_account_item_now">
+
+    <com.bcm.messenger.common.ui.IndividualAvatarView
+        android:id="@+id/keybox_account_img"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
+        android:id="@+id/keybox_account_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="17dp"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textSize="17sp"
+        android:textColor="@color/common_color_white"
+        android:gravity="left"
+        app:layout_constraintEnd_toStartOf="@+id/keybox_account_qrcode"
+        app:layout_constraintStart_toEndOf="@+id/keybox_account_img"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Chan"/>
+
+    <TextView
+        android:id="@+id/keybox_account_openid"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="8dp"
+        android:gravity="left"
+        app:layout_constraintEnd_toStartOf="@+id/keybox_account_qrcode"
+        app:layout_constraintStart_toEndOf="@+id/keybox_account_img"
+        app:layout_constraintTop_toBottomOf="@+id/keybox_account_name"
+        android:textSize="14sp"
+        android:textColor="@color/common_color_white"
+        tools:text="ID: ChanCinfop2qnfoaiow3fnoainw3gionio32bgoangoi3anog3waoi"/>
+
+    <ImageView
+        android:id="@+id/keybox_account_qrcode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:padding="5dp"
+        android:src="@drawable/me_self_qr_icon"
+        app:layout_constraintEnd_toEndOf="@+id/divier"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:id="@+id/divier"
+        android:layout_width="0dp"
+        android:layout_height="0.1dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/common_color_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/keybox_account_openid"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/key_generate_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:textSize="11sp"
+        android:textColor="@color/common_color_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divier"
+        tools:text="Date of Key"/>
+
+    <TextView
+        android:id="@+id/key_backup_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/key_generate_date"
+        android:textColor="@color/common_color_white"
+        android:textSize="11sp"
+        tools:text="Date of Backup"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffeeeeee">
+
+        <TextView
+            android:id="@+id/transfer_confirm_title"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="@string/wallet_transfer_fee_choose_title"
+            android:textColor="@color/common_color_black"
+            android:textSize="12sp"
+            android:paddingStart="@dimen/common_horizontal_gap"
+            android:paddingEnd="@dimen/common_horizontal_gap"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ImageView
+            android:id="@+id/transfer_confirm_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/common_tag_close"
+            android:paddingStart="@dimen/common_horizontal_gap"
+            android:paddingEnd="@dimen/common_horizontal_gap"
+            android:contentDescription="@string/wallet_transfer_confirm_close_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/transfer_confirm_title"
+            app:layout_constraintBottom_toBottomOf="@id/transfer_confirm_title"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_line_color"/>
+
+    <LinearLayout
+        android:id="@+id/transfer_confirm_amount_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/WalletTransactionConfirmLayoutStyle">
+
+        <TextView
+            style="@style/WalletTransactionConfirmHeadStyle"
+            android:text="@string/wallet_transfer_confirm_amount_head"/>
+
+        <TextView
+            android:id="@+id/transfer_confirm_amount"
+            style="@style/WalletTransactionConfirmValueStyle"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_color_e8e8e8"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"/>
+
+
+    <LinearLayout
+        android:id="@+id/transfer_confirm_to_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/WalletTransactionConfirmLayoutStyle">
+
+        <TextView
+            style="@style/WalletTransactionConfirmHeadStyle"
+            android:text="@string/wallet_transfer_confirm_to_head"/>
+
+        <TextView
+            android:id="@+id/transfer_confirm_to"
+            style="@style/WalletTransactionConfirmValueStyle"
+            tools:text="TMqPU4DDeez93cj6wFffhACTMqPU4DDeez93cj6wFffh"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_line_color"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"/>
+
+
+    <LinearLayout
+        android:id="@+id/transfer_confirm_from_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/WalletTransactionConfirmLayoutStyle">
+
+        <TextView
+            style="@style/WalletTransactionConfirmHeadStyle"
+            android:text="@string/wallet_transfer_confirm_from_head"/>
+
+        <TextView
+            android:id="@+id/transfer_confirm_from"
+            style="@style/WalletTransactionConfirmValueStyle"
+            tools:text="TMqPU4DDeez93cj6wFffhACTMqPU4DDeez93cj6wFffh"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_line_color"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"/>
+
+
+    <LinearLayout
+        android:id="@+id/transfer_confirm_fee_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/WalletTransactionConfirmLayoutStyle">
+
+        <TextView
+            style="@style/WalletTransactionConfirmHeadStyle"
+            android:text="@string/wallet_transfer_confirm_fee_head"/>
+
+        <TextView
+            android:id="@+id/transfer_confirm_fee"
+            style="@style/WalletTransactionConfirmValueStyle"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_line_color"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"/>
+
+    <com.bcm.messenger.common.ui.StateButton
+        android:id="@+id/transfer_confirm_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/wallet_transfer_confirm_action_text"
+        style="@style/CommonDarkBigTextStyle"
+        android:layout_marginStart="@dimen/common_horizontal_gap"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"/>
+
+</LinearLayout>

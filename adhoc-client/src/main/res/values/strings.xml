@@ -1,0 +1,90 @@
+<resources>
+
+    <string name="adhoc_setting_enable_title">Offline Chat</string>
+    <string name="adhoc_setting_enable_describe">Chat with friends via device-to-device Bluetooth/Wi-Fi connections without connecting to the Internet.</string>
+    <string name="adhoc_join_channel_join">Join</string>
+    <string name="adhoc_join_channel_name">AirChat Name</string>
+    <string name="adhoc_join_pass_code">Passcode</string>
+    <string name="adhoc_join_error_input_channel_name">Input AirChat Group Name</string>
+    <string name="adhoc_join_error_input_channel_password">Input AirChat Group Passcode</string>
+    <string name="adhoc_join_error_join_failed">Join AirChat Failed</string>
+
+    <string name="adhoc_channel_settiong_action_title">CHAT ACTIONS</string>
+    <string name="adhoc_channel_settiong_footprint_title">FOOTPRINT</string>
+    <string name="adhoc_channel_settiong_others_title">OTHERS</string>
+    <string name="adhoc_channel_setting_pin_title">Pin to the Top</string>
+    <string name="adhoc_channel_setting_mute_title">Mute</string>
+    <string name="adhoc_channel_setting_clear_notice">Chat history will be erased from this device.</string>
+    <string name="adhoc_channel_setting_clear_title">Clear Local History</string>
+    <string name="adhoc_channel_setting_clear_success">Clear Successfully</string>
+    <string name="adhoc_channel_setting_clear_fail">Clear Failed</string>
+    <string name="adhoc_channel_setting_leave_notice">Leave AirChat will not receive any message.</string>
+    <string name="adhoc_channel_setting_leave_title">Leave AirChat</string>
+    <string name="adhoc_channel_setting_leave_success">Leave Successfully</string>
+    <string name="adhoc_channel_setting_leave_fail">Leave Failed</string>
+    <string name="adhoc_channel_setting_leave_action">Leave</string>
+
+    <string name="adhoc_channel_message_sticky_secure">Connectivity between phones will affect the sending and receiving of messages. </string>
+
+    <string name="adhoc_unread_message">[1 message]&#160;</string>
+    <string name="adhoc_unread_messages">[%d messages]&#160;</string>
+    <string name="adhoc_unread_full_messages">[99+ messages]&#160;</string>
+    <string name="adhoc_official_channel_name">#General AirChat</string>
+    <string name="adhoc_main_title">AirChats</string>
+    <string name="adhoc_create_chat_room">Create AirChat Group</string>
+    <string name="adhoc_join_chat_room">Join AirChat Group</string>
+    <string name="adhoc_chat_room_create">Create</string>
+    <string name="adhoc_chat_room_join">Join</string>
+    <plurals name="adhoc_main_title_device_found">
+        <item quantity="one">1 Device Found</item>
+        <item quantity="other">%d Devices Found</item>
+    </plurals>
+    <string name="adhoc_main_title_device_found_0">No Device Found</string>
+    <string name="adhoc_device_scanning">Scanning Devices…</string>
+    <string name="adhoc_main_title_connecting">Connecting…</string>
+    <string name="adhoc_main_title_connecting_to">Connecting to %s…</string>
+    <string name="adhoc_setting_airchat_title">AirChat</string>
+    <string name="adhoc_chat_with_friends_via_device_to_device">Chat with friends via device-to-device Bluetooth/Wi-Fi connections without accessing the Internet.</string>
+    <string name="adhoc_the_bluetooth_and_wi_fi_connectivity_of_this_device">The Bluetooth and Wi-Fi connectivity of this device will be occupied and utilized for device-to-device correspondence when the AirChat mode is enabled.</string>
+    <string name="adhoc_setting_enable_airchat">Enable AirChat</string>
+    <string name="adhoc_setting_disable_airchat">Disable AirChat</string>
+    <string name="adhoc_amin_airchat_on">AirChat: ON</string>
+
+    <!-- invite group -->
+    <string name="adhoc_invite_join_title">Invite to Join AirChat</string>
+    <string name="adhoc_invite_join_room_title">Group Name</string>
+    <string name="adhoc_invite_join_password_title">Password</string>
+    <string name="adhoc_invite_join_action">Join AirChat</string>
+    <string name="adhoc_invite_copy_item">Copy</string>
+    <string name="adhoc_invite_forward_item">Forward</string>
+    <string name="adhoc_invite_forward_success">Forward Successfully</string>
+    <string name="adhoc_invite_forward_fail">Forward Failed</string>
+
+    <!-- transfer related -->
+    <string name="adhoc_session_selection_title">To…</string>
+    <string name="adhoc_session_search_title">Search</string>
+    <string name="adhoc_session_recent_item_title">RECENT AIRCHATS</string>
+
+    <string name="adhoc_device_ble">Bluetooth</string>
+    <string name="adhoc_device_wifi">Wi-Fi</string>
+    <string name="adhoc_device_gps">GPS</string>
+    <string name="adhoc_device_state_error">Error：%s disabled</string>
+    <string name="adhoc_airchat_setting_members">Members</string>
+    <string name="adhoc_channel_member_list_title">Members</string>
+
+    <!-- attachment notify -->
+    <string name="adhoc_attachment_too_large_upload_fail">exist Attachment upload fail, upload size has to lower than 64MB</string>
+    <string name="adhoc_session_item_unpin">Unpin</string>
+    <string name="adhoc_session_item_pin">Pin</string>
+    <string name="adhoc_ble_not_support_error">Failed to enable AirChat, as Bluetooth Low Energy is not supported on this device</string>
+    <string name="adhoc_wifi_not_enable_error">Failed to enable AirChat, Wi-Fi is disabled</string>
+    <string name="adhoc_gps_not_enable_error">Failed to enable AirChat, GPS is disabled</string>
+    <string name="adhoc_ble_not_enable_error">Failed to enable AirChat, Bluetooth is disabled</string>
+
+    <!-- media related -->
+    <string name="adhoc_attachment_browse_nonsupport_description">Not supported yet</string>
+
+
+    <string name="adhoc_main_title_connect_failed">Failed to Connect</string>
+    <string name="adhoc_main_title_connected">Connected</string>
+</resources>

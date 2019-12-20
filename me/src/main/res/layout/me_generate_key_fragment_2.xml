@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/me_login_bg">
+
+    <ImageView
+        android:id="@+id/startup_circle_out"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/me_light_ring"/>
+
+    <ImageView
+        android:id="@+id/startup_circle_in"
+        android:layout_width="375dp"
+        android:layout_height="374dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/startup_circle_number"
+        app:layout_constraintEnd_toEndOf="@+id/startup_circle_number"
+        app:layout_constraintStart_toStartOf="@+id/startup_circle_number"
+        app:layout_constraintTop_toTopOf="@+id/startup_circle_number"
+        app:srcCompat="@drawable/me_light_ring"/>
+
+    <ImageView
+        android:id="@+id/startup_circle_number"
+        android:layout_width="283dp"
+        android:layout_height="300dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/me_circle_animation_list"/>
+
+    <!--<ImageView-->
+    <!--android:id="@+id/startup_number_bg"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:scaleType="centerCrop"-->
+    <!--android:visibility="gone"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent"-->
+    <!--app:srcCompat="@drawable/me_number_bg" />-->
+
+    <TextView
+        android:id="@+id/startup_tip_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/me_generating_key"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startup_circle_number" />
+
+    <TextView
+        android:id="@+id/hash_generated_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="40dp"
+        android:textColor="@color/common_color_white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="@string/me_login_generate_hash_calculation"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startup_circle_number"/>
+
+    <TextView
+        android:id="@+id/hash_generated_target_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/common_color_white"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hash_generated_text"
+        android:typeface="monospace"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/hash_result_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/common_color_white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hash_generated_target_text" />
+
+    <TextView
+        android:id="@+id/hash_generated_running_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/common_color_half_tran_white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hash_result_text"
+        android:typeface="monospace"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/hash_generated_success_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/common_tick_green_big_icon"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hash_generated_running_text" />
+
+    <ImageView
+        android:id="@+id/startup_key"
+        android:layout_width="400dp"
+        android:layout_height="700dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/me_anim_key"/>
+
+    <com.bcm.messenger.common.ui.StateButton
+        android:id="@+id/startup_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:drawablePadding="6dp"
+        android:gravity="center"
+        android:paddingBottom="@dimen/common_vertical_gap"
+        android:paddingEnd="40dp"
+        android:paddingStart="40dp"
+        android:paddingTop="@dimen/common_vertical_gap"
+        android:text="@string/me_stop_generate"
+        android:textAllCaps="false"
+        android:textColor="@color/common_color_white"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:backgroundRound="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startup_tip_text"
+        app:normalBackgroundColor="@color/common_app_primary_color"
+        app:pressedBackgroundColor="@color/common_app_primary_color" />
+
+    <include
+        android:id="@+id/key_load_anim_layout"
+        layout="@layout/me_key_load_anim_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/anim_letter_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/common_color_white"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

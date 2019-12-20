@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="vpn_ssr_not_support_warning">高隐私连接通道开启失败</string>
+    <string name="vpn_ssr_time_wrong_warning">高隐私连接通道开启失败</string>
+</resources>

@@ -1,0 +1,429 @@
+<resources>
+
+    <string name="me_str_login">Login</string>
+    <string name="me_str_create_account">Create Account</string>
+    <string name="me_str_switch_account">Switch Account</string>
+    <string name="me_more_options_btn">More Options</string>
+    <string name="me_str_succeed">Succeed</string>
+    <string name="me_str_failed">Failed</string>
+
+    <string name="me_login_scan_to_add_me">Scan to Add Me</string>
+
+    <string name="me_notification_head">Notification</string>
+    <string name="me_backup_head">Account</string>
+    <string name="me_security_head">Security &amp; Privacy</string>
+    <string name="me_help_head">FAQ</string>
+    <string name="me_support_head">Feedback</string>
+    <string name="me_about_head">About</string>
+    <string name="me_device_switch_head">Switch Device</string>
+    <string name="me_logout_head">Log Out</string>
+    <string name="me_backup_notice_description">Not Backed Up</string>
+    <string name="me_new_version_description">New Version Available</string>
+
+    <string name="me_more_title">More</string>
+    <string name="me_more_account_title">Accounts</string>
+    <string name="me_more_data_vault_title">Data Vault</string>
+    <string name="me_more_wallet_title">Wallet</string>
+    <string name="me_more_settings_title">Settings</string>
+    <string name="me_more_feedback_title">Feedback</string>
+    <string name="me_more_about_title">About</string>
+    <string name="me_more_scan">Scan</string>
+
+    <string name="me_take_phone">Take Photo</string>
+    <string name="me_choose_phone">Choose Photo</string>
+    <string name="me_delete_phone">Delete Photo</string>
+
+    <string name="me_edit_save_success_description">Save Successfully</string>
+    <string name="me_edit_save_fail_description">Save Failed</string>
+
+    <string name="me_confirm_logout_title">Log Out</string>
+    <string name="me_confirm_logout_notice">Chat history will be cleared after you logged out. Are you sure to proceed?</string>
+    <string name="me_confirm_logout_ok_text">Log Out</string>
+
+
+    <string name="me_confirm_clear_history_title">Clear Chat History</string>
+    <string name="me_confirm_clear_history_notice">All content will be deleted for the accounts of yours and the user in this conversation.</string>
+    <string name="me_confirm_clear_history_ok_text">Clear</string>
+
+    <string name="me_backup_title">Account</string>
+
+    <string name="me_nick_name_set_title">Please pick a nickname</string>
+    <string name="me_nick_name_set_hint">Enter your nickname</string>
+    <string name="me_nick_name_set_later">Later</string>
+    <string name="me_nick_name_set_save">Save</string>
+    <string name="me_nick_name_set_success">Nick Name Saved</string>
+    <string name="me_nick_name_set_fail">Nick Name Save Fail</string>
+
+    <string name="me_confirm_password_title">Set Password</string>
+    <string name="me_confirm_password_notice">Set password for Account Key encryption and Virtual currency transaction in wallet.</string>
+
+    <string name="me_switch_title">Switch Device</string>
+    <string name="me_switch_device_qr_description">Account QR Code</string>
+    <string name="me_switch_device_qr_fail_description">Create Account QR Code Fail</string>
+    <string name="me_switch_head">Scan QR Code to login</string>
+    <string name="me_scan_code_add_contact">Scan the QR Code to Add Contact</string>
+    <string name="me_scan_code_add_me">Scan QR code to add me</string>
+    <string name="me_switch_notice">Scan QR code and enter password on the new device to login.\nThis device will log out once done.</string>
+
+    <string name="me_default_password_content">This passwords (at least 8 characters) is for Account Key encryption. Please note that passwords can NOT be reset.</string>
+
+    <string name="me_version_head">BCM %1$s</string>
+    <string name="me_problem_describe">Describe the problem(s)</string>
+    <string name="me_submit">Submit</string>
+
+    <string name="me_version">Version</string>
+    <string name="me_copyright">Privacy</string>
+
+    <string name="me_nickname_placeholder">Nickname</string>
+
+    <string name="me_name_title">Name</string>
+    <string name="me_name_content">Hint: Please enter a new name.</string>
+
+    <string name="me_id_title">ID</string>
+    <string name="me_id_content">Hint: Please enter a new ID.</string>
+    <string name="me_register_id">Register your ID</string>
+
+    <string name="me_keys_generated">Keys Generated</string>
+    <string name="me_private_key">Private Key</string>
+    <string name="me_default_private_key" translatable="false">12399a8b2342342342349fcde09df8da890fe99aefefa5e6afe666ea6faea</string>
+    <string name="me_public_key">Public Key</string>
+    <string name="me_default_public_key" translatable="false">12399a8b2342342342349fcde09df8da890fe99aefefa5e6afe666ea6faea</string>
+
+    <string name="me_encrypt_your_keys">Encrypt your keys</string>
+    <string name="me_keys_encrypted">Keys encrypted</string>
+    <string name="me_pin_hint">Password</string>
+    <string name="me_re_enter_pin_hint">Re-enter Password</string>
+    <string name="me_input_pin_hint">Please input password</string>
+
+    <string name="me_login_successful">Login Successful</string>
+
+    <string name="me_pick_an_id">Pick an ID</string>
+    <string name="me_type_id_hint">Type your ID here</string>
+
+    <string name="me_confirm_dialog_title_placeholder">Title</string>
+    <string name="me_confirm_dialog_tip_placeholder">Tips</string>
+    <string name="me_confirm_dialog_button_placeholder_1">First</string>
+    <string name="me_confirm_dialog_button_placeholder_2">Second</string>
+
+    <string name="me_avatar_size_too_big">The avatar is larger than 10MB, please choose another</string>
+
+    <string name="me_unsupported_rq_code">unsupported qr code</string>
+    <string name="me_account_unsupported_qr_warning_title">Invalid Account Key</string>
+    <string name="me_account_unsupported_qr_warning_description">This QR code is not a valid Account Key, please check and try again</string>
+    <string name="me_account_import_qr_warning_title">Import Account Key</string>
+    <string name="me_account_import_qr_warning_description">This QR code is an Account Key. It is NOT for adding friend. If you want to import this Account Key, please go to \"Accounts\" in \"More\" tab</string>
+
+    <!--about-->
+    <string name="me_about_new_version_status">Upgrade</string>
+    <string name="me_about_latest_version_status">Latest Version</string>
+    <string name="me_about_security_support">Security Support</string>
+    <string name="me_about_open_source_licenses">Open source licenses</string>
+
+    <string name="me_change_password">Change Password</string>
+
+    <string name="me_account_key">Account Key</string>
+    <string name="me_log_out">Log Out</string>
+
+    <string name="me_enter_original_password">Enter original password</string>
+    <string name="me_original_password">Original Password</string>
+    <string name="me_new_password">New Password</string>
+    <string name="me_enter_new_password">Enter new password</string>
+    <string name="me_confirm_new_password">Confirm Password</string>
+    <string name="me_re_enter_new_password">Re-enter new password</string>
+
+    <string name="me_self_edit_button">Edit</string>
+    <string name="me_set_new_password">Set New Password</string>
+    <string name="me_enter_password_hint">Enter Password</string>
+    <string name="me_re_enter_password_hint">Re-enter Password</string>
+
+    <string name="me_save_success">save successfully</string>
+    <string name="me_save_fail">save failed</string>
+    <string name="me_title_my_qr_code">My QR Code</string>
+    <string name="me_my_qr_code_content">Scan QR Code with BCM to add me.</string>
+    <string name="me_my_qr_code_save">Save Image</string>
+    <string name="me_reset_password">Reset Password</string>
+    <string name="me_forget_password">Forgot Password</string>
+    <string name="me_forward">Forward</string>
+    <string name="me_share">Share</string>
+
+    <string name="me_input_password_can_not_empty">Password cannot be empty</string>
+
+    <string name="me_save">Save</string>
+    <string name="me_psw_not_equals_confirm_psw">Your password and confirmation password do not match.</string>
+    <string name="me_change_password_success">change password success</string>
+    <string name="me_input_origin_password_error">The original password you entered is incorrect.</string>
+    <string name="me_account_key_anim_tips">Your Account Key is your \n only pass in BCM</string>
+
+    <string name="me_donate_us">Donate</string>
+    <string name="me_generating_key">Generating Account Key \n Tap "Stop" to get yours.</string>
+    <string name="me_generated_key">Account Key Generated</string>
+    <string name="me_stop_generate">Stop</string>
+    <string name="me_scan_qr_code_to_login_to_another_device">Scan QR code to login/backup to another device</string>
+
+    <string name="me_str_scan_account_key">Scan Account Key</string>
+    <string name="me_str_scan_to_login">Scan to Log In</string>
+    <string name="me_str_scan_account_key_content">Scan the QR Code of your Account Key to backup</string>
+    <string name="me_str_scan_to_login_content">Scan the QR Code of your Account Key to login</string>
+    <string name="me_str_delete_account_key">Delete Account Key</string>
+    <string name="me_str_delete_account_key_success">Account Key Deleted</string>
+    <string name="me_str_show_account_key">Show Account Key</string>
+    <string name="me_str_generation_key_date">Date of Key Generation: %s</string>
+    <string name="me_str_backup_date">Date of Backup: %s</string>
+    <string name="me_str_backup_date_export">Date of Backup(Export):&#160;</string>
+    <string name="me_str_backup_export_date">Date of Backup(Export): %s</string>
+    <string name="me_str_backup_date_import">Date of Backup(Import): %s</string>
+    <string name="me_show_qr_code">Show QR Code</string>
+    <string name="me_str_my_account_key">My Account Key</string>
+
+    <string name="me_setting_feedback">Feedback</string>
+    <string name="me_str_version_update">Version Update</string>
+    <string name="me_text_register_failed">Register Failed</string>
+
+    <string name="me_update_dialog_title">New Version %s available</string>
+    <string name="me_update_dialog_content">New version %s is available, download now?</string>
+    <string name="me_update_dialog_downloading">New version is downloading and will be installed when download finished</string>
+    <string name="me_update_dialog_ok">Upgrade</string>
+    <string name="me_update_dialog_cancel">Exit</string>
+    <string name="me_update_notification_downloading">Downloading update: %d%% completed</string>
+    <string name="me_update_notification_success">Update success downloaded</string>
+    <string name="me_update_notification_failed">Download update failed</string>
+    <string name="me_update_notification_canceled">Update download has been canceled</string>
+    <string name="me_update_install">Install</string>
+
+    <string name="me_backup_notice">Notice</string>
+    <string name="me_backup_have_no_notes_app">Unable to find the system Memopad/Notes App.</string>
+    <string name="me_backup_share_to">Share to</string>
+    <string name="me_backup_cannot_copy_qr_code">Copy QR code feature is only available for Android 7.0 and above.</string>
+    <string name="me_backup_str_copy">Copy</string>
+    <string name="me_backup_copy_content">This QR code will be copied and automatically pasted in the system Memopad/Notes App.</string>
+
+    <!--keybox-->
+    <string name="me_keybox">KeyBox</string>
+    <string name="me_keybox_qr_into">Scan Account Key QR code to import Account Keys into Keybox.</string>
+    <string name="me_keybox_qr_upload">Keybox is locally stored in device, without uploading to any server.</string>
+    <string name="me_keybox_scan_and_import">Scan and Import</string>
+    <string name="me_keybox_delete_account_key">Delete Account Key</string>
+    <string name="me_keybox_delete_detail">By switching account, your chat history of the this account will be deleted</string>
+    <string name="me_keybox_delete_btn">Delete History and Switch</string>
+    <string name="me_keybox_delete_success">Delete Success</string>
+    <string name="me_keybox_logged">You have already logged into this account.</string>
+    <string name="me_keybox_reach_limit">Reach Keybox Limit</string>
+    <string name="me_keybox_reach_limit_detail">You have reached the limit of Keybox\'s capacity of Account Keys</string>
+    <string name="me_keybox_current_item">CURRENT ACCOUNT KEY</string>
+    <string name="me_keybox_inactive_item">INACTIVE ACCOUNT KEY(S)</string>
+    <string name="me_keybox_long_click_delete">Delete</string>
+
+    <!--fingerprint-->
+    <string name="me_fingerprint_verify_title">Verify Fingerprint to Show Account Key</string>
+    <string name="me_fingerprint_change_to_password">Use Password</string>
+    <string name="me_fingerprint_password_title">Show Account Key</string>
+    <string name="me_fingerprint_password_hint">Account Key Password</string>
+    <string name="me_fingerprint_password_try_again">Try again</string>
+    <string name="me_fingerprint_not_match">Fingerprint Not Recognised</string>
+    <string name="me_fingerprint_lockout">Fingerprint temporarily disabled due to too many fails attempts</string>
+    <string name="me_fingerprint_scan_timeout">Scan fingerprint timeout</string>
+    <string name="me_fingerprint_unknown_error">Unknown error</string>
+    <string name="me_fingerprint_fail_cancel">Canceled by user</string>
+    <string name="me_fingerprint_wrong_password">Wrong Password</string>
+
+    <!--generate key-->
+    <string name="me_login_generate_hash_calculation">START Hash Calculation</string>
+    <string name="me_login_generate_target">Target</string>
+    <string name="me_login_generate_account_key">Account Key Generated</string>
+    <string name="me_login_generate_result">Result</string>
+    <string name="me_text_set_password">Set password</string>
+    <string name="me_login_account_key_null_warning">Account key pair is empty</string>(
+
+    <!--my profile-->
+    <string name="me_profile_title">My Profile</string>
+    <string name="me_profile_picture">Avatar</string>
+    <string name="me_profile_nickname">Alias</string>
+    <string name="me_profile_add_me">Add me</string>
+
+    <!--Ban password reset-->
+    <string name="me_ban_reset_password_title">Password Cannot Be Reset</string>
+    <string name="me_ban_reset_password_content">For account safety concern, every Account Key is encrypted and stored locally, with no data uploaded to any server. Therefore, your password cannot be reset.</string>
+    <string name="me_ban_reset_password_back">You can go back to the former page and try again, or create a new account.</string>
+    <string name="me_create_account">Create Account</string>
+    <string name="me_text_account_created">Account Created</string>
+
+    <!-- local profile -->
+    <string name="me_other_local_display_title">REMARK</string>
+    <string name="me_other_local_display_clear">Clear</string>
+    <string name="me_local_profile_title">Contact Details</string>
+    <string name="me_local_profile_reset_button">Clear</string>
+    <string name="me_local_profile_all_reset_notice">Clear this display profile for %s</string>
+    <string name="me_other_local_display_name">Display Alias</string>
+    <string name="me_other_local_display_avatar">Display Avatar</string>
+    <string name="me_other_local_empty_action">Tap to Set</string>
+    <string name="me_other_local_display_comment">Display avatar and display alias will be shown instead of the original ones. </string>
+    <string name="me_other_profile_avatar_reset_notice">Clear the display Avatar for %s</string>
+
+    <!--Destroy Account-->
+    <string name="me_destroy_force_logout_title">Forced Log Out</string>
+    <string name="me_destroy_force_logout_content">Another device (shown below) has successfully logged into this account. </string>
+    <string name="me_destroy_force_logout_tips">If it is not you, your Account Key and password may be leaked. </string>
+    <string name="me_destroy_account_str">Destroy Account</string>
+    <string name="me_destroy_account_content">Please be noted that everything in your account, including your contacts, profiles, settings, and digital assets in your wallet, will be destroyed, and this action can NOT be undone.</string>
+    <string name="me_destroy_account_notice">I am aware of the consequences and I agree with the legal terms.</string>
+    <string name="me_destroy_other_client_unknown">UNKNOWN</string>
+    <string name="me_destroy_other_client_name">&quot;%s&quot;</string>
+    <string name="me_destroy_other_client_command_sent">Command Sent</string>
+    <string name="me_destroy_other_client_response_success">Account destroyed success</string>
+    <string name="me_destroy_account_password_hint">Enter Password</string>
+    <string name="me_destroy_account_confirm_title">Account Destroyed</string>
+    <string name="me_destroy_account_confirm_notice">This account has been destroyed, you can no longer log in.</string>
+    <string name="me_destroy_account_confirm_button">Understood</string>
+    <string name="me_destroy_account_warning_notice">This account has been destroyed, you are now forced to log out.</string>
+    <string name="me_logout_with_expire">Your account login status has expired, please re-login</string>
+    <string name="me_destroy_account_success">Account Destroyed</string>
+
+    <!--Settings-->
+    <string name="me_setting_title">Settings</string>
+    <string name="me_setting_notifications_head">NOTIFICATIONS</string>
+    <string name="me_settings_notification_disabled">BCM checked the notification is disabled. Would you like to enable the notification?</string>
+    <string name="me_setting_notification_title">Notifications</string>
+    <string name="me_setting_language_head">LANGUAGE</string>
+    <string name="me_setting_language_title">Language</string>
+    <string name="me_setting_tts_language_title">TTS Language</string>
+    <string name="me_setting_tts_language_sub_title">The language of TTS (Text to Speech) is used for magnified messages</string>
+    <string name="me_setting_tts_cannot_open">Please manually open the TTS Settings and change the TTS language.</string>
+    <string name="me_setting_block_head">BLOCKED</string>
+    <string name="me_setting_blocked_user_title">Blocked Users</string>
+    <string name="me_setting_block_stranger_title">Block Strangers\' Msgs</string>
+    <string name="me_setting_block_stranger_error">Set failed</string>
+    <string name="me_setting_data_storage_head">DATA AND STORAGE</string>
+    <string name="me_setting_data_stoarge_calulating_tip">Calculating…</string>
+    <string name="me_setting_clear_cache_title">Clear Cache</string>
+    <string name="me_setting_security_head">SECURITY</string>
+    <string name="me_setting_pin_lock_title">PIN Lock</string>
+    <string name="me_setting_pin_on_tip">On</string>
+    <string name="me_setting_pin_off_tip">Off</string>
+    <string name="me_setting_privacy_head">PRIVACY ENHANCEMENT</string>
+    <string name="me_setting_rtc_p2p_title">Always Relay Calls</string>
+    <string name="me_setting_rtc_p2p_sub_title">Relay all calls through a BCM server to avoid revealing your IP address to your contact. Call quality will be reduced.</string>
+
+    <!--Notification Setting-->
+    <string name="me_notification_setting_title">Notification</string>
+    <string name="me_notification_push_title">Push Notification</string>
+    <string name="me_notification_title">Message Notifications</string>
+    <string name="me_notification_sound_title">Sounds</string>
+    <string name="me_notification_vibrate_title">Vibrate</string>
+
+    <!--Pin Lock -->
+    <string name="me_pin_size_4">Use 4-digit PIN</string>
+    <string name="me_pin_size_6">Use 6-digit PIN</string>
+    <string name="me_enter_pin">Enter PIN</string>
+    <string name="me_confirm_pin">Confirm PIN</string>
+    <string name="me_new_pin">New PIN</string>
+    <string name="me_enter_current_pin">Enter your current PIN</string>
+    <string name="me_set_pin_successfully">Set PIN Successfully</string>
+    <string name="me_fingerprint_unlock_successful">Fingerprint unlock successfully</string>
+    <string name="me_fingerprint_unlock_fail">Fingerprint unlock fail</string>
+    <string name="me_pin_not_matched">PINs Not Matched</string>
+    <string name="me_forget_pin_detail">Use password to change or clear your PIN.</string>
+    <string name="me_wrong_pin">Wrong PIN</string>
+    <string name="me_change_pin">Change PIN</string>
+    <string name="me_clear_pin">Clear PIN</string>
+    <string name="me_pin_disabled">PIN Disabled</string>
+    <string name="me_pin_clear">PIN Cleared</string>
+    <string name="me_forget_pin"> </string>
+    <string name="me_pin_lock_entrance">PIN Lock</string>
+    <string name="me_pin_lock_instantly">instantly</string>
+    <string name="me_pin_lock_5_minutes">5 minutes</string>
+    <string name="me_pin_lock_one_hour">1 hour</string>
+    <string name="me_pin_lock_selection_title">Auto-Lock after leaving BCM for…</string>
+    <string name="me_disable_pin_lock">Disable PIN Lock</string>
+    <string name="me_change_pin_lock">Change PIN</string>
+    <string name="me_use_6_digit_pin_lock">6-digit PIN</string>
+    <string name="me_pin_is_for_identity_describe">PIN is for identity verification before launching the App or accessing your Account Key QR Code.</string>
+    <string name="me_pin_lock_auto_lock">Auto-Lock</string>
+    <string name="me_unlock_with_fingerprint">Unlock With Fingerprint</string>
+    <string name="me_pin_lock_title">PIN Lock</string>
+    <string name="me_request_pin_for_identity_verification">Request PIN for identity verification before launching the App or accessing your Account Key QR code.</string>
+    <string name="me_enable_pin_lock">Enable PIN Lock</string>
+    <string name="me_note_forget_the_pin">Note: if you forget the PIN, you\'ll need to delete and re-install the App. Please note that all chats will be cleared as a result.</string>
+    <string name="me_logout_clear_tip">Erase chat history of current account</string>
+    <string name="me_logout_tip_title">Log out from this device?</string>
+    <string name="me_logout_tip_out">Log Out</string>
+
+    <!--Backup -->
+    <string name="me_backup_account_detail">Back up Account Key (2 ways):\n• Scan using Keybox (BCM) on another device.\n• Copy and paste as an image.\n \nSwitch device:\n• Scanned by and login to another device. </string>
+    <string name="me_mark_as_backed_up">Mark as backed up</string>
+    <string name="me_not_backed_up">Not Backed Up</string>
+    <string name="me_finish_backup">I have finished backing up</string>
+    <string name="me_account_backup_tips">Please back up your Account Key.</string>
+    <string name="me_account_security">ACCOUNT SECURITY</string>
+    <string name="me_current_account_key">CURRENT ACCOUNT KEY</string>
+    <string name="me_mark_as_backed_up_detail">Please make sure you have made a back up safely.</string>
+    <string name="me_qr_code_copied">QR Code Copied</string>
+    <string name="me_store_safely">Please store it safely.</string>
+    <string name="me_chats_are_you_sure_to_switch">Are you sure to switch to this account?</string>
+    <string name="me_switch_action_text">Switch</string>
+
+    <!--FeedBack-->
+    <string name="me_feedback_category">Category</string>
+    <string name="me_feedback_bug">Bug</string>
+    <string name="me_feedback_crash">Crash</string>
+    <string name="me_feedback_workflow">Workflow</string>
+    <string name="me_feedback_wording">Wording</string>
+    <string name="me_feedback_suggestion">Suggestion</string>
+    <string name="me_feedback_others">Others</string>
+    <string name="me_feedback_screenshot">Screenshots</string>
+    <string name="me_feedback_description">Description</string>
+    <string name="me_feedback_category_select_tip">Please choose category first.</string>
+
+    <!--Block Users-->
+    <string name="me_no_block_user">No Blocked Users</string>
+
+    <string name="me_scan">Scan</string>
+    <string name="me_screen_secure_describe">Prevent all screen capture operations of BCM.</string>
+    <string name="me_screen_secure_enable_tip">This will hide the contents of you chats or chat list from the task switcher, but you will not be able to take screenshots on BCM.\n\nYou may need to restart the app for this take effect.</string>
+    <string name="me_screen_secure_enable_title">Prevent Screenshots</string>
+
+
+    <string name="me_force_upgrade_title">Upgrade Notice</string>
+    <string name="me_note_forward">Forward</string>
+    <string name="me_note_delete">Delete</string>
+    <string name="me_note_delete_note_title">Delete this note</string>
+    <string name="me_note_list_title">Data Vault</string>
+    <string name="me_note_item_pin">Pin</string>
+    <string name="me_note_item_cancel_pin">Unpin</string>
+    <string name="me_note_item_delete">Delete</string>
+    <string name="me_note_unlock_wrong_password">Wrong Password</string>
+    <string name="me_note_unlock_enter_password">Enter Password</string>
+    <string name="me_note_new_note_title">New Note</string>
+    <string name="me_all_data_in_the_vault_will_be_encrypted_and_stored_locally_in_this_device">All data in the vault will be encrypted and stored locally in this device.</string>
+    <string name="me_create_a_note">Create a Note</string>
+    <string name="me_note_if_you_lost_your_password_or_delete_the_app_you_will_lose_all_your_data_in_the_vault">Note: If you lost your password or delete the App, you will lose all your data in the vault.</string>
+    <string name="me_setting_internet_less">Offline Chat</string>
+    <string name="me_setting_internet_less_describe">Offline Chat Rooms</string>
+
+    <!--unlock-->
+    <string name="me_unlock_app">Unlock BCM</string>
+    <string name="me_unlock_app_description">BCM use your biometric to unlock app</string>
+    <string name="me_unlock_account_key">Unlock Account Key</string>
+    <string name="me_unlock_account_key_description">BCM use your biometric to unlock your account key</string>
+    <string name="me_more_airchat_title">AirChat</string>
+    <string name="me_proxy_setting_title">Proxy</string>
+    <string name="me_test_proxy_usability">Run Usability Test</string>
+    <string name="me_proxy_configurations">PROXY CONFIGURATIONS</string>
+    <string name="me_add_proxy_title">Add Proxy</string>
+    <string name="me_add_proxy_name">Name</string>
+    <string name="me_add_proxy_uri_scheme_url">URI Scheme (URL)</string>
+    <string name="me_setting_proxy_item_unusable">Unusable</string>
+    <string name="me_setting_proxy_item_usable">Usable</string>
+    <string name="me_proxy_add_error_format">Wrong Farmat</string>
+    <string name="me_setting_proxy_pop_delete">Delete %s</string>
+    <string name="me_setting_proxy_item_testing">Testing…</string>
+    <string name="me_setting_proxy_action_add">Add</string>
+    <string name="me_test_proxy_usability_describe">All proxies added will be used for connecting server when needed, each proxy will take about a few seconds.</string>
+    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
+    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
+    <string name="me_add_proxy_edit_title">Edit Proxy</string>
+    <string name="me_add_proxy_action_save">Save</string>
+    <string name="me_proxy_connecing_to_server">Connecting to Server…</string>
+    
+    
+
+</resources>

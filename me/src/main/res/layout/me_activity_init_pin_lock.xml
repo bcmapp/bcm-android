@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/common_background_color"
+        android:clipToPadding="true"
+        android:fitsSystemWindows="false">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/title_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:elevation="0dp">
+
+            <com.bcm.messenger.common.ui.CommonTitleBar2
+                android:id="@+id/title_bar"
+                style="@style/CommonTitleBarStyle"
+                app:center_text="@string/me_pin_lock_title" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/common_color_white"
+            android:orientation="vertical"
+            android:layout_below="@id/title_bar_layout">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/me_init_pin_lock_icon"
+                android:layout_marginTop="50dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:textColor="@color/common_color_606060"
+                android:textSize="17sp"
+                android:text="@string/me_pin_lock_title"
+                android:layout_marginTop="50dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="@color/common_color_606060"
+                android:textSize="15sp"
+                android:text="@string/me_request_pin_for_identity_verification"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                android:layout_marginTop="25dp" />
+
+            <Button
+                android:id="@+id/me_enable_pin_lock"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginEnd="60dp"
+                android:layout_marginStart="60dp"
+                android:background="@drawable/common_blue_bg"
+                android:text="@string/me_enable_pin_lock"
+                android:textAllCaps="false"
+                android:textColor="@color/common_color_white"
+                android:layout_marginTop="50dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="@color/common_color_606060"
+                android:textSize="15sp"
+                android:text="@string/me_note_forget_the_pin"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginBottom="20dp" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</androidx.core.widget.NestedScrollView>

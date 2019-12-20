@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@color/common_color_white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        style="@style/CommonTitleBarStyle"
+        android:id="@+id/note_title_bar"
+        app:right_type="image"
+        app:right_image="@drawable/common_titlebar_plus_icon" />
+
+    <include layout="@layout/me_note_guild_view_layout"
+        android:id="@+id/me_note_guild_view"
+        android:paddingStart="45dp"
+        android:paddingEnd="45dp"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/me_note_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

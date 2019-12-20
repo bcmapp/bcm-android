@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_dark_background">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/backup_account_title"
+        style="@style/CommonTitleBarStyle"
+        android:layout_marginBottom="8dp"
+        app:left_image="@drawable/common_back_arrow_white_icon"
+        app:title_bar_background="@color/common_color_dark_background"
+        app:right_type="text"
+        app:right_text="@string/me_backup_str_copy"
+        app:right_text_color="@color/common_color_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/account_qr_detail"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/backup_account_title"
+        app:layout_constraintBottom_toTopOf="@+id/me_backup_status">
+
+        <View
+            android:id="@+id/view5"
+            android:layout_width="0dp"
+            android:layout_height="350dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/common_white_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/account_qr"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="76dp"
+            android:contentDescription="@string/me_switch_device_qr_description"
+            app:layout_constraintBottom_toBottomOf="@id/view5"
+            app:layout_constraintStart_toStartOf="@id/view5"
+            app:layout_constraintEnd_toEndOf="@id/view5"
+            app:layout_constraintTop_toTopOf="@id/view5" />
+
+        <ImageView
+            android:id="@+id/account_key_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/me_64_account_key_qr_code_tag"
+            app:layout_constraintBottom_toBottomOf="@+id/account_qr"
+            app:layout_constraintEnd_toEndOf="@+id/account_qr"
+            app:layout_constraintStart_toStartOf="@+id/account_qr"
+            app:layout_constraintTop_toTopOf="@+id/account_qr" />
+
+        <TextView
+            android:id="@+id/text_account_time"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/me_account_backup_time_background"
+            android:gravity="left|center_vertical"
+            android:lines="2"
+            android:paddingStart="20dp"
+            android:paddingEnd="0dp"
+            android:textColor="@color/common_color_white"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/view5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Date of Key Generation: 2017-Aug-12\nDate of Backup: 2017-Aug-25 " />
+
+        <TextView
+            android:id="@+id/account_backup_detail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/me_backup_account_detail"
+            android:textColor="@color/common_color_white_70"
+            android:textSize="13sp"
+            android:gravity="start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_account_time"
+            tools:text="@string/me_backup_account_detail" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/me_backup_status"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@color/common_color_white_70"
+        android:gravity="center"
+        android:lines="2"
+        android:text="@string/me_mark_as_backed_up"
+        android:textColor="@color/common_color_white"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

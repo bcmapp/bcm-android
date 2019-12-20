@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/scan_main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:elevation="10dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="10dp"
+        app:layout_constraintDimensionRatio="1: 1.3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextureView
+            android:id="@+id/scan_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:keepScreenOn="true" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/scan_mask_layout"
+            android:layout_width="match_parent"
+            android:layout_height="84dp"
+            android:layout_gravity="bottom"
+            android:background="@color/common_scan_mask">
+
+            <ImageView
+                android:id="@+id/scan_flash_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:src="@drawable/common_scan_flash_off"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.bcm.messenger.common.ui.scan.ScannerView
+            android:id="@+id/scan_scanner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="84dp"/>
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/scan_album_btn"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/common_item_ripple_transparent_bg"
+        android:drawableTop="@drawable/me_scan_album_icon"
+        android:drawablePadding="10dp"
+        android:text="@string/common_scan_from_album_text"
+        android:textSize="13sp"
+        android:textColor="@color/common_color_black"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@id/scan_main"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

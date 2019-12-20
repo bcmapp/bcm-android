@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="login_account_unsupported_qr_warning_title">Invalid Account Key</string>
+    <string name="login_account_unsupported_qr_warning_description">This QR code is not a valid Account Key, please check and try again</string>
+
+    <string name="login_account_not_exist">Account Does Not Exist</string>
+    <string name="login_destroy_other_client_response_fail">Account destroyed fail</string>
+    <string name="login_login_failed">Login Failed</string>
+    <string name="login_password_error">password error</string>
+
+    <string name="login_loading_connecting_server">Connecting to Server…</string>
+
+    <string name="login_try_user_proxy_using_xxx">Trying User Proxy %s</string>
+    <string name="login_try_official_proxy_using_xxx">Trying Preset Proxy</string>
+
+    <string name="login_account_qr_exist_notice">This key had been backed up before</string>
+
+</resources>

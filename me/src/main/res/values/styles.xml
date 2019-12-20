@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MeItem">
+
+    </style>
+
+    <style name="MeItem.Container">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">62dp</item>
+    </style>
+
+    <style name="MeItem.Icon">
+        <item name="android:layout_marginLeft">15dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="MeItem.Title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#131313</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="PickLockInput">
+        <item name="android:layout_width">65dp</item>
+        <item name="android:layout_height">65dp</item>
+        <item name="android:textColor">@color/me_pin_input_color</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:background">@drawable/me_input_bg</item>
+        <item name="android:clickable">true</item>
+    </style>
+</resources>

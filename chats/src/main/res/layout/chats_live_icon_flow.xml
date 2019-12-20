@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bcm.messenger.chats.components.FlowWindowCoverLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/common_white_circle"
+    android:elevation="10dp"
+    tools:context="com.bcm.messenger.chats.components.LiveIconFlowWindow">
+
+    <ImageView
+        android:id="@+id/flow_video_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:src="@drawable/chats_flow_video_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</com.bcm.messenger.chats.components.FlowWindowCoverLayout>

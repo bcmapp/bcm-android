@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="adhoc_setting_enable_title">エアチャット</string>
+    <string name="adhoc_setting_enable_describe">デバイス間のBluetooth/Wi-Fiの接続で友人とチャットすることができる、インターネットとの接続する必要がない。</string>
+    <string name="adhoc_join_channel_join">加入</string>
+    <string name="adhoc_join_channel_name">グループ名前</string>
+    <string name="adhoc_join_pass_code">パスワード</string>
+    <string name="adhoc_join_error_input_channel_name">エアチャットグループの名前を輸入する</string>
+    <string name="adhoc_join_error_input_channel_password">エアチャットグループのパスワードを輸入する</string>
+    <string name="adhoc_join_error_join_failed">エアチャットグループ加入失敗</string>
+
+    <string name="adhoc_channel_settiong_action_title">チャット操作</string>
+    <string name="adhoc_channel_settiong_footprint_title">記録</string>
+    <string name="adhoc_channel_settiong_others_title">ほか</string>
+    <string name="adhoc_channel_setting_pin_title">スティッキーポスト</string>
+    <string name="adhoc_channel_setting_mute_title">邪魔にならない</string>
+    <string name="adhoc_channel_setting_clear_notice">聊天记录将会在本机上被删除。</string>
+    <string name="adhoc_channel_setting_clear_title">チャット記録をクリアする</string>
+    <string name="adhoc_channel_setting_clear_success">クリア成功</string>
+    <string name="adhoc_channel_setting_clear_fail">クリア失敗</string>
+    <string name="adhoc_channel_setting_leave_notice">エアチャットグループから退出とメッセージをうけとれません。</string>
+    <string name="adhoc_channel_setting_leave_title">エアチャットグループから退出</string>
+    <string name="adhoc_channel_setting_leave_success">退出成功</string>
+    <string name="adhoc_channel_setting_leave_fail">退出失敗</string>
+    <string name="adhoc_channel_setting_leave_action">退出</string>
+
+    <string name="adhoc_channel_message_sticky_secure">携帯電話間の接続はメッセージの送受信に影響を与える。</string>
+
+    <string name="adhoc_unread_message">[1通]&#160;</string>
+    <string name="adhoc_unread_messages">[%d通]&#160;</string>
+    <string name="adhoc_unread_full_messages">[99+通]&#160;</string>
+    <string name="adhoc_official_channel_name">全員エアチャット</string>
+    <string name="adhoc_main_title">エアチャット</string>
+    <string name="adhoc_create_chat_room">エアチャットグループを作成</string>
+    <string name="adhoc_join_chat_room">エアチャットグループに加入</string>
+    <string name="adhoc_chat_room_create">作成</string>
+    <string name="adhoc_chat_room_join">加入</string>
+    <plurals name="adhoc_main_title_device_found">
+    <item quantity="other">%d個デバイスを見つける</item>
+    </plurals>
+    <string name="adhoc_main_title_device_found_0">デバイスが見つからない</string>
+    <string name="adhoc_device_scanning">デバイスを捜索中…</string>
+    <string name="adhoc_main_title_connecting">接続中…</string>
+    <string name="adhoc_main_title_connecting_to">%sと接続中…</string>
+    <string name="adhoc_setting_airchat_title">エアチャット</string>
+    <string name="adhoc_chat_with_friends_via_device_to_device">デバイスからデバイスのBluetoothへ/Wi-Fi接続でフレンドとチャットし、ネットとアクセスする必要がない。</string>
+    <string name="adhoc_the_bluetooth_and_wi_fi_connectivity_of_this_device">エアチャットモードが起動後、このデバイスのBluetoothおよびWi-Fi接続が占有され、デバイスへの通信に使用されることになる。</string>
+    <string name="adhoc_setting_enable_airchat">エアチャット起動</string>
+    <string name="adhoc_setting_disable_airchat">エアチャット閉じる</string>
+    <string name="adhoc_amin_airchat_on">エアチャット: 開け</string>
+
+        <!-- 邀请进群 -->
+    <string name="adhoc_invite_join_title">エアチャットグループ加入を招待する</string>
+    <string name="adhoc_invite_join_room_title">グループ名前</string>
+    <string name="adhoc_invite_join_password_title">パスワード</string>
+    <string name="adhoc_invite_join_action">エアチャットグループに加入</string>
+    <string name="adhoc_invite_copy_item">コピー</string>
+    <string name="adhoc_invite_forward_item">転送</string>
+    <string name="adhoc_invite_forward_success">転送成功</string>
+    <string name="adhoc_invite_forward_fail">転送失敗</string>
+
+        <!-- 转发相关 -->
+    <string name="adhoc_session_selection_title">…まで転送する</string>
+    <string name="adhoc_session_search_title">検索</string>
+    <string name="adhoc_session_recent_item_title">最近エアチャット</string>
+
+
+    <string name="adhoc_device_ble">Bluetooth</string>
+    <string name="adhoc_device_wifi">Wi-Fi</string>
+    <string name="adhoc_device_gps">GPS位置情報</string>
+    <string name="adhoc_device_state_error">エラ：%s開いていない</string>
+    <string name="adhoc_airchat_setting_members">オンラインメンバー</string>
+    <string name="adhoc_channel_member_list_title">オンラインメンバー</string>
+
+        <!-- 附件大小通知 -->
+    <string name="adhoc_attachment_too_large_upload_fail">添付ファイルがアップロード失敗で、サイズは64 MB以下でなければなりません</string>
+    <string name="adhoc_session_item_unpin">スティッキーポストをキャンセル</string>
+    <string name="adhoc_session_item_pin">スティッキーポスト</string>
+    <string name="adhoc_ble_not_support_error">現在のデバイスは低消費電力のBluetoothにサポートしないため、エアチャットを開けません</string>
+    <string name="adhoc_wifi_not_enable_error">Wi-Fiはアクティブされてないため、エアチャットを開けません</string>
+    <string name="adhoc_gps_not_enable_error">GPS位置情報はアクティブされてないため、エアチャットを開けません</string>
+    <string name="adhoc_ble_not_enable_error">Bluetoothはアクティブされてないため、エアチャットを開けません</string>
+
+        <!-- 多媒体相关 -->
+    <string name="adhoc_attachment_browse_nonsupport_description">この機能をサポートしません</string>
+    <string name="adhoc_main_title_connect_failed">接続失敗</string>
+    <string name="adhoc_main_title_connected">接続成功</string>
+
+</resources>
