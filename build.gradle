@@ -80,8 +80,7 @@ allprojects {
 
 static def getAppId() {
     if (branch() == "origin/master" || branch() == "master" ||
-            branch() == "origin/ame-android_bugfix_feature" || branch() == "ame-android_bugfix_feature" ||
-            branch().contains("bcm_open_source_feature")) {
+            branch() == "origin/ame-android_bugfix_feature" || branch() == "ame-android_bugfix_feature") {
         return "com.bcm.messenger"
     } else if (branch().length() == 0) {
         return "com.bcm.messenger.local"
