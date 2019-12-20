@@ -226,7 +226,7 @@ object AmeLoginLogic {
                 ALog.logForSecret(TAG, "quit error", e)
             }
 
-        }else {
+        } else {
             ALog.i(TAG, "just only clear current login uid")
         }
 
@@ -821,8 +821,8 @@ object AmeLoginLogic {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .flatMap {
-            requestChallenge(it)
-        }.observeOn(Schedulers.io()).subscribe({
+                    requestChallenge(it)
+                }.observeOn(Schedulers.io()).subscribe({
 
             val difficulty = it.second.difficulty
             if (difficulty > 32 || difficulty < 0) {

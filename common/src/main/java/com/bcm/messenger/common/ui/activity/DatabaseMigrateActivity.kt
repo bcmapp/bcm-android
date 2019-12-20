@@ -7,13 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.database.migrate.DatabaseMigration
-import com.bcm.messenger.common.database.migrate.EncryptedDatabaseMigration
 import com.bcm.messenger.common.database.migrate.IDatabaseMigration
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.IContactModule
-import com.bcm.messenger.common.provider.ILoginModule
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -57,11 +55,8 @@ class DatabaseMigrateActivity : AppCompatActivity() {
 
     private fun migrate() {
         ALog.i(TAG, "Start migrate")
-        val migration: IDatabaseMigration = if (TextSecurePreferences.getMigrateFailedCount(this) == 3) {
-            EncryptedDatabaseMigration
-        } else {
-            DatabaseMigration
-        }
+
+        val migration: IDatabaseMigration = DatabaseMigration
         migration.doMigrate {
             if (it < 0) {
                 ALog.i(TAG, "Migrate failed")
@@ -117,11 +112,7 @@ class DatabaseMigrateActivity : AppCompatActivity() {
 
         AmeModuleCenter.onLoginStateChanged(AMESelfData.uid)
 
-        val migration: IDatabaseMigration = if (TextSecurePreferences.getMigrateFailedCount(this) == 3) {
-            EncryptedDatabaseMigration
-        } else {
-            DatabaseMigration
-        }
+        val migration: IDatabaseMigration = DatabaseMigration
         migration.clearFlag()
 
         BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH).navigation()

@@ -1,6 +1,5 @@
 package com.bcm.messenger.common.database.migrate
 
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.crypto.MasterCipher
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.database.RecipientDatabase
@@ -9,8 +8,6 @@ import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.grouprepository.room.database.GroupDatabase
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMESelfData
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IUserModule
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.utility.AppContextHolder
@@ -423,10 +420,6 @@ object DatabaseMigration : IDatabaseMigration {
             migrateFailedCount++
         }
         TextSecurePreferences.setMigrateFailedCount(AppContextHolder.APP_CONTEXT, migrateFailedCount)
-
-        // Upload feedback for resolving bugs
-        val userProviderImp = AmeProvider.get<IUserModule>(ARouterConstants.Provider.PROVIDER_USER_BASE)
-        userProviderImp?.feedback("Migrate","DatabaseMigrateFailed", emptyList())
 
         return if (migrateFailedCount == 3) -2 else -1
 //        return -2

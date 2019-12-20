@@ -8,12 +8,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMESelfData
-import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.activity.DatabaseMigrateActivity
 import com.bcm.messenger.logic.SchemeLaunchHelper
 import com.bcm.messenger.me.ui.login.RegistrationActivity
@@ -32,6 +30,7 @@ import com.bcm.route.annotation.Route
 @Route(routePath = ARouterConstants.Activity.APP_LAUNCH_PATH)
 class LaunchActivity : AppCompatActivity() {
     private val TAG = "LaunchActivity"
+
     companion object {
         private val quickOp = QuickOpCheck(2000)
     }
@@ -90,12 +89,11 @@ class LaunchActivity : AppCompatActivity() {
                 }
             }
             routeToRegister()
-        } else if (DatabaseFactory.isDatabaseExist(this) && (!TextSecurePreferences.isDatabaseMigrated(this) || TextSecurePreferences.getMigrateFailedCount(this) == 3)) {
+        } else if (DatabaseFactory.isDatabaseExist(this) && !TextSecurePreferences.isDatabaseMigrated(this)) {
             routeToDatabaseMigrate()
         } else {
             routeToHome()
         }
-
     }
 
     private fun routeToHome() {
@@ -107,7 +105,7 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun routeToRegister() {
-        ALog.i(TAG,"routeToRegister")
+        ALog.i(TAG, "routeToRegister")
         SchemeLaunchHelper.storeSchemeIntent(intent)
         startActivity(Intent(this, RegistrationActivity::class.java))
         delayFinish()
@@ -121,12 +119,9 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun delayFinish() {
-
         AmeDispatcher.mainThread.dispatch({
             finish()
         }, 2000)
 
     }
-
-
 }

@@ -107,7 +107,7 @@ object AmeModuleCenter {
             ReportUtils.setGUid(newUid)
 
             if (DatabaseFactory.isDatabaseExist(AppContextHolder.APP_CONTEXT)
-                    && (!TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT) || TextSecurePreferences.getMigrateFailedCount(AppContextHolder.APP_CONTEXT) == 3)) {
+                    && !TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT)) {
                 val factory = DatabaseFactory.getInstance(AppContextHolder.APP_CONTEXT)
                 factory?.reset(AppContextHolder.APP_CONTEXT, newUid)
                 return
