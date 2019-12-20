@@ -16,8 +16,8 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTransform
 import com.bcm.messenger.common.grouprepository.room.entity.GroupLiveInfo
 import com.bcm.messenger.common.mms.PartAuthority
+import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -232,7 +232,7 @@ class ThreadRepo {
                         threadModel.snippetUri = null
                     }
 
-                }else {
+                } else {
                     threadModel.snippetType = BASE_DRAFT_TYPE
                     threadModel.snippetContent = drafts.getSnippet(AppContextHolder.APP_CONTEXT) ?: ""
                     threadModel.snippetUri = drafts.getUriSnippet(AppContextHolder.APP_CONTEXT)
@@ -243,7 +243,6 @@ class ThreadRepo {
                 threadModel.messageCount = count
 
                 threadDao.updateThread(threadModel)
-
             }
         }
     }
@@ -283,18 +282,14 @@ class ThreadRepo {
             // @me，@，，@，，，@me，，
             val state = if (messageContent is AmeGroupMessage.SystemContent && messageContent.tipType == AmeGroupMessage.SystemContent.TIP_JOIN_GROUP_REQUEST) {
                 BASE_JOIN_REQUEST
-            }
-            else if (!message.isSendByMe && ConversationUtils.checkHasAtMe(message)) {
+            } else if (!message.isSendByMe && message.extContent?.isAtAll == true || message.extContent?.atList?.contains(AMESelfData.uid) == true) {
                 BASE_AT_ME_TYPE
-            }
-            else if (drafts.isNotEmpty()) {
+            } else if (drafts.isNotEmpty()) {
                 BASE_DRAFT_TYPE
-            }
-            else {
+            } else {
                 message.sendState.value
             }
             updateByNewGroup(threadId, count, unreadCount, body, uriString, draftText, draftUri, state, time ?: message.sendTime)
-
         }
     }
 
@@ -308,20 +303,16 @@ class ThreadRepo {
                 // @me，@，，@，，，@me，，
                 if (state == BASE_JOIN_REQUEST && unreadCount > 0) {
                     record.snippetType = BASE_JOIN_REQUEST
-
-                }else if (state == BASE_AT_ME_TYPE && !record.isJoinRequestMessage() && unreadCount > 0) {
+                } else if (state == BASE_AT_ME_TYPE && !record.isJoinRequestMessage() && unreadCount > 0) {
                     record.snippetType = BASE_AT_ME_TYPE
+                } else if ((record.isJoinRequestMessage() || record.isAtMeMessage()) && unreadCount > 0) {
 
-                }
-                else if ((record.isJoinRequestMessage() || record.isAtMeMessage()) && unreadCount > 0) {
-
-                }
-                else if (state == BASE_DRAFT_TYPE || !draftText.isNullOrEmpty() || !draftUri.isNullOrEmpty()) {
+                } else if (state == BASE_DRAFT_TYPE || !draftText.isNullOrEmpty() || !draftUri.isNullOrEmpty()) {
                     record.snippetType = BASE_DRAFT_TYPE
                     record.snippetContent = draftText ?: ""
                     record.snippetUri = if (draftUri == null) null else Uri.parse(draftUri)
-                }else {
-                    record.snippetType = AmeGroupMessageDetail.SendState.SEND_SUCCESS.value
+                } else {
+                    record.snippetType = state
                 }
 
                 record.messageCount = count
@@ -331,7 +322,6 @@ class ThreadRepo {
                 threadDao.updateThread(record)
             }
         }
-
     }
 
     fun setHasSent(threadId: Long, hasSent: Boolean) {
@@ -342,11 +332,11 @@ class ThreadRepo {
         val threadList = threadDao.queryAllThreads()
         val map = mutableMapOf<String, ThreadRecord>()
         val uidList = mutableListOf<String>()
-        threadList.forEach {r ->
+        threadList.forEach { r ->
             uidList.add(r.uid)
             map[r.uid] = r
         }
-        Repository.getRecipientRepo()?.getRecipients(uidList)?.forEach {settings ->
+        Repository.getRecipientRepo()?.getRecipients(uidList)?.forEach { settings ->
             map[settings.uid]?.setRecipient(Recipient.fromSnapshot(AppContextHolder.APP_CONTEXT, Address.fromSerialized(settings.uid), settings))
         }
         return threadList

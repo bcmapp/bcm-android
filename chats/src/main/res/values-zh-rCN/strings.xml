@@ -17,12 +17,22 @@
     <string name="chats_item_confirm_delete_title">确认删除</string>
     <string name="chats_item_confirm_delete_message">你确认要删除此会话吗？</string>
     <string name="chats_title">聊天</string>
-    <string name="chats_no_conversation_main">暂无会话</string>
+    <string name="chats_no_conversation_main">无聊天记录</string>
     <string name="chats_no_conversation_sub">聊天会在这里显示</string>
+    <string name="chats_no_conversation_description">还没有朋友吗？%s并开始私密聊天吧！</string>
+    <string name="chats_no_conversation_invite">邀请你的朋友</string>
     <string name="chats_no_nickname_set">你尚未设置昵称</string>
     <string name="chats_no_nickname_set_btn">立即设置</string>
     <string name="chats_network_connecting">连接中…</string>
     <string name="chats_network_disconnected">离线</string>
+    <string name="chats_main_new_chat">新建聊天</string>
+    <string name="chats_main_scan_and_add">扫码添加</string>
+    <string name="chats_main_invite_friend">邀请好友</string>
+    <string name="chats_more_data_vault_title">数据保险箱</string>
+    <string name="chats_more_wallet_title">钱包</string>
+    <string name="chats_more_settings_title">设置</string>
+    <string name="chats_more_airchat_title">隔空聊天</string>
+    <string name="chats_friend_request_title">好友请求</string>
 
     <!--group setting-->
     <string name="chats_group_setting_members">群聊成员</string>
@@ -148,7 +158,7 @@
     <string name="chats_select_mode_cancel_btn">取消</string>
     <string name="chats_select_mode_delete_empty">请选择消息</string>
 
-    <string name="chats_create_group_title">创建群</string>
+    <string name="chats_create_group_title">新建群聊</string>
     <string name="chats_select_contact_title">选择联系人</string>
     <string name="chats_select_contact_done">完成</string>
     <string name="chats_default_group_name">群聊名称</string>
@@ -655,5 +665,10 @@
     <string name="chats_network_try_proxy">\n代理</string>
     <string name="chats_server_can_not_reach">无法访问服务器</string>
     <string name="chats_try_proxy_doing">使用代理连接中…</string>
+
+    <!--Media view-->
+    <string name="chats_media_view_image_expire">图片已过期或已被删除</string>
+    <string name="chats_media_view_video_expire">视频已过期或已被删除</string>
+    <string name="chats_media_view_audio_expire">语音消息过期</string>
 
 </resources>

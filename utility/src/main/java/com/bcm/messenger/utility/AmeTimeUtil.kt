@@ -5,7 +5,7 @@ import com.bcm.messenger.utility.logger.ALog
 import kotlin.math.abs
 
 /**
- * Created by bcm.social.01 on 2018/11/12.
+ * bcm.social.01 2018/11/12.
  */
 object AmeTimeUtil {
     private var serverTime = 0L

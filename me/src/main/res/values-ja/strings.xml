@@ -12,7 +12,7 @@
     <string name="me_notification_head">通知</string>
     <string name="me_backup_head">アカウント</string>
     <string name="me_security_head">セキュリティ &amp; プライバシー</string>
-    <string name="me_help_head">FAQ</string>
+    <string name="me_setting_help_title">FAQ</string>
     <string name="me_support_head">フィードバック</string>
     <string name="me_about_head">について</string>
     <string name="me_device_switch_head">スイッチ装置</string>
@@ -22,11 +22,8 @@
 
     <string name="me_more_title">もっと</string>
     <string name="me_more_account_title">アカウント</string>
-    <string name="me_more_data_vault_title">データセーフティボックス</string>
-    <string name="me_more_wallet_title">財布</string>
-    <string name="me_more_settings_title">設置</string>
-    <string name="me_more_feedback_title">フィードバック</string>
-    <string name="me_more_about_title">関する</string>
+    <string name="me_setting_feedback_title">フィードバック</string>
+    <string name="me_setting_about_title">関する</string>
     <string name="me_more_scan">スキャン</string>
 
     <string name="me_take_phone">写真を撮る</string>
@@ -140,7 +137,7 @@
     <string name="me_save">保存</string>
     <string name="me_psw_not_equals_confirm_psw">入力されたパスワードの確認が一致しません。</string>
     <string name="me_change_password_success">パスワードが変更されました</string>
-    <string name="me_input_origin_password_error">入力した元のパスワードが間違っています。</string>
+    <string name="me_change_password_error">入力した元のパスワードが間違っています。</string>
     <string name="me_account_key_anim_tips">アカウントキーはBCMにログインする唯一の手段です。</string>
 
     <string name="me_donate_us">寄付</string>
@@ -164,7 +161,6 @@
     <string name="me_show_qr_code">QRコードを表示</string>
     <string name="me_str_my_account_key">私のアカウントキー</string>
     <string name="me_not_backed_up">未バックアップ</string>
-    <string name="me_setting_feedback">フィードバック</string>
     <string name="me_str_version_update">更新</string>
     <string name="me_text_register_failed">登録に失敗しました</string>
 
@@ -394,8 +390,7 @@
     <string name="me_unlock_app_description">BCMは生体認識機能でロックを解除</string>
     <string name="me_unlock_account_key">アカウントキーのロック解除</string>
     <string name="me_unlock_account_key_description">BCMはあなたの生体認証機能でアカウントキーをアンロックする</string>
-    <string name="me_more_airchat_title">エアチャット</string>
-    <string name="me_proxy_setting_title">Proxy</string>
+    <string name="me_setting_proxy_title">Proxy</string>
     <string name="me_test_proxy_usability">Run Usability Test</string>
     <string name="me_proxy_configurations">PROXY CONFIGURATIONS</string>
     <string name="me_add_proxy_title">Add Proxy</string>

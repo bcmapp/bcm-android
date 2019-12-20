@@ -7,7 +7,7 @@ import androidx.appcompat.widget.AppCompatTextView
 
 
 /**
- * Created by bcm.social.01 on 2019/1/25.
+ * bcm.social.01 2019/1/25.
  */
 class CountDownTimeText: AppCompatTextView {
     private var countDownTimer:CountDownTimer? = null

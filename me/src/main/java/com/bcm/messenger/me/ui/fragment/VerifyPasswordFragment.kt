@@ -8,12 +8,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
+import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.utils.BcmFileUtils
+import com.bcm.messenger.common.utils.setStatusBarLightMode
+import com.bcm.messenger.common.utils.showKeyboard
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.login.backup.VerifyFingerprintActivity
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.QuickOpCheck
+import com.bcm.messenger.utility.ViewUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.me_fragment_verify_password.*
+import java.lang.ref.WeakReference
 
 /**
  * Created by Kin on 2018/9/3
@@ -30,41 +46,60 @@ class VerifyPasswordFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        verify_password_input.inputType = EditorInfo.TYPE_TEXT_VARIATION_PASSWORD or EditorInfo.TYPE_CLASS_TEXT
 
-        verify_password_fingerprint.setOnClickListener {
-            (activity as? VerifyFingerprintActivity)?.switchToFingerprintFragment()
+        verify_pin_input_clear.isEnabled = false
+        verify_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
+            override fun onClickLeft() {
+                verifyCallback?.invoke(false)
+            }
+        })
+
+        verify_pin_input_text.inputType = EditorInfo.TYPE_TEXT_VARIATION_PASSWORD or EditorInfo.TYPE_CLASS_TEXT
+
+        verify_pin_input_go.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            verifyPassword(verify_pin_input_text.text.toString())
         }
-        verify_password_confirm.setOnClickListener {
-            verifyPassword(verify_password_input.text.toString())
+        verify_pin_input_clear.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            verify_pin_input_text.text.clear()
         }
-        verify_password_input.addTextChangedListener(object : TextWatcher {
+        verify_pin_input_text.addTextChangedListener(object : TextWatcher {
+
             override fun afterTextChanged(s: Editable?) {
-                verify_password_confirm.visibility = if (s != null && s.isNotEmpty()) {
-                    View.VISIBLE
+                if (s != null && s.isNotEmpty()) {
+                    verify_pin_input_clear.alpha = 1f
+                    verify_pin_input_clear.isEnabled = true
+                    verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_icon)
+                    verify_pin_input_go.isEnabled = true
+                    verify_pin_error.visibility = View.GONE
                 } else {
-                    View.GONE
+                    verify_pin_input_clear.alpha = 0.7f
+                    verify_pin_input_clear.isEnabled = false
+                    verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_disabled_icon)
+                    verify_pin_input_go.isEnabled = false
                 }
-                verify_password_input.background = context?.getDrawable(R.drawable.me_register_input_bg)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
-        verify_password_cancel.setOnClickListener {
-            verifyCallback?.invoke(false)
-        }
-        if (!hasFingerprint) {
-            verify_password_fingerprint.visibility = View.GONE
-            verify_password_try_again.visibility = View.GONE
-        }
-        if (lockout) {
-            verify_password_fingerprint.setOnClickListener {
-                AmePopup.result.failure(activity, getString(R.string.me_fingerprint_lockout), true)
-            }
-            AmePopup.result.failure(activity, getString(R.string.me_fingerprint_lockout), true)
-        }
+
+        fetchProfile(arguments?.getString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID))
+
+        verify_pin_input_text.postDelayed({
+            verify_pin_input_text?.setSelection(0)
+            verify_pin_input_text?.isFocusable = true
+            verify_pin_input_text?.requestFocus()
+            verify_pin_input_text?.showKeyboard()
+        }, 250)
+
+        activity?.window?.setStatusBarLightMode()
     }
 
     fun setCallback(callback: (success: Boolean) -> Unit): VerifyPasswordFragment {
@@ -87,26 +122,79 @@ class VerifyPasswordFragment : Fragment() {
         verifyCallback = null
     }
 
-    private fun verifyPassword(inputPassword: String) {
-        AmePopup.loading.show(activity)
-        AmeDispatcher.io.dispatch {
-            try {
-                val profile = AmeLoginLogic.getCurrentAccount()
-                profile?.let {
-                    if (AmeLoginLogic.accountHistory.getPrivateKeyWithPassword(it, inputPassword) != null) {
-                        AmeDispatcher.mainThread.dispatch {
-                            AmePopup.loading.dismiss()
-                            verifyCallback?.invoke(true)
+    private fun fetchProfile(accountId: String?) {
+        if (!accountId.isNullOrEmpty()) {
+            val account = AmeLoginLogic.accountHistory.getAccount(accountId)
+            val realUid: String? = account?.uid
+            val name: String? = account?.name
+            val avatar: String? = account?.avatar
+
+            if (!realUid.isNullOrEmpty()) {
+                val weakThis = WeakReference(this)
+                Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
+                    try {
+                        val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(realUid), false)
+                        val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
+                            avatar
+                        } else {
+                            null
                         }
+                        recipient.setProfile(recipient.profileKey, name, finalAvatar)
+                        emitter.onNext(recipient)
+                    } finally {
+                        emitter.onComplete()
                     }
-                    return@dispatch
-                }
-            } catch (e: Exception) {}
-            AmeDispatcher.mainThread.dispatch {
-                AmePopup.loading.dismiss()
-                verify_password_input.background = context?.getDrawable(R.drawable.me_register_input_error_bg)
-                AmePopup.result.failure(activity, getString(R.string.me_fingerprint_wrong_password), true)
+                }).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ recipient ->
+                            weakThis.get()?.verify_pin_name?.text = recipient.name
+                            weakThis.get()?.verify_pin_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                        }, {})
             }
+        } else {
+            activity?.finish()
         }
+    }
+
+    /**
+     * 校验密码
+     *
+     * @param inputPassword 用户输入的密码
+     */
+    private fun verifyPassword(inputPassword: String) {
+        ViewUtils.fadeOut(verify_pin_input_go, 250)
+        ViewUtils.fadeIn(verify_pin_loading, 250)
+        verify_pin_loading.startAnim()
+
+        Observable.create<Boolean> {
+            val accountData = AmeLoginLogic.getCurrentAccount()
+            if (accountData != null) {
+                it.onNext(AmeLoginLogic.accountHistory.getPrivateKeyWithPassword(accountData, inputPassword) != null)
+            } else {
+                it.onNext(false)
+            }
+            it.onComplete()
+
+        }.subscribeOn(AmeDispatcher.ioScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    ViewUtils.fadeIn(verify_pin_input_go, 250)
+                    ViewUtils.fadeOut(verify_pin_loading, 250)
+                    verify_pin_loading.stopAnim()
+
+                    if (it) {
+                        verifyCallback?.invoke(true)
+                    } else {
+                        verify_pin_error.text = getString(R.string.me_fingerprint_wrong_password)
+                        ViewUtils.fadeIn(verify_pin_error, 300)
+                    }
+                }, {
+                    verify_pin_input_go.visibility = View.VISIBLE
+                    verify_pin_loading.visibility = View.GONE
+                    verify_pin_loading.stopAnim()
+
+                    verify_pin_error.text = getString(R.string.me_fingerprint_wrong_password)
+                    ViewUtils.fadeIn(verify_pin_error, 300)
+                })
     }
 }

@@ -84,6 +84,8 @@ public class AmeNotificationService extends Service {
                         case ACTION_ADHOC:
                             toAdHoc(intent);
                             break;
+                        default:
+                            break;
                     }
                 } catch (Throwable e) {
                     ALog.e(TAG, "onStartCommand", e);

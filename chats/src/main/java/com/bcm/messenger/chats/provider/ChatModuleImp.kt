@@ -137,6 +137,9 @@ class ChatModuleImp : IChatModule {
                 AmeGroupMessageDetail.SendState.SEND_SUCCESS -> GroupMessage.SEND_SUCCESS
                 AmeGroupMessageDetail.SendState.SENDING -> GroupMessage.SENDING
                 AmeGroupMessageDetail.SendState.RECEIVE_SUCCESS -> GroupMessage.RECEIVE_SUCCESS
+                AmeGroupMessageDetail.SendState.FILE_NOT_FOUND -> GroupMessage.FILE_NOT_FOUND
+                AmeGroupMessageDetail.SendState.FILE_DOWNLOAD_FAIL -> GroupMessage.FILE_DOWNLOAD_FAIL
+                AmeGroupMessageDetail.SendState.THUMB_DOWNLOAD_FAIL -> GroupMessage.THUMB_DOWNLOAD_FAIL
                 else -> GroupMessage.SEND_FAILURE
             }
 

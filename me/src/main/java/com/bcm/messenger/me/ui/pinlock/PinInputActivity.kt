@@ -52,14 +52,14 @@ class PinInputActivity : SwipeBaseActivity() {
         const val DISABLE_PIN = 6
         const val CHECK_PIN = 7
 
-        fun router(activity: Activity, pinSize:Int, viewStyle:Int){
+        fun router(activity: Activity, pinSize: Int, viewStyle: Int) {
             val intent = Intent(activity, PinInputActivity::class.java)
             intent.putExtra(INPUT_STYPE, viewStyle)
             intent.putExtra(INPUT_SIZE, pinSize)
             activity.startActivity(intent)
         }
 
-        fun routerChangedPin(activity: Activity, newPinStyle:Int){
+        fun routerChangedPin(activity: Activity, newPinStyle: Int) {
             val intent = Intent(activity, PinInputActivity::class.java)
             intent.putExtra(INPUT_STYPE, CHANGE_PIN)
             intent.putExtra(INPUT_SIZE, AmePinLogic.lengthOfPin())
@@ -67,7 +67,7 @@ class PinInputActivity : SwipeBaseActivity() {
             activity.startActivity(intent)
         }
 
-        fun routerCheckPin(activity: Activity, requestCode:Int){
+        fun routerCheckPin(activity: Activity, requestCode: Int) {
             val intent = Intent(activity, PinInputActivity::class.java)
             intent.putExtra(INPUT_STYPE, CHECK_PIN)
             intent.putExtra(INPUT_SIZE, AmePinLogic.lengthOfPin())
@@ -75,7 +75,7 @@ class PinInputActivity : SwipeBaseActivity() {
             activity.startActivityForResult(intent, requestCode)
         }
 
-        fun routerVerifyUnlock(activity: Activity){
+        fun routerVerifyUnlock(activity: Activity) {
             val intent = Intent(activity, PinInputActivity::class.java)
             intent.putExtra(INPUT_STYPE, VERIFY_UNLOCK)
             intent.putExtra(INPUT_SIZE, AmePinLogic.lengthOfPin())
@@ -164,7 +164,7 @@ class PinInputActivity : SwipeBaseActivity() {
         }
     }
 
-    private fun initParams(intent: Intent){
+    private fun initParams(intent: Intent) {
         inputSize = intent.getIntExtra(INPUT_SIZE, INPUT_SIZE_4)
         inputStyle = intent.getIntExtra(INPUT_STYPE, VERIFY_UNLOCK)
         newPinSize = intent.getIntExtra(NEW_PIN_STYLE, inputSize)
@@ -255,7 +255,7 @@ class PinInputActivity : SwipeBaseActivity() {
     private fun checkBack() {
         when (inputStyle) {
             INPUT_PIN -> {
-                if (!inputFragment.empty()){
+                if (!inputFragment.empty()) {
                     inputStyle = inputFragment.pop()
                     setTitleStyle()
                 } else {
@@ -263,7 +263,7 @@ class PinInputActivity : SwipeBaseActivity() {
                 }
             }
             CONFIRM_NEW_PIN -> {
-                if (!inputFragment.empty()){
+                if (!inputFragment.empty()) {
                     inputStyle = inputFragment.pop()
                     setTitleStyle()
                 } else {
@@ -274,7 +274,7 @@ class PinInputActivity : SwipeBaseActivity() {
                 finish()
             }
             NEW_PIN -> {
-                if (!inputFragment.empty()){
+                if (!inputFragment.empty()) {
                     inputStyle = inputFragment.pop()
                     setTitleStyle()
                 } else {
@@ -299,7 +299,7 @@ class PinInputActivity : SwipeBaseActivity() {
     private fun setPinSize(size: Int) {
         inputSize = if (size == 0) {
             val length = AmePinLogic.lengthOfPin()
-            if (length > 0){
+            if (length > 0) {
                 length
             } else {
                 INPUT_SIZE_4
@@ -368,7 +368,7 @@ class PinInputActivity : SwipeBaseActivity() {
                 }
             }
             CHECK_PIN -> {
-                if (AmePinLogic.checkPin(pin.toString())){
+                if (AmePinLogic.checkPin(pin.toString())) {
                     setResult(Activity.RESULT_OK)
                     finish()
                 } else {
@@ -436,7 +436,7 @@ class PinInputActivity : SwipeBaseActivity() {
     private fun startAuthenticate() {
         if (!BiometricVerifyUtil.canUseBiometricFeature() || !AmePinLogic.isUnlockWithFingerprintEnable()) {
             pin_word_size.visibility = View.VISIBLE
-            input_back.visibility =View.GONE
+            input_back.visibility = View.GONE
             input_verify.visibility = View.GONE
             return
         }
@@ -452,11 +452,10 @@ class PinInputActivity : SwipeBaseActivity() {
                     if (success) {
                         isFingerShow = false
                         AmeDispatcher.mainThread.dispatch({
-                            AmePopup.result.succeed(this@PinInputActivity, resources.getString(R.string.me_fingerprint_unlock_successful))
-                            AmeDispatcher.mainThread.dispatch({
+                            AmePopup.result.succeed(this@PinInputActivity, resources.getString(R.string.me_fingerprint_unlock_successful)) {
                                 AmePinLogic.unlock()
                                 finish()
-                            }, 1000)
+                            }
                         }, 300)
                     } else {
                         if (!hasHw || isLocked) {

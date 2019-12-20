@@ -27,6 +27,15 @@
     <string name="chats_no_nickname_set_btn">Ввести</string>
     <string name="chats_network_connecting">Подключаем…</string>
     <string name="chats_network_disconnected">Офлайн</string>
+    <string name="chats_main_new_chat">Новый чат</string>
+    <string name="chats_main_scan_and_add">Скан. и добав.</string>
+    <string name="chats_main_invite_friend">Приглас. друзей</string>
+    <string name="chats_more_data_vault_title">Хран. данных</string>
+    <string name="chats_more_wallet_title">Кошелек</string>
+    <string name="chats_more_settings_title">Настройки</string>
+    <string name="chats_more_airchat_title">AirChat</string>
+    <string name="chats_friend_request_title">Запросы дружбы</string>
+
     <string name="chats_conversation_input_hint">&#160;Введ. здесь</string>
     <string name="chats_private_lock_description">блок. чата</string>
     <string name="chats_private_verified_description">статус подтв. чата</string>

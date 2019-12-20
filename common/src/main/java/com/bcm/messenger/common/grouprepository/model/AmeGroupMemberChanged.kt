@@ -8,7 +8,7 @@ import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.proguard.NotGuard
 
 /**
- * Created by bcm.social.01 on 2018/6/7.
+ * bcm.social.01 2018/6/7.
  */
 data class AmeGroupMemberChanged(val groupId:Long, val messageId:Long) {
     companion object {

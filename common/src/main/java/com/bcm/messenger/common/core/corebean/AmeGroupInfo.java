@@ -2,12 +2,11 @@ package com.bcm.messenger.common.core.corebean;
 
 import android.text.TextUtils;
 
-import androidx.annotation.Nullable;
-
 import com.bcm.messenger.common.R;
 import com.bcm.messenger.common.core.AmeLanguageUtilsKt;
 import com.bcm.messenger.common.utils.AppUtilKotlinKt;
 import com.bcm.messenger.utility.AppContextHolder;
+
 import java.util.Locale;
 import java.util.Objects;
 

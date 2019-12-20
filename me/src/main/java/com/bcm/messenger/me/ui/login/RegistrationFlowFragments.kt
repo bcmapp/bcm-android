@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
+import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -203,6 +204,8 @@ class StartupFragment : AbsRegistrationFragment() {
         super.onViewCreated(view, savedInstanceState)
         initView()
         showLogoAnimation()
+
+        SuperPreferences.setTablessIntroductionFlag(AppContextHolder.APP_CONTEXT)
     }
 
     private fun initView() {

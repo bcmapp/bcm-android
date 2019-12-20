@@ -13,6 +13,7 @@ import java.util.List;
 public class SuperPreferences {
 
     public static final String LOGIN_PROFILE_PREFERENCES = "login_profile_preferences";
+
     private static final String LOGIN_PROFILE_BACKUP_MODE_PREFERENCES = "login_profile_backup_mode_preferences";
     private static final String LOGIN_PROFILE_SET = "login_profile_set";
     private static final String LOGIN_PROFILE_SET_V2 = "login_profile_set_new";
@@ -24,6 +25,12 @@ public class SuperPreferences {
     private static final String FLOATING_WINDOW_MUTE = "floating_window_mute";
     private static final String HEIGHT_KEYBOARD_PORTRAIT = "height_keyboard_portrait";
     private static final String HEIGHT_KEYBOARD_LANDSCAPE = "height_keyboard_landscape";
+    private static final String TABLESS_INTRODUCTION_FLAG = "tabless_introduction_flag";
+
+    public static final String AME_LAST_LOGIN = "AME_LAST_LOGIN";
+    public static final String AME_ACCOUNT_LIST = "AME_ACCOUNT_LIST";
+    public static final String AME_LAST_BACKUP = "AME_LAST_BACKUP";
+    public static final String AME_CURRENT_LOGIN = "AME_CURRENT_LOGIN";
 
 
     public static final String METRICS = "metrics";
@@ -165,5 +172,13 @@ public class SuperPreferences {
 
     public static void setLandscapeKeyboardHeight(Context context, int height) {
         context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putInt(HEIGHT_KEYBOARD_LANDSCAPE, height).apply();
+    }
+
+    public static boolean getTablessIntroductionFlag(Context context) {
+        return context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).getBoolean(TABLESS_INTRODUCTION_FLAG, false);
+    }
+
+    public static void setTablessIntroductionFlag(Context context) {
+        context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putBoolean(TABLESS_INTRODUCTION_FLAG, true).apply();
     }
 }

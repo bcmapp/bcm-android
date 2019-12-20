@@ -12,6 +12,7 @@ import com.bcm.messenger.common.groups.GroupUpdateModel;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.recipients.RecipientModifiedListener;
 import com.bcm.messenger.utility.Base64;
+import com.bcm.messenger.utility.logger.ALog;
 import com.google.gson.Gson;
 
 import org.whispersystems.signalservice.internal.push.SignalServiceProtos;
@@ -21,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by bcm.social.01 on 2018/9/4.
+ * bcm.social.01 2018/9/4.
  */
 public class GroupDescription {
     private static final String TAG = "GroupDescription";
@@ -72,7 +73,7 @@ public class GroupDescription {
                     this.members.add(recipient);
                 }
             } catch (Exception ignore) {
-
+                ALog.e(TAG, "GroupDescription init error", ignore);
             }
 
         }

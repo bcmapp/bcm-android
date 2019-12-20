@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference
 
 
 /**
- * Created by bcm.social.01 on 2018/7/14.
+ * bcm.social.01 2018/7/14.
  */
 class UpgradeOptionView : AppCompatTextView {
     companion object {
@@ -19,8 +19,8 @@ class UpgradeOptionView : AppCompatTextView {
         var cancelView: WeakReference<View?>? = null
     }
 
-    constructor(context: Context) : this(context, null) {}
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0) {}
+    constructor(context: Context) : this(context, null)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, style: Int) : super(context, attrs, style) {
         AmePopup.loading.dismiss()
     }

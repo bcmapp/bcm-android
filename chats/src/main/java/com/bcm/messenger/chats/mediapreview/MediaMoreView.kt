@@ -8,11 +8,6 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
 import com.bcm.messenger.chats.R
-import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.provider.IContactModule
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.route.api.BcmRouter
-import com.google.zxing.Result
 import kotlinx.android.synthetic.main.chats_media_more_view.view.*
 
 
@@ -26,28 +21,17 @@ class MediaMoreView @JvmOverloads constructor(context: Context, attrs: Attribute
 
     private var listener: MoreViewActionListener? = null
 
-    private var mDefaultOptionVisible = true
-    private var mScanResult: Array<out Result>? = null
-
-    private var topShowAnim = TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f,
-            Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0f)
+    private var mDefaultOptionVisible = true//默认控制组件是否可见
 
     private var bottomShowAnim = TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f,
             Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 0f)
-
-    private var topHideAnim = TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f,
-            Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, -1f)
 
     private var bottomHideAnim = TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f,
             Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1f)
 
     interface MoreViewActionListener {
         fun clickDownload()
-        fun clickForward()
-        fun clickDelete()
         fun clickMediaBrowser()
-        fun clickScanQRCode()
-        fun clickClose()
         fun moreOptionVisibilityChanged(isShow: Boolean)
     }
 
@@ -57,46 +41,15 @@ class MediaMoreView @JvmOverloads constructor(context: Context, attrs: Attribute
     }
 
     fun initView() {
-        chats_media_more_btn.setOnClickListener {
-            if (chats_more_option_layout.visibility == View.VISIBLE) {
-                hideMoreOptionLayout()
-                if (mDefaultOptionVisible) {
-                    showDefaultOptionLayout()
-                }
-            } else {
-                showMoreOptionLayout()
-                if (mDefaultOptionVisible) {
-                    hideDefaultOptionLayout()
-                }
-            }
-        }
-
-        chats_media_forward_btn.setOnClickListener {
-            listener?.clickForward()
-        }
-
         chats_media_download_flow_btn.setOnClickListener {
+            if (chats_media_download_flow_btn_mask.visibility == View.VISIBLE) {
+                return@setOnClickListener
+            }
             listener?.clickDownload()
         }
 
-        chats_media_download_btn.setOnClickListener {
-            listener?.clickDownload()
-        }
-
-        chats_media_delete_btn.setOnClickListener {
-            listener?.clickDelete()
-        }
-        chats_media_browser_btn.setOnClickListener {
+        chats_media_pool_btn.setOnClickListener {
             listener?.clickMediaBrowser()
-        }
-
-        chats_media_scan_btn.setOnClickListener {
-            doQrDiscernAction(context, mScanResult?.get(0) ?: return@setOnClickListener)
-            listener?.clickScanQRCode()
-        }
-
-        close_btn.setOnClickListener {
-            listener?.clickClose()
         }
     }
 
@@ -104,143 +57,59 @@ class MediaMoreView @JvmOverloads constructor(context: Context, attrs: Attribute
         this.listener = listener
     }
 
-    fun hideCloseButton() {
-        close_btn.visibility = View.GONE
-    }
-
-
-    fun displayMoreOption() {
-        showBarLayout()
-        showMoreOptionLayout()
-        if (mDefaultOptionVisible) {
-            hideDefaultOptionLayout()
-        }
-    }
-
-
-    fun hideMoreOption() {
-        showBarLayout()
-        hideMoreOptionLayout()
-        if (mDefaultOptionVisible) {
-            showDefaultOptionLayout()
-        }
-    }
-
-
     fun displaySpinning() {
         if (chats_more_progress.visibility != View.VISIBLE) {
             chats_more_progress.visibility = View.VISIBLE
-            chats_more_progress.spin()
+            chats_more_progress.startAnim()
         }
-        mDefaultOptionVisible = false
-        showBarLayout()
-        hideDefaultOptionLayout()
-        hideMoreOptionLayout()
+//        mDefaultOptionVisible = false
+//        hideDefaultOptionLayout()
     }
 
 
     fun displayDefault() {
         if (chats_more_progress.visibility == View.VISIBLE) {
-            chats_more_progress.stopSpinning()
+            chats_more_progress.stopAnim()
             chats_more_progress.visibility = View.GONE
         }
-        mDefaultOptionVisible = true
-        showBarLayout()
-        showDefaultOptionLayout()
-        hideMoreOptionLayout()
+//        mDefaultOptionVisible = true
+//        showDefaultOptionLayout()
     }
 
 
     fun displayNull() {
         if (chats_more_progress.visibility == View.VISIBLE) {
-            chats_more_progress.stopSpinning()
+            chats_more_progress.stopAnim()
             chats_more_progress.visibility = View.GONE
         }
         mDefaultOptionVisible = false
-        showBarLayout()
         hideDefaultOptionLayout()
-        hideMoreOptionLayout()
     }
 
-    private fun showBarLayout(useAnim: Boolean = true) {
-        if (chats_more_bar_layout.visibility != View.VISIBLE) {
-            chats_more_bar_layout.visibility = View.VISIBLE
-
-            if (useAnim) {
-                chats_more_bar_layout.clearAnimation()
-                topShowAnim.duration = 300
-                chats_more_bar_layout.startAnimation(topShowAnim)
-            }
+    fun switchOptionLayout() {
+        if (mDefaultOptionVisible) {
+            hideDefaultOptionLayout()
+        } else {
+            showDefaultOptionLayout()
         }
     }
 
-    private fun hideBarLayout(useAnim: Boolean = true) {
-        if (chats_more_bar_layout.visibility == View.VISIBLE) {
-            if (useAnim) {
-                chats_more_bar_layout.clearAnimation()
-                topHideAnim.duration = 300
-                topHideAnim.setAnimationListener(object : Animation.AnimationListener {
-                    override fun onAnimationRepeat(animation: Animation?) {}
-                    override fun onAnimationEnd(animation: Animation?) {
-                        chats_more_bar_layout.visibility = View.GONE
-                    }
-                    override fun onAnimationStart(animation: Animation?) {}
-                })
-                chats_more_bar_layout.startAnimation(topHideAnim)
-            } else {
-                chats_more_bar_layout.visibility = View.GONE
-            }
-        }
-    }
-
-    private fun showMoreOptionLayout(useAnim: Boolean = true) {
-        if (chats_more_option_layout.visibility != View.VISIBLE) {
-            listener?.moreOptionVisibilityChanged(true)
-            chats_more_option_layout.visibility = View.VISIBLE
-            if (useAnim) {
-                chats_more_option_layout.clearAnimation()
-                bottomShowAnim.duration = 300
-                chats_more_option_layout.startAnimation(bottomShowAnim)
-            }
-        }
-    }
-
-    private fun hideMoreOptionLayout(useAnim: Boolean = true) {
-        if (chats_more_option_layout.visibility == View.VISIBLE) {
-            if (useAnim) {
-                chats_more_option_layout.clearAnimation()
-                bottomHideAnim.duration = 300
-                bottomHideAnim.setAnimationListener(object : Animation.AnimationListener {
-                    override fun onAnimationRepeat(animation: Animation?) {}
-                    override fun onAnimationEnd(animation: Animation?) {
-                        chats_more_option_layout.visibility = View.GONE
-                        listener?.moreOptionVisibilityChanged(false)
-                    }
-                    override fun onAnimationStart(animation: Animation?) {}
-                })
-                chats_more_option_layout.startAnimation(bottomHideAnim)
-            } else {
-                chats_more_option_layout.visibility = View.GONE
-                listener?.moreOptionVisibilityChanged(false)
-            }
-        }
-    }
-
-
-    private fun showDefaultOptionLayout(useAnim: Boolean = true) {
+    fun showDefaultOptionLayout(useAnim: Boolean = true) {
         if (chats_default_option_layout.visibility != View.VISIBLE) {
             chats_default_option_layout.visibility = View.VISIBLE
+            listener?.moreOptionVisibilityChanged(true)
             if (useAnim) {
                 chats_default_option_layout.clearAnimation()
                 bottomShowAnim.duration = 300
                 chats_default_option_layout.startAnimation(bottomShowAnim)
             }
+            mDefaultOptionVisible = true
         }
     }
 
-
-    private fun hideDefaultOptionLayout(useAnim: Boolean = true) {
+    fun hideDefaultOptionLayout(useAnim: Boolean = true) {
         if (chats_default_option_layout.visibility == View.VISIBLE) {
+            listener?.moreOptionVisibilityChanged(false)
             if (useAnim) {
                 chats_default_option_layout.clearAnimation()
                 bottomHideAnim.duration = 300
@@ -255,13 +124,15 @@ class MediaMoreView @JvmOverloads constructor(context: Context, attrs: Attribute
             } else {
                 chats_default_option_layout.visibility = View.GONE
             }
+            mDefaultOptionVisible = false
         }
     }
 
+    fun disableDownload() {
+        chats_media_download_flow_btn_mask.visibility = View.VISIBLE
+    }
 
-    private fun doQrDiscernAction(context: Context, result: Result) {
-        ALog.d(TAG, "doQrDiscernAction result: ${result.text}")
-        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-        provider.discernScanData(context, result.text)
+    fun enableDownload() {
+        chats_media_download_flow_btn_mask.visibility = View.GONE
     }
 }

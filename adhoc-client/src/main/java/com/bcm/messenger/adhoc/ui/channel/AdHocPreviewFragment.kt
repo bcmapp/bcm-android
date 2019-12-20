@@ -220,36 +220,36 @@ class AdHocPreviewFragment : Fragment(), MediaMoreView.MoreViewActionListener {
         }
     }
 
-    override fun clickForward() {
-        mCurrentData?.let {
-            AdHocMessageLogic.getModel()?.forward(it)
-        }
-    }
-
-    override fun clickDelete() {
-        mCurrentData?.let {
-            AdHocMessageLogic.getModel()?.deleteMessage(listOf(it)) {success ->
-                if (success) {
-                    AmeAppLifecycle.succeed(getString(R.string.chats_delete_success), true) {
-                        mListener?.onDismiss()
-                    }
-                }else {
-                    AmeAppLifecycle.failure(getString(R.string.chats_delete_fail), true)
-                }
-            }
-        }
-    }
+//    override fun clickForward() {
+//        mCurrentData?.let {
+//            AdHocMessageLogic.getModel()?.forward(it)
+//        }
+//    }
+//
+//    override fun clickDelete() {
+//        mCurrentData?.let {
+//            AdHocMessageLogic.getModel()?.deleteMessage(listOf(it)) {success ->
+//                if (success) {
+//                    AmeAppLifecycle.succeed(getString(R.string.chats_delete_success), true) {
+//                        mListener?.onDismiss()
+//                    }
+//                }else {
+//                    AmeAppLifecycle.failure(getString(R.string.chats_delete_fail), true)
+//                }
+//            }
+//        }
+//    }
 
     override fun clickMediaBrowser() {
         ToastUtil.show(AppContextHolder.APP_CONTEXT, getString(R.string.adhoc_attachment_browse_nonsupport_description))
     }
 
-    override fun clickScanQRCode() {
-    }
-
-    override fun clickClose() {
-        mListener?.onDismiss()
-    }
+//    override fun clickScanQRCode() {
+//    }
+//
+//    override fun clickClose() {
+//        mListener?.onDismiss()
+//    }
 
     override fun moreOptionVisibilityChanged(isShow: Boolean) {
         if (isShow) {

@@ -11,7 +11,7 @@
     <string name="me_notification_head">إخطار</string>
     <string name="me_backup_head">حساب</string>
     <string name="me_security_head">الحماية والخصوصية</string>
-    <string name="me_help_head">أسئلة شائعة</string>
+    <string name="me_setting_help_title">أسئلة شائعة</string>
     <string name="me_support_head">التعقيب</string>
     <string name="me_about_head">عن</string>
     <string name="me_device_switch_head">تبديل الجهاز</string>
@@ -20,11 +20,8 @@
     <string name="me_new_version_description">متاح إصدار جديد</string>
     <string name="me_more_title">المزيد</string>
     <string name="me_more_account_title">حسابات</string>
-    <string name="me_more_data_vault_title">مخزن البيانات</string>
-    <string name="me_more_wallet_title">المحفظة</string>
-    <string name="me_more_settings_title">إعداد</string>
-    <string name="me_more_feedback_title">التعقيب</string>
-    <string name="me_more_about_title">عن</string>
+    <string name="me_setting_feedback_title">التعقيب</string>
+    <string name="me_setting_about_title">عن</string>
     <string name="me_more_scan">مسح</string>
     <string name="me_take_phone">التقط صورة</string>
     <string name="me_choose_phone">اختر صورة</string>
@@ -116,7 +113,7 @@
     <string name="me_save">حفظ</string>
     <string name="me_psw_not_equals_confirm_psw">كلمة السر وكلمة سر التأكيد غير متطابقتين.</string>
     <string name="me_change_password_success">تم تغيير كلمة السر بنجاح</string>
-    <string name="me_input_origin_password_error">كلمة السر الأصلية التي أدخلتها غير صحيحة.</string>
+    <string name="me_change_password_error">كلمة السر الأصلية التي أدخلتها غير صحيحة.</string>
     <string name="me_account_key_anim_tips">مفتاح الحساب الخاص بك هو \n مفتاح المرور الوحيد في BCM</string>
     <string name="me_donate_us">تبرع</string>
     <string name="me_generating_key">لإنشاء مفتاح حساب انقر على \n علامة التبويب \&quot;توقف\&quot; للحصول على المفتاح الخاص بك.</string>
@@ -137,7 +134,6 @@
     <string name="me_str_backup_date_import">تاريخ النسخة الاحتياطية (استيراد): %s</string>
     <string name="me_show_qr_code">أظهر رمز QR</string>
     <string name="me_str_my_account_key">مفتاح حسابي</string>
-    <string name="me_setting_feedback">التعقيب</string>
     <string name="me_str_version_update">تحديث الإصدار</string>
     <string name="me_text_register_failed">فشل التسجيل</string>
     <string name="me_update_dialog_title">متاح إصدار %sجديد</string>
@@ -350,8 +346,8 @@
     <string name="me_unlock_app_description">يستخدم BCM البيومترية لفتح التطبيق</string>
     <string name="me_unlock_account_key">فتح مفتاح الحساب</string>
     <string name="me_unlock_account_key_description">يستخدم BCM البيومترية لفتح مفتاح حسابك</string>
-    <string name="me_more_airchat_title">AirChat</string>
-    <string name="me_proxy_setting_title">Proxy</string>
+    <string name="me_setting_adhoc_title">AirChat</string>
+    <string name="me_setting_proxy_title">Proxy</string>
     <string name="me_test_proxy_usability">Run Usability Test</string>
     <string name="me_proxy_configurations">PROXY CONFIGURATIONS</string>
     <string name="me_add_proxy_title">Add Proxy</string>

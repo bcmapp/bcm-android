@@ -12,7 +12,7 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
 
 /**
- * Created by bcm.social.01 on 2018/11/22.
+ * bcm.social.01 2018/11/22.
  */
 class CleanAllConversationStorageSelectionViewCreater(var storage: ConversationStorage, val selected:(type:Int)->Unit): AmeBottomPopup.CustomViewCreator {
     private var itemFiles: CommonSettingItem? = null

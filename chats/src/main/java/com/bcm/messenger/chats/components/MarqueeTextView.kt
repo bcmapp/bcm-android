@@ -7,7 +7,7 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 
 /**
- * Created by bcm.social.01 on 2019/1/29.
+ * bcm.social.01 2019/1/29.
  */
 class MarqueeTextView: AppCompatTextView {
     constructor(context: Context) : super(context){

@@ -10,6 +10,7 @@ import com.bcm.messenger.chats.forward.ForwardOnceMessage
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.privatechat.logic.MessageSender
+import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
 import com.bcm.messenger.common.crypto.MasterSecret
@@ -20,7 +21,6 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.sms.OutgoingLocationMessage
 import com.bcm.messenger.common.utils.AmeAppLifecycle
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -226,7 +226,7 @@ class ForwardViewModel : ViewModel() {
                                 GroupMessageLogic.messageSender.sendHistoryMessage(groupId, content, null)
                                 ForwardController.sendGroupCommentMessage(commentText, groupId)
                             } else {
-                                ConversationUtils.getThreadId(recipient) { threadId ->
+                                ThreadListViewModel.getThreadId(recipient) { threadId ->
                                     val contentStr = AmeGroupMessage(AmeGroupMessage.CHAT_HISTORY, content).toString()
                                     val locationMessage = OutgoingLocationMessage(recipient, contentStr,
                                             recipient.expireMessages * 1000L)

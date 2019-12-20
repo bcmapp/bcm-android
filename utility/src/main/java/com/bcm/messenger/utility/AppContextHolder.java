@@ -6,7 +6,7 @@ import android.app.Application;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by bcm.social.01 on 2018/9/4.
+ * bcm.social.01 2018/9/4.
  */
 
 public class AppContextHolder {

@@ -4,7 +4,7 @@ import com.bcm.messenger.common.ui.popup.centerpopup.*
 import com.bcm.messenger.common.ui.popup.bottompopup.*
 
 /**
- * Created by bcm.social.01 on 2018/5/31.
+ * bcm.social.01 2018/5/31.
  */
 object AmePopup {
     //

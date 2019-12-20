@@ -1,7 +1,7 @@
 package com.bcm.messenger.common.server
 
 import com.bcm.messenger.common.event.ClientAccountDisabledEvent
-import com.bcm.messenger.common.event.NetworkChangedEvent
+import com.bcm.messenger.common.event.ServerConnStateChangedEvent
 import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.utility.listener.WeakListeners
 import com.bcm.messenger.utility.logger.ALog
@@ -54,11 +54,11 @@ class ServerDataDispatcher() : IServerConnectionEvent, IServerDataDispatcher {
         ALog.i(TAG, "onServiceConnected $state")
 
         val newState = when (state) {
-            ConnectState.CONNECTED -> NetworkChangedEvent.ON
-            ConnectState.CONNECTING -> NetworkChangedEvent.CONNECTING
-            else -> NetworkChangedEvent.OFF
+            ConnectState.CONNECTED -> ServerConnStateChangedEvent.ON
+            ConnectState.CONNECTING -> ServerConnStateChangedEvent.CONNECTING
+            else -> ServerConnStateChangedEvent.OFF
         }
-        EventBus.getDefault().post(NetworkChangedEvent(newState))
+        EventBus.getDefault().post(ServerConnStateChangedEvent(newState))
 
     }
 

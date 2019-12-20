@@ -33,7 +33,6 @@ import kotlinx.android.synthetic.main.chats_list_item_view.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.lang.ref.WeakReference
 import java.util.*
 
 
@@ -120,6 +119,17 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         reset()
     }
 
+    fun checkPin(): Boolean {
+        return if (::threadRecord.isInitialized) {
+            threadRecord.pinTime > 0L
+        }else {
+            false
+        }
+    }
+
+    /**
+     * 重置UI
+     */
     private fun reset() {
         this.groupId = 0
         group_live_icon?.visibility = View.GONE

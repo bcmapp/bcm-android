@@ -21,11 +21,12 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.netswitchy.configure.AmeConfigure
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.chats_group_select_activity.*
 import java.lang.ref.WeakReference
 import java.util.*
@@ -57,6 +58,7 @@ class ChatGroupCreateActivity : SwipeBaseActivity(), IContactsCallback {
         initializeResources()
 
         setSwipeBackEnable(false)
+        window?.setStatusBarLightMode()
     }
 
     override fun onSelect(recipient: Recipient) {
@@ -133,6 +135,7 @@ class ChatGroupCreateActivity : SwipeBaseActivity(), IContactsCallback {
 
         val weakSelf = WeakReference(this)
         AmeConfigure.queryGroupSecureV3Enable()
+                .observeOn(Schedulers.io())
                 .subscribe {
                     val checker = if (type == TYPE_SELECT_ADD_GROUP_MEMBER) {
                         val groupInfo = GroupLogic.getGroupInfo(groupId)
@@ -159,6 +162,7 @@ class ChatGroupCreateActivity : SwipeBaseActivity(), IContactsCallback {
                                 ?.replace(container, fragment)
                                 ?.commitAllowingStateLoss()
                     }
+
                 }
     }
 
@@ -179,9 +183,8 @@ class ChatGroupCreateActivity : SwipeBaseActivity(), IContactsCallback {
                     val activity = weakThis.get()
                     if (activity != null && !activity.isFinishing && !activity.isDestroyed) {
                         val recipient = Recipient.recipientFromNewGroup(activity, groupInfo)
-                        ConversationUtils.getThreadId(recipient) { threadId ->
-                            AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true, HomeTopEvent.ConversationEvent(ARouterConstants.Activity.CHAT_GROUP_CONVERSATION, threadId, recipient.address, groupInfo.gid)))
-                        }
+                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
+                                HomeTopEvent.ConversationEvent.fromGroupConversation(recipient.address, groupInfo.gid)))
                     }
                 } else {
                     AmePopup.result.failure(this, error

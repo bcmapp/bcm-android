@@ -46,10 +46,12 @@ public abstract class FileDownCallback extends Callback<File> {
                 response.body().close();
                 if (is != null) is.close();
             } catch (IOException e) {
+                e.printStackTrace();
             }
             try {
                 if (fos != null) fos.close();
             } catch (IOException e) {
+                e.printStackTrace();
             }
 
         }

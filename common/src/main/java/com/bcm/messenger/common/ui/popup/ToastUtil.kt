@@ -6,7 +6,7 @@ import android.widget.Toast
 import java.lang.ref.WeakReference
 
 /**
- * Created by bcm.social.01 on 2018/6/8.
+ * bcm.social.01 2018/6/8.
  */
 object ToastUtil {
 

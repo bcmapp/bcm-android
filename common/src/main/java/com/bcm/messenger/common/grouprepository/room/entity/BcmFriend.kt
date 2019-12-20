@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * Created by bcm.social.01 on 2019/3/13.
+ * bcm.social.01 2019/3/13.
  */
 @Entity(tableName = BcmFriend.TABLE_NAME)
 class BcmFriend(@PrimaryKey var uid: String = "", var tag: String = "", var state: Int = CONTACT) {

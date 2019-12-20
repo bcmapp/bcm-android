@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import android.widget.ProgressBar
 
 /**
- * Created by bcm.social.01 on 2019/1/25.
+ * bcm.social.01 2019/1/25.
  */
 class CountDownTimerProgressBar:ProgressBar {
     private var countDownTimer: CountDownTimer? = null

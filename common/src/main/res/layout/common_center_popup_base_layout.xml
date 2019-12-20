@@ -91,7 +91,7 @@
                 android:visibility="visible"
                 android:layout_marginEnd="7.5dp"
                 android:layout_marginStart="7.5dp"
-                android:background="@drawable/common_red_round_selector"
+                android:background="@drawable/common_red_stroke_big_corner_bg"
                 android:layout_weight="1"/>
 
             <Button

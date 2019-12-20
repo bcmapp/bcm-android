@@ -27,6 +27,8 @@ import com.bcm.messenger.login.bean.KeyBoxItem
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.login.RegistrationActivity
+import com.bcm.messenger.me.ui.login.backup.MyAccountKeyActivity
+import com.bcm.messenger.me.ui.login.backup.VerifyFingerprintActivity
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
@@ -46,6 +48,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
 
     private val TAG = "KeyBoxControlActivity"
     private val REQUEST_VERIFICATION_SCAN = 1001
+    private val REQUEST_MY_ACCOUNT = 1002
 
     private val adapter = KeyboxAdapter()
 
@@ -67,6 +70,11 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_VERIFICATION_SCAN && resultCode == Activity.RESULT_OK) {
             handleQrScan(data?.getStringExtra(ARouterConstants.PARAM.SCAN.SCAN_RESULT))
+        }
+        else if (requestCode == REQUEST_MY_ACCOUNT && resultCode == Activity.RESULT_OK) {
+            val intent = Intent(this, MyAccountKeyActivity::class.java)
+            intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, AMESelfData.uid)
+            startActivity(intent)
         }
     }
 
@@ -271,7 +279,11 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
                     })
 
                 } else {
-                    SwitchAccountAdapter().switchAccount(it.context, id ?: "", recipient)
+                    if (accountData?.uid == AMESelfData.uid) {
+                        startActivityForResult(Intent(this@KeyBoxControlActivity, VerifyFingerprintActivity::class.java), REQUEST_MY_ACCOUNT)
+                    }else {
+                        SwitchAccountAdapter().switchAccount(it.context, id ?: "", recipient)
+                    }
                 }
             }
 
@@ -289,17 +301,21 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
                 return@setOnLongClickListener true
             }
 
-            containerView.keybox_account_qrcode.setOnClickListener {
+            containerView.keybox_account_entrance.setOnClickListener {
                 if (QuickOpCheck.getDefault().isQuick){
                     return@setOnClickListener
                 }
                 val id = accountData?.getAccountID()
                 if (id != null) {
-                    startActivity(Intent(this@KeyBoxControlActivity, VerifyKeyActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        putExtra(VerifyKeyActivity.BACKUP_JUMP_ACTION, VerifyKeyActivity.SHOW_QRCODE_BACKUP)
-                        putExtra(VerifyKeyActivity.ACCOUNT_ID, id)
-                    })
+                    if (accountData?.uid == AMESelfData.uid) {
+                        startActivityForResult(Intent(this@KeyBoxControlActivity, VerifyFingerprintActivity::class.java), REQUEST_MY_ACCOUNT)
+                    }else {
+                        startActivity(Intent(this@KeyBoxControlActivity, VerifyKeyActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            putExtra(VerifyKeyActivity.BACKUP_JUMP_ACTION, VerifyKeyActivity.SHOW_QRCODE_BACKUP)
+                            putExtra(VerifyKeyActivity.ACCOUNT_ID, id)
+                        })
+                    }
                 }
             }
         }
@@ -311,21 +327,21 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
             containerView.keybox_account_name.text = account.name
             containerView.keybox_account_openid.text = "${getString(R.string.me_id_title)}: ${account.uid}"
             if (account.genKeyTime > 0) {
-                containerView.key_generate_date.text = getString(R.string.me_str_generation_key_date, DateUtils.formatDayTime(account.genKeyTime))
+                containerView.account_generate_date.text = getString(R.string.me_str_generation_key_date, DateUtils.formatDayTime(account.genKeyTime))
             }
             val backupTime = AmeLoginLogic.accountHistory.getBackupTime(account.uid)
             if (backupTime > 0) {
-                containerView.key_backup_date.text = getString(R.string.me_str_backup_date_import, DateUtils.formatDayTime(backupTime))
-                containerView.key_backup_date.setTextColor(getColorCompat(R.color.common_color_white))
+                containerView.account_backup_date.text = getString(R.string.me_str_backup_date_import, DateUtils.formatDayTime(backupTime))
+                containerView.account_backup_date.setTextColor(getColorCompat(R.color.common_color_white))
             } else {
-                containerView.key_backup_date.text = getString(R.string.me_not_backed_up)
-                containerView.key_backup_date.setTextColor(getColorCompat(R.color.common_color_ff3737))
+                containerView.account_backup_date.text = getString(R.string.me_not_backed_up)
+                containerView.account_backup_date.setTextColor(getColorCompat(R.color.common_color_ff3737))
             }
 
             if (AmeLoginLogic.getCurrentAccount()?.uid == account.uid) {
-                containerView.setBackgroundResource(R.drawable.me_keybox_account_item_now)
+                containerView.setBackgroundResource(R.drawable.me_account_item_current_bg)
             } else {
-                containerView.setBackgroundResource(R.drawable.me_keybox_account_item_other)
+                containerView.setBackgroundResource(R.drawable.me_account_item_other_bg)
             }
 
             if (account.version > AmeAccountData.V2 || account.uid.isNotEmpty()) {

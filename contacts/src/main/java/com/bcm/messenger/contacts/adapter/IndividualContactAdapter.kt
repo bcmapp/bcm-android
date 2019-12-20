@@ -34,9 +34,6 @@ class IndividualContactAdapter(context: Context, val mListener: OnContactActionL
     private var mHeaderTool: Int = 0
     private var mHeaderShade: Int = 0
 
-    private var mFriendUnhandledCount = 0
-    private var mFriendUnreadCount = 0
-
     init {
         setHasStableIds(true)
         mShowLoading = true
@@ -51,20 +48,6 @@ class IndividualContactAdapter(context: Context, val mListener: OnContactActionL
     fun showLoading(loading: Boolean) {
         mShowLoading = loading
         notifyDataSetChanged()
-    }
-
-    fun updateFriendRequest(unhandledCount: Int, unreadCount: Int) {
-        this.mFriendUnhandledCount = unhandledCount
-        this.mFriendUnreadCount = unreadCount
-        val headerList = getHeaderDataList()
-        for (header in headerList) {
-            if (header.type == mHeaderTool && header.show) {
-                header.view?.let {
-                    updateFriendRequestItem(it)
-                }
-                break
-            }
-        }
     }
 
     override fun showSideBar(): Boolean {
@@ -179,12 +162,6 @@ class IndividualContactAdapter(context: Context, val mListener: OnContactActionL
         }
     }
 
-    override fun onViewAttachedToWindow(holder: ViewHolder<Recipient>) {
-        if (holder is ToolHolder) {
-            holder.bind()
-        }
-    }
-
     override fun onViewDetachedFromWindow(holder: ViewHolder<Recipient>) {
 
     }
@@ -193,24 +170,6 @@ class IndividualContactAdapter(context: Context, val mListener: OnContactActionL
         mShowLoading = false
         showHeader(mHeaderShade, friendList.isEmpty(), false)
         setDataList(friendList)
-    }
-
-    private fun updateFriendRequestItem(itemView: View) {
-        when {
-            mFriendUnreadCount > 0 -> {
-                itemView.header_friend_request.visibility = View.VISIBLE
-                itemView.header_friend_request_count.text = mFriendUnreadCount.toString()
-                itemView.header_friend_request_count.setTextColor(getColor(R.color.common_color_white))
-                itemView.header_friend_request_count.setBackgroundResource(R.drawable.contacts_friend_request_count_bg)
-            }
-            mFriendUnhandledCount > 0 -> {
-                itemView.header_friend_request.visibility = View.VISIBLE
-                itemView.header_friend_request_count.text = mFriendUnhandledCount.toString()
-                itemView.header_friend_request_count.setTextColor(getColor(R.color.common_color_A8A8A8))
-                itemView.header_friend_request_count.setBackgroundResource(0)
-            }
-            else -> itemView.header_friend_request.visibility = View.GONE
-        }
     }
 
     override fun getItemId(position: Int): Long {
@@ -261,18 +220,7 @@ class IndividualContactAdapter(context: Context, val mListener: OnContactActionL
                 }
                 mListener?.onGroupContact()
             }
-            itemView.header_friend_request.setOnClickListener {
-                if (QuickOpCheck.getDefault().isQuick) {
-                    return@setOnClickListener
-                }
-                mListener?.onRequest()
-            }
         }
-
-        fun bind() {
-            updateFriendRequestItem(itemView)
-        }
-
     }
 
     inner class SearchBarHolder(private val searchbar: CommonSearchBar) : ViewHolder<Recipient>(searchbar) {
@@ -312,7 +260,6 @@ class IndividualContactAdapter(context: Context, val mListener: OnContactActionL
         fun onSelect(recipient: Recipient)
         fun onSearch()
         fun onEmpty()
-        fun onRequest()
         fun onGroupContact()
     }
 }

@@ -20,9 +20,13 @@ class AttachmentRecord : AttachmentDbModel() {
 
     fun isVoiceNote() = attachmentType == AttachmentType.VOICE_NOTE.type
 
-    fun isInProgress() = transferState != TransferState.DONE.state && transferState != TransferState.FAILED.state
+    fun isInProgress() = transferState != TransferState.DONE.state && transferState != TransferState.FAILED.state && transferState != TransferState.NOT_FOUND.state
 
-    fun isPendingDownload() = transferState == TransferState.FAILED.state || transferState == TransferState.PENDING.state
+    fun isPendingDownload() = transferState == TransferState.PENDING.state
+
+    fun isRemoteDeleted() = transferState == TransferState.NOT_FOUND.state
+
+    fun isFailed() = transferState == TransferState.FAILED.state
 
     fun getPartUri() = if (dataUri == null) null else PartAuthority.getAttachmentDataUri(id, uniqueId)
 

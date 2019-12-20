@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.core.widget.NestedScrollView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.mediabrowser.ui.MediaBrowserActivity
+import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
@@ -24,7 +25,10 @@ import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
-import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.setStatusBarDarkMode
+import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.setDrawableRight
 import com.bcm.route.annotation.Route
@@ -98,12 +102,16 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
                         if (it) {
                             window.setStatusBarLightMode()
                             chat_user_name.setTextColor(getColorCompat(R.color.common_color_black))
-                            chat_user_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
+                            if (!mRecipient.isSelf) {
+                                chat_user_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
+                            }
                         } else {
                             chat_user_title_bar.setLeftIcon(R.drawable.common_back_arrow_white_icon)
                             chat_user_title_bar.setRightTextColor(getColorCompat(R.color.common_color_white))
                             chat_user_name.setTextColor(getColorCompat(R.color.common_color_white))
-                            chat_user_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
+                            if (!mRecipient.isSelf) {
+                                chat_user_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
+                            }
                         }
                     }
                 }
@@ -156,7 +164,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
                 return@setOnClickListener
             }
             val isPinned = !chat_user_stick.getSwitchStatus()
-            ConversationUtils.setPin(mRecipient, isPinned) {
+            ThreadListViewModel.getCurrentThreadModel()?.setPin(mRecipient, isPinned) {
                 if (it) {
                     chat_user_stick.setSwitchStatus(isPinned)
                 }
@@ -207,7 +215,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
                             val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
                             provider.deleteFriend(mRecipient.address.serialize()) {
                                 if (it) {
-                                    ConversationUtils.deleteConversation(mRecipient, threadId) {
+                                    ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(mRecipient, threadId) {
                                         AmePopup.result.succeed(this, getString(R.string.chats_user_delete_success)) {
                                             AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true))
                                         }
@@ -271,12 +279,11 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
         mRecipient = Recipient.from(this, address, true)
         mRecipient.addListener(this)
 
-        ConversationUtils.checkPin(threadId) {
+        ThreadListViewModel.getCurrentThreadModel()?.checkPin(threadId) {
             mCurrentPinStatus = it
             chat_user_stick.setSwitchStatus(it)
             initUserPage(mRecipient)
         }
-
     }
 
     private fun initUserPage(recipient: Recipient) {
@@ -286,10 +293,12 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
         chat_user_img.setPhoto(recipient)
         chat_user_name.text = recipient.name
-        if (isBgLight) {
-            chat_user_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
-        }else {
-            chat_user_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
+        if (!recipient.isSelf) {
+            if (isBgLight) {
+                chat_user_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
+            } else {
+                chat_user_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
+            }
         }
         chat_user_title_bar.setCenterText(recipient.name)
 

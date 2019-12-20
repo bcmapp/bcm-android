@@ -5,7 +5,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
- * Created by bcm.social.01 on 2019/1/15.
+ * bcm.social.01 2019/1/15.
  */
 @Entity(tableName = GroupKey.TABLE_NAME, indices = [Index(value = ["version","gid"], unique = true)])
 class GroupKey {

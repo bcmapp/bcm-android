@@ -1,12 +1,13 @@
 package com.bcm.messenger.contacts
 
 import android.os.Bundle
-import com.bcm.route.annotation.Route
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.utils.setStatusBarLightMode
+import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.contacts_activity_group_contact.*
-import com.bcm.messenger.common.SwipeBaseActivity
 
 /**
  * Created by wjh on 2019/7/1
@@ -20,12 +21,14 @@ class GroupContactActivity : SwipeBaseActivity() {
 
         title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
-                onBackPressed()
+                finish()
             }
 
             override fun onClickRight() {
                 BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_GROUP_CREATE).navigation(this@GroupContactActivity)
             }
         })
+
+        window?.setStatusBarLightMode()
     }
 }

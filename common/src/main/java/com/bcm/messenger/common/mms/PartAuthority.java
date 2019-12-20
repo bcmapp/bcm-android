@@ -8,13 +8,12 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 
 import com.bcm.messenger.common.BuildConfig;
-import com.bcm.messenger.common.database.repositories.Repository;
-import com.bcm.messenger.common.grouprepository.manager.MessageDataManager;
-
 import com.bcm.messenger.common.attachments.AttachmentId;
 import com.bcm.messenger.common.crypto.MasterSecret;
-import com.bcm.messenger.common.providers.PersistentBlobProvider;
+import com.bcm.messenger.common.database.repositories.Repository;
+import com.bcm.messenger.common.grouprepository.manager.MessageDataManager;
 import com.bcm.messenger.common.providers.PartProvider;
+import com.bcm.messenger.common.providers.PersistentBlobProvider;
 import com.bcm.messenger.common.providers.SingleUseBlobProvider;
 
 import java.io.IOException;
@@ -134,6 +133,8 @@ public class PartAuthority {
             case PERSISTENT_ROW:
             case SINGLE_USE_ROW:
                 return true;
+            default:
+                break;
         }
         return false;
     }

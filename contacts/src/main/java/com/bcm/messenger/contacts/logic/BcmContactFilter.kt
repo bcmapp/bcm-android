@@ -1,7 +1,7 @@
 package com.bcm.messenger.contacts.logic
 
 import android.content.Context
-import com.bcm.messenger.common.database.repositories.Repository
+import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
@@ -41,24 +41,20 @@ class BcmContactFilter() {
         mBloomFilter = BcmBloomFilter(mAlgoEntity.seed, mAlgoEntity.func, mAlgoEntity.tweek)
     }
 
-    fun checkHandleLastFail(context: Context, callback: ((success: Boolean) -> Unit)? = null) {
-        if (!TextSecurePreferences.getBooleanPreference(context, LAST_UPLOAD_RESULT, false)) {
-            updateContact(context, callback)
-        }else {
-            callback?.invoke(true)
-        }
-    }
 
-    fun updateContact(context: Context, callback: ((success: Boolean) -> Unit)? = null) {
+    fun updateContact(context: Context, contactSet: List<BcmContactCore.ContactItem>, callback: (success: Boolean) -> Unit) {
         Observable.create<Boolean> {
             ALog.d(TAG, "updateContact")
             var uploadAll = false
-            val nowList = Repository.getRecipientRepo()?.getContactsFromOneSide() ?: emptyList()
+            val nowList = contactSet.filter { it.relationship != RecipientRepo.Relationship.STRANGER.type }
 
+            //last uploaded bloom
             val lastBloomData = findLastBloomData(context)
             val lastBloomSize = (lastBloomData.size * 8)
+            //current bloom length
             val newBloomSize = checkNewBloomSize(nowList.size)
             ALog.d(TAG, "lastBloomSize: $lastBloomSize, newBloomSize: $newBloomSize")
+            //diff bloom
             if (newBloomSize != lastBloomSize) {
                 uploadAll = true
             }
@@ -95,10 +91,10 @@ class BcmContactFilter() {
         }.subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe({
-                    callback?.invoke(it)
+                    callback.invoke(it)
                 }, {
                     ALog.e(TAG, "updaterContact error", it)
-                    callback?.invoke(false)
+                    callback.invoke(false)
                 })
     }
 

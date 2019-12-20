@@ -4,7 +4,7 @@ import androidx.room.*
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriend
 
 /**
- * Created by bcm.social.01 on 2019/3/13.
+ * bcm.social.01 2019/3/13.
  */
 @Dao
 interface BcmFriendDao {

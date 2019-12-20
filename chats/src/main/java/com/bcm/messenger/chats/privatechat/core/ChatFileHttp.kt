@@ -2,10 +2,11 @@ package com.bcm.messenger.chats.privatechat.core
 
 import com.bcm.messenger.common.bcmhttp.BcmBaseHttp
 import com.bcm.messenger.common.bcmhttp.interceptor.metrics.FileMetricsInterceptor
-import com.bcm.messenger.utility.bcmhttp.facade.SyncHttpWrapper
-import com.bcm.messenger.utility.bcmhttp.facade.AmeEmpty
 import com.bcm.messenger.utility.bcmhttp.exception.NoContentException
+import com.bcm.messenger.utility.bcmhttp.exception.RemoteFileNotFoundException
+import com.bcm.messenger.utility.bcmhttp.facade.AmeEmpty
 import com.bcm.messenger.utility.bcmhttp.facade.BaseHttp
+import com.bcm.messenger.utility.bcmhttp.facade.SyncHttpWrapper
 import com.bcm.messenger.utility.bcmhttp.interceptor.ProgressInterceptor
 import com.bcm.messenger.utility.proguard.NotGuard
 import okhttp3.OkHttpClient
@@ -19,7 +20,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.lang.Exception
 
 object ChatFileHttp : SyncHttpWrapper(BcmBaseHttp()) {
     private const val TAG = "ChatFileHttp"
@@ -94,7 +94,11 @@ object ChatFileHttp : SyncHttpWrapper(BcmBaseHttp()) {
             output.close()
             Log.w(TAG, "Downloaded: " + url + " to: " + localDestination.absolutePath)
         } catch (e: Exception) {
-            throw PushNetworkException(e)
+            if (e is BaseHttp.HttpErrorException && (e.code == 403 || e.code == 404)) {
+                throw RemoteFileNotFoundException("File has been deleted by server")
+            } else {
+                throw PushNetworkException(e)
+            }
         }
     }
 

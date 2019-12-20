@@ -4,7 +4,7 @@ import com.bcm.messenger.utility.proguard.NotGuard
 
 
 /**
- * Created by bcm.social.01 on 2018/10/15.
+ * bcm.social.01 2018/10/15.
  */
 data class EnvSetting(var devEnable:Boolean,
                       var server:String,

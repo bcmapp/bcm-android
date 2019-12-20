@@ -7,17 +7,18 @@ import android.text.SpannableStringBuilder
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocSetting
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.common.utils.AmeAppLifecycle
+import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.ble.BleUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.gps.GPSUtil
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.wifi.WiFiUtil
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.adhoc_setting_activity.*
-import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.utility.StringAppearanceUtil
 
 class AdHocSettingActivity : SwipeBaseActivity() {
     private val TAG = "AdHocSettingActivity"
@@ -54,11 +55,11 @@ class AdHocSettingActivity : SwipeBaseActivity() {
 
     private fun updateState() {
         if (AdHocSetting.isEnable()) {
-            adhoc_setting_mode_enable.setBackgroundResource(R.drawable.common_button_red_background)
+            adhoc_setting_mode_enable.setBackgroundResource(R.drawable.common_red_tint_bg)
             adhoc_setting_mode_enable.text = getString(R.string.adhoc_setting_disable_airchat)
             adhoc_setting_mode_enable.setTextColor(AppUtil.getColor(resources, R.color.common_color_ff3737))
         } else {
-            adhoc_setting_mode_enable.setBackgroundResource(R.drawable.common_button_blue_background)
+            adhoc_setting_mode_enable.setBackgroundResource(R.drawable.common_blue_bg)
             adhoc_setting_mode_enable.text = getString(R.string.adhoc_setting_enable_airchat)
             adhoc_setting_mode_enable.setTextColor(AppUtil.getColor(resources, R.color.common_color_white))
         }

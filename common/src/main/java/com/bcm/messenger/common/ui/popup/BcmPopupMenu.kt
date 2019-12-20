@@ -2,7 +2,9 @@ package com.bcm.messenger.common.ui.popup
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.view.*
+import android.view.Gravity
+import android.view.Menu
+import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuPopupHelper
@@ -25,7 +27,7 @@ class BcmPopupMenu {
         val context = config.context?.get() ?: return
         val anchorView = config.anchorView ?: return
 
-        val popupMenu = PopupMenu(context, anchorView)
+        val popupMenu = PopupMenu(context, anchorView, config.gravity)
         val menu = popupMenu.menu
         config.menuItem.forEachIndexed { index, menuText ->
             menu.add(Menu.NONE, index, index, menuText.title)

@@ -26,7 +26,6 @@ import androidx.annotation.Nullable;
 
 import com.bcm.messenger.common.contacts.ContactsDatabase;
 import com.bcm.messenger.common.provider.AMESelfData;
-import com.bcm.messenger.common.utils.ConversationUtils;
 import com.bcm.messenger.utility.logger.ALog;
 
 import java.io.File;
@@ -383,7 +382,6 @@ public class DatabaseFactory {
                 db.execSQL("UPDATE thread set pin_time = ? WHERE pin_time = ?", new String[]{
                         String.valueOf(0), String.valueOf(1)
                 });
-                ConversationUtils.INSTANCE.clearCache();
             }
 
             if (oldVersion < GROUP_LIVE_VERSION) {

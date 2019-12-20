@@ -27,6 +27,15 @@
     <string name="chats_no_nickname_set_btn">تعیین کنید</string>
     <string name="chats_network_connecting">درحال اتصال…</string>
     <string name="chats_network_disconnected">آفلاین</string>
+    <string name="chats_main_new_chat">چت جدید</string>
+    <string name="chats_main_scan_and_add">اسکن و افزودن</string>
+    <string name="chats_main_invite_friend">دعوت از دوستان</string>
+    <string name="chats_more_data_vault_title">گاوصندوق داده‌ها</string>
+    <string name="chats_more_wallet_title">کیف پول</string>
+    <string name="chats_more_settings_title">تنظیمات</string>
+    <string name="chats_more_airchat_title">AirChat</string>
+    <string name="chats_friend_request_title">درخواست‌های دوستی</string>
+
     <string name="chats_conversation_input_hint">&#160;اینجا تایپ کنید</string>
     <string name="chats_private_lock_description">قفل چت</string>
     <string name="chats_private_verified_description">وضعیت تأیید چت</string>

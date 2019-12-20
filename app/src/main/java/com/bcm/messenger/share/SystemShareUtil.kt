@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.group.logic.MessageSender
+import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.chats.util.AttachmentUtils
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
@@ -16,7 +17,6 @@ import com.bcm.messenger.common.mms.SlideDeck
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.sms.OutgoingEncryptedMessage
 import com.bcm.messenger.common.utils.BcmFileUtils
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -160,7 +160,7 @@ object SystemShareUtil {
     }
 
     fun shareToPrivateChat(intent: Intent, recipient: Recipient, masterSecret: MasterSecret, callback: () -> Unit) {
-        ConversationUtils.getThreadId(recipient) { id ->
+        ThreadListViewModel.getThreadId(recipient) { id ->
             if (intent.action == Intent.ACTION_SEND) {
                 val type = intent.type ?: ""
                 when {
@@ -230,7 +230,7 @@ object SystemShareUtil {
     }
 
     fun shareCommentToPrivateChat(comment: String, recipient: Recipient, masterSecret: MasterSecret) {
-        ConversationUtils.getThreadId(recipient) { id ->
+        ThreadListViewModel.getThreadId(recipient) { id ->
             sendTextToPrivateChat(id, recipient, masterSecret, comment)
         }
     }

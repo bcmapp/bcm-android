@@ -285,6 +285,8 @@ public interface MmsSmsColumns {
                     return BASE_SENT_FAILED_TYPE;
                 case 6:
                     return BASE_OUTBOX_TYPE;
+                default:
+                    break;
             }
 
             return BASE_INBOX_TYPE;

@@ -9,7 +9,7 @@ import com.bcm.messenger.utility.logger.ALog
 
 
 /**
- * Created by bcm.social.01 on 2018/10/10.
+ * bcm.social.01 2018/10/10.
  */
 class ActivityCounterService: Service() {
     private val TAG = "ActivityCounterService"

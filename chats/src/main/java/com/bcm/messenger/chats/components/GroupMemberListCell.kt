@@ -14,7 +14,7 @@ import com.bcm.messenger.common.utils.BcmGroupNameUtil
 import com.bcm.messenger.utility.AppContextHolder
 
 /**
- * Created by bcm.social.01 on 2018/5/28.
+ * bcm.social.01 2018/5/28.
  */
 class GroupMemberListCell : LinearLayout {
 

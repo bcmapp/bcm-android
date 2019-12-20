@@ -8,7 +8,7 @@ import com.bcm.messenger.utility.logger.ALog
 import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
- * Created by bcm.social.01 on 2019/3/26.
+ * bcm.social.01 2019/3/26.
  */
 class GroupMemberSyncManager {
     companion object {

@@ -158,7 +158,6 @@ public class BaseHttp {
                     if (response.body() != null)
                         response.body().close();
                 }
-
             }
         });
     }
@@ -191,8 +190,9 @@ public class BaseHttp {
                 Log.e("HTTP Facade", "===== upload percent ===" + progressInfo.getPercent());
                 break;
             }
+            default:
+                break;
         }
-
     }
 
     protected void sendFailResultCallback(final Call call, final Exception e, final Callback callback, final long id) {
@@ -201,7 +201,7 @@ public class BaseHttp {
         Runnable r = () -> {
             if (e instanceof ConnectException || e instanceof SocketTimeoutException) {
                 callback.onError(call, new ConnectionException(e), id);
-            } else  {
+            } else {
                 callback.onError(call, e, id);
             }
         };
@@ -219,6 +219,8 @@ public class BaseHttp {
                 r.run();
                 break;
             }
+            default:
+                break;
         }
     }
 
@@ -247,6 +249,9 @@ public class BaseHttp {
             }
             case Callback.THREAD_CURRENT: {
                 callback.onResponse(object, id);
+                break;
+            }
+            default: {
                 break;
             }
         }

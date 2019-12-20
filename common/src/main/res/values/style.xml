@@ -102,13 +102,13 @@
     </style>
 
     <style name="CommonPrimaryBlueText">
-        <item name="android:background">@drawable/common_white_bg_selector</item>
+        <item name="android:background">@drawable/common_blue_bg</item>
         <item name="android:textColor">@color/common_color_379BFF</item>
         <item name="android:gravity">center</item>
     </style>
 
     <style name="CommonPrimaryRedText">
-        <item name="android:background">@drawable/common_white_bg_selector</item>
+        <item name="android:background">@drawable/common_white_bg</item>
         <item name="android:textColor">@color/common_content_warning_color</item>
         <item name="android:gravity">center</item>
     </style>
@@ -126,7 +126,7 @@
     </style>
 
     <style name="CommonSecondTextButtonStyle">
-        <item name="android:background">@drawable/common_second_radius_bg</item>
+        <item name="android:background">@drawable/common_green_stroke_big_corner_bg</item>
         <item name="android:textColor">@color/common_app_green_color</item>
         <item name="android:gravity">center</item>
     </style>

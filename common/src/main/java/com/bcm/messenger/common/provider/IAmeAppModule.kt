@@ -4,7 +4,7 @@ import android.app.Activity
 import com.bcm.messenger.common.event.HomeTopEvent
 
 /**
- * Created by bcm.social.01 on 2018/6/20.
+ * bcm.social.01 2018/6/20.
  */
 interface IAmeAppModule : IAmeModule {
     /**

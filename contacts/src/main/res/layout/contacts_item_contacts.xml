@@ -20,7 +20,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:visibility="visible"
-        tools:src="@drawable/common_select_box"/>
+        tools:src="@drawable/common_select_box_selector"/>
 
     <com.bcm.messenger.common.ui.CommonLoadingView
         android:id="@+id/contacts_selecting"
@@ -34,7 +34,7 @@
         app:layout_constraintStart_toStartOf="@id/contacts_select"
         app:layout_constraintEnd_toEndOf="@id/contacts_select"
         tools:visibility="visible"
-        tools:src="@drawable/common_select_box"/>
+        tools:src="@drawable/common_select_box_selector"/>
 
     <com.bcm.messenger.common.ui.RecipientAvatarView
         android:id="@+id/contacts_logo_iv"

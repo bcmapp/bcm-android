@@ -70,9 +70,6 @@
     <string name="contacts_add_friend_failed">दोस्त जोड़ना विफल</string>
     <string name="contacts_add_friend_reject_failed">नकारना विफल</string>
     <string name="contacts_request_friend_empty">कोई आग्रह नहीं</string>
-    <!--invite and scan-->
-    <string name="contacts_main_scan_and_add">स्कैन करें &amp; जोड़ें</string>
-    <string name="contacts_main_invite_friend">दोस्तों को आमंत्रित करें</string>
     <!-- BcmUserCard -->
     <string name="contacts_user_card_forward_title">फॉरवर्ड करें</string>
     <string name="contacts_user_card_block_title">ब्लॉक</string>

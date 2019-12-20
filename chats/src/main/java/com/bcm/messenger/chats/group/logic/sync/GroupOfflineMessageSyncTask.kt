@@ -19,7 +19,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**　
- * Created by bcm.social.01 on 2019/3/19.
+ * bcm.social.01 2019/3/19.
  */
 class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: Long, var executing: Boolean = false, var isSucceed: Boolean = false, var delay: Long = 0) : Serializable {
     companion object {

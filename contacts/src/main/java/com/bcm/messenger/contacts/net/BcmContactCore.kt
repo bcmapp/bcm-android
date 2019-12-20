@@ -49,21 +49,33 @@ class BcmContactCore {
 
         private const val CONTACT_FILTER_API = "/v2/contacts/filters"
 
+        const val CONTACT_SYNC_VERSION = 2
+
+        const val CONTACT_PART_MAX = 20 //通讯录最大组数
+
+        /**
+         * 根据UID转化成通讯录part index
+         */
+        fun getPartKey(uid: String): String {
+            return (BcmHash.hash(uid.toByteArray()) % CONTACT_PART_MAX).toString()
+        }
+
     }
 
-    private data class GetFriendListReq(val parts: Map<String, Long> = HashMap()) : NotGuard
-    private data class GetFriendListRes(val parts: HashMap<String, String?>? = HashMap()) : NotGuard
+    data class ContactSyncRequest(val parts: Map<String, Long> = HashMap()) : NotGuard
+
+    data class ContactSyncResponse(val parts: HashMap<String, String?>? = HashMap()) : NotGuard
     /**
      * @param parts key: UID bucket index， value: FriendListPart
      */
-    private data class UploadFriendListReq(val parts: HashMap<String, String> = HashMap()) : NotGuard
+    data class ContactPatchRequest(val parts: HashMap<String, String> = HashMap()) : NotGuard
 
     /**
      * bucket data class
      */
-    private data class FriendListPart(val contacts_version: Int, val contacts_time: Long, val contacts_key: String, val contacts_body: String) : NotGuard
+    data class FriendListPart(val contacts_version: Int, val contacts_time: Long, val contacts_key: String, val contacts_body: String) : NotGuard
 
-    private data class ContactItem(val uid: String, val profileName: String, val localName: String, val relationship: Int, val nameKey: String, val avatarKey: String) : NotGuard {
+    data class ContactItem(val uid: String, var profileName: String?, var localName: String?, var relationship: Int = RecipientRepo.Relationship.FOLLOW.type, var nameKey: String?, var avatarKey: String?) : NotGuard {
 
         companion object {
             fun from(settings: RecipientSettings): ContactItem {
@@ -79,17 +91,13 @@ class BcmContactCore {
             }
         }
 
-        fun toSetting(contactVersion: Int): RecipientSettings {
+        fun toSetting(): RecipientSettings {
             val settings = RecipientSettings(uid)
-            var r = this.relationship
-            if (r == 0) {
-                r = RecipientRepo.Relationship.FOLLOW.type
-            }
-            settings.setTemporaryProfile(this.profileName, null)
+            val r = this.relationship
+            settings.setTemporaryProfile(this.profileName, null) //兼容旧版本
             settings.setLocalProfile(this.localName, null)
             settings.relationship = RecipientRepo.Relationship.values()[r].type
             settings.setPrivacyKey(this.nameKey, this.avatarKey)
-            settings.contactVersion = contactVersion
             return settings
         }
 
@@ -115,12 +123,14 @@ class BcmContactCore {
 
     }
 
-    data class UploadFriendResult(val uploadMap: Map<String, Set<RecipientSettings>>, val hashResult: Map<String, Long>)
+    data class ContactSyncResult(val different: Map<String, List<ContactItem>>, val contactVersion: Int)
+    data class ContactPatchResult(val uploadMap: Map<String, List<ContactItem>>)
 
     data class FriendRequestBody(val handleBackground: Boolean, val nameKey: String, val avatarKey: String, val requestMemo: String, val version: Int) : NotGuard
 
     data class ContactFilterResponse(val version: String, val uploadAll: Boolean) : NotGuard
 
+    data class ContactParts(val version: Int, val list: List<ContactItem>)
     data class ContactFilterPatchRequest(val position: Int, val value: Boolean) : NotGuard {
 
         override fun toString(): String {
@@ -139,49 +149,61 @@ class BcmContactCore {
 
     }
 
-    fun syncFriendList(currentContactMap: Map<String, Set<RecipientSettings>>, uploadContactMap: Map<String, Long>, handlingMap: Map<String, RecipientSettings>): Observable<UploadFriendResult> {
-        ALog.i(TAG, "syncFriendList begin localMap: ${currentContactMap.size}, handlingMap: ${handlingMap.size}")
-        val req = GetFriendListReq(uploadContactMap)
-        val reqJson = GsonUtils.toJson(req)
+    /**
+     * 同步通讯录
+     * @param uploadContactMap 当前通讯录，key: 分组ID， value: 对应的联系人信息
+     */
+    fun syncFriendList(uploadContactMap: Map<String, List<ContactItem>>): Observable<ContactSyncResult> {
+        val req = genContactPatchRequest(uploadContactMap)
         if (!AppUtil.isReleaseBuild()) {
-            ALog.i(TAG, "syncFriendList request body: $reqJson")
+            //ALog.i(TAG, "syncFriendList request body: ${GsonUtils.toJson(uploadContactMap)}")
         }
-        return RxIMHttp.post<GetFriendListRes>(BcmHttpApiHelper.getApi(SYNC_FRIEND_API), reqJson, GetFriendListRes::class.java)
+        val reqJson = GsonUtils.toJson(genContactSyncRequest(req, uploadContactMap.isEmpty()))
+        if (!AppUtil.isReleaseBuild()) {
+            ALog.i(TAG, "genContactSyncRequest: " + GsonUtils.toJson(reqJson))
+        }
+        return RxIMHttp.post<ContactSyncResponse>(BcmHttpApiHelper.getApi(SYNC_FRIEND_API), reqJson, ContactSyncResponse::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .flatMap {response ->
-                    ALog.i(TAG, "syncFriendList response size: ${response.parts?.size}")
-
-                    var uploadMap: Map<String, Set<RecipientSettings>>? = null
-
-                    if (!response.parts.isNullOrEmpty()) {
-                        uploadMap = mergePart(response.parts, currentContactMap, handlingMap)
-
+                .map {
+                    var contactVersion = CONTACT_SYNC_VERSION
+                    val result = if (it.parts.isNullOrEmpty()) {
+                        mapOf<String, List<ContactItem>>()
                     }else {
-                        if (handlingMap.isNotEmpty()) {
-                            uploadMap = currentContactMap
-                            if (!isReleaseBuild()) {
-                                ALog.d(TAG, "syncFriendList uploadNew: ${GsonUtils.toJson(currentContactMap)}")
+                        val targetUploadMap = mutableMapOf<String, List<ContactItem>>()
+                        for ((k, v) in it.parts) {
+                            val p = parsePartToRecipientList(v)
+                            if (p != null) {
+                                contactVersion = p.version
                             }
+                            targetUploadMap[k] = p?.list ?: listOf()
                         }
+                        targetUploadMap
                     }
-
-                    ALog.i(TAG, "syncFriendList uploadMap size: ${uploadMap?.size}")
-                    if (uploadMap.isNullOrEmpty()) {
-                        Observable.just(response)
-                                .map {
-                                    UploadFriendResult(uploadMap ?: mapOf(), mapOf())
-                                }
-                    } else {
-                        uploadFriendList(uploadMap)
-                    }
-
+                    ContactSyncResult(result, contactVersion)
                 }
+
     }
 
-    fun uploadFriendList(uploadMap: Map<String, Set<RecipientSettings>>): Observable<UploadFriendResult> {
-        ALog.i(TAG, "uploadFriendList")
-        val req = genUploadFriendListRequest(uploadMap)
+    fun uploadFriendList(uploadMap: Map<String, List<ContactItem>>, checkFull: Boolean): Observable<ContactPatchResult> {
+        val targetUploadMap = mutableMapOf<String, List<ContactItem>>()
+        if (checkFull) {
+            for (i in 0 until CONTACT_PART_MAX) {
+                val k = i.toString()
+                val v = uploadMap[k]
+                if (v == null) {
+                    targetUploadMap[k] = listOf()
+                }else {
+                    targetUploadMap[k] = v
+                }
+            }
+        }else {
+            targetUploadMap.putAll(uploadMap)
+        }
+        if (!isReleaseBuild()) {
+            ALog.i(TAG, "uploadFriendList uploadMap: ${GsonUtils.toJson(targetUploadMap)}")
+        }
+        val req = genContactPatchRequest(targetUploadMap)
         val reqJson = GsonUtils.toJson(req)
         if (!AppUtil.isReleaseBuild()) {
             ALog.i(TAG, "uploadFriendList: $reqJson")
@@ -190,72 +212,29 @@ class BcmContactCore {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .map {
-                    UploadFriendResult(uploadMap, genUploadFriendHashMap(req))
+                    ContactPatchResult(uploadMap)
                 }
     }
 
-    private fun mergePart(remoteHashMap: Map<String, String?>, localMap: Map<String, Set<RecipientSettings>>, handlingMap: Map<String, RecipientSettings>):
-            Map<String, Set<RecipientSettings>> {
-        ALog.i(TAG, "mergePart remote size: ${remoteHashMap.size}, local size: ${localMap.size}, handling size: ${handlingMap.size}")
-        val targetUploadMap = mutableMapOf<String, MutableSet<RecipientSettings>>()
-        for ((k, v) in remoteHashMap) {
-            ALog.i(TAG, "mergePart k: $k")
-            val uploadSet = mutableSetOf<RecipientSettings>()
-            val localSet = localMap[k]
-            val remoteSet = parsePartToRecipientList(v)
-            if (remoteSet != null) {
-                uploadSet.addAll(remoteSet)
-                localSet?.forEach {
-                    if (remoteSet.contains(it)) {
-                        ALog.logForSecret(TAG, "mergePart remote exist, uid: ${it.uid}, name: ${it.profileName}")
-                    }else {
-                        if (handlingMap[it.uid] == null) {
-                            ALog.logForSecret(TAG, "mergePart handling not exist: ${it.uid}, set stranger")
-                            it.relationship = RecipientRepo.Relationship.STRANGER.type
-                        }
-                        uploadSet.add(it)
-                    }
-                }
-            }else {
-                localSet?.forEach {
-                    if (handlingMap[it.uid] == null) {
-                        ALog.logForSecret(TAG, "mergePart remote is null, handling not exist: ${it.uid}, set stranger")
-                        it.relationship = RecipientRepo.Relationship.STRANGER.type
-                    }
-                    uploadSet.add(it)
-                }
-            }
-            targetUploadMap[k] = uploadSet
-        }
 
-        for ((uid, l) in handlingMap) {
-            val key = l.contactPartKey ?: ""
-            var uploadSet = targetUploadMap[key]
-            if (uploadSet == null) {
-                uploadSet = mutableSetOf()
-                targetUploadMap[key] = uploadSet
-            }
-            uploadSet.remove(l)
-            uploadSet.add(l)
-            ALog.d(TAG, "mergePart uploadSet add handlingSettings: $l")
-        }
-
-        return targetUploadMap
-    }
-
-    private fun genUploadFriendHashMap(req: UploadFriendListReq): Map<String, Long> {
+    private fun genContactSyncRequest(req: ContactPatchRequest, checkFull: Boolean): ContactSyncRequest {
         val hashList = mutableMapOf<String, Long>()
         for ((k, v) in req.parts) {
             hashList[k] = BcmHash.hash(v.toByteArray())
         }
-        if (!AppUtil.isReleaseBuild()) {
-            ALog.i(TAG, "genUploadFriendHashMap: " + GsonUtils.toJson(hashList))
+        if (checkFull) {
+            for (i in 0 until CONTACT_PART_MAX) {
+                if (hashList[i.toString()] == null) {
+                    hashList[i.toString()] = 0
+                }
+            }
         }
-        return hashList
+
+        return ContactSyncRequest(hashList)
     }
 
-    private fun genUploadFriendListRequest(localFriendMap: Map<String, Set<RecipientSettings>>?): UploadFriendListReq {
-        val req = UploadFriendListReq()
+    private fun genContactPatchRequest(localFriendMap: Map<String, List<ContactItem>>?): ContactPatchRequest {
+        val req = ContactPatchRequest()
         if (localFriendMap == null) {
             return req
         }
@@ -272,17 +251,13 @@ class BcmContactCore {
 
         val pubKey = Base64.encodeBytes((keyPair.publicKey as DjbECPublicKey).publicKey)
         for ((key, uploadSet) in localFriendMap) {
-            val contactBody = GsonUtils.toJson(uploadSet.mapNotNull {
-                if (it.relationship == RecipientRepo.Relationship.STRANGER.type) {
-                    null
-                }else {
-                    ContactItem.from(it)
-                }
+            val contactBody = GsonUtils.toJson(uploadSet.filter {
+                it.relationship != RecipientRepo.Relationship.STRANGER.type
             })
             if (!isReleaseBuild()) {
-                ALog.d(TAG, "genUploadFriendListRequest contactBody: $contactBody")
+                ALog.d(TAG, "genContactPatchRequest contactBody: $contactBody")
             }
-            val part = FriendListPart(RecipientSettings.CONTACT_SYNC_VERSION,
+            val part = FriendListPart(CONTACT_SYNC_VERSION,
                     AmeTimeUtil.serverTimeMillis(),
                     pubKey,
                     Base64.encodeBytes(EncryptUtils.encryptAES(contactBody.toByteArray(), aesKeyPair.first, CONTACTS_ALGORITHM, aesKeyPair.second)))
@@ -291,7 +266,7 @@ class BcmContactCore {
         return req
     }
 
-    private fun parsePartToRecipientList(partString: String?): Set<RecipientSettings>? {
+    private fun parsePartToRecipientList(partString: String?): ContactParts? {
         if (partString.isNullOrEmpty()) {
             return null
         }
@@ -307,9 +282,10 @@ class BcmContactCore {
         if (!isReleaseBuild()) {
             ALog.d(TAG, "parsePartToRecipientList contactBodyString: $contactBodyString")
         }
-        val contactItemList = GsonUtils.fromJson<ArrayList<ContactItem>>(contactBodyString, object : TypeToken<ArrayList<ContactItem>>() {}.type)
 
-        return contactItemList.map { it.toSetting(part.contacts_version) }.toSet()
+        val list = GsonUtils.fromJson<List<ContactItem>>(contactBodyString, object : TypeToken<List<ContactItem>>() {}.type)
+
+        return ContactParts(part.contacts_version, list)
     }
 
     private fun createAESKeyPair(dhPassword: ByteArray): Pair<ByteArray, ByteArray> {

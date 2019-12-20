@@ -7,9 +7,10 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.event.ServiceConnectEvent
 import com.bcm.messenger.common.provider.IUserModule
 import com.bcm.messenger.common.utils.AmeAppLifecycle
-import com.bcm.messenger.wallet.model.*
+import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.R
+import com.bcm.messenger.wallet.model.*
 import com.bcm.messenger.wallet.utils.*
 import com.bcm.route.api.BcmRouter
 import com.orhanobut.logger.Logger
@@ -18,7 +19,6 @@ import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Request
-import com.bcm.messenger.utility.AppContextHolder
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -92,8 +92,7 @@ class WalletViewModel : ViewModel() {
          * 通知结果
          */
         fun notifyResult(success: Boolean, coinType: String, list: List<WalletDisplay>) {
-            ALog.i(TAG, "queryAccountsDisplay notifyResult: current: $completeNum, success: $success, coinType:$coinType, list: ${list.size}")
-
+            ALog.i(TAG, "loadWalletData notifyResult: current: $completeNum, success: $success, coinType:$coinType")
             if (coinType == WalletSettings.BTC) {
                 btcDisplay.coinList.addAll(list)
             } else if (coinType == WalletSettings.ETH) {

@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-       android:shape="oval">
-    <corners android:radius="8dp"/>
-    <size
-        android:width="10dp"
-        android:height="10dp"/>
-    <solid android:color="#606060"/>
-    <stroke
-        android:dashWidth="1dp"
-        android:width="1dp"
-        android:color="@color/common_color_white"/>
-</shape>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+android:color="@color/common_color_C2C2C2">
+<item android:id="@android:id/mask">
+    <shape android:shape="oval">
+        <solid android:color="@color/common_color_white"/>
+    </shape>
+</item>
+<item>
+    <shape android:shape="oval">
+        <size
+            android:width="10dp"
+            android:height="10dp"/>
+        <solid android:color="#606060"/>
+        <stroke
+            android:dashWidth="1dp"
+            android:width="1dp"
+            android:color="@color/common_color_white"/>
+    </shape>
+</item>
+</ripple>

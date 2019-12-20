@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by bcm.social.01 on 2018/6/29.
+ * bcm.social.01 2018/6/29.
  */
 
 public class ALog {

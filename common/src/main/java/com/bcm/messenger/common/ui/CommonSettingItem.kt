@@ -24,8 +24,8 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         const val RIGHT_NONE = 0
         const val RIGHT_LOADING = 1
         const val RIGHT_ARROW = 2
-        const val RIGHT_YES = 3 
-        const val RIGHT_ARROW_WHITE = 4  
+        const val RIGHT_YES = 3
+        const val RIGHT_ARROW_WHITE = 4
         const val RIGHT_CUSTOM = 5
     }
 
@@ -78,7 +78,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         }
         if (head.isBlank()) {
             hideHead()
-        }else {
+        } else {
             setHead(head, mHeadColor)
         }
         if (background == null) {
@@ -96,7 +96,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
 
         if (customRightDrawable != 0) {
             showRightIcon(customRightDrawable)
-        }else {
+        } else {
             showRightStatus(rightStatus)
         }
 
@@ -124,6 +124,10 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         item_sub_name.setOnClickListener(listener)
     }
 
+    override fun setOnClickListener(l: OnClickListener?) {
+        item_content_layout.setOnClickListener(l)
+    }
+
     /**
      * Register a callback to be invoked when the checked state of this button
      * changes.
@@ -134,12 +138,12 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         switchListener = listener
     }
 
-   
+
     fun showLine(show: Boolean) {
         item_line?.visibility = if (show) View.VISIBLE else View.GONE
     }
 
-  
+
     fun setLogo(logoRes: Int, size: Int? = null) {
         if (logoRes == 0) {
             item_left.visibility = View.GONE
@@ -155,7 +159,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    
+
     fun getName(): CharSequence {
         return item_name.text
     }
@@ -171,7 +175,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     fun setHead(head: CharSequence, headColor: Int? = null) {
         if (head.isBlank()) {
             item_head.visibility = View.GONE
-        }else {
+        } else {
             item_head.visibility = View.VISIBLE
             item_head.text = head
             if (headColor == null) {
@@ -182,7 +186,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-   
+
     fun setName(name: CharSequence, nameColor: Int? = null) {
         item_name.text = name
         if (nameColor == null) {
@@ -195,26 +199,26 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     fun setSubName(subName: CharSequence, subNameColor: Int? = null) {
         if (subName.isEmpty()) {
             item_sub_name.visibility = View.GONE
-        }else {
+        } else {
             item_sub_name.visibility = View.VISIBLE
             item_sub_name.text = subName
             if (subNameColor == null) {
                 item_sub_name.setTextColor(mSubNameColor)
-            }else {
+            } else {
                 item_sub_name.setTextColor(subNameColor)
             }
         }
     }
 
     /**
-     * 
+     *
      */
     fun hideTip() {
         item_tip.visibility = View.GONE
     }
 
     /**
-     * 
+     *
      */
     fun setTip(content: CharSequence, iconRes: Int = mTipIcon, contentColor: Int? = null) {
         item_tip.visibility = View.VISIBLE
@@ -229,7 +233,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
 
 
     /**
-     * 
+     *
      */
     private fun changeSwitch(isOn: Boolean) {
         if (isOn) {
@@ -240,7 +244,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 
+     *
      */
     fun setSwitchStatus(isOn: Boolean) {
         item_switch.visibility = View.VISIBLE
@@ -249,20 +253,20 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 
+     *
      */
     fun getSwitchStatus(): Boolean {
         return item_switch.isChecked
     }
 
     /**
-     * 
+     *
      */
     fun showRightIcon(iconRes: Int) {
         if (iconRes != 0) {
             item_right.visibility = View.VISIBLE
             item_right_body.setImageResource(iconRes)
-        }else {
+        } else {
             item_right.visibility = View.GONE
         }
     }
@@ -303,7 +307,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 
+     *
      */
     fun setSwitchEnable(enable: Boolean) {
         item_switch.isEnabled = enable
@@ -311,7 +315,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 
+     *
      */
     fun setItemBodyPadding(paddingTop: Int, paddingBottom: Int) {
 
@@ -327,7 +331,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 
+     *
      */
     fun setItemHeadPadding(paddingTop: Int, paddingBottom: Int) {
 //        val lp = item_head.layoutParams as ConstraintLayout.LayoutParams
@@ -338,16 +342,16 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 
+     *
      */
     fun setLogoMargin(margin: Int) {
         item_left.setPadding(item_left.paddingStart, item_left.paddingTop, margin, item_left.paddingBottom)
     }
 
     /**
-     * 
+     *
      */
-    private fun measureInternalLayout(headPaddingPair: Pair<Int,Int>, itemPaddingPair: Pair<Int, Int>, logoMargin: Int) {
+    private fun measureInternalLayout(headPaddingPair: Pair<Int, Int>, itemPaddingPair: Pair<Int, Int>, logoMargin: Int) {
 
         setItemHeadPadding(headPaddingPair.first, headPaddingPair.second)
         setItemBodyPadding(itemPaddingPair.first, itemPaddingPair.second)

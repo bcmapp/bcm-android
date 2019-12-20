@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.event
 
+import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.utility.GsonUtils
 
@@ -13,7 +14,18 @@ data class HomeTopEvent(val finishTop: Boolean = true, val chatEvent: Conversati
     /**
      * 
      */
-    class ConversationEvent(val path: String, val threadId: Long, val address: Address?, val gid: Long? = null)
+    class ConversationEvent(val path: String, val threadId: Long, val address: Address?, val gid: Long?, val createIfNotExist: Boolean) {
+
+        companion object {
+            fun fromGroupConversation(address: Address?, gid: Long): ConversationEvent {
+                return ConversationEvent(ARouterConstants.Activity.CHAT_GROUP_CONVERSATION, 0L, address, gid, true)
+            }
+
+            fun fromPrivateConversation(address: Address, createIfNotExist: Boolean): ConversationEvent {
+                return ConversationEvent(ARouterConstants.Activity.CHAT_CONVERSATION_PATH, 0L, address, null, createIfNotExist)
+            }
+        }
+    }
 
     /**
      * 

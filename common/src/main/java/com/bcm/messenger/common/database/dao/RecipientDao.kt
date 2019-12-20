@@ -86,9 +86,9 @@ interface RecipientDao {
         SELECT recipient.uid, block, mute_until, expires_time, local_name, local_avatar, profile_key, profile_name, profile_avatar, profile_sharing_approval, privacy_profile, relationship, support_feature, identities.`key` AS identityKey 
         FROM ${RecipientDbModel.TABLE_NAME} 
         LEFT OUTER JOIN ${IdentityDbModel.TABLE_NAME} ON (${RecipientDbModel.TABLE_NAME}.uid = ${IdentityDbModel.TABLE_NAME}.uid) 
-        WHERE recipient.uid != :selfUid AND ${RecipientDbModel.TABLE_NAME}.uid NOT LIKE '${GroupUtil.ENCODED_TT_GROUP_PREFIX}%' AND ${RecipientDbModel.TABLE_NAME}.uid NOT LIKE '${GroupUtil.ENCODED_MMS_GROUP_PREFIX}%' AND ${RecipientDbModel.TABLE_NAME}.uid NOT LIKE '${GroupUtil.ENCODED_SIGNAL_GROUP_PREFIX}%' AND relationship != 0
+        WHERE recipient.uid != :selfUid AND ${RecipientDbModel.TABLE_NAME}.uid NOT LIKE '${GroupUtil.ENCODED_TT_GROUP_PREFIX}%' AND ${RecipientDbModel.TABLE_NAME}.uid NOT LIKE '${GroupUtil.ENCODED_MMS_GROUP_PREFIX}%' AND ${RecipientDbModel.TABLE_NAME}.uid NOT LIKE '${GroupUtil.ENCODED_SIGNAL_GROUP_PREFIX}%'
     """)
-    fun queryOneSideRecipients(selfUid: String): List<RecipientSettings>
+    fun queryAllIndividualRecipients(selfUid: String): List<RecipientSettings>
 
     @Query("""
         SELECT recipient.uid, block, mute_until, expires_time, local_name, local_avatar, profile_key, profile_name, profile_avatar, profile_sharing_approval, privacy_profile, relationship, support_feature, identities.`key` AS identityKey 

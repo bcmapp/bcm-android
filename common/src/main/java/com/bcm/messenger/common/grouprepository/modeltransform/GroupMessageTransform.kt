@@ -48,6 +48,9 @@ object GroupMessageTransform {
             GroupMessage.SEND_FAILURE -> ameMessage.sendState = AmeGroupMessageDetail.SendState.SEND_FAILED
             GroupMessage.SEND_SUCCESS -> ameMessage.sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
             GroupMessage.RECEIVE_SUCCESS -> ameMessage.sendState = AmeGroupMessageDetail.SendState.RECEIVE_SUCCESS
+            GroupMessage.FILE_NOT_FOUND -> ameMessage.sendState = AmeGroupMessageDetail.SendState.FILE_NOT_FOUND
+            GroupMessage.FILE_DOWNLOAD_FAIL -> ameMessage.sendState = AmeGroupMessageDetail.SendState.FILE_DOWNLOAD_FAIL
+            GroupMessage.THUMB_DOWNLOAD_FAIL -> ameMessage.sendState = AmeGroupMessageDetail.SendState.THUMB_DOWNLOAD_FAIL
         }
 
         if (message.thumbnailUri != null) {
@@ -88,6 +91,9 @@ object GroupMessageTransform {
             AmeGroupMessageDetail.SendState.SEND_SUCCESS -> GroupMessage.SEND_SUCCESS
             AmeGroupMessageDetail.SendState.SENDING -> GroupMessage.SENDING
             AmeGroupMessageDetail.SendState.RECEIVE_SUCCESS -> GroupMessage.RECEIVE_SUCCESS
+            AmeGroupMessageDetail.SendState.FILE_NOT_FOUND -> GroupMessage.FILE_NOT_FOUND
+            AmeGroupMessageDetail.SendState.FILE_DOWNLOAD_FAIL -> GroupMessage.FILE_DOWNLOAD_FAIL
+            AmeGroupMessageDetail.SendState.THUMB_DOWNLOAD_FAIL -> GroupMessage.THUMB_DOWNLOAD_FAIL
             else -> GroupMessage.SEND_FAILURE
         }
 

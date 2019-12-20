@@ -5,17 +5,21 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.net.Uri;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bcm.messenger.common.BuildConfig;
 import com.bcm.messenger.common.crypto.DecryptingPartInputStream;
 import com.bcm.messenger.common.crypto.EncryptingPartOutputStream;
 import com.bcm.messenger.common.crypto.MasterCipher;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.utility.Util;
+
 import org.whispersystems.libsignal.InvalidMessageException;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -130,6 +134,8 @@ public class PersistentBlobProvider {
                 long id = ContentUris.parseId(uri);
                 cache.remove(id);
                 return getFile(ContentUris.parseId(uri)).delete();
+            default:
+                break;
         }
 
         if (isExternalBlobUri(context, uri)) {

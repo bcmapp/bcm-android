@@ -75,10 +75,6 @@
     <string name="contacts_user_card_stranger">陌生人</string>
     <string name="contacts_request_friend_empty">暂无请求</string>
 
-    <!--invite and scan-->
-    <string name="contacts_main_scan_and_add">扫码添加</string>
-    <string name="contacts_main_invite_friend">邀请好友</string>
-
     <!-- BcmUserCard -->
     <string name="contacts_user_card_forward_title">转发</string>
     <string name="contacts_user_card_block_title">屏蔽</string>

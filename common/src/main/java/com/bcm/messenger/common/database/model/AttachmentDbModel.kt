@@ -3,6 +3,7 @@ package com.bcm.messenger.common.database.model
 import android.net.Uri
 import androidx.room.*
 import androidx.room.ForeignKey.CASCADE
+import java.util.*
 
 /**
  * Created by Kin on 2019/9/16
@@ -54,6 +55,20 @@ open class AttachmentDbModel {
     @ColumnInfo(name = "thumb_hash")
     var thumbHash: String? = null
 
+    override fun equals(other: Any?): Boolean {
+        if (other == null || other !is AttachmentDbModel) return false
+        return other.id == id &&
+                other.mid == mid &&
+                other.attachmentType == attachmentType &&
+                other.contentLocation == contentLocation &&
+                other.uniqueId == uniqueId &&
+                other.url == url
+    }
+
+    override fun hashCode(): Int {
+        return Arrays.hashCode(arrayOf(id, mid, attachmentType, contentLocation, uniqueId, digest, url))
+    }
+
     enum class AttachmentType(val type: Int) {
         IMAGE(1),
         VIDEO(2),
@@ -66,6 +81,7 @@ open class AttachmentDbModel {
         DONE(0),
         STARTED(1),
         PENDING(2),
-        FAILED(3)
+        FAILED(3),
+        NOT_FOUND(4)
     }
 }

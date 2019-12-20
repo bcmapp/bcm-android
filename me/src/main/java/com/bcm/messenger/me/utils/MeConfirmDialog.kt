@@ -179,7 +179,7 @@ object MeConfirmDialog {
 
         fun setLogOutStyle() {
             confirm_cancel.setTextColor(getColor(R.color.common_color_ff3737))
-            confirm_cancel.setBackgroundResource(R.drawable.common_red_round_selector)
+            confirm_cancel.setBackgroundResource(R.drawable.common_red_stroke_big_corner_bg)
             confirm_ok.setTextColor(getColor(R.color.common_color_379BFF))
             confirm_ok.setBackgroundResource(R.drawable.common_primary_thin_round_selector)
         }

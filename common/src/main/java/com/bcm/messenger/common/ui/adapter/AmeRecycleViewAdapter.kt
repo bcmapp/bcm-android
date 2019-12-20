@@ -9,7 +9,7 @@ import java.lang.ref.WeakReference
 
 
 /**
- * Created by bcm.social.01 on 2018/5/22.
+ * bcm.social.01 2018/5/22.
  */
 open class AmeRecycleViewAdapter<T : Any>(context: Context, private var dataModel: IListDataSource<T>) : RecyclerView.Adapter<AmeRecycleViewAdapter.ViewHolder<T>>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)

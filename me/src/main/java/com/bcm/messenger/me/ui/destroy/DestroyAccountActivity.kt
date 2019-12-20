@@ -1,18 +1,13 @@
 package com.bcm.messenger.me.ui.destroy
 
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.setLocale
-import com.bcm.messenger.common.provider.AMESelfData
-import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.me.R
-import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
-import com.bcm.route.api.BcmRouter
 
 /**
  * Created by Kin on 2018/9/19
@@ -54,20 +49,6 @@ class DestroyAccountActivity : AppCompatActivity() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             super.onBackPressed()
         }
-    }
-
-    fun gotoLogin() {
-        if (AMESelfData.isLogin) {
-            ALog.e(TAG, "login state wrong")
-            return
-        }
-
-        AmeModuleCenter.onLoginStateChanged("")
-
-        BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .navigation(this)
-        finish()
     }
 
 }

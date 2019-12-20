@@ -7,9 +7,9 @@ object ARouterConstants {
 
     const val CONSTANT_RELEASE = "release"
     const val CONSTANT_BACKGROUND_DIM = 0.3f
-    
+
     const val CONSTANT_LEFT_BRACKET = "["
-    
+
     const val CONSTANT_RIGHT_BRACKET = "]"
 
     const val PASSWORD_LEN_MIN = 8
@@ -18,11 +18,11 @@ object ARouterConstants {
     const val PASSWORD_REGEX = "^[\\S]{8,}"
 
     const val CHAT_AT_CHAR = "@"
-   
+
     const val SDCARD_ROOT_FOLDER = "bcm"
 
-    const val PRIVATE_MEDIA_CHAT = -1001L   
-    const val PRIVATE_TEXT_CHAT = -1000L    
+    const val PRIVATE_MEDIA_CHAT = -1001L
+    const val PRIVATE_TEXT_CHAT = -1000L
 
 
     object PREFIX {
@@ -98,7 +98,7 @@ object ARouterConstants {
         const val CHAT_CALL_PATH = PREFIX.CHAT + "/call"
 
         /**
-         * thread list 
+         * thread list
          */
         const val CHAT_MESSAGE_PATH = PREFIX.CHAT + "/message_list"
 
@@ -130,7 +130,7 @@ object ARouterConstants {
         const val MAP = PREFIX.CHAT + "/map"
 
         /**
-         * map preview 
+         * map preview
          */
         const val MAP_PREVIEW = PREFIX.CHAT + "/map_preview"
 
@@ -140,7 +140,7 @@ object ARouterConstants {
         const val WEB = PREFIX.AME + "/web"
 
         /**
-         * qr code 
+         * qr code
          */
         const val ME_QR = PREFIX.USER + "/qr"
 
@@ -165,11 +165,11 @@ object ARouterConstants {
         const val VERIFY_PASSWORD = PREFIX.USER + "/verify_password"
 
         /**
-         * forward 
+         * forward
          */
         const val FORWARD = PREFIX.CHAT + "/forward"
 
-    
+
         const val PROFILE_EDIT = PREFIX.USER + "/profile_edit"
 
         /**
@@ -188,43 +188,45 @@ object ARouterConstants {
          */
         const val PIN_INPUT = PREFIX.USER + "/pin_input"
 
-    
+
         const val EDIT_NAME = PREFIX.USER + "/edit_name"
 
-       
+
         const val REQUEST_FRIEND = PREFIX.CONTACT + "/request_friend"
 
-       
+
         const val GROUP_JOIN_REQUEST = PREFIX.GROUP + "/request_join"
 
-       
+
         const val GROUP_JOIN_CHECK = PREFIX.GROUP + "/check_join"
 
         const val GROUP_SHARE_FORWARD = PREFIX.GROUP + "/share_forward"
 
         const val CONTACT_SHARE_FORWARD = PREFIX.CONTACT + "/share_forward"
 
-       
+
         const val GROUP_SHARE_DESCRIPTION = PREFIX.GROUP + "/share_description"
 
-       
+
         const val GROUP_CONTACT_MAIN = PREFIX.CONTACT + "/group_main"
 
         const val WALLET_MAIN = PREFIX.WALLET + "/main"
 
-       
+
         const val SCAN_NEW = PREFIX.USER + "/scan_new"
 
-      
+
         const val SYSTEM_SHARE = PREFIX.APP + "/system_share"
 
-      
+
         const val ADHOC_CONVERSATION = PREFIX.ADHOC + "/chat_conversation"
 
-       
+
         const val FRIEND_REQUEST_LIST = PREFIX.CONTACT + "/friend_request_list"
 
         const val CONTACT_SEND = PREFIX.CONTACT + "/contact_send"
+
+        const val SETTINGS = PREFIX.USER + "/settings"
     }
 
 
@@ -232,16 +234,16 @@ object ARouterConstants {
      * fragment path
      */
     object Fragment {
-       
+
         const val WALLET_HOST = PREFIX.WALLET + "/host"
 
-       
+
         const val CONTACTS_HOST = PREFIX.CONTACT + "/host"
 
-       
+
         const val CONTACTS_GROUP = PREFIX.CONTACT + "/group"
 
-      
+
         const val CONTACTS_INDIVIDUAL = PREFIX.CONTACT + "/individual"
         const val SELECT_CONTACTS = PREFIX.CONTACT + "/select"
         const val SELECT_SINGLE = PREFIX.CONTACT + "/single_select"
@@ -255,7 +257,7 @@ object ARouterConstants {
      * provider path
      */
     object Provider {
-        
+
         const val PROVIDER_CONTACTS_BASE = PREFIX.CONTACT + "/provider/base"
 
         const val PROVIDER_CONVERSATION_BASE = PREFIX.CHAT + "/provider/base"
@@ -302,7 +304,7 @@ object ARouterConstants {
 
         const val PARAM_LOGIN_FROM_REGISTER = "login_enter_from_register"
 
-        const val WEB_URL = "web_url" 
+        const val WEB_URL = "web_url"
         const val WEB_TITLE = "web_title"
         const val WEB_FRAGMENT = "web_fragment"
 
@@ -312,7 +314,7 @@ object ARouterConstants {
 
         const val PARAM_EDIT = "edit"
 
-        const val PARAM_CREATE_GROUP_CHANNEL = "create_group_channel" 
+        const val PARAM_CREATE_GROUP_CHANNEL = "create_group_channel"
 
         const val PARAM_HOME_TAB_SELECT = "home_tab_select"
 
@@ -325,20 +327,20 @@ object ARouterConstants {
 
         const val PARAM_LOCALE = "locale_extra"
 
-        const val PARAM_ACCOUNT_ID = "param_account_id" 
+        const val PARAM_ACCOUNT_ID = "param_account_id"
         const val PARAM_DATA = "param_transfer_data"
 
-    
+
         object CONTACTS_SELECT {
 
-            const val PARAM_MULTI_SELECT = "multi_select"           
-            const val PARAM_CHANGE_MODE = "can_change_mode"         
-            const val PARAM_ADDRESS_LIST = "address_list"           
-            const val PARAM_SHOW_DECORATION = "show_decoration"     
-            const val PARAM_SELECT_TYPE = "select_type"             
-            const val PARAM_CONTACT_GROUP = "contact_from_group"     
-            const val PARAM_INCLUDE_ME = "contact_include_me"       
-            const val PARAM_ENABLE_CHECKER = "selector_enable_checker"  
+            const val PARAM_MULTI_SELECT = "multi_select"
+            const val PARAM_CHANGE_MODE = "can_change_mode"
+            const val PARAM_ADDRESS_LIST = "address_list"
+            const val PARAM_SHOW_DECORATION = "show_decoration"
+            const val PARAM_SELECT_TYPE = "select_type"
+            const val PARAM_CONTACT_GROUP = "contact_from_group"
+            const val PARAM_INCLUDE_ME = "contact_include_me"
+            const val PARAM_ENABLE_CHECKER = "selector_enable_checker"
 
             object ENABLE_CHECKER {
                 const val CHECKER_DEFAULT = "checker.default"
@@ -346,7 +348,7 @@ object ARouterConstants {
             }
         }
 
-       
+
         object PRIVATE_CHAT {
 
             const val IS_ARCHIVED_EXTRA = "is_archived"
@@ -357,35 +359,35 @@ object ARouterConstants {
             const val LOCALE_EXTRA = "locale_extra"
         }
 
-        
+
         object GROUP {
             const val GROUP = "group" //
-            const val MEMBERS_ADDRESS = "members_address" 
+            const val MEMBERS_ADDRESS = "members_address"
             const val SELECT_TYPE = "select_type"
         }
 
         object MAP {
             const val LATITUDE = "latitude" //
             const val LONGTITUDE = "longtidue"
-            const val MAPE_TYPE = "map_type"  
+            const val MAPE_TYPE = "map_type"
             const val TITLE = "title"
             const val ADDRESS = "address"
         }
 
         object PRIVATE_CALL {
-            const val PARAM_CALL_TYPE = "call_type" 
-            const val PARAM_ACTION = "param_call_action"    
+            const val PARAM_CALL_TYPE = "call_type"
+            const val PARAM_ACTION = "param_call_action"
             const val VALUE_DENY = "value_call_deny"
             const val VALUE_ACCEPT = "value_call_deny"
             const val VALUE_END = "value_call_end"
         }
 
-  
+
         object WALLET {
 
             const val WALLET_ADDRESS = "wallet_address"
             const val ACTIVE_PASSWORD = "active_password"
-            const val PRIVATE_KEY = "private_key"   
+            const val PRIVATE_KEY = "private_key"
             const val WALLET_COIN = "wallet_coin"
             const val WALLET_LIST = "wallet_list"
             const val WALLET_NAME = "wallet_name"
@@ -400,7 +402,7 @@ object ARouterConstants {
             const val ACTIVATE_OTHER_IMPORT = 3
 
         }
-  
+
         object WEB {
             const val TOOLBAR_STYPE = "toolbar_style"
         }
@@ -424,6 +426,7 @@ object ARouterConstants {
             const val SCAN_TYPE = "scan_type"
             const val TYPE_ACCOUNT = 1
             const val TYPE_CONTACT = 2
+            const val TYPE_SCAN = 3
             const val TYPE_OTHER = 0
 
             const val SCAN_TITLE = "scan_title"
@@ -449,7 +452,7 @@ object ARouterConstants {
 
         object ME {
             const val PROFILE_EDIT = "profile_edit"
-            const val PROFILE_FOR_LOCAL = "profile_for_local" 
+            const val PROFILE_FOR_LOCAL = "profile_for_local"
         }
     }
 
@@ -457,6 +460,6 @@ object ARouterConstants {
      * ACTIVITY ACTION
      */
     object ACTION {
-        const val ACTION_NOTIFICATION = "com.yy.telegram.notification.CLICK" 
+        const val ACTION_NOTIFICATION = "com.yy.telegram.notification.CLICK"
     }
 }

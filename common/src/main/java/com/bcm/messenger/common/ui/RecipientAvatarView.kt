@@ -66,7 +66,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
     fun showRecipientAvatar(recipient: Recipient) {
         if (recipient.isGroupRecipient) {
             showGroupAvatar(recipient.groupId)
-        }else {
+        } else {
             showPrivateAvatar(recipient)
         }
     }
@@ -187,6 +187,10 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         member_single_avatar.setOval(true)
     }
 
+    fun updateOval() {
+        member_single_avatar.radius = width / 2f
+    }
+
     private fun setGroupRecipientAvatar() {
         group_splice_avatar.visibility = View.GONE
         member_single_avatar.visibility = View.VISIBLE
@@ -212,7 +216,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
     override fun onModified(recipient: Recipient) {
         if (this.privateRecipient == recipient) {
             setRecipientAvatar()
-        }else if(this.groupRecipient == recipient) {
+        } else if (this.groupRecipient == recipient) {
             setGroupRecipientAvatar()
         }
     }
@@ -224,4 +228,13 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         privateRecipient?.removeListener(this)
         groupRecipient?.removeListener(this)
     }
+
+    fun setPrivateElevation(elevation: Float) {
+        if (elevation != this.elevation) {
+            setBackgroundResource(R.drawable.common_white_circle)
+            this.elevation = elevation
+        }
+    }
+
+    fun getIndividualAvatarView() = member_single_avatar
 }

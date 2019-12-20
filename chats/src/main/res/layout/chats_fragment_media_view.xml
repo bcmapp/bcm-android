@@ -7,26 +7,65 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.bcm.messenger.common.video.VideoPlayer
-        android:id="@+id/mediaview_videoplayer"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.bcm.messenger.chats.components.ZoomingImageView
-        android:id="@+id/mediaview_imageview"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <com.pnikosis.materialishprogress.ProgressWheel
+        <com.bcm.messenger.common.video.VideoPlayer
+            android:id="@+id/mediaview_videoplayer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.bcm.messenger.chats.components.ZoomingImageView
+            android:id="@+id/mediaview_imageview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/mediaview_expire_layout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/common_30_transparent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/chats_more_expire_icon" />
+
+            <TextView
+                android:id="@+id/mediaview_expire_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:textColor="@color/common_color_white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.bcm.messenger.common.ui.CommonLoadingView
         android:id="@+id/mediaview_progress"
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -37,15 +76,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:matProg_barColor="@color/common_color_white"
-        app:matProg_linearProgress="true"
-        app:matProg_spinSpeed="0.333"
+        app:circle_color="white"
+        app:circle_size="large"
         tools:visibility="visible" />
 
     <ImageView
         android:id="@+id/mediaview_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@color/common_10_transparent"
         android:visibility="gone"
         android:src="@drawable/common_video_play"
         app:layout_constraintBottom_toBottomOf="parent"

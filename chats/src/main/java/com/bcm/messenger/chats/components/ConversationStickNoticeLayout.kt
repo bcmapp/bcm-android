@@ -6,11 +6,11 @@ import android.util.AttributeSet
 import android.view.View
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.utility.StringAppearanceUtil
-import com.bcm.messenger.common.utils.getColor
-import kotlinx.android.synthetic.main.chats_layout_stick_notice.view.*
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.getColor
+import com.bcm.messenger.utility.StringAppearanceUtil
+import kotlinx.android.synthetic.main.chats_layout_stick_notice.view.*
 
 /**
  * Created by wjh on 2019/5/24
@@ -82,4 +82,13 @@ class ConversationStickNoticeLayout : androidx.constraintlayout.widget.Constrain
         stick_notify_text_one?.text = notice
     }
 
+    fun showLoading(loading: Boolean) {
+        if (loading) {
+            stick_notify_loading.visibility = View.VISIBLE
+            stick_notify_loading.startAnim()
+        }else {
+            stick_notify_loading.visibility = View.GONE
+            stick_notify_loading.stopAnim()
+        }
+    }
 }

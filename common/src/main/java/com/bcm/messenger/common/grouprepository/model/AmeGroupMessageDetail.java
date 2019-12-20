@@ -38,7 +38,10 @@ public class AmeGroupMessageDetail {
         SEND_SUCCESS(1),
         SENDING(2),
         RECEIVE_SUCCESS(3),
-        SEND_FAILED(10000);
+        SEND_FAILED(10000),
+        FILE_NOT_FOUND(10001),
+        FILE_DOWNLOAD_FAIL(10002),
+        THUMB_DOWNLOAD_FAIL(10003);
 
         private final long value;
 
@@ -195,6 +198,18 @@ public class AmeGroupMessageDetail {
 
     public boolean isReceiveSuccess() {
         return sendState == SendState.RECEIVE_SUCCESS;
+    }
+
+    public boolean isFileDownloadFail() {
+        return sendState == SendState.FILE_DOWNLOAD_FAIL;
+    }
+
+    public boolean isThumbnailDownloadFail() {
+        return sendState == SendState.THUMB_DOWNLOAD_FAIL;
+    }
+
+    public boolean isFileDeleted() {
+        return sendState == SendState.FILE_NOT_FOUND;
     }
 
     public boolean isSendFail() {

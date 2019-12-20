@@ -4,18 +4,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:maxLines="2"
         android:ellipsize="end"
+        android:textSize="20sp"
         android:gravity="left|center_vertical" />
-    <TextView
+    <com.bcm.messenger.common.ui.emoji.EmojiTextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:maxLines="2"
         android:ellipsize="end"
-        android:gravity="left|center_vertical"
-        />
+        android:textSize="20sp"
+        android:gravity="left|center_vertical" />
 
 </com.bcm.messenger.chats.thread.MessageListTitleView>

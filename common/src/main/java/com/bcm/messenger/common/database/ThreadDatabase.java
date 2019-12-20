@@ -54,7 +54,6 @@ import com.bcm.messenger.common.mms.Slide;
 import com.bcm.messenger.common.mms.SlideDeck;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
 import com.bcm.messenger.common.recipients.Recipient;
-import com.bcm.messenger.common.utils.ConversationUtils;
 import com.bcm.messenger.common.utils.GroupUtil;
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.utility.AmeTimeUtil;
@@ -123,7 +122,7 @@ public class ThreadDatabase extends Database {
             "CREATE INDEX IF NOT EXISTS archived_count_index ON " + TABLE_NAME + " (" + ARCHIVED + ", " + MESSAGE_COUNT + ");",
     };
 
-    
+
     public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
     private static final String[] THREAD_PROJECTION = {
@@ -174,7 +173,7 @@ public class ThreadDatabase extends Database {
         }
     }
 
-    
+
     private long createThreadForRecipient(Address address, boolean group, int distributionType) {
         ContentValues contentValues = new ContentValues(5);
         long date = System.currentTimeMillis();
@@ -347,7 +346,7 @@ public class ThreadDatabase extends Database {
         }};
     }
 
-   
+
     public void setReadList(List<ThreadRecord> threads, boolean lastSeen) {
         ContentValues contentValues = new ContentValues(1);
         contentValues.put(READ, 1);
@@ -376,7 +375,7 @@ public class ThreadDatabase extends Database {
     }
 
 
-  
+
     public void setReadForNewGroup(long threadId, long gid, long lastSeen) {
         MessageDataManager.INSTANCE.setGroupMessageRead(gid);
         ContentValues contentValues = new ContentValues(3);
@@ -415,7 +414,7 @@ public class ThreadDatabase extends Database {
     }
 
 
-    
+
     public int getDistributionType(long threadId) {
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME, new String[]{TYPE}, ID_WHERE, new String[]{String.valueOf(threadId)}, null, null, null);
@@ -528,7 +527,7 @@ public class ThreadDatabase extends Database {
             if (cursor != null && cursor.moveToNext()) {
                 return cursor.getLong(cursor.getColumnIndexOrThrow(PIN));
             }
-            
+
             return 0;
         } catch (Exception ex) {
             return 0;
@@ -644,7 +643,7 @@ public class ThreadDatabase extends Database {
         }
     }
 
- 
+
     public void deleteConversationContentForNewGroup(long gid, long threadId) {
         DatabaseFactory.getDraftDatabase(context).clearDrafts(threadId);
         deleteThread(threadId);
@@ -653,7 +652,7 @@ public class ThreadDatabase extends Database {
         notifyConversationListListeners();
     }
 
-  
+
     public void deleteConversationForNewGroup(long gid, long threadId) {
         DatabaseFactory.getDraftDatabase(context).clearDrafts(threadId);
         GroupLiveInfoManager.Companion.getInstance().deleteLiveInfoWhenLeaveGroup(gid);
@@ -661,7 +660,7 @@ public class ThreadDatabase extends Database {
         notifyConversationListListeners();
     }
 
-   
+
     public void clearConversationContent(long threadId) {
         DatabaseFactory.getSmsDatabase(context).deleteThread(threadId);
         DatabaseFactory.getMmsDatabase(context).deleteThread(threadId);
@@ -675,7 +674,7 @@ public class ThreadDatabase extends Database {
         notifyConversationListListeners();
     }
 
-   
+
     public void clearConversationExcept(long threadId, long... messageId) {
         DatabaseFactory.getSmsDatabase(context).deleteMessagesExcept(threadId, messageId);
         DatabaseFactory.getMmsDatabase(context).deleteAllExcept(threadId);
@@ -788,7 +787,7 @@ public class ThreadDatabase extends Database {
         return null;
     }
 
-   
+
     public void setHasSent(long threadId, boolean hasSent) {
         ContentValues contentValues = new ContentValues(1);
         contentValues.put(HAS_SENT, hasSent ? 1 : 0);
@@ -798,7 +797,7 @@ public class ThreadDatabase extends Database {
 
     }
 
-  
+
     void updateReadStateForNewGroup(long threadId, int unreadCount) {
         ALog.i(TAG, "updateReadStateForNewGroup threadId: " + threadId + ", unreadCount: " + unreadCount);
         ContentValues contentValues = new ContentValues();
@@ -826,7 +825,7 @@ public class ThreadDatabase extends Database {
 
     }
 
-    
+
     public void updateLiveState(long gid, int liveState) {
         long threadId;
         if (liveState == GroupLiveInfo.LiveStatus.REMOVED.getValue() || liveState == GroupLiveInfo.LiveStatus.STOPED.getValue()||liveState == GroupLiveInfo.LiveStatus.EMPTY.getValue()) {
@@ -844,7 +843,7 @@ public class ThreadDatabase extends Database {
         notifyConversationListListeners();
     }
 
-   
+
     public boolean update(long threadId, boolean unarchive) {
         MmsSmsDatabase mmsSmsDatabase = DatabaseFactory.getMmsSmsDatabase(context);
         MmsSmsDatabase.Reader reader = null;
@@ -856,7 +855,7 @@ public class ThreadDatabase extends Database {
                 final Slide snipSlide = getAttachmentFor(record);
                 ALog.i(TAG, "update threadId " + threadId + ", snipSlide is null: " + (snipSlide == null));
                 Uri uri = snipSlide != null ? (snipSlide.getThumbnailUri() == null ? snipSlide.getUri() : snipSlide.getThumbnailUri()) : null;
-                
+
                 if (uri == null && snipSlide != null) {
                     try {
                         Attachment att = snipSlide.asAttachment();
@@ -883,7 +882,7 @@ public class ThreadDatabase extends Database {
                 return false;
 
             } else {
-                
+
 //                updateThread(threadId, count, "", null,
 //                        System.currentTimeMillis(), -1, 0, -2136997865
 //                        , true, 0, 0);
@@ -906,12 +905,12 @@ public class ThreadDatabase extends Database {
         }
     }
 
- 
+
     public void updateByNewGroup(long gid) {
         AmeGroupMessageDetail message = GroupMessageTransform.INSTANCE.transformToModel(MessageDataManager.INSTANCE.fetchLastMessage(gid));
         long threadId = getThreadIdIfExistsFor(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid));
         if (threadId == -1L && (null == message || null == message.getMessage())) {
-            
+
             ALog.i(TAG, "updateByNewGroup gid: " + gid + ", no thread, no message, return");
             return;
         } else if(threadId == -1L) {
@@ -933,7 +932,7 @@ public class ThreadDatabase extends Database {
         }
     }
 
-   
+
     private void updateByNewGroup(long threadId, long count, String body, String attachmentUri, AmeGroupMessageDetail.SendState state, long date) {
         updateThread(threadId, count, body, Uri.parse(attachmentUri),
                 date, -1, 0, state.getValue()
@@ -941,7 +940,7 @@ public class ThreadDatabase extends Database {
         notifyConversationListListeners();
     }
 
-  
+
     public int getAllUnreadThreadCount() {
         return getAllUnreadThread().size();
     }
@@ -1064,7 +1063,7 @@ public class ThreadDatabase extends Database {
         public static final int INBOX_ZERO = 4;
         public static final int NEW_GROUP = 5;
 
-        
+
 
     }
 
@@ -1150,9 +1149,6 @@ public class ThreadDatabase extends Database {
             Address address = Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(ThreadDatabase.ADDRESS)));
 
             Recipient recipient = Recipient.from(context, address, true);
-
-            
-            ConversationUtils.INSTANCE.addConversationCache(recipient, threadId);
 
             DisplayRecord.Body body;
             if (distributionType == DistributionTypes.NEW_GROUP) {

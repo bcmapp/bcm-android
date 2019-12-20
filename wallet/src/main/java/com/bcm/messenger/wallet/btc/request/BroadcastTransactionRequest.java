@@ -18,8 +18,10 @@ package com.bcm.messenger.wallet.btc.request;
 
 import com.bcm.messenger.utility.proguard.NotGuard;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.io.Serializable;
 
 public class BroadcastTransactionRequest implements Serializable, NotGuard {
@@ -45,7 +47,7 @@ public class BroadcastTransactionRequest implements Serializable, NotGuard {
             return json.toString();
 
         } catch (Exception ex) {
-
+            ex.printStackTrace();
         }
         return "";
     }

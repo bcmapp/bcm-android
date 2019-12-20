@@ -13,6 +13,7 @@ import android.text.style.StyleSpan
 import android.util.AttributeSet
 import android.view.animation.AnimationUtils
 import android.widget.TextSwitcher
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getColor
 import com.bcm.messenger.chats.R
@@ -21,9 +22,12 @@ import com.bcm.messenger.common.event.ServiceConnectEvent
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAdHocModule
 import com.bcm.messenger.common.provider.ILoginModule
+import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.AppUtil.getString
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.sp2Px
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
@@ -36,7 +40,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class MessageListTitleView: TextSwitcher,IConnectionListener,IProxyStateChanged {
+class MessageListTitleView : TextSwitcher, IConnectionListener, IProxyStateChanged, RecipientModifiedListener {
 
     private val INIT = 0
     private val OFFLINE = 1
@@ -50,13 +54,17 @@ class MessageListTitleView: TextSwitcher,IConnectionListener,IProxyStateChanged 
     private var mHasNoticeLowVersionWarning = false
     private var state = INIT
 
-    constructor(context: Context) : super(context, null) {}
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {}
+    private var recipient = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)
+    private var currentName = recipient.name
+
+    constructor(context: Context) : super(context, null)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     fun init() {
         EventBus.getDefault().register(this)
         NetworkUtil.addListener(this)
         ProxyManager.setListener(this)
+        recipient.addListener(this)
 
         inAnimation = AnimationUtils.loadAnimation(context, R.anim.common_popup_drop_in)
         outAnimation = AnimationUtils.loadAnimation(context, R.anim.common_popup_drop_out)
@@ -75,6 +83,7 @@ class MessageListTitleView: TextSwitcher,IConnectionListener,IProxyStateChanged 
     fun unInit() {
         EventBus.getDefault().unregister(this)
         NetworkUtil.removeListener(this)
+        recipient.removeListener(this)
     }
 
     private fun jump() {
@@ -82,7 +91,7 @@ class MessageListTitleView: TextSwitcher,IConnectionListener,IProxyStateChanged 
             BcmRouter.getInstance().get(ARouterConstants.Activity.PROXY_SETTING)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .navigation()
-        } else if(OFFLINE == state) {
+        } else if (OFFLINE == state) {
             val adhocProvider = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
             adhocProvider?.configHocMode()
         }
@@ -125,11 +134,22 @@ class MessageListTitleView: TextSwitcher,IConnectionListener,IProxyStateChanged 
 
         this.state = state
 
-        isEnabled = (state == OFFLINE || state == PROXY_TRY )
-        getChildAt(0).isEnabled = isEnabled
-        getChildAt(1).isEnabled = isEnabled
+        isEnabled = (state == OFFLINE || state == PROXY_TRY)
+        if (isEnabled) {
+            getChildAt(0).isEnabled = true
+            getChildAt(1).isEnabled = true
 
-        val spanText = when(state) {
+            (getChildAt(0) as TextView).maxLines = 2
+            (getChildAt(1) as TextView).maxLines = 2
+        } else {
+            getChildAt(0).isEnabled = false
+            getChildAt(1).isEnabled = false
+
+            (getChildAt(0) as TextView).maxLines = 1
+            (getChildAt(1) as TextView).maxLines = 1
+        }
+
+        val spanText = when (state) {
             OFFLINE -> {
                 val builder = SpannableStringBuilder()
                 val offlineString = SpannableString(getString(R.string.chats_network_disconnected))
@@ -174,7 +194,6 @@ class MessageListTitleView: TextSwitcher,IConnectionListener,IProxyStateChanged 
                     }
                 }
 
-
                 val t = if (state == PROXY_CONNECTING) {
                     getString(R.string.chats_try_proxy_doing)
                 } else {
@@ -190,9 +209,9 @@ class MessageListTitleView: TextSwitcher,IConnectionListener,IProxyStateChanged 
 
             }
             else -> {
-                val spanString = SpannableString(getString(R.string.chats_title))
+                val spanString = SpannableString(currentName)
                 spanString.setSpan(StyleSpan(Typeface.BOLD), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spanString.setSpan(AbsoluteSizeSpan(30, true), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spanString.setSpan(AbsoluteSizeSpan(22.sp2Px()), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spanString.setSpan(ForegroundColorSpan(getColor(context, R.color.common_color_black)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
                 spanString
@@ -202,13 +221,13 @@ class MessageListTitleView: TextSwitcher,IConnectionListener,IProxyStateChanged 
         setText(spanText)
     }
 
-    private fun getState(): Int{
+    private fun getState(): Int {
         return when {
             !NetworkUtil.isConnected() -> {
                 OFFLINE
             }
-            isServiceDisconnected()  -> {
-                if (ProxyManager.hasCustomProxy()) {
+            isServiceDisconnected() -> {
+                if (ProxyManager.isProxyRunning() ) {
                     if (!customProxyConnecting) {
                         CONNECTING
                     } else {
@@ -229,4 +248,20 @@ class MessageListTitleView: TextSwitcher,IConnectionListener,IProxyStateChanged 
         return loginProvider?.serviceConnectedState() == ServiceConnectEvent.STATE.DISCONNECTED
     }
 
+    override fun onModified(recipient: Recipient) {
+        if (recipient == this.recipient) {
+            if (recipient.name != currentName) {
+                currentName = recipient.name
+
+                if (getState() == CONNECTED) {
+                    val spanString = SpannableString(currentName)
+                    spanString.setSpan(StyleSpan(Typeface.BOLD), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    spanString.setSpan(AbsoluteSizeSpan(22.sp2Px()), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    spanString.setSpan(ForegroundColorSpan(getColor(context, R.color.common_color_black)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                    setText(spanString)
+                }
+            }
+        }
+    }
 }

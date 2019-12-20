@@ -12,7 +12,9 @@ public class PrivacyProfileConverter {
         if (privacyProfile == null) return "";
         try {
             return GsonUtils.INSTANCE.toJson(privacyProfile);
-        } catch (Throwable tr) {}
+        } catch (Throwable tr) {
+            tr.printStackTrace();
+        }
         return "";
     }
 
@@ -21,7 +23,9 @@ public class PrivacyProfileConverter {
         if (json == null || json.isEmpty()) return new PrivacyProfile();
         try {
             return GsonUtils.INSTANCE.fromJson(json, PrivacyProfile.class);
-        } catch (Throwable tr) {}
+        } catch (Throwable tr) {
+            tr.printStackTrace();
+        }
         return new PrivacyProfile();
     }
 }

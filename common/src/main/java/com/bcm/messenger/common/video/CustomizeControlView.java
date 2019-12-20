@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.SystemClock;
 import androidx.annotation.Nullable;
 import android.util.AttributeSet;
@@ -90,6 +89,7 @@ public class CustomizeControlView extends FrameLayout {
     private final TextView durationView;
     private final TextView positionView;
     private final ImageView thumbnailView;
+    private final View controlLayout;
     private final TimeBar timeBar;
     private final StringBuilder formatBuilder;
     private final Formatter formatter;
@@ -240,6 +240,7 @@ public class CustomizeControlView extends FrameLayout {
         if (thumbnailView != null) {
             thumbnailView.setOnClickListener(componentListener);
         }
+        controlLayout = findViewById(R.id.center_control_layout);
         Resources resources = context.getResources();
         repeatOffButtonDrawable = resources.getDrawable(com.google.android.exoplayer2.R.drawable.exo_controls_repeat_off);
         repeatOneButtonDrawable = resources.getDrawable(com.google.android.exoplayer2.R.drawable.exo_controls_repeat_one);
@@ -366,7 +367,9 @@ public class CustomizeControlView extends FrameLayout {
 
     public void show() {
         if (!isVisible()) {
-            setVisibility(VISIBLE);
+//            setVisibility(VISIBLE);
+            centerPlayButton.setVisibility(VISIBLE);
+            controlLayout.setVisibility(VISIBLE);
             if (visibilityListener != null) {
                 visibilityListener.onVisibilityChange(getVisibility());
             }
@@ -379,7 +382,9 @@ public class CustomizeControlView extends FrameLayout {
 
     public void hide() {
         if (isVisible()) {
-            setVisibility(GONE);
+//            setVisibility(GONE);
+            centerPlayButton.setVisibility(GONE);
+            controlLayout.setVisibility(GONE);
             if (visibilityListener != null) {
                 visibilityListener.onVisibilityChange(getVisibility());
             }
@@ -390,7 +395,7 @@ public class CustomizeControlView extends FrameLayout {
     }
 
     public boolean isVisible() {
-        return getVisibility() == VISIBLE;
+        return controlLayout.getVisibility() == VISIBLE;
     }
 
     private void hideAfterTimeout() {
@@ -828,7 +833,7 @@ public class CustomizeControlView extends FrameLayout {
                 || keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS;
     }
 
-    public void setVideoThumbnail(Uri uri, GlideRequests glide) {
+    public void setVideoThumbnail(Object uri, GlideRequests glide) {
         ALog.i(TAG, "setVideoThumbnail");
         if (thumbnailView != null) {
             isThumbnailMode = true;

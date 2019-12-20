@@ -40,6 +40,11 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
             intent.putExtra(ARouterConstants.PARAM.SEARCH.DISPLAY_ALL, displayAll)
             intent.putExtra(ARouterConstants.PARAM.SEARCH.RECENT_CLAZZ, recentClass)
             intent.putExtra(ARouterConstants.PARAM.SEARCH.CURRENT_CLAZZ, searchClass)
+            intent.putExtra(ARouterConstants.PARAM.PARAM_ENTER_ANIM, R.anim.common_popup_alpha_in)
+            intent.putExtra(ARouterConstants.PARAM.PARAM_EXIT_ANIM, R.anim.common_popup_alpha_out)
+            intent.putExtra(ARouterConstants.PARAM.PARAM_PREVIOUS_EXIT_ANIM, R.anim.common_popup_alpha_out)
+            intent.putExtra(ARouterConstants.PARAM.PARAM_PREVIOUS_ENTER_ANIM, R.anim.common_popup_alpha_in)
+
             if (context is Activity) {
                 if (requestCode != 0) {
                     context.startActivityForResult(intent, requestCode)

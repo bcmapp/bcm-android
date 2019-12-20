@@ -3,35 +3,35 @@ package com.bcm.messenger.contacts
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.Loader
-import com.bcm.route.annotation.Route
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.api.IContactsAction
 import com.bcm.messenger.common.api.IContactsCallback
+import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.ContentShadeView
 import com.bcm.messenger.common.ui.CustomDataSearcher
 import com.bcm.messenger.common.ui.Sidebar
+import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.contacts.adapter.ContactsListLoader
 import com.bcm.messenger.contacts.components.RecipientRecyclerView
+import com.bcm.messenger.contacts.components.RecipientSelectionView
+import com.bcm.messenger.contacts.components.SelectionEnableChecker
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.logger.ALog
+import com.bcm.route.annotation.Route
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getColorCompat
-import com.bcm.messenger.contacts.components.RecipientSelectionView
-import com.bcm.messenger.contacts.components.SelectionEnableChecker
-import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.utility.AppContextHolder
 
 /**
  * Created by zjl on 2018/4/8.
@@ -48,6 +48,7 @@ class SingleContactSelectionFragment : Fragment(), IContactsAction {
 
     private val mHeaderList: MutableList<View> = ArrayList()
     private val mFooterList: MutableList<View> = ArrayList()
+    private val mHeaderFooterMap: MutableMap<View, Int> = mutableMapOf()
 
     private var mRecyclerView: RecipientRecyclerView? = null
     private var mSidebar: Sidebar? = null
@@ -64,6 +65,8 @@ class SingleContactSelectionFragment : Fragment(), IContactsAction {
     private var mHeaderEmpty = 0
 
     private var mShowDecoration: Boolean = false
+
+    private var mFixedSelectedList: MutableList<Recipient> = mutableListOf()
 
     private var mContactLoader = object : LoaderManager.LoaderCallbacks<List<Recipient>> {
 
@@ -117,6 +120,7 @@ class SingleContactSelectionFragment : Fragment(), IContactsAction {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        ALog.i(TAG, "onCreateView")
         val convertView = inflater.inflate(R.layout.contacts_fragment_selection, container, false)
 
         mSelectionView = convertView.findViewById(R.id.contacts_select_top)
@@ -183,11 +187,18 @@ class SingleContactSelectionFragment : Fragment(), IContactsAction {
             mSelectionView?.visibility = View.VISIBLE
         }
 
+        var index: Int?
         for (header in mHeaderList) {
-            mRecyclerView?.addHeader(header, false)
+            index = mRecyclerView?.addHeader(header, false)
+            if (index != null) {
+                mHeaderFooterMap[header] = index
+            }
         }
         for (footer in mFooterList) {
-            mRecyclerView?.addFooter(footer, false)
+            index = mRecyclerView?.addFooter(footer, false)
+            if (index != null) {
+                mHeaderFooterMap[footer] = index
+            }
         }
 
         val emptyView = mEmptyView
@@ -208,16 +219,17 @@ class SingleContactSelectionFragment : Fragment(), IContactsAction {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        ALog.i(TAG, "onViewCreated")
         initData()
     }
 
     private fun initSelectedContacts() {
+        //判断是否已有选中的联系人
+        mRecyclerView?.setSelectedRecipient(mFixedSelectedList)
         val gid = arguments?.getLong(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)?:return
         if (gid <= 0) {
             return
         }
-
         val memberList = AmeModuleCenter.group().getMembersFromCache(gid)
         if (memberList.isNotEmpty()) {
 
@@ -234,6 +246,7 @@ class SingleContactSelectionFragment : Fragment(), IContactsAction {
                         mRecyclerView?.setSelectedRecipient(it)
                     }
         }
+
     }
 
     private fun initData() {
@@ -305,23 +318,49 @@ class SingleContactSelectionFragment : Fragment(), IContactsAction {
     }
 
     override fun addHeader(header: View) {
-        mRecyclerView?.addHeader(header, true) ?: mHeaderList.add(header)
+        val index = mRecyclerView?.addHeader(header, true)
+        if (index != null) {
+            mHeaderFooterMap[header] = index
+        }else {
+            mHeaderList.add(header)
+        }
     }
 
     override fun addFooter(footer: View) {
-        mRecyclerView?.addFooter(footer, true) ?: mFooterList.add(footer)
+        val index = mRecyclerView?.addFooter(footer, true)
+        if (index != null) {
+            mHeaderFooterMap[footer] = index
+        }else {
+            mFooterList.add(footer)
+        }
+
     }
 
-    override fun showHeader(viewType: Int, show: Boolean) {
-        mRecyclerView?.showHeader(viewType, show, true)
+    override fun showHeader(header: View, show: Boolean) {
+        val viewType = mHeaderFooterMap[header]
+        if (viewType != null) {
+            mRecyclerView?.showHeader(viewType, show, true)
+        }
     }
 
-    override fun showFooter(viewType: Int, show: Boolean) {
-        mRecyclerView?.showFooter(viewType, show, true)
+    override fun showFooter(footer: View, show: Boolean) {
+        val viewType = mHeaderFooterMap[footer]
+        if (viewType != null) {
+            mRecyclerView?.showFooter(viewType, show, true)
+        }
     }
 
     override fun setSelected(recipient: Recipient, select: Boolean) {
         mRecyclerView?.setSelected(recipient, select)
+    }
+
+    override fun setFixedSelected(recipientList: List<Recipient>) {
+        recipientList.forEach {
+            if (!mFixedSelectedList.contains(it)) {
+                mFixedSelectedList.add(it)
+            }
+        }
+        mRecyclerView?.setSelectedRecipient(recipientList, true)
     }
 
     override fun setContactSelectCallback(callback: IContactsCallback) {

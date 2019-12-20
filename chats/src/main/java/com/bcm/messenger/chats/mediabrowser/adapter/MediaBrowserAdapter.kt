@@ -18,7 +18,7 @@ import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.utility.logger.ALog
 
 /**
- * Created by bcm.social.01 on 2018/10/16.
+ * bcm.social.01 2018/10/16.
  */
 class MediaBrowserAdapter(viewModel: BaseMediaBrowserViewModel, private val mediaHandleModel: MediaHandleViewModel,
                           private val emptyView: View, private val isDeleteMode: Boolean, context: Context,

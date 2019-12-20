@@ -69,9 +69,9 @@ class SetPasswordFragment : AbsRegistrationFragment() {
             }
         }
 
-        confirm_psw_edit.addTextChangedListener(object : TextWatcher {
+        confirm_pwd_edit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                confirm_psw_edit.background = context?.getDrawable(R.drawable.me_register_input_bg)
+                confirm_pwd_edit.background = context?.getDrawable(R.drawable.me_register_input_bg)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -83,10 +83,10 @@ class SetPasswordFragment : AbsRegistrationFragment() {
             AmePopup.result.failure(activity, getString(R.string.common_password_too_short_warning), true)
             new_password_edit.background = context?.getDrawable(R.drawable.me_register_input_error_bg)
             return false
-        } else if (!TextUtils.equals(new_password_edit.text, confirm_psw_edit.text)) {
+        } else if (!TextUtils.equals(new_password_edit.text, confirm_pwd_edit.text)) {
 
             AmePopup.result.failure(activity, resources.getString(R.string.me_psw_not_equals_confirm_psw), true)
-            confirm_psw_edit.background = context?.getDrawable(R.drawable.me_register_input_error_bg)
+            confirm_pwd_edit.background = context?.getDrawable(R.drawable.me_register_input_error_bg)
             return false
 
         } else if (!Pattern.matches(ARouterConstants.PASSWORD_REGEX, new_password_edit.text)) {

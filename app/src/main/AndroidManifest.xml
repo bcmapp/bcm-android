@@ -106,6 +106,9 @@
         <activity android:name="com.bcm.messenger.ui.PixelActivity"
             android:launchMode="singleTop"/>
 
+        <activity android:name=".ui.TablessIntroActivity"
+            android:screenOrientation="portrait" />
+
         <service android:name="com.bcm.messenger.google.FcmMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

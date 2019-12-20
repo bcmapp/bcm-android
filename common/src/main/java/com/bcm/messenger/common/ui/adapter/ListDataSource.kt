@@ -1,7 +1,7 @@
 package com.bcm.messenger.common.ui.adapter
 
 /**
- * Created by bcm.social.01 on 2018/5/25.
+ * bcm.social.01 2018/5/25.
  */
 open class ListDataSource<D : Any> : IListDataSource<D> {
 

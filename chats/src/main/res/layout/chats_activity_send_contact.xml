@@ -10,7 +10,7 @@
         app:left_type="text"
         app:left_text=""
         app:right_type="text"
-        app:right_text=""
+        app:right_text="@string/common_multi_select"
         app:right_text_color="@color/common_app_primary_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

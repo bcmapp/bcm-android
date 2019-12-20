@@ -15,6 +15,7 @@ import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
+import com.bcm.messenger.common.mms.DecryptableStreamUriLoader
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.video.VideoPlayer
@@ -70,6 +71,14 @@ data class MediaViewData(val indexId: Long,
         return result
     }
 
+    fun isDataNotFound(): Boolean {
+        if (msgType == MSG_TYPE_PRIVATE) {
+            return (sourceMsg as MessageRecord).isMediaDeleted()
+        } else if (msgType == MSG_TYPE_GROUP || msgType == MSG_TYPE_HISTORY) {
+            return (sourceMsg as AmeGroupMessageDetail).isFileDeleted
+        }
+        return false
+    }
 
     fun refreshSlide(attachment: AttachmentRecord) {
         if (sourceMsg is MessageRecord) {
@@ -109,18 +118,15 @@ data class MediaViewData(val indexId: Long,
                         videoPlayer.setVideoSource(masterSecret, mediaUri!!, false)
                     }
                 }
-
             }
             MSG_TYPE_GROUP, MSG_TYPE_HISTORY -> {
-                val msg = sourceMsg as AmeGroupMessageDetail
-                val content = msg.message.content as AmeGroupMessage.VideoContent
                 videoPlayer.hideVideoThumbnail()
                 videoPlayer.setVideoSource(masterSecret, mediaUri!!, false)
             }
         }
     }
 
-    fun setVideoThumbnail(videoPlayer: VideoPlayer, glide: GlideRequests) {
+    fun setVideoThumbnail(videoPlayer: VideoPlayer, glide: GlideRequests, masterSecret: MasterSecret) {
         videoViewRef = WeakReference(videoPlayer)
         when (msgType) {
             MSG_TYPE_PRIVATE -> {
@@ -130,21 +136,26 @@ data class MediaViewData(val indexId: Long,
                 }
             }
             MSG_TYPE_GROUP, MSG_TYPE_HISTORY -> {
-                MessageFileHandler.downloadThumbnail(sourceMsg as AmeGroupMessageDetail, object : MessageFileHandler.MessageFileCallback {
-                    override fun onResult(success: Boolean, uri: Uri?) {
-                        val view = videoViewRef?.get()
-                        if (view == videoPlayer) {
-                            if (success) {
-                                view.setVideoThumbnail(uri, glide)
-                            } else {
-                                try {
-                                    view.setVideoThumbnail(Uri.parse("android.resource://${AppContextHolder.APP_CONTEXT.packageName}/${R.drawable.common_video_place_img}"), glide)
-                                } catch (ex: Exception) {
+                val messageRecord = sourceMsg as AmeGroupMessageDetail
+                if (messageRecord.thumbnailPartUri != null) {
+                    videoPlayer.setVideoThumbnail(DecryptableStreamUriLoader.DecryptableUri(masterSecret, messageRecord.thumbnailPartUri!!), glide)
+                } else {
+                    MessageFileHandler.downloadThumbnail(messageRecord, object : MessageFileHandler.MessageFileCallback {
+                        override fun onResult(success: Boolean, uri: Uri?) {
+                            val view = videoViewRef?.get()
+                            if (view == videoPlayer) {
+                                if (success) {
+                                    view.setVideoThumbnail(uri, glide)
+                                } else {
+                                    try {
+                                        view.setVideoThumbnail(Uri.parse("android.resource://${AppContextHolder.APP_CONTEXT.packageName}/${R.drawable.common_video_place_img}"), glide)
+                                    } catch (ex: Exception) {
+                                    }
                                 }
                             }
                         }
-                    }
-                })
+                    })
+                }
             }
         }
     }
@@ -192,7 +203,6 @@ data class MediaViewData(val indexId: Long,
                 if (success) {
                     if (videoPlayer == videoViewRef?.get()) {
                         mediaUri = uri
-                        val content = message.message.content as AmeGroupMessage.AttachmentContent
                         videoPlayer.hideVideoThumbnail()
                         videoPlayer.setVideoSource(masterSecret, mediaUri!!, false)
                     }
@@ -203,6 +213,9 @@ data class MediaViewData(val indexId: Long,
     }
 
     private fun downloadGroupThumbnail(imageView: ZoomingImageView, glide: GlideRequests, messageDetail: AmeGroupMessageDetail, masterSecret: MasterSecret) {
+        if (messageDetail.isFileDeleted) {
+            return
+        }
         MessageFileHandler.downloadThumbnail(messageDetail, object : MessageFileHandler.MessageFileCallback {
             override fun onResult(thumbSuccess: Boolean, thumbUri: Uri?) {
                 val content = messageDetail.message.content as AmeGroupMessage.AttachmentContent
@@ -225,6 +238,9 @@ data class MediaViewData(val indexId: Long,
     }
 
     private fun downloadGroupAttachment(imageView: ZoomingImageView, glide: GlideRequests, messageDetail: AmeGroupMessageDetail, masterSecret: MasterSecret) {
+        if (messageDetail.isFileDeleted) {
+            return
+        }
         MessageFileHandler.downloadAttachment(messageDetail, object : MessageFileHandler.MessageFileCallback {
             override fun onResult(success: Boolean, uri: Uri?) {
                 val content = messageDetail.message.content as AmeGroupMessage.AttachmentContent

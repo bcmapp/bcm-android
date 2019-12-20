@@ -65,5 +65,8 @@
     <string name="OK">OK</string>
     <string name="upgrade">更新</string>
 
-
+    <!-- Tabless UI -->
+    <string name="tabless_ui_intro_text_1"><Data><![CDATA[<font color=#C5F4F7>全新的</font><br><font color=#FFFFFF><b>无标签用户界面</b></font>]]></Data></string>
+    <string name="tabless_ui_intro_text_2"><Data><![CDATA[<font color=#FFFFFF><b>好友列表</b></font><font color=#C5F4F7>转移到了<br></font><font color=#FFFFFF><b>新建聊天</b></font><font color=#C5F4F7>中</font>]]></Data></string>
+    <string name="tabless_ui_intro_text_3"><Data><![CDATA[<font color=#C5F4F7>点击</font><font color=#FFFFFF><b>头像</b></font><font color=#C5F4F7>可以找到</font><br><font color=#FFFFFF><b>“更多”标签页</b></font><font color=#C5F4F7>内的功能<br></font>]]></Data></string>
 </resources>

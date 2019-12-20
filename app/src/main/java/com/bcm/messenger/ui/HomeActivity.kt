@@ -1,44 +1,54 @@
 package com.bcm.messenger.ui
 
-import android.annotation.SuppressLint
+import android.animation.*
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
-import androidx.viewpager.widget.ViewPager
 import com.bcm.messenger.R
-import com.bcm.messenger.adapter.HomeViewPagerAdapter
+import com.bcm.messenger.chats.NewChatActivity
+import com.bcm.messenger.chats.privatechat.webrtc.CameraState
 import com.bcm.messenger.chats.thread.MessageListFragment
+import com.bcm.messenger.chats.thread.MessageListTitleView
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.ARouterConstants.Fragment.CONTACTS_HOST
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.database.db.UserDatabase
+import com.bcm.messenger.common.core.RecipientProfileLogic
 import com.bcm.messenger.common.event.HomeTabEvent
+import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.metrics.ReportUtil
+import com.bcm.messenger.common.preferences.SuperPreferences
+import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.IAdHocModule
-import com.bcm.messenger.common.ui.BadgeLayout
-import com.bcm.messenger.common.utils.AmePushProcess
-import com.bcm.messenger.common.utils.ClipboardUtil
-import com.bcm.messenger.common.utils.PushUtil
-import com.bcm.messenger.common.utils.RxBus
+import com.bcm.messenger.common.provider.IChatModule
+import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.recipients.RecipientModifiedListener
+import com.bcm.messenger.common.ui.BcmRecyclerView
+import com.bcm.messenger.common.ui.CommonShareView
+import com.bcm.messenger.common.ui.ConstraintPullDownLayout
+import com.bcm.messenger.common.ui.popup.BcmPopupMenu
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.utils.pixel.PixelManager
-import com.bcm.messenger.contacts.ContactsFragment
 import com.bcm.messenger.logic.SchemeLaunchHelper
-import com.bcm.messenger.me.ui.profile.MeMoreFragment
+import com.bcm.messenger.login.logic.AmeLoginLogic
+import com.bcm.messenger.me.ui.scan.NewScanActivity
 import com.bcm.messenger.me.utils.BcmUpdateUtil
 import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.MultiClickObserver
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
+import com.google.gson.reflect.TypeToken
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.home_profile_layout.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -46,8 +56,7 @@ import java.util.concurrent.TimeUnit
  * Created by zjl on 2018/2/27.
  */
 @Route(routePath = ARouterConstants.Activity.APP_HOME_PATH)
-class HomeActivity : SwipeBaseActivity() {
-
+class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
     companion object {
         private const val TAG = "HomeActivity"
 
@@ -63,22 +72,28 @@ class HomeActivity : SwipeBaseActivity() {
     private val mAdHocModule: IAdHocModule by lazy { AmeModuleCenter.adhoc() }
     private var mPixelManager: PixelManager? = null
 
+    private var recipient = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)
+    private lateinit var titleView: MessageListTitleView
+    private var mWaitForShortLink: Boolean = false //是否等待短链生成
+    private var messageListFragment: MessageListFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ALog.i(TAG, "onCreate")
         ReportUtil.launchEnded()
 
         setSwipeBackEnable(false)
 
         setContentView(R.layout.activity_home)
 
+        checkShowIntroPage()
+        recipient.addListener(this)
+
         if (null != savedInstanceState) {
-            recyclerFragments()
+            recycleFragments()
         }
         initView()
-
-        checkUnreadFriendRequest()
+        initPullDownView()
+        initRecipientData()
 
         BcmUpdateUtil.checkUpdate { hasUpdate, forceUpdate, _ ->
             if (hasUpdate) {
@@ -90,36 +105,36 @@ class HomeActivity : SwipeBaseActivity() {
             }
         }
 
-        home_viewpager.setCurrentItem(TAB_CHAT, false)
-        selectItem(TAB_CHAT)
-
         RxBus.subscribe<HomeTabEvent>(TAG) {
 
             ALog.i(TAG, "receive HomeTabEvent position: ${it.position}, figure: ${it.showFigure}")
-            fun updateBadge(badgeView: BadgeLayout?, showFigure: Int, showDot: Boolean, badgeCount: Int) {
+            fun updateBadge(showFigure: Int, showDot: Boolean, badgeCount: Int) {
                 when {
-                    showFigure > 0 -> badgeView?.showFigure(showFigure)
-                    showDot -> badgeView?.showDot()
-                    else -> badgeView?.hideBadge()
+                    showFigure > 0 -> {
+//                        home_toolbar_badge?.unreadCount = showFigure
+                        home_profile_layout.unreadCount = showFigure
+                    }
+                    else -> {
+//                        home_toolbar_badge?.unreadCount = 0
+                        home_profile_layout.unreadCount = 0
+                    }
                 }
                 ALog.i(TAG, "updateBadge: $badgeCount")
                 AmePushProcess.updateAppBadge(AppContextHolder.APP_CONTEXT, badgeCount)
             }
 
-            var showFigure: Int = 0
-            var showDot: Boolean = false
-            var badgeView: BadgeLayout? = null
-            var badgeCount: Int = 0
-            var updateBadge: Boolean = false
-            when(it.position) {
+            var showFigure = 0
+            var showDot = false
+            var badgeCount = 0
+            var updateBadge = false
+            when (it.position) {
                 TAB_CHAT -> {
 
                     if ((it.showFigure != null || it.showDot != null) && !mAdHocModule.isAdHocMode()) {
                         updateBadge = true
-                        badgeView = tab_chat_badge
                         showFigure = it.showFigure ?: 0
                         showDot = it.showDot ?: false
-                        badgeCount = showFigure + (tab_contacts_badge?.getBadgeCount() ?: 0) + (tab_me_badge?.getBadgeCount() ?: 0)
+                        badgeCount = showFigure
 
                     }
                 }
@@ -127,11 +142,9 @@ class HomeActivity : SwipeBaseActivity() {
 
                     if ((it.showFigure != null || it.showDot != null) && !mAdHocModule.isAdHocMode()) {
                         updateBadge = true
-                        badgeView = tab_contacts_badge
                         showFigure = it.showFigure ?: 0
                         showDot = it.showDot ?: false
-                        badgeCount = (tab_chat_badge?.getBadgeCount()
-                                ?: 0) + showFigure + (tab_me_badge?.getBadgeCount() ?: 0)
+                        badgeCount = showFigure
 
                     }
 
@@ -140,11 +153,9 @@ class HomeActivity : SwipeBaseActivity() {
 
                     if ((it.showFigure != null || it.showDot != null) && !mAdHocModule.isAdHocMode()) {
                         updateBadge = true
-                        badgeView = tab_me_badge
                         showFigure = it.showFigure ?: 0
                         showDot = it.showDot ?: false
-                        badgeCount = (tab_chat_badge?.getBadgeCount()
-                                ?: 0) + (tab_contacts_badge?.getBadgeCount() ?: 0) + showFigure
+                        badgeCount = showFigure
 
                     }
 
@@ -153,7 +164,6 @@ class HomeActivity : SwipeBaseActivity() {
 
                     if ((it.showFigure != null || it.showDot != null) && mAdHocModule.isAdHocMode()) {
                         updateBadge = true
-                        badgeView = null
                         showFigure = it.showFigure ?: 0
                         showDot = it.showDot ?: false
                         badgeCount = showFigure
@@ -162,73 +172,22 @@ class HomeActivity : SwipeBaseActivity() {
                 }
             }
             if (updateBadge) {
-                updateBadge(badgeView, showFigure, showDot, badgeCount)
+                updateBadge(showFigure, showDot, badgeCount)
             }
         }
 
         checkSchemeLaunch()
 
         initClipboardUtil()
-
         checkAdHocMode()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        RxBus.unSubscribe(TAG)
-        ClipboardUtil.unInitClipboardUtil()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        if(!checkAdHocMode()){
-            checkClipboardDelay()
-            if (SchemeLaunchHelper.hasIntent()) {
-                checkSchemeLaunch()
-            }
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (System.currentTimeMillis() - checkStartTime < 1000) {
-            ALog.i(TAG, "HomeActivity onPause, Start check clipboard time to pause time less then 1 seconds, means have pin lock, canceled check")
-            checkDisposable?.dispose()
-        }
-    }
-
-    override fun onNewIntent(newIntent: Intent?) {
-        super.onNewIntent(newIntent)
-        ALog.i(TAG, "onNewIntent")
-        intent = newIntent
-
-        home_viewpager.setCurrentItem(TAB_CHAT, false)
-        selectItem(TAB_CHAT)
-
-        if (AmeModuleCenter.login().isPinLocked()) {
-            AmeModuleCenter.login().showPinLock()
-            SchemeLaunchHelper.storeSchemeIntent(newIntent)
-        } else {
-            AmePushProcess.checkSystemBannerNotice()
-            PushUtil.loadSystemMessages()
-            checkSchemeLaunch()
-        }
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        super.onRestoreInstanceState(savedInstanceState)
-        if (null != savedInstanceState) {
-            home_viewpager.setCurrentItem(TAB_CHAT, false)
-            selectItem(TAB_CHAT)
-        }
+        handleTopEvent()
     }
 
     private fun checkAdHocMode(): Boolean {
         val adHocMainTag = "adhoc_main"
         val adHocMainFragment = supportFragmentManager.findFragmentByTag(adHocMainTag)
         if (mAdHocModule.isAdHocMode()) {
-            if(null != adHocMainFragment) {
+            if (null != adHocMainFragment) {
                 return true
             }
             val addFragment = supportFragmentManager.beginTransaction()
@@ -267,6 +226,100 @@ class HomeActivity : SwipeBaseActivity() {
         return false
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        recipient.removeListener(this)
+        RxBus.unSubscribe(TAG)
+        ClipboardUtil.unInitClipboardUtil()
+        titleView.unInit()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!checkAdHocMode()) {
+            checkClipboardDelay()
+            if (SchemeLaunchHelper.hasIntent()) {
+                checkSchemeLaunch()
+            }
+            checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(AMESelfData.uid) > 0)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (System.currentTimeMillis() - checkStartTime < 1000) {
+            ALog.i(TAG, "HomeActivity onPause, Start check clipboard time to pause time less then 1 seconds, means have pin lock, canceled check")
+            checkDisposable?.dispose()
+        }
+    }
+
+    override fun onNewIntent(newIntent: Intent?) {
+        super.onNewIntent(newIntent)
+        intent = newIntent
+
+        if (AmeModuleCenter.login().isPinLocked()) {
+            AmeModuleCenter.login().showPinLock()
+            SchemeLaunchHelper.storeSchemeIntent(newIntent)
+        } else {
+            //查看系统banner消息是否存在
+            AmePushProcess.checkSystemBannerNotice()
+            //拉取系统消息
+            PushUtil.loadSystemMessages()
+
+            checkSchemeLaunch()
+        }
+    }
+
+    /**
+     * 处理请求过来的topevent事件
+     */
+    private fun handleTopEvent() {
+        try {
+            val data = intent.getStringExtra(ARouterConstants.PARAM.PARAM_DATA)
+            if (!data.isNullOrEmpty()) {
+                val event = GsonUtils.fromJson<HomeTopEvent>(data, object : TypeToken<HomeTopEvent>() {}.type)
+                fun continueAction() {
+                    if (event.finishTop) {
+                        BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH).navigation(this)
+                    }
+
+                    val con = event.chatEvent
+                    if (con != null) {
+                        BcmRouter.getInstance()
+                                .get(con.path)
+                                .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, con.address)
+                                .putLong(ARouterConstants.PARAM.PARAM_THREAD, con.threadId)
+                                .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, con.gid ?: -1L)
+                                .navigation(this)
+                    }
+
+                    val call = event.callEvent
+                    if (call != null) {
+                        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONVERSATION_BASE).navigationWithCast<IChatModule>()
+                        provider.startRtcCallService(AppContextHolder.APP_CONTEXT, call.address.serialize(), CameraState.Direction.NONE.ordinal)
+                    }
+                }
+
+                val notify = event.notifyEvent
+                if (notify != null) {
+                    ALog.d(TAG, "receive HomeTopEvent success: ${notify.success}, message: ${notify.message}")
+                    if (notify.success) {
+                        AmeAppLifecycle.succeed(notify.message, true) {
+                            continueAction()
+                        }
+                    } else {
+                        AmeAppLifecycle.failure(notify.message, true) {
+                            continueAction()
+                        }
+                    }
+                } else {
+                    continueAction()
+                }
+            }
+        } catch (ex: Exception) {
+            ALog.e(TAG, "handleTopEvent error", ex)
+        }
+    }
 
     /**
      * Check called by other apps
@@ -282,7 +335,7 @@ class HomeActivity : SwipeBaseActivity() {
         }
     }
 
-    private fun recyclerFragments() {
+    private fun recycleFragments() {
         val list = ArrayList<Fragment>()
         if (supportFragmentManager.fragments.size > 0) {
             for (i in supportFragmentManager.fragments) {
@@ -299,98 +352,42 @@ class HomeActivity : SwipeBaseActivity() {
     }
 
     private fun initView() {
-        val fms = ArrayList<Fragment>()
-        val conversationFragment = MessageListFragment()
-        conversationFragment.arguments = Bundle().apply {
+        titleView = home_toolbar_name as MessageListTitleView
+        titleView.init()
+
+        home_toolbar_name.setOnClickListener(MultiClickObserver(2, object : MultiClickObserver.MultiClickListener {
+            override fun onMultiClick(view: View?, count: Int) {
+                messageListFragment?.clearThreadUnreadState()
+            }
+        }))
+        home_toolbar_more.setOnClickListener {
+            showMenu()
+        }
+        home_toolbar_chat.setOnClickListener {
+            startActivity(Intent(this, NewChatActivity::class.java))
+        }
+
+        messageListFragment = MessageListFragment()
+        messageListFragment!!.arguments = Bundle().apply {
             putParcelable(ARouterConstants.PARAM.PARAM_MASTER_SECRET, getMasterSecret())
         }
-        fms.add(conversationFragment)
-        conversationFragment.setActive(true)
-
-        val contactsFragment = BcmRouter.getInstance().get(CONTACTS_HOST).navigationWithCast<ContactsFragment>()
-        fms.add(contactsFragment)
-
-        val meFragment = MeMoreFragment()
-        val args = Bundle()
-        args.putBoolean(ARouterConstants.PARAM.PARAM_LOGIN_FROM_REGISTER, intent.getBooleanExtra(ARouterConstants.PARAM.PARAM_LOGIN_FROM_REGISTER, false))
-        meFragment.arguments = args
-        fms.add(meFragment)
-
-        val homeViewPagerAdapter = HomeViewPagerAdapter(supportFragmentManager, fms)
-        home_viewpager.adapter = homeViewPagerAdapter
-        home_viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-
+        messageListFragment!!.callback = object : MessageListFragment.MessageListCallback {
+            override fun onRecyclerViewCreated(recyclerView: BcmRecyclerView) {
+                home_pull_down_layout.setScrollView(recyclerView)
             }
 
-            override fun onPageSelected(position: Int) {
-                RxBus.post(HomeTabEvent(position, false))
-
-                for ((index, value) in fms.withIndex()) {
-                    if (value is BaseFragment) {
-                        if (index == position) {
-                            value.setActive(true)
-                        } else {
-                            if (value.isActive()) {
-                                value.setActive(false)
-                            }
-                        }
-                    }
-                }
-
-                when (position) {
-                    0 -> selectItem(TAB_CHAT)
-                    1 -> selectItem(TAB_CONTACT)
-                    2 -> selectItem(TAB_ME)
-                }
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {}
-
-        })
-        home_viewpager.isSlidingEnable = true
-        home_viewpager.offscreenPageLimit = 3
-
-        tab_contacts_badge.setOnClickListener {
-            home_viewpager.setCurrentItem(TAB_CONTACT, false)
-            selectItem(TAB_CONTACT)
-        }
-
-        tab_me_badge.setOnClickListener {
-            home_viewpager.setCurrentItem(TAB_ME, false)
-            selectItem(TAB_ME)
-        }
-    }
-
-    private fun selectItem(numId: Int) {
-        tab_chat.setImageResource(R.drawable.tab_chat_icon)
-        tab_contacts.setImageResource(R.drawable.tab_contacts_icon)
-        tab_me.setImageResource(R.drawable.tab_me_icon)
-
-        when (numId) {
-            TAB_CHAT -> tab_chat.setImageResource(R.drawable.tab_chat_selected_icon)
-            TAB_CONTACT -> tab_contacts.setImageResource(R.drawable.tab_contacts_selected_icon)
-            TAB_ME -> tab_me.setImageResource(R.drawable.tab_me_selected_icon)
-        }
-
-        when (numId) {
-            TAB_CHAT -> tab_chat_badge.setOnClickListener(MultiClickObserver(2, object : MultiClickObserver.MultiClickListener {
-                override fun onMultiClick(view: View?, count: Int) {
-                    RxBus.post(HomeTabEvent(TAB_CHAT, true))
-                }
-            }))
-            else -> tab_chat_badge.setOnClickListener {
-                home_viewpager.setCurrentItem(TAB_CHAT, false)
-                selectItem(TAB_CHAT)
+            override fun onClickInvite() {
+                doInvite(recipient)
             }
         }
+
+        initFragment(R.id.home_chats_main, messageListFragment!!, messageListFragment!!.arguments)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            val meMoreFragment = (home_viewpager.adapter as HomeViewPagerAdapter).getItem(2) as MeMoreFragment
-            if (meMoreFragment.isTopViewExpanded()) {
-                meMoreFragment.closeTopView()
+            if (home_pull_down_layout.isTopViewExpanded()) {
+                home_pull_down_layout.closeTopViewAndCallback()
                 return true
             }
 
@@ -404,18 +401,171 @@ class HomeActivity : SwipeBaseActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
-    @SuppressLint("CheckResult")
-    private fun checkUnreadFriendRequest() {
-        Observable.create<Int> {
-            it.onNext(UserDatabase.getDatabase().friendRequestDao().queryUnreadCount())
-            it.onComplete()
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    if (it > 0) {
-                        tab_contacts_badge.showFigure(it)
+    private fun initRecipientData() {
+        updateRecipientData(recipient)
+        checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(AMESelfData.uid) > 0)
+    }
+
+    private fun updateRecipientData(recipient: Recipient) {
+        home_toolbar_avatar.showPrivateAvatar(recipient)
+        home_profile_name.text = recipient.name
+        home_profile_layout.recipient = recipient
+    }
+
+    private fun initPullDownView() {
+        val statusBarHeight = getStatusBarHeight()
+        val screenWidth = getScreenWidth()
+
+        val topViewHeight = if (checkDeviceHasNavigationBar()) {
+            getRealScreenHeight() - getNavigationBarHeight()
+        } else {
+            getRealScreenHeight()
+        }
+
+        home_toolbar.layoutParams = home_toolbar.layoutParams.apply {
+            height = 60.dp2Px()
+        }
+        home_status_fill.layoutParams = home_status_fill.layoutParams.apply {
+            height = statusBarHeight
+        }
+        home_profile_top_line.setGuidelineBegin(statusBarHeight - 8.dp2Px())
+        home_pull_down_layout.setInterceptTouch()
+        home_pull_down_layout.setReboundSize(75.dp2Px())
+        home_pull_down_layout.setTopViewSize(topViewHeight, 0)
+
+        val callback = object : ConstraintPullDownLayout.PullDownLayoutCallback() {
+            private fun hideAnimation() = AnimatorSet().apply {
+                val updateListener = ValueAnimator.AnimatorUpdateListener {
+                    home_profile_bg.alpha = it.animatedValue as Float
+                }
+                val valueAnimator = ValueAnimator.ofFloat(1f, 0f)
+                valueAnimator.addUpdateListener(updateListener)
+
+                play(valueAnimator)
+
+                addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        valueAnimator.removeAllUpdateListeners()
+                        this@apply.removeAllListeners()
                     }
-                }, {})
+                })
+            }
+
+            private val dp40 = 40.dp2Px()
+            private val dp15 = 15.dp2Px()
+            private val dp10 = 10.dp2Px()
+            private val dp120 = 120.dp2Px()
+            private val dp75 = 75.dp2Px()
+            private val dp6 = 6.dp2Px()
+            private val gapSize = (topViewHeight - statusBarHeight - 426.dp2Px()) / 3 + 30.dp2Px()
+
+            private val avatarMaxSize = 160.dp2Px()
+            private val avatarStartMaxMargin = (screenWidth - avatarMaxSize) / 2 - dp15
+
+            override fun onTopViewHeightChanged(height: Int, direction: Int) {
+                val percentage = height.toFloat() / topViewHeight
+                val distance = if (direction == ConstraintPullDownLayout.MOVE_DOWN) {
+                    height
+                } else {
+                    topViewHeight - height
+                }
+                var alpha = distance.toFloat() / dp75
+                alpha = when {
+                    alpha > 1f -> 1f
+                    alpha < 0f -> 0f
+                    else -> alpha
+                }
+
+                val avatarSize = (dp120.toFloat() * percentage).toInt() + dp40
+                val marginStart = dp15 + (avatarStartMaxMargin.toFloat() * percentage).toInt()
+                val marginTop = (gapSize.toFloat() * percentage).toInt() + dp10
+                home_toolbar_avatar.layoutParams = (home_toolbar_avatar.layoutParams as ConstraintLayout.LayoutParams).apply {
+                    this.marginStart = marginStart
+                    this.topMargin = marginTop
+                    this.width = avatarSize
+                    this.height = avatarSize
+                }
+                home_toolbar_avatar.updateOval()
+
+                if (direction == ConstraintPullDownLayout.MOVE_DOWN) {
+                    home_profile_bg.alpha = alpha
+                    home_toolbar.layoutParams = (home_toolbar.layoutParams as ConstraintLayout.LayoutParams).apply {
+                        topMargin = (marginTop - dp10) * 2
+                    }
+                    home_toolbar_badge.layoutParams = (home_toolbar_badge.layoutParams as ConstraintLayout.LayoutParams).apply {
+                        topMargin = (marginTop - dp10) * 2 + dp6
+                    }
+                } else if (direction == ConstraintPullDownLayout.MOVE_UP) {
+                    home_profile_bg.alpha = 1 - alpha
+                    home_profile_layout.setMargin(-(dp120 * alpha).toInt())
+                    home_profile_layout.setViewsAlpha(1 - alpha)
+                }
+
+                when {
+                    height != 0 && height != topViewHeight -> {
+                        home_toolbar_avatar.setPrivateElevation(32f.dp2Px())
+                        home_toolbar_avatar.visibility = View.VISIBLE
+                        home_toolbar_avatar.getIndividualAvatarView().hideCoverText()
+                        home_profile_layout.hideAvatar()
+                    }
+                    height == 0 -> {
+                        home_toolbar_avatar.setPrivateElevation(0f)
+                        home_toolbar_avatar.getIndividualAvatarView().showCoverText()
+                        home_toolbar_avatar.showPrivateAvatar(recipient)
+
+                        home_toolbar.layoutParams = (home_toolbar.layoutParams as ConstraintLayout.LayoutParams).apply {
+                            topMargin = 0
+                        }
+                        home_toolbar_badge.layoutParams = (home_toolbar_badge.layoutParams as ConstraintLayout.LayoutParams).apply {
+                            topMargin = dp6
+                        }
+                    }
+                    height == topViewHeight -> {
+                        home_toolbar_avatar.setPrivateElevation(0f)
+                        home_toolbar_avatar.visibility = View.GONE
+                        home_profile_layout.showAvatar()
+
+                        home_toolbar.layoutParams = (home_toolbar.layoutParams as ConstraintLayout.LayoutParams).apply {
+                            topMargin = 0
+                        }
+                        home_toolbar_badge.layoutParams = (home_toolbar_badge.layoutParams as ConstraintLayout.LayoutParams).apply {
+                            topMargin = dp6
+                        }
+                    }
+                }
+            }
+
+            override fun onTouchUp(direction: Int) {
+                ALog.i(TAG, "PullDownView onTouchUp, direction = $direction")
+                when (direction) {
+                    ConstraintPullDownLayout.MOVE_UP -> {
+                        home_profile_layout.visibility = View.GONE
+                        hideAnimation().start()
+                    }
+                    ConstraintPullDownLayout.MOVE_DOWN -> {
+                        if (home_profile_layout.visibility == View.GONE) {
+                            home_profile_layout.visibility = View.VISIBLE
+                            home_profile_layout.resetMargin()
+                            home_profile_layout.showAllViewsWithAnimation()
+                        }
+                    }
+                }
+            }
+
+            override fun onTouchDown() {
+                ALog.i(TAG, "PullDownView onTouchDown.")
+            }
+        }
+        home_pull_down_layout.setCallback(callback)
+
+        home_toolbar_avatar.setOnClickListener {
+            home_pull_down_layout.expandTopViewAndCallback()
+        }
+        home_profile_layout.setListener(object : HomeProfileView.ClickListener {
+            override fun onClickExit() {
+                home_pull_down_layout.closeTopViewAndCallback()
+            }
+        })
     }
 
     private fun initClipboardUtil() {
@@ -439,4 +589,79 @@ class HomeActivity : SwipeBaseActivity() {
                 }
     }
 
+    override fun onModified(recipient: Recipient) {
+        if (recipient == this.recipient) {
+            this.recipient = recipient
+            updateRecipientData(recipient)
+            if (mWaitForShortLink) {
+                doInvite(recipient)
+            }
+        }
+    }
+
+    private fun showMenu() {
+        showAnim(home_toolbar_more)
+        BcmPopupMenu.Builder(this)
+                .setMenuItem(listOf(
+                        BcmPopupMenu.MenuItem(getString(com.bcm.messenger.chats.R.string.chats_main_scan_and_add), com.bcm.messenger.chats.R.drawable.chats_menu_scan_icon),
+                        BcmPopupMenu.MenuItem(getString(com.bcm.messenger.chats.R.string.chats_main_invite_friend), com.bcm.messenger.chats.R.drawable.chats_menu_invite_icon)
+                ))
+                .setAnchorView(home_toolbar_more)
+                .setSelectedCallback { index ->
+                    when (index) {
+                        0 -> startActivity(Intent(this, NewScanActivity::class.java).apply {
+                            putExtra(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_SCAN)
+                            putExtra(ARouterConstants.PARAM.SCAN.HANDLE_DELEGATE, true)
+                        })
+                        1 -> doInvite(recipient)
+                    }
+                }
+                .setDismissCallback {
+                    hideAnim(home_toolbar_more)
+                }
+                .setGravity(Gravity.BOTTOM)
+                .show()
+    }
+
+    private fun doInvite(recipient: Recipient) {
+        val shareLink = recipient.privacyProfile.shortLink
+        if (shareLink.isNullOrEmpty()) {
+            mWaitForShortLink = true
+            AmeAppLifecycle.showLoading()
+            RecipientProfileLogic.updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
+                AmeAppLifecycle.hideLoading()
+            }
+
+        } else {
+            mWaitForShortLink = false
+            CommonShareView.Builder()
+                    .setText(getString(com.bcm.messenger.chats.R.string.common_invite_user_message, shareLink))
+                    .setType(CommonShareView.Config.TYPE_TEXT)
+                    .show(this)
+        }
+
+    }
+
+    private fun showAnim(view: View) {
+        ObjectAnimator.ofFloat(view, "rotation", 0f, 45f).apply {
+            duration = 250
+        }.start()
+    }
+
+    private fun hideAnim(view: View) {
+        ObjectAnimator.ofFloat(view, "rotation", 45f, 0f).apply {
+            duration = 250
+        }.start()
+    }
+
+    private fun checkBackupNotice(isHasBackup: Boolean) {
+        home_toolbar_badge.isAccountBackup = isHasBackup
+        home_profile_layout.isAccountBackup = isHasBackup
+    }
+
+    private fun checkShowIntroPage() {
+        if (!SuperPreferences.getTablessIntroductionFlag(this)) {
+            startActivity(Intent(this, TablessIntroActivity::class.java))
+        }
+    }
 }

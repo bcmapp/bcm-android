@@ -12,7 +12,7 @@ import com.bcm.messenger.utility.logger.ALog
 import java.util.concurrent.*
 
 /**
- * Created by bcm.social.01 on 2018/8/4.
+ * bcm.social.01 2018/8/4.
  */
 object AmeDispatcher {
     private val handlerExecutorThread: HandlerThread = HandlerThread("HandlerThreadFactory")

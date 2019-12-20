@@ -22,7 +22,7 @@ import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 /**
- * Created by bcm.social.01 on 2018/11/13.
+ * bcm.social.01 2018/11/13.
  */
 class GroupCache(val cacheReady: () -> Unit) {
 

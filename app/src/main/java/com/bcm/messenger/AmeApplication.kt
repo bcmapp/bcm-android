@@ -10,9 +10,7 @@ import android.os.Environment
 import android.os.IBinder
 import android.webkit.WebView
 import androidx.multidex.MultiDexApplication
-import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.ApplicationService
-import com.bcm.messenger.common.IApplicationlImpl
+import com.bcm.messenger.common.*
 import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSManager
 import com.bcm.messenger.common.bcmhttp.conncheck.IMServerConnectionChecker
 import com.bcm.messenger.common.bcmhttp.interceptor.BcmHeaderInterceptor
@@ -24,7 +22,6 @@ import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.crypto.PRNGFixes
 import com.bcm.messenger.common.jobs.GcmRefresh
 import com.bcm.messenger.common.metrics.ReportUtil
-import com.bcm.messenger.common.p
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAFModule
@@ -32,7 +29,6 @@ import com.bcm.messenger.common.provider.IUmengModule
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.crash.initCrash
 import com.bcm.messenger.crash.setCrashReportLogs
-import com.bcm.messenger.logic.DataTransferCensor
 import com.bcm.messenger.logic.EnvSettingLogic
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.bcmhttp.facade.BaseHttp
@@ -252,11 +248,17 @@ class AmeApplication : MultiDexApplication() {
     }
 
     private fun bindService() {
+        ALog.i(TAG, "bind other process service")
         val intent = Intent(this, ApplicationService::class.java)
         bindService(intent, object : ServiceConnection {
 
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 ApplicationService.impl = IApplicationlImpl.Stub.asInterface(service)
+                //如果服务已经连接上，要检测一下防窥屏设置（因为服务有延后，所以可能当时的activity还没来得及设置）
+                val curActivity = AmeAppLifecycle.current()
+                if (curActivity is SwipeBaseActivity) {
+                    curActivity.updateScreenshotSecurity()
+                }
             }
 
             override fun onServiceDisconnected(name: ComponentName) {
@@ -277,6 +279,7 @@ class AmeApplication : MultiDexApplication() {
             o.a(AppContextHolder.APP_CONTEXT)
         }
 
-        DataTransferCensor.init(this)
+        //还没定方案，先不检测
+//        DataTransferCensor.init(this)
     }
 }

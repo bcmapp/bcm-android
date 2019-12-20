@@ -4,18 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="124dp"
-    android:layout_marginStart="15dp"
-    android:layout_marginEnd="15dp"
-    android:layout_marginTop="10dp"
-    android:background="@drawable/me_keybox_account_item_now">
+    android:layout_height="wrap_content"
+    android:padding="@dimen/common_horizontal_gap"
+    android:layout_marginBottom="10dp"
+    android:layout_marginStart="@dimen/common_horizontal_gap"
+    android:layout_marginEnd="@dimen/common_horizontal_gap"
+    android:background="@drawable/me_account_item_current_bg">
 
     <com.bcm.messenger.common.ui.IndividualAvatarView
         android:id="@+id/keybox_account_img"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -24,14 +23,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="2dp"
         android:maxLines="1"
         android:singleLine="true"
         android:ellipsize="end"
         android:textSize="17sp"
         android:textColor="@color/common_color_white"
         android:gravity="left"
-        app:layout_constraintEnd_toStartOf="@+id/keybox_account_qrcode"
+        app:layout_constraintEnd_toStartOf="@+id/keybox_account_entrance"
         app:layout_constraintStart_toEndOf="@+id/keybox_account_img"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Chan"/>
@@ -47,7 +46,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginStart="8dp"
         android:gravity="left"
-        app:layout_constraintEnd_toStartOf="@+id/keybox_account_qrcode"
+        app:layout_constraintEnd_toStartOf="@+id/keybox_account_entrance"
         app:layout_constraintStart_toEndOf="@+id/keybox_account_img"
         app:layout_constraintTop_toBottomOf="@+id/keybox_account_name"
         android:textSize="14sp"
@@ -55,48 +54,82 @@
         tools:text="ID: ChanCinfop2qnfoaiow3fnoainw3gionio32bgoangoi3anog3waoi"/>
 
     <ImageView
-        android:id="@+id/keybox_account_qrcode"
+        android:id="@+id/keybox_account_entrance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:padding="5dp"
         android:src="@drawable/me_self_qr_icon"
-        app:layout_constraintEnd_toEndOf="@+id/divier"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <View
-        android:id="@+id/divier"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/keybox_account_qr_container"
         android:layout_width="0dp"
-        android:layout_height="0.1dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="@color/common_color_white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/keybox_account_openid"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/keybox_account_openid">
+
+        <ImageView
+            android:id="@+id/keybox_account_qr"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="30dp"
+            android:background="@drawable/common_white_bg"
+            android:scaleType="fitXY"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:visibility="visible"/>
+
+        <View
+            android:id="@+id/keybox_account_divider"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/common_line_height"
+            android:background="@color/common_color_white"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/key_generate_date"
-        android:layout_width="wrap_content"
+        android:id="@+id/account_generate_date"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
+        android:gravity="left"
         android:layout_marginTop="10dp"
         android:textSize="11sp"
+        android:drawablePadding="10dp"
         android:textColor="@color/common_color_white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/keybox_account_qr_container"
         tools:text="Date of Key"/>
 
     <TextView
-        android:id="@+id/key_backup_date"
-        android:layout_width="wrap_content"
+        android:id="@+id/account_backup_date"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/key_generate_date"
+        android:gravity="left"
+        android:layout_marginTop="9dp"
         android:textColor="@color/common_color_white"
         android:textSize="11sp"
+        android:drawablePadding="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/account_generate_date"
         tools:text="Date of Backup"/>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 

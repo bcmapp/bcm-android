@@ -32,10 +32,6 @@ class AmeAccountHistory {
 
     companion object {
         private const val TAG = "AmeAccountHistory"
-        private const val AME_LAST_LOGIN_UID: String = "AME_LAST_LOGIN_UID"
-        private const val AME_ACCOUNT_LIST: String = "AME_ACCOUNT_LIST"
-        private const val AME_LAST_BACKUP_UID: String = "AME_LAST_BACKUP_UID"
-        private const val AME_CURRENT_LOGIN: String = "AME_CURRENT_LOGIN"
 
         const val LIMIT_SIZE = 50
     }
@@ -174,10 +170,13 @@ class AmeAccountHistory {
             var needUpdate = false
             var fixCur = mCurAccount == null
             var fixLast = mLastAccount == null
+
+            val oldCur = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_CURRENT_LOGIN)
+            val oldLast = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_LAST_LOGIN)
+
             if (fixCur || fixLast) {
                 needUpdate = true
-                val oldCur = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, AME_CURRENT_LOGIN)
-                val oldLast = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, AME_LAST_LOGIN_UID)
+
                 for ((k, v) in accountMap) {
                     if (fixCur) {
                         if (v.uid == oldCur) {
@@ -204,6 +203,19 @@ class AmeAccountHistory {
                 mCurAccount = null
                 needUpdate = true
             }
+
+            if (oldCur.isNullOrEmpty()) {
+                mCurAccount?.let {
+                    SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_CURRENT_LOGIN, it.uid)
+
+                }
+            }
+            if (oldLast.isNullOrEmpty()) {
+                mLastAccount?.let {
+                    SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_LAST_LOGIN, it.uid)
+                }
+            }
+
             return needUpdate
         }
 
@@ -212,7 +224,7 @@ class AmeAccountHistory {
             synchronized(this) {
 
                 accountMap.clear()
-                val accountListString = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, AME_ACCOUNT_LIST)
+                val accountListString = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_ACCOUNT_LIST)
                 if (!accountListString.isNullOrEmpty()) {
                     accountMap.putAll(Gson().fromJson(accountListString, object : TypeToken<HashMap<String, AmeAccountData>>() {}.type))
                 }
@@ -246,8 +258,6 @@ class AmeAccountHistory {
                 saveAccountHistory()
                 SuperPreferences.clearAccountsV1Profile(AppContextHolder.APP_CONTEXT)
                 SuperPreferences.clearAccountsV2Profile(AppContextHolder.APP_CONTEXT)
-                SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, AME_LAST_LOGIN_UID, "")
-                SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, AME_CURRENT_LOGIN, "")
             }
 
             if (fixDataComplement()) {
@@ -262,7 +272,7 @@ class AmeAccountHistory {
 
     @Synchronized
     private fun saveAccountHistory() {
-        SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, AME_ACCOUNT_LIST, GsonUtils.toJson(accountMap))
+        SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_ACCOUNT_LIST, GsonUtils.toJson(accountMap))
     }
 
     fun getBackupTime(uid: String): Long {
@@ -296,6 +306,7 @@ class AmeAccountHistory {
             mLastAccount?.lastLogin = false
             mLastAccount = accountData
             mLastAccount?.lastLogin = true
+            SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_LAST_LOGIN, uid)
             saveAccountHistory()
         }
     }
@@ -308,6 +319,7 @@ class AmeAccountHistory {
             mCurAccount?.curLogin = false
             mCurAccount = accountData
             mCurAccount?.curLogin = true
+            SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_CURRENT_LOGIN, uid)
             saveAccountHistory()
             upgradeOldAccountFlags()
         }

@@ -14,7 +14,6 @@ import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.AppGlideModule;
 import com.bcm.messenger.common.contacts.avatars.ContactPhoto;
 import com.bcm.messenger.common.glide.ContactPhotoLoader;
-import com.bcm.messenger.common.glide.OkHttpUrlLoader;
 import com.bcm.messenger.common.mms.AttachmentStreamUriLoader.AttachmentModel;
 import com.bcm.messenger.common.mms.DecryptableStreamUriLoader.DecryptableUri;
 import java.io.InputStream;

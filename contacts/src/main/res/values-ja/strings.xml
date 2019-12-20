@@ -88,10 +88,6 @@
     <string name="contacts_user_card_stranger">ストレンジャー</string>
     <string name="contacts_request_friend_empty">申請なし</string>
 
-    <!--invite and scan-->
-    <string name="contacts_main_scan_and_add">スキャンして、追加する</string>
-    <string name="contacts_main_invite_friend">フレンド招待</string>
-
     <!-- BcmUserCard -->
     <string name="contacts_user_card_forward_title">転送</string>
     <string name="contacts_user_card_block_title">ブロックする</string>

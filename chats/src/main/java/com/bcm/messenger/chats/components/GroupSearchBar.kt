@@ -7,7 +7,7 @@ import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.ui.CustomDataSearcher
 
 /**
- * Created by bcm.social.01 on 2018/5/28.
+ * bcm.social.01 2018/5/28.
  */
 open class GroupSearchBar : CustomDataSearcher<AmeGroupMemberInfo> {
     constructor(context: Context) : this(context, null) {}

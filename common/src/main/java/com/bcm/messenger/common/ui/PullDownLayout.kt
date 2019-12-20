@@ -11,15 +11,17 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 
 /**
- * 
+ *
  *
  * Created by Kin on 2019/6/28
  */
 
-class PullDownLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
+class PullDownLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
     companion object {
         const val MOVE_NONE = 0
         const val MOVE_UP = 1
@@ -29,40 +31,39 @@ class PullDownLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     abstract class PullDownLayoutCallback {
-       
-        open fun onTopViewHeightChanged(height: Int, front: Int) {}
-
-        /**
-         * 
-         */
+        open fun onTopViewHeightChanged(height: Int, direction: Int) {}
         open fun onScrollViewScrolled(scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int) {}
+        open fun onTouchUp(direction: Int) {}
     }
 
-    private var lastX = 0f // 
-    private var lastY = 0f // 
+    private var lastX = 0f
+    private var lastY = 0f
 
-    private var touchEvent = false // 
-    private var moveDirection = MOVE_NONE // 
-    private var topViewOriginHeight = 0 // 
+    private var touchEvent = false
+    private var moveDirection = MOVE_NONE
+    private var topViewOriginHeight = 0
     private var moved = false
-    private val scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop // 
+    private val scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop //
 
-    private var scrollView: BcmScrollView? = null // ScrollView
-    private var isScrollViewReachTop = true // 
+    private var scrollView: BcmScrollView? = null
+    private var recyclerView: BcmRecyclerView? = null
+    private var isScrollViewReachTop = true
     private var clickToClose = false
-    
-    private lateinit var topView: View // TopView
-    private var maxHeight = 0 // 
-    private var minHeight = 0
+    private var interceptTouch = false
+    private var reboundSize = 100
 
-    private var callback: PullDownLayoutCallback? = null // 
+    private lateinit var topView: View
+    private var topViewMaxHeight = 0
+    private var topViewMinHeight = 0
+
+    private var callback: PullDownLayoutCallback? = null //
 
     /**
-     * 
+     *
      */
     private fun expandAnim(): AnimatorSet {
         return AnimatorSet().apply {
-            play(ValueAnimator.ofInt(topView.height, maxHeight).apply {
+            play(ValueAnimator.ofInt(topView.height, topViewMaxHeight).apply {
                 addUpdateListener {
                     topView.layoutParams = topView.layoutParams.apply {
                         height = it.animatedValue as Int
@@ -74,6 +75,7 @@ class PullDownLayout @JvmOverloads constructor(context: Context, attrs: Attribut
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator?) {
                     scrollView?.interruptScroll = true
+                    recyclerView?.interruptScroll = true
                     this@apply.removeAllListeners()
                 }
             })
@@ -81,11 +83,11 @@ class PullDownLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     /**
-     * 
+     *
      */
     private fun hideAnim(): AnimatorSet {
         return AnimatorSet().apply {
-            play(ValueAnimator.ofInt(topView.height, minHeight).apply {
+            play(ValueAnimator.ofInt(topView.height, topViewMinHeight).apply {
                 addUpdateListener {
                     topView.layoutParams = topView.layoutParams.apply {
                         height = it.animatedValue as Int
@@ -97,6 +99,7 @@ class PullDownLayout @JvmOverloads constructor(context: Context, attrs: Attribut
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
                     scrollView?.interruptScroll = false
+                    recyclerView?.interruptScroll = false
                     this@apply.removeAllListeners()
                 }
             })
@@ -108,35 +111,31 @@ class PullDownLayout @JvmOverloads constructor(context: Context, attrs: Attribut
 
         when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
-                
+
                 lastX = ev.rawX
                 lastY = ev.rawY
-                topViewOriginHeight = topView.height
+                topViewOriginHeight = topView.layoutParams.height
 
-                touchEvent = clickToClose && topViewOriginHeight > minHeight && ev.rawY > maxHeight
+                touchEvent = interceptTouch && topViewOriginHeight > topViewMinHeight && ev.rawY > topViewMaxHeight
             }
             MotionEvent.ACTION_MOVE -> {
-                // 
+                //
                 val disY = ev.rawY - lastY
                 val absDisY = abs(disY)
                 if (absDisY > scaledTouchSlop) {
-                    // 
-                    touchEvent = if (scrollView == null) {
-                        // 
+                    touchEvent = if (scrollView == null && recyclerView == null) {
                         true
                     } else {
                         when {
-                            // 
-                            topViewOriginHeight == minHeight && !isScrollViewReachTop -> false
-                            // 
-                            topViewOriginHeight > minHeight || (isScrollViewReachTop && disY > 0) -> true
-                            // 
+                            topViewOriginHeight == topViewMinHeight && !isScrollViewReachTop -> false
+                            topViewOriginHeight > topViewMinHeight || (isScrollViewReachTop && disY > 0) -> true
+
                             else -> false
                         }
                     }
                 }
             }
-            // 
+            //
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> touchEvent = false
         }
 
@@ -148,50 +147,54 @@ class PullDownLayout @JvmOverloads constructor(context: Context, attrs: Attribut
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                // 
+                //
                 moved = false
                 touchEvent = true
             }
             MotionEvent.ACTION_MOVE -> {
-                // 
+                //
                 val scrollY = event.rawY - lastY
                 val absScrollY = abs(scrollY)
                 if (absScrollY >= scaledTouchSlop) {
                     moved = true
-                    if (topViewOriginHeight == minHeight && !isScrollViewReachTop) {
-                        // 
+                    if (topViewOriginHeight == topViewMinHeight && !isScrollViewReachTop) {
                         touchEvent = false
-                    } else if (topViewOriginHeight > minHeight || (isScrollViewReachTop && scrollY > 0) || topView.height > minHeight) {
-                        // 
+                    } else if (topViewOriginHeight > topViewMinHeight || (isScrollViewReachTop && scrollY > 0) || topView.height > topViewMinHeight) {
                         touchEvent = true
 
-                        // 
+                        //
                         moveDirection = if (scrollY > 0) MOVE_DOWN else MOVE_UP
-                        // 
+                        var newHeight = topViewOriginHeight + scrollY.toInt()
+                        if (newHeight > topViewMaxHeight) newHeight = topViewMaxHeight
+                        if (newHeight < topViewMinHeight) newHeight = topViewMinHeight
                         topView.layoutParams = topView.layoutParams.apply {
-                            var newHeight = topViewOriginHeight + scrollY.toInt()
-                            if (newHeight > maxHeight) newHeight = maxHeight
-                            if (newHeight < minHeight) newHeight = minHeight
                             height = newHeight
-
-                            callback?.onTopViewHeightChanged(newHeight, moveDirection)
                         }
+//                        topView.layout(0, 0, topView.width, newHeight)
+                        callback?.onTopViewHeightChanged(newHeight, moveDirection)
                     } else {
-                        // 
+                        //
                         touchEvent = false
                     }
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                if (clickToClose && topView.height > maxHeight - 50 && !moved && event.rawY > maxHeight) {
+                if (interceptTouch && topView.height > topViewMaxHeight - 50 && !moved && event.rawY > topViewMaxHeight) {
                     touchEvent = true
-                    hideAnim().start()
+                    if (clickToClose) {
+                        hideAnim().start()
+                    }
                 } else {
                     when {
-                        //
-                        (topView.height > minHeight + 100 && moveDirection == MOVE_DOWN) || topView.height >= maxHeight - 100 -> expandAnim().start()
-                        // 
-                        (topView.height < maxHeight - 100 && moveDirection == MOVE_UP) || topView.height <= minHeight + 100 -> hideAnim().start()
+                        (topView.height > topViewMinHeight + reboundSize && moveDirection == MOVE_DOWN) || topView.height >= topViewMaxHeight - reboundSize -> {
+                            expandAnim().start()
+                            moveDirection = MOVE_DOWN
+                        }
+
+                        (topView.height < topViewMaxHeight - reboundSize && moveDirection == MOVE_UP) || topView.height <= topViewMinHeight + reboundSize -> {
+                            hideAnim().start()
+                            moveDirection = MOVE_UP
+                        }
                     }
                     touchEvent = false
                 }
@@ -211,33 +214,56 @@ class PullDownLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         })
     }
 
-    
-    fun setTopView(topView: View, maxHeight: Int, minHeight: Int) {
-        this.topView = topView
-        this.maxHeight = maxHeight
-        this.minHeight = minHeight
+    fun setScrollView(scrollView: BcmRecyclerView) {
+        this.recyclerView = scrollView
+        this.recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            private var oldScrollX = 0
+            private var oldScrollY = 0
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                isScrollViewReachTop = dy == 0
+                callback?.onScrollViewScrolled(dx, dy, oldScrollX, oldScrollY)
+                oldScrollX = dx
+                oldScrollY = dy
+            }
+        })
     }
 
-   
+    fun setTopView(topView: View, maxHeight: Int, minHeight: Int) {
+        this.topView = topView
+        this.topViewMaxHeight = maxHeight
+        this.topViewMinHeight = minHeight
+    }
+
+
     fun setCallback(callback: PullDownLayoutCallback) {
         this.callback = callback
     }
 
     fun expandTopView() {
-        if (this.topView.height == minHeight) {
+        if (this.topView.height == topViewMinHeight) {
             expandAnim().start()
         }
     }
 
     fun closeTopView() {
-        if (this.topView.height > minHeight) {
+        if (this.topView.height > topViewMinHeight) {
             hideAnim().start()
         }
     }
 
-    fun isTopViewExpanded() = this.topView.height > minHeight
+    fun isTopViewExpanded() = this.topView.height > topViewMinHeight
 
     fun setClickToCloseWhenExpanded() {
         clickToClose = true
+        interceptTouch = true
+    }
+
+    fun setInterceptTouch() {
+        interceptTouch = true
+    }
+
+    fun setReboundSize(size: Int) {
+        reboundSize = size
     }
 }

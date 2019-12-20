@@ -1,13 +1,12 @@
 package com.bcm.messenger.contacts.logic
 
 import android.content.Context
-import android.os.Build
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.RecipientProfileLogic
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.records.RecipientSettings
 import com.bcm.messenger.common.database.repositories.RecipientRepo
@@ -16,17 +15,13 @@ import com.bcm.messenger.common.event.FriendRequestEvent
 import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.event.ServiceConnectEvent
 import com.bcm.messenger.common.finder.BcmFinderManager
-import com.bcm.messenger.common.grouprepository.room.entity.BcmFriend
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
-import com.bcm.messenger.common.p
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.RxBus
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.contacts.net.BcmContactCore
-import com.bcm.messenger.contacts.net.BcmHash
 import com.bcm.messenger.contacts.search.BcmContactFinder
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
@@ -71,15 +66,13 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
         @Synchronized get
         @Synchronized set
 
-    const val CONTACT_PART_MAX = 20
-
-    private val mContactSyncFlag: AtomicReference<CountDownLatch> = AtomicReference(CountDownLatch(0))
-    private var mQuitSyncFlag: AtomicReference<CountDownLatch> = AtomicReference(CountDownLatch(0))
+    private val mContactSyncFlag: AtomicReference<CountDownLatch> = AtomicReference(CountDownLatch(1))
+    private val mInitFlag: AtomicReference<CountDownLatch> = AtomicReference(CountDownLatch(1))
+    private val mQuitSyncFlag: AtomicReference<CountDownLatch> = AtomicReference(CountDownLatch(1))
 
     private val contactFilter = BcmContactFilter()
     internal val coreApi = BcmContactCore()
 
-    private val mCurrentContactListRef = AtomicReference<List<RecipientSettings>>()
     val contactFinder = BcmContactFinder()
 
     private val cache = BcmContactCache()
@@ -89,7 +82,8 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
     }
 
     private var mLocalLiveData: LiveData<List<RecipientSettings>>? = null
-    val contactLiveData = MutableLiveData<List<Recipient>>()
+
+    private val mCurrentContactListRef = AtomicReference<List<RecipientSettings>>()
     private var mContactListDisposable: Disposable? = null
     private var mContactSyncDisposable: Disposable? = null
 
@@ -101,36 +95,82 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
 
     private fun init(callback: (() -> Unit)? = null) {
         ALog.i(TAG, "init")
-        AmeDispatcher.mainThread.dispatch {
-            cache.initCache()
+
+        fun doAfterFirstSync() {
             BcmFinderManager.get().registerFinder(contactFinder)
             if (mLocalLiveData == null) {
                 mLocalLiveData = Repository.getRecipientRepo()?.getRecipientsLiveData()
                 mLocalLiveData?.observeForever(mObserver)
             }
-            checkAndSync()
-            callback?.invoke()
+            mInitFlag.get().countDown()
         }
+
+        if (mInitFlag.get().count <= 0) {
+            mInitFlag.set(CountDownLatch(1))
+        }
+        cache.initCache()
+        Observable.create<Boolean> {
+
+            ALog.i(TAG, "init begin")
+            handleRemoteSync { result ->
+                it.onNext(result)
+                it.onComplete()
+            }
+
+        }.subscribeOn(AmeDispatcher.ioScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    ALog.i(TAG, "init finish: $it")
+                    doAfterFirstSync()
+                }, {
+                    ALog.e(TAG, "init error", it)
+                    doAfterFirstSync()
+                })
 
     }
 
-    private fun unInit(callback: (() -> Unit)? = null) {
+    /**
+     * 清理回收
+     */
+    private fun unInit() {
         ALog.i(TAG, "unInit")
-        mBackgroundRequestJob?.cancel()
-        mBackgroundRequestJob = null
-        mBackgroundRequestQueue.clear()
-        mContactListDisposable?.dispose()
-        mContactListDisposable = null
-        contactFinder.cancel()
-        mCurrentContactListRef.set(listOf())
-        AmeDispatcher.mainThread.dispatch {
+
+        fun doAfterFirstLogout() {
+            mBackgroundRequestJob?.cancel()
+            mBackgroundRequestJob = null
+            mBackgroundRequestQueue.clear()
+            mContactListDisposable?.dispose()
+            mContactListDisposable = null
+            mCurrentContactListRef.set(listOf())
+            contactFinder.cancel()
             BcmFinderManager.get().unRegisterFinder(contactFinder)
             mLocalLiveData?.removeObserver(mObserver)
             mLocalLiveData = null
-            cache.clearCache()
-            callback?.invoke()
+            mQuitSyncFlag.get().countDown()
         }
 
+        if (mQuitSyncFlag.get().count <= 0) {
+            mQuitSyncFlag.set(CountDownLatch(1))
+        }
+        Observable.create<Boolean> {
+
+            handleRemoteSync { result ->
+                cache.clearCache()
+                it.onNext(result)
+                it.onComplete()
+            }
+
+        }.subscribeOn(AmeDispatcher.ioScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    ALog.i(TAG, "unInit finish: $it")
+                    doAfterFirstLogout()
+                }, {
+                    ALog.e(TAG, "unInit error", it)
+                    doAfterFirstLogout()
+                })
+
+        mQuitSyncFlag.get().await()
     }
 
     fun checkRequestFriendForOldVersion(recipient: Recipient) {
@@ -213,7 +253,7 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
         mContactListDisposable = Observable.create<List<Recipient>> {
 
             ALog.i(TAG, "onContactListChanged begin, check contactSyncFlag")
-            checkFirstLogin()
+            waitForReady()
 
             ALog.i(TAG, "onContactListChanged run")
 
@@ -227,8 +267,6 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
                 contactFinder.updateContact(bcmList, Recipient.getRecipientComparator())
                 ALog.i(TAG, "onContactListChanged end, bcmList: ${bcmList.size}")
 
-                it.onNext(contactFinder.getContactList())
-
             } catch (ex: Exception) {
                 it.onError(ex)
             } finally {
@@ -239,170 +277,164 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     mContactListDisposable = null
-                    contactLiveData.postValue(it)
                 }, {
                     ALog.e(TAG, "onContactListChanged error", it)
                     mContactListDisposable = null
-                    contactLiveData.postValue(listOf())
                 })
 
 
     }
 
-    fun getPartKey(uid: String): String {
-        return (BcmHash.hash(uid.toByteArray()) % CONTACT_PART_MAX).toString()
-    }
+
 
     fun doForLogin() {
         ALog.i(TAG, "doForLogin")
-        val lastFlag = mContactSyncFlag.get()
-        if (lastFlag.count <= 0) {
-            mContactSyncFlag.set(CountDownLatch(1))
-        }
         init()
     }
 
     fun doForLogout() {
         ALog.i(TAG, "doForLogout")
-        mQuitSyncFlag.set(CountDownLatch(1))
-        checkAndSync(true) { success ->
-            ALog.i(TAG, "doForLogout checkAndSync result: $success")
-            unInit {
-                mQuitSyncFlag.get().countDown()
-            }
-        }
-        mQuitSyncFlag.get().await()
-
+        unInit()
     }
 
-    fun checkAndSync(force: Boolean = false, callback: ((result: Boolean) -> Unit)? = null) {
-        ALog.i(TAG, "checkAndSync")
+    private fun checkNeedSync() {
 
-        if (mContactSyncDisposable?.isDisposed == false && !force) {
-            ALog.w(TAG, "checkAndSync fail, has sync disposable")
+        if (cache.getLastSyncResult() == BcmContactCache.CONTACT_SUCCESS) {
+            ALog.i(TAG, "last sync action success, no need sync")
             return
         }
+
+        if (mContactSyncDisposable?.isDisposed == false) {
+            ALog.w(TAG, "checkNeedSync ignore, has sync running")
+            return
+        }
+
         mContactSyncDisposable = Observable.create<Boolean> {
 
-            ALog.i(TAG, "checkAnsSync begin")
-            syncContact {result ->
+            mInitFlag.get().await()
+            ALog.i(TAG, "checkNeedSync begin")
+            handleRemoteSync { result ->
                 it.onNext(result)
                 it.onComplete()
             }
 
-        }.subscribeOn(AmeDispatcher.ioScheduler)
-                .observeOn(AmeDispatcher.ioScheduler)
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    ALog.i(TAG, "checkAndSync finish: $it")
-                    callback?.invoke(it)
+                    ALog.i(TAG, "checkNeedSync finish: $it")
+                    mContactSyncDisposable = null
 
                 }, {
-                    ALog.e(TAG, "checkAndSync error", it)
-                    callback?.invoke(false)
+                    ALog.e(TAG, "checkNeedSync error", it)
+                    mContactSyncDisposable = null
                 })
     }
 
-    private fun syncContact(callback: ((result: Boolean) -> Unit)? = null) {
-        ALog.i(TAG, "syncContact")
+    private fun handleRemoteSync(callback: ((result: Boolean) -> Unit)? = null) {
+
         if (!cache.waitCacheReady()) {
-            ALog.w(TAG, "syncContact fail, cache is not ready")
+            ALog.w(TAG, "handleRemoteSync fail, cache is not ready")
             callback?.invoke(false)
             return
         }
-        ALog.i(TAG, "syncContact begin")
-        val handlingList = cache.getHandlingList()
-        val handlingMap = cache.localHandlingMap(handlingList)
-        coreApi.syncFriendList(cache.getContactMap(), cache.getLastUploadHashMap(), handlingMap)
-                .observeOn(Schedulers.io())
-                .doOnNext {
-                    cache.updateSyncContactMap(it.uploadMap, it.hashResult, handlingList)
+
+        if (cache.getLastSyncResult() != BcmContactCache.SYNC_FAIL) {
+            val handlingMap = cache.getHandlingUploadMap()
+            if (handlingMap.isEmpty()) {
+                mContactSyncFlag.get().countDown()
+                cache.setSyncResult(BcmContactCache.CONTACT_SUCCESS)
+                callback?.invoke(true)
+            }else {
+                patch(handlingMap, false) {
+                    callback?.invoke(it)
                 }
-                .observeOn(AndroidSchedulers.mainThread())
+            }
+
+        }else {
+            sync {
+                callback?.invoke(it)
+            }
+        }
+    }
+
+    private fun sync(callback: (result: Boolean) -> Unit) {
+        ALog.i(TAG, "sync")
+        if (mContactSyncFlag.get().count <= 0) {
+            mContactSyncFlag.set(CountDownLatch(1))
+        }
+        coreApi.syncFriendList(cache.getUploadContactMap(false))
+                .observeOn(Schedulers.io())
                 .subscribe({
-                    ALog.i(TAG, "syncContact succeed")
-                    mContactSyncFlag.get().countDown()
-                    contactFilter.updateContact(AppContextHolder.APP_CONTEXT) { success ->
-                        if (success) {
-                            ALog.i(TAG, "updateContactFilter success")
-                        }else {
-                            ALog.e(TAG, "updateContactFilter fail")
-                        }
-                        callback?.invoke(success)
+                    ALog.i(TAG, "sync succeed, different: ${it.different.size}")
+                    if (it.different.isNotEmpty()) {
+                        cache.updateSyncContactMap(it.different, it.contactVersion == BcmContactCore.CONTACT_SYNC_VERSION)
                     }
-
-                }, {
-                    if (it is NoContentException) {
-                        ALog.w(TAG, "syncContact fail, noContentChanged, just syncPatch")
-
-                        AmeDispatcher.io.dispatch {
-
-                            val uploadMap = mutableMapOf<String, Set<RecipientSettings>>()
-                            for (i in 0 until CONTACT_PART_MAX) {
-                                val k = i.toString()
-                                uploadMap[k] = cache.getContactSet(k) ?: setOf()
-                            }
-                            syncPatch(uploadMap, handlingList) {result ->
-                                mContactSyncFlag.get().countDown()
-                                callback?.invoke(result)
-                            }
+                    val handlingMap = cache.getHandlingUploadMap()
+                    if (handlingMap.isNotEmpty()) {
+                        patch(handlingMap, false) { success ->
+                            callback.invoke(success)
                         }
-
                     }else {
-                        ALog.e(TAG, "syncContact fail", it)
+                        cache.setSyncResult(BcmContactCache.CONTACT_SUCCESS)
                         mContactSyncFlag.get().countDown()
-                        contactFilter.checkHandleLastFail(AppContextHolder.APP_CONTEXT) {
-                            callback?.invoke(false)
+                        callback.invoke(true)
+                    }
+                }, {
+
+                    if (it is NoContentException) { //如果抛AmeNoContent错误，表示当前可能是新号，云端没有通讯录，这时候需要全量提交，否则会有问题（后续更新可以分片）
+                        ALog.w(TAG, "sync fail, no remote contact data, just patch")
+                        patch(cache.getUploadContactMap(true), true) { result ->
+                            callback.invoke(result)
                         }
+
+                    } else {
+                        ALog.e(TAG, "sync fail", it)
+                        cache.setSyncResult(BcmContactCache.SYNC_FAIL)
+                        mContactSyncFlag.get().countDown()
+                        callback.invoke(false)
+
                     }
                 })
-
     }
 
-    private fun syncPatch(uploadMap: Map<String, Set<RecipientSettings>>,
-                          handlingList: Set<BcmFriend>,
-                          callback: ((result: Boolean) -> Unit)? = null) {
-
-        coreApi.uploadFriendList(uploadMap)
+    private fun patch(uploadMap: Map<String, List<BcmContactCore.ContactItem>>, checkFull: Boolean, callback: (result: Boolean) -> Unit) {
+        ALog.i(TAG, "patch")
+        if (mContactSyncFlag.get().count <= 0) {
+            mContactSyncFlag.set(CountDownLatch(1))
+        }
+        coreApi.uploadFriendList(uploadMap, checkFull)
                 .observeOn(Schedulers.io())
-                .map {
-                    cache.updateSyncContactMap(it.uploadMap, it.hashResult, handlingList)
-                    it
-                }
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    ALog.i(TAG, "uploadFriends succeed")
-                    mContactSyncFlag.get().countDown()
-                    contactFilter.updateContact(AppContextHolder.APP_CONTEXT) { success ->
-                        if (success) {
-                            ALog.i(TAG, "updateContactFilter success")
-                        }else {
-                            ALog.e(TAG, "updateContactFilter fail")
-                        }
-                        callback?.invoke(success)
+                    ALog.i(TAG, "patch succeed")
+                    if (it.uploadMap.isNotEmpty()) {
+                        cache.updateSyncContactMap(it.uploadMap, true)
+                        cache.doneHandling(it.uploadMap)
                     }
+                    cache.setSyncResult(BcmContactCache.CONTACT_SUCCESS)
+                    mContactSyncFlag.get().countDown()
+                    callback(true)
 
                 }, {
-                    ALog.e(TAG, "uploadFriends failed", it)
+                    ALog.e(TAG, "patch failed", it)
+                    cache.setSyncResult(if (checkFull) BcmContactCache.SYNC_FAIL else BcmContactCache.PATCH_FAIL)
                     mContactSyncFlag.get().countDown()
-                    contactFilter.checkHandleLastFail(AppContextHolder.APP_CONTEXT) {
-                        callback?.invoke(false)
-                    }
+                    callback(false)
                 })
     }
 
-    private fun checkFirstLogin() {
+    private fun waitForReady() {
         try {
             if (cache.waitCacheReady()) {
                 mContactSyncFlag.get().await()
             }
         }catch (ex: Exception) {
-            ALog.e(TAG, "checkFirstLogin error", ex)
+            ALog.e(TAG, "waitForReady error", ex)
         }
     }
 
     fun addFriend(targetUid: String, memo: String, handleBackground: Boolean, callback: ((result: Boolean) -> Unit)? = null) {
 
-        checkFirstLogin()
+        waitForReady()
 
         fun doSendAddFriendRequest(recipient: Recipient, callback: ((result: Boolean) -> Unit)?) {
             try {
@@ -432,7 +464,7 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
                 })
 
             } catch (ex: Exception) {
-                ALog.e(TAG, "addHandling error", ex)
+                ALog.e(TAG, "addRelationHandling error", ex)
                 callback?.invoke(false)
             }
         }
@@ -458,7 +490,7 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
 
     fun replyAddFriend(targetUid: String, approved: Boolean, proposer: String, addFriendSignature: String, callback: ((result: Boolean) -> Unit)? = null) {
 
-        checkFirstLogin()
+        waitForReady()
 
         fun doSendAddFriendReply(recipient: Recipient, approved: Boolean, proposer: String, addFriendSignature: String, callback: ((result: Boolean) -> Unit)?) {
             try {
@@ -521,7 +553,7 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
 
     fun deleteFriend(targetUid: String, callback: ((result: Boolean) -> Unit)? = null) {
 
-        checkFirstLogin()
+        waitForReady()
 
         coreApi.sendDeleteFriendReq(targetUid, object : OriginCallback() {
             override fun onError(call: Call?, e: Exception?, id: Long) {
@@ -547,7 +579,7 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
     fun handleAddFriendRequest(request: FriendProtos.FriendRequest) {
         ALog.i(TAG, "Handle add friend request")
 
-        checkFirstLogin()
+        waitForReady()
 
         fun handleAfterRecipientUpdated(recipient: Recipient, decryptProposer: String) {
             try {
@@ -621,7 +653,7 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
 
     fun handleFriendReply(reply: FriendProtos.FriendReply) {
         ALog.i(TAG, "Handle add friend reply")
-        checkFirstLogin()
+        waitForReady()
         try {
 
             fun doForApproved(targetRecipient: Recipient, approved: Boolean) {
@@ -667,7 +699,7 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
 
     fun handleDeleteFriend(delete: FriendProtos.DeleteFriend) {
         ALog.i(TAG, "Handle delete friend request")
-        checkFirstLogin()
+        waitForReady()
         try {
             val decryptProposer = BCMEncryptUtils.decryptSource(delete.proposerBytes.toByteArray())
             val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(decryptProposer), false)
@@ -679,16 +711,22 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
     }
 
     fun handleFriendPropertyChanged(recipient: Recipient, callback: ((result: Boolean) -> Unit)? = null) {
+
         ALog.logForSecret(TAG, "handleFriendPropertyChanged uid: ${recipient.address}")
-        val key = cache.addPropertyChangedHandling(recipient.settings)
-        handleAfterCache(key)
-        callback?.invoke(true)
+        waitForReady()
+        cache.addPropertyChangedHandling(recipient) { doAfter ->
+            handleRemoteSync { success ->
+                doAfter(success)
+                callback?.invoke(success)
+            }
+        }
+
     }
 
     @Throws(Exception::class)
     private fun handleRequestAddFriend(recipient: Recipient, callback: ((result: Boolean) -> Unit)? = null) {
         ALog.i(TAG, "handleRequestAddFriend old relationship: ${recipient.relationship}")
-        recipient.relationship = when (recipient.relationship) {
+        val relationship = when (recipient.relationship) {
             RecipientRepo.Relationship.FOLLOW -> RecipientRepo.Relationship.FOLLOW_REQUEST
             RecipientRepo.Relationship.STRANGER -> RecipientRepo.Relationship.REQUEST
             else -> {
@@ -696,63 +734,91 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
                 return
             }
         }
-        val key = cache.addHandling(recipient.settings)
-        handleAfterCache(key)
-        callback?.invoke(true)
+        cache.addRelationHandling(recipient, relationship) { bloomList, doAfter ->
+            handleAfterCache(bloomList) { success ->
+                doAfter.invoke(success)
+                callback?.invoke(success)
+            }
+
+        }
     }
 
     @Throws(Exception::class)
     private fun handleBecomeFriend(recipient: Recipient, callback: ((result: Boolean) -> Unit)? = null) {
         ALog.i(TAG, "handleBecomeFriend old relationship: ${recipient.relationship}")
-        recipient.relationship = RecipientRepo.Relationship.FRIEND
-        val key = cache.addHandling(recipient.settings)
-        handleAfterCache(key)
-        callback?.invoke(true)
+        val oldRelationship = recipient.relationship
+        cache.addRelationHandling(recipient, RecipientRepo.Relationship.FRIEND) { bloomList, doAfter ->
+            handleAfterCache(bloomList) { success ->
+                doAfter.invoke(success)
+                if (success) {
+                    if (oldRelationship == RecipientRepo.Relationship.REQUEST) {
+                        Repository.getRecipientRepo()?.createFriendMessage(recipient, true)
+                    }
+                    if (recipient.isBlocked) {
+                        Repository.getRecipientRepo()?.setBlocked(recipient, false)
+                    }
+                }
+                callback?.invoke(success)
+            }
+
+        }
     }
 
     private fun handleRefuseToFriend(recipient: Recipient, callback: ((result: Boolean) -> Unit)? = null) {
         ALog.i(TAG, "handleRefuseToFriend old relationship: ${recipient.relationship}")
         if (recipient.relationship == RecipientRepo.Relationship.REQUEST) {
-            recipient.relationship = RecipientRepo.Relationship.STRANGER
-            val key = cache.addHandling(recipient.settings)
-            handleAfterCache(key)
+            val relationship = RecipientRepo.Relationship.STRANGER
+            cache.addRelationHandling(recipient, relationship) { bloomList, doAfter ->
+                handleAfterCache(bloomList) { success ->
+                    doAfter.invoke(success)
+                    callback?.invoke(success)
+                }
+
+            }
+        }else {
+            callback?.invoke(true)
         }
-        callback?.invoke(true)
     }
 
     private fun handleDeleteFriend(recipient: Recipient, isPassive: Boolean, callback: ((result: Boolean) -> Unit)? = null) {
         ALog.i(TAG, "handleDeleteFriend isPassive: $isPassive, old relationship: ${recipient.relationship}")
 
         if (recipient.relationship == RecipientRepo.Relationship.FOLLOW || recipient.relationship == RecipientRepo.Relationship.FRIEND || recipient.relationship == RecipientRepo.Relationship.BREAK) {
-            if (isPassive) {
-                recipient.relationship = RecipientRepo.Relationship.BREAK
-                val key = cache.addHandling(recipient.settings)
-                handleAfterCache(key)
+            val relationship = if (isPassive) {
+                RecipientRepo.Relationship.BREAK
             } else {
-                recipient.relationship = RecipientRepo.Relationship.STRANGER
-                val key = cache.addHandling(recipient.settings)
-                handleAfterCache(key)
+                RecipientRepo.Relationship.STRANGER
+            }
+            cache.addRelationHandling(recipient, relationship) { bloomList, doAfter ->
+                handleAfterCache(bloomList) { success ->
+                    doAfter.invoke(success)
+                    if (success) {
+                        if (relationship == RecipientRepo.Relationship.STRANGER && !recipient.isBlocked) {
+                            Repository.getRecipientRepo()?.setBlocked(recipient, true)
+                        }
+                    }
+                    callback?.invoke(success)
+
+                }
             }
 
+        }else {
+            callback?.invoke(true)
         }
-        callback?.invoke(true)
     }
 
-    private fun handleAfterCache(key: String) {
-        Observable.create<Boolean> {
+    private fun handleAfterCache(bloomList: List<BcmContactCore.ContactItem>, callback: (result: Boolean) -> Unit) {
 
-            ALog.i(TAG, "handleAfterCache begin")
-            syncContact {result ->
-                it.onNext(result)
-                it.onComplete()
+        contactFilter.updateContact(AppContextHolder.APP_CONTEXT, bloomList) { success ->
+            if (success) {
+                handleRemoteSync { success ->
+                    callback(success)
+                }
+
+            }else {
+                callback(false)
             }
-
-        }.subscribeOn(Schedulers.io())
-                .subscribe({
-                    ALog.i(TAG, "handleAfterCache finish: $it")
-                }, {
-                    ALog.e(TAG, "handleAfterCache error", it)
-                })
+        }
     }
 
     private fun createRequestBody(context: Context, handleBackground: Boolean, recipient: Recipient, memo: String): String {
@@ -841,15 +907,7 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
     override fun onForegroundChanged(isForeground: Boolean) {
         if (isForeground) {
             ALog.i(TAG, "receive foreground event")
-            checkAndSync()
-
-            val o = p()
-            if (Build.VERSION.SDK_INT >= 28) {
-                o.b(AppContextHolder.APP_CONTEXT)
-            } else {
-                o.a(AppContextHolder.APP_CONTEXT)
-            }
-
+            checkNeedSync()
         }
     }
 
@@ -857,7 +915,7 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
     fun onEvent(event: ServiceConnectEvent) {
         if (event.state == ServiceConnectEvent.STATE.CONNECTED) {
             ALog.i(TAG, "receive service connected event")
-            checkAndSync()
+            checkNeedSync()
         }
     }
 }

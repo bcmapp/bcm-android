@@ -7,7 +7,7 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.google.gson.Gson
 
 /**
- * Created by bcm.social.01 on 2018/10/15.
+ * bcm.social.01 2018/10/15.
  */
 object EnvSettingLogic {
     private const val ENV_SETTING = "bcm_dev_env_setting"

@@ -194,7 +194,6 @@ class IndividualAvatarView : CardView {
             canvas.restore()
             return BitmapDrawable(resources, newBitmap)
         }
-
     }
 
     interface RecipientPhotoCallback {
@@ -221,6 +220,7 @@ class IndividualAvatarView : CardView {
 
     private var mOval: Boolean = false
     private var mRadius: Float = 0.0F
+    private var needLetter = false
 
     private var mCallback: RecipientPhotoCallback? = null
 
@@ -335,7 +335,7 @@ class IndividualAvatarView : CardView {
             val drawable = mImageView?.drawable as? BitmapDrawable
             return drawable?.bitmap
 
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "getPhoto error", ex)
         }
         return null
@@ -385,7 +385,6 @@ class IndividualAvatarView : CardView {
         } catch (ex: Exception) {
             ALog.e(TAG, "setPhoto error", ex)
         }
-
     }
 
     /**
@@ -403,7 +402,6 @@ class IndividualAvatarView : CardView {
         } catch (ex: Exception) {
             ALog.e(TAG, "setPhoto error", ex)
         }
-
     }
 
     /**
@@ -421,7 +419,7 @@ class IndividualAvatarView : CardView {
         mCurrentRequestObj = photoObj
         val diskCacheStrategy = if (photoObj is String && BcmFileUtils.isExist(photoObj)) {
             DiskCacheStrategy.NONE
-        }else {
+        } else {
             DiskCacheStrategy.ALL
         }
         mImageView?.let {
@@ -487,11 +485,9 @@ class IndividualAvatarView : CardView {
     }
 
     private fun updateText(text: CharSequence?, textSizePx: Float) {
-
         mTextView?.visibility = View.VISIBLE
         mTextView?.text = text
         mTextView?.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizePx)
-
     }
 
     private fun getCurrentSize(): Int {
@@ -530,14 +526,11 @@ class IndividualAvatarView : CardView {
             KEYBOX_PHOTO_TYPE -> {
                 if (!recipient?.getPrivacyAvatar(desireHD).isNullOrEmpty()) {
                     recipient?.getPrivacyAvatar(desireHD)
-                }
-                else if (!recipient?.getPrivacyAvatar(!desireHD).isNullOrEmpty()) {
+                } else if (!recipient?.getPrivacyAvatar(!desireHD).isNullOrEmpty()) {
                     recipient?.getPrivacyAvatar(!desireHD)
-                }
-                else if (!recipient?.profileAvatar.isNullOrEmpty()) {
+                } else if (!recipient?.profileAvatar.isNullOrEmpty()) {
                     getAvatarThumbnailUrl(recipient, size, size)
-                }
-                else {
+                } else {
                     needLetter = true
                     getDefaultPortraitUrl(recipient)
                 }
@@ -545,8 +538,7 @@ class IndividualAvatarView : CardView {
             LOCAL_PHOTO_TYPE -> {
                 if (!recipient?.localAvatar.isNullOrEmpty()) {
                     recipient?.localAvatar
-                }
-                else {
+                } else {
                     needLetter = true
                     getDefaultPortraitUrl(recipient)
                 }
@@ -554,14 +546,11 @@ class IndividualAvatarView : CardView {
             PROFILE_PHOTO_TYPE -> {
                 if (!recipient?.getPrivacyAvatar(desireHD).isNullOrEmpty()) {
                     recipient?.getPrivacyAvatar(desireHD)
-                }
-                else if (!recipient?.getPrivacyAvatar(!desireHD).isNullOrEmpty()) {
+                } else if (!recipient?.getPrivacyAvatar(!desireHD).isNullOrEmpty()) {
                     recipient?.getPrivacyAvatar(!desireHD)
-                }
-                else if (!recipient?.profileAvatar.isNullOrEmpty()) {
+                } else if (!recipient?.profileAvatar.isNullOrEmpty()) {
                     getAvatarThumbnailUrl(recipient, size, size)
-                }
-                else {
+                } else {
                     needLetter = true
                     getDefaultPortraitUrl(recipient)
                 }
@@ -569,22 +558,17 @@ class IndividualAvatarView : CardView {
             else -> {
                 if (!recipient?.localAvatar.isNullOrEmpty()) {
                     recipient?.localAvatar
-                }
-                else if (!recipient?.getPrivacyAvatar(desireHD).isNullOrEmpty()) {
+                } else if (!recipient?.getPrivacyAvatar(desireHD).isNullOrEmpty()) {
                     recipient?.getPrivacyAvatar(desireHD)
-                }
-                else if (!recipient?.getPrivacyAvatar(!desireHD).isNullOrEmpty()) {
+                } else if (!recipient?.getPrivacyAvatar(!desireHD).isNullOrEmpty()) {
                     recipient?.getPrivacyAvatar(!desireHD)
-                }
-                else if (!recipient?.profileAvatar.isNullOrEmpty()) {
+                } else if (!recipient?.profileAvatar.isNullOrEmpty()) {
                     getAvatarThumbnailUrl(recipient, size, size)
-                }
-                else {
+                } else {
                     needLetter = true
                     getDefaultPortraitUrl(recipient)
                 }
             }
-
         } ?: ""
 
         val name = if (!alterName.isNullOrEmpty()) {
@@ -612,9 +596,11 @@ class IndividualAvatarView : CardView {
         updateStyle(size)
         val strategy = if (photoObj.startsWith(ContentResolver.SCHEME_FILE)) {
             DiskCacheStrategy.NONE
-        }else {
+        } else {
             DiskCacheStrategy.ALL
         }
+        this.needLetter = needLetter
+
         mImageView?.let {
             it.background = null
             requestManager
@@ -644,7 +630,6 @@ class IndividualAvatarView : CardView {
                             }
                             return false
                         }
-
                     })
                     .into(it)
         }
@@ -659,8 +644,7 @@ class IndividualAvatarView : CardView {
                     }
                 }
             })
-        }
-        else if (recipient != null) {
+        } else if (recipient != null) {
             val avatar = recipient.getPrivacyAvatar(desireHD)
             if (avatar.isNullOrEmpty()) {
                 ALog.i(TAG, "requestPhoto check need download Avatar desireHD: $desireHD, size: $size")
@@ -669,4 +653,14 @@ class IndividualAvatarView : CardView {
         }
     }
 
+    fun showCoverText() {
+        if (needLetter) {
+            mTextView?.visibility = View.VISIBLE
+            mTextView?.setTextSize(TypedValue.COMPLEX_UNIT_PX, getTextSize(getCurrentSize()))
+        }
+    }
+
+    fun hideCoverText() {
+        mTextView?.visibility = View.GONE
+    }
 }

@@ -71,7 +71,7 @@ class LaunchActivity : AppCompatActivity() {
         val title = getString(R.string.common_request_basic_permission_title)
         val tip = getString(R.string.common_request_basic_permission_message)
         val buttonTitle = getString(R.string.common_request_basic_permission_grant)
-        PermissionUtil.checkCommonPermission(this, title, tip, buttonTitle) {
+        PermissionUtil.checkStorage(this) {
             router()
         }
     }
@@ -122,6 +122,5 @@ class LaunchActivity : AppCompatActivity() {
         AmeDispatcher.mainThread.dispatch({
             finish()
         }, 2000)
-
     }
 }

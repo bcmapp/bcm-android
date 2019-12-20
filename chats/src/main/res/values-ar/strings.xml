@@ -27,6 +27,15 @@
     <string name="chats_no_nickname_set_btn">تعيين الآن</string>
     <string name="chats_network_connecting">اتصال…</string>
     <string name="chats_network_disconnected">غير متصل</string>
+    <string name="chats_main_new_chat">دردشة جديدة</string>
+    <string name="chats_main_scan_and_add">مسح وإضافة</string>
+    <string name="chats_main_invite_friend">دعوة الأصدقاء</string>
+    <string name="chats_more_data_vault_title">مخزن البيانات</string>
+    <string name="chats_more_wallet_title">المحفظة</string>
+    <string name="chats_more_settings_title">إعداد</string>
+    <string name="chats_more_airchat_title">AirChat</string>
+    <string name="chats_friend_request_title">طلبات الأصدقاء</string>
+
     <string name="chats_conversation_input_hint"> أكتب هنا</string>
     <string name="chats_private_lock_description">الدردشة مغلقة</string>
     <string name="chats_private_verified_description">التحقق من حالة الدردشة</string>

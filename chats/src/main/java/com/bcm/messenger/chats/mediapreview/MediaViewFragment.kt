@@ -54,6 +54,7 @@ class MediaViewFragment : Fragment() {
         fun longClickImage(): Boolean
         fun controllerVisible(isVisible: Boolean)
         fun dataIsVideo(isVideo: Boolean)
+        fun dataIsValid(isValid: Boolean)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -121,6 +122,9 @@ class MediaViewFragment : Fragment() {
         mediaview_videoplayer.setControllerVisibleListener {
             mListener?.controllerVisible(it)
         }
+        mediaview_videoplayer.setLongClickListener {
+            mListener?.longClickImage()
+        }
     }
 
     private fun initViewData() {
@@ -141,15 +145,26 @@ class MediaViewFragment : Fragment() {
                     data.setVideo(mediaview_videoplayer ?: return, masterSecret)
                 } else {
                     mediaview_play?.visibility = View.VISIBLE
-                    data.setVideoThumbnail(mediaview_videoplayer ?: return, glide)
+                    data.setVideoThumbnail(mediaview_videoplayer ?: return, glide, masterSecret)
                 }
             }
+        }
+        if (data?.isDataNotFound() == true) {
+            mediaview_expire_layout.visibility = View.VISIBLE
+            mediaview_videoplayer.disableShowController()
+            mediaview_videoplayer.hideControllerWithoutCallback()
+            mediaview_play.visibility = View.GONE
+            mediaview_expire_text.text = if (data.mediaType == com.bcm.messenger.chats.mediapreview.bean.MEDIA_TYPE_IMAGE)
+                getString(R.string.chats_media_view_image_expire)
+            else
+                getString(R.string.chats_media_view_video_expire)
+        } else {
+            mediaview_expire_layout.visibility = View.GONE
         }
     }
 
     fun setData(data: MediaViewData?) {
         this.mData = data
-        initViewData()
     }
 
     fun setListener(listener: MediaViewFragmentActionListener) {
@@ -158,16 +173,6 @@ class MediaViewFragment : Fragment() {
 
     fun setMasterSecret(masterSecret: MasterSecret) {
         this.mMasterSecret = masterSecret
-    }
-
-    fun hideController() {
-        if (mData?.mediaUri != null) {
-            mediaview_videoplayer?.hideControllerWithoutCallback()
-        }
-    }
-
-    fun showController() {
-        mediaview_videoplayer?.showControllerWithoutCallback()
     }
 
     fun getData(): MediaViewData? = mData
@@ -192,6 +197,7 @@ class MediaViewFragment : Fragment() {
                 }
             } else if (!isUserVisible && isVisibleToUser) {
                 mListener?.dataIsVideo(data.mediaType == com.bcm.messenger.chats.mediapreview.bean.MEDIA_TYPE_VIDEO)
+                mListener?.dataIsValid(!data.isDataNotFound())
             }
             isUserVisible = isVisibleToUser
         }
@@ -209,14 +215,14 @@ class MediaViewFragment : Fragment() {
     private fun downloadVideo(videoPlayer: VideoPlayer) {
         val data = mData
         val masterSecret = mMasterSecret
-        if (data != null && masterSecret != null) {
+        if (data != null && masterSecret != null && !data.isDataNotFound()) {
             if (data.mediaUri == null) {
-                mediaview_progress.spin()
+                mediaview_progress.startAnim()
                 mediaview_progress.visibility = View.VISIBLE
                 mediaview_play.visibility = View.GONE
 
                 data.downloadVideo(videoPlayer, masterSecret) {
-                    mediaview_progress?.stopSpinning()
+                    mediaview_progress?.stopAnim()
                     mediaview_progress?.visibility = View.GONE
 
                     if (data.msgType != MSG_TYPE_PRIVATE) {
@@ -225,7 +231,6 @@ class MediaViewFragment : Fragment() {
                             if (activity?.isFinishing == false && activity?.isDestroyed == false) {
                                 mediaview_videoplayer?.playVideo()
                             }
-
                         } else {
                             mediaview_play?.visibility = View.VISIBLE
                         }
@@ -270,7 +275,7 @@ class MediaViewFragment : Fragment() {
                     val progress = event.progress.toFloat() / event.total
                     if (progress >= 1.0f) {
                         mediaview_progress?.visibility = View.GONE
-                        mediaview_progress?.stopSpinning()
+                        mediaview_progress?.stopAnim()
 
                         data.mediaUri = attachment.getPartUri()
 
@@ -291,10 +296,9 @@ class MediaViewFragment : Fragment() {
                             data.refreshSlide(attachment)
                             data.setVideo(mediaview_videoplayer ?: return, masterSecret)
                         }
-
                     } else {
                         mediaview_progress?.visibility = View.VISIBLE
-                        mediaview_progress?.spin()
+                        mediaview_progress?.stopAnim()
 
                         if (data.mediaType != com.bcm.messenger.chats.mediapreview.bean.MEDIA_TYPE_IMAGE) {
                             mediaview_play?.visibility = View.GONE
@@ -302,7 +306,6 @@ class MediaViewFragment : Fragment() {
                     }
                 }
             }
-
         } catch (ex: Exception) {
             ALog.e(TAG, "receive private video download progress error", ex)
         }

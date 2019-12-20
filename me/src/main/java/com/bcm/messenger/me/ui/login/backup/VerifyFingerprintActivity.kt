@@ -3,9 +3,10 @@ package com.bcm.messenger.me.ui.login.backup
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.fingerprint.BiometricVerifyUtil
 import com.bcm.messenger.me.ui.fragment.VerifyFingerprintFragment
 import com.bcm.messenger.me.ui.fragment.VerifyPasswordFragment
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -37,13 +38,7 @@ class VerifyFingerprintActivity : SwipeBaseActivity() {
     }
 
     private fun initView() {
-        if (BiometricVerifyUtil.canUseBiometricFeature()) {
-            ALog.d(TAG, "Device has fingerprint sensor and has enrolled fingerprints, start authenticate fingerprint.")
-            switchToFingerprintFragment()
-        } else {
-            ALog.d(TAG, "Device has no fingerprint sensor, start authenticate password.")
-            switchToPasswordFragment(false)
-        }
+        switchToPasswordFragment(false)
     }
 
     fun switchToFingerprintFragment() {
@@ -59,6 +54,9 @@ class VerifyFingerprintActivity : SwipeBaseActivity() {
                 .setHasFingerprint(hasFingerprint)
                 .setHasLockout(lockout)
                 .setCallback(this::handleCallback)
+        f.arguments = Bundle().apply {
+            putString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID, AMESelfData.uid)
+        }
         supportFragmentManager.beginTransaction()
                 .replace(R.id.container, f)
                 .commitAllowingStateLoss()

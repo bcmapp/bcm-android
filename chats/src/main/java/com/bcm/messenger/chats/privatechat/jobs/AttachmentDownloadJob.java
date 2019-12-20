@@ -25,6 +25,7 @@ import com.bcm.messenger.common.crypto.encrypt.ChatFileEncryptDecryptUtil;
 import com.bcm.messenger.common.crypto.encrypt.FileInfo;
 import com.bcm.messenger.utility.HexUtil;
 import com.bcm.messenger.utility.Util;
+import com.bcm.messenger.utility.bcmhttp.exception.RemoteFileNotFoundException;
 import com.bcm.messenger.utility.logger.ALog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -103,9 +104,9 @@ public class AttachmentDownloadJob extends MasterSecretJob {
         repo.setTransferState(record, AttachmentDbModel.TransferState.STARTED);
 
         try {
-            retrieveAttachment(masterSecret, messageId, attachmentId, record);
+            retrieveAttachment(masterSecret, attachmentId, record);
         } catch (Throwable t) {
-            markFailed(messageId, attachmentId);
+            markFailed(attachmentId);
             ALog.e(TAG, t);
         }
 
@@ -114,7 +115,7 @@ public class AttachmentDownloadJob extends MasterSecretJob {
     @Override
     public void onCanceled() {
         final AttachmentId attachmentId = new AttachmentId(partRowId, partUniqueId);
-        markFailed(messageId, attachmentId);
+        markFailed(attachmentId);
     }
 
     @Override
@@ -131,10 +132,8 @@ public class AttachmentDownloadJob extends MasterSecretJob {
     }
 
     private void retrieveAttachment(MasterSecret masterSecret,
-                                    long messageId,
                                     final AttachmentId attachmentId,
-                                    final AttachmentRecord attachment)
-            throws IOException {
+                                    final AttachmentRecord attachment) {
 
         File attachmentFile = null;
 
@@ -156,7 +155,13 @@ public class AttachmentDownloadJob extends MasterSecretJob {
             }
         } catch (InvalidPartException | NonSuccessfulResponseCodeException | InvalidMessageException e) {
             Log.w(TAG, e);
-            markFailed(messageId, attachmentId);
+            markFailed(attachmentId);
+        } catch (RemoteFileNotFoundException e) {
+            ALog.w(TAG, "Attachment file not found");
+            markNotFound(attachmentId);
+        } catch (IOException e) {
+            ALog.w(TAG, "Download attachment failed, " + e.getMessage());
+            markFailed(attachmentId);
         } finally {
             if (attachmentFile != null) {
                 attachmentFile.delete();
@@ -233,7 +238,13 @@ public class AttachmentDownloadJob extends MasterSecretJob {
         }
     }
 
-    private void markFailed(long messageId, AttachmentId attachmentId) {
+    private void markNotFound(AttachmentId attachmentId) {
+        AttachmentRepo repo = Repository.getAttachmentRepo();
+        repo.setTransferState(attachmentId.getRowId(), attachmentId.getUniqueId(), AttachmentDbModel.TransferState.NOT_FOUND);
+        repo.cleanUris(attachmentId.getRowId(), attachmentId.getUniqueId());
+    }
+
+    private void markFailed(AttachmentId attachmentId) {
         Repository.getAttachmentRepo()
                 .setTransferState(attachmentId.getRowId(), attachmentId.getUniqueId(), AttachmentDbModel.TransferState.FAILED);
     }

@@ -17,10 +17,6 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 import kotlin.math.max
 
-
-/**
- * Created by bcm.social.01 on 2018/8/4.
- */
 object EncryptMediaUtils {
     private val TAG = "EncryptMediaUtils"
     private val MAX_THUMBNAIL_SIZE = 300

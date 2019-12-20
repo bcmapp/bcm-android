@@ -5,7 +5,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.widget.LinearLayout
 import androidx.customview.widget.ViewDragHelper
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 
@@ -53,10 +56,20 @@ class DragLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet
             val present = 1 - top.toFloat() / height
             dragListener?.onPositionChanged(present)
 
-            val maxScale = Math.min(present, 1f)
-            val minScale = Math.max(0.2f, maxScale)
+            val maxScale = min(present, 1f)
+            val minScale = max(0.2f, maxScale)
             changedView.scaleX = minScale
             changedView.scaleY = minScale
+
+            if (changedView is LinearLayout) {
+                if (dataType == com.bcm.messenger.chats.mediapreview.bean.MEDIA_TYPE_IMAGE) {
+                    getChildAt(1).scaleX = minScale
+                    getChildAt(1).scaleY = minScale
+                } else if (dataType == com.bcm.messenger.chats.mediapreview.bean.MEDIA_TYPE_VIDEO) {
+                    getChildAt(0).scaleX = minScale
+                    getChildAt(0).scaleY = minScale
+                }
+            }
         }
 
         override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
@@ -70,6 +83,15 @@ class DragLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 if (mDragScale) {
                     releasedChild.scaleX = 1f
                     releasedChild.scaleY = 1f
+                    if (releasedChild is LinearLayout) {
+                        if (dataType == com.bcm.messenger.chats.mediapreview.bean.MEDIA_TYPE_IMAGE) {
+                            getChildAt(1).scaleX = 1f
+                            getChildAt(1).scaleY = 1f
+                        } else if (dataType == com.bcm.messenger.chats.mediapreview.bean.MEDIA_TYPE_VIDEO) {
+                            getChildAt(0).scaleX = 1f
+                            getChildAt(0).scaleY = 1f
+                        }
+                    }
                 }
                 invalidate()
             }

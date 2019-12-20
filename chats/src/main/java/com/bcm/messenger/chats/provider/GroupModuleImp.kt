@@ -51,7 +51,8 @@ class GroupModuleImp : IGroupModule {
             ALog.d(TAG, "doGroupJoin queryGroupInfo is null: ${ameGroupInfo == null}, role: ${ameGroupInfo?.role ?: 0}")
             if (ameGroupInfo != null && ameGroupInfo.role != AmeGroupMemberInfo.VISITOR) {
                 AmeAppLifecycle.hideLoading()
-                AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true, HomeTopEvent.ConversationEvent(ARouterConstants.Activity.CHAT_GROUP_CONVERSATION, -1, null, gid)))
+                AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
+                        HomeTopEvent.ConversationEvent.fromGroupConversation(null, gid)))
                 callback?.invoke(true)
             }else {
                 GroupLogic.checkJoinGroupNeedConfirm(groupShareContent.groupId) {succeed, needConfirm ->
@@ -70,7 +71,8 @@ class GroupModuleImp : IGroupModule {
                                 GroupLogic.queryGroupInfo(groupShareContent.groupId) { ameGroupInfo, _, _ ->
                                     ALog.d(TAG, "after joinGroupByShareCode queryGroupInfo is null: ${ameGroupInfo == null}, role: ${ameGroupInfo?.role ?: 0}")
                                     if (ameGroupInfo != null && ameGroupInfo.role != AmeGroupMemberInfo.VISITOR) {
-                                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true, HomeTopEvent.ConversationEvent(ARouterConstants.Activity.CHAT_GROUP_CONVERSATION, -1, null, gid)))
+                                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
+                                                HomeTopEvent.ConversationEvent.fromGroupConversation(null, gid)))
 
                                     }
                                     callback?.invoke(true)

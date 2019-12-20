@@ -8,7 +8,7 @@ import com.bcm.messenger.chats.R
 import kotlinx.android.synthetic.main.chats_title_bar_drop_item_view.view.*
 
 /**
- * Created by bcm.social.01 on 2019/1/27.
+ * bcm.social.01 2019/1/27.
  */
 class ChatTitleDropItemView:FrameLayout {
     constructor(context: Context) : super(context)

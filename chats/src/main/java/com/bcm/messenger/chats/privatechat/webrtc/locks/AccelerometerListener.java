@@ -130,7 +130,7 @@ public final class AccelerometerListener {
         setOrientation(orientation);
     }
 
-    SensorEventListener mSensorListener = new SensorEventListener() {
+    private SensorEventListener mSensorListener = new SensorEventListener() {
         public void onSensorChanged(SensorEvent event) {
             onSensorEvent(event.values[0], event.values[1], event.values[2]);
         }
@@ -140,10 +140,12 @@ public final class AccelerometerListener {
         }
     };
 
-    Handler mHandler = new Handler() {
+    private Handler mHandler = new Handler() {
+
+        @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-            case ORIENTATION_CHANGED:
+                case ORIENTATION_CHANGED:
                 synchronized (this) {
                     mOrientation = mPendingOrientation;
                     if (DEBUG) {
@@ -155,7 +157,10 @@ public final class AccelerometerListener {
                     mListener.orientationChanged(mOrientation);
                 }
                 break;
+                default:
+                    break;
             }
+
         }
     };
 }

@@ -17,7 +17,6 @@ import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.route.api.BcmRouter
@@ -209,9 +208,8 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
         if (mAdHocModule?.isAdHocMode() == true) {
             mAdHocModule?.gotoPrivateChat(this, recipient.address.serialize())
         }else {
-            ConversationUtils.getExistThreadId(recipient) {
-                AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true, HomeTopEvent.ConversationEvent(ARouterConstants.Activity.CHAT_CONVERSATION_PATH, it, recipient.address)))
-            }
+            AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
+                    HomeTopEvent.ConversationEvent.fromPrivateConversation(recipient.address, false)))
         }
     }
 

@@ -7,7 +7,7 @@ import com.bcm.messenger.common.ui.CustomDataSearcher
 import com.bcm.messenger.common.core.Address
 
 /**
- * Created by bcm.social.01 on 2018/6/11.
+ * bcm.social.01 2018/6/11.
  */
 class AddressSearchBar : CustomDataSearcher<Address> {
     constructor(context: Context) : this(context, null) {}

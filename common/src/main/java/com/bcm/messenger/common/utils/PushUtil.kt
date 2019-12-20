@@ -22,7 +22,7 @@ import io.reactivex.schedulers.Schedulers
 import java.io.IOException
 
 /**
- * Created by bcm.social.01 on 2018/6/28.
+ * bcm.social.01 2018/6/28.
  */
 object PushUtil {
     private const val REGISTER_GCM_PATH = "/v1/accounts/gcm/"

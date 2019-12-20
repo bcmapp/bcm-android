@@ -4,7 +4,7 @@ import com.bcm.messenger.common.config.BcmFeatureSupport
 import com.bcm.messenger.common.event.ServiceConnectEvent
 
 /**
- * Created by bcm.social.01 on 2018/9/20.
+ * bcm.social.01 2018/9/20.
  */
 interface ILoginModule: IAmeModule {
     /**
@@ -115,7 +115,7 @@ interface ILoginModule: IAmeModule {
     /**
      * refresh signed prekey
      */
-    fun rotateSignedPrekey();
+    fun rotateSignedPrekey()
 
     /**
      * reload note list

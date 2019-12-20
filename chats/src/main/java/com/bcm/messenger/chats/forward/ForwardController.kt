@@ -5,6 +5,7 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.privatechat.logic.MessageSender
+import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.chats.util.AttachmentSaver
 import com.bcm.messenger.chats.util.AttachmentUtils
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -16,7 +17,6 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.sms.OutgoingEncryptedMessage
 import com.bcm.messenger.common.sms.OutgoingLocationMessage
 import com.bcm.messenger.common.utils.BcmFileUtils
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -88,7 +88,7 @@ object ForwardController {
 
     private fun privateForwardPrivateMessage(message: ForwardOnceMessage) {
         ALog.d(TAG, "Private forward private")
-        ConversationUtils.getThreadId(message.recipient) { threadId ->
+        ThreadListViewModel.getThreadId(message.recipient) { threadId ->
             try {
                 val privateMessage = message.privateMessage
                 val masterSecret = message.masterSecret
@@ -349,7 +349,7 @@ object ForwardController {
      */
     private fun groupForwardPrivateMessage(message: ForwardOnceMessage) {
         ALog.d(TAG, "Group forward to private")
-        ConversationUtils.getThreadId(message.recipient) { threadId ->
+        ThreadListViewModel.getThreadId(message.recipient) { threadId ->
 
             try {
                 if (message.groupMessage != null && message.masterSecret != null) {

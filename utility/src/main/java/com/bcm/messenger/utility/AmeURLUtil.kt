@@ -7,7 +7,7 @@ import java.util.regex.PatternSyntaxException
 
 
 /**
- * Created by bcm.social.01 on 2018/6/9.
+ * bcm.social.01 2018/6/9.
  */
 object AmeURLUtil {
 

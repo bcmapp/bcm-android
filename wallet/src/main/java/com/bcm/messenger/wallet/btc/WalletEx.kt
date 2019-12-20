@@ -2,6 +2,7 @@ package com.bcm.messenger.wallet.btc
 
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.btc.request.BroadcastTransactionRequest
 import com.bcm.messenger.wallet.btc.request.GetTransactionsRequest
 import com.bcm.messenger.wallet.btc.request.QueryTransactionInventoryRequest
@@ -15,7 +16,6 @@ import com.bcm.messenger.wallet.utils.WalletSettings
 import com.google.common.base.Predicate
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Iterables
-import com.bcm.messenger.utility.logger.ALog
 import org.bitcoinj.core.*
 import org.bitcoinj.crypto.ChildNumber
 import org.bitcoinj.crypto.HDKeyDerivation
@@ -26,7 +26,6 @@ import org.bitcoinj.wallet.WalletTransaction
 import java.lang.reflect.Method
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.Exception
 import kotlin.collections.LinkedHashSet
 
 /**
@@ -68,12 +67,12 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
     }
 
     fun addIssuedInternalKeyMap(addressIndex: Int, addressBase58: String) {
-        ALog.d(TAG, "addIssuedInternalKeyMap addressIndex: $addressIndex, addressBase58: $addressBase58")
+        ALog.i(TAG, "addIssuedInternalKeyMap addressIndex: $addressIndex, addressBase58: $addressBase58")
         issuedInternalMap[addressIndex] = LegacyAddress.fromBase58(this.params, addressBase58)
     }
 
     fun addIssuedExternalKeyMap(addressIndex: Int, addressBase58: String) {
-        ALog.d(TAG, "addIssuedExternalKeyMap addressIndex: $addressIndex, addressBase58: $addressBase58")
+        ALog.i(TAG, "addIssuedExternalKeyMap addressIndex: $addressIndex, addressBase58: $addressBase58")
         issuedExternalMap[addressIndex] = LegacyAddress.fromBase58(this.params, addressBase58)
     }
 
@@ -95,7 +94,7 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
         val response = mApi?.broadcastTransaction(BroadcastTransactionRequest(Wapi.VERSION,
                 parseRawTransactionByteArray(tran, true)))?.result
         if (response != null && response.success) {
-            ALog.d(TAG, "broadcastTransaction response txId: ${response.txid}, actual tx: ${tran.txId}")
+            ALog.i(TAG, "broadcastTransaction response txId: ${response.txid}, actual tx: ${tran.txId}")
             handleTransactionsUpdate(listOf(tran), true)
             return response.txid
         } else {
@@ -104,7 +103,7 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
     }
 
     fun callSynchronization(): Boolean {
-        ALog.d(TAG, "callSynchronization")
+        ALog.i(TAG, "callSynchronization")
         try {
             var checkHistory = false
             if (needDiscoverHistory()) {
@@ -123,31 +122,31 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
 
     fun removeDiscoveryFlag() {
         val account = activeKeyChain.accountPath.get(2).num()
-        ALog.d(TAG, "removeDiscoveryFlag account: $account")
+        ALog.i(TAG, "removeDiscoveryFlag account: $account")
         BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).edit().remove("${BCMWalletManager.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account").apply()
     }
 
     private fun needDiscoverHistory(): Boolean {
         val last = getLastDiscoveryTime()
-        ALog.d(TAG, "needDiscoverHistory last: $last, now: ${System.currentTimeMillis()}")
+        ALog.i(TAG, "needDiscoverHistory last: $last, now: ${System.currentTimeMillis()}")
         return last + TimeUnit.DAYS.toMillis(1) < System.currentTimeMillis()
     }
 
     private fun getLastDiscoveryTime(): Long {
         val account = activeKeyChain.accountPath.get(2).num()
-        ALog.d(TAG, "getLastDiscoveryTime account: $account")
+        ALog.i(TAG, "getLastDiscoveryTime account: $account")
         return BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).getLong("${BCMWalletManager.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account", 0)
     }
 
     private fun setLastDiscoveryTime() {
         val account = activeKeyChain.accountPath.get(2).num()
-        ALog.d(TAG, "setLastDiscoveryTime account: $account")
+        ALog.i(TAG, "setLastDiscoveryTime account: $account")
         BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).edit()
                 .putLong("${BCMWalletManager.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account", System.currentTimeMillis()).apply()
     }
 
     private fun doUnspentDiscovery(hasDiscoverHistory: Boolean): Boolean {
-        ALog.d(TAG, "doUnspentDiscovery hasDiscoveryHistory: $hasDiscoverHistory")
+        ALog.i(TAG, "doUnspentDiscovery hasDiscoveryHistory: $hasDiscoverHistory")
         try {
             val internalCount = if (hasDiscoverHistory) {
                 INTERNAL_FULL_ADDRESS_LOOK_AHEAD_LENGTH
@@ -165,7 +164,7 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
             var externalAddressList = getAddressRange(false, externalCount)
 
             val newUtxo = handleUnspentDiscovery(internalAddressList + externalAddressList)
-            ALog.d(TAG, "doUnspentDiscovery newUtxo: $newUtxo")
+            ALog.i(TAG, "doUnspentDiscovery newUtxo: $newUtxo")
             if (newUtxo == -1) {
                 return false
             }
@@ -191,7 +190,7 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
         try {
             var loop = false
             do {
-                ALog.d(TAG, "doHistoryDiscovery")
+                ALog.i(TAG, "doHistoryDiscovery")
                 loop = handleHistoryDiscovery()
 
             } while (loop)
@@ -264,7 +263,7 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
     }
 
     private fun handleHistoryDiscovery(): Boolean {
-        ALog.d(TAG, "handleHistoryDiscovery")
+        ALog.i(TAG, "handleHistoryDiscovery")
         ensureAddressIndexes(true, INTERNAL_FULL_ADDRESS_LOOK_AHEAD_LENGTH)
         ensureAddressIndexes(false, EXTERNAL_FULL_ADDRESS_LOOK_AHEAD_LENGTH)
         val internalAddress = getAddressRange(true, INTERNAL_FULL_ADDRESS_LOOK_AHEAD_LENGTH)
@@ -276,11 +275,11 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
             if (getTransactionResponse != null) {
                 val internalKeysBefore = issuedInternalKeys
                 val externalKeysBefore = issuedExternalKeys
-                ALog.d(TAG, "handleHistoryDiscovery internalBefore: $internalKeysBefore, externalBefore: $externalKeysBefore")
+                ALog.i(TAG, "handleHistoryDiscovery internalBefore: $internalKeysBefore, externalBefore: $externalKeysBefore")
                 val newTransactionList = transform(getTransactionResponse.transactions)
                 tryFetchValidTransactionOutPoint(newTransactionList)
                 handleTransactionsUpdate(newTransactionList)
-                ALog.d(TAG, "handleHistoryDiscovery internalAfter: $issuedInternalKeys, externalAfter: $issuedExternalKeys")
+                ALog.i(TAG, "handleHistoryDiscovery internalAfter: $issuedInternalKeys, externalAfter: $issuedExternalKeys")
                 return issuedInternalKeys != internalKeysBefore || issuedExternalKeys != externalKeysBefore
             }
         }
@@ -297,13 +296,13 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
                         continue
                     }
 
-                    ALog.d(TAG, "tryFetchValidTransactionOutPoint tx: ${input.outpoint.hash}")
+                    ALog.i(TAG, "tryFetchValidTransactionOutPoint tx: ${input.outpoint.hash}")
                     if (!this.transactions.containsKey(input.outpoint.hash)) {
                         fetchList.add(input.outpoint.hash)
                     }
                 }
             }
-            ALog.d(TAG, "tryFetchValidTransactionOutPoint fetch: ${fetchList.joinToString { it.toString() }}")
+            ALog.i(TAG, "tryFetchValidTransactionOutPoint fetch: ${fetchList.joinToString { it.toString() }}")
             if (fetchList.isNotEmpty()) {
                 val getTransactionResponse = mApi?.getTransactions(GetTransactionsRequest(Wapi.VERSION, fetchList))?.result
                 if (getTransactionResponse != null) {
@@ -349,13 +348,13 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
 
                     val wasPending = pending.remove(txHash) != null
                     if (wasPending) {
-                        ALog.d(TAG, "  <-pending")
+                        ALog.i(TAG, "  <-pending")
                     }
 
                     if (bestChain) {
                         val wasDead = dead.remove(txHash) != null
                         if (wasDead)
-                            ALog.d(TAG, "  <-dead")
+                            ALog.i(TAG, "  <-dead")
                         if (wasPending) {
                             // Was pending and is now confirmed. Disconnect the outputs in case we spent any already: they will be
                             // re-connected by processTxFromBestChain below.
@@ -377,7 +376,7 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
                         if (wasPending) {
                             // Just put it back in without touching the connections or confidence.
                             addWalletTransaction(WalletTransaction(WalletTransaction.Pool.PENDING, tmp))
-                            ALog.d(TAG, "  ->pending")
+                            ALog.i(TAG, "  ->pending")
                         } else {
                             // Ignore the case where a tx appears on a side chain at the same time as the best chain (this is
                             // quite normal and expected).
@@ -433,7 +432,7 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
 
                     val inputs = parseTransactionInputs(reader)
                     val outputs = parseTransactionOutputs(reader)
-                    ALog.d(TAG, "transform tx: ${tx.txid} inputs: ${inputs.size} outputs: ${outputs.size}")
+                    ALog.i(TAG, "transform tx: ${tx.txid} inputs: ${inputs.size} outputs: ${outputs.size}")
 
                     if (useSegwit) {
                         parseWitness(reader, inputs)
@@ -595,7 +594,7 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
         if (index > 0) {
             index -= 1
         }
-        ALog.d(TAG, "ensureAddressIndexes isChange: $isChange index: $index lookHead: $lookHead")
+        ALog.i(TAG, "ensureAddressIndexes isChange: $isChange index: $index lookHead: $lookHead")
         index += lookHead
         val path = ImmutableList.builder<ChildNumber>().addAll(chain.accountPath).add(if (isChange) ChildNumber.ONE else ChildNumber.ZERO).build()
         while (index >= 0) {
@@ -623,7 +622,7 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
     }
 
     private fun getAddressRange(isChange: Boolean, fromIndex: Int, toIndex: Int): Collection<Address> {
-        ALog.d(TAG, "getAddressRange isChange: $isChange fromIndex: $fromIndex toIndex: $toIndex")
+        ALog.i(TAG, "getAddressRange isChange: $isChange fromIndex: $fromIndex toIndex: $toIndex")
         val map = if (isChange) issuedInternalMap else issuedExternalMap
         val clippedFromIndex = Math.max(0, fromIndex) // clip at zero
         val ret = LinkedHashSet<Address>(toIndex - clippedFromIndex + 1)

@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
-        android:id="@+id/title_bar"
+        android:id="@+id/new_chat_title_bar"
         style="@style/CommonTitleBarStyle"
         app:left_type="image"
         app:left_image="@drawable/common_close_black_m_icon"
+        app:right_type="text"
+        app:right_text="@string/chats_new_group_chat"
         app:center_text="@string/chats_new_chat" />
 
     <FrameLayout
-        android:id="@+id/container"
+        android:id="@+id/new_chat_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

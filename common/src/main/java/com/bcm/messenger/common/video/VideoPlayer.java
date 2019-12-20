@@ -37,7 +37,6 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.bcm.messenger.common.R;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.mms.GlideRequests;
-import com.bcm.messenger.common.mms.VideoSlide;
 import com.bcm.messenger.common.video.exo.AttachmentDataSourceFactory;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -65,6 +64,7 @@ public class VideoPlayer extends FrameLayout {
     private VideoStateChangeListener videoStateChangeListener;
     private ControllerVisibleListener controllerVisibleListener;
     private VolumeChangeListener volumeChangeListener;
+    private LongClickListener longClickListener;
 
     public static abstract class VideoStateChangeListener {
         public abstract void onChanged(int state);
@@ -81,6 +81,10 @@ public class VideoPlayer extends FrameLayout {
 
     public interface VolumeChangeListener {
         void onVolumeChanged(int volume);
+    }
+
+    public interface LongClickListener {
+        void onLongClicked();
     }
 
     public VideoPlayer(Context context) {
@@ -246,6 +250,7 @@ public class VideoPlayer extends FrameLayout {
         this.videoStateChangeListener = null;
         this.controllerVisibleListener = null;
         this.volumeChangeListener = null;
+        this.longClickListener = null;
         if (exoView != null) {
             exoView.removeListeners();
         }
@@ -284,7 +289,13 @@ public class VideoPlayer extends FrameLayout {
         }
     }
 
-    public void setVideoThumbnail(Uri uri, GlideRequests glide) {
+    public void disableShowController() {
+        if (exoView != null) {
+            exoView.setUseController(false);
+        }
+    }
+
+    public void setVideoThumbnail(Object uri, GlideRequests glide) {
         if (exoView != null) {
             exoView.setPlayer(exoPlayer);
             exoView.setVideoThumbnail(uri, glide);
@@ -303,6 +314,12 @@ public class VideoPlayer extends FrameLayout {
         }
     }
 
+    public void setLongClickListener(LongClickListener listener) {
+        if (exoView != null) {
+            this.longClickListener = listener;
+        }
+    }
+
     private void setControllerListener() {
         if (exoView != null) {
             exoView.setControllerVisibilityListener(visibility -> {
@@ -318,6 +335,12 @@ public class VideoPlayer extends FrameLayout {
                         controllerVisibleListener.onVisibleChanged(visibility == View.VISIBLE);
                     }
                 }
+            });
+            exoView.setOnLongClickListener(v -> {
+                if (longClickListener != null) {
+                    longClickListener.onLongClicked();
+                }
+                return true;
             });
         }
     }

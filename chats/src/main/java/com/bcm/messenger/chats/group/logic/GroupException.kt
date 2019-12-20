@@ -3,7 +3,7 @@ package com.bcm.messenger.chats.group.logic
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
 
 /**
- * Created by bcm.social.01 on 2019/1/14.
+ * bcm.social.01 2019/1/14.
  */
 class GroupException(val err: String) : Exception(err) {
 

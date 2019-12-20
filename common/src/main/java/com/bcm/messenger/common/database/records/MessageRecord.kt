@@ -7,7 +7,6 @@ import com.bcm.messenger.common.database.model.PrivateChatDbModel
 import com.bcm.messenger.common.database.repositories.*
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.ExpirationUtil
-import com.bcm.messenger.common.utils.getString
 import com.bcm.messenger.utility.AppContextHolder
 
 /**
@@ -58,31 +57,32 @@ class MessageRecord() : ChatMessageModel() {
     }
 
     fun getDisplayBody(): CharSequence {
+        val context = AppContextHolder.APP_CONTEXT
         return when {
-            isDecryptFail() -> getString(R.string.MessageDisplayHelper_bad_encrypted_message)
-            isCorruptedKeyExchange() -> getString(R.string.common_record_received_corrupted_key_exchange_message)
-            isInvalidVersionKeyExchange() -> getString(R.string.common_record_received_key_exchange_message_for_invalid_protocol_version)
-            isLegacy() -> getString(R.string.MessageRecord_message_encrypted_with_a_legacy_protocol_version_that_is_no_longer_supported)
-            isBundleKeyExchange() -> getString(R.string.common_record_received_message_with_new_safety_number_tap_to_process)
+            isDecryptFail() -> context.getString(R.string.MessageDisplayHelper_bad_encrypted_message)
+            isCorruptedKeyExchange() -> context.getString(R.string.common_record_received_corrupted_key_exchange_message)
+            isInvalidVersionKeyExchange() -> context.getString(R.string.common_record_received_key_exchange_message_for_invalid_protocol_version)
+            isLegacy() -> context.getString(R.string.MessageRecord_message_encrypted_with_a_legacy_protocol_version_that_is_no_longer_supported)
+            isBundleKeyExchange() -> context.getString(R.string.common_record_received_message_with_new_safety_number_tap_to_process)
             isKeyExchange() && isOutgoing() -> ""
-            isKeyExchange() && !isOutgoing() -> getString(R.string.common_conversation_received_key_exchange_message_tap_to_process)
-            isDuplicateMessage() -> getString(R.string.common_record_duplicate_message)
-            isDecrypting() -> getString(R.string.MessageDisplayHelper_decrypting_please_wait)
-            isNoSession() -> getString(R.string.MessageDisplayHelper_message_encrypted_for_non_existing_session)
-            isEndSession() && isOutgoing() -> getString(R.string.common_record_secure_session_reset)
-            isIncomingCall() -> getString(R.string.MessageRecord_s_called_you, recipient.toShortString())
-            isOutgoingCall() -> getString(R.string.MessageRecord_called_s, recipient.toShortString())
-            isMissedCall() -> getString(R.string.MessageRecord_missed_call_from, recipient.toShortString())
-            isJoin() -> getString(R.string.MessageRecord_s_joined_signal, recipient.toShortString())
+            isKeyExchange() && !isOutgoing() -> context.getString(R.string.common_conversation_received_key_exchange_message_tap_to_process)
+            isDuplicateMessage() -> context.getString(R.string.common_record_duplicate_message)
+            isDecrypting() -> context.getString(R.string.MessageDisplayHelper_decrypting_please_wait)
+            isNoSession() -> context.getString(R.string.MessageDisplayHelper_message_encrypted_for_non_existing_session)
+            isEndSession() && isOutgoing() -> context.getString(R.string.common_record_secure_session_reset)
+            isIncomingCall() -> context.getString(R.string.MessageRecord_s_called_you, recipient.toShortString())
+            isOutgoingCall() -> context.getString(R.string.MessageRecord_called_s, recipient.toShortString())
+            isMissedCall() -> context.getString(R.string.MessageRecord_missed_call_from, recipient.toShortString())
+            isJoin() -> context.getString(R.string.MessageRecord_s_joined_signal, recipient.toShortString())
             isExpirationTimerUpdate() -> {
                 val time = ExpirationUtil.getExpirationDisplayValue(AppContextHolder.APP_CONTEXT, expiresTime.toInt() / 1000)
                 if (isOutgoing()) {
-                    getString(R.string.MessageRecord_you_set_disappearing_message_time_to_s, time)
+                    context.getString(R.string.MessageRecord_you_set_disappearing_message_time_to_s, time)
                 } else {
-                    getString(R.string.MessageRecord_s_set_disappearing_message_time_to_s, recipient.toShortString(), time)
+                    context.getString(R.string.MessageRecord_s_set_disappearing_message_time_to_s, recipient.toShortString(), time)
                 }
             }
-            isLocation() -> getString(R.string.common_location_message_description)
+            isLocation() -> context.getString(R.string.common_location_message_description)
             body.length > MAX_DISPLAY_LENGTH -> body.substring(0, MAX_DISPLAY_LENGTH)
             else -> body
         }
@@ -157,4 +157,24 @@ class MessageRecord() : ChatMessageModel() {
     fun isVideoCall() = messageType == MessageType.CALL.type && callType == CallType.VIDEO.type
 
     fun isMediaMessage() = messageType != MessageType.TEXT.type && messageType != MessageType.LOCATION.type && messageType != MessageType.CALL.type
+
+    fun isMediaFailed(): Boolean {
+        if (!isMediaMessage()) return false
+        attachments.forEach {
+            if (it.isFailed()) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fun isMediaDeleted(): Boolean {
+        if (!isMediaMessage()) return false
+        attachments.forEach {
+            if (it.isRemoteDeleted()) {
+                return true
+            }
+        }
+        return false
+    }
 }

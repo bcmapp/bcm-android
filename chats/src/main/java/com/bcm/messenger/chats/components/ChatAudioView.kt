@@ -71,6 +71,17 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         audio_pause.setOnClickListener { v -> doPlayAction(false) }
 
         setOnClickListener { v ->
+            if (mPrivateMessage?.isMediaDeleted() == true || mGroupMessage?.isFileDeleted == true) {
+                return@setOnClickListener
+            }
+            if (mPrivateMessage?.isMediaFailed() == true || mGroupMessage?.isFileDownloadFail == true) {
+                if (mPrivateMessage != null) {
+                    downloadListener?.onClick(v, mPrivateMessage!!)
+                } else if (mGroupMessage != null) {
+                    downloadListener?.onClick(v, mGroupMessage!!)
+                }
+                return@setOnClickListener
+            }
             if (audio_play.visibility == View.VISIBLE) {
                 doPlayAction(true)
             } else {
@@ -97,7 +108,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         mPrivateMessage = null
 
         val content = messageRecord.message.content as AmeGroupMessage.AudioContent
-        val slide = if(messageRecord.attachmentUri.isNullOrEmpty()) {
+        val slide = if (messageRecord.attachmentUri.isNullOrEmpty()) {
             AudioSlide(context, null, content.size, content.duration, false)
         } else {
             AudioSlide(context, messageRecord.filePartUri, content.size, content.duration, false, true)
@@ -106,7 +117,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         displayControl(audio_play)
         if (messageRecord.isSending || messageRecord.isAttachmentDownloading) {
             mShowPending = true
-        } else if(messageRecord.attachmentUri.isNullOrEmpty()) {
+        } else if (messageRecord.attachmentUri.isNullOrEmpty()) {
             mShowPending = false
         } else {
             mShowPending = false
@@ -119,6 +130,16 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         updateMediaDuration(audioSlidePlayer, slide.duration)
         if (slide.duration <= 0) {
             audioSlidePlayer?.prepareDuration()
+        }
+
+        if (messageRecord.isFileDeleted) {
+            audio_expire_text.visibility = View.VISIBLE
+            audio_timestamp.visibility = View.GONE
+            audio_decoration.visibility = View.GONE
+        } else {
+            audio_expire_text.visibility = View.GONE
+            audio_timestamp.visibility = View.VISIBLE
+            audio_decoration.visibility = View.VISIBLE
         }
 
     }
@@ -146,6 +167,16 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         updateMediaDuration(audioSlidePlayer, slide.duration)
         if (slide.duration <= 0) {
             audioSlidePlayer?.prepareDuration()
+        }
+
+        if (messageRecord.isMediaDeleted()) {
+            audio_expire_text.visibility = View.VISIBLE
+            audio_timestamp.visibility = View.GONE
+            audio_decoration.visibility = View.GONE
+        } else {
+            audio_expire_text.visibility = View.GONE
+            audio_timestamp.visibility = View.VISIBLE
+            audio_decoration.visibility = View.VISIBLE
         }
 
     }
@@ -275,6 +306,12 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
 
 
     private fun doPlayAction(toPlay: Boolean) {
+        if (mPrivateMessage?.isMediaFailed() == true ||
+                mPrivateMessage?.isMediaDeleted() == true ||
+                mGroupMessage?.isFileDeleted == true ||
+                mGroupMessage?.isFileDownloadFail == true) {
+            return
+        }
         PermissionUtil.checkStorage(context) { aBoolean ->
             if (aBoolean) {
                 realDoPlayAction(toPlay)

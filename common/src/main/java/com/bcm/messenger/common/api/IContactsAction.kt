@@ -43,17 +43,22 @@ interface IContactsAction {
     /**
      * （index1）
      */
-    fun showHeader(index: Int, show: Boolean)
+    fun showHeader(header: View, show: Boolean)
 
     /**
      * （index1）
      */
-    fun showFooter(index: Int, show: Boolean)
+    fun showFooter(footer: View, show: Boolean)
 
     /**
      * 
      */
     fun setMultiMode(multiSelect: Boolean)
+
+    /**
+     * 设置已选中的不可更改的联系人
+     */
+    fun setFixedSelected(recipientList: List<Recipient>)
     /**
      * 
      */
@@ -63,6 +68,7 @@ interface IContactsAction {
      * 
      */
     fun setContactSelectCallback(callback: IContactsCallback)
+
 
     /**
      * 

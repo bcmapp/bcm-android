@@ -122,7 +122,7 @@ class PrivateChatRepo {
 
         model.uid = message.recipient.address.serialize()
         model.threadId = realThreadId
-        model.body = message.messageBody
+        model.body = message.messageBody.orEmpty()
         model.dateReceive = System.currentTimeMillis()
         model.dateSent = sendTime
         model.read = 1
@@ -223,7 +223,7 @@ class PrivateChatRepo {
         model.dateSent = message.sentTimestampMillis
         model.read = if (unread) 0 else 1
         model.expiresTime = message.expiresIn
-        model.body = message.messageBody
+        model.body = message.messageBody.orEmpty()
         model.type = status
         model.threadId = threadId
         model.messageType = if (message.isLocation) PrivateChatDbModel.MessageType.LOCATION.type else PrivateChatDbModel.MessageType.TEXT.type

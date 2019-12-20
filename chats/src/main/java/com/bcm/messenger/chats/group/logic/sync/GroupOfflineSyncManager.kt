@@ -17,7 +17,7 @@ import kotlin.collections.ArrayList
 import kotlin.math.max
 
 /**
- * Created by bcm.social.01 on 2019/3/19.
+ * bcm.social.01 2019/3/19.
  */
 class GroupOfflineSyncManager(private val syncCallback: OfflineSyncCallback) {
     companion object {

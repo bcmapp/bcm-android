@@ -19,6 +19,7 @@ import com.bcm.messenger.common.config.BcmFeatureSupport;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.AmeGroupMessage;
 import com.bcm.messenger.common.crypto.MasterSecretUnion;
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.common.provider.AMESelfData;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.sms.OutgoingLocationMessage;
@@ -27,7 +28,6 @@ import com.bcm.messenger.common.utils.AppUtilKotlinKt;
 import com.bcm.messenger.common.utils.GroupUtil;
 import com.bcm.messenger.common.utils.IdentityUtil;
 import com.bcm.messenger.common.utils.RxBus;
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.utility.AmeTimeUtil;
 import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.Base64;
@@ -257,7 +257,9 @@ public class RecipientDatabase extends Database {
         try {
             Cursor cursor = database.query(TABLE_NAME, null, null, null, null, null, null);
             return cursor;
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
@@ -355,7 +357,7 @@ public class RecipientDatabase extends Database {
             try {
                 featureSupport = new BcmFeatureSupport(supportFeatures);
             } catch (DecoderException exception){
-
+                exception.printStackTrace();
             }
         }
         recipient.resolve().setFeatureSupport(featureSupport);

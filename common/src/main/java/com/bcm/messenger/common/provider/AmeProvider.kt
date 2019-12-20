@@ -4,7 +4,7 @@ import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
 
 /**
- * Created by bcm.social.01 on 2018/9/20.
+ * bcm.social.01 2018/9/20.
  */
 object AmeProvider {
     private const val TAG = "AmeProvider"

@@ -17,6 +17,8 @@ import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.commonsware.cwac.saferoom.SafeHelperFactory
+import net.sqlcipher.database.SQLiteException
+import java.io.File
 
 /**
  * Created by Kin on 2019/9/10
@@ -85,7 +87,7 @@ abstract class UserDatabase : RoomDatabase() {
             Repository.getInstance().reset()
         }
 
-        private fun openDatabase(): UserDatabase {
+        private fun openDatabase(needCheckDb: Boolean = true): UserDatabase {
             val masterSecret = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
             val options = SafeHelperFactory.Options.builder().setClearPassphrase(false).build()
             val factory = SafeHelperFactory(masterSecret?.encryptionKey?.encoded, options)
@@ -93,13 +95,34 @@ abstract class UserDatabase : RoomDatabase() {
                     .addMigrations(
                             MIGRATION_1_2,
                             MIGRATION_2_3
-                            )
+                    )
             // Do encryption if version is release build.
             val db = if (isReleaseBuild()) {
-                dbBuilder.openHelperFactory(factory).build()
+                dbBuilder.openHelperFactory(factory).allowMainThreadQueries().build()
             } else {
                 dbBuilder.build()
             }
+
+            if (needCheckDb) {
+                try {
+                    db.getThreadDao().queryThread("check_db")
+                } catch (tr: Throwable) {
+                    ALog.e(TAG, "Database error", tr)
+                    if (tr is SQLiteException && tr.message?.startsWith("file is not a database") == true) {
+                        ALog.e(TAG, "Database psw error, must delete old database!!")
+                        try {
+                            db.close()
+                        } catch (tr2: Throwable) {
+                        }
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMESelfData.uid}.db").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMESelfData.uid}.db-shm").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMESelfData.uid}.db-wal").delete()
+
+                        return openDatabase(false)
+                    }
+                }
+            }
+
             return db
         }
     }

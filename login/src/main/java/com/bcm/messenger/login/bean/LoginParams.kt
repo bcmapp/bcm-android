@@ -3,7 +3,7 @@ package com.bcm.messenger.login.bean
 import com.bcm.messenger.utility.proguard.NotGuard
 
 /**
- * Created by bcm.social.01 on 2018/9/5.
+ * bcm.social.01 2018/9/5.
  *
  */
 

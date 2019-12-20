@@ -11,6 +11,7 @@ import com.bcm.messenger.chats.components.ChatForwardDialog
 import com.bcm.messenger.chats.forward.viewmodel.ForwardViewModel
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.privatechat.logic.MessageSender
+import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.chats.util.AttachmentUtils
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
@@ -23,7 +24,6 @@ import com.bcm.messenger.common.mms.SlideDeck
 import com.bcm.messenger.common.provider.IForwardSelectProvider.ForwardSelectCallback
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -372,7 +372,7 @@ class ForwardActivity : SwipeBaseActivity() {
                     .doOnComplete { finish() }
                     .subscribe()
         } else {
-            ConversationUtils.getThreadId(recipient) { threadId ->
+            ThreadListViewModel.getThreadId(recipient) { threadId ->
                 try {
                     val uri = Uri.fromFile(File(path))
                     val slide = AttachmentUtils.getImageSlide(this, uri)?:return@getThreadId

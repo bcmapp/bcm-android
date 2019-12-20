@@ -2,21 +2,21 @@ package com.bcm.messenger.contacts
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentPagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.bcm.route.annotation.Route
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.api.IContactsAction
 import com.bcm.messenger.common.api.IContactsCallback
-import kotlinx.android.synthetic.main.contacts_fragment_contacts_selection.*
-import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.common.utils.hideKeyboard
-import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.utility.logger.ALog
+import com.bcm.route.annotation.Route
+import kotlinx.android.synthetic.main.contacts_fragment_contacts_selection.*
 
 /**
  * Created by zjl on 2018/4/8.
@@ -187,11 +187,11 @@ class ContactsSelectionFragment : Fragment(), IContactsAction {
 
     }
 
-    override fun showHeader(index: Int, show: Boolean) {
+    override fun showHeader(header: View, show: Boolean) {
 
     }
 
-    override fun showFooter(index: Int, show: Boolean) {
+    override fun showFooter(footer: View, show: Boolean) {
 
     }
 
@@ -201,6 +201,10 @@ class ContactsSelectionFragment : Fragment(), IContactsAction {
         } else {
             mIndividualContact?.setSelected(recipient, select)
         }
+    }
+
+    override fun setFixedSelected(recipientList: List<Recipient>) {
+
     }
 
     override fun setContactSelectCallback(callback: IContactsCallback) {

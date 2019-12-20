@@ -49,11 +49,7 @@ class VerifyFingerprintFragment : Fragment() {
                         if (success) {
                             verifyCallback?.invoke(true)
                         } else {
-                            if (AmePinLogic.hasPin()) {
-                                PinInputActivity.routerCheckPin(it, 1)
-                            } else {
-                                (activity as? VerifyFingerprintActivity)?.switchToPasswordFragment(hasHw, isLocked)
-                            }
+                            (activity as? VerifyFingerprintActivity)?.switchToPasswordFragment(hasHw, isLocked)
                         }
                     }
                     .build()

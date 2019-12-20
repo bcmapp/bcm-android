@@ -10,7 +10,7 @@ import org.whispersystems.jobqueue.dependencies.DependencyInjector
 import org.whispersystems.jobqueue.requirements.NetworkRequirementProvider
 
 /**
- * Created by bcm.social.01 on 2018/9/26.
+ * bcm.social.01 2018/9/26.
  */
 object AccountJobManager {
     @SuppressWarnings("all")

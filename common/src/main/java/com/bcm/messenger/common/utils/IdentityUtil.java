@@ -95,13 +95,6 @@ public class IdentityUtil {
         }
     }
 
-    public static void markIdentityUpdate(Context context, Recipient recipient) {
-        long time = System.currentTimeMillis();
-        IncomingTextMessage incoming = new IncomingTextMessage(recipient.getAddress(), 1, time, null, Optional.<SignalServiceGroup>absent(), 0);
-        IncomingIdentityUpdateMessage individualUpdate = new IncomingIdentityUpdateMessage(incoming);
-        Repository.getChatRepo().insertIncomingTextMessage(incoming);
-    }
-
     public static void saveIdentity(Context context, String number, IdentityKey identityKey, boolean nonBlockingApproval) {
         synchronized (SESSION_LOCK) {
             TextSecureIdentityKeyStore identityKeyStore = new TextSecureIdentityKeyStore(context);

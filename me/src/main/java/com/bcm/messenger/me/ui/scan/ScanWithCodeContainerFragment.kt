@@ -8,10 +8,11 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.me.R
 import kotlinx.android.synthetic.main.me_fragment_container_scan_and_code.*
-import com.bcm.messenger.common.BaseFragment
 
 /**
  * Created by wjh on 2019/7/3
@@ -77,7 +78,10 @@ class ScanWithCodeContainerFragment : BaseFragment() {
         mPagerListener?.let {
             container_pager.addOnPageChangeListener(it)
         }
-        selectTab(0)
+
+        val selectIndex = arguments?.getInt(ARouterConstants.PARAM.SCAN.TAB) ?: 0
+        selectTab(selectIndex)
+        container_pager.setCurrentItem(selectIndex, false)
     }
 
     private fun selectTab(index: Int) {

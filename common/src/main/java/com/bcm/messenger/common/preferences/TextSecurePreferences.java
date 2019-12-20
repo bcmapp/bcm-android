@@ -3,13 +3,13 @@ package com.bcm.messenger.common.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
+import android.text.TextUtils;
 
 import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bcm.messenger.common.R;
-import com.bcm.messenger.common.provider.AMESelfData;
 import com.bcm.messenger.common.utils.AppUtil;
 import com.bcm.messenger.utility.logger.ALog;
 
@@ -326,9 +326,10 @@ public class TextSecurePreferences {
         }
     }
 
-    public static SharedPreferences getCurrentSharedPreferences(Context context) {
-        if (AMESelfData.INSTANCE.isLogin()) {
-            return context.getSharedPreferences(TABLE_NAME + AMESelfData.INSTANCE.getUid(), Context.MODE_PRIVATE);
+    private static SharedPreferences getCurrentSharedPreferences(Context context) {
+        String curLogin = SuperPreferences.getStringPreference(context, SuperPreferences.AME_CURRENT_LOGIN);
+        if (!TextUtils.isEmpty(curLogin)) {
+            return context.getSharedPreferences(TABLE_NAME + curLogin, Context.MODE_PRIVATE);
         }
         return null;
     }

@@ -16,6 +16,7 @@ import com.bcm.messenger.chats.mediabrowser.*
 import com.bcm.messenger.chats.mediabrowser.adapter.MediaBrowserAdapter
 import com.bcm.messenger.chats.mediapreview.MediaViewActivity
 import com.bcm.messenger.chats.provider.ChatModuleImp
+import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.Address
@@ -31,7 +32,7 @@ import kotlinx.android.synthetic.main.chats_media_image_browser.*
 import java.lang.ref.WeakReference
 
 /**
- * Created by bcm.social.01 on 2018/10/16.
+ * bcm.social.01 2018/10/16.
  */
 class MediaBrowserFragment : Fragment(), IMediaBrowserMenuProxy {
 
@@ -67,7 +68,7 @@ class MediaBrowserFragment : Fragment(), IMediaBrowserMenuProxy {
             val model = ViewModelProviders.of(act).get(PrivateMediaBrowseModel::class.java)
             val masterSecret = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
             val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, address, true)
-            ConversationUtils.getThreadId(recipient) {
+            ThreadListViewModel.getThreadId(recipient) {
                 threadId = it
                 if (null != masterSecret && threadId >= 0){
                     model.init(threadId, masterSecret)

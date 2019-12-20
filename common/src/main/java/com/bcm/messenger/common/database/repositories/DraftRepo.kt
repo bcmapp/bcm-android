@@ -2,9 +2,9 @@ package com.bcm.messenger.common.database.repositories
 
 import android.content.Context
 import android.net.Uri
+import com.bcm.messenger.common.R
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.model.DraftDbModel
-import com.bcm.messenger.common.R
 import com.bcm.messenger.utility.logger.ALog
 import java.util.*
 

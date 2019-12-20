@@ -16,7 +16,6 @@ import com.bcm.netswitchy.proxy.support.IConnectionChecker
 import com.bcm.netswitchy.proxy.support.IProxy
 import com.bcm.ssrsystem.config.SSParams
 import com.bcm.ssrsystem.config.SSRParams
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -200,6 +199,7 @@ object ProxyManager : IConnectionListener, ProxyRunner.IProxyRunResult, ProxyTes
             weakNotify.forEach {
                 it.onProxyConnectFinished()
             }
+            return
         }
 
         weakNotify.forEach {

@@ -2,13 +2,13 @@ package com.bcm.messenger.common.glide;
 
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 
+import com.bcm.messenger.common.contacts.avatars.ContactPhoto;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.data.DataFetcher;
-
-import com.bcm.messenger.common.contacts.avatars.ContactPhoto;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +39,9 @@ class ContactPhotoFetcher implements DataFetcher<InputStream> {
   public void cleanup() {
     try {
       if (inputStream != null) inputStream.close();
-    } catch (IOException e) {}
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override

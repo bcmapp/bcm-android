@@ -1,7 +1,7 @@
 package com.bcm.messenger.common.event
 
 /**
- * Created by bcm.social.01 on 2018/11/27.
+ * bcm.social.01 2018/11/27.
  */
 /**
  * gid id, -1 

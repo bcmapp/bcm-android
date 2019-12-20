@@ -11,6 +11,7 @@ import androidx.core.content.FileProvider
 import androidx.core.util.Pair
 import com.bcm.messenger.chats.BuildConfig
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.chats.components.ChatThumbnailView
 import com.bcm.messenger.chats.mediapreview.MediaViewActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
@@ -23,10 +24,7 @@ import com.bcm.messenger.common.mms.PartAuthority
 import com.bcm.messenger.common.providers.PartProvider
 import com.bcm.messenger.common.ui.activity.ApkInstallRequestActivity
 import com.bcm.messenger.common.ui.popup.ToastUtil
-import com.bcm.messenger.common.utils.AmeAppLifecycle
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.BcmFileUtils
-import com.bcm.messenger.common.utils.MediaUtil
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Util
@@ -153,6 +151,20 @@ open class ChatPreviewClickListener : ChatComponentListener {
             val attachmentContent = messageRecord.message.content as AmeGroupMessage.AttachmentContent
             var contentType: String? = attachmentContent.mimeType
             val messageType = messageRecord.message.type
+
+            // retry download thumbnail
+            if (messageRecord.isThumbnailDownloadFail) {
+                (v as? ChatThumbnailView)?.downloadGroupThumbnail(messageRecord)
+                return
+            } else if (messageRecord.isFileDeleted && messageRecord.thumbnailPartUri == null) {
+                if (messageType == AmeGroupMessage.VIDEO) {
+                    AmeAppLifecycle.failure(getString(R.string.chats_media_view_video_expire), true)
+                } else {
+                    AmeAppLifecycle.failure(getString(R.string.chats_media_view_image_expire), true)
+                }
+                return
+            }
+
             if (messageType == AmeGroupMessage.IMAGE || messageType == AmeGroupMessage.VIDEO) {
                 val intent = Intent(v.context, MediaViewActivity::class.java)
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)

@@ -26,6 +26,14 @@
     <string name="chats_no_nickname_set_btn">今すぐ設定</string>
     <string name="chats_network_connecting">接続中…</string>
     <string name="chats_network_disconnected">オフライン</string>
+    <string name="chats_main_new_chat">新しいチャット</string>
+    <string name="chats_main_scan_and_add">スキャンして、追加する</string>
+    <string name="chats_main_invite_friend">フレンド招待</string>
+    <string name="chats_more_data_vault_title">データセーフティボックス</string>
+    <string name="chats_more_wallet_title">財布</string>
+    <string name="chats_more_settings_title">設置</string>
+    <string name="chats_more_airchat_title">エアチャット</string>
+    <string name="chats_friend_request_title">フレンド申請</string>
 
     <string name="chats_conversation_input_hint">&#160;ここに入力</string>
 

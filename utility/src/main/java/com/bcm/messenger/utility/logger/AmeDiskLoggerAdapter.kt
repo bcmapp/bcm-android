@@ -6,7 +6,7 @@ import com.orhanobut.logger.FormatStrategy
 import com.orhanobut.logger.Logger
 
 /**
- * Created by bcm.social.01 on 2018/6/15.
+ * bcm.social.01 2018/6/15.
  */
 class AmeDiskLoggerAdapter(formatStrategy: FormatStrategy, private val level: Int) : DiskLogAdapter(formatStrategy) {
     override fun isLoggable(priority: Int, tag: String?): Boolean {

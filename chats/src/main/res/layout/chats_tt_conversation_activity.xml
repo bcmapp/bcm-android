@@ -69,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25sp"
                 android:layout_marginBottom="10dp"
-                android:background="@drawable/common_red_round_selector"
+                android:background="@drawable/common_red_stroke_big_corner_bg"
                 android:gravity="center"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"

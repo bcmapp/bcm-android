@@ -7,6 +7,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.R
 import com.bcm.messenger.chats.privatechat.webrtc.CameraState
+import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -16,7 +17,6 @@ import com.bcm.messenger.common.provider.*
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AmePushProcess
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.common.utils.base64Decode
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.contacts.FriendRequestsListActivity
@@ -131,7 +131,7 @@ class SchemeLaunchHelper(val context: Context) {
         }
     }
 
-    private fun handleTopEvent(data:String?) {
+    private fun handleTopEvent(data: String?) {
         try{
             val current = AmeAppLifecycle.current()?:return
             if (!data.isNullOrEmpty()) {
@@ -143,12 +143,25 @@ class SchemeLaunchHelper(val context: Context) {
 
                     val con = event.chatEvent
                     if (con != null) {
-                        BcmRouter.getInstance()
-                                .get(con.path)
-                                .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, con.address)
-                                .putLong(ARouterConstants.PARAM.PARAM_THREAD, con.threadId)
-                                .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, con.gid ?: -1L)
-                                .navigation(current)
+                        val threadId = con.threadId
+                        val address = con.address
+                        if (threadId <= 0L && address != null && con.createIfNotExist) {
+                            ThreadListViewModel.getThreadId(Recipient.from(AppContextHolder.APP_CONTEXT, address, true)) {newThreadId ->
+                                BcmRouter.getInstance()
+                                        .get(con.path)
+                                        .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
+                                        .putLong(ARouterConstants.PARAM.PARAM_THREAD, newThreadId)
+                                        .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, con.gid ?: -1L)
+                                        .navigation(current)
+                            }
+                        }else {
+                            BcmRouter.getInstance()
+                                    .get(con.path)
+                                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, con.address)
+                                    .putLong(ARouterConstants.PARAM.PARAM_THREAD, threadId)
+                                    .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, con.gid ?: -1L)
+                                    .navigation(current)
+                        }
                     }
 
                     val call = event.callEvent
@@ -292,7 +305,7 @@ class SchemeLaunchHelper(val context: Context) {
         val uid = data?.uid
         if (uid != null) {
             val address = Address.fromSerialized(uid)
-            ConversationUtils.getThreadId(Recipient.from(AppContextHolder.APP_CONTEXT, address, true)) {
+            ThreadListViewModel.getThreadId(Recipient.from(AppContextHolder.APP_CONTEXT, address, true)) {
                 BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_CONVERSATION_PATH)
                         .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
                         .putLong(ARouterConstants.PARAM.PARAM_THREAD, it)

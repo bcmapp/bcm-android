@@ -116,8 +116,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
 
                 bodyView.text = spannableStringBuilder
                 return spannableStringBuilder
-
-            }else {
+            } else {
                 bodyView.text = bodyText
             }
 
@@ -143,7 +142,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
     }
 
     protected var mActionArray = LongSparseArray<IConversationContentAction<AmeGroupMessageDetail>>(20)
-    protected var mSelectView: CheckBox? =null
+    protected var mSelectView: CheckBox? = null
     protected var mCellClickView: View? = null
     protected var mAlertView: AlertView? = null
     protected var mPhotoView: IndividualAvatarView? = null
@@ -190,6 +189,8 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
                         })
                         .withDoneTitle(getString(R.string.chats_cancel))
                         .show(it.context as? FragmentActivity)
+            } else if (messageRecord.sendState == AmeGroupMessageDetail.SendState.THUMB_DOWNLOAD_FAIL) {
+                (mAction?.getDisplayView() as? ChatThumbnailView)?.downloadGroupThumbnail(messageRecord)
             }
         }
 
@@ -233,10 +234,10 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
     }
 
     override fun updateAlert(message: AmeGroupMessageDetail, action: IConversationContentAction<AmeGroupMessageDetail>?) {
-        if (message.sendState == AmeGroupMessageDetail.SendState.SEND_FAILED) {
-            mAlertView?.setFailed()
-        }else {
-            mAlertView?.setNone()
+        when (message.sendState) {
+            AmeGroupMessageDetail.SendState.SEND_FAILED,
+            AmeGroupMessageDetail.SendState.THUMB_DOWNLOAD_FAIL -> mAlertView?.setFailed()
+            else -> mAlertView?.setNone()
         }
     }
 
@@ -253,11 +254,11 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
 
     override fun bindViewAction(message: AmeGroupMessageDetail, glideRequests: GlideRequests, batchSelected: MutableSet<AmeGroupMessageDetail>?): IConversationContentAction<AmeGroupMessageDetail>? {
         var child: View? = null
-        for (i in 0 until  (mBodyContainer?.childCount ?: 0)) {
+        for (i in 0 until (mBodyContainer?.childCount ?: 0)) {
             child = mBodyContainer?.getChildAt(i)
             if (child is ViewStub) {
 
-            }else {
+            } else {
                 child?.visibility = View.GONE
             }
         }
@@ -266,8 +267,8 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
 
     private fun bindAction(messageRecord: AmeGroupMessageDetail, glideRequests: GlideRequests, batchSelected: MutableSet<AmeGroupMessageDetail>?): IConversationContentAction<AmeGroupMessageDetail>? {
 
-        fun <T> getInflateView(resId: Int) :T {
-            return when (val view = itemView.findViewById<View>(resId)){
+        fun <T> getInflateView(resId: Int): T {
+            return when (val view = itemView.findViewById<View>(resId)) {
                 is ViewStub -> {
                     ALog.i(TAG, "getInflateView viewStub")
                     view.inflate() as T
@@ -278,6 +279,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
                 }
             }
         }
+
         val type = messageRecord.message.type
         ALog.i(TAG, "createViewAction type: $type")
         var action: IConversationContentAction<AmeGroupMessageDetail>? = mActionArray[type]
@@ -391,18 +393,17 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
     }
 
     private fun getGroupMemberInfo(messageRecord: AmeGroupMessageDetail): AmeGroupMemberInfo? {
-        if(messageRecord.gid > 0 && GroupLogic.isCurrentModel(messageRecord.gid)) {
+        if (messageRecord.gid > 0 && GroupLogic.isCurrentModel(messageRecord.gid)) {
             val model = GroupLogic.getModel(messageRecord.gid)
             val sender = model?.getGroupMember(messageRecord.senderId)
-            if (model != null && sender == null){
+            if (model != null && sender == null) {
                 val weakThis = WeakReference(this)
-                model.queryGroupMember(messageRecord.senderId) {
-                    member->
+                model.queryGroupMember(messageRecord.senderId) { member ->
                     if (null != member && weakThis.get()?.recipient?.address == member.uid) {
                         updateUserInfo(recipient, sender)
                     }
                 }
-            }  else {
+            } else {
                 return sender
             }
         }
@@ -420,7 +421,6 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
             RecipientProfileLogic.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient, profileKey)
         }
         mPhotoView?.setPhoto(recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
-
     }
 
     open fun unBindData() {
@@ -465,7 +465,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
     }
 
     private fun showItemPopWindow(context: Context, anchorView: View, messageRecord: AmeGroupMessageDetail) {
-        val groupModel = GroupLogic.getModel(messageRecord.gid)?:return
+        val groupModel = GroupLogic.getModel(messageRecord.gid) ?: return
         if (groupModel.myRole() == AmeGroupMemberInfo.VISITOR) {
             ALog.i(TAG, "visitor can't showItemPopWindow")
             return
@@ -535,15 +535,12 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
                                 })
                                 .withDoneTitle(AppContextHolder.APP_CONTEXT.getString(R.string.common_cancel))
                                 .show(AmeAppLifecycle.current() as? FragmentActivity)
-
                     }
 
                     override fun onReply() {
                         EventBus.getDefault().post(ReplyMessageEvent(messageRecord, ReplyMessageEvent.ACTION_REPLY))
                     }
-
                 }).build()
-
     }
 
     protected fun onDataForward(context: Context, messageRecord: AmeGroupMessageDetail) {
@@ -565,21 +562,19 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
     }
 
     private fun updateBackground(messageRecord: AmeGroupMessageDetail, mainView: View?) {
-        if(mainView == null) {
+        if (mainView == null) {
             return
         }
-        if(this.mMessageSubject == messageRecord) {
-            when {
-                messageRecord.isLabel == AmeGroupMessageDetail.LABEL_REPLY -> {
-
+        if (this.mMessageSubject == messageRecord) {
+            when (messageRecord.isLabel) {
+                 AmeGroupMessageDetail.LABEL_REPLY -> {
                     mainView.setBackgroundResource(R.color.common_color_black_transparent_10)
                     mainView.postDelayed({
                         messageRecord.isLabel = AmeGroupMessageDetail.LABEL_NONE
                         updateBackground(messageRecord, mainView)
                     }, 1000)
-
                 }
-                messageRecord.isLabel == AmeGroupMessageDetail.LABEL_PIN -> {
+                AmeGroupMessageDetail.LABEL_PIN -> {
                     mainView.setBackgroundResource(R.color.common_color_black_transparent_10)
                     mainView.postDelayed({
                         messageRecord.isLabel = AmeGroupMessageDetail.LABEL_NONE
@@ -592,41 +587,34 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
     }
 
     private fun updateAlpha(messageRecord: AmeGroupMessageDetail, mainView: View?) {
-        if(mainView == null) {
+        if (mainView == null) {
             ALog.d(TAG, "updateAlpha  indexId: ${messageRecord.indexId}, gid: ${messageRecord.gid}, return")
             return
         }
-        if(messageRecord !is AmeHistoryMessageDetail) {
-
-            if(!messageRecord.isSendByMe) {
+        if (messageRecord !is AmeHistoryMessageDetail) {
+            if (!messageRecord.isSendByMe) {
                 mainView.animation?.cancel()
                 mainView.clearAnimation()
                 mainView.alpha = 1.0f
-            }
-            else if(messageRecord.isSendFail) {
+            } else if (messageRecord.isSendFail) {
                 mainView.animation?.cancel()
                 mainView.clearAnimation()
                 mainView.alpha = 0.5f
-            }
-            else if(messageRecord.isSending) {
-
+            } else if (messageRecord.isSending) {
                 mainView.alpha = 0.5f
                 mBreatheAnim.duration = 1000
                 mBreatheAnim.repeatCount = Animation.INFINITE
                 mBreatheAnim.repeatMode = Animation.REVERSE
                 mainView.startAnimation(mBreatheAnim)
-
-            }else {
+            } else {
                 mainView.animation?.cancel()
                 mainView.clearAnimation()
                 mainView.alpha = 1.0f
             }
-
-        }else {
+        } else {
             mainView.animation?.cancel()
             mainView.clearAnimation()
             mainView.alpha = 1.0f
         }
-
     }
 }

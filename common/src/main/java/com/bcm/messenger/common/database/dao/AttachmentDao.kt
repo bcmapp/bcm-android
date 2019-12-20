@@ -82,4 +82,7 @@ interface AttachmentDao {
 
     @Query("UPDATE ${AttachmentDbModel.TABLE_NAME} SET file_name = :fileName WHERE id = :id")
     fun updateAttachmentFileName(id: Long, fileName: String?)
+
+    @Query("UPDATE ${AttachmentDbModel.TABLE_NAME} SET uri = null, thumbnail_uri = null WHERE id = :id AND unique_id = :uniqueId")
+    fun cleanAttachmentUris(id: Long, uniqueId: Long)
 }

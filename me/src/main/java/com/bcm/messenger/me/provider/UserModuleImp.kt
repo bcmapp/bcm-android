@@ -1,11 +1,12 @@
 package com.bcm.messenger.me.provider
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
-import com.bcm.messenger.me.logic.FeedbackReport
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.RecipientProfileLogic
@@ -24,6 +25,9 @@ import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmeNoteLogic
+import com.bcm.messenger.me.logic.FeedbackReport
+import com.bcm.messenger.me.ui.note.AmeNoteActivity
+import com.bcm.messenger.me.ui.note.AmeNoteUnlockActivity
 import com.bcm.messenger.me.utils.MeConfirmDialog
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
@@ -95,11 +99,11 @@ class UserModuleImp : IUserModule {
 
                 }.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        if (it) {
+                    .subscribe({ result ->
+                        if (result) {
                             val contactProvider = AmeProvider.get<IContactModule>(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE)
                             contactProvider?.handleFriendPropertyChanged(recipient.address.serialize()) {
-                                callback(it)
+                                callback(result)
                             }
                         }else {
                             callback(true)
@@ -276,6 +280,22 @@ class UserModuleImp : IUserModule {
             }
         }
         throw Exception("login state failed")
+    }
+
+    override fun gotoDataNote(context: Context) {
+        if (AmeNoteLogic.getInstance().isLocked()) {
+            val intent = Intent(context, AmeNoteUnlockActivity::class.java)
+            if (context !is Activity) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }else {
+            val intent = Intent(context, AmeNoteActivity::class.java)
+            if (context !is Activity) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
     }
 
     override fun gotoBackupTutorial() {

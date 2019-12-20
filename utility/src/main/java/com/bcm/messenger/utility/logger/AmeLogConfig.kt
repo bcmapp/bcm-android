@@ -8,7 +8,7 @@ import java.io.File
 
 
 /**
- * Created by bcm.social.01 on 2018/6/21.
+ * bcm.social.01 2018/6/21.
  */
 object AmeLogConfig {
     var logDir: String? = ""

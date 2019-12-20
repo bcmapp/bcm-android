@@ -68,7 +68,7 @@
         android:textColor="@color/common_color_white"
         android:textAllCaps="false"
         android:text="@string/adhoc_setting_enable_airchat"
-        android:background="@drawable/common_button_blue_background"
+        android:background="@drawable/common_blue_bg"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

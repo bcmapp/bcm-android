@@ -9,7 +9,7 @@ import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.login.LoginVerifyPinFragment
 import com.bcm.messenger.me.ui.login.RegistrationActivity
-import com.bcm.messenger.me.ui.login.backup.CheckBackupPasswordFragment
+import com.bcm.messenger.me.ui.login.backup.VerifyPasswordFragment
 import com.bcm.messenger.me.ui.pinlock.PinInputActivity
 import com.bcm.route.annotation.Route
 
@@ -43,7 +43,7 @@ class VerifyKeyActivity : SwipeBaseActivity() {
         val arg = intent.extras
         arg?.putBoolean(NEED_FINISH, true)
         if (controlType == DELETE_PROFILE || controlType == SHOW_QRCODE_BACKUP || controlType == CHANGE_PIN || controlType == CLEAR_PIN) {
-            val f = CheckBackupPasswordFragment()
+            val f = VerifyPasswordFragment()
             f.arguments = arg
             supportFragmentManager.beginTransaction()
                     .replace(R.id.register_container, f)

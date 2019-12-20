@@ -9,9 +9,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.RectF;
-import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,11 +21,14 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bcm.messenger.utility.AppContextHolder;
+import com.bcm.messenger.utility.logger.ALog;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -91,6 +96,16 @@ public class CustomizePlayerView extends FrameLayout {
     private boolean controllerHideDuringAds;
     private boolean controllerHideOnTouch;
     private int textureViewRotation;
+
+    private Handler handler = new Handler(Looper.getMainLooper());
+    private boolean isTouching = false;
+    private float x = 0f;
+    private float y = 0f;
+    private final int touchSlop = ViewConfiguration.get(AppContextHolder.APP_CONTEXT).getScaledTouchSlop();
+    private Runnable longClickRunnable = () -> {
+        isTouching = false;
+        performLongClick();
+    };
 
     public CustomizePlayerView(Context context) {
         this(context, null);
@@ -543,7 +558,46 @@ public class CustomizePlayerView extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (!useController || player == null || ev.getActionMasked() != MotionEvent.ACTION_DOWN) {
+        if (!useController || player == null) {
+            return false;
+        }
+        ALog.i("PlayerView", ev.toString());
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                isTouching = true;
+                x = ev.getX();
+                y = ev.getY();
+                handler.postDelayed(longClickRunnable, 500);
+                return true;
+            case MotionEvent.ACTION_UP:
+                if (isTouching) {
+                    handler.removeCallbacks(longClickRunnable);
+                    isTouching = false;
+                    performClick();
+                    return true;
+                }
+                return false;
+            case MotionEvent.ACTION_MOVE:
+                if (Math.abs(ev.getX() - x) >= touchSlop || Math.abs(ev.getY() - y) >= touchSlop) {
+                    handler.removeCallbacks(longClickRunnable);
+                }
+                return false;
+            case MotionEvent.ACTION_CANCEL:
+                handler.removeCallbacks(longClickRunnable);
+                return false;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        return toggleControllerVisibility();
+    }
+
+    private boolean toggleControllerVisibility() {
+        if (!useController || player == null) {
             return false;
         }
         if (!controller.isVisible()) {
@@ -770,7 +824,7 @@ public class CustomizePlayerView extends FrameLayout {
                 || keyCode == KeyEvent.KEYCODE_DPAD_CENTER;
     }
 
-    public void setVideoThumbnail(Uri uri, GlideRequests glide) {
+    public void setVideoThumbnail(Object uri, GlideRequests glide) {
         controller.setVideoThumbnail(uri, glide);
     }
 

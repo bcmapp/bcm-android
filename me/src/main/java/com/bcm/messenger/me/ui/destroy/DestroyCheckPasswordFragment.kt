@@ -1,5 +1,6 @@
 package com.bcm.messenger.me.ui.destroy
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,14 +10,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.BcmFileUtils
+import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.utils.MeConfirmDialog
 import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.logger.ALog
+import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -60,7 +66,10 @@ class DestroyCheckPasswordFragment : Fragment() {
         }
 
         mUid = arguments?.getString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID)
+
         fetchProfile(mUid)
+
+        activity?.window?.setStatusBarLightMode()
     }
 
     private fun fetchProfile(accountId: String?) {
@@ -121,7 +130,18 @@ class DestroyCheckPasswordFragment : Fragment() {
                     activity?.let {
                         MeConfirmDialog.showConfirm(it, it.getString(R.string.me_destroy_account_confirm_title),
                                 it.getString(R.string.me_destroy_account_confirm_notice), it.getString(R.string.me_destroy_account_confirm_button)) { _ ->
-                            (it as? DestroyAccountActivity)?.gotoLogin()
+
+                            if (AMESelfData.isLogin) {
+                                ALog.e(TAG, "登录态还没释放完")
+                                return@showConfirm
+                            }
+                            AmeModuleCenter.onLoginStateChanged("")
+
+                            BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
+                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                    .navigation(it)
+
+                            it.finish()
                         }
 
                     }

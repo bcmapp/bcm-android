@@ -206,9 +206,12 @@
     <string name="common_later">Later</string>
     <string name="common_copied">Copied</string>
     <string name="common_open">Open</string>
+    <string name="common_help">Help</string>
+    <string name="common_multi_select">Multiselect</string>
+    <string name="common_save_to_album">Save to Album</string>
     <string name="common_connection_lost">Connecting&#8230;</string>
     <string name="common_group_get_member_fail">Chat Group Get Members Fail</string>
-    <string name="common_save_to_album">Save to Album</string>
+
 
     <string name="common_search_hint">Search</string>
     <string name="common_title_hint">Title</string>

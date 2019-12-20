@@ -23,6 +23,7 @@ import com.bcm.messenger.chats.history.ChatHistoryActivity
 import com.bcm.messenger.chats.privatechat.jobs.AttachmentDownloadJob
 import com.bcm.messenger.chats.privatechat.logic.MessageSender
 import com.bcm.messenger.chats.provider.ChatModuleImp
+import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.chats.util.*
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
@@ -129,8 +130,22 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
 
     private val previewClickListener = object : ChatPreviewClickListener() {
         override fun onClick(v: View, data: Any) {
-            if (!shouldInterceptClicks(messageRecord)) {
-                super.onClick(v, data)
+            when {
+                messageRecord.isMediaFailed() -> {
+                    downloadClickListener.onClick(v, data)
+                }
+                messageRecord.isMediaDeleted() -> {
+                    (context as? FragmentActivity)?.let {
+                        if (messageRecord.getVideoAttachment() != null) {
+                            AmePopup.result.failure(it, context.getString(R.string.chats_media_view_video_expire), true)
+                        } else {
+                            AmePopup.result.failure(it, context.getString(R.string.chats_media_view_image_expire), true)
+                        }
+                    }
+                }
+                !shouldInterceptClicks(messageRecord) -> {
+                    super.onClick(v, data)
+                }
             }
         }
     }
@@ -475,6 +490,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         audioViewStub.get().visibility = View.VISIBLE
         audioViewStub.get().setAudio(masterSecret, messageRecord)
         audioViewStub.get().setOnLongClickListener(this)
+        audioViewStub.get().setDownloadClickListener(downloadClickListener)
 
         if (messageRecord.isOutgoing()) {
             audioViewStub.get().setProgressDrawableResource(R.drawable.chats_audio_send_top_progress_bg)
@@ -717,7 +733,8 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         bodyTextView?.setCompoundDrawablesWithIntrinsicBounds(0, 0, if (messageRecord.isKeyExchange()) R.drawable.ic_menu_login else 0, 0)
         when {
             messageRecord.isFailed() -> setFailedStatusIcons()
-            messageRecord.isPendingInsecureFallback() -> setFailedStatusIcons()
+            messageRecord.isMediaFailed() -> setFailedStatusIcons()
+            messageRecord.isPendingInsecureFallback()-> setFailedStatusIcons()
             else -> alertView?.setNone()
         }
     }
@@ -890,7 +907,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                     }
 
                     override fun onDelete() {
-                        ConversationUtils.getThreadId(conversationRecipient) { threadId ->
+                        ThreadListViewModel.getThreadId(conversationRecipient) { threadId ->
                             ChatModuleImp().deleteMessage(context, false, threadId, setOf(messageRecord), null)
                         }
                     }
@@ -932,7 +949,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                     }
 
                     override fun onDelete() {
-                        ConversationUtils.getThreadId(conversationRecipient) { threadId ->
+                        ThreadListViewModel.getThreadId(conversationRecipient) { threadId ->
                             ChatModuleImp().deleteMessage(context, false, threadId, setOf(messageRecord), null)
                         }
                     }
@@ -1011,36 +1028,39 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                 performMultiSelect()
                 return
             }
-            if (messageRecord.isFailed() || messageRecord.isPendingInsecureFallback()) {
-                AmePopup.bottom.newBuilder()
-                        .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_resend)) {
-                            if (!groupThread && (messageRecord.isFailed() || messageRecord.isPendingInsecureFallback())) {
+            when {
+                messageRecord.isFailed() || messageRecord.isPendingInsecureFallback() -> {
+                    AmePopup.bottom.newBuilder()
+                            .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_resend)) {
+                                if (!groupThread && (messageRecord.isFailed() || messageRecord.isPendingInsecureFallback())) {
+                                    Observable.create<Unit> {
+                                        // TODO: Change resend code
+                                        if (messageRecipient.isPushGroupRecipient) {
+//                                        MessageSender.resendGroupMessage(context, messageRecord, messageRecipient.address)
+                                        } else {
+                                            MessageSender.resend(context, masterSecret, messageRecord)
+                                        }
+                                        it.onComplete()
+
+                                    }.subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe({}, {})
+                                }
+                            })
+                            .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.common_delete)) {
                                 Observable.create<Unit> {
-                                    // TODO: Change resend code
-                                    if (messageRecipient.isPushGroupRecipient) {
-                                    } else {
-                                        MessageSender.resend(context, masterSecret, messageRecord)
-                                    }
+
+                                    Repository.getChatRepo().deleteMessage(messageRecord)
                                     it.onComplete()
 
                                 }.subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe({}, {})
-                            }
-                        })
-                        .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.common_delete)) {
-                            Observable.create<Unit> {
 
-                                Repository.getChatRepo().deleteMessage(messageRecord)
-                                it.onComplete()
-
-                            }.subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe({}, {})
-
-                        })
-                        .withDoneTitle(getString(R.string.common_cancel))
-                        .show(context as? FragmentActivity)
+                            })
+                            .withDoneTitle(getString(R.string.common_cancel))
+                            .show(context as? FragmentActivity)
+                }
             }
             parent?.onClick(v)
         }

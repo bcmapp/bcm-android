@@ -12,9 +12,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * Created by bcm.social.01 on 2018/11/21.
- */
 object CleanConversationStorageLogic {
 
     interface ConversationStorageCallback {

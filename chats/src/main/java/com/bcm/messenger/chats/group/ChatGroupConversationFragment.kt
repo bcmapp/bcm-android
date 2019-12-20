@@ -41,8 +41,8 @@ import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.chats_group_conversation_fragment.*
 import kotlinx.android.synthetic.main.chats_tt_conversation_activity.*
-import kotlinx.android.synthetic.main.chats_tt_conversation_fragment.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -79,6 +79,11 @@ class ChatGroupConversationFragment : Fragment() {
 
     private var listAdapter: CommonConversationAdapter<AmeGroupMessageDetail>? = null
 
+    private var mStickyTopData: AmeGroupMessageDetail? = null //for pin message，sending for loadingMore
+
+    /**
+     * 是否在列表底部
+     */
     private val isListAtBottom: Boolean
         get() {
             if (group_conversation_list?.childCount == 0) {
@@ -117,7 +122,7 @@ class ChatGroupConversationFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, bundle: Bundle?): View? {
         EventBus.getDefault().register(this)
-        return inflater.inflate(R.layout.chats_tt_conversation_fragment, container, false)
+        return inflater.inflate(R.layout.chats_group_conversation_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -127,7 +132,6 @@ class ChatGroupConversationFragment : Fragment() {
         bottomUnreadBubble = view.findViewById(R.id.message_unread_down_bubble)
         bottomUnreadBubble?.setOrientationIcon(R.drawable.chats_10_down)
         layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, true)
-        layoutManager.stackFromEnd = true
         group_conversation_list.setHasFixedSize(false)
         group_conversation_list.layoutManager = layoutManager
         group_conversation_list.itemAnimator = null
@@ -153,9 +157,7 @@ class ChatGroupConversationFragment : Fragment() {
                     val totalItemCount = layoutManager.itemCount
 
                     if (isSlidingToLast && hasMore && lastVisibleItem >= totalItemCount - 2) {
-                        if (swipe_group_message.isRefreshing == false) {
-                            loadMore()
-                        }
+                        loadMore()
                     }
 
                     if (isSlidingToLast && topUnreadBubble?.visibility == View.VISIBLE && lastVisibleItem >= topUnreadBubble?.lastSeenPosition ?: 0) {
@@ -196,9 +198,6 @@ class ChatGroupConversationFragment : Fragment() {
             override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
         })
 
-        swipe_group_message.setOnRefreshListener {
-            loadMore()
-        }
     }
 
     private fun initResources() {
@@ -395,7 +394,6 @@ class ChatGroupConversationFragment : Fragment() {
                 lastIndexAtomic.set(result.last().indexId)
                 hasMore = result.size == GET_COUNT
                 listAdapter?.loadData(result + createStickySecureMessage(), false)
-                scrollToBottom(false)
                 group_conversation_list?.post {
                     handleTopBubbleState(true, unread.toInt())
                     initPinLayout()
@@ -408,9 +406,7 @@ class ChatGroupConversationFragment : Fragment() {
 
     private fun fetchBeforeMessage(count: Int, scrollPosition: Int = -1) {
         ALog.i(TAG, "fetchFrontMessage")
-        swipe_group_message?.isRefreshing = true
         groupModel?.fetchMessage(lastIndexAtomic.get(), count, false) { result, unread ->
-            swipe_group_message?.isRefreshing = false
             if (result.isNotEmpty()) {
                 lastIndexAtomic.set(result.last().indexId)
                 listAdapter?.loadData(getLastDataPosition(), result)
@@ -421,14 +417,20 @@ class ChatGroupConversationFragment : Fragment() {
     }
 
     private fun loadMore() {
-        swipe_group_message?.isRefreshing = true
+        if (mStickyTopData?.isSending == true) { //已经在loadingMore中
+            return
+        }
+        mStickyTopData?.sendState = AmeGroupMessageDetail.SendState.SENDING
+        listAdapter?.notifyDataSetChanged()
         groupModel?.fetchMessage(lastIndexAtomic.get(), GET_COUNT, false) { result, unread ->
             ALog.i(TAG, "loadMore lastIndex: ${lastIndexAtomic.get()}, result: ${result.size}")
-            swipe_group_message?.isRefreshing = false
+            mStickyTopData?.sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
             hasMore = result.size == GET_COUNT
             if (result.isNotEmpty()) {
                 lastIndexAtomic.set(result.last().indexId)
                 listAdapter?.loadData(getLastDataPosition(), result)
+            } else {
+                listAdapter?.notifyDataSetChanged()
             }
         }
     }
@@ -689,9 +691,9 @@ class ChatGroupConversationFragment : Fragment() {
     }
 
     private fun showPinLayout(targetScrollMessage: AmeGroupMessageDetail) {
-        pin_layout?.visibility = View.VISIBLE
-        pin_layout?.post {
-            pin_layout?.setGroupMessage(targetScrollMessage, glideRequests, object : ChatPinView.OnChatPinActionListener {
+        group_pin_layout?.visibility = View.VISIBLE
+        group_pin_layout?.post {
+            group_pin_layout?.setGroupMessage(targetScrollMessage, glideRequests, object : ChatPinView.OnChatPinActionListener {
 
                 override fun onContentClick() {
                     fetchAndScrollTo(targetScrollMessage.serverIndex, AmeGroupMessageDetail.LABEL_PIN)
@@ -714,7 +716,7 @@ class ChatGroupConversationFragment : Fragment() {
                     } else {
                         groupModel?.updateGroupPinMid(-1) {
                             if (it) {
-                                pin_layout.visibility = View.GONE
+                                group_pin_layout.visibility = View.GONE
                             }
                         }
                     }
@@ -735,7 +737,7 @@ class ChatGroupConversationFragment : Fragment() {
     private fun hidePinLayout() {
         groupModel?.updateGroupPinMid(-1) {
             if (it) {
-                pin_layout.visibility = View.GONE
+                group_pin_layout.visibility = View.GONE
             }
         }
     }
@@ -782,11 +784,14 @@ class ChatGroupConversationFragment : Fragment() {
     }
 
     private fun createStickySecureMessage(): AmeGroupMessageDetail {
-        return AmeGroupMessageDetail().apply {
+        val result = AmeGroupMessageDetail().apply {
             indexId = -1
             gid = groupId
+            sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
             message = AmeGroupMessage(AmeGroupMessage.MESSAGE_SECURE_NOTICE, AmeGroupMessage.SecureContent())
         }
+        mStickyTopData = result
+        return result
     }
 
     private fun getLastDataPosition(): Int {

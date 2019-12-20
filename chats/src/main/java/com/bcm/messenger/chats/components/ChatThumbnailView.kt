@@ -26,6 +26,8 @@ import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.MediaUtil
 import com.bcm.messenger.utility.ViewUtils
 import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.getColor
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.gif.GifDrawable
@@ -72,10 +74,19 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
 
     private var mPlaceHolderResource = R.drawable.common_image_place_img
     private var mPlaceDrawable: Drawable? = context.getDrawable(R.drawable.common_image_place_img)
+    private var mPlaceVideoResource = R.drawable.common_video_place_img
+    private var mPlaceVideo = context.getDrawable(R.drawable.common_video_place_img)
+
     private var mErrorImageResource = R.drawable.common_image_broken_img
     private var mErrorDrawable: Drawable? = context.getDrawable(R.drawable.common_image_broken_img)
+    private var mErrorVideoResource = R.drawable.common_video_broken_img
+    private var mErrorVideo = context.getDrawable(R.drawable.common_video_broken_img)
+
+    private var mNotFoundImage = context.getDrawable(R.drawable.common_image_not_found_img)
+    private var mNotFoundVideo = context.getDrawable(R.drawable.common_video_not_found_img)
 
     private var mImageRadius = 0
+    private var mIsVideo = false
 
     init {
         View.inflate(context, R.layout.chats_thumbnail_view_new, this)
@@ -109,23 +120,12 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
         parentClickListener = l
     }
 
-
-    fun setThumbnailLimit(maxWidth: Int, maxHeight: Int) {
-        mMaxWidth = maxWidth
-        mMaxHeight = maxHeight
-    }
-
-    fun setThumbnailAppearance(defaultBackgroundRes: Int, radius: Int) {
-        if (mPlaceHolderResource != defaultBackgroundRes) {
-            mPlaceHolderResource = defaultBackgroundRes
-            mPlaceDrawable = context.getDrawable(defaultBackgroundRes)
-        }
-        if (mImageRadius != radius) {
-            mImageRadius = radius
-            thumbnail_card?.radius = radius.toFloat()
-        }
-    }
-
+    /**
+     * 设置图片样式
+     * @param defaultBackgroundRes
+     * @param errorBackgroundRes
+     * @param radius
+     */
     fun setThumbnailAppearance(defaultBackgroundRes: Int, errorBackgroundRes: Int, radius: Int) {
         if (mPlaceHolderResource != defaultBackgroundRes) {
             mPlaceHolderResource = defaultBackgroundRes
@@ -151,64 +151,74 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
 
     fun setImage(masterSecret: MasterSecret, glideRequests: GlideRequests, messageRecord: MessageRecord) {
         val showControls = !messageRecord.isFailed() && (!messageRecord.isOutgoing() || messageRecord.isPending())
-        val attachmentRecord = messageRecord.getImageAttachment() ?: messageRecord.getVideoAttachment() ?: return
-        val isVideo = MediaUtil.isVideo(attachmentRecord.contentType)
-        if (showControls && attachmentRecord.transferState == AttachmentDbModel.TransferState.STARTED.state) {
-            if (isVideo) {
-                displayControl(STATE_VIDEO_PROGRESS)
-            } else {
-                displayControl(STATE_IMG_PROGRESS)
-            }
-            thumbnail_size.visibility = View.GONE
-        } else if (showControls && attachmentRecord.isPendingDownload()) {
-            displayControl(STATE_DOWNLOAD)
-
-            thumbnail_size.visibility = View.GONE
-        } else {
-            if (isVideo) {
-                displayControl(STATE_VIDEO_COMPLETE)
-                val duration = attachmentRecord.duration
-                if (duration > 0L) {
-                    thumbnail_size.visibility = View.VISIBLE
-                    thumbnail_size.text = BcmFileUtils.stringForTime(duration)
+        val attachment = messageRecord.getImageAttachment() ?: messageRecord.getVideoAttachment() ?: return
+        mIsVideo = MediaUtil.isVideo(attachment.contentType)
+        when {
+            showControls && attachment.transferState == AttachmentDbModel.TransferState.STARTED.state -> {
+                if (mIsVideo) {
+                    displayControl(STATE_VIDEO_PROGRESS)
                 } else {
+                    displayControl(STATE_IMG_PROGRESS)
+                }
+                thumbnail_size.visibility = View.GONE
+            }
+            showControls && attachment.isPendingDownload() -> {
+                displayControl(STATE_DOWNLOAD)
+
+                thumbnail_size.visibility = View.GONE
+            }
+            else -> {
+                if (mIsVideo) {
+                    displayControl(STATE_VIDEO_COMPLETE)
+                    val duration = attachment.duration
+                    if (duration > 0L) {
+                        thumbnail_size.visibility = View.VISIBLE
+                        thumbnail_size.text = BcmFileUtils.stringForTime(duration)
+                    } else {
+                        thumbnail_size.visibility = View.GONE
+                    }
+                } else {
+                    displayControl(STATE_IMG_COMPLETE)
                     thumbnail_size.visibility = View.GONE
                 }
-            } else {
-                displayControl(STATE_IMG_COMPLETE)
-                thumbnail_size.visibility = View.GONE
             }
         }
 
-        ALog.d(TAG, "contentType: ${attachmentRecord.contentType}, thumbnail: ${attachmentRecord.thumbnailUri}, uri: ${attachmentRecord.dataUri}, id: ${messageRecord.id}, fastID: ${attachmentRecord.fastPreflightId}")
+        ALog.d(TAG, "contentType: ${attachment.contentType}, thumbnail: ${attachment.thumbnailUri}, uri: ${attachment.dataUri}, id: ${messageRecord.id}, fastID: ${attachment.fastPreflightId}")
 
-        val uri = if (isVideo) {
-            attachmentRecord.getThumbnailPartUri()
+        val uri = if (mIsVideo) {
+            attachment.getThumbnailPartUri()
         } else {
-            attachmentRecord.getThumbnailPartUri() ?: attachmentRecord.getPartUri()
+            if (attachment.thumbnailUri == null) attachment.getPartUri() else attachment.getThumbnailPartUri()
         }
 
         val useReplace: Boolean = if (mPrivateMessage?.id == messageRecord.id) {
-            if (mAttachmentRecord?.thumbnailUri == attachmentRecord.thumbnailUri && mAttachmentRecord?.dataUri == attachmentRecord.dataUri) {
+            if (attachment.thumbnailUri == mAttachmentRecord?.thumbnailUri && attachment.dataUri == mAttachmentRecord?.dataUri) {
                 false
-            } else mAttachmentRecord?.dataUri != attachmentRecord.dataUri || isVideo
+            } else attachment.dataUri == attachment.dataUri && !mIsVideo
         } else {
             true
         }
 
         mPrivateMessage = messageRecord
         mGroupMessage = null
-        mAttachmentRecord = attachmentRecord
+        mAttachmentRecord = attachment
         mGlideRequests = glideRequests
         mMasterSecret = masterSecret
-        buildPlaceHolderThumbnail(uri == null)
-        if (useReplace) {
-            when {
-                uri != null -> buildThumbnailRequest(glideRequests,
-                        DecryptableUri(masterSecret, uri),
-                        attachmentRecord.contentType)
-                else -> {
-                    buildPlaceHolderThumbnail()
+        //设置占位图
+        if (attachment.isRemoteDeleted()) {
+            buildNotFoundHolderThumbnail(show = true, hasThumbnail = false)
+        } else {
+            buildNotFoundHolderThumbnail(false)
+            buildPlaceHolderThumbnail(uri == null)
+            if (useReplace) {
+                when {
+                    uri != null -> buildThumbnailRequest(glideRequests,
+                            DecryptableUri(masterSecret, uri),
+                            attachment.contentType)
+                    else -> {
+                        buildPlaceHolderThumbnail()
+                    }
                 }
             }
         }
@@ -224,12 +234,16 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
         mMasterSecret = masterSecret
         mPrivateMessage = null
         mAttachmentRecord = null
+        mIsVideo = messageRecord.message.isVideo()
 
         setEncryptedThumbnail(masterSecret, glideRequests, messageRecord)
     }
 
 
     private fun updateState(messageRecord: AmeGroupMessageDetail) {
+        if (messageRecord.isFileDeleted) {
+            displayControl(STATE_IMG_COMPLETE)
+        }
 
         val isVideo = messageRecord.message.isVideo()
         if (messageRecord.isSending || messageRecord.isThumbnailDownloading) {
@@ -238,7 +252,6 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
             } else {
                 displayControl(STATE_IMG_PROGRESS)
             }
-
         } else {
             if (isVideo) {
                 displayControl(STATE_VIDEO_COMPLETE)
@@ -255,45 +268,69 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
                 displayControl(STATE_IMG_COMPLETE)
                 thumbnail_size.visibility = View.GONE
             }
-
         }
     }
 
 
     private fun setEncryptedThumbnail(masterSecret: MasterSecret, glideRequests: GlideRequests, messageDetailRecord: AmeGroupMessageDetail) {
+        when (messageDetailRecord.sendState) {
+            AmeGroupMessageDetail.SendState.FILE_NOT_FOUND -> {
+                if (messageDetailRecord.thumbnailPartUri != null) {
+                    buildNotFoundHolderThumbnail(show = true, hasThumbnail = true)
 
-        val content = messageDetailRecord.message.content as AmeGroupMessage.ThumbnailContent
-        val resultUri = if (messageDetailRecord.message.isVideo()) {
-            messageDetailRecord.thumbnailPartUri
-        } else {
-            messageDetailRecord.thumbnailPartUri ?: messageDetailRecord.filePartUri
-        }
-        buildPlaceHolderThumbnail(resultUri == null)
-        if (resultUri == null) {
-            MessageFileHandler.downloadThumbnail(messageDetailRecord, object : MessageFileHandler.MessageFileCallback {
-                override fun onResult(success: Boolean, uri: Uri?) {
-                    if (mGroupMessage == messageDetailRecord) {
-                        updateState(messageDetailRecord)
-                        if (success && uri != null) {
-                            buildThumbnailRequest(glideRequests, DecryptableUri(masterSecret, uri), content.mimeType)
-                        } else {
-                            buildErrorHolderThumbnail()
-                        }
-                    }
+                    val content = messageDetailRecord.message.content as AmeGroupMessage.ThumbnailContent
+                    buildThumbnailRequest(glideRequests, DecryptableUri(masterSecret, messageDetailRecord.thumbnailPartUri!!), content.mimeType)
+                } else {
+                    buildNotFoundHolderThumbnail(show = true, hasThumbnail = false)
+                }
+            }
+            AmeGroupMessageDetail.SendState.THUMB_DOWNLOAD_FAIL -> {
+                buildNotFoundHolderThumbnail(false)
+                buildPlaceHolderThumbnail(true)
+            }
+            else -> {
+                val content = messageDetailRecord.message.content as AmeGroupMessage.ThumbnailContent
+                //如果资源已经下载好，则直接设置当前image，而无需先展示站位图
+                val resultUri = if (messageDetailRecord.message.isVideo()) {
+                    messageDetailRecord.thumbnailPartUri
+                } else {
+                    messageDetailRecord.thumbnailPartUri ?: messageDetailRecord.filePartUri
                 }
 
-            })
-        } else {
-            buildThumbnailRequest(glideRequests, DecryptableUri(masterSecret, resultUri), content.mimeType)
+                buildNotFoundHolderThumbnail(false)
+                buildPlaceHolderThumbnail(resultUri == null)
+                if (resultUri == null) {
+                    downloadGroupThumbnail(messageDetailRecord)
+                } else {
+                    buildThumbnailRequest(glideRequests, DecryptableUri(masterSecret, resultUri), content.mimeType)
+                }
+            }
         }
+    }
 
+    fun downloadGroupThumbnail(messageDetailRecord: AmeGroupMessageDetail) {
+        MessageFileHandler.downloadThumbnail(messageDetailRecord, object : MessageFileHandler.MessageFileCallback {
+            override fun onResult(success: Boolean, uri: Uri?) {
+                if (mGroupMessage == messageDetailRecord) {
+                    updateState(messageDetailRecord)
+                    if (success) {
+                        mGlideRequests?.let {
+                            val content = messageDetailRecord.message.content as AmeGroupMessage.ThumbnailContent
+                            buildThumbnailRequest(it, uri, content.mimeType)
+                        }
+                    } else {
+                        buildErrorHolderThumbnail(messageDetailRecord.message.isVideo())
+                    }
+                }
+            }
+        })
     }
 
     private fun changeShowSize(image: Any?) {
-        var w = mMaxWidth
-        var h = mMaxHeight
-        var aw = mMaxWidth
-        var ah = mMaxHeight
+        var w = mMaxWidth//最终宽度
+        var h = mMaxHeight//最终高度
+        var aw = mMaxWidth//当前图片宽度
+        var ah = 120.dp2Px()//当前图片高度
         if (image is Bitmap) {
             aw = image.width
             ah = image.height
@@ -354,8 +391,14 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
 
     private fun buildPlaceHolderThumbnail(force: Boolean = false) {
         ALog.d(TAG, "buildPlaceHolderThumbnail force: $force")
-        if (thumbnail_holder.drawable != mPlaceDrawable) {
-            thumbnail_holder.setImageDrawable(mPlaceDrawable)
+        if (mIsVideo) {
+            if (thumbnail_holder.drawable != mPlaceVideo) {
+                thumbnail_holder.setImageDrawable(mPlaceVideo)
+            }
+        } else {
+            if (thumbnail_holder.drawable != mPlaceDrawable) {
+                thumbnail_holder.setImageDrawable(mPlaceDrawable)
+            }
         }
         if (force) {
             changeShowSize(null)
@@ -365,15 +408,52 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
 
     private fun buildErrorHolderThumbnail(force: Boolean = false) {
         ALog.d(TAG, "buildPlaceHolderThumbnail force: $force")
-        if (thumbnail_holder.drawable != mErrorDrawable) {
-            thumbnail_holder.setImageDrawable(mErrorDrawable)
+        if (mIsVideo) {
+            if (thumbnail_holder.drawable != mErrorVideo) {
+                thumbnail_holder.setImageDrawable(mErrorVideo)
+            }
+        } else {
+            if (thumbnail_holder.drawable != mErrorDrawable) {
+                thumbnail_holder.setImageDrawable(mErrorDrawable)
+            }
         }
+
         if (force) {
             changeShowSize(null)
             thumbnail_image.setImageDrawable(null)
         }
     }
 
+    private fun buildNotFoundHolderThumbnail(show: Boolean, hasThumbnail: Boolean = true) {
+        if (show) {
+            thumbnail_not_found_cover.visibility = View.VISIBLE
+            if (mIsVideo) {
+                if (thumbnail_not_found_cover.drawable != mNotFoundVideo) {
+                    thumbnail_not_found_cover.setImageDrawable(mNotFoundVideo)
+                }
+            } else {
+                if (thumbnail_not_found_cover.drawable != mNotFoundImage) {
+                    thumbnail_not_found_cover.setImageDrawable(mNotFoundImage)
+                }
+            }
+
+            if (hasThumbnail) {
+                thumbnail_not_found_cover.setBackgroundColor(getColor(R.color.common_color_white_50))
+            } else {
+                thumbnail_not_found_cover.background = null
+            }
+
+            changeShowSize(null)
+            thumbnail_image.setImageDrawable(null)
+            ViewUtils.fadeOut(thumbnail_play, TRANSITION_MS)
+        } else {
+            thumbnail_not_found_cover.visibility = View.GONE
+        }
+    }
+
+    /**
+     * 建立图片加载请求
+     */
     private fun buildThumbnailRequest(glideRequests: GlideRequests, loadObj: Any?, contentType: String) {
 
         if (loadObj is DecryptableUri) {
@@ -423,7 +503,6 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private fun displayControl(state: Int) {
-
         when (state) {
             STATE_IMG_COMPLETE -> {
                 mShowPending = false

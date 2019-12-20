@@ -53,7 +53,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:background="@drawable/me_keybox_account_item_now">
+            android:background="@drawable/me_account_item_current_bg">
 
             <com.bcm.messenger.common.ui.IndividualAvatarView
                 android:id="@+id/me_account_img"
@@ -139,7 +139,7 @@
                 app:layout_constraintEnd_toEndOf="parent"/>
 
             <TextView
-                android:id="@+id/key_generate_date"
+                android:id="@+id/account_generate_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
@@ -151,7 +151,7 @@
                 tools:text="Date of Key" />
 
             <TextView
-                android:id="@+id/key_backup_date"
+                android:id="@+id/account_backup_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/common_horizontal_gap"
@@ -161,7 +161,7 @@
                 android:gravity="left"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/key_generate_date"
+                app:layout_constraintTop_toBottomOf="@+id/account_generate_date"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="Date of Backup" />
 

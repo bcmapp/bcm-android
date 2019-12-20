@@ -9,7 +9,7 @@ import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.QuickOpCheck
 
 /**
- * Created by bcm.social.01 on 2019/1/27.
+ * bcm.social.01 2019/1/27.
  */
 class ChatTitleDropBar:LinearLayout {
     companion object {

@@ -6,10 +6,6 @@ import org.whispersystems.signalservice.internal.util.Util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Created by bcm.social.01 on 2019/3/11.
- */
-
 public class BcmHash {
     private static final long FNV1_32_INIT = 0x811c9dc5;
 

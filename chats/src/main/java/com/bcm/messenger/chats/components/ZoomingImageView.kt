@@ -50,6 +50,7 @@ import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.io.IOException
 import java.util.*
 import kotlin.math.abs
 
@@ -166,7 +167,11 @@ class ZoomingImageView @JvmOverloads constructor(context: Context, attrs: Attrib
                 } else {
                     AppContextHolder.APP_CONTEXT.contentResolver.openInputStream(uri)
                 }
-                it.onNext(BitmapUtils.getImageDimensions(inputStream))
+                if (inputStream == null) {
+                    it.onError(IOException("InputStream is null"))
+                } else {
+                    it.onNext(BitmapUtils.getImageDimensions(inputStream))
+                }
             } catch (e: Throwable) {
                 it.onError(e)
             } finally {
@@ -330,39 +335,39 @@ class ZoomingImageView @JvmOverloads constructor(context: Context, attrs: Attrib
             this.mHugeImageView.setBitmapDecoderFactory(AttachmentBitmapDecoderFactory())
             this.mHugeImageView.setRegionDecoderFactory(AttachmentRegionDecoderFactory())
         }
-        mHugeImageView.setImage(ImageSource.uri(uri))
-        mHugeImageView.setOnImageEventListener(object : SubsamplingScaleImageView.OnImageEventListener {
-            override fun onImageLoaded() {
-                ALog.d(TAG, "onImageLoaded")
-                stopSpinning()
-                mHugeImageView.visibility = View.VISIBLE
-                mStandardImageView.visibility = View.GONE
-            }
+        try {
+            mHugeImageView.setImage(ImageSource.uri(uri))
+            mHugeImageView.setOnImageEventListener(object : SubsamplingScaleImageView.OnImageEventListener {
+                override fun onImageLoaded() {
+                    ALog.d(TAG, "onImageLoaded")
+                    stopSpinning()
+                    mHugeImageView.visibility = View.VISIBLE
+                    mStandardImageView.visibility = View.GONE
+                }
 
-            override fun onReady() {
-                ALog.d(TAG, "onReady")
+                override fun onReady() {
+                    ALog.d(TAG, "onReady")
+                }
 
-            }
+                override fun onTileLoadError(p0: java.lang.Exception?) {
+                    ALog.e(TAG, "onTileLoadError", p0)
+                    stopSpinning()
+                }
 
-            override fun onTileLoadError(p0: java.lang.Exception?) {
-                ALog.e(TAG, "onTileLoadError", p0)
-                stopSpinning()
-            }
+                override fun onPreviewReleased() {
+                }
 
-            override fun onPreviewReleased() {
+                override fun onImageLoadError(p0: java.lang.Exception?) {
+                    ALog.e(TAG, "onImageLoadError", p0)
+                    stopSpinning()
+                }
 
-            }
-
-            override fun onImageLoadError(p0: java.lang.Exception?) {
-                ALog.e(TAG, "onImageLoadError", p0)
-                stopSpinning()
-            }
-
-            override fun onPreviewLoadError(p0: java.lang.Exception?) {
-
-            }
-
-        })
+                override fun onPreviewLoadError(p0: java.lang.Exception?) {
+                }
+            })
+        } catch (e: Throwable) {
+            ALog.e(TAG, "load huge uri error", e)
+        }
     }
 
     private fun setGifUri(masterSecret: MasterSecret?, glideRequests: GlideRequests, uri: Uri) {

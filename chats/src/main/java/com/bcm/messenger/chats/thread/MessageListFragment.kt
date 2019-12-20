@@ -1,8 +1,8 @@
 package com.bcm.messenger.chats.thread
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,18 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bcm.messenger.chats.NewChatActivity
 import com.bcm.messenger.chats.R
-import com.bcm.messenger.chats.adapter.MessageListAdapterNew
+import com.bcm.messenger.chats.adapter.MessageListAdapter
 import com.bcm.messenger.chats.bean.MessageListItem
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.crypto.MasterSecret
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.database.repositories.ThreadRepo
+import com.bcm.messenger.common.event.FriendRequestEvent
 import com.bcm.messenger.common.event.GroupInfoCacheReadyEvent
 import com.bcm.messenger.common.event.GroupListChangedEvent
 import com.bcm.messenger.common.event.HomeTabEvent
@@ -30,19 +32,18 @@ import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.provider.ILoginModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
-import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.ui.BcmRecyclerView
 import com.bcm.messenger.common.ui.SystemNoticeDialog
-import com.bcm.messenger.common.utils.AmePushProcess
-import com.bcm.messenger.common.utils.PushUtil
-import com.bcm.messenger.common.utils.RxBus
-import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.utility.MultiClickObserver
+import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.chats_fragment_message_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -54,49 +55,54 @@ import org.greenrobot.eventbus.ThreadMode
  */
 @Route(routePath = ARouterConstants.Activity.CHAT_MESSAGE_PATH)
 class MessageListFragment : BaseFragment(), RecipientModifiedListener {
+    interface MessageListCallback {
+        fun onRecyclerViewCreated(recyclerView: BcmRecyclerView)
+        fun onClickInvite()
+    }
 
     private val TAG = "MessageListFragment"
     private var masterSecret: MasterSecret? = null
 
-    private lateinit var viewModel: MessageListViewModel
+    private lateinit var viewModel: ThreadListViewModel
 
     private var archive = false
 
     private lateinit var recipient: Recipient
-    private var mAdapter: MessageListAdapterNew? = null
+    private var mAdapter: MessageListAdapter? = null
 
     private var firstVisiblePosition = 0
     private var lastVisiblePosition = 0
 
-    private lateinit var titleView: MessageListTitleView
-
     private var webAlertData: AmePushProcess.SystemNotifyData.WebAlertData? = null
+    var callback: MessageListCallback? = null
 
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().unregister(this)
 
-        if(::recipient.isInitialized) {
+        if (::recipient.isInitialized) {
             recipient.removeListener(this)
         }
 
-        RxBus.unSubscribe(ARouterConstants.PARAM.PARAM_HOME_TAB_SELECT + TAG)
-
-        titleView.unInit()
+        RxBus.unSubscribe(TAG)
+        callback = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        masterSecret = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_MASTER_SECRET) ?: BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
-        archive = arguments?.getBoolean(ARouterConstants.PARAM.PRIVATE_CHAT.IS_ARCHIVED_EXTRA, false) ?: false
+        masterSecret = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_MASTER_SECRET)
+                ?: BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
+        archive = arguments?.getBoolean(ARouterConstants.PARAM.PRIVATE_CHAT.IS_ARCHIVED_EXTRA, false)
+                ?: false
 
         EventBus.getDefault().register(this)
+        showShadeView(true)
     }
 
     override fun setActive(isActive: Boolean) {
         super.setActive(isActive)
         if (isActive) {
-            activity?.let {a ->
+            activity?.let { a ->
                 webAlertData?.let { wd ->
                     SystemNoticeDialog.show(a, wd)
                     webAlertData = null
@@ -109,6 +115,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
         super.onResume()
         ALog.d(TAG, "onResume")
         chats_app_notification_layout.checkNotice()
+        checkUnhandledRequest()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -120,12 +127,12 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
         try {
             recipient = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)
             recipient.addListener(this)
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "onActivityCreated fail, get self recipient fail", ex)
             try {
                 val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_LOGIN_BASE).navigationWithCast<ILoginModule>()
                 provider.logoutMenu()
-            }catch (ex: Exception) {
+            } catch (ex: Exception) {
                 activity?.finish()
             }
         }
@@ -135,28 +142,10 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
             initializeListAdapter(it)
             initData()
         }
-
+        callback?.onRecyclerViewCreated(chats_list)
     }
 
     private fun initView(context: Context) {
-        titleView = chats_toolbar.getCenterView().second as MessageListTitleView
-        titleView.init()
-
-        chats_toolbar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
-            override fun onClickRight() {
-                startActivity(Intent(activity, NewChatActivity::class.java))
-            }
-        })
-
-        chats_toolbar.setMultiClickListener(
-                MultiClickObserver(2, object : MultiClickObserver.MultiClickListener {
-                    override fun onMultiClick(view: View?, count: Int) {
-                        clearThreadUnreadState()
-                        chats_title_double_click_tips.visibility = View.GONE
-                    }
-                })
-        )
-
         chats_list.setHasFixedSize(true)
         val layoutManager = LinearLayoutManager(context)
         chats_list.layoutManager = layoutManager
@@ -171,29 +160,54 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
         })
         firstVisiblePosition = layoutManager.findFirstCompletelyVisibleItemPosition()
         lastVisiblePosition = layoutManager.findLastCompletelyVisibleItemPosition()
+
+        chats_shade?.setOnContentClickListener {
+            if (!it) {
+                callback?.onClickInvite()
+            }
+        }
     }
 
     private fun initData() {
-        viewModel = ViewModelProviders.of(this).get(MessageListViewModel::class.java)
-        viewModel.threadLiveData.observe(this, Observer {data ->
-            ALog.i(TAG, "updateThread, size: ${data.data.size}, unread: ${data.unread}")
+        viewModel = ViewModelProviders.of(this).get(ThreadListViewModel::class.java)
+        viewModel.threadLiveData.observe(this, Observer { data ->
+            ALog.i(TAG, "updateThread, size: ${data.data.size}")
             RxBus.post(HomeTabEvent(HomeTabEvent.TAB_CHAT, false, data.unread, false))
             mAdapter?.setThreadList(data.data)
-
+            showShadeView(false)
         })
 
-        RxBus.subscribe<HomeTabEvent>(ARouterConstants.PARAM.PARAM_HOME_TAB_SELECT + TAG) { event ->
-            ALog.i(TAG, "receive RxBus event pos: ${event.position}")
-            if (event.position == 0 && event.isDoubleClick) {
-                goToNextUnread()
-            }
+        RxBus.subscribe<FriendRequestEvent>(TAG) {
+            checkUnhandledRequest(it.unreadCount)
         }
 
         AmePushProcess.checkSystemBannerNotice()
         PushUtil.loadSystemMessages()
     }
 
+    private fun showShadeView(isLoading: Boolean) {
+        if (isLoading) {
+            chats_shade?.showLoading()
+        } else {
+            if (mAdapter?.getTrueDataList().isNullOrEmpty()) {
+                val context = activity ?: return
+                var title: CharSequence = context.getString(R.string.chats_no_conversation_main)
+                title = StringAppearanceUtil.applyAppearance(title, 20.dp2Px(), context.getColorCompat(R.color.common_color_black))
+                val contentBuilder = SpannableStringBuilder(StringAppearanceUtil.applyBold(title))
+                contentBuilder.append("\n\n")
+                val key = context.getString(R.string.chats_no_conversation_invite)
+                val source = context.getString(R.string.chats_no_conversation_description, key)
+                contentBuilder.append(StringAppearanceUtil.applyFilterAppearance(source, key, color = context.getColorCompat(R.color.common_app_primary_color)))
+                chats_shade?.showContent(contentBuilder)
+            }else {
+                chats_shade?.hide()
+            }
+        }
+    }
 
+    /**
+     * 显示下一个未读消息
+     */
     private fun goToNextUnread() {
         ALog.i(TAG, "gotoNextUnread")
         try {
@@ -212,7 +226,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
                     }
                 }
             }
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "goToNextUnread error", ex)
         }
     }
@@ -220,12 +234,13 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
     private fun initializeListAdapter(context: Context) {
         ALog.d(TAG, "initializeListAdapter")
         val masterSecret = this.masterSecret ?: return
-        val adapter = MessageListAdapterNew(context, masterSecret, GlideApp.with(AppContextHolder.APP_CONTEXT), getSelectedLocale(context), object : MessageListAdapterNew.IThreadHolderDelete {
-            override fun onViewClicked(adapter: MessageListAdapterNew, viewHolder: RecyclerView.ViewHolder) {
-                if (viewHolder is MessageListAdapterNew.ThreadViewHolder) {
+        val adapter = MessageListAdapter(context, masterSecret, GlideApp.with(AppContextHolder.APP_CONTEXT), getSelectedLocale(context), object : MessageListAdapter.IThreadHolderDelete {
+            override fun onViewClicked(adapter: MessageListAdapter, viewHolder: RecyclerView.ViewHolder) {
+                if (viewHolder is MessageListAdapter.ThreadViewHolder) {
                     val item = viewHolder.getItem()
                     item.clearUnreadCount()
-                    handleCreateConversation(item, item.threadId, item.recipient ?: return, item.distributionType, item.lastSeen)
+                    handleCreateConversation(item, item.threadId, item.recipient
+                            ?: return, item.distributionType, item.lastSeen)
                 }
             }
         })
@@ -329,6 +344,22 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
         } else {
             webAlertData = event
         }
+    }
 
+    private fun checkUnhandledRequest(unreadCount: Int = 0) {
+        Observable.create<Pair<Int, Int>> {
+            val requestDao = UserDatabase.getDatabase().friendRequestDao()
+            var unread = unreadCount
+            if (unread == 0) {
+                unread = requestDao.queryUnreadCount()
+            }
+            it.onNext(Pair(requestDao.queryUnhandledCount(), unread))
+            it.onComplete()
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    ALog.i(TAG, "checkUnHandledFriendRequest, unHandled: ${it.first}, unread: ${it.second}")
+                    mAdapter?.updateFriendRequest(it.first, it.second)
+                }
     }
 }

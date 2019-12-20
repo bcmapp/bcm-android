@@ -127,9 +127,9 @@ class AdHocPreviewActivity : AppCompatActivity() {
 
             override fun onControllerVisible(isVisible: Boolean) {
                 ALog.i(TAG, "onControllerVisible isVisible: $isVisible, ${preview_more_view == null}")
-                if (isVisible) {
-                    preview_more_view?.hideMoreOption()
-                }
+//                if (isVisible) {
+//                    preview_more_view?.hideMoreOption()
+//                }
             }
 
         })

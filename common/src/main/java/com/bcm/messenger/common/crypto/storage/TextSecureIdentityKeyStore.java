@@ -1,7 +1,6 @@
 package com.bcm.messenger.common.crypto.storage;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.bcm.messenger.common.core.Address;
@@ -11,8 +10,6 @@ import com.bcm.messenger.common.database.records.IdentityRecord;
 import com.bcm.messenger.common.database.repositories.IdentityRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.provider.AMESelfData;
-import com.bcm.messenger.common.recipients.Recipient;
-import com.bcm.messenger.common.utils.IdentityUtil;
 
 import org.whispersystems.libsignal.IdentityKey;
 import org.whispersystems.libsignal.IdentityKeyPair;
@@ -67,10 +64,6 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
 
                 identityRepo.saveIdentity(signalAddress.serialize(), identityKey, verifiedStatus, false, System.currentTimeMillis(), nonBlockingApproval);
 
-                String localNumber = AMESelfData.INSTANCE.getUid();
-                if (!TextUtils.equals(localNumber, signalAddress.serialize())) {
-                    IdentityUtil.markIdentityUpdate(context, Recipient.from(context, signalAddress, true));
-                }
                 SessionUtil.archiveSiblingSessions(context, address);
                 return true;
             }

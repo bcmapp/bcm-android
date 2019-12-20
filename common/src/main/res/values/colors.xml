@@ -9,6 +9,8 @@
     <color name="common_color_white_70">#B3ffffff</color>
     <color name="common_color_white_30">#4dffffff</color>
     <color name="common_color_black">#000000</color>
+    <color name="common_color_black_50">#80000000</color>
+    <color name="common_color_black_60">#66000000</color>
     <color name="common_color_black_70">#4d000000</color>
     <color name="common_color_666666">#666666</color>
     <color name="common_color_999999">#999999</color>
@@ -101,8 +103,6 @@
     <color name="common_light_green_2">#c8e6c9</color>
     <color name="common_blue_3">#64B5F6</color>
 
-    <color name="common_color_black_50_translucent">#80000000</color>
-    <color name="common_color_black_30_translucent">#4D000000</color>
 
     <!--image picker-->
     <color name="common_theme_body">#cc22292c</color>

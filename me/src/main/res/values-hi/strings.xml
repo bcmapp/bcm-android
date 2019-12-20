@@ -11,7 +11,7 @@
     <string name="me_notification_head">सूचना</string>
     <string name="me_backup_head">खाता</string>
     <string name="me_security_head">सुरक्षा &amp; निजता</string>
-    <string name="me_help_head">अक्‍सर पूछे जाने वाले सवाल</string>
+    <string name="me_setting_help_title">अक्‍सर पूछे जाने वाले सवाल</string>
     <string name="me_support_head">प्रतिक्रिया</string>
     <string name="me_about_head">बारे में</string>
     <string name="me_device_switch_head">डिवाइस बदलें</string>
@@ -20,11 +20,8 @@
     <string name="me_new_version_description">नया संस्‍करण उपलब्‍ध है</string>
     <string name="me_more_title">अधिक</string>
     <string name="me_more_account_title">खाता</string>
-    <string name="me_more_data_vault_title">डेटा वॉल्ट</string>
-    <string name="me_more_wallet_title">वॉलेट</string>
-    <string name="me_more_settings_title">सेटिंग</string>
-    <string name="me_more_feedback_title">प्रतिक्रिया</string>
-    <string name="me_more_about_title">बारे में</string>
+    <string name="me_setting_feedback_title">प्रतिक्रिया</string>
+    <string name="me_setting_about_title">बारे में</string>
     <string name="me_more_scan">स्कैन</string>
     <string name="me_take_phone">फोटो लें</string>
     <string name="me_choose_phone">फोटो चुनें</string>
@@ -116,7 +113,7 @@
     <string name="me_save">सहेजें</string>
     <string name="me_psw_not_equals_confirm_psw">आपका पासवर्ड और पुष्टिकरण पासवर्ड मेल नहीं खाते।</string>
     <string name="me_change_password_success">पासवर्ड बदलना सफल</string>
-    <string name="me_input_origin_password_error">आपने जो ओरिजिनल पासवर्ड डाला था वह गलत है।</string>
+    <string name="me_change_password_error">आपने जो ओरिजिनल पासवर्ड डाला था वह गलत है।</string>
     <string name="me_account_key_anim_tips">केवल आपका खाता कुंजी आपका \n BCM का पासवर्ड है</string>
     <string name="me_donate_us">दान देना</string>
     <string name="me_generating_key">खाता कुंजी बनाया जा रहा है \n \"बंद करें\" टैप कर अपना पाएं।</string>
@@ -137,7 +134,6 @@
     <string name="me_str_backup_date_import">बैकप की तिथि (इम्पोर्ट): %s</string>
     <string name="me_show_qr_code">क्यूआर कोड दिखाएं</string>
     <string name="me_str_my_account_key">मेरा खाता कुंजी</string>
-    <string name="me_setting_feedback">प्रतिक्रिया</string>
     <string name="me_str_version_update">संस्‍करण अपडेट</string>
     <string name="me_text_register_failed">पंजीकरण विफल</string>
     <string name="me_update_dialog_title">नया संस्‍करण %s उपलब्‍ध है</string>
@@ -347,8 +343,7 @@
     <string name="me_unlock_app_description">BCM अपने बायोमेट्रिक का इस्तेमाल कर ऐप अनलॉक करें</string>
     <string name="me_unlock_account_key">खाता कुंजी अनलॉक करें</string>
     <string name="me_unlock_account_key_description">BCM अपने बायोमेट्रिक का इस्तेमाल कर अपना खाता कुंजी अनलॉक करें</string>
-    <string name="me_more_airchat_title">AirChat</string>
-    <string name="me_proxy_setting_title">Proxy</string>
+    <string name="me_setting_proxy_title">Proxy</string>
     <string name="me_test_proxy_usability">Run Usability Test</string>
     <string name="me_proxy_configurations">PROXY CONFIGURATIONS</string>
     <string name="me_add_proxy_title">Add Proxy</string>

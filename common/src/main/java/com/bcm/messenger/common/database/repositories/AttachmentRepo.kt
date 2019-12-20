@@ -199,6 +199,14 @@ class AttachmentRepo {
         }
     }
 
+    fun cleanUris(id: Long, uniqueId: Long) {
+        val record = attachmentDao.queryAttachment(id, uniqueId)
+        if (record != null) {
+            attachmentDao.cleanAttachmentUris(id, uniqueId)
+            notifyAttachmentUpdate(record.mid)
+        }
+    }
+
     fun insertForPlaceholder(masterSecret: MasterSecret, id: Long, uniqueId: Long, fileInfo: FileInfo): Long {
         val record = attachmentDao.queryAttachment(id, uniqueId)
         val encryptedFile = fileInfo.file

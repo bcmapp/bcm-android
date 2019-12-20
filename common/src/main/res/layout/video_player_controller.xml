@@ -28,14 +28,15 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/center_control_layout"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="@drawable/white_to_black_50"
-        android:padding="5dp"
-        android:paddingTop="30dp"
-        android:paddingEnd="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        >
+        android:layout_height="wrap_content"
+        android:background="@drawable/common_white_to_black_gradient"
+        android:paddingStart="20dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:paddingEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:id="@+id/exo_position"
@@ -48,8 +49,8 @@
             android:textColor="@color/common_color_white"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="30dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="30dp"
             app:layout_constraintTop_toTopOf="@id/guideline"
             tools:text="23:45"/>
 
@@ -59,27 +60,27 @@
             android:layout_height="0dp"
             android:maxHeight="1dp"
             android:progress="0"
-            android:progressDrawable="@drawable/seekbar_bg"
+            android:progressDrawable="@drawable/common_seekbar_bg"
             android:thumbTint="@color/common_color_white"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/exo_position"
-            app:layout_constraintRight_toLeftOf="@id/exo_duration"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toEndOf="@id/exo_position"
+            app:layout_constraintEnd_toStartOf="@id/exo_duration"
             app:layout_constraintTop_toTopOf="@id/guideline"/>
 
         <TextView
             android:id="@+id/exo_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
             android:gravity="center_vertical"
             android:minWidth="40dp"
             android:padding="5dp"
             android:textColor="@color/common_color_white"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/guideline"
-            app:layout_constraintRight_toRightOf="parent"
-            tools:text="21:34"/>
+            tools:text="21:34" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
@@ -95,7 +96,7 @@
             android:padding="7dp"
             android:src="@drawable/ic_stop_video_white_16"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/guideline"/>
 
         <ImageView
@@ -105,7 +106,7 @@
             android:padding="7dp"
             android:src="@drawable/ic_play_video_white"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/guideline"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

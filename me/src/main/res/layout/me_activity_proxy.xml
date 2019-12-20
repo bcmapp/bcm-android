@@ -9,7 +9,7 @@
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/proxy_title_bar"
         style="@style/CommonTitleBarStyle"
-        app:center_text="@string/me_proxy_setting_title"
+        app:center_text="@string/me_setting_proxy_title"
         app:right_type="image"
         app:right_image="@drawable/common_titlebar_plus_icon"/>
 

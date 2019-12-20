@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="match_parent"
-                                             android:background="@color/common_color_white">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_color_white">
 
     <FrameLayout
         android:id="@+id/map_container"
@@ -45,7 +44,7 @@
         android:paddingTop="6dp"
         android:paddingBottom="6dp"
         android:gravity="center"
-        android:background="@drawable/common_white_bg_selector"
+        android:background="@drawable/common_white_bg"
         android:textSize="14sp"
         android:textCursorDrawable="@drawable/common_edit_cursor_shape"
         android:text="@string/chats_search"

@@ -147,10 +147,21 @@ class RecipientRecyclerView @JvmOverloads constructor(
 
     fun setSelectedRecipient(recipients: List<Recipient>, fixed: Boolean = true) {
         if (fixed) {
-            mFixedSelectList.addAll(recipients)
-            mSelectList.addAll(mFixedSelectList)
+            recipients.forEach {
+                if (!mFixedSelectList.contains(it)) {
+                    mFixedSelectList.add(it)
+                }
+                if (!mSelectList.contains(it)) {
+                    mSelectList.add(it)
+                }
+            }
+
         } else {
-            mSelectList.addAll(recipients)
+            recipients.forEach {
+                if (!mSelectList.contains(it)) {
+                    mSelectList.add(it)
+                }
+            }
         }
         mAdapter.notifyDataSetChanged()
     }
@@ -173,8 +184,10 @@ class RecipientRecyclerView @JvmOverloads constructor(
             mSelectList.clear()
             mListener?.onModeChanged(multiSelect)
             if (currentSelect != null) {
-                mSelectList.add(currentSelect)
-                mListener?.onSelected(currentSelect)
+                if (!mFixedSelectList.contains(currentSelect)) {
+                    mSelectList.add(currentSelect)
+                    mListener?.onSelected(currentSelect)
+                }
             }
             if (notify) {
                 mAdapter.notifyDataSetChanged()

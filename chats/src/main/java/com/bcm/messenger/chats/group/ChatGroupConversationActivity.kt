@@ -26,6 +26,7 @@ import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.group.logic.MessageSender
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.chats.group.setting.ChatGroupSettingActivity
+import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.chats.user.SendContactActivity
 import com.bcm.messenger.chats.util.AttachmentUtils
 import com.bcm.messenger.common.ARouterConstants
@@ -35,7 +36,6 @@ import com.bcm.messenger.common.audio.AudioSlidePlayer
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
-import com.bcm.messenger.common.database.repositories.BASE_DRAFT_TYPE
 import com.bcm.messenger.common.database.repositories.DraftRepo
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.GroupListChangedEvent
@@ -43,7 +43,6 @@ import com.bcm.messenger.common.event.GroupNameOrAvatarChanged
 import com.bcm.messenger.common.event.MultiSelectEvent
 import com.bcm.messenger.common.event.ReEditEvent
 import com.bcm.messenger.common.grouprepository.manager.GroupLiveInfoManager
-import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.room.entity.GroupLiveInfo
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoConstants
@@ -393,7 +392,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
         groupRecipient = Recipient.recipientFromNewGroup(this, groupInfo)
         val newThreadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, -1L)
         if (newThreadId <= 0) {
-            ConversationUtils.getThreadId(groupRecipient ?: return) {
+            ThreadListViewModel.getThreadId(groupRecipient ?: return) {
                 intent.putExtra(ARouterConstants.PARAM.PARAM_THREAD, it)
                 initConversation(it)
             }

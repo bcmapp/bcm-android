@@ -4,16 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
-import com.bcm.route.annotation.Route
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.provider.IContactModule
-import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.common.utils.RxBus
 import com.bcm.messenger.me.R
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.messenger.utility.logger.ALog
+import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import com.google.zxing.Result
-import com.bcm.messenger.common.SwipeBaseActivity
 
 /**
  * Created by wjh on 2019/7/2
@@ -75,6 +75,13 @@ class NewScanActivity : SwipeBaseActivity() {
                 tran.add(R.id.scan_container_root, ScanAccountContainerFragment())
             }
             ARouterConstants.PARAM.SCAN.TYPE_CONTACT -> {
+                tran.add(R.id.scan_container_root, ScanWithCodeContainerFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt(ARouterConstants.PARAM.SCAN.TAB, 1)
+                    }
+                })
+            }
+            ARouterConstants.PARAM.SCAN.TYPE_SCAN -> {
                 tran.add(R.id.scan_container_root, ScanWithCodeContainerFragment())
             }
             else -> {

@@ -5,7 +5,7 @@ import com.huawei.android.pushagent.PushReceiver
 import com.bcm.messenger.utility.logger.ALog
 
 /**
- * Created by bcm.social.01 on 2018/7/10.
+ * bcm.social.01 2018/7/10.
  */
 class HuaweiPushReceiver : PushReceiver() {
     companion object {

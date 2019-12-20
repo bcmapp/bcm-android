@@ -11,7 +11,7 @@
     <string name="me_notification_head">اعلان</string>
     <string name="me_backup_head">حساب</string>
     <string name="me_security_head">امنیت و حریم خصوصی</string>
-    <string name="me_help_head">سؤالات متداول</string>
+    <string name="me_setting_help_title">سؤالات متداول</string>
     <string name="me_support_head">بازخورد</string>
     <string name="me_about_head">درباره</string>
     <string name="me_device_switch_head">تعویض دستگاه</string>
@@ -20,11 +20,8 @@
     <string name="me_new_version_description">نسخه جدید موجود است</string>
     <string name="me_more_title">بیشتر</string>
     <string name="me_more_account_title">حساب‌ها</string>
-    <string name="me_more_data_vault_title">گاوصندوق داده‌ها</string>
-    <string name="me_more_wallet_title">کیف پول</string>
-    <string name="me_more_settings_title">تنظیمات</string>
-    <string name="me_more_feedback_title">بازخورد</string>
-    <string name="me_more_about_title">درباره</string>
+    <string name="me_setting_feedback_title">بازخورد</string>
+    <string name="me_setting_about_title">درباره</string>
     <string name="me_more_scan">اسکن</string>
     <string name="me_take_phone">گرفتن عکس</string>
     <string name="me_choose_phone">انتخاب عکس</string>
@@ -116,7 +113,7 @@
     <string name="me_save">ذخیره</string>
     <string name="me_psw_not_equals_confirm_psw">رمزعبور شما با تکرار رمزعبور مطابقت ندارد.</string>
     <string name="me_change_password_success">تغییر رمزعبور موفق بود</string>
-    <string name="me_input_origin_password_error">رمز عبور اصلی واردشده اشتباه است.</string>
+    <string name="me_change_password_error">رمز عبور اصلی واردشده اشتباه است.</string>
     <string name="me_account_key_anim_tips">کلید حساب شما \n تنها رمزتان در BCM است</string>
     <string name="me_donate_us">اهدای کمک</string>
     <string name="me_generating_key">ایجاد کلید حساب \n برای دریافت کلید حساب خودتان، روی «توقف» بزنید.</string>
@@ -137,7 +134,6 @@
     <string name="me_str_backup_date_import">تاریخ پشتیبان‌گیری(ورودی): %s</string>
     <string name="me_show_qr_code">نمایش کد QR</string>
     <string name="me_str_my_account_key">کلید حساب من</string>
-    <string name="me_setting_feedback">بازخورد</string>
     <string name="me_str_version_update">بروزرسانی نسخه</string>
     <string name="me_text_register_failed">ثبت ناموفق بود</string>
     <string name="me_update_dialog_title">نسخه جدید %s موجود است</string>
@@ -348,8 +344,7 @@
     <string name="me_unlock_app_description">BCM از بیومتریک شما برای قفل‌گشایی برنامه استفاده می‌کند</string>
     <string name="me_unlock_account_key">قفل‌گشایی کلید حساب</string>
     <string name="me_unlock_account_key_description">BCM از بیومتریک شما برای قفل‌گشایی کلید حساب استفاده می‌کند</string>
-    <string name="me_more_airchat_title">AirChat</string>
-    <string name="me_proxy_setting_title">Proxy</string>
+    <string name="me_setting_proxy_title">Proxy</string>
     <string name="me_test_proxy_usability">Run Usability Test</string>
     <string name="me_proxy_configurations">PROXY CONFIGURATIONS</string>
     <string name="me_add_proxy_title">Add Proxy</string>

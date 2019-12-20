@@ -4,34 +4,49 @@ import com.bcm.messenger.common.database.records.RecipientSettings
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.BcmFriendManager
-import com.bcm.messenger.common.grouprepository.room.entity.BcmFriend
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.isReleaseBuild
+import com.bcm.messenger.contacts.net.BcmContactCore
+import com.bcm.messenger.contacts.net.BcmContactCore.Companion.CONTACT_SYNC_VERSION
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.logger.ALog
+import com.google.gson.reflect.TypeToken
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * Created by bcm.social.01 on 2019/3/12.
+ * bcm.social.01 2019/3/12.
  */
 class BcmContactCache() {
 
     companion object {
         private const val TAG = "BcmContactCache"
+
+        private const val KEY_LAST_SYNC_RESULT = "pref_last_sync_result"
+        private const val KEY_HANDLING_LIST = "pref_handling_list"
+
+        const val SYNC_FAIL = 0
+        const val PATCH_FAIL = 1
+        const val CONTACT_SUCCESS = 2
     }
 
     private val friendRoom: BcmFriendManager = BcmFriendManager()
-    private var myContactList = mutableMapOf<String, MutableSet<RecipientSettings>>()
-    private val handlingList = mutableSetOf<BcmFriend>()
 
     private var mReadyCountDown: AtomicReference<CountDownLatch> = AtomicReference(CountDownLatch(1))
     private var mInitFlag = AtomicBoolean(false)
+
+    private var mMyContactMap = mutableMapOf<String, BcmContactCore.ContactItem>()
+    private var mHandlingMap = mutableMapOf<String, BcmContactCore.ContactItem>()
+
+    private var mLastSyncResult = AtomicInteger(0) //0：同步失败，1：上报失败，2：成功
+
 
     internal fun initCache() {
 
@@ -46,33 +61,50 @@ class BcmContactCache() {
                 return
             }
 
+            fun initPreference() {
+                var lastHandlingList: List<BcmContactCore.ContactItem>? = null
+                try {
+                    mLastSyncResult.set(TextSecurePreferences.getIntegerPreference(AppContextHolder.APP_CONTEXT, KEY_LAST_SYNC_RESULT, SYNC_FAIL))
+
+                    val handlingListString = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, KEY_HANDLING_LIST, "")
+                    if (!handlingListString.isNullOrEmpty()) {
+                        lastHandlingList = GsonUtils.fromJson<List<BcmContactCore.ContactItem>>(handlingListString, object : TypeToken<List<BcmContactCore.ContactItem>>(){}.type)
+                    }
+                }catch (ex: Exception) {}
+
+                val oldVersionHandlingList = friendRoom.getHandingList()
+                friendRoom.clearHandlingList()
+                val localList = Repository.getRecipientRepo()?.getAllContacts() ?: emptyList()
+                for (setting in localList) {
+                    mMyContactMap[setting.uid] = BcmContactCore.ContactItem.from(setting)
+                }
+                var item: BcmContactCore.ContactItem? = null
+                oldVersionHandlingList.forEach { oldItem ->
+                    item = mMyContactMap[oldItem.uid]
+                    item?.let {
+                        mHandlingMap[it.uid] = it
+                    }
+                }
+
+                if (lastHandlingList != null) {
+                    lastHandlingList.forEach {
+                        item = mMyContactMap[it.uid]
+                        if (item != null || it.relationship == RecipientRepo.Relationship.STRANGER.type) {
+                            mHandlingMap[it.uid] = it
+                        }
+                    }
+                }
+            }
+
             @Synchronized
             fun fixUpgradeSituation() {
                 val lastVersion = TextSecurePreferences.getIntegerPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.CONTACT_SYNC_VERSION, 0)
-                if (lastVersion != RecipientSettings.CONTACT_SYNC_VERSION) {
+                if (lastVersion < CONTACT_SYNC_VERSION) {
                     ALog.i(TAG, "fixUpgradeSituation")
-                    val settingList = Repository.getRecipientRepo()?.getContactsFromOneSide()
-                    if (!settingList.isNullOrEmpty()) {
-                        ALog.i(TAG, "fixUpgradeSituation currentContacts: ${settingList.size}")
-                        settingList.forEach {
-                            val key = if (it.contactPartKey.isNullOrEmpty()) {
-                                BcmContactLogic.getPartKey(it.uid).apply {
-                                    it.contactPartKey = this
-                                }
-                            } else {
-                                it.contactPartKey ?: "0"
-                            }
-                            val h = if (it.relationship == RecipientRepo.Relationship.STRANGER.type) {
-                                BcmFriend(it.uid, key, BcmFriend.DELETING)
-                            } else {
-                                BcmFriend(it.uid, key, BcmFriend.ADDING)
-                            }
-                            this.handlingList.remove(h)
-                            this.handlingList.add(h)
-                        }
-                        friendRoom.saveHandlingList(this.handlingList.toList())
+                    for ((k, v) in mMyContactMap) {
+                        mHandlingMap[k] = v
                     }
-                    TextSecurePreferences.setIntegerPrefrence(AppContextHolder.APP_CONTEXT, TextSecurePreferences.CONTACT_SYNC_VERSION, RecipientSettings.CONTACT_SYNC_VERSION)
+                    TextSecurePreferences.setIntegerPrefrence(AppContextHolder.APP_CONTEXT, TextSecurePreferences.CONTACT_SYNC_VERSION, CONTACT_SYNC_VERSION)
                 }
             }
 
@@ -81,29 +113,12 @@ class BcmContactCache() {
                     .observeOn(Schedulers.io())
                     .map {
                         ALog.i(TAG, "initCache run")
-                        val handlingList = friendRoom.getHandingList()
-                        val localList = getLocalContactList()
-                        val contactMap = HashMap<String, MutableSet<RecipientSettings>>()
-                        for (setting in localList) {
-                            val key = BcmContactLogic.getPartKey(setting.uid)
-                            setting.contactPartKey = key
-                            var set = contactMap[key]
-                            if (null == set) {
-                                set = mutableSetOf()
-                                contactMap[key] = set
-                            }
-                            set.add(setting)
-                        }
-                        Pair(contactMap, handlingList)
+                        initPreference()
+                        true
 
                     }.observeOn(Schedulers.io())
                     .subscribe({
-                        ALog.i(TAG, "initCache end")
-                        for ((key, set) in it.first) {
-                            updateContact(key, set)
-                        }
-                        this.handlingList.clear()
-                        this.handlingList.addAll(it.second)
+                        ALog.i(TAG, "initCache end localMap: ${mMyContactMap.size}")
                         fixUpgradeSituation()
                         mReadyCountDown.get().countDown()
                     }, {
@@ -122,8 +137,11 @@ class BcmContactCache() {
     @Synchronized
     private fun clearContact() {
         ALog.i(TAG, "clearContact")
-        handlingList.clear()
-        myContactList.clear()
+        mHandlingMap.clear()
+        mMyContactMap.clear()
+
+        TextSecurePreferences.setIntegerPrefrence(AppContextHolder.APP_CONTEXT, KEY_LAST_SYNC_RESULT, SYNC_FAIL)
+        TextSecurePreferences.setStringPreference(AppContextHolder.APP_CONTEXT, KEY_HANDLING_LIST, "")
     }
 
     private fun isCacheReady(): Boolean {
@@ -140,204 +158,193 @@ class BcmContactCache() {
         return isCacheReady()
     }
 
-    @Synchronized
-    fun getContactSet(partKey: String): Set<RecipientSettings>? {
-        return myContactList[partKey]?.toSet()
+    fun setSyncResult(result: Int) {
+        mLastSyncResult.set(result)
+        TextSecurePreferences.setIntegerPrefrence(AppContextHolder.APP_CONTEXT, KEY_LAST_SYNC_RESULT , result)
+        try {
+            val handlingListString = GsonUtils.toJson(getHandlingList())
+            TextSecurePreferences.setStringPreference(AppContextHolder.APP_CONTEXT, KEY_HANDLING_LIST, handlingListString)
+
+        }catch (ex: Exception) {}
+    }
+
+    fun getLastSyncResult(): Int {
+        return mLastSyncResult.get()
     }
 
     @Synchronized
-    private fun updateContact(partKey: String, setting: RecipientSettings) {
-        setting.contactPartKey = partKey
-        var set = myContactList[partKey]
-        if (set == null) {
-            set = mutableSetOf()
-            set.add(setting)
-            myContactList[partKey] = set
-        }else {
-            set.remove(setting)
-            set.add(setting)
-        }
-        if (!isReleaseBuild()) {
-            ALog.d(TAG, "updateContact partKey: $partKey, setting: ${GsonUtils.toJson(setting)}, currentMap: ${GsonUtils.toJson(myContactList)}")
-        }
+    private fun getHandlingList(): List<BcmContactCore.ContactItem> {
+        return mHandlingMap.map { it.value }
     }
 
     @Synchronized
-    private fun updateContact(partKey: String, settingList: Set<RecipientSettings>) {
-        settingList.forEach {
-            it.contactPartKey = partKey
-        }
-        var set = myContactList[partKey]
-        if (set == null) {
-            set = mutableSetOf()
-            set.addAll(settingList)
-            myContactList[partKey] = set
-        }else {
-            set.clear()
-            set.addAll(settingList)
-        }
-        if (!isReleaseBuild()) {
-            ALog.d(TAG, "updateContact partKey: $partKey, settingList: ${GsonUtils.toJson(settingList)}, currentMap: ${GsonUtils.toJson(myContactList)}")
-        }
-    }
+    fun getHandlingUploadMap(): Map<String, List<BcmContactCore.ContactItem>> {
+        val uploadMap = mutableMapOf<String, MutableList<BcmContactCore.ContactItem>>()
+        convertToContactPartMap(mHandlingMap, uploadMap)
 
-    @Synchronized
-    private fun deleteContact(partKey: String, setting: RecipientSettings) {
-        setting.contactPartKey = partKey
-        myContactList[partKey]?.remove(setting)
-    }
-
-    @Synchronized
-    fun getContactMap(): Map<String, Set<RecipientSettings>> {
-        val contactMap = mutableMapOf<String, Set<RecipientSettings>>()
-        for ((key, set) in myContactList) {
-            contactMap[key] = set.toSet()
-        }
-        return contactMap
-    }
-
-    private fun getLocalContactList(): List<RecipientSettings> {
-        return Repository.getRecipientRepo()?.getFriendsFromContact() ?: emptyList()
-    }
-
-
-    @Synchronized
-    fun getHandlingList(): Set<BcmFriend> {
-        return handlingList.toSet()
-    }
-
-    @Synchronized
-    fun localHandlingMap(handlingList: Set<BcmFriend>): Map<String, RecipientSettings> {
-        if (handlingList.isEmpty()) {
-            return mapOf()
-        }
-        val localMap = mutableMapOf<String, RecipientSettings>()
-        for (h in handlingList) {
-            val l: MutableSet<RecipientSettings> = myContactList[h.tag] ?: continue
-            for (s in l) {
-                if (s.uid == h.uid) {
-                    if (s.contactPartKey.isNullOrEmpty()) {
-                        s.contactPartKey = h.tag
-                    }
-                    localMap[s.uid] = s
-                    break
+        for ((uid, v) in mMyContactMap) {
+            val key = BcmContactCore.getPartKey(uid)
+            val set = uploadMap[key]
+            if (set != null) {
+                if (!set.contains(v)) {
+                    set.add(v)
                 }
             }
         }
-        return localMap
+        return uploadMap
+    }
+
+
+    @Synchronized
+    fun getUploadContactMap(withHandling: Boolean): Map<String, List<BcmContactCore.ContactItem>> {
+
+        val uploadMap = mutableMapOf<String, MutableList<BcmContactCore.ContactItem>>()
+        convertToContactPartMap(mMyContactMap, uploadMap)
+        if (withHandling) {
+            convertToContactPartMap(mHandlingMap, uploadMap)
+        }
+        ALog.i(TAG, "getUploadContactMap myContactMap: ${mMyContactMap.size}, uploadMap: ${uploadMap.size}")
+        return uploadMap
+    }
+
+    private fun convertToContactPartMap(inputMap: Map<String, BcmContactCore.ContactItem>, outputMap: MutableMap<String, MutableList<BcmContactCore.ContactItem>> ) {
+        var key: String
+        var set: MutableList<BcmContactCore.ContactItem>?
+        for ((uid, v) in inputMap) {
+            key = BcmContactCore.getPartKey(uid)
+            set = outputMap[key]
+            if (set == null) {
+                set = mutableListOf()
+                outputMap[key] = set
+            }
+            set.remove(v)
+            set.add(v)
+        }
     }
 
     @Synchronized
-    fun removeDoneList(doneList: Set<BcmFriend>) {
-        val toDeleteList = mutableListOf<BcmFriend>()
-        for (done in doneList) {
-            for (cur in handlingList) {
-                if (done.uid == cur.uid) {
-                    if (done.state == cur.state) {
-                        toDeleteList.add(done)
-                    }
-                    break
-                }
-            }
+    fun updateSyncContactMap(syncContactMap: Map<String, List<BcmContactCore.ContactItem>>, replace: Boolean) {
+
+        if (!isReleaseBuild()) {
+            ALog.i(TAG, "updateSyncContactMap syncContactMap: ${GsonUtils.toJson(syncContactMap)}, \ncurrentMap: ${GsonUtils.toJson(mMyContactMap)}")
         }
-        if (toDeleteList.isNotEmpty()) {
-            this.handlingList.removeAll(toDeleteList)
-            friendRoom.saveHandlingList(handlingList.toList())
-        }else {
-            ALog.i(TAG, "no need to remove doneList")
-        }
-    }
-
-    @Synchronized
-    fun addHandlingList(handling: RecipientSettings, replace: Boolean = true) {
-
-        val key = if (handling.contactPartKey.isNullOrEmpty()) {
-            BcmContactLogic.getPartKey(handling.uid).apply {
-                handling.contactPartKey = this
-            }
-        }else {
-            handling.contactPartKey ?: "0"
-        }
-        val h = if (handling.relationship == RecipientRepo.Relationship.STRANGER.type) {
-            BcmFriend(handling.uid, key, BcmFriend.DELETING)
-        }else {
-            BcmFriend(handling.uid, key, BcmFriend.ADDING)
-        }
-
-        if (replace) {
-            this.handlingList.remove(h)
-        }
-        this.handlingList.add(h)
-        friendRoom.saveHandlingList(handlingList.toList())
-
-    }
-
-    fun getLastUploadHashMap(): Map<String, Long> {
-        val map = friendRoom.loadLastSyncHashMap()
-        return if (null == map) {
-            val m = HashMap<String, Long>()
-            for (i in 0 until BcmContactLogic.CONTACT_PART_MAX) {
-                m[i.toString()] = 0
-            }
-            friendRoom.saveSyncHashMap(m)
-            m
-        } else {
-            map
-        }
-    }
-
-    fun updateSyncContactMap(syncContactMap: Map<String, Set<RecipientSettings>>, syncHashMap: Map<String, Long>, doneList: Set<BcmFriend>) {
-
-        ALog.d(TAG, "updateSyncContactMap syncContactMap: ${GsonUtils.toJson(syncContactMap)}, \ncurrentMap: ${GsonUtils.toJson(myContactList)}")
-
         val updateList = mutableListOf<RecipientSettings>()
+        val localMap = mutableMapOf<String, MutableList<BcmContactCore.ContactItem>>()
+        convertToContactPartMap(mMyContactMap, localMap)
+        var localList: MutableList<BcmContactCore.ContactItem>?
         for ((key, syncSet) in syncContactMap) {
-            updateContact(key, syncSet)
-            syncSet.forEach {
-                updateList.remove(it)
-                updateList.add(it)
+            localList = localMap[key]
+
+            for (new in syncSet) {
+                var old = mMyContactMap[new.uid]
+                if (old == null) {
+                    old = new
+                    updateList.add(new.toSetting())
+                } else {
+                    localList?.remove(old)
+                    var update = false
+                    if (old.relationship != new.relationship) {
+                        old.relationship = new.relationship
+                        update = true
+                    }
+
+                    if (replace) {
+                        if (old.profileName != new.profileName) {
+                            old.profileName = new.profileName
+                            update = true
+                        }
+                        if (old.localName != new.localName) {
+                            old.localName = new.localName
+                            update = true
+                        }
+                        if (old.nameKey != new.nameKey) {
+                            old.nameKey = new.nameKey
+                            update = true
+                        }
+                        if (old.avatarKey != new.avatarKey) {
+                            old.avatarKey = new.avatarKey
+                            update = true
+                        }
+                    }
+                    if (update) {
+                        updateList.add(old.toSetting())
+                    }
+                }
+                mMyContactMap[old.uid] = old
             }
-        }
 
-        removeDoneList(doneList)
-
-        if (syncContactMap.isNotEmpty()) {
-
-            ALog.d(TAG, "updateSyncContactMap syncHashMap: ${GsonUtils.toJson(syncHashMap)}")
-
-            val saveHashMap = mutableMapOf<String, Long>()
-            friendRoom.loadLastSyncHashMap()?.let {
-                saveHashMap.putAll(it)
-            }
-            saveHashMap.putAll(syncHashMap)
-
-            for (i in 0 until BcmContactLogic.CONTACT_PART_MAX) {
-                if (saveHashMap[i.toString()] == null) {
-                    saveHashMap[i.toString()] = 0
+            if (!localList.isNullOrEmpty()) { //最终localList不为空，表明云端已经没有该key对应的通讯录列表，则要遍历设置为陌生人并删除
+                for (old in localList) {
+                    old.relationship = RecipientRepo.Relationship.STRANGER.type
+                    updateList.add(old.toSetting())
+                    mMyContactMap.remove(old.uid)
                 }
             }
-            friendRoom.saveSyncHashMap(saveHashMap)
         }
-        Repository.getRecipientRepo()?.updateBcmContacts(updateList, false)
+
+        // 更新本地数据库
+        Repository.getRecipientRepo()?.updateBcmContacts(updateList)
 
     }
 
-    fun addHandling(setting: RecipientSettings): String {
+    @Synchronized
+    fun addRelationHandling(target: Recipient, relationship: RecipientRepo.Relationship,
+                            callback: (bloomList: List<BcmContactCore.ContactItem>, doAfter: (success: Boolean) -> Unit) -> Unit) {
+        ALog.i(TAG, "addRelationHandling begin, relationship: $relationship")
+        var handling = mHandlingMap[target.address.serialize()]
+        if (handling == null) {
+            handling = BcmContactCore.ContactItem.from(target.settings)
+            mHandlingMap[target.address.serialize()] = handling
+        }
+        handling.relationship = relationship.type
+        if (relationship == RecipientRepo.Relationship.STRANGER) {
+            handling.localName = ""
+            handling.profileName = ""
+            handling.nameKey = ""
+            handling.avatarKey = ""
+        }
 
-        addHandlingList(setting)
-        Repository.getRecipientRepo()?.updateBcmContacts(listOf(setting), true)
-        val key = BcmContactLogic.getPartKey(setting.uid)
-        updateContact(key, setting)
-
-        return key
-
+        val bloomList = mutableListOf<BcmContactCore.ContactItem>()
+        for ((k, c) in mMyContactMap) {
+            bloomList.remove(c)
+            bloomList.add(c)
+        }
+        for ((k, c) in mHandlingMap) {
+            bloomList.remove(c)
+            bloomList.add(c)
+        }
+        callback(bloomList) {
+            if (it) {
+                target.relationship = relationship
+                ALog.i(TAG, "addRelationHandling result: $it, relationship: $relationship")
+            }
+        }
     }
 
-    fun addPropertyChangedHandling(setting: RecipientSettings): String {
-        addHandlingList(setting, false)
-        val key = BcmContactLogic.getPartKey(setting.uid)
-        updateContact(key, setting)
-        return key
+    @Synchronized
+    fun doneHandling(doneMap: Map<String, List<BcmContactCore.ContactItem>>) {
+        for ((key, list) in doneMap) {
+            for (item in list) {
+                mHandlingMap.remove(item.uid)
+            }
+        }
+    }
+
+    @Synchronized
+    fun addPropertyChangedHandling(target: Recipient, callback: (doAfter: (success: Boolean) -> Unit) -> Unit) {
+        var handling = mHandlingMap[target.address.serialize()]
+        if (handling == null) {
+            handling = BcmContactCore.ContactItem.from(target.settings)
+            mHandlingMap[target.address.serialize()] = handling
+        }else {
+            handling.profileName = target.profileName ?: ""
+            handling.localName = target.localName ?: ""
+            handling.nameKey = target.privacyProfile.nameKey ?: ""
+            handling.avatarKey = target.privacyProfile.avatarKey ?: ""
+        }
+        callback {
+            ALog.i(TAG, "addPropertyChangedHandling result: $it")
+        }
     }
 
 }

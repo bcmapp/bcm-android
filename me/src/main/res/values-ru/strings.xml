@@ -11,7 +11,7 @@
     <string name="me_notification_head">Уведомление</string>
     <string name="me_backup_head">Аккаунт</string>
     <string name="me_security_head">Безопасн. и конфиденц.</string>
-    <string name="me_help_head">ЧаВо</string>
+    <string name="me_setting_help_title">ЧаВо</string>
     <string name="me_support_head">Отзыв</string>
     <string name="me_about_head">О нас</string>
     <string name="me_device_switch_head">Сменить устр.</string>
@@ -20,11 +20,8 @@
     <string name="me_new_version_description">Доступна новая версия</string>
     <string name="me_more_title">Еще</string>
     <string name="me_more_account_title">Аккаунты</string>
-    <string name="me_more_data_vault_title">Хран. данных</string>
-    <string name="me_more_wallet_title">Кошелек</string>
-    <string name="me_more_settings_title">Настройки</string>
-    <string name="me_more_feedback_title">Отзыв</string>
-    <string name="me_more_about_title">О программе</string>
+    <string name="me_setting_feedback_title">Отзыв</string>
+    <string name="me_setting_about_title">О программе</string>
     <string name="me_more_scan">Скан.</string>
     <string name="me_take_phone">Сделать снимок</string>
     <string name="me_choose_phone">Выберите фото</string>
@@ -116,7 +113,7 @@
     <string name="me_save">Сохранить</string>
     <string name="me_psw_not_equals_confirm_psw">Ваш пароль и его подтверждение не совпадают.</string>
     <string name="me_change_password_success">пароль успешно изменен</string>
-    <string name="me_input_origin_password_error">Вы неправильно ввели текущий пароль.</string>
+    <string name="me_change_password_error">Вы неправильно ввели текущий пароль.</string>
     <string name="me_account_key_anim_tips">Ваш ключ аккаунта - это\n ваш пропуск в BCM</string>
     <string name="me_donate_us">Пожертв.</string>
     <string name="me_generating_key">Создаем ключ аккаунта \n Нажмите \"Стоп\" для получ.</string>
@@ -137,7 +134,6 @@
     <string name="me_str_backup_date_import">Дата рез.коп.(импорт): %s</string>
     <string name="me_show_qr_code">Показ. QR-код</string>
     <string name="me_str_my_account_key">Мой ключ акк.</string>
-    <string name="me_setting_feedback">Отзыв</string>
     <string name="me_str_version_update">Обновл. версии</string>
     <string name="me_text_register_failed">Не зарегистрир.</string>
     <string name="me_update_dialog_title">Доступна новая версия %s</string>
@@ -348,8 +344,7 @@
     <string name="me_unlock_app_description">BCM исп. биом. данные для разбл. прил.</string>
     <string name="me_unlock_account_key">Разблок. ключ акк.</string>
     <string name="me_unlock_account_key_description">BCM исп. биометр. данные для разблок. ключа акк.</string>
-    <string name="me_more_airchat_title">AirChat</string>
-    <string name="me_proxy_setting_title">Proxy</string>
+    <string name="me_setting_proxy_title">Proxy</string>
     <string name="me_test_proxy_usability">Run Usability Test</string>
     <string name="me_proxy_configurations">PROXY CONFIGURATIONS</string>
     <string name="me_add_proxy_title">Add Proxy</string>

@@ -12,7 +12,7 @@ import com.bcm.messenger.common.ui.GroupMemberPhotoView
 import com.bcm.messenger.common.recipients.Recipient
 
 /**
- * Created by bcm.social.01 on 2018/6/6.
+ * bcm.social.01 2018/6/6.
  */
 class ChatGroupShareMemberCell : LinearLayout {
     private lateinit var avatarView: GroupMemberPhotoView

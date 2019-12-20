@@ -109,36 +109,25 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.bcm.messenger.common.ui.CommonSettingItem
-        android:id="@+id/about_faq_layout"
-        android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:layout_marginTop="20dp"
-        app:setting_item_line="false"
-        app:setting_item_name="@string/me_help_head"
-        app:setting_item_right="arrow"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/about_update_layout" />
 
     <com.bcm.messenger.common.ui.CommonSettingItem
         android:id="@+id/about_cooperation_layout"
-        android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
         app:setting_item_line="false"
         app:setting_item_name="@string/me_about_security_support"
         app:setting_item_right="arrow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/about_faq_layout" />
+        app:layout_constraintTop_toBottomOf="@id/about_update_layout" />
 
     <com.bcm.messenger.common.ui.CommonSettingItem
         android:id="@+id/about_policy_layout"
-        android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
-        app:setting_item_line="true"
+        app:setting_item_line="false"
         app:setting_item_name="@string/me_copyright"
         app:setting_item_right="arrow"
         app:layout_constraintEnd_toEndOf="parent"
@@ -148,7 +137,8 @@
     <com.bcm.messenger.common.ui.CommonSettingItem
         android:id="@+id/about_os_licenses_layout"
         android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
         app:setting_item_line="false"
         app:setting_item_name="@string/me_about_open_source_licenses"
         app:setting_item_right="arrow"
@@ -158,8 +148,8 @@
 
     <com.bcm.messenger.common.ui.CommonSettingItem
         android:id="@+id/about_donate_layout"
-        android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         app:setting_item_line="false"
         app:setting_item_name="@string/me_donate_us"
@@ -171,8 +161,8 @@
 
     <com.bcm.messenger.common.ui.CommonSettingItem
         android:id="@+id/about_env_setting"
-        android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         app:setting_item_line="false"
         app:setting_item_name="Debug Environment"

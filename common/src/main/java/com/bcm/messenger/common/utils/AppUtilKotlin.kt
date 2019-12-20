@@ -417,10 +417,6 @@ fun getString(resId: Int): String {
     return AppContextHolder.APP_CONTEXT.getString(resId)
 }
 
-fun getString(resId: Int, vararg args: Any): String {
-    return AppContextHolder.APP_CONTEXT.getString(resId, args)
-}
-
 /**
  * ，，，
  * @param event 

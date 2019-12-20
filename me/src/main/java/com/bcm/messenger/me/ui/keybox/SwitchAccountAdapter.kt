@@ -29,7 +29,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /**
- * Created by bcm.social.01 on 2018/11/6.
+ * bcm.social.01 2018/11/6.
  */
 class SwitchAccountAdapter {
 

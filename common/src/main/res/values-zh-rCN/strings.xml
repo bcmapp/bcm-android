@@ -185,7 +185,9 @@
     <string name="common_understood">我知道了</string>
     <string name="common_later">稍后处理</string>
     <string name="common_copied">已复制</string>
+    <string name="common_help">帮助</string>
     <string name="common_save_to_album">保存到相册</string>
+    <string name="common_multi_select">多选</string>
 
 
     <string name="common_connection_lost">连接中&#8230;</string>

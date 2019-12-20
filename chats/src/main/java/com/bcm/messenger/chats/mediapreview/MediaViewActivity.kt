@@ -28,10 +28,12 @@ import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.utils.AmeAppLifecycle
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.common.utils.MediaUtil
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.chats_activity_media_view.*
@@ -136,66 +138,10 @@ class MediaViewActivity : AppCompatActivity() {
     private fun initOnClickListeners() {
         chats_media_more_view.setMoreViewListener(object : MediaMoreView.MoreViewActionListener {
             override fun clickDownload() {
-                val f = (adapter.getCurrentFragment() as? MediaViewFragment) ?: return
-                val data = f.getData()
-                chats_media_more_view.displaySpinning()
-                viewModel.saveData(data) { success ->
-                    chats_media_more_view.displayDefault()
-                    if (success) {
-                        AmeAppLifecycle.succeed(getString(R.string.chats_save_success), true)
-                    } else {
-                        AmeAppLifecycle.failure(getString(R.string.chats_save_fail), true)
-                    }
-                }
+                saveMedia()
             }
 
-            override fun clickForward() {
-                val f = (adapter.getCurrentFragment() as? MediaViewFragment) ?: return
-                val data = f.getData()
-                if (data == null || data.msgType == MSG_TYPE_HISTORY) {
-                    return
-                }
-                val intent = Intent(this@MediaViewActivity, ForwardActivity::class.java).apply {
-                    val gid = if (data.msgType == MSG_TYPE_PRIVATE) {
-                        ARouterConstants.PRIVATE_MEDIA_CHAT
-                    } else {
-                        (data.sourceMsg as AmeGroupMessageDetail).gid
-                    }
-                    putExtra(ForwardActivity.GID, gid)
-                    putExtra(ForwardActivity.INDEX_ID, data.indexId)
-                }
-                startActivity(intent)
-            }
-
-            override fun clickDelete() {
-                val f = (adapter.getCurrentFragment() as? MediaViewFragment) ?: return
-                val data = f.getData()
-                if (data == null || data.msgType == MSG_TYPE_HISTORY) {
-                    return
-                }
-                AmeAppLifecycle.show(
-                        getString(R.string.chats_media_browser_delete_title),
-                        getString(R.string.chats_media_browser_delete),
-                        getString(R.string.chats_cancel)) {
-                    chats_media_more_view.displaySpinning()
-                    viewModel.deleteData(data) { success ->
-                        chats_media_more_view.displayDefault()
-                        if (success) {
-                            AmeAppLifecycle.succeed(getString(R.string.chats_delete_success), true) {
-                                if (mediaDataList.size == 1) {
-                                    finish()
-                                } else {
-                                    mediaDataList.remove(data)
-                                    adapter.notifyDataSetChanged()
-                                }
-                            }
-                        } else {
-                            AmeAppLifecycle.failure(getString(R.string.chats_delete_fail), true)
-                        }
-                    }
-                }
-            }
-
+            // 跳转到多媒体列表
             override fun clickMediaBrowser() {
                 val f = (adapter.getCurrentFragment() as? MediaViewFragment) ?: return
                 val data = f.getData()
@@ -214,42 +160,36 @@ class MediaViewActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-            override fun clickScanQRCode() {
-
-            }
-
-            override fun clickClose() {
-                dismissActivity()
-            }
-
             override fun moreOptionVisibilityChanged(isShow: Boolean) {
-                val f = (adapter.getCurrentFragment() as? MediaViewFragment) ?: return
-                if (isShow) {
-                    f.hideController()
-                } else {
-                    f.showController()
-                }
+//                val f = (adapter.getCurrentFragment() as? MediaViewFragment) ?: return
+//                if (isShow) {
+//                    f.hideController()
+//                } else {
+//                    f.showController()
+//                }
             }
         })
     }
 
     private val fragmentListener = object : MediaViewFragment.MediaViewFragmentActionListener {
         override fun videoPlaying() {
-            chats_media_more_view.hideMoreOption()
+            // TODO:
         }
 
         override fun clickImage() {
-            dismissActivity()
+            chats_media_more_view.switchOptionLayout()
         }
 
         override fun longClickImage(): Boolean {
-            chats_media_more_view.displayMoreOption()
+            showSheet()
             return true
         }
 
         override fun controllerVisible(isVisible: Boolean) {
             if (isVisible) {
-                chats_media_more_view.hideMoreOption()
+                chats_media_more_view.hideDefaultOptionLayout()
+            } else {
+                chats_media_more_view.showDefaultOptionLayout()
             }
         }
 
@@ -260,6 +200,90 @@ class MediaViewActivity : AppCompatActivity() {
                 chats_media_more_view.displayDefault()
             }
         }
+
+        override fun dataIsValid(isValid: Boolean) {
+            if (isValid) {
+                chats_media_more_view.enableDownload()
+            } else {
+                chats_media_more_view.disableDownload()
+            }
+        }
+    }
+
+    private fun showSheet() {
+        AmePopup.bottom.newBuilder()
+                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_forward)) {
+                    forwardMedia()
+                })
+                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_save)) {
+                    saveMedia()
+                })
+                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_delete)) {
+                    deleteMedia()
+                })
+                .withDoneTitle(getString(R.string.chats_cancel))
+                .show(this)
+    }
+
+    private fun forwardMedia() {
+        val f = (adapter.getCurrentFragment() as? MediaViewFragment) ?: return
+        val data = f.getData()
+        if (data == null || data.msgType == MSG_TYPE_HISTORY) {
+            return
+        }
+        val intent = Intent(this@MediaViewActivity, ForwardActivity::class.java).apply {
+            val gid = if (data.msgType == MSG_TYPE_PRIVATE) {
+                ARouterConstants.PRIVATE_MEDIA_CHAT
+            } else {
+                (data.sourceMsg as AmeGroupMessageDetail).gid
+            }
+            putExtra(ForwardActivity.GID, gid)
+            putExtra(ForwardActivity.INDEX_ID, data.indexId)
+        }
+        startActivity(intent)
+    }
+
+    private fun saveMedia() {
+        val f = (adapter.getCurrentFragment() as? MediaViewFragment) ?: return
+        val data = f.getData()
+        chats_media_more_view.displaySpinning()
+        viewModel.saveData(data) { success ->
+            chats_media_more_view.displayDefault()
+            if (success) {
+                AmeAppLifecycle.succeed(getString(R.string.chats_save_success), true)
+            } else {
+                AmeAppLifecycle.failure(getString(R.string.chats_save_fail), true)
+            }
+        }
+    }
+
+    private fun deleteMedia() {
+        val f = (adapter.getCurrentFragment() as? MediaViewFragment) ?: return
+        val data = f.getData()
+        if (data == null || data.msgType == MSG_TYPE_HISTORY) {
+            return
+        }
+        AmeAppLifecycle.show(
+                getString(R.string.chats_media_browser_delete_title),
+                getString(R.string.chats_media_browser_delete),
+                getString(R.string.chats_cancel)) {
+            chats_media_more_view.displaySpinning()
+            viewModel.deleteData(data) { success ->
+                chats_media_more_view.displayDefault()
+                if (success) {
+                    AmeAppLifecycle.succeed(getString(R.string.chats_delete_success), true) {
+                        if (mediaDataList.size == 1) {
+                            finish()
+                        } else {
+                            mediaDataList.remove(data)
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                } else {
+                    AmeAppLifecycle.failure(getString(R.string.chats_delete_fail), true)
+                }
+            }
+        }
     }
 
     private fun initResources() {
@@ -268,8 +292,6 @@ class MediaViewActivity : AppCompatActivity() {
             initSingleResources()
             return
         }
-
-        chats_media_more_view.hideCloseButton()
 
         val threadId = intent.getLongExtra(THREAD_ID, -1L)
         val indexId = intent.getLongExtra(INDEX_ID, -1L)
@@ -391,7 +413,6 @@ class MediaViewActivity : AppCompatActivity() {
                 setResult(Activity.RESULT_OK, Intent().apply { putExtra(ShareElements.PARAM.MEDIA_INDEX, data.indexId) })
             }
             chats_media_more_view.visibility = View.GONE
-
         } catch (ex: Exception) {
             ALog.e(TAG, "dismissActivity error", ex)
         } finally {

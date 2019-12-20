@@ -7,7 +7,7 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
 
 /**
- * Created by bcm.social.01 on 2018/10/23.
+ * bcm.social.01 2018/10/23.
  */
 class ChatContactHolderAction() : BaseChatHolderAction<ContactCardView>() {
 

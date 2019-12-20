@@ -8,6 +8,8 @@ import com.bcm.messenger.common.finder.IBcmFinder
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Created by bcm.social.01 on 2019/4/8.
@@ -16,34 +18,24 @@ class BcmGroupFinder :IBcmFinder {
 
     private val TAG = "BcmGroupFinder"
 
-    private val mLock = java.lang.Object()
+    private val mLock = AtomicReference(CountDownLatch(1))
     private var mGroupList: List<AmeGroupInfo>? = null
     private var mFindResult: GroupFindResult? = null
 
 
     fun updateSource(groupList: List<AmeGroupInfo>) {
-        synchronized(mLock) {
-            var times = 0
-            do {
-                try {
-                    mGroupList = groupList.sortedWith(object : Comparator<AmeGroupInfo> {
-                        private val map = mutableMapOf<AmeGroupInfo, Int>()
-                        override fun compare(o1: AmeGroupInfo, o2: AmeGroupInfo): Int {
-                            return sort(map, o1, o2)
-                        }
-                    })
-                    times = 2
+        if (mLock.get().count <= 0) {
+            mLock.set(CountDownLatch(1))
+            ALog.d(TAG, "groupLock setCountDown")
 
-                }catch (ex: Exception) {
-                    ALog.e(TAG, "topN error", ex)
-                    times++
-                    if (times >= 2) {
-                        mGroupList = null
-                    }
-                }
-            }while (times < 2)
-            mLock.notifyAll()
         }
+        mGroupList = groupList.sortedWith(object : Comparator<AmeGroupInfo> {
+            private val map = mutableMapOf<AmeGroupInfo, Int>()
+            override fun compare(o1: AmeGroupInfo, o2: AmeGroupInfo): Int {
+                return sort(map, o1, o2)
+            }
+        })
+        mLock.get().countDown()
     }
 
     override fun type(): BcmFinderType {
@@ -60,25 +52,16 @@ class BcmGroupFinder :IBcmFinder {
     }
 
     override fun cancel() {
-        synchronized(mLock) {
-            mGroupList = null
-            mLock.notifyAll()
-        }
+        mLock.get().countDown()
     }
 
     fun getSourceList(): List<AmeGroupInfo> {
-        synchronized(mLock) {
-            try {
-                if (mGroupList == null) {
-                    mLock.wait()
-                }
-                return mGroupList?.toList() ?: listOf()
-            }catch (ex: Exception) {
-                ALog.e(TAG, "getSourceList error", ex)
-                mLock.notifyAll()
-            }
+        try {
+            mLock.get().await()
+        }catch (ex: Exception) {
+
         }
-        return listOf()
+        return mGroupList ?: listOf()
     }
 
     private fun sort(map: MutableMap<AmeGroupInfo,Int>, entry1: AmeGroupInfo, entry2: AmeGroupInfo): Int {

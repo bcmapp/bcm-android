@@ -175,7 +175,7 @@
                 android:src="@drawable/chats_emoji"
                 android:layout_marginBottom="3dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <com.bcm.messenger.common.ui.emoji.EmojiEditText
                 android:id="@+id/panel_compose_text"
@@ -193,8 +193,8 @@
                 android:textSize="15sp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:paddingStart="3dp"
-                android:paddingEnd="3dp"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="3dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/panel_burn_toggle"
                 app:layout_constraintEnd_toStartOf="@+id/panel_emoji_toggle"

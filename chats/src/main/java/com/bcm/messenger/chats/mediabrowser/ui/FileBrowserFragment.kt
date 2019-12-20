@@ -16,6 +16,7 @@ import com.bcm.messenger.chats.mediabrowser.adapter.FileBrowserAdapter
 import com.bcm.messenger.chats.mediabrowser.bean.DeleteFileCallBack
 import com.bcm.messenger.chats.mediabrowser.bean.FileBrowserData
 import com.bcm.messenger.chats.provider.ChatModuleImp
+import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.MasterSecret
@@ -24,7 +25,10 @@ import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
-import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.common.utils.AmeAppLifecycle
+import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.GroupUtil
+import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.chats_file_browser_fragment.*
@@ -117,7 +121,7 @@ class FileBrowserFragment : Fragment(), IMediaBrowserMenuProxy, RecipientModifie
                 initGroupResource(activity, gid)
             } else {
                 masterSecret = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_MASTER_SECRET)
-                ConversationUtils.getThreadId(recipient) {
+                ThreadListViewModel.getThreadId(recipient) {
                     threadId = it
                     masterSecret?.let {m ->
                         initPrivateResource(activity, threadId, m)

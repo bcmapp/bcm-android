@@ -19,12 +19,22 @@
     <string name="chats_item_confirm_delete_title">Delete Confirm</string>
     <string name="chats_item_confirm_delete_message">Are you sure to delete this conversation?</string>
     <string name="chats_title">Chats</string>
-    <string name="chats_no_conversation_main">No conversations yet</string>
+    <string name="chats_no_conversation_main">No Chats</string>
     <string name="chats_no_conversation_sub">strike up a chat and it will show up here</string>
+    <string name="chats_no_conversation_description">No friends yet? %s and start your private chatting! </string>
+    <string name="chats_no_conversation_invite">Invite your friends</string>
     <string name="chats_no_nickname_set">You haven\'t set your nickname yet.</string>
     <string name="chats_no_nickname_set_btn">Set Now</string>
     <string name="chats_network_connecting">Connecting…</string>
     <string name="chats_network_disconnected">Offline</string>
+    <string name="chats_main_new_chat">New Chat</string>
+    <string name="chats_main_scan_and_add">Scan &amp; Add</string>
+    <string name="chats_main_invite_friend">Invite Friends</string>
+    <string name="chats_more_data_vault_title">Data Vault</string>
+    <string name="chats_more_wallet_title">Wallet</string>
+    <string name="chats_more_settings_title">Settings</string>
+    <string name="chats_more_airchat_title">AirChat</string>
+    <string name="chats_friend_request_title">Friend Requests</string>
 
     <string name="chats_conversation_input_hint">&#160;Type Here</string>
 
@@ -137,7 +147,7 @@
     <string name="chats_select_mode_cancel_btn">Cancel</string>
     <string name="chats_select_mode_delete_empty">Please select message</string>
 
-    <string name="chats_create_group_title">Create a Group</string>
+    <string name="chats_create_group_title">Create Group</string>
     <string name="chats_select_contact_title">Select Contacts</string>
     <string name="chats_select_contact_done">Done</string>
     <string name="chats_default_group_name">Group Name</string>
@@ -280,7 +290,8 @@
     <string name="chats_group_broadcast">Broadcast</string>
     <string name="chats_group_actor_creator">Owner</string>
     <string name="chats_group_setting_mute">Mute Notifications</string>
-    <string name="chats_new_group_chat">New Group Chat</string>
+    <string name="chats_new_group_chat">Create Group</string>
+    <string name="chats_group_contact_title">Groups</string>
     <string name="chats_group_member_add_success">Add Complete</string>
     <string name="chats_group_member_invite_wating_review">Request Sent, Waiting for Admin\'s Approval</string>
     <string name="chats_contact_add_time">You add %s on %s</string>
@@ -672,5 +683,10 @@
     <string name="chats_group_key_refreshing_description">Refreshing the Group Key…</string>
     <string name="chats_server_can_not_reach">Can\'t Reach Servers</string>
     <string name="chats_try_proxy_doing">Trying Proxies…</string>
+
+    <!--Media view-->
+    <string name="chats_media_view_image_expire">This image is expired or deleted</string>
+    <string name="chats_media_view_video_expire">This video is expired or deleted</string>
+    <string name="chats_media_view_audio_expire">Expired audio message</string>
 
 </resources>

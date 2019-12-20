@@ -54,7 +54,7 @@ class AmeConversationFragment : Fragment(), RecipientModifiedListener {
     private var mLastSeen: Long = -1L
     private var mChangeReadStateListener: ChangeReadStateListener? = null
     private var mLayoutManager: LinearLayoutManager? = null
-    private var mAdapter: AmeConversationAdapterNew? = null
+    private var mAdapter: AmeConversationAdapter? = null
 
     private var mBottomUnreadBubble: UnreadMessageBubbleView? = null
     private var mTopUnreadBubble: UnreadMessageBubbleView? = null
@@ -87,7 +87,6 @@ class AmeConversationFragment : Fragment(), RecipientModifiedListener {
         mBottomUnreadBubble?.setOrientationIcon(R.drawable.chats_10_down)
 
         mLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, true)
-        mLayoutManager?.stackFromEnd = true
 
         private_conversation_list?.setHasFixedSize(false)
         private_conversation_list?.layoutManager = mLayoutManager
@@ -172,8 +171,9 @@ class AmeConversationFragment : Fragment(), RecipientModifiedListener {
         val recipient = this.mRecipient
         if (recipient != null) {
 
-            val adapter = AmeConversationAdapterNew(activity, mMasterSecret, GlideApp.with(AppContextHolder.APP_CONTEXT), mLocale, recipient, object : AmeConversationAdapterNew.IConversationDelegate {
-                override fun onViewClicked(adapter: AmeConversationAdapterNew, viewHolder: RecyclerView.ViewHolder) {
+            val adapter = AmeConversationAdapter(activity, mMasterSecret, GlideApp.with(AppContextHolder.APP_CONTEXT), mLocale, recipient, object : AmeConversationAdapter.IConversationDelegate {
+                override fun onViewClicked(adapter: AmeConversationAdapter, viewHolder: RecyclerView.ViewHolder) {
+                    //隐藏输入键盘
                     if (activity is AmeConversationActivity) {
                         activity.hideInput()
                     }
@@ -182,7 +182,7 @@ class AmeConversationFragment : Fragment(), RecipientModifiedListener {
 
             this.mStickNoticeLayout = adapter.addStickNotification(activity)
             this.mStickNoticeLayout?.setRecipient(recipient)
-            private_conversation_list?.addItemDecoration(AmeConversationAdapterNew.LastSeenHeader(adapter))
+            private_conversation_list?.addItemDecoration(AmeConversationAdapter.LastSeenHeader(adapter))
             private_conversation_list?.adapter = adapter
             this.mAdapter = adapter
 
@@ -285,7 +285,7 @@ class AmeConversationFragment : Fragment(), RecipientModifiedListener {
             val view = mLayoutManager?.findViewByPosition(i)
             if(view != null) {
                 val holder = private_conversation_list?.getChildViewHolder(view)
-                if (holder is AmeConversationAdapterNew.ViewHolder) {
+                if (holder is AmeConversationAdapter.ViewHolder) {
                     val itemView = holder.getItem()
                     if (itemView is ConversationItem) {
                         val bodyView = itemView.getView(indexId)
@@ -299,7 +299,9 @@ class AmeConversationFragment : Fragment(), RecipientModifiedListener {
 
     fun loadMore() {
         private_conversation_list?.post {
-            mConversationViewModel?.loadMore()
+            mConversationViewModel?.loadMore() {
+                mAdapter?.showStickyNotificationLoading(it)
+            }
         }
     }
 
@@ -348,7 +350,7 @@ class AmeConversationFragment : Fragment(), RecipientModifiedListener {
                             AmeConversationViewModel.AmeConversationData.ACType.RESET -> {
                                 ConversationItemPopWindow.dismissConversationPop()
                                 mAdapter?.initRecordList(data.data, true)
-                                toScroll = true
+                                toScroll = false
                                 private_conversation_list?.post {
                                     val showItemCount = mLayoutManager?.childCount ?: 0
                                     if (data.unread > showItemCount) {

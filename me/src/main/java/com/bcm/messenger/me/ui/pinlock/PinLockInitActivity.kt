@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.me_activity_init_pin_lock.*
 import com.bcm.messenger.common.SwipeBaseActivity
 
 /**
- * Created by bcm.social.01 on 2018/10/10.
+ * bcm.social.01 2018/10/10.
  */
 class PinLockInitActivity: SwipeBaseActivity() {
     companion object {

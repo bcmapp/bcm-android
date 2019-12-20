@@ -11,11 +11,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.crypto.MasterSecret
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IUmengModule
 import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -48,11 +48,13 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!disableDefaultTransition) {
             val enterAnim = intent.getIntExtra(ARouterConstants.PARAM.PARAM_ENTER_ANIM, R.anim.common_slide_from_right)
-            overridePendingTransition(enterAnim, R.anim.common_slide_silent)
+            val previousExitAnim = intent.getIntExtra(ARouterConstants.PARAM.PARAM_PREVIOUS_EXIT_ANIM, R.anim.common_slide_silent)
+            overridePendingTransition(enterAnim, previousExitAnim)
         } else {
             val enterAnim = intent.getIntExtra(ARouterConstants.PARAM.PARAM_ENTER_ANIM, 0)
             if (enterAnim != 0) {
-                overridePendingTransition(enterAnim, R.anim.common_slide_silent)
+                val previousExitAnim = intent.getIntExtra(ARouterConstants.PARAM.PARAM_PREVIOUS_EXIT_ANIM, R.anim.common_slide_silent)
+                overridePendingTransition(enterAnim, previousExitAnim)
             }
         }
         super.onCreate(savedInstanceState)
@@ -72,11 +74,13 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         super.finish()
         if (!disableDefaultTransition) {
             val exitAnim = intent.getIntExtra(ARouterConstants.PARAM.PARAM_EXIT_ANIM, R.anim.common_slide_to_right)
-            overridePendingTransition(R.anim.common_slide_silent, exitAnim)
+            val previousEnterAnim = intent.getIntExtra(ARouterConstants.PARAM.PARAM_PREVIOUS_ENTER_ANIM, R.anim.common_slide_silent)
+            overridePendingTransition(previousEnterAnim, exitAnim)
         } else {
             val exitAnim = intent.getIntExtra(ARouterConstants.PARAM.PARAM_EXIT_ANIM, 0)
             if (exitAnim != 0) {
-                overridePendingTransition(R.anim.common_slide_silent, exitAnim)
+                val previousEnterAnim = intent.getIntExtra(ARouterConstants.PARAM.PARAM_PREVIOUS_ENTER_ANIM, R.anim.common_slide_silent)
+                overridePendingTransition(previousEnterAnim, exitAnim)
             }
         }
     }
@@ -84,9 +88,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     override fun onResume() {
         super.onResume()
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onActivityResume(this)
-
         updateScreenshotSecurity()
-
         if (!disabledClipboardCheck && ClipboardUtil.clipboardChanged) {
             checkClipboardDelay()
         }
@@ -165,7 +167,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         disabledLightStatusBar = true
     }
 
-    
+
     fun <T : Fragment> initFragment(@IdRes target: Int,
                                             fragment: T,
                                             extras: Bundle?): T {
@@ -180,8 +182,10 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     fun updateScreenshotSecurity() {
         if (isScreenSecurityEnabled(this)) {
+            ALog.i(TAG, "updateScreenshotSecurity setWindowSecure")
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         } else {
+            ALog.i(TAG, "updateScreenshotSecurity clearWindowSecure")
             window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
     }

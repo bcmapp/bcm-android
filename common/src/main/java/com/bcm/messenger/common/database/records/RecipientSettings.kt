@@ -1,6 +1,5 @@
 package com.bcm.messenger.common.database.records
 
-import androidx.room.Ignore
 import com.bcm.messenger.common.config.BcmFeatureSupport
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.GsonUtils
@@ -11,10 +10,6 @@ import java.io.IOException
  * Created by Kin on 2019/9/25
  */
 class RecipientSettings() : RecipientModel() {
-
-    companion object {
-        const val CONTACT_SYNC_VERSION = 2
-    }
 
     constructor(
             uid: String,
@@ -56,8 +51,6 @@ class RecipientSettings() : RecipientModel() {
         this.uid = uid
     }
 
-    @Ignore
-    var contactVersion: Int = CONTACT_SYNC_VERSION //
 
     fun isBlocked() = block == 1
 

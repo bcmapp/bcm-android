@@ -12,7 +12,6 @@
     <string name="me_notification_head">Notification</string>
     <string name="me_backup_head">Account</string>
     <string name="me_security_head">Security &amp; Privacy</string>
-    <string name="me_help_head">FAQ</string>
     <string name="me_support_head">Feedback</string>
     <string name="me_about_head">About</string>
     <string name="me_device_switch_head">Switch Device</string>
@@ -25,8 +24,6 @@
     <string name="me_more_data_vault_title">Data Vault</string>
     <string name="me_more_wallet_title">Wallet</string>
     <string name="me_more_settings_title">Settings</string>
-    <string name="me_more_feedback_title">Feedback</string>
-    <string name="me_more_about_title">About</string>
     <string name="me_more_scan">Scan</string>
 
     <string name="me_take_phone">Take Photo</string>
@@ -66,6 +63,18 @@
     <string name="me_switch_notice">Scan QR code and enter password on the new device to login.\nThis device will log out once done.</string>
 
     <string name="me_default_password_content">This passwords (at least 8 characters) is for Account Key encryption. Please note that passwords can NOT be reset.</string>
+
+    <!-- change pwd -->
+    <string name="me_change_password_notice_part">Note: Password can NOT be reset if you forgot it. </string>
+    <string name="me_change_password_notce_action">Learn More</string>
+    <string name="me_change_password_same_origin_warning">new password is same with origin</string>
+    <string name="me_change_password_success">change password success</string>
+    <string name="me_change_password_error">The original password you entered is incorrect.</string>
+    <string name="me_change_password_strong_description">Strong</string>
+    <string name="me_change_password_weak_description">Weak</string>
+    <string name="me_change_password_match_description">Match</string>
+    <string name="me_change_password_not_match_description">Not Match</string>
+
 
     <string name="me_version_head">BCM %1$s</string>
     <string name="me_problem_describe">Describe the problem(s)</string>
@@ -150,8 +159,6 @@
 
     <string name="me_save">Save</string>
     <string name="me_psw_not_equals_confirm_psw">Your password and confirmation password do not match.</string>
-    <string name="me_change_password_success">change password success</string>
-    <string name="me_input_origin_password_error">The original password you entered is incorrect.</string>
     <string name="me_account_key_anim_tips">Your Account Key is your \n only pass in BCM</string>
 
     <string name="me_donate_us">Donate</string>
@@ -160,6 +167,7 @@
     <string name="me_stop_generate">Stop</string>
     <string name="me_scan_qr_code_to_login_to_another_device">Scan QR code to login/backup to another device</string>
 
+    <!-- account_key -->
     <string name="me_str_scan_account_key">Scan Account Key</string>
     <string name="me_str_scan_to_login">Scan to Log In</string>
     <string name="me_str_scan_account_key_content">Scan the QR Code of your Account Key to backup</string>
@@ -174,11 +182,15 @@
     <string name="me_str_backup_date_import">Date of Backup(Import): %s</string>
     <string name="me_show_qr_code">Show QR Code</string>
     <string name="me_str_my_account_key">My Account Key</string>
-
-    <string name="me_setting_feedback">Feedback</string>
-    <string name="me_str_version_update">Version Update</string>
     <string name="me_text_register_failed">Register Failed</string>
 
+    <string name="me_account_verify_title">Verify Identity</string>
+    <string name="me_account_backup_action">Back up to album</string>
+    <string name="me_account_not_backup_warning">Not backed up. </string>
+    <string name="me_account_backup_help_description">How to back up / switch device?</string>
+
+    <!-- update -->
+    <string name="me_str_version_update">Version Update</string>
     <string name="me_update_dialog_title">New Version %s available</string>
     <string name="me_update_dialog_content">New version %s is available, download now?</string>
     <string name="me_update_dialog_downloading">New version is downloading and will be installed when download finished</string>
@@ -190,12 +202,17 @@
     <string name="me_update_notification_canceled">Update download has been canceled</string>
     <string name="me_update_install">Install</string>
 
+    <!-- backup -->
     <string name="me_backup_notice">Notice</string>
     <string name="me_backup_have_no_notes_app">Unable to find the system Memopad/Notes App.</string>
     <string name="me_backup_share_to">Share to</string>
     <string name="me_backup_cannot_copy_qr_code">Copy QR code feature is only available for Android 7.0 and above.</string>
     <string name="me_backup_str_copy">Copy</string>
     <string name="me_backup_copy_content">This QR code will be copied and automatically pasted in the system Memopad/Notes App.</string>
+
+    <string name="me_backup_after_change_pwd_notice">Please back up your updated Account Key after changing the password.</string>
+    <string name="me_backup_after_change_pwd_action">Back Up Now</string>
+
 
     <!--keybox-->
     <string name="me_keybox">KeyBox</string>
@@ -225,6 +242,7 @@
     <string name="me_fingerprint_unknown_error">Unknown error</string>
     <string name="me_fingerprint_fail_cancel">Canceled by user</string>
     <string name="me_fingerprint_wrong_password">Wrong Password</string>
+    <string name="me_fingerprint_enter_pwd_hint">Enter Password</string>
 
     <!--generate key-->
     <string name="me_login_generate_hash_calculation">START Hash Calculation</string>
@@ -239,6 +257,9 @@
     <string name="me_profile_picture">Avatar</string>
     <string name="me_profile_nickname">Alias</string>
     <string name="me_profile_add_me">Add me</string>
+    <string name="me_profile_account_title">My Account Key</string>
+    <string name="me_profile_change_pwd_title">Change Password</string>
+    <string name="me_profile_alias_save_success">Alias Changed</string>
 
     <!--Ban password reset-->
     <string name="me_ban_reset_password_title">Password Cannot Be Reset</string>
@@ -246,6 +267,7 @@
     <string name="me_ban_reset_password_back">You can go back to the former page and try again, or create a new account.</string>
     <string name="me_create_account">Create Account</string>
     <string name="me_text_account_created">Account Created</string>
+    <string name="me_ban_reset_back_action">Go Back and Try Again</string>
 
     <!-- local profile -->
     <string name="me_other_local_display_title">REMARK</string>
@@ -261,7 +283,7 @@
 
     <!--Destroy Account-->
     <string name="me_destroy_force_logout_title">Forced Log Out</string>
-    <string name="me_destroy_force_logout_content">Another device (shown below) has successfully logged into this account. </string>
+    <string name="me_destroy_force_logout_content">The device shown below has successfully logged into this account. </string>
     <string name="me_destroy_force_logout_tips">If it is not you, your Account Key and password may be leaked. </string>
     <string name="me_destroy_account_str">Destroy Account</string>
     <string name="me_destroy_account_content">Please be noted that everything in your account, including your contacts, profiles, settings, and digital assets in your wallet, will be destroyed, and this action can NOT be undone.</string>
@@ -302,6 +324,16 @@
     <string name="me_setting_privacy_head">PRIVACY ENHANCEMENT</string>
     <string name="me_setting_rtc_p2p_title">Always Relay Calls</string>
     <string name="me_setting_rtc_p2p_sub_title">Relay all calls through a BCM server to avoid revealing your IP address to your contact. Call quality will be reduced.</string>
+    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
+    <string name="me_setting_adhoc_title">AirChat</string>
+    <string name="me_setting_adhoc_sub_title">Chat without the Internet.</string>
+    <string name="me_setting_proxy_title">Proxy</string>
+    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
+    <string name="me_setting_others_head">OTHERS</string>
+    <string name="me_setting_feedback_title">Feedback</string>
+    <string name="me_setting_about_title">About</string>
+    <string name="me_setting_help_title">FAQ</string>
+
 
     <!--Notification Setting-->
     <string name="me_notification_setting_title">Notification</string>
@@ -404,8 +436,9 @@
     <string name="me_unlock_app_description">BCM use your biometric to unlock app</string>
     <string name="me_unlock_account_key">Unlock Account Key</string>
     <string name="me_unlock_account_key_description">BCM use your biometric to unlock your account key</string>
-    <string name="me_more_airchat_title">AirChat</string>
-    <string name="me_proxy_setting_title">Proxy</string>
+
+
+    <!-- proxy setting -->
     <string name="me_test_proxy_usability">Run Usability Test</string>
     <string name="me_proxy_configurations">PROXY CONFIGURATIONS</string>
     <string name="me_add_proxy_title">Add Proxy</string>
@@ -418,12 +451,9 @@
     <string name="me_setting_proxy_item_testing">Testing…</string>
     <string name="me_setting_proxy_action_add">Add</string>
     <string name="me_test_proxy_usability_describe">All proxies added will be used for connecting server when needed, each proxy will take about a few seconds.</string>
-    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
-    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
     <string name="me_add_proxy_edit_title">Edit Proxy</string>
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>
-    
-    
+
 
 </resources>

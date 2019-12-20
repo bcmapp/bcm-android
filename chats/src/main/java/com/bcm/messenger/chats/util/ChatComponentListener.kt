@@ -8,6 +8,4 @@ import android.view.View
  */
 interface ChatComponentListener {
     fun onClick(v: View, data: Any)
-
-
 }

@@ -15,5 +15,6 @@ class StickNotificationViewHolder(containerView: View) : RecyclerView.ViewHolder
     fun bindData(messageRecord: AmeGroupMessageDetail) {
         itemView.chats_stick_notification_layout?.setGroupInfo(GroupLogic.getGroupInfo(messageRecord.gid)
                 ?: return)
+        itemView.chats_stick_notification_layout?.showLoading(messageRecord.isSending)
     }
 }

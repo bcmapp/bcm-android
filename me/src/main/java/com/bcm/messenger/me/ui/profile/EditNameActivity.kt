@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.me_fragment_edit_name.*
  * Created by Kin on 2018/9/7
  */
 @Route(routePath = ARouterConstants.Activity.EDIT_NAME)
-class EditNameActivity : SwipeBaseActivity(), RecipientModifiedListener  {
+class EditNameActivity : SwipeBaseActivity(), RecipientModifiedListener {
     private val TAG = "EditNameActivity"
 
     private lateinit var recipient: Recipient
@@ -106,7 +106,7 @@ class EditNameActivity : SwipeBaseActivity(), RecipientModifiedListener  {
         if (!mForLocal) {
             edit_name_title_bar.setCenterText(getString(R.string.me_profile_nickname))
             edit_name_input.setText(recipient.bcmName)
-        }else {
+        } else {
             edit_name_title_bar.setCenterText(getString(R.string.me_other_local_display_name))
             edit_name_input.setText(recipient.localName)
         }
@@ -128,22 +128,19 @@ class EditNameActivity : SwipeBaseActivity(), RecipientModifiedListener  {
         userProvider.updateNameProfile(recipient, name) {
             AmePopup.loading.dismiss()
             if (it) {
-                AmePopup.result.succeed(this, getString(R.string.me_save_success), true)
+                AmePopup.result.succeed(this, getString(R.string.me_profile_alias_save_success), true)
                 AmeDispatcher.mainThread.dispatch({
                     finish()
                 }, 1500)
-
-            }else {
+            } else {
                 AmePopup.result.failure(this, getString(R.string.me_save_fail), true)
             }
         }
-
     }
 
     override fun onModified(recipient: Recipient) {
-
         edit_name_input.post {
-            if(this.recipient == recipient) {
+            if (this.recipient == recipient) {
                 initName(recipient)
             }
         }

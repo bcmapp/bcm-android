@@ -4,7 +4,7 @@ import com.bcm.messenger.utility.proguard.NotGuard
 import com.google.gson.annotations.SerializedName
 
 /**
- * Created by bcm.social.01 on 2019/3/18.
+ * bcm.social.01 2019/3/18.
  */
 class GroupAckState(val gid: Long,
                     @SerializedName("last_mid") val lastMid: Long,

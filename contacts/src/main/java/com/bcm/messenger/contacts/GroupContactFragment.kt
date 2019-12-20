@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.event.GroupInfoCacheReadyEvent
+import com.bcm.messenger.common.event.HomeTopEvent
+import com.bcm.messenger.common.provider.AmeProvider
+import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonSearchBar
 import com.bcm.messenger.common.ui.RecipientAvatarView
@@ -21,7 +24,6 @@ import com.bcm.messenger.common.ui.StickyLinearDecoration
 import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
 import com.bcm.messenger.common.ui.adapter.IListDataSource
 import com.bcm.messenger.common.ui.adapter.ListDataSource
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.contacts.provider.ContactModuleImp
@@ -30,7 +32,6 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
-import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.contacts_fragment_group.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -258,13 +259,10 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
         }
 
         if (data != null) {
-            ConversationUtils.getExistThreadId(Recipient.recipientFromNewGroup(context, data.groupInfo)) {
-                BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_GROUP_CONVERSATION)
-                        .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, data.groupInfo.gid)
-                        .putLong(ARouterConstants.PARAM.PARAM_THREAD, it)
-                        .navigation(context)
 
-            }
+            AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
+                        HomeTopEvent.ConversationEvent.fromGroupConversation(null, data.groupInfo.gid)))
+
         }
 
     }

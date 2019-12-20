@@ -356,6 +356,8 @@ public class SuperImageView extends AppCompatImageView {
 
                 }
                 break;
+            default:
+                break;
         }
         return true;
     }

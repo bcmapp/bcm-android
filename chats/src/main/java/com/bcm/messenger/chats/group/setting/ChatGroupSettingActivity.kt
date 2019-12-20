@@ -16,6 +16,7 @@ import com.bcm.messenger.chats.group.ChatGroupCreateActivity
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.chats.mediabrowser.ui.MediaBrowserActivity
+import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
@@ -88,9 +89,10 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
             AmePopup.bottom.newBuilder()
                     .withTitle(getString(R.string.chats_user_clear_history_title, mGroupModel.groupName()))
                     .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clear), AmeBottomPopup.PopupItem.CLR_RED) {
-                        ConversationUtils.deleteGroupConversation(mGroupModel.groupId(), mGroupModel.threadId()) { success, groupId ->
-                            if (success) {
-                                RxBus.post(ChatGroupContentClear(groupId))
+
+                        ThreadListViewModel.getCurrentThreadModel()?.deleteGroupConversation(mGroupModel.groupId(), mGroupModel.threadId()) {
+                            if (it) {
+                                RxBus.post(ChatGroupContentClear(mGroupModel.groupId()))
                                 ToastUtil.show(this@ChatGroupSettingActivity, getString(R.string.chats_clean_succeed))
                             }
                         }
@@ -375,12 +377,11 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
         stick_on_top_switch.setOnClickListener {
             val switch = !stick_on_top_switch.getSwitchStatus()
             stick_on_top_switch.setSwitchStatus(switch)
-            ConversationUtils.setPin(mGroupModel.threadId(), switch) {
-            }
+            ThreadListViewModel.getCurrentThreadModel()?.setPin(mGroupModel.threadId(), switch) {}
         }
         stick_on_top_switch?.setSwitchStatus(false)
         val weakThis = WeakReference(this)
-        ConversationUtils.checkPin(mGroupModel.threadId()) {
+        ThreadListViewModel.getCurrentThreadModel()?.checkPin(mGroupModel.threadId()) {
             weakThis.get()?.stick_on_top_switch?.setSwitchStatus(it)
         }
     }

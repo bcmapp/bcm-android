@@ -1,9 +1,11 @@
 package com.bcm.messenger.common.video.exo;
 
 import android.net.Uri;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.database.records.AttachmentRecord;
 import com.bcm.messenger.common.database.repositories.AttachmentRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
@@ -11,15 +13,12 @@ import com.bcm.messenger.common.grouprepository.manager.MessageDataManager;
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail;
 import com.bcm.messenger.common.mms.GroupUriParser;
 import com.bcm.messenger.common.mms.PartAuthority;
+import com.bcm.messenger.common.mms.PartUriParser;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.TransferListener;
 
-import com.bcm.messenger.common.crypto.MasterSecret;
-import com.bcm.messenger.common.mms.PartUriParser;
-
 import java.io.EOFException;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 

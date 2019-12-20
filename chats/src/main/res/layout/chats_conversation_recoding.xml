@@ -100,7 +100,7 @@
             android:layout_width="109dp"
             android:layout_height="109dp"
             android:layout_gravity="center"
-            android:background="@drawable/circle_tintable"
+            android:background="@drawable/common_circle_tintable"
             android:scaleType="center"
             android:src="@drawable/chats_recording_circle" />
 

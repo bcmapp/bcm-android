@@ -11,6 +11,7 @@ import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
+import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.mms.PartAuthority
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.MediaUtil
@@ -21,6 +22,7 @@ import com.bcm.messenger.common.crypto.encrypt.FileInfo
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.bcmhttp.callback.Callback
 import com.bcm.messenger.utility.bcmhttp.callback.FileDownCallback
+import com.bcm.messenger.utility.bcmhttp.facade.BaseHttp
 import com.bcm.messenger.utility.bcmhttp.utils.streams.StreamUploadData
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -40,6 +42,7 @@ object MessageFileHandler {
     interface MessageFileCallback {
         fun onResult(success: Boolean, uri: Uri?)
     }
+
     data class UploadResult(var url: String, val fileInfo: FileInfo, val sign: String, val width: Int, val height: Int)
 
     private var mThumbnailCallbackMap = WeakHashMap<AmeGroupMessageDetail, MutableSet<(MessageFileCallback)>>()
@@ -78,7 +81,7 @@ object MessageFileHandler {
             if (Looper.myLooper() == Looper.getMainLooper()) {
                 ALog.logForSecret(TAG, "downloadThumbnail localResponse success: $success, uri: $uri")
                 messageDetail.isThumbnailDownloading = false
-                if(uri != null && !useThumbnail) {
+                if (uri != null && !useThumbnail) {
                     messageDetail.attachmentUri = uri.toString()
                 }
 
@@ -152,10 +155,16 @@ object MessageFileHandler {
                         override fun onError(call: Call?, e: Exception?, id: Long) {
                             ALog.e(TAG, "downloadThumbnail error", e)
                             localResponse(false, null)
+                            if (e is BaseHttp.HttpErrorException && (e.code == 403 || e.code == 404)) {
+                                MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_NOT_FOUND)
+                            } else {
+                                MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.THUMB_DOWNLOAD_FAIL)
+                            }
                         }
 
                         override fun onResponse(response: File?, id: Long) {
                             if (response == null) {
+                                MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_DOWNLOAD_FAIL)
                                 localResponse(false, null)
                             } else {
 
@@ -183,7 +192,8 @@ object MessageFileHandler {
                                             localResponse(true, Uri.fromFile(fileInfo.file))
                                         }
                                     }
-
+                                    MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId,
+                                            if (messageDetail.isSendByMe) GroupMessage.SEND_SUCCESS else GroupMessage.RECEIVE_SUCCESS)
                                 } catch (ex: Exception) {
                                     ALog.e(TAG, "downloadThumbnail error", ex)
                                     BcmFileUtils.delete(destPath)
@@ -192,7 +202,6 @@ object MessageFileHandler {
                             }
                         }
                     })
-
         } catch (ex: Throwable) {
             ALog.e(TAG, "downloadThumbnail error", ex)
             localResponse(false, null)
@@ -201,7 +210,7 @@ object MessageFileHandler {
 
 
     @SuppressLint("CheckResult")
-    fun downloadThumbnail(gid: Long, indexId: Long, content: AmeGroupMessage.ThumbnailContent, keyVersion:Long, callback: MessageFileCallback? = null) {
+    fun downloadThumbnail(gid: Long, indexId: Long, content: AmeGroupMessage.ThumbnailContent, keyVersion: Long, callback: MessageFileCallback? = null) {
 
 
         fun localResponse(success: Boolean, uri: Uri?) {
@@ -218,7 +227,7 @@ object MessageFileHandler {
         val thumbnailPathPair = content.getThumbnailPath()
         var useThumbnail = true
         var isExist = false
-        val thumb = if(content.thumbnail_url.isNullOrEmpty() || MediaUtil.isGif(content.mimeType)) {
+        val thumb = if (content.thumbnail_url.isNullOrEmpty() || MediaUtil.isGif(content.mimeType)) {
             useThumbnail = false
             isExist = content.isExist()
             content.url
@@ -226,7 +235,11 @@ object MessageFileHandler {
             isExist = content.isThumbnailExist()
             content.thumbnail_url
         }
-        val destPath = if(useThumbnail) {thumbnailPathPair.second + File.separator + content.getThumbnailExtension()} else {pathPair.second + File.separator + content.getExtension()}
+        val destPath = if (useThumbnail) {
+            thumbnailPathPair.second + File.separator + content.getThumbnailExtension()
+        } else {
+            pathPair.second + File.separator + content.getExtension()
+        }
 
         if (isExist) {
             ALog.w(TAG, "downloadThumbnail thumbnail exist, indexId: $indexId, gid: $gid")
@@ -249,10 +262,16 @@ object MessageFileHandler {
                         override fun onError(call: Call?, e: Exception?, id: Long) {
                             ALog.e(TAG, "downloadThumbnail error", e)
                             localResponse(false, null)
+                            if (e is BaseHttp.HttpErrorException && (e.code == 403 || e.code == 404)) {
+                                MessageDataManager.updateMessageSendStateByIndex(gid, indexId, GroupMessage.FILE_NOT_FOUND)
+                            } else {
+                                MessageDataManager.updateMessageSendStateByIndex(gid, indexId, GroupMessage.THUMB_DOWNLOAD_FAIL)
+                            }
                         }
 
                         override fun onResponse(response: File?, id: Long) {
                             if (response == null) {
+                                MessageDataManager.updateMessageSendStateByIndex(gid, indexId, GroupMessage.FILE_DOWNLOAD_FAIL)
                                 localResponse(false, null)
                             } else {
                                 try {
@@ -284,7 +303,6 @@ object MessageFileHandler {
                             }
                         }
                     })
-
         } catch (ex: Exception) {
             ALog.e(TAG, "downloadThumbnail error", ex)
             localResponse(false, null)
@@ -314,8 +332,7 @@ object MessageFileHandler {
                     it.onResult(success, uri)
                 }
                 mAttachmentCallbackMap.remove(messageDetail)
-
-            }else {
+            } else {
                 AmeDispatcher.mainThread.dispatch {
                     ALog.i(TAG, "downloadAttachment localResponse success: $success, uri: $uri")
                     messageDetail.isAttachmentDownloading = false
@@ -353,9 +370,7 @@ object MessageFileHandler {
         try {
             messageDetail.isAttachmentDownloading = true
             AmeFileUploader.downloadFile(AppContextHolder.APP_CONTEXT, content.url, object : FileDownCallback(pathPair.first, content.getExtension()) {
-
                 override fun inProgress(progress: Int, total: Long, id: Long) {
-
                     messageDetail.isAttachmentDownloading = progress != 100
                     if (messageDetail is AmeHistoryMessageDetail) {
                         EventBus.getDefault().post(HistoryGroupAttachmentProgressEvent(content.url, GroupAttachmentProgressEvent.ACTION_ATTACHMENT_DOWNLOADING, progress.toFloat() / 100, total))
@@ -367,10 +382,16 @@ object MessageFileHandler {
                 override fun onError(call: Call?, e: Exception?, id: Long) {
                     ALog.e(TAG, "downloadAttachment error", e)
                     localResponse(false, null)
+                    if (e is BaseHttp.HttpErrorException && (e.code == 403 || e.code == 404)) {
+                        MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_NOT_FOUND)
+                    } else {
+                        MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.THUMB_DOWNLOAD_FAIL)
+                    }
                 }
 
                 override fun onResponse(response: File?, id: Long) {
                     if (response == null) {
+                        MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_DOWNLOAD_FAIL)
                         return localResponse(false, null)
                     }
                     try {
@@ -389,7 +410,8 @@ object MessageFileHandler {
                         } else {
                             localResponse(true, Uri.fromFile(fileInfo.file))
                         }
-
+                        MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId,
+                                if (messageDetail.isSendByMe) GroupMessage.SEND_SUCCESS else GroupMessage.RECEIVE_SUCCESS)
                     } catch (ex: Exception) {
                         ALog.e(TAG, "downloadAttachment error", ex)
                         BcmFileUtils.delete(destPath)
@@ -398,7 +420,6 @@ object MessageFileHandler {
                 }
 
             })
-
         } catch (ex: Exception) {
             ALog.e(TAG, "downloadAttachment error", ex)
             localResponse(false, null)

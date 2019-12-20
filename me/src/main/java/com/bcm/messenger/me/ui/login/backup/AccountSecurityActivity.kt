@@ -145,7 +145,7 @@ class AccountSecurityActivity : SwipeBaseActivity(), RecipientModifiedListener {
             isShowTip = SuperPreferences.getAccountTipVisible(this)
 
             me_account_name.text = it.name
-            key_generate_date.text = getString(R.string.me_str_generation_key_date, DateUtils.formatDayTime(it.genKeyTime))
+            account_generate_date.text = getString(R.string.me_str_generation_key_date, DateUtils.formatDayTime(it.genKeyTime))
             me_account_openid.text = "${getString(R.string.me_id_title)}: ${it.uid}"
             val backupState = AmeLoginLogic.accountHistory.getBackupTime(AMESelfData.uid)
 
@@ -165,7 +165,7 @@ class AccountSecurityActivity : SwipeBaseActivity(), RecipientModifiedListener {
                 val foregroundColor = ForegroundColorSpan(getColorCompat(R.color.common_color_ff3737))
                 dateBuilder.setSpan(foregroundColor, dateBuilder.length - extra.length - 1, dateBuilder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
-            key_backup_date.text = dateBuilder
+            account_backup_date.text = dateBuilder
             recipient = Recipient.fromSelf(this, true)
             me_account_img.setPhoto(recipient)
             recipient?.addListener(this)
@@ -182,7 +182,7 @@ class AccountSecurityActivity : SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun showQrCode() {
-        val intent = Intent(this, BackupAccountKeyActivity::class.java)
+        val intent = Intent(this, MyAccountKeyActivity::class.java)
         intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, AMESelfData.uid)
         startActivity(intent)
     }

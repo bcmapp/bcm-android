@@ -19,6 +19,7 @@ import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
+import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.logger.ALog
 import org.spongycastle.util.encoders.DecoderException
 import org.whispersystems.libsignal.IdentityKey
@@ -224,11 +225,10 @@ class RecipientRepo {
         }
     }
 
-    fun getAllUsers() = recipientDao.queryAllRecipients()
 
     fun getFriendsFromContact() = recipientDao.queryAllFriendsAndFollowers(AMESelfData.uid)
 
-    fun getContactsFromOneSide() = recipientDao.queryOneSideRecipients(AMESelfData.uid)
+    fun getAllContacts() = recipientDao.queryAllIndividualRecipients(AMESelfData.uid)
 
     fun getBlockedUsers() = recipientDao.queryAllBlockedRecipients(AMESelfData.uid)
 
@@ -245,24 +245,28 @@ class RecipientRepo {
         recipientDao.deleteRecipients(groupList)
     }
 
-    fun updateBcmContacts(settingList: List<RecipientSettings>, notify: Boolean) {
+    fun updateBcmContacts(settingList: List<RecipientSettings>) {
         UserDatabase.getDatabase().runInTransaction {
-            realUpdateBcmContacts(settingList, notify)
+            realUpdateBcmContacts(settingList)
         }
     }
 
     /**
      * （notify: block，）
      */
-    private fun realUpdateBcmContacts(settingList: List<RecipientSettings>, notify: Boolean) {
+    private fun realUpdateBcmContacts(settingList: List<RecipientSettings>) {
 
-        class UpdateSettings(var settings: RecipientSettings?, var needUpdate: Boolean, var createFriendMsg: Boolean, var createBlockMsg: Boolean)
+        class UpdateSettings(var settings: RecipientSettings?, var needUpdate: Boolean)
 
         if (settingList.isEmpty()) return
 
+        if (!isReleaseBuild()) {
+            ALog.d(TAG, "realUpdateBcmContacts try update: ${GsonUtils.toJson(settingList)}")
+        }
+
         val updateMap = HashMap<String, UpdateSettings>(settingList.size)
         settingList.forEach {
-            updateMap[it.uid] = UpdateSettings(it, true, false, false)
+            updateMap[it.uid] = UpdateSettings(it, true)
         }
         val dbSettingList = realQueryRecipients(updateMap.keys)
         ALog.d(TAG, "realQueryRecipients update: ${settingList.size}, result: ${dbSettingList.size}")
@@ -271,28 +275,25 @@ class RecipientRepo {
             val newUpdateSettings = updateMap[dbSettings.uid]
             val newSettings = newUpdateSettings?.settings
             if (newSettings != null) {
-                if (!isReleaseBuild()) {
-                    ALog.d(TAG, "updateBcmContacts dbSettings: $dbSettings, newSetting: $newSettings")
-                }
+
                 var hasUpdate = false
-                if (dbSettings.profileName.isNullOrEmpty() && !newSettings.profileName.isNullOrEmpty()) {
+                if (dbSettings.profileName != newSettings.profileName) {
                     dbSettings.setTemporaryProfile(newSettings.profileName, dbSettings.profileAvatar)
                     hasUpdate = true
                 }
-                if (newSettings.contactVersion == RecipientSettings.CONTACT_SYNC_VERSION) { //，，，
-                    if (dbSettings.localName != newSettings.localName) {
-                        dbSettings.localName = newSettings.localName
-                        hasUpdate = true
-                    }
-                    val dbPrivacyProfile = dbSettings.privacyProfile
-                    if (dbPrivacyProfile.nameKey.isNullOrEmpty() && !newSettings.privacyProfile.nameKey.isNullOrEmpty()) {
-                        dbPrivacyProfile.nameKey = newSettings.privacyProfile.nameKey
-                        hasUpdate = true
-                    }
-                    if (dbPrivacyProfile.avatarKey.isNullOrEmpty() && !newSettings.privacyProfile.avatarKey.isNullOrEmpty()) {
-                        dbPrivacyProfile.avatarKey = newSettings.privacyProfile.avatarKey
-                        hasUpdate = true
-                    }
+
+                if (dbSettings.localName != newSettings.localName) {
+                    dbSettings.localName = newSettings.localName
+                    hasUpdate = true
+                }
+                val dbPrivacyProfile = dbSettings.privacyProfile
+                if (dbPrivacyProfile.nameKey != newSettings.privacyProfile.nameKey) {
+                    dbPrivacyProfile.nameKey = newSettings.privacyProfile.nameKey
+                    hasUpdate = true
+                }
+                if (dbPrivacyProfile.avatarKey != newSettings.privacyProfile.avatarKey) {
+                    dbPrivacyProfile.avatarKey = newSettings.privacyProfile.avatarKey
+                    hasUpdate = true
                 }
 
                 if (newSettings.relationship != dbSettings.relationship) {
@@ -301,39 +302,23 @@ class RecipientRepo {
 
                         if (dbSettings.uid != AMESelfData.uid) {
                             dbSettings.localAvatar = ""
-                            dbSettings.localName = ""
                             val privacyProfile = dbSettings.privacyProfile
+                            privacyProfile.encryptedName = ""
                             privacyProfile.name = ""
-                            privacyProfile.nameKey = ""
+                            privacyProfile.encryptedAvatarHD = ""
                             privacyProfile.avatarHD = ""
                             privacyProfile.avatarHDUri = ""
+                            privacyProfile.encryptedAvatarLD = ""
                             privacyProfile.avatarLD = ""
                             privacyProfile.avatarLDUri = ""
-                            privacyProfile.avatarKey = ""
-                            dbSettings.privacyProfile = privacyProfile
                             dbSettings.profileKey = ""
                             dbSettings.profileAvatar = ""
                         }
 
-                        if (dbSettings.relationship == Relationship.FRIEND.type && dbSettings.block == 0) {
-                            newUpdateSettings.createBlockMsg = true
-                        }
-
-                    } else if (newSettings.relationship == Relationship.FRIEND.type) {
-
-                        if (dbSettings.relationship == Relationship.REQUEST.type) {
-                            newUpdateSettings.createFriendMsg = true
-                        }
-                        if (dbSettings.block == 1) {
-                            newUpdateSettings.createBlockMsg = true
-                        }
                     }
-
-                    ALog.logForSecret(TAG, "updateBcmContacts, uid: ${newSettings.uid} update relationship: ${newSettings.relationship}")
                     dbSettings.relationship = newSettings.relationship
 
                 }else {
-                    ALog.logForSecret(TAG, "updateBcmContacts, no need update uid: ${newSettings.uid}, relationship: ${newSettings.relationship}, hasUpdate: $hasUpdate")
 
                     if (!hasUpdate) {
                         newUpdateSettings.needUpdate = false
@@ -354,46 +339,9 @@ class RecipientRepo {
             }
         }
 
-        if (notify) {
-            val blockChangeUsers = mutableListOf<RecipientSettings>()
-            updateMap.values.forEach {
-                it.settings?.let { settings ->
-                    val recipient = Recipient.fromSnapshot(AppContextHolder.APP_CONTEXT, Address.fromSerialized(settings.uid), settings)
-                    if (it.createFriendMsg) {
-                        if (settings.relationship == Relationship.FRIEND.type) {
-                            ALog.logForSecret(TAG, "updateBcmContacts, create friendMsg uid: ${settings.uid}")
-                            createFriendMessage(recipient, true)
-                        } else if (settings.relationship == Relationship.STRANGER.type) {
-                            ALog.logForSecret(TAG, "updateBcmContacts, create strangerMsg uid: ${settings.uid}")
-                            createFriendMessage(recipient, false)
-                        } else {
-                            ALog.logForSecret(TAG, "updateBcmContacts, do nothing uid: " + settings.uid + ", relation: " + settings.relationship)
-                        }
-                    }
-                    if (it.createBlockMsg) {
-                        if (settings.relationship == Relationship.FRIEND.type) {
-                            ALog.logForSecret(TAG, "updateBcmContacts, unblock uid: ${settings.uid}")
-                            settings.block = 0
-                            recipient.resolve().isBlocked = false
-                            createBlockMessage(recipient, false)
-                            blockChangeUsers.add(settings)
-                        } else if (settings.relationship == Relationship.STRANGER.type) {
-                            ALog.logForSecret(TAG, "updateBcmContacts, block uid: ${settings.uid}")
-
-                            settings.block = 1
-                            recipient.resolve().isBlocked = true
-                            createBlockMessage(recipient, true)
-                            blockChangeUsers.add(settings)
-                        }
-
-                    }
-                }
-            }
-            recipientDao.updateRecipients(blockChangeUsers)
-        }
     }
 
-    private fun createFriendMessage(recipient: Recipient, isFriend: Boolean) {
+    fun createFriendMessage(recipient: Recipient, isFriend: Boolean) {
         if (recipient.isSelf) return
         val messageBody = AmeGroupMessage(AmeGroupMessage.FRIEND, AmeGroupMessage.FriendContent(
                 if (isFriend) AmeGroupMessage.FriendContent.ADD else AmeGroupMessage.FriendContent.DELETE,

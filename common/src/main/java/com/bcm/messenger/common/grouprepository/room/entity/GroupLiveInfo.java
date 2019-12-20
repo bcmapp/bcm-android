@@ -1,9 +1,10 @@
 package com.bcm.messenger.common.grouprepository.room.entity;
 
+import android.provider.BaseColumns;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import android.provider.BaseColumns;
 
 import com.bcm.messenger.utility.AmeTimeUtil;
 
@@ -163,8 +164,6 @@ public class GroupLiveInfo {
 
         public static LiveStatus getStatus(int status) {
             switch (status) {
-                case 0:
-                    return EMPTY;
                 case 1:
                     return LIVING;
                 case -1:
@@ -175,8 +174,9 @@ public class GroupLiveInfo {
                     return STOPED;
                 case -2:
                     return STASH;
+                default:
+                    return EMPTY;
             }
-            return LiveStatus.EMPTY;
         }
 
         LiveStatus(int value) {
@@ -210,6 +210,8 @@ public class GroupLiveInfo {
                     return Original;
                 case 2:
                     return Youtube;
+                default:
+                    break;
             }
             return Unsupported;
         }

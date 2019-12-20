@@ -4,33 +4,33 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.orhanobut.logger.Logger
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.common.provider.IUserModule
 import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.utility.dispatcher.AmeDispatcher
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.GsonUtils
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.model.*
 import com.bcm.messenger.wallet.presenter.ImportantLiveData
 import com.bcm.messenger.wallet.presenter.WalletViewModel
 import com.bcm.messenger.wallet.provider.WalletProviderImp
 import com.bcm.messenger.wallet.ui.WalletConfirmDialog
+import com.bcm.route.api.BcmRouter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.orhanobut.logger.Logger
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.utility.GsonUtils
-import com.bcm.route.api.BcmRouter
 import okhttp3.OkHttpClient
-import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import org.bitcoinj.core.LegacyAddress
 import org.bitcoinj.wallet.DeterministicSeed
 import org.greenrobot.eventbus.EventBus
@@ -194,7 +194,7 @@ object BCMWalletManager {
     }
 
     fun startInitService(context: Context, privateKeyArray: ByteArray, callback: ((success: Boolean) -> Unit)? = null) {
-        ALog.d(TAG, "startInitService")
+        ALog.i(TAG, "startInitService")
         Observable.create<Boolean> {
 
             it.onNext(initWallet(privateKeyArray, getWalletPin()))
@@ -310,12 +310,12 @@ object BCMWalletManager {
     }
 
     private fun setCurrentAccountIndex(coinType: String, accountIndex: Int) {
-        ALog.d(TAG, "setCurrentAccountIndex, coinType: $coinType, $accountIndex")
+        ALog.i(TAG, "setCurrentAccountIndex, coinType: $coinType, $accountIndex")
         getWalletUtils(coinType).setCurrentAccountIndex(accountIndex)
     }
 
     private fun loadWalletAccounts(): BCMWalletAccounts {
-        ALog.d(TAG, "loadWalletAccounts")
+        ALog.i(TAG, "loadWalletAccounts")
         val walletAccounts: BCMWalletAccounts = BCMWalletAccounts()
         try {
             val prefs = getAccountPreferences(AppContextHolder.APP_CONTEXT)
@@ -357,7 +357,7 @@ object BCMWalletManager {
             }
         }
         mCurStage = stage
-        ALog.d(TAG, "broadcastWalletInit stage: $stage, progress: $actualProgress")
+        ALog.i(TAG, "broadcastWalletInit stage: $stage, progress: $actualProgress")
         EventBus.getDefault().post(WalletProgressEvent(stage, (actualProgress * 100).toInt()))
     }
 
@@ -370,7 +370,7 @@ object BCMWalletManager {
         }
 
         if (!checkVersionNew()) {
-            ALog.d(TAG, "start, version not new, clear")
+            ALog.i(TAG, "start, version not new, clear")
             //版本不对，首先清理旧的数据（所有账号相关的）
             clear()
             reset()
@@ -384,7 +384,7 @@ object BCMWalletManager {
         if (mLastInitResult == null) {
             val accounts = mWalletAccounts.get()
             if (!accounts.isAccountExist(WalletSettings.BTC) || !accounts.isAccountExist(WalletSettings.ETH)) {
-                ALog.d(TAG, "checkAccountsCompleteOrWait, account is not complete")
+                ALog.i(TAG, "checkAccountsCompleteOrWait, account is not complete")
                 val keyPair = IdentityKeyUtil.getIdentityKeyPair(AppContextHolder.APP_CONTEXT)
                 startInitService(AppContextHolder.APP_CONTEXT, keyPair.privateKey.serialize()) {
                     callback(it)
@@ -403,7 +403,7 @@ object BCMWalletManager {
 
     fun saveWalletAccounts(newAccounts: BCMWalletAccounts) {
         try {
-            ALog.d(TAG, "saveWalletAccounts")
+            ALog.i(TAG, "saveWalletAccounts")
             mWalletAccounts.set(newAccounts)
             val backup = Gson().toJson(mWalletAccounts.get(), object : TypeToken<BCMWalletAccounts>() {}.type)
             val edit = getAccountPreferences(AppContextHolder.APP_CONTEXT).edit()
@@ -416,7 +416,7 @@ object BCMWalletManager {
     }
 
     private fun initWallet(privateKeyArray: ByteArray, password: String): Boolean {
-        ALog.d(TAG, "initAllWallet")
+        ALog.i(TAG, "initAllWallet")
         try {
             mSyncFlag.get().await()
         } catch (ex: Exception) {
@@ -455,7 +455,7 @@ object BCMWalletManager {
                             if (bcmWallet == null) {
                                 bcmWallet = BCMWallet(address, destination.absolutePath, coinType, currentIndex, System.currentTimeMillis())
                             }
-                            ALog.d(TAG, "initWallet coin: $coinType, account: $currentIndex, address: $address")
+                            ALog.i(TAG, "initWallet coin: $coinType, account: $currentIndex, address: $address")
                             walletMap[address] = Triple(bcmWallet, false, i)
                             if (WalletSettings.isBCMDefault(currentIndex) && i == 0) {
                                 defaultWallet = walletMap[address]
@@ -463,7 +463,7 @@ object BCMWalletManager {
 
                             address = LegacyAddress.fromKey(BtcWalletUtils.NETWORK_PARAMETERS, KeyChainUtils.computeChildKey(coinType, currentIndex, hierarchy, true, i)).toBase58()
                             walletMap[address] = Triple(bcmWallet, true, i)
-                            ALog.d(TAG, "initWallet coin: $coinType, account: $currentIndex, address: $address")
+                            ALog.i(TAG, "initWallet coin: $coinType, account: $currentIndex, address: $address")
 
                         }
                     } else {
@@ -471,7 +471,7 @@ object BCMWalletManager {
                         bcmWallet = BCMWallet(address, destination.absolutePath, coinType, currentIndex, System.currentTimeMillis())
                         walletMap[address] = Triple(bcmWallet, false, 0)
 
-                        ALog.d(TAG, "initWallet coin: $coinType, account: $currentIndex, address: $address")
+                        ALog.i(TAG, "initWallet coin: $coinType, account: $currentIndex, address: $address")
                         if (WalletSettings.isBCMDefault(currentIndex)) {
                             defaultWallet = walletMap[address]
                         }
@@ -479,9 +479,9 @@ object BCMWalletManager {
                     currentIndex++
                 }
 
-                ALog.d(TAG, "before checkValid coinType: $coinType, count: ${walletMap.size}")
+                ALog.i(TAG, "before checkValid coinType: $coinType, count: ${walletMap.size}")
                 currentIndex = utils.checkValid(walletMap)
-                ALog.d(TAG, "after checkValid coinType: $coinType, count: ${walletMap.size}, index:$currentIndex")
+                ALog.i(TAG, "after checkValid coinType: $coinType, count: ${walletMap.size}, index:$currentIndex")
                 if (currentIndex != -1) {//如果checkValid成功，则记录最新到达的账号索引
 
                     if (defaultWallet != null) {//如果checkValid查询不到余额，是会清空walletMap的，所以这里需要把default加回walletMap
@@ -530,7 +530,7 @@ object BCMWalletManager {
     }
 
     private fun createWallet(coinType: String, password: String, privateKeyArray: ByteArray, name: String? = null): BCMWallet? {
-        ALog.d(TAG, "createWallet")
+        ALog.i(TAG, "createWallet")
         return try {
             val accountIndex = getCurrentAccountIndex(coinType)
             val utils = getWalletUtils(coinType)
@@ -557,7 +557,7 @@ object BCMWalletManager {
         val account = accounts.getAccount(wallet.coinType) ?: return false
 
         return if (account.coinList.find { it == wallet } == null) {
-            ALog.d(TAG, "synchronize coinType: ${wallet.coinType}, address: ${wallet.address}, name: $name")
+            ALog.i(TAG, "synchronize coinType: ${wallet.coinType}, address: ${wallet.address}, name: $name")
 
             account.coinList.add(wallet)
 

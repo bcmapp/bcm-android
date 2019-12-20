@@ -3,17 +3,16 @@ package com.bcm.netswitchy.configure
 import android.annotation.SuppressLint
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.bcmhttp.facade.BaseHttp
-import com.bcm.messenger.utility.dispatcher.AmeDispatcher
-import com.google.gson.reflect.TypeToken
-import io.reactivex.Observable
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.storage.SPEditor
+import com.google.gson.reflect.TypeToken
+import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import java.io.IOException
 import java.lang.reflect.Type
 
 /**
- * Created by bcm.social.01 on 2018/8/8.
+ * bcm.social.01 2018/8/8.
  */
 object AmeConfigure {
     private const val TAG = "AmeConfigure"
@@ -118,16 +117,15 @@ object AmeConfigure {
     fun queryGroupSecureV3Enable(): Observable<Boolean> {
         return Observable.create<Boolean> { emit ->
             querySetting<GroupSecureV3Enable>("g_secure_v3", object : TypeToken<GroupSecureV3Enable>() {}.type)
-                    .doOnError {
-                        ALog.e(TAG, "Group Secure V3 enable", it)
-                        emit.onNext(true)
-                        emit.onComplete()
-                    }
-                    .subscribe {
+                    .subscribe({
                         ALog.i(TAG, "Group Secure V3 enable ${it.g_secure_v3 ?: "null"}")
                         emit.onNext(it.g_secure_v3 != 0)
                         emit.onComplete()
-                    }
+                    }, {
+                        ALog.e(TAG, "Group Secure V3 enable", it)
+                        emit.onNext(true)
+                        emit.onComplete()
+                    })
         }
     }
 
@@ -137,12 +135,11 @@ object AmeConfigure {
     @SuppressLint("CheckResult")
     fun getUpgradeVersionInfo(result: (data: UpdateData?) -> Unit) {
         querySettingByTag<UpdateData>("upgrade", object : TypeToken<UpdateData>() {}.type)
-                .doOnError {
-                    result(null)
-                }
-                .subscribe {
+                .subscribe({
                     result(it)
-                }
+                }, {
+                    result(null)
+                })
     }
 
     private fun <T : RxConfigHttp.Config> querySetting(key: String, typeOfT: Type): Observable<T> {

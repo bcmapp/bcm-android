@@ -9,7 +9,7 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.MasterSecretUtil
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.event.ClientAccountDisabledEvent
-import com.bcm.messenger.common.event.NetworkChangedEvent
+import com.bcm.messenger.common.event.ServerConnStateChangedEvent
 import com.bcm.messenger.common.event.ServiceConnectEvent
 import com.bcm.messenger.common.grouprepository.room.database.GroupDatabase
 import com.bcm.messenger.common.preferences.TextSecurePreferences
@@ -30,6 +30,7 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.foreground.AppForeground
 import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.utility.network.IConnectionListener
 import com.bcm.messenger.utility.network.NetworkUtil
 import com.bcm.netswitchy.proxy.IProxyStateChanged
 import com.bcm.netswitchy.proxy.ProxyManager
@@ -45,10 +46,10 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 /**
- * Created by bcm.social.01 on 2018/9/20.
+ * bcm.social.01 2018/9/20.
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_LOGIN_BASE)
-class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStateChanged {
+class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStateChanged,IConnectionListener {
 
     private val TAG = "LoginProviderImplProxy"
 
@@ -61,11 +62,14 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
     private var delayCheckRunProxy: Disposable? = null
     private var lastTryProxyTime = 0L
 
+    private var networkType = NetworkUtil.netType()
+
     init {
         ALog.i(TAG, "init")
         EventBus.getDefault().register(this)
         AppForeground.listener.addListener(this)
         ProxyManager.setListener(this)
+        NetworkUtil.addListener(this)
     }
 
     override fun initModule() {
@@ -302,6 +306,8 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
                     if (serviceConnectedState != ServiceConnectEvent.STATE.CONNECTED) {
                         AmeModuleCenter.serverDaemon().checkConnection(false)
                     }
+                } else {
+                    lastTryProxyTime = 0
                 }
             }
         }
@@ -318,17 +324,17 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
     }
 
     @Subscribe
-    fun onEvent(e: NetworkChangedEvent) {
+    fun onEvent(e: ServerConnStateChangedEvent) {
         val oldState = serviceConnectedState
         serviceConnectedState = ServiceConnectEvent.STATE.UNKNOWN
-        if (e.state == NetworkChangedEvent.ON) {
+        if (e.state == ServerConnStateChangedEvent.ON) {
             lastTryProxyTime = 0L
             serviceConnectedState = ServiceConnectEvent.STATE.CONNECTED
             delayCheckRunProxy?.dispose()
         } else {
             serviceConnectedState = ServiceConnectEvent.STATE.DISCONNECTED
 
-            if (e.state == NetworkChangedEvent.OFF) {
+            if (e.state == ServerConnStateChangedEvent.OFF) {
                 tryRunProxy()
             }
         }
@@ -337,6 +343,19 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
             ALog.i(TAG, "service connected state changed:$serviceConnectedState")
             AmeDispatcher.mainThread.dispatch {
                 EventBus.getDefault().post(ServiceConnectEvent(serviceConnectedState))
+            }
+        }
+    }
+
+    override fun onNetWorkStateChanged() {
+        if (networkType != NetworkUtil.netType()) {
+            networkType = NetworkUtil.netType()
+            if (NetworkUtil.isConnected() && AMESelfData.isLogin) {
+                //网络切换了，重新
+                if (ProxyManager.isProxyRunning()) {
+                    ProxyManager.stopProxy()
+                    AmeModuleCenter.serverDaemon().checkConnection(false)
+                }
             }
         }
     }

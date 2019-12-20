@@ -17,7 +17,6 @@ import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.getString
 import com.bcm.messenger.common.utils.sp2Px
@@ -52,9 +51,8 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
                             .putString(ARouterConstants.PARAM.PARAM_NICK, mContactContent?.nickName)
                             .navigation(context)
                 }else {
-                    ConversationUtils.getExistThreadId(it) { threadId ->
-                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true, HomeTopEvent.ConversationEvent(ARouterConstants.Activity.CHAT_CONVERSATION_PATH, threadId, it.address)))
-                    }
+                    AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
+                            HomeTopEvent.ConversationEvent.fromPrivateConversation(it.address,false)))
                 }
             }
 

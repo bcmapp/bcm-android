@@ -7,6 +7,8 @@ import com.bcm.messenger.common.finder.IBcmFinder
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Created by bcm.social.01 on 2019/4/8.
@@ -14,10 +16,10 @@ import com.bcm.messenger.utility.logger.ALog
 class BcmContactFinder : IBcmFinder {
 
     private val TAG = "BcmContactFinder"
-    private val mSearchLock = java.lang.Object()
+    private val mSearchLock = AtomicReference(CountDownLatch(1))
     private var mSearchList: List<Recipient>? = null
     private var mFindResult: ContactFindResult? = null
-    private val mContactLock = java.lang.Object()
+    private val mContactLock = AtomicReference(CountDownLatch(1))
     private var mContactList: List<Recipient>? = null
 
     fun updateSourceWithThread(threadList: List<Recipient>, comparator: Comparator<Recipient>?) {
@@ -25,42 +27,24 @@ class BcmContactFinder : IBcmFinder {
         val sourceList = mutableSetOf<Recipient>()
         sourceList.addAll(getContactList())
         sourceList.addAll(threadList)
-        synchronized(mSearchLock) {
-            var times = 0
-            do {
-                try {
-                    mSearchList = sourceList.sortedWith(comparator ?: Recipient.getRecipientComparator())
-                    times = 2
-                }catch (ex: Exception) {
-                    ALog.e(TAG, "updateSource error", ex)
-                    times ++
-                    if (times >= 2) {
-                        mSearchList = null
-                    }
-                }
-            }while (times < 2)
-            mSearchLock.notifyAll()
+        if (mSearchLock.get().count <= 0) {
+            mSearchLock.set(CountDownLatch(1))
+            ALog.d(TAG, "searchLock setCountDown")
         }
+        mSearchList = sourceList.sortedWith(comparator ?: Recipient.getRecipientComparator())
+        mSearchLock.get().countDown()
+
     }
 
     fun updateContact(contactList: List<Recipient>, comparator: Comparator<Recipient>?) {
         ALog.d(TAG, "updateContact: ${contactList.size}")
-        synchronized(mContactLock) {
-            var times = 0
-            do {
-                try {
-                    mContactList = contactList.sortedWith(comparator ?: Recipient.getRecipientComparator())
-                    times = 2
-                }catch (ex: Exception) {
-                    ALog.e(TAG, "updateSource error", ex)
-                    times ++
-                    if (times >= 2) {
-                        mContactList = null
-                    }
-                }
-            }while (times < 2)
-            mContactLock.notifyAll()
+        if (mContactLock.get().count <= 0) {
+            mContactLock.set(CountDownLatch(1))
+            ALog.d(TAG, "contactLock setCountDown")
+
         }
+        mContactList = contactList.sortedWith(comparator ?: Recipient.getRecipientComparator())
+        mContactLock.get().countDown()
     }
 
     override fun type(): BcmFinderType {
@@ -79,44 +63,27 @@ class BcmContactFinder : IBcmFinder {
 
     override fun cancel() {
         ALog.d(TAG, "cancel")
-        synchronized(mSearchLock) {
-            mSearchList = null
-            mSearchLock.notifyAll()
-        }
-        synchronized(mContactLock) {
-            mContactList = null
-            mContactLock.notifyAll()
-        }
+        mSearchLock.get().countDown()
+        mContactLock.get().countDown()
     }
 
     fun getContactList(): List<Recipient> {
-        synchronized(mContactLock) {
-            try {
-                if (mContactList == null) {
-                    mContactLock.wait()
-                }
-                return mContactList?.toList() ?: listOf()
-
-            }catch (ex: Exception) {
-                mContactLock.notifyAll()
-            }
+        try {
+            mContactLock.get().await()
+        }catch (ex: Exception) {
+            ALog.e(TAG, "getContactList error", ex)
         }
-        return listOf()
+        return mContactList ?: listOf()
     }
 
     fun getSourceList(): List<Recipient> {
-        synchronized(mSearchLock) {
-            try {
-                if (mSearchList == null) {
-                    mSearchLock.wait()
-                }
-                return mSearchList?.toList() ?: listOf()
 
-            }catch (ex: Exception) {
-                mSearchLock.notifyAll()
-            }
+        try {
+            mSearchLock.get().await()
+        }catch (ex: Exception) {
+            ALog.e(TAG, "getSourceList error", ex)
         }
-        return listOf()
+        return mSearchList ?: listOf()
     }
 
     inner class ContactFindResult(key: String) : IBcmFindResult {

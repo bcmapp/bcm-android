@@ -20,12 +20,15 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bcm.messenger.utility.deque.LinkedBlockingLifoQueue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,7 +92,7 @@ public class Util {
         try {
             lock.wait(timeout);
         } catch (InterruptedException ie) {
-
+            ie.printStackTrace();
         }
     }
 

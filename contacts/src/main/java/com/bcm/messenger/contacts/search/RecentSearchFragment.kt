@@ -24,7 +24,6 @@ import com.bcm.messenger.common.provider.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.RecipientAvatarView
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.contacts.R
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.route.api.BcmRouter
@@ -77,20 +76,17 @@ class RecentSearchFragment() : Fragment() {
                 if (a is ISearchCallback) {
                     a.onSelect(type, r.address.serialize())
                 }
-                ConversationUtils.getThreadId(r) {
-                    AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true, HomeTopEvent.ConversationEvent(ARouterConstants.Activity.CHAT_CONVERSATION_PATH, it, r.address, null)))
-                }
+                AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
+                        HomeTopEvent.ConversationEvent.fromPrivateConversation(r.address, true)))
 
             }
             BcmFinderType.GROUP -> {
                 val g = data as AmeGroupInfo
-                val groupRecipient = Recipient.recipientFromNewGroup(AppContextHolder.APP_CONTEXT, g)
                 if (a is ISearchCallback) {
                     a.onSelect(type, g.gid.toString())
                 }
-                ConversationUtils.getThreadId(groupRecipient) {
-                    AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true, HomeTopEvent.ConversationEvent(ARouterConstants.Activity.CHAT_GROUP_CONVERSATION, it, null, g.gid)))
-                }
+                AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
+                        HomeTopEvent.ConversationEvent.fromGroupConversation(null, g.gid)))
             }
             else -> {}
         }

@@ -43,7 +43,6 @@ class DecryptableStreamLocalUriFetcher extends StreamLocalUriFetcher {
                 thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 return new ByteArrayInputStream(baos.toByteArray());
             }
-
         }
 
         try {

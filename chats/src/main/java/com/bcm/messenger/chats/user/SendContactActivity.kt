@@ -55,7 +55,12 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
             }
 
             override fun onClickRight() {
-                prepareSend()
+                if (mMultiMode) {
+                    prepareSend()
+                }
+                else {
+                    mContactsAction?.setMultiMode(true)
+                }
             }
         })
 
@@ -116,7 +121,7 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
         if (!multiSelect) {
             left?.text = ""
             left?.setDrawableLeft(R.drawable.common_back_arrow_black_icon)
-            right?.text = ""
+            right?.text = getString(R.string.common_multi_select)
         }else {
             left?.text = getString(R.string.chats_select_mode_cancel_btn)
             left?.setDrawableLeft(0)
@@ -126,7 +131,6 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
 
     private fun prepareSend() {
         if (selectSet.isEmpty()) {
-
             return
         }
         ChatSendContactDialog()

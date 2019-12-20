@@ -8,7 +8,7 @@ import androidx.annotation.ColorInt
 import com.bcm.messenger.common.R
 
 /**
- * Created by bcm.social.01 on 2018/11/6.
+ * bcm.social.01 2018/11/6.
  */
 class BottomPopupCellView :RelativeLayout {
     private lateinit var itemText:TextView

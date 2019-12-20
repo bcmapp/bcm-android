@@ -3,16 +3,16 @@ package com.bcm.messenger.me.ui.setting
 import android.os.Bundle
 import android.view.View
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.common.utils.getPackageInfo
-import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.utils.BcmUpdateUtil
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_activity_about.*
-import com.bcm.messenger.common.SwipeBaseActivity
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -43,14 +43,6 @@ class AboutActivity : SwipeBaseActivity() {
                 BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, BuildConfig.BCM_COOPERATION_ZH_ADDRESS).navigation(this)
             } else {
                 BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, BuildConfig.BCM_COOPERATION_EN_ADDRESS).navigation(this)
-            }
-        }
-
-        about_faq_layout.setOnClickListener {
-            if (Locale.getDefault() == Locale.SIMPLIFIED_CHINESE) {
-                BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, BuildConfig.BCM_FAQ_ZH_ADDRESS).navigation(this)
-            } else {
-                BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, BuildConfig.BCM_FAQ_EN_ADDRESS).navigation(this)
             }
         }
 
@@ -96,7 +88,7 @@ class AboutActivity : SwipeBaseActivity() {
         about_update_conetnt.text = getString(R.string.common_new_version_tip, versionName)
         about_update_btn.text = getString(R.string.me_about_new_version_status)
         about_update_btn.setTextColor(getColorCompat(R.color.common_color_white))
-        about_update_btn.background = AppUtil.getDrawable(resources, R.drawable.common_blue_round_bg)
+        about_update_btn.background = AppUtil.getDrawable(resources, R.drawable.common_blue_big_corner_bg)
         about_update_layout.setOnClickListener {
             BcmUpdateUtil.showUpdateDialog()
         }
@@ -112,7 +104,7 @@ class AboutActivity : SwipeBaseActivity() {
         about_update_title.visibility = View.VISIBLE
         about_update_btn.text = getString(R.string.me_about_latest_version_status)
         about_update_btn.setTextColor(getColorCompat(R.color.common_disable_color))
-        about_update_btn.background = AppUtil.getDrawable(resources, R.drawable.common_grey_round_bg)
+        about_update_btn.background = AppUtil.getDrawable(resources, R.drawable.common_grey_big_corner_bg)
     }
 
     override fun onResume() {

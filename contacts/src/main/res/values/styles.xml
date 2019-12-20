@@ -28,7 +28,7 @@
 
     </style>
     <style name="ContactsSelectCheckBoxStyle">
-        <item name="android:button">@drawable/common_select_box</item>
+        <item name="android:button">@drawable/common_select_box_selector</item>
     </style>
 
     <style name="ContactsFigureNoticeStyle">

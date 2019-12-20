@@ -346,6 +346,8 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                     case ACTION_GRANTED_AUDIO:
                         handleGrantedAudioPermission(intent);
                         break;
+                    default:
+                        break;
                 }
 
                 if (this.callState.get() == CallState.STATE_IDLE) {
@@ -1451,6 +1453,8 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                 AppUtilKotlinKt.startForegroundServiceCompat(this, intent2);
 
                 break;
+            default:
+                break;
         }
     }
 
@@ -1609,6 +1613,8 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                 return WebRtcViewModel.State.CALL_INCOMING;
             case STATE_IDLE:
                 return WebRtcViewModel.State.CALL_DISCONNECTED;
+            default:
+                break;
         }
 
         return WebRtcViewModel.State.CALL_DISCONNECTED;

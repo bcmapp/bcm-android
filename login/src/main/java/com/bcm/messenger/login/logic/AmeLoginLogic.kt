@@ -163,7 +163,6 @@ object AmeLoginLogic {
         AmeModuleCenter.onLoginStateChanged("")
         BCMEncryptUtils.clearMasterSecret()
         Recipient.clearCache(context)
-        ConversationUtils.clearCache()
 
     }
 

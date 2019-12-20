@@ -26,7 +26,7 @@ import com.bcm.route.annotation.Route
 import kotlinx.android.synthetic.main.chats_activity_clean_storage.*
 
 /**
- * Created by bcm.social.01 on 2018/11/21.
+ * bcm.social.01 2018/11/21.
  */
 @Route(routePath = ARouterConstants.Activity.CLEAN_STORAGE)
 class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<Address> {

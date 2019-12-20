@@ -17,7 +17,6 @@ import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.server.IServerDataListener
 import com.bcm.messenger.common.utils.AmePushProcess
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.common.utils.base64Decode
 import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
 import com.bcm.messenger.utility.AmeTimeUtil
@@ -217,7 +216,6 @@ class GroupMessageReceiver : IServerDataListener {
             val groupRecipient = Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, message.gid)
             val threadId = db.getThreadIdIfExist(groupRecipient)
             if (threadId > 0) {
-                ConversationUtils.deleteConversationCache(groupRecipient, threadId)
                 db.cleanConversationContentForGroup(threadId, message.gid)
             }
             return

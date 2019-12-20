@@ -27,7 +27,6 @@ import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.common.utils.AmePushProcess
-import com.bcm.messenger.common.utils.ConversationUtils
 import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AmeURLUtil
@@ -104,7 +103,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
             ALog.w(TAG, "receiveGroupMessage, but not have groupInfo, ignore gid: ${e.message.gid}")
             return
         }
-        val isAtMe = ConversationUtils.checkHasAtMe(e.message)
+        val isAtMe = e.message?.extContent?.isAtAll == true || e.message?.extContent?.atList?.contains(AMESelfData.uid) == true
         if (e.message.type.toLong() != AmeGroupMessage.DECRYPT_FAIL) {
             val bcmData = AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, null, AmePushProcess.GroupNotifyData(e.message.serverIndex, e.message.gid, isAtMe), null, null))
             AmePushProcess.processPush(bcmData, false)

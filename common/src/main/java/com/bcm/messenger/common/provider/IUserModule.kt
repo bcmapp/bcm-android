@@ -7,18 +7,18 @@ import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.recipients.Recipient
 
 /**
- * 
+ *
  * Created by ling on 2018/3/14.
  */
 interface IUserModule : IAmeModule {
 
     /**
-     * 
+     *
      */
     fun checkBackupAccountValid(qrString: String): Pair<String?, String?>
 
     /**
-     * 
+     *
      */
     fun showImportAccountWarning(context: Context, dissmissCallback: (() -> Unit)? = null)
 
@@ -28,12 +28,12 @@ interface IUserModule : IAmeModule {
     fun showClearHistoryConfirm(context: Context, confirmCallback: () -> Unit, cancelCallback: () -> Unit)
 
     /**
-     * 
+     *
      */
     fun updateNameProfile(recipient: Recipient, name: String, callback: (success: Boolean) -> Unit)
 
     /**
-     * 
+     *
      */
     fun updateAvatarProfile(recipient: Recipient, avatarBitmap: Bitmap?, callback: (success: Boolean) -> Unit)
 
@@ -47,22 +47,26 @@ interface IUserModule : IAmeModule {
     fun saveAccount(recipient: Recipient, newPrivacyProfile: PrivacyProfile)
 
     /**
-     * 
+     *
      */
     fun doForLogin(uid: String, profileKey: ByteArray?, profileName: String?, profileAvatar: String?)
 
     /**
-     * 
+     *
      */
     fun doForLogout()
 
     /**
-     * 
+     * 跳转到数据保险箱
+     */
+    fun gotoDataNote(context: Context)
+    /**
+     *
      */
     fun gotoBackupTutorial()
 
     /**
-     * 
+     *
      */
     fun hasBackupAccount(): Boolean
 
@@ -71,12 +75,12 @@ interface IUserModule : IAmeModule {
      */
     fun checkUseDefaultPin(callback: (result: Boolean, defaultPin: String?) -> Unit)
     /**
-     * 
+     *
      */
     fun getUserPrivateKey(password: String): ByteArray?
 
     /**
-     * 
+     *
      */
     fun getDefaultPinPassword(): String?
 
@@ -92,7 +96,7 @@ interface IUserModule : IAmeModule {
     fun changePinPassword(oldPassword: String, newPassword: String): Boolean
 
     /**
-     * 
+     *
      */
     fun feedback(tag: String, description: String, screenshotList: List<String>, callback: ((result: Boolean, cause: Throwable?) -> Unit)? = null)
 
@@ -113,7 +117,7 @@ interface IUserModule : IAmeModule {
     fun isPhoneEncrypted(phoneBunk: String): Boolean
 
     /**
-     * 
+     *
      */
     fun packEncryptedPhone(encryptedPhone: String, tempPubKey: String): String
 

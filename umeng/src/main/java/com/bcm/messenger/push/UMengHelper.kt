@@ -12,7 +12,7 @@ import com.umeng.message.MsgConstant
 import com.umeng.message.PushAgent
 
 /**
- * Created by bcm.social.01 on 2018/6/25.
+ * bcm.social.01 2018/6/25.
  */
 object UMengHelper {
     private const val TAG = "UMengHelper"

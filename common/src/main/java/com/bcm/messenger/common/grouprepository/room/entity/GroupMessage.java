@@ -44,6 +44,9 @@ public class GroupMessage {
     public static final int SENDING = 2;
     public static final int RECEIVE_SUCCESS = 3;
     public static final int SEND_FAILURE = 10000;
+    public static final int FILE_NOT_FOUND = 10001;
+    public static final int FILE_DOWNLOAD_FAIL = 10002;
+    public static final int THUMB_DOWNLOAD_FAIL = 10003;
 
     /**
      * group_id

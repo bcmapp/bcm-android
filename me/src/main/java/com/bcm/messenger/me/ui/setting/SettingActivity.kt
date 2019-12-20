@@ -12,6 +12,8 @@ import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.AmeProvider
+import com.bcm.messenger.common.provider.IAdHocModule
 import com.bcm.messenger.common.provider.IChatModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -22,26 +24,32 @@ import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.RxBus
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.common.utils.getPackageInfo
+import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmePinLogic
 import com.bcm.messenger.me.ui.block.BlockUsersActivity
+import com.bcm.messenger.me.ui.feedback.AmeFeedbackActivity
 import com.bcm.messenger.me.ui.language.LanguageSelectActivity
 import com.bcm.messenger.me.ui.language.LanguageViewModel
 import com.bcm.messenger.me.ui.pinlock.PinLockInitActivity
 import com.bcm.messenger.me.ui.pinlock.PinLockSettingActivity
 import com.bcm.messenger.me.ui.proxy.ProxySettingActivity
+import com.bcm.messenger.me.utils.BcmUpdateUtil
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.RomUtil
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
+import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_activity_settings.*
+import java.lang.ref.WeakReference
 import java.util.*
 
 
 /**
  * Created by zjl on 2018/4/27.
  */
+@Route(routePath = ARouterConstants.Activity.SETTINGS)
 class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     private val TAG = "SettingActivity"
@@ -155,6 +163,14 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
             BcmRouter.getInstance().get(ARouterConstants.Activity.CLEAN_STORAGE).navigation(this, REQUEST_SETTING)
         }
 
+        setting_adhoc.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            val adhocProvider = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
+            adhocProvider?.configHocMode()
+        }
+
         setting_proxy.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
@@ -230,6 +246,33 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
             TextSecurePreferences.setTurnOnly(it.context, turnOnly)
             setting_rtc_p2p.setSwitchStatus(turnOnly)
         }
+
+        setting_feedback.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            val intent = Intent(this, AmeFeedbackActivity::class.java)
+            startActivity(intent)
+        }
+
+        setting_faq.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            if (Locale.getDefault() == Locale.SIMPLIFIED_CHINESE) {
+                BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, BuildConfig.BCM_FAQ_ZH_ADDRESS).navigation(this)
+            } else {
+                BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, BuildConfig.BCM_FAQ_EN_ADDRESS).navigation(this)
+            }
+        }
+
+        setting_about.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            val intent = Intent(this, AboutActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun initData() {
@@ -247,6 +290,16 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
         setting_rtc_p2p.setSwitchStatus(TextSecurePreferences.isTurnOnly(this))
 
         setting_screen_secure.setSwitchStatus(TextSecurePreferences.isScreenSecurityEnabled(this))
+
+        val weakThis = WeakReference(this)
+        BcmUpdateUtil.checkUpdate { hasUpdate, forceUpdate, version ->
+            if (hasUpdate) {
+                weakThis.get()?.setting_about?.setTip("", iconRes = R.drawable.common_red_dot_circle)
+
+            }else {
+                weakThis.get()?.setting_about?.hideTip()
+            }
+        }
     }
 
 

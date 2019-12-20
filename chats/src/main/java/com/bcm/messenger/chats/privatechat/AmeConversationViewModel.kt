@@ -15,7 +15,10 @@ import com.bcm.messenger.common.database.identity.IdentityRecordList
 import com.bcm.messenger.common.database.model.DecryptFailData
 import com.bcm.messenger.common.database.records.IdentityRecord
 import com.bcm.messenger.common.database.records.MessageRecord
-import com.bcm.messenger.common.database.repositories.*
+import com.bcm.messenger.common.database.repositories.DraftRepo
+import com.bcm.messenger.common.database.repositories.PrivateChatEvent
+import com.bcm.messenger.common.database.repositories.PrivateChatRepo
+import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.MessageReceiveNotifyEvent
 import com.bcm.messenger.common.event.TextSendEvent
 import com.bcm.messenger.common.mms.OutgoingMediaMessage
@@ -62,6 +65,7 @@ class AmeConversationViewModel : ViewModel() {
         private const val NO_NEED_TO_SHOW = 0
         private const val SHOW_RESEND = 1
         private const val SHOW_NOT_FOUND = 2
+
     }
 
     private val chatRepo = Repository.getChatRepo()
@@ -175,12 +179,17 @@ class AmeConversationViewModel : ViewModel() {
         return mRecipient
     }
 
-    fun loadMore() {
-        if (!mHasMore) return
+    fun loadMore(callback: ((loading: Boolean) -> Unit)?) {
+        if (!mHasMore) {
+            callback?.invoke(false)
+            return
+        }
         if (mLoadingMore) {
+            callback?.invoke(mLoadingMore)
             return
         }
         mLoadingMore = true
+        callback?.invoke(mLoadingMore)
         val lastMid = if (mMessageList.isEmpty()) {
             0L
         }else {
@@ -198,9 +207,11 @@ class AmeConversationViewModel : ViewModel() {
                 .subscribe({
                     mLoadingMore = false
                     messageLiveData.postValue(it)
+                    callback?.invoke(mLoadingMore)
                 }, {
                     ALog.logForSecret(TAG, "loadMore error", it)
                     mLoadingMore = false
+                    callback?.invoke(mLoadingMore)
                 })
     }
 
@@ -484,7 +495,7 @@ class AmeConversationViewModel : ViewModel() {
                             SHOW_NOT_FOUND -> {
                                 AmePopup.center.show(activity, AmeCenterPopup.PopConfig().apply {
                                     title = getString(R.string.chats_message_decrypt_fail_change_device_title)
-                                    content = getString(R.string.chats_message_decrypt_fail_not_found,
+                                    content = AppContextHolder.APP_CONTEXT.getString(R.string.chats_message_decrypt_fail_not_found,
                                             data.failMessageCount,
                                             DateUtils.formatHourTime(data.firstNotFoundMsgTime),
                                             DateUtils.formatDayTimeForMillisecond(data.firstNotFoundMsgTime))
@@ -823,6 +834,7 @@ class AmeConversationViewModel : ViewModel() {
                 })
 
     }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onIdentityRecordUpdate(event: IdentityRecord) {
