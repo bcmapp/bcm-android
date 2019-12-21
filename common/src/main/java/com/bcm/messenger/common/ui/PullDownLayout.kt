@@ -111,7 +111,6 @@ class PullDownLayout @JvmOverloads constructor(context: Context, attrs: Attribut
 
         when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
-
                 lastX = ev.rawX
                 lastY = ev.rawY
                 topViewOriginHeight = topView.layoutParams.height

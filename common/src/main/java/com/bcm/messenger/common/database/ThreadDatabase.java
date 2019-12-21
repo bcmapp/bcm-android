@@ -122,7 +122,6 @@ public class ThreadDatabase extends Database {
             "CREATE INDEX IF NOT EXISTS archived_count_index ON " + TABLE_NAME + " (" + ARCHIVED + ", " + MESSAGE_COUNT + ");",
     };
 
-
     public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
     private static final String[] THREAD_PROJECTION = {
@@ -172,7 +171,6 @@ public class ThreadDatabase extends Database {
             }
         }
     }
-
 
     private long createThreadForRecipient(Address address, boolean group, int distributionType) {
         ContentValues contentValues = new ContentValues(5);
@@ -414,7 +412,6 @@ public class ThreadDatabase extends Database {
     }
 
 
-
     public int getDistributionType(long threadId) {
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME, new String[]{TYPE}, ID_WHERE, new String[]{String.valueOf(threadId)}, null, null, null);
@@ -527,7 +524,6 @@ public class ThreadDatabase extends Database {
             if (cursor != null && cursor.moveToNext()) {
                 return cursor.getLong(cursor.getColumnIndexOrThrow(PIN));
             }
-
             return 0;
         } catch (Exception ex) {
             return 0;
@@ -825,7 +821,6 @@ public class ThreadDatabase extends Database {
 
     }
 
-
     public void updateLiveState(long gid, int liveState) {
         long threadId;
         if (liveState == GroupLiveInfo.LiveStatus.REMOVED.getValue() || liveState == GroupLiveInfo.LiveStatus.STOPED.getValue()||liveState == GroupLiveInfo.LiveStatus.EMPTY.getValue()) {
@@ -855,7 +850,6 @@ public class ThreadDatabase extends Database {
                 final Slide snipSlide = getAttachmentFor(record);
                 ALog.i(TAG, "update threadId " + threadId + ", snipSlide is null: " + (snipSlide == null));
                 Uri uri = snipSlide != null ? (snipSlide.getThumbnailUri() == null ? snipSlide.getUri() : snipSlide.getThumbnailUri()) : null;
-
                 if (uri == null && snipSlide != null) {
                     try {
                         Attachment att = snipSlide.asAttachment();
@@ -882,7 +876,6 @@ public class ThreadDatabase extends Database {
                 return false;
 
             } else {
-
 //                updateThread(threadId, count, "", null,
 //                        System.currentTimeMillis(), -1, 0, -2136997865
 //                        , true, 0, 0);
@@ -910,7 +903,6 @@ public class ThreadDatabase extends Database {
         AmeGroupMessageDetail message = GroupMessageTransform.INSTANCE.transformToModel(MessageDataManager.INSTANCE.fetchLastMessage(gid));
         long threadId = getThreadIdIfExistsFor(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid));
         if (threadId == -1L && (null == message || null == message.getMessage())) {
-
             ALog.i(TAG, "updateByNewGroup gid: " + gid + ", no thread, no message, return");
             return;
         } else if(threadId == -1L) {
@@ -1062,7 +1054,6 @@ public class ThreadDatabase extends Database {
         public static final int ARCHIVE = 3;
         public static final int INBOX_ZERO = 4;
         public static final int NEW_GROUP = 5;
-
 
 
     }

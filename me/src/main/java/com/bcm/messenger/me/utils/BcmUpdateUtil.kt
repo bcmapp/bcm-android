@@ -55,7 +55,6 @@ object BcmUpdateUtil {
     }
 
     fun checkUpdate(result: (hasUpdate: Boolean, forceUpdate: Boolean, version: String) -> Unit) {
-
         updateData?.let {
             val versionName = "${it.last_version}-${it.version_code}"
             result(hasUpdate, forceUpdate, versionName)

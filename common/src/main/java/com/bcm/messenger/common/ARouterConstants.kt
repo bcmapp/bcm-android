@@ -257,7 +257,6 @@ object ARouterConstants {
      * provider path
      */
     object Provider {
-
         const val PROVIDER_CONTACTS_BASE = PREFIX.CONTACT + "/provider/base"
 
         const val PROVIDER_CONVERSATION_BASE = PREFIX.CHAT + "/provider/base"
@@ -358,7 +357,6 @@ object ARouterConstants {
             const val LAST_SEEN_EXTRA = "last_seen"
             const val LOCALE_EXTRA = "locale_extra"
         }
-
 
         object GROUP {
             const val GROUP = "group" //

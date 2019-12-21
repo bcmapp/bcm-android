@@ -56,9 +56,7 @@ interface IUserModule : IAmeModule {
      */
     fun doForLogout()
 
-    /**
-     * 跳转到数据保险箱
-     */
+
     fun gotoDataNote(context: Context)
     /**
      *

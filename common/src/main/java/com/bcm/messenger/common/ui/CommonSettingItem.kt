@@ -159,7 +159,6 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-
     fun getName(): CharSequence {
         return item_name.text
     }
