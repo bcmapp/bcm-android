@@ -80,7 +80,7 @@ public abstract class DisplayRecord {
     }
 
     /**
-     * 是否解码中
+     * 
      *
      * @return
      */
@@ -89,7 +89,7 @@ public abstract class DisplayRecord {
     }
 
     /**
-     * 是否解码失败
+     * 
      *
      * @return
      */
@@ -98,7 +98,7 @@ public abstract class DisplayRecord {
     }
 
     /**
-     * 是否没有远端会话
+     * 
      *
      * @return
      */
@@ -111,7 +111,7 @@ public abstract class DisplayRecord {
     }
 
     /**
-     * 是否草稿
+     * 
      *
      * @return
      */
@@ -186,7 +186,7 @@ public abstract class DisplayRecord {
     }
 
     /**
-     * 是否未成功的通话
+     * 
      *
      * @return
      */
@@ -195,7 +195,7 @@ public abstract class DisplayRecord {
     }
 
     /**
-     * 是否拨打的未成功的通话
+     * 
      *
      * @return
      */
@@ -204,7 +204,7 @@ public abstract class DisplayRecord {
     }
 
     /**
-     * 是否接听的未成功的通话
+     * 
      *
      * @return
      */

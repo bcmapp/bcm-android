@@ -7,18 +7,18 @@ import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.utility.logger.ALog
 
 /**
- * 公共的会话体viewHolder
+ 
  * Created by wjh on 2019/7/27
  */
 abstract class ConversationContentViewHolder<T>(layout: View) : RecyclerView.ViewHolder(layout) {
 
     protected var mMessageSubject: T? = null
-    private var mCanLongClick = true // 全局长按开关
+    private var mCanLongClick = true 
     protected var mSelectedBatch: MutableSet<T>? = null
     protected var mAction: IConversationContentAction<T>? = null
 
     /**
-     * 设置是否可以长按
+     * 
      */
     fun setCanLongClick(canLongClick: Boolean) {
         mCanLongClick = canLongClick
@@ -29,7 +29,7 @@ abstract class ConversationContentViewHolder<T>(layout: View) : RecyclerView.Vie
     }
 
     /**
-     * 绑定数据
+     * 
      */
     open fun bind(message: T, glideRequests: GlideRequests, batchSelected: MutableSet<T>?) {
         ALog.d("ConversationContentViewHoler", "bind")
@@ -48,7 +48,7 @@ abstract class ConversationContentViewHolder<T>(layout: View) : RecyclerView.Vie
         }
         updateBackground(message, action)
 
-        //判断是否需要响应长按
+        //
         if (mCanLongClick && action?.hasPop() == true && batchSelected == null) {
             action?.getDisplayView()?.isLongClickable = true
         } else {
@@ -58,14 +58,14 @@ abstract class ConversationContentViewHolder<T>(layout: View) : RecyclerView.Vie
     }
 
     /**
-     * 解除绑定
+     * 
      */
     fun unbind() {
         mAction?.unBind()
     }
 
     /**
-     * 获取当前view的具体行为接口
+     * 
      * @param message
      */
     protected abstract fun bindViewAction(message: T, glideRequests: GlideRequests, batchSelected: MutableSet<T>?): IConversationContentAction<T>?

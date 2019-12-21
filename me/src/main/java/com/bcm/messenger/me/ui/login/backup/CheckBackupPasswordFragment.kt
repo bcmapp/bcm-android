@@ -103,7 +103,7 @@ class CheckBackupPasswordFragment : AbsRegistrationFragment() {
                         activity?.apply {
                             if (action == SHOW_QRCODE_BACKUP) {
                                 activity?.apply { supportFragmentManager.popBackStack() }
-                                //展示二维码
+                                
                                 val intent = Intent(this, ShowQRCodeActivity::class.java)
                                 if (!arguments?.getString(VerifyKeyActivity.ACCOUNT_ID).isNullOrEmpty()) {
                                     intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, arguments?.getString(VerifyKeyActivity.ACCOUNT_ID))
@@ -117,7 +117,7 @@ class CheckBackupPasswordFragment : AbsRegistrationFragment() {
                                 text_result_view.visibility = View.VISIBLE
 
                                 text_result_view.postDelayed({
-                                    //删除备份
+                                    
                                     AmeLoginLogic.accountHistory.resetBackupState(AMESelfData.uid)
                                     BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -135,7 +135,7 @@ class CheckBackupPasswordFragment : AbsRegistrationFragment() {
 
                                 hideKeyboard()
                                 text_result_view.postDelayed({
-                                    //删除备份
+                                    
                                     if (needFinish){
                                         if (AmeLoginLogic.isLogin()){
                                             activity?.finish()
@@ -161,13 +161,13 @@ class CheckBackupPasswordFragment : AbsRegistrationFragment() {
                             }
                         }
                     } else {
-                        //密码错误
+                        
                         Toast.makeText(activity, getString(R.string.login_password_error), Toast.LENGTH_SHORT).show()
                     }
                 }
 
             } else {
-                //密码不能为空
+                
                 Toast.makeText(activity, R.string.me_input_pin_hint, Toast.LENGTH_SHORT).show()
             }
 

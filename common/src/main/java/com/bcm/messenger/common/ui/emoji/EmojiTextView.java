@@ -33,7 +33,7 @@ public class EmojiTextView extends AppCompatTextView {
     private boolean      useSystemEmoji;
     private boolean      sizeChangeInProgress;
 
-    private CharSequence sourceText = null;//原设置的文本
+    private CharSequence sourceText = null;//
     private BufferType sourceBufferType = null;
 
     public EmojiTextView(Context context) {
@@ -77,7 +77,7 @@ public class EmojiTextView extends AppCompatTextView {
             super.setTextSize(TypedValue.COMPLEX_UNIT_PX, originalFontSize);
         }
 
-        if (!sizeChangeInProgress && TextUtils.equals(sourceText, text) && Objects.equals(sourceBufferType, type) && useSystemEmoji == useSystemEmoji()) { //对于要设置的文本和原文本一致，则不处理，解决重复绘制的问题
+        if (!sizeChangeInProgress && TextUtils.equals(sourceText, text) && Objects.equals(sourceBufferType, type) && useSystemEmoji == useSystemEmoji()) { //，，
             return;
         }
         sourceText = text;
@@ -114,7 +114,7 @@ public class EmojiTextView extends AppCompatTextView {
     }
 
     /**
-     * setText捕获异常，如果是webview类异常，证明设备可能没有安装webview，所以要取消LinkMask，再设置text一遍
+     * setText，webview，webview，LinkMask，text
      * @param text
      * @param type
      */

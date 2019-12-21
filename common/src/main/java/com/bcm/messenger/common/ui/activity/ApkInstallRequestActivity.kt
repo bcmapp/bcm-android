@@ -11,7 +11,7 @@ import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.utility.FullScreenTransparentActivity
 
 /**
- * apk安全请求页面
+ * apk
  * Created by wjh on 2019-09-05
  */
 class ApkInstallRequestActivity : FullScreenTransparentActivity()  {
@@ -31,7 +31,7 @@ class ApkInstallRequestActivity : FullScreenTransparentActivity()  {
             finish()
             return
         }
-        val isUpgrade = intent.getBooleanExtra(ARouterConstants.PARAM.PARAM_UPGRADE, false) //是否版本升级，如果是，则不需要谈窗提示
+        val isUpgrade = intent.getBooleanExtra(ARouterConstants.PARAM.PARAM_UPGRADE, false) //，，
         if (isUpgrade) {
             if (AppUtil.checkInstallPermission(this@ApkInstallRequestActivity)) {
                 BcmFileUtils.installApk(this@ApkInstallRequestActivity, mApkPath

@@ -29,7 +29,7 @@ import com.orhanobut.logger.Logger
 import kotlin.math.max
 
 /**
- * 浏览器组件
+ * 
  * Created by zjl on 2018/7/3.
  */
 class NestedScrollWebView : WebView, NestedScrollingChild {
@@ -62,12 +62,12 @@ class NestedScrollWebView : WebView, NestedScrollingChild {
     @SuppressLint("SetJavaScriptEnabled")
     private fun init() {
 
-        //初始化进度条
+        //
         progressView = WebProgressView(context)
         progressView.layoutParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 4.dp2Px())
         progressView.setColor(getColor(R.color.common_blue_3))
         progressView.setProgress(10)
-        //把进度条加到Webview中
+        //
         addView(progressView)
 
         mChildHelper = NestedScrollingChildHelper(this)
@@ -77,39 +77,39 @@ class NestedScrollWebView : WebView, NestedScrollingChild {
 
         webSettings.javaScriptEnabled = true
 
-        //设置自适应屏幕，两者合用
-        webSettings.useWideViewPort = true  //将图片调整到适合webview的大小
-        webSettings.loadWithOverviewMode = true // 缩放至屏幕的大小
+        //
+        webSettings.useWideViewPort = true  //
+        webSettings.loadWithOverviewMode = true // 
 
-        webSettings.displayZoomControls = false //隐藏原生的缩放控件
+        webSettings.displayZoomControls = false //
 
-        webSettings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN //支持内容重新布局
-        webSettings.supportMultipleWindows()  //多窗口
-        // webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);  //关闭webview中缓存
+        webSettings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN //
+        webSettings.supportMultipleWindows()  //
+        // webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);  //
 
-        webSettings.setNeedInitialFocus(true) //当webview调用requestFocus时为webview设置节点
-        webSettings.javaScriptCanOpenWindowsAutomatically = true //支持通过JS打开新窗口
-        webSettings.loadsImagesAutomatically = true  //支持自动加载图片
+        webSettings.setNeedInitialFocus(true) //
+        webSettings.javaScriptCanOpenWindowsAutomatically = true //
+        webSettings.loadsImagesAutomatically = true  //
 
         webSettings.defaultTextEncodingName = "UTF-8"
 
-        webSettings.allowFileAccess = false  //设置可以访问文件
+        webSettings.allowFileAccess = false  //
         webSettings.allowFileAccessFromFileURLs = false
         webSettings.allowUniversalAccessFromFileURLs = false
 
-        // 设置可以支持缩放
+        // 
         webSettings.setSupportZoom(true)
-        // // 设置出现缩放工具
+        // // 
         webSettings.builtInZoomControls = true
 
-        // 自适应屏幕
+        // 
         webSettings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
 
-        //缓存相关
+        //
         webSettings.setAppCacheEnabled(true)
         webSettings.domStorageEnabled = true
 
-        //开启定位
+        //
         webSettings.setGeolocationEnabled(true)
 
         WebView.setWebContentsDebuggingEnabled(false)
@@ -128,7 +128,7 @@ class NestedScrollWebView : WebView, NestedScrollingChild {
 
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                ALog.d(TAG, "网页重写地址：" + request.url)
+                ALog.d(TAG, "${request.url}")
                 try {
                     val host = request.url.host
                     val scheme = request.url.scheme
@@ -136,14 +136,14 @@ class NestedScrollWebView : WebView, NestedScrollingChild {
                         return AppUtil.checkInvalidAddressV4(host)
                     }
                 } catch (ex: Exception) {
-                    ALog.e("网页重加载失败", ex)
+                    ALog.e("", ex)
                 }
 
                 return super.shouldOverrideUrlLoading(view, request)
             }
 
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                ALog.d(TAG, "网页重写地址：$url")
+                ALog.d(TAG, "$url")
                 if (TextUtils.isEmpty(url)) {
                     return true
                 }
@@ -160,7 +160,7 @@ class NestedScrollWebView : WebView, NestedScrollingChild {
                         }
                     }
                 } catch (ex: Exception) {
-                    ALog.e("网页重加载失败", ex)
+                    ALog.e("", ex)
                 }
                 return super.shouldOverrideUrlLoading(view, url)
             }
@@ -170,10 +170,10 @@ class NestedScrollWebView : WebView, NestedScrollingChild {
 
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 if (newProgress == 100) {
-                    //加载完毕进度条消失
+                    
                     progressView.visibility = View.GONE
                 } else {
-                    //更新进度
+                    
                     progressView.visibility = View.VISIBLE
                     progressView.setProgress(newProgress)
                 }
@@ -197,7 +197,7 @@ class NestedScrollWebView : WebView, NestedScrollingChild {
     }
 
     /**
-     * 处理拦截的内部链接
+     * 
      * @param context
      * @param uri
      * @return
@@ -214,7 +214,7 @@ class NestedScrollWebView : WebView, NestedScrollingChild {
                 })
             }
         } catch (ex: Exception) {
-            Logger.e("网页重加载失败", ex)
+            Logger.e("", ex)
         }
 
         return true

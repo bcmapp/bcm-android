@@ -16,18 +16,17 @@ import kotlinx.android.synthetic.main.common_setting_item.view.*
 import com.bcm.messenger.common.R
 
 /**
- * 公共设置item组件
  * Created by wjh on 2018/6/6
  */
 class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     companion object {
-        const val RIGHT_NONE = 0//不显示右边图标
-        const val RIGHT_LOADING = 1//显示loading图标
-        const val RIGHT_ARROW = 2//显示箭头图标
-        const val RIGHT_YES = 3 //显示绿色勾选中
-        const val RIGHT_ARROW_WHITE = 4  //显示白色箭头
-        const val RIGHT_CUSTOM = 5//自定义图标
+        const val RIGHT_NONE = 0
+        const val RIGHT_LOADING = 1
+        const val RIGHT_ARROW = 2
+        const val RIGHT_YES = 3 
+        const val RIGHT_ARROW_WHITE = 4  
+        const val RIGHT_CUSTOM = 5
     }
 
     private var switchListener: CompoundButton.OnCheckedChangeListener? = null
@@ -117,9 +116,6 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
 
     }
 
-    /**
-     * 设置tip点击回调
-     */
     fun setOnTipClickListener(listener: View.OnClickListener) {
         item_tip.setOnClickListener(listener)
     }
@@ -138,18 +134,12 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         switchListener = listener
     }
 
-    /**
-     * 显示底线
-     */
+   
     fun showLine(show: Boolean) {
         item_line?.visibility = if (show) View.VISIBLE else View.GONE
     }
 
-    /**
-     * 设置logo
-     * @param logoRes 如果logoRes==0，表示不显示
-     * @param size 默认40dp，自定义设置
-     */
+  
     fun setLogo(logoRes: Int, size: Int? = null) {
         if (logoRes == 0) {
             item_left.visibility = View.GONE
@@ -165,9 +155,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    /**
-     * 返回名称
-     */
+    
     fun getName(): CharSequence {
         return item_name.text
     }
@@ -194,9 +182,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    /**
-     * 设置名称
-     */
+   
     fun setName(name: CharSequence, nameColor: Int? = null) {
         item_name.text = name
         if (nameColor == null) {
@@ -206,9 +192,6 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    /**
-     * 设置备注名称
-     */
     fun setSubName(subName: CharSequence, subNameColor: Int? = null) {
         if (subName.isEmpty()) {
             item_sub_name.visibility = View.GONE
@@ -224,14 +207,14 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 隐藏提示
+     * 
      */
     fun hideTip() {
         item_tip.visibility = View.GONE
     }
 
     /**
-     * 设置提示
+     * 
      */
     fun setTip(content: CharSequence, iconRes: Int = mTipIcon, contentColor: Int? = null) {
         item_tip.visibility = View.VISIBLE
@@ -246,7 +229,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
 
 
     /**
-     * 控制开关状态
+     * 
      */
     private fun changeSwitch(isOn: Boolean) {
         if (isOn) {
@@ -257,7 +240,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 设置开关状态
+     * 
      */
     fun setSwitchStatus(isOn: Boolean) {
         item_switch.visibility = View.VISIBLE
@@ -266,14 +249,14 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 获取当前开关状态
+     * 
      */
     fun getSwitchStatus(): Boolean {
         return item_switch.isChecked
     }
 
     /**
-     * 自定义右图图标
+     * 
      */
     fun showRightIcon(iconRes: Int) {
         if (iconRes != 0) {
@@ -285,7 +268,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 设置右图标状态(RIGHT_NONE, RIGHT_LOADING, RIGHT_ARROW)
+     * (RIGHT_NONE, RIGHT_LOADING, RIGHT_ARROW)
      */
     fun showRightStatus(status: Int) {
         when (status) {
@@ -320,7 +303,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 设置开关是否可点击
+     * 
      */
     fun setSwitchEnable(enable: Boolean) {
         item_switch.isEnabled = enable
@@ -328,7 +311,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 设置body 的padding
+     * 
      */
     fun setItemBodyPadding(paddingTop: Int, paddingBottom: Int) {
 
@@ -344,7 +327,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 设置header的padding
+     * 
      */
     fun setItemHeadPadding(paddingTop: Int, paddingBottom: Int) {
 //        val lp = item_head.layoutParams as ConstraintLayout.LayoutParams
@@ -355,14 +338,14 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     /**
-     * 设置logo与body之间的margin
+     * 
      */
     fun setLogoMargin(margin: Int) {
         item_left.setPadding(item_left.paddingStart, item_left.paddingTop, margin, item_left.paddingBottom)
     }
 
     /**
-     * 计算内部的布局和空间
+     * 
      */
     private fun measureInternalLayout(headPaddingPair: Pair<Int,Int>, itemPaddingPair: Pair<Int, Int>, logoMargin: Int) {
 

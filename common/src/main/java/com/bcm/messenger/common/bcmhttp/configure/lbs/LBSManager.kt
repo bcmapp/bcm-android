@@ -52,14 +52,14 @@ object LBSManager : IConnectionListener {
     }
 
     /**
-     * 获取缓存的上次成功的主服务节点
+     * 
      */
     fun getServerList(lbsType: String): List<ServerNode> {
         return getStorage(lbsType).getLastServerList()
     }
 
     /**
-     * 保存上次成功的主服务器节点
+     * 
      */
     fun saveServerList(lbsType: String, ipList: List<ServerNode>) {
         getStorage(lbsType).saveServerList(ipList)

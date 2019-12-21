@@ -257,7 +257,7 @@ class ThreadRepo {
         val message = GroupMessageTransform.transformToModel(MessageDataManager.fetchLastMessage(gid))
         var threadId = getThreadIdIfExist(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid))
         if (threadId <= 0L && (null == message || null == message.message)) {
-            //即不存在会话，也不存在消息，就不update了
+            //，，update
             ALog.i(TAG, "updateByNewGroup gid: $gid, no thread, no message, return")
             return
         } else if (threadId <= 0L) {
@@ -280,7 +280,7 @@ class ThreadRepo {
 
             val messageContent = message.message.content
 
-            // 逻辑是入群请求优先级大于@me大于草稿，优先设置@，如果有新消息过来，内容替换但是标识还是@，如果当前状态是草稿，来新消息的时候，除了@me的消息，其余情况标识和内容不变，都是草稿
+            // @me，@，，@，，，@me，，
             val state = if (messageContent is AmeGroupMessage.SystemContent && messageContent.tipType == AmeGroupMessage.SystemContent.TIP_JOIN_GROUP_REQUEST) {
                 BASE_JOIN_REQUEST
             }
@@ -305,7 +305,7 @@ class ThreadRepo {
 
                 record.snippetContent = body
                 record.snippetUri = if (attachmentUri == null) null else Uri.parse(attachmentUri)
-                // 逻辑是入群请求优先级大于@me大于草稿，优先设置@，如果有新消息过来，内容替换但是标识还是@，如果当前状态是草稿，来新消息的时候，除了@me的消息，其余情况标识和内容不变，都是草稿
+                // @me，@，，@，，，@me，，
                 if (state == BASE_JOIN_REQUEST && unreadCount > 0) {
                     record.snippetType = BASE_JOIN_REQUEST
 

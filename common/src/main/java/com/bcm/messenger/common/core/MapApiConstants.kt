@@ -6,7 +6,7 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.maps.MapsInitializer
 
 /**
- * 地图Api
+ * Api
  * Created by zjl on 2018/6/22.
  */
 object MapApiConstants {

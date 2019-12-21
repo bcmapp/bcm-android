@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.common_bottom_popup_base_layout.*
 import java.lang.ref.WeakReference
 
 /**
- * 自定义选择确认窗
+ * 
  * Created by bcm.social.01 on 2018/5/31.
  */
 class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
@@ -137,7 +137,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
                     activity.hideKeyboard()
                     popup.show(activity.supportFragmentManager, activity.javaClass.simpleName)
 
-                }, 200)//这里延迟是为了解决隐藏输入法的bug
+                }, 200)//bug
 
             } catch (ex: Throwable) {
                 ALog.e("AmeCenterPopup", "show error", ex)
@@ -146,7 +146,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 隐藏
+     * 
      */
     fun dismiss() {
         dismissInner(popup)
@@ -204,7 +204,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
                 val dialog = Dialog(it, R.style.CommonBottomPopupWindow)
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 dialog.window?.let { window ->
-                    window.setBackgroundDrawableResource(android.R.color.transparent)    //设置Dialog背景透明效果
+                    window.setBackgroundDrawableResource(android.R.color.transparent)    //Dialog
                     window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                     window.setWindowAnimations(R.style.CommonBottomPopupWindow)
 

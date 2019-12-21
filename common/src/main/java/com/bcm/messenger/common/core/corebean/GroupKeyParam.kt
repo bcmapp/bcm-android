@@ -1,4 +1,4 @@
 package com.bcm.messenger.common.core.corebean
 
-class GroupKeyParam(val key: ByteArray, //聊天加密密钥
+class GroupKeyParam(val key: ByteArray, //
                     val keyVersion:Long)

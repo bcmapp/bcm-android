@@ -14,7 +14,6 @@ import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import kotlinx.android.synthetic.main.chats_conversation_item_live.view.*
 
 /**
- * 提示消息处理
  * Created by zjl on 2018/4/3.
  */
 class ChatLiveViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

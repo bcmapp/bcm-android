@@ -35,7 +35,7 @@ class MediaBrowserAdapter(viewModel: BaseMediaBrowserViewModel, private val medi
             }
         }
 
-    var isInSelecting: Boolean = false //是否是在选择模式中
+    var isInSelecting: Boolean = false //
         set(value) {
             if (field != value) {
                 field = value

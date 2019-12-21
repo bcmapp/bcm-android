@@ -19,16 +19,16 @@ import com.bcm.messenger.common.utils.dp2Px
  *
  * User: wangjh
  * Date: 2016-07-13
- * 状态遮罩控件
+ * 
  */
 class ContentShadeView : LinearLayout {
 
-    private lateinit var mLoadingView: CommonLoadingView//加载图标
-    private lateinit var mContentView: TextView//显示文本
-//    private lateinit var mRotateAnim: RotateAnimation//旋转动画
+    private lateinit var mLoadingView: CommonLoadingView//
+    private lateinit var mContentView: TextView//
+//    private lateinit var mRotateAnim: RotateAnimation//
 
-    private lateinit var mTitleAppearance: Pair<Int, Int>//主标题样式,first:尺寸，second:颜色
-    private lateinit var mSubTitleAppearance: Pair<Int, Int>//次标题样式，first:尺寸，second:颜色
+    private lateinit var mTitleAppearance: Pair<Int, Int>//
+    private lateinit var mSubTitleAppearance: Pair<Int, Int>//
 
     constructor(context: Context) : this(context, null)
 
@@ -47,7 +47,7 @@ class ContentShadeView : LinearLayout {
     }
 
     /**
-     * 初始化
+     * 
      */
     private fun init(context: Context) {
         layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -67,7 +67,7 @@ class ContentShadeView : LinearLayout {
     }
 
     /**
-     * 设置内容点击回调
+     * 
      */
     fun setOnContentClickListener(callback: ((isLoadingStatus: Boolean) -> Unit)?) {
         mLoadingView.setOnClickListener {
@@ -85,35 +85,35 @@ class ContentShadeView : LinearLayout {
     }
 
     /**
-     * 获取标题大小
+     * 
      */
     fun getTitleSize(): Int {
         return mTitleAppearance.first
     }
 
     /**
-     * 获取标题颜色
+     * 
      */
     fun getTitleColor(): Int {
         return mTitleAppearance.second
     }
 
     /**
-     * 获取副标题大小
+     * 
      */
     fun getSubTitleSize(): Int {
         return mSubTitleAppearance.first
     }
 
     /**
-     * 获取副标题颜色
+     * 
      */
     fun getSubTitleColor(): Int {
         return mSubTitleAppearance.second
     }
 
     /**
-     * 设置标题样式
+     * 
      * @param titleSize
      * @param titleColor
      */
@@ -122,7 +122,7 @@ class ContentShadeView : LinearLayout {
     }
 
     /**
-     * 设置副标题样式
+     * 
      * @param subTitleSize
      * @param subTitleColor
      */
@@ -131,14 +131,14 @@ class ContentShadeView : LinearLayout {
     }
 
     /**
-     * 是否是loading状态
+     * 
      */
     fun isLoadingStatus(): Boolean {
         return mLoadingView.visibility == View.VISIBLE
     }
 
     /**
-     * 显示加载中状态
+     * 
      */
     fun showLoading() {
         mLoadingView.visibility = View.VISIBLE
@@ -150,7 +150,7 @@ class ContentShadeView : LinearLayout {
     }
 
     /**
-     * 显示标题和副标题（用自带的文案样式）
+     * 
      * @param title
      * @param subTitle
      */
@@ -173,7 +173,7 @@ class ContentShadeView : LinearLayout {
     }
 
     /**
-     * 展示自定义的标题（自定义文案样式，例如自己拼接spannable）
+     * 
      * @param content
      */
     fun showContent(content: CharSequence) {
@@ -186,7 +186,7 @@ class ContentShadeView : LinearLayout {
     }
 
     /**
-     * 隐藏
+     * 
      */
     fun hide() {
         visibility = View.GONE
@@ -194,14 +194,14 @@ class ContentShadeView : LinearLayout {
     }
 
     /**
-     * 展示
+     * 
      */
     fun show() {
         visibility = View.VISIBLE
     }
 
     /**
-     * 是否展示中
+     * 
      */
     fun isShow(): Boolean {
         return visibility == View.VISIBLE

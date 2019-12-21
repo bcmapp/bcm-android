@@ -30,11 +30,11 @@ class FeedBackCategoryAdapter(activity: AppCompatActivity, list: MutableList<Str
         holder.item.setOnClickListener {
             viewModel.categoryText = item
             selectItem = item
-//            if (selectedPosition != -1)  //刷新旧位置
+//            if (selectedPosition != -1)  
 //                notifyItemChanged(selectedPosition)
-//            notifyItemChanged(position) //刷新选中位置
+//            notifyItemChanged(position) 
             notifyDataSetChanged()
-            selectedPosition = position  //更换选中位置
+            selectedPosition = position 
         }
     }
 

@@ -136,7 +136,7 @@ class AmeNoteActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDe
                 .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_note_delete), AmeBottomPopup.PopupItem.CLR_RED) {
                     wself.get()?.noteLogic?.deleteNote(topicId) {
                         succeed, error ->
-                        ALog.i("AmeNoteActivity", "删除 succeed:$succeed, $error")
+                        ALog.i("AmeNoteActivity", "delete succeed:$succeed, $error")
                     }
                 })
                 .withDoneTitle(getString(R.string.common_cancel))

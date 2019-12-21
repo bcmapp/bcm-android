@@ -59,9 +59,6 @@ public class TextSecurePreferences {
     private static final String PROFILE_KEY_PREF = "pref_profile_key";
     public static final String READ_RECEIPTS_PREF = "pref_read_receipts";
 
-    /**
-     * 联系人profile是否采用私密
-     */
     public static final String PROFILE_SECRET_PREF = "pref_profile_secret";
 
     public static final String QR_DISCERN_NOTICE = "pref_qr_discern";

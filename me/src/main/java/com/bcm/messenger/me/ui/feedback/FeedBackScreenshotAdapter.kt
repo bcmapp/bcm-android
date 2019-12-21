@@ -91,7 +91,7 @@ class FeedBackScreenshotAdapter(activity: AppCompatActivity, selectImage: () -> 
 
 
     class ScreenshotViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val mErrorResource = R.drawable.common_image_broken_img// 错误资源图
+        private val mErrorResource = R.drawable.common_image_broken_img
         private val mPlaceHolderResource = R.drawable.common_image_place_img
 
         val radius = 4.dp2Px()

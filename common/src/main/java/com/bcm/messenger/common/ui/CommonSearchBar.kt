@@ -17,7 +17,6 @@ import com.bcm.messenger.utility.QuickOpCheck
 import java.util.concurrent.TimeUnit
 
 /**
- * 搜索栏组件
  * Created by wjh on 2018/4/10
  */
 class CommonSearchBar : ConstraintLayout {
@@ -66,19 +65,12 @@ class CommonSearchBar : ConstraintLayout {
 
     }
 
-
-    /**
-     * 请求焦点
-     */
     fun requestSearchFocus() {
         search_content_et.isFocusable = true
         search_content_et.requestFocus()
         search_content_et.setSelection(search_content_et.text.length)
     }
 
-    /**
-     * 设置搜索模式
-     */
     fun setMode(mode: Int) {
         when(mode) {
             MODE_DISPLAY -> {
@@ -96,17 +88,10 @@ class CommonSearchBar : ConstraintLayout {
         }
     }
 
-
-    /**
-     * 获取当前的索索字段
-     */
     fun getSearchText(): CharSequence {
         return search_content_et.text.toString()
     }
 
-    /**
-     * 设置搜索字段
-     */
     fun setSearchText(searchText: CharSequence) {
         post {
             if (searchText != search_content_et.text.toString()) {
@@ -115,16 +100,10 @@ class CommonSearchBar : ConstraintLayout {
         }
     }
 
-    /**
-     * 设置搜索hint
-     */
     fun setSearchHint(hint: CharSequence) {
         search_content_et.hint = hint
     }
 
-    /**
-     * 设置搜索栏回调
-     */
     fun setOnSearchActionListener(listener: OnSearchActionListener?) {
         mListener = listener
     }
@@ -141,9 +120,6 @@ class CommonSearchBar : ConstraintLayout {
         destroySearchObservable()
     }
 
-    /**
-     * 创建搜索栏的订阅
-     */
     private fun createSearchObservable() {
 
         if (mTextWatcher == null) {
@@ -184,9 +160,6 @@ class CommonSearchBar : ConstraintLayout {
         }
     }
 
-    /**
-     * 取消搜索栏的订阅
-     */
     private fun destroySearchObservable() {
         ALog.d(TAG, "destroySearchObservable")
         mSearchDispose?.dispose()
@@ -196,14 +169,11 @@ class CommonSearchBar : ConstraintLayout {
         }
     }
 
-    /**
-     * 搜索栏输入行为回调
-     */
     interface OnSearchActionListener {
 
-        fun onJump()//跳转
-        fun onSearch(keyword: String)//关键字变更
-        fun onClear()//搜索栏清空
+        fun onJump()
+        fun onSearch(keyword: String)
+        fun onClear()
     }
 
 }

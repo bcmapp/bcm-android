@@ -41,7 +41,7 @@ public class AmeNotificationService extends Service {
     public final static int ACTION_INSTALL = 3;
     public final static int SYSTEM_WEB_URL = 4;
     public final static int ACTION_FRIEND_REQ = 5;
-    public final static int ACTION_ADHOC = 6;//无网相关通知
+    public final static int ACTION_ADHOC = 6;//
 
     public final static String ACTION = "PUSH_ACTION";
     public final static String ACTION_DATA = "PUSH_ACTION_DATA";

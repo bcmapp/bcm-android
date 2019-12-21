@@ -31,7 +31,7 @@ abstract class AbsRegistrationFragment : Fragment() {
             BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
                     .putBoolean(ARouterConstants.PARAM.PARAM_LOGIN_FROM_REGISTER, register)
                     .navigation(this)
-            //因为ARouter处理需要时间，所以这里不能马上finish掉当前页面
+        
             AmeDispatcher.mainThread.dispatch({
                 finish()
             }, 1000)

@@ -15,7 +15,7 @@ import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import java.lang.ref.WeakReference
 
 /**
- * 自定义的loading窗口
+ * loading
  * Created by bcm.social.01 on 2018/5/31.
  */
 class AmeLoadingPopup : Application.ActivityLifecycleCallbacks {
@@ -56,7 +56,7 @@ class AmeLoadingPopup : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 延迟隐藏
+     * 
      */
     fun dismiss(delay: Long, callback: (() -> Unit)? = null) {
         if (delay > 0) {
@@ -71,7 +71,7 @@ class AmeLoadingPopup : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 快速隐藏
+     * 
      */
     fun dismiss() {
         dismiss(0)
@@ -129,7 +129,7 @@ class AmeLoadingPopup : Application.ActivityLifecycleCallbacks {
                 dialog.setCanceledOnTouchOutside(false)
 
                 dialog.window?.let { window ->
-                    window.setBackgroundDrawableResource(android.R.color.transparent)    //设置Dialog背景透明效果
+                    window.setBackgroundDrawableResource(android.R.color.transparent)    //Dialog
                     window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
 
                     val windowParams = window.attributes

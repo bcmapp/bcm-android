@@ -85,14 +85,14 @@ class PickPhotoActivity : BasePickActivity() {
 
     private fun switchFragment() {
         if (mode == MODE_LIST) {
-            // 切换到文件夹列表
+            // 
             ALog.d(TAG, "Switch to folder fragment")
             supportFragmentManager.beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .show(listFragment).hide(gridFragment).commit()
             mode = MODE_GRID
         } else {
-            // 切换到照片列表
+            // 
             ALog.d(TAG, "Switch to photo fragment")
             supportFragmentManager.beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
@@ -119,17 +119,17 @@ class PickPhotoActivity : BasePickActivity() {
         RxBus.subscribe<Any>(PICK_TAG) {
             when (it) {
                 is PickPhotoListChangeEvent -> {
-                    // 文件夹更改
+                    // 
                     ALog.i(TAG, "Receive list change event")
                     pick_photo_title_bar.setCenterText(it.newDir)
                 }
                 is PickPhotoFinishEvent -> {
-                    // 选择完成
+                    // 
                     ALog.i(TAG, "Receive finish event")
                     selectFinish()
                 }
                 is PickPhotoChangeEvent -> {
-                    // 选中数量更改
+                    // 
                     ALog.i(TAG, "Receive selected list change event")
                     pick_photo_title_bar.setRightText("${BcmPickHelper.currentPickConfig.applyText}(${BcmPickHelper.selectedPhotos.size})")
                 }

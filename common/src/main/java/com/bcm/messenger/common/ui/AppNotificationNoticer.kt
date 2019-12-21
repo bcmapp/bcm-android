@@ -16,21 +16,16 @@ import kotlinx.android.synthetic.main.common_system_notification_layout.view.*
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.common.utils.getColorCompat
 
-/**
- * 系统通知提示组件
- * Created by wjh on 2018/10/26
- */
+
 class AppNotificationNoticer : ConstraintLayout {
 
-    private var mShowSystemNotificationNotice = true//是否提示系统通知
+    private var mShowSystemNotificationNotice = true
 
     companion object {
 
         private val mNoticerList: MutableList<AppNotificationNoticer> = mutableListOf()
 
-        /**
-         * 设置通知关闭
-         */
+        
         private fun setNoticeClose() {
             mNoticerList.forEach {
                 it.mShowSystemNotificationNotice = false
@@ -90,9 +85,7 @@ class AppNotificationNoticer : ConstraintLayout {
         }
     }
 
-    /**
-     * 检查通知
-     */
+    
     fun checkNotice() {
         val manager = NotificationManagerCompat.from(context)
         if(manager.areNotificationsEnabled() || !mShowSystemNotificationNotice) {

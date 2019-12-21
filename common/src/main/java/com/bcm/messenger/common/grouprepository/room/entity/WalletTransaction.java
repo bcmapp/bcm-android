@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 import static androidx.room.ForeignKey.CASCADE;
 
 /**
- * BCM专属钱包交易记录表
+ * BCM
  * Created by wjh on 2018/8/3
  */
 @Entity(tableName = WalletTransaction.TABLE_NAME, foreignKeys = @ForeignKey(entity = WalletData.class, parentColumns = WalletData.COLUMN_ID, childColumns = WalletTransaction.COLUMN_WALLET,
@@ -35,43 +35,43 @@ public class WalletTransaction {
     private long id;
 
     /**
-     * 钱包id
+     * id
      */
     @ColumnInfo(index = true, name = COLUMN_WALLET)
     private long walletId;
 
     /**
-     * 交易id
+     * id
      */
     @ColumnInfo(index = true, name = COLUMN_TX)
     private String tx;
 
     /**
-     * 交易类型
+     * 
      */
     @ColumnInfo(name = COLUMN_TYPE)
     private String type;
 
     /**
-     * 交易数量
+     * 
      */
     @ColumnInfo(name = COLUMN_AMOUNT)
     private String amount;
 
     /**
-     * 交易来源
+     * 
      */
     @ColumnInfo(name = COLUMN_FROM)
     private String from;
 
     /**
-     * 交易目的地
+     * 
      */
     @ColumnInfo(name = COLUMN_TO)
     private String to;
 
     /**
-     * 时间
+     * 
      */
     @ColumnInfo(name = COLUMN_TIME)
     private long time;

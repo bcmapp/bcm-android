@@ -16,25 +16,8 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 
 object GroupInfoDataManager {
-    fun updateGroupName(gid: Long, name: String) {
-        val info = queryOneGroupInfo(gid)
-        if (info != null) {
-            info.name = name
-            getDao().update(info)
-        }
-    }
-
     fun updateGroupRole(gid: Long, role: Long) {
         getDao().updateRole(gid, role)
-    }
-
-    fun updateGroupMemberCount(gid: Long, memberCount: Int, suberCount: Int) {
-        val info = queryOneGroupInfo(gid)
-        if (info != null) {
-            info.member_count = memberCount
-            info.subscriber_count = suberCount
-            getDao().update(info)
-        }
     }
 
     fun updateGroupNotice(gid: Long, noticeContent: String, updateTime: Long) {
@@ -57,17 +40,6 @@ object GroupInfoDataManager {
             getDao().update(info)
         }
 
-    }
-
-    fun queryIsNoticeShow(gid: Long): Boolean {
-        val info = queryOneGroupInfo(gid)
-        if (info != null) {
-            when (info.is_show_notice) {
-                GroupInfo.SHOW_NOTICE -> return true
-                else -> return false
-            }
-        }
-        return false
     }
 
     fun queryGroupKeyParam(gid: Long, version: Long): GroupKeyParam? {
@@ -101,11 +73,6 @@ object GroupInfoDataManager {
         return UserDatabase.getDatabase().groupKeyDao().queryLastVersionKey(gid)
     }
 
-    fun saveGroupKeyParam(list: List<GroupKey>) {
-        UserDatabase.getDatabase().groupKeyDao().saveKeys(list)
-    }
-
-
     fun updateGroupNotificationEnable(gid: Long, enable: Boolean) {
         val info = queryOneGroupInfo(gid)
         if (info != null) {
@@ -118,31 +85,8 @@ object GroupInfoDataManager {
         }
     }
 
-    fun queryDBGroupInfoByChannelShareUrl(shareUrl: String?): GroupInfo? {
-        if (shareUrl == null) {
-            return null
-        }
-        return getDao().loadGroupInfoByShareUrl(shareUrl)
-    }
-
     fun updateGroupKey(gid: Long, keyVersion: Long, key: String) {
         getDao().updateGroupKey(gid, keyVersion, key)
-    }
-
-    fun updateGroupShareContent(gid: Long, shareContent: String) {
-        val info = queryOneGroupInfo(gid)
-        if (info != null) {
-            info.share_content = shareContent
-            getDao().update(info)
-        }
-    }
-
-    fun updateGroupShareUrl(gid: Long, shareUrl: String) {
-        val info = queryOneGroupInfo(gid)
-        if (info != null) {
-            info.share_url = shareUrl
-            getDao().update(info)
-        }
     }
 
     fun updateGroupPinMid(gid: Long, mid: Long) {
@@ -165,46 +109,12 @@ object GroupInfoDataManager {
         }
     }
 
-    //更新群权限信息，群主和管理员可操作
-    fun updateGroupPermission(gid: Long, permission: Int) {
-        val info = queryOneGroupInfo(gid)
-        if (info != null) {
-            info.permission = permission
-            getDao().update(info)
-        }
-    }
-
-    fun updateGroupSpliceName(gid: Long, spliceName: String) {
-        val info = queryOneGroupInfo(gid)
-        if (info != null && info.spliceName != spliceName) {
-            info.spliceName = spliceName
-            getDao().update(info)
-            val recipient = Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid)
-            Repository.getRecipientRepo()?.setProfile(recipient, null, info.name, info.iconUrl)
-        }
-    }
-
-    fun updateGroupSpliceAvatar(gid: Long, avatarPath: String) {
-        val info = queryOneGroupInfo(gid)
-        if (info != null) {
-            info.spliceAvatar = avatarPath
-            getDao().update(info)
-            val recipient = Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid)
-            Repository.getRecipientRepo()?.setProfile(recipient, null, info.name, info.iconUrl)
-        }
-    }
-
-    /**
-     * 更新群的分享短链
-     */
     fun updateGroupShareShortLink(gid: Long, shareLink: String) {
         getDao().updateShareShortLink(gid, shareLink)
     }
 
-    //必需先取出该信息，更新相应字段，再去插入，切勿构造 GroupInfo插入，除非之前是空的
-    //插入一条新群组信息
     fun insertGroupInfo(groupInfo: GroupInfo) {
-        //同时更新到recipient数据库
+        //recipient
         val recipient = Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, groupInfo.gid)
         Repository.getRecipientRepo()?.setProfile(recipient, null, groupInfo.name, groupInfo.iconUrl)
 
@@ -231,12 +141,12 @@ object GroupInfoDataManager {
         return GroupInfoTransform.transformToModel(info)
     }
 
-    //用于更新群信息时使用
+    //
     fun queryOneGroupInfo(gid: Long): GroupInfo? {
         return getDao().loadGroupInfoByGid(gid)
     }
 
-    //用于更新群信息时使用
+    //
     fun queryGroupInfoList(gidList: List<Long>): List<GroupInfo> {
         return getDao().loadGroupInfoListByGid(gidList.toLongArray())
     }
@@ -247,10 +157,10 @@ object GroupInfoDataManager {
 
 
     /**
-     * 获取群信息（同步）
+     * （）
      */
     fun getGroupInfo(groupId: Long): AmeGroupInfo? {
-        return GroupInfoDataManager.queryOneAmeGroupInfo(groupId)
+        return queryOneAmeGroupInfo(groupId)
     }
 
     fun loadAll(): List<GroupInfo> {
@@ -262,15 +172,6 @@ object GroupInfoDataManager {
             return
         }
         getDao().insertOrUpdateAll(list)
-    }
-
-    fun updateGroupKey(gid: Long, groupKey: String, groupInfoSecret: String) {
-        val info = queryOneGroupInfo(gid)
-        if (null != info) {
-            info.currentKey = groupKey
-            info.infoSecret = groupInfoSecret
-            getDao().update(info)
-        }
     }
 
     fun updateGroupInfoSecret(gid: Long, groupInfoSecret: String) {
@@ -300,8 +201,12 @@ object GroupInfoDataManager {
         getDao().setProfileEncrypted(gid, isEncrypted)
     }
 
-    fun updateGroupNameAndAvatar(gid: Long, newName: String, newIcon: String) {
-        getDao().updateNameAndAvatar(gid, newName, newIcon)
+    fun updateGroupName(gid: Long, newName: String) {
+        getDao().updateName(gid, newName)
+    }
+
+    fun updateGroupAvatar(gid: Long, newIcon: String) {
+        getDao().updateAvatar(gid, newIcon)
     }
 
     fun clearShareSetting(gid: Long) {

@@ -52,8 +52,8 @@ import com.bcm.messenger.common.mms.GlideRequests;
 import java.util.List;
 
 /**
- * 定制的ExoPlayerView，拥有自定义的控制器UI
- * 注释已被删除，若有需要请看未修改的源代码
+ * ExoPlayerView，UI
+ * ，
  * <p>
  * Created by Kin on 2018/7/21
  */

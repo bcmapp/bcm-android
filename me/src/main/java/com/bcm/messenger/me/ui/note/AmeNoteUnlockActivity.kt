@@ -114,7 +114,6 @@ class AmeNoteUnlockActivity : SwipeBaseActivity() {
 
         val wself = WeakReference(this)
 
-        //最少要转600ms
         val left = 600 - duration
         if (left > 50) {
             AmeDispatcher.mainThread.dispatch({

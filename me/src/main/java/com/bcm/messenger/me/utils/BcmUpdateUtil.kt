@@ -35,21 +35,13 @@ object BcmUpdateUtil {
     private const val TAG = "BcmUpdateUtil"
     private const val playUrl = "https://play.google.com/store/apps/details?id=com.bcm.messenger"
 
-    // 通知相关
+
     private var downloadDialog: ForceUpdateDownloadDialog? = null
-
-    // 是否有更新
     private var hasUpdate = false
-    // 是否强制更新
     private var forceUpdate = false
-
-    // 当前版本号
     private var currentVersion = AppUtil.getVersionName(AppContextHolder.APP_CONTEXT)
-    // 当前内部版本号
     private var currentVersionCode = AppUtil.getVersionCode(AppContextHolder.APP_CONTEXT)
-    // 升级提示
     private var updateInfo = ""
-    // Google Play包名
     private var packageName = AppUtil.getCurrentPkgName(AppContextHolder.APP_CONTEXT)
 
     private var updateData: AmeConfigure.UpdateData? = null
@@ -83,7 +75,7 @@ object BcmUpdateUtil {
             AmePushProcess.notifyDownloadApkNotification(AppContextHolder.APP_CONTEXT.getString(R.string.me_update_notification_downloading, 0), false, "")
             AmeFileUploader.downloadFile(AppContextHolder.APP_CONTEXT, url, object : FileDownCallback(AmeFileUploader.AME_PATH, "bcm-${it.last_version}.apk") {
                 override fun onError(call: Call?, e: java.lang.Exception?, id: Long) {
-                    // 下载失败，强更继续显示强更对话框
+                
                     isDownloading = false
                     if (forceUpdate) {
                         downloadDialog?.setFailed()
@@ -97,7 +89,7 @@ object BcmUpdateUtil {
                 override fun onResponse(response: File?, id: Long) {
                     isDownloading = false
                     if (response != null) {
-                        // 下载成功，移动文件到外部存储
+                
                         val apkFile = File(AmeFileUploader.APK_DIRECTORY, "bcm-${it.last_version}.apk")
                         moveFile(response.path, apkFile.path)
 
@@ -192,7 +184,7 @@ object BcmUpdateUtil {
     }
 
     fun checkUpdate(result: (hasUpdate: Boolean, forceUpdate: Boolean, version: String) -> Unit) {
-        // 已经查询过版本
+        
         updateData?.let {
             val versionName = "${it.last_version}-${it.version_code}"
             result(hasUpdate, forceUpdate, versionName)
@@ -213,17 +205,17 @@ object BcmUpdateUtil {
                         if (isNewVersion()) {
                             val forceUpdateMinVersion = data.force_update_min.toInt()
                             val forceUpdateMaxVersion = data.force_update_max.toInt()
-                            // 强制升级版本号都不等于-1且当前版本号处于强制升级版本号区间中则为强制升级，否则是普通升级
+                            
                             forceUpdate = forceUpdateMinVersion != -1 && forceUpdateMaxVersion != -1 &&
                                     forceUpdateMinVersion <= currentVersionCode && currentVersionCode <= forceUpdateMaxVersion
-                            // 根据语言选择更新日志
+                            
                             updateInfo = if (Locale.getDefault() == Locale.SIMPLIFIED_CHINESE) {
                                 if (forceUpdate) data.force_update_info_zh else data.update_info_zh
                             } else {
                                 if (forceUpdate) data.force_update_info_en else data.update_info_en
                             }
                             updateInfo = updateInfo.replace("\\n", "\n")
-                            // 获取Google Play上架的包名
+                            
                             if (!data.google_package.isNullOrBlank()) {
                                 this.packageName = data.google_package
                             }

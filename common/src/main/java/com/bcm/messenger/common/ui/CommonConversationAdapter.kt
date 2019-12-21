@@ -19,7 +19,6 @@ import com.bcm.messenger.common.R
 import java.util.*
 
 /**
- * 公共的会话消息适配器
  * Created by wjh on 2019/7/27
  */
 class CommonConversationAdapter<T>(context: Context, private val delegate: IConversationDelegate<T>) :
@@ -50,9 +49,6 @@ class CommonConversationAdapter<T>(context: Context, private val delegate: IConv
         return mSourceList.size
     }
 
-    /**
-     * 删除消息
-     */
     fun removeData(data: T) {
         val contains = mSourceList.contains(data)
         if (contains) {
@@ -61,9 +57,6 @@ class CommonConversationAdapter<T>(context: Context, private val delegate: IConv
         }
     }
 
-    /**
-     * 删除指定位置消息
-     */
     fun removeData(position: Int) {
         if (mSourceList.size == 0) {
             return
@@ -75,9 +68,7 @@ class CommonConversationAdapter<T>(context: Context, private val delegate: IConv
 
     }
 
-    /**
-     * 删除所有消息
-     */
+    
     fun removeAll() {
         mSourceList.clear()
         notifyDataSetChanged()
@@ -87,9 +78,6 @@ class CommonConversationAdapter<T>(context: Context, private val delegate: IConv
         mSourceList.clear()
     }
 
-    /**
-     * 置换消息
-     */
     fun replaceData(position: Int, data: T) {
         if (position in 0 until mSourceList.size) {
             mSourceList[position] = data
@@ -97,9 +85,6 @@ class CommonConversationAdapter<T>(context: Context, private val delegate: IConv
         }
     }
 
-    /**
-     * 置换消息
-     */
     fun replaceData(data: T) {
         val index = mSourceList.indexOf(data)
         if (index != -1) {
@@ -107,25 +92,16 @@ class CommonConversationAdapter<T>(context: Context, private val delegate: IConv
         }
     }
 
-    /**
-     * 加载单条消息到末尾
-     */
     fun loadData(data: T, notify: Boolean = true) {
         val index = mSourceList.size
         loadData(index, data, notify)
     }
 
-    /**
-     * 加载消息到末尾
-     */
     fun loadData(dataList: List<T>, notify: Boolean = true) {
         val index = mSourceList.size
         loadData(index, dataList, notify)
     }
 
-    /**
-     * 加载单条消息到指定的位置
-     */
     fun loadData(index: Int, data: T, notify: Boolean = true) {
         val count = mSourceList.size
         if (index == count) {
@@ -141,9 +117,6 @@ class CommonConversationAdapter<T>(context: Context, private val delegate: IConv
         }
     }
 
-    /**
-     * 加载消息到指定的位置
-     */
     fun loadData(index: Int, dataList: List<T>, notify: Boolean = true) {
         val count = mSourceList.size
         if (index == count) {
@@ -232,9 +205,6 @@ class CommonConversationAdapter<T>(context: Context, private val delegate: IConv
         }
     }
 
-    /**
-     * 上次阅读时间header
-     */
     class LastSeenHeader(private val adapter: CommonConversationAdapter<*>, private val interval: Long) : StickyHeaderDecoration(adapter, false, false) {
 
         override fun hasHeader(parent: RecyclerView, stickyAdapter: StickyHeaderAdapter<*>, position: Int): Boolean {

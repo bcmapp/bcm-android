@@ -65,7 +65,7 @@ class CommonLoadingView @JvmOverloads constructor(context: Context, attrs: Attri
         }
 
         anim = AnimatorSet().apply {
-            //改成playTogether, with可能存在泄漏问题
+           
             playTogether(ObjectAnimator.ofFloat(loading_inner, "rotation", 360f, 0f).apply {
                 duration = 3000
                 repeatCount = Animation.INFINITE

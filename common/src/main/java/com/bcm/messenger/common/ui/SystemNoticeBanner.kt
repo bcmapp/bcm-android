@@ -22,7 +22,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 /**
- * 系统推送通知banner
+ * banner
  * Created by wjh on 2018/10/29
  */
 class SystemNoticeBanner : ConstraintLayout {

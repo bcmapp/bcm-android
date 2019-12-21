@@ -56,12 +56,10 @@ class VerifyPasswordFragment : Fragment() {
             verifyCallback?.invoke(false)
         }
         if (!hasFingerprint) {
-            // 设备没有指纹识别，隐藏跳转图标
             verify_password_fingerprint.visibility = View.GONE
             verify_password_try_again.visibility = View.GONE
         }
         if (lockout) {
-            // 失败过多被锁，不允许跳转到指纹识别
             verify_password_fingerprint.setOnClickListener {
                 AmePopup.result.failure(activity, getString(R.string.me_fingerprint_lockout), true)
             }

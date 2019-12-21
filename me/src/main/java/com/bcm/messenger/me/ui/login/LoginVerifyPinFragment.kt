@@ -164,7 +164,6 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
                 return
             }
 
-            //代理连好了，重新登录
             if (ProxyManager.isProxyRunning()) {
                 AmePopup.tipLoading.updateTip("")
                 AmePopup.tipLoading.updateSubTip("")
@@ -218,7 +217,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
     override fun onSoftKeyboardOpened(keyboardHeightInPx: Int) {
         activity?.apply {
             val location = IntArray(2)
-            content_layout.getLocationOnScreen(location)     //获取body在屏幕中的坐标,控件左上角
+            content_layout.getLocationOnScreen(location)    
             val x = location[0]
             val y = location[1]
             val bottom = getScreenHeight() - (y + content_layout.height)
@@ -246,7 +245,6 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
     }
 
     private fun initViews() {
-        //输入pin
         relogin_pin_input_done_button.setOnClickListener {
             if (TextUtils.isEmpty(relogin_input_pin_editText.text)) {
                 Toast.makeText(activity!!, R.string.me_input_pin_hint, Toast.LENGTH_SHORT).show()

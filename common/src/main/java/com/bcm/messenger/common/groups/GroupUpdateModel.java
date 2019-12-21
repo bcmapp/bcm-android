@@ -5,19 +5,19 @@ import com.bcm.messenger.utility.proguard.NotGuard;
 import java.util.List;
 
 public class GroupUpdateModel implements NotGuard {
-    //创建群
+    //
     public final static int GROUP_CREATE = 10;
-    //更新群
+    //
     public final static int GROUP_UPDATE = 20;
     public final static int GROUP_REMOVE = 30;
     public final static int GROUP_ADD = 40;
-    //加入新成员
+    //
     public final static int GROUP_MEMBER_JOINED = 50;
-    //成员退群
+    //
     public final static int GROUP_MEMBER_LEFT = 60;
-    //群昵称改变
+    //
     public final static int GROUP_TITLE_CHANGED = 70;
-    //群头像改变
+    //
     public final static int GROUP_AVATAR_CHANGED = 80;
 
 

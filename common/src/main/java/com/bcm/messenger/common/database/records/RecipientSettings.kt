@@ -57,7 +57,7 @@ class RecipientSettings() : RecipientModel() {
     }
 
     @Ignore
-    var contactVersion: Int = CONTACT_SYNC_VERSION //通讯录同步版本
+    var contactVersion: Int = CONTACT_SYNC_VERSION //
 
     fun isBlocked() = block == 1
 

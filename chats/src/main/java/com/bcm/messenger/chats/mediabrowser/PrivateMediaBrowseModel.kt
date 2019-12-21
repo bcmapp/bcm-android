@@ -28,7 +28,7 @@ import java.util.*
 
 
 /**
- * 私聊媒体浏览model
+ * 
  * Created by wjh on 2018/10/15
  */
 class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {

@@ -79,7 +79,6 @@ class BackupAccountKeyActivity : SwipeBaseActivity() {
         val genKeyTime = AmeLoginLogic.accountHistory.getGenKeyTime(AMESelfData.uid)
         val backupTime = AmeLoginLogic.accountHistory.getBackupTime(AMESelfData.uid)
 
-        // 新老帐号兼容
         val account = AmeLoginLogic.getAccount(accountId)
         if (account != null) {
             createAccountQRCodeWithAccountData(account)
@@ -128,7 +127,6 @@ class BackupAccountKeyActivity : SwipeBaseActivity() {
 
     private fun handleCopyQRCode() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            // Android 7.0以下不允许复制二维码
             MeConfirmDialog.showCopyBackup(this, {}, {})
         } else {
             MeConfirmDialog.showCopyBackup(this, {}, {
@@ -141,7 +139,7 @@ class BackupAccountKeyActivity : SwipeBaseActivity() {
         AmePopup.loading.show(this)
         Observable.create<Uri> {
             try {
-                // 把二维码写入到文件
+            
                 val tempQRCodeFile = File("${cacheDir.path}/qrcode.jpg")
                 if (!tempQRCodeFile.exists()) {
                     tempQRCodeFile.createNewFile()
@@ -164,10 +162,10 @@ class BackupAccountKeyActivity : SwipeBaseActivity() {
                     AmePopup.loading.dismiss()
                 }
                 .subscribe({
-                    // 找到便签应用
+                
                     val targetIntents = filterPackages(it)
                     if (targetIntents.isEmpty()) {
-                        // 没有便签应用，弹窗
+                    
                         AmePopup.center.newBuilder()
                                 .withTitle(getString(R.string.me_backup_notice))
                                 .withContent(getString(R.string.me_backup_have_no_notes_app))
@@ -175,7 +173,7 @@ class BackupAccountKeyActivity : SwipeBaseActivity() {
                                 .show(this)
                         return@subscribe
                     } else {
-                        // 跳转或选择便签应用
+                        
                         val chooseIntent = Intent.createChooser(targetIntents.removeAt(0), getString(R.string.me_backup_share_to))
                         chooseIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray<Array<Parcelable>>(emptyArray()))
                         startActivity(chooseIntent)

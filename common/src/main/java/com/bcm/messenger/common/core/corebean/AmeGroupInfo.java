@@ -25,13 +25,13 @@ public class AmeGroupInfo {
     private long createTime;
     private int memberCount;
     private int subscriberCount;
-    private String channelURL; //分享链接
-    private String shareContent;//分享描述
+    private String channelURL; //
+    private String shareContent;//
     private Boolean subscriberEnabled;
     private Boolean stickOnTop;
     private Boolean mute;
-    private int status;//标识是否加密
-    private Long role;//参照 AmeGroupMemberInfo role定义
+    private int status;//
+    private Long role;// AmeGroupMemberInfo role
     private LegitimateState legitimateState;
     private long pinMid;
     private String shareCode;
@@ -39,7 +39,7 @@ public class AmeGroupInfo {
     private Boolean shareEnable;
     private Boolean needConfirm;
 
-    //群公告
+    //
     private String noticeContent;
     private long  noticeUpdateTime;
 

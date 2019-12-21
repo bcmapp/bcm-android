@@ -14,7 +14,7 @@ class LBSFetcher(val type: String) {
     private var fetchingIndex = 0
 
     /**
-     * @param fetchIndex 上一次请求的索引,防止请求重复触发
+     * @param fetchIndex ,
      */
     fun request(fetchIndex: Int) {
         AmeDispatcher.singleScheduler.scheduleDirect {
@@ -48,7 +48,7 @@ class LBSFetcher(val type: String) {
                 val statusCode = ServerCodeUtil.getNetStatusCode(e)
 
                 if (statusCode == ServerCodeUtil.CODE_PARSE_ERROR) {
-                    //只是本地解析数据失败,应该算接口响应成功
+                    //,
                     ReportUtil.addCustomNetworkReportData(NET_TOPIC_LBS_SERVER, seedUri.host, seedUri.port, "", LBS_LBS, METRIC_SUCCESS, endTime - startTime)
                 } else {
                     ReportUtil.addCustomNetworkReportData(NET_TOPIC_LBS_SERVER, seedUri.host, seedUri.port, "", LBS_LBS, METRIC_FAILED, endTime - startTime)

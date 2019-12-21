@@ -15,7 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import io.reactivex.Observable
 
 /**
- * 图片拼接帮助类
+ * 
  */
 object CombineBitmapUtil {
 
@@ -79,7 +79,7 @@ object CombineBitmapUtil {
     }
 
     /**
-     * 负责联系人的图片单元
+     * 
      */
     class RecipientBitmapUnit(val recipient: Recipient, val name: String): BitmapUnit {
 
@@ -111,7 +111,7 @@ object CombineBitmapUtil {
     }
 
     /**
-     * 多个图片单元覆盖在一起
+     * 
      */
     fun convertBitmap(bitmapUnits: List<BitmapUnit>, width: Int, height: Int): Observable<Bitmap> {
         if (width <= 0 || height <= 0 || width%4 != 0 || height%4 != 0) {
@@ -122,7 +122,7 @@ object CombineBitmapUtil {
             throw Exception("bitmap unit list is empty")
         }
 
-        //最多4张合成一张
+        //4
         val unitList = bitmapUnits.subList(0, Math.min(bitmapUnits.size, 4))
         return Observable.zip(unitList.map {unit-> unit.toBitmap()}) { list ->
             val bitmapList:List<Bitmap> = list as List<Bitmap>
@@ -139,7 +139,7 @@ object CombineBitmapUtil {
     }
 
     /**
-     * 多个图片单元拼接在一起
+     * 
      */
     fun combineBitmap(bitmapUnits:List<BitmapUnit>, width:Int, height:Int):Observable<Bitmap> {
         if (width <= 0 || height <= 0 || width%4 != 0 || height%4 != 0) {
@@ -150,7 +150,7 @@ object CombineBitmapUtil {
             throw Exception("bitmap unit list is empty")
         }
 
-        //最多4张合成一张
+        //4
         val unitList = bitmapUnits.subList(0, Math.min(bitmapUnits.size, 4))
         return Observable.zip(unitList.map {unit-> unit.toBitmap()}) { list ->
             val bitmapList:List<Bitmap> = list.map { it as Bitmap }

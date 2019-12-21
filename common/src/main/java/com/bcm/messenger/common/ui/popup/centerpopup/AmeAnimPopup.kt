@@ -87,7 +87,7 @@ class AmeAnimPopup: Application.ActivityLifecycleCallbacks {
                     activity.hideKeyboard()
                     popup.show(activity.fragmentManager, activity.javaClass.simpleName)
 
-                }, 200)//这里延迟是为了解决隐藏输入法的bug
+                }, 200)//bug
 
             } catch (ex: Throwable) {
                 ALog.e("AmeCenterPopup", "show error", ex)
@@ -96,7 +96,7 @@ class AmeAnimPopup: Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 隐藏
+     * 
      */
     fun dismiss() {
         dismissInner(popup)
@@ -158,7 +158,7 @@ class AmeAnimPopup: Application.ActivityLifecycleCallbacks {
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             val dialog = Dialog(activity, style)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.window.setBackgroundDrawableResource(android.R.color.transparent)    //设置Dialog背景透明效果
+            dialog.window.setBackgroundDrawableResource(android.R.color.transparent)    //Dialog
             dialog.window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             dialog.window.setWindowAnimations(style)
 

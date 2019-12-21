@@ -58,7 +58,7 @@ import kotlin.math.max
 
 
 /**
- * 联系人资料处理逻辑类
+ * 
  */
 object RecipientProfileLogic {
 
@@ -121,7 +121,7 @@ object RecipientProfileLogic {
     private var mShortLinkCreating: Boolean = false
 
     /**
-     * 检测联系人是否需要profileKey（同步）
+     * profileKey（）
      */
     fun checkNeedProfileKey(recipient: Recipient): Boolean {
         val privacyProfile = recipient.resolve().privacyProfile
@@ -133,7 +133,7 @@ object RecipientProfileLogic {
     }
 
     /**
-     * 更新联系人的最终的解密profileKey(异步, 可能回有引出需要更新当前profile的逻辑)
+     * profileKey(, profile)
      */
     @SuppressLint("CheckResult")
     fun updateProfileKey(context: Context, recipient: Recipient, profileKeyModel: ProfileKeyModel) {
@@ -495,7 +495,7 @@ object RecipientProfileLogic {
     }
 
     /**
-     * 更新个人分享短链
+     * 
      */
     private data class UpdateShareLinkReq(val content: String) : NotGuard
 
@@ -547,7 +547,7 @@ object RecipientProfileLogic {
     private data class UserShareLinkRes(val content: String?) : NotGuard
 
     /**
-     * 检测短链是否个人二维码
+     * 
      */
     @SuppressLint("CheckResult")
     fun checkShareLink(context: Context, shareLink: String, callback: (qrData: Recipient.RecipientQR?) -> Unit) {
@@ -588,7 +588,7 @@ object RecipientProfileLogic {
     }
 
     /**
-     * 更新昵称到明文中（其他途径，非对话聊天）
+     * （，）
      */
     fun updateNickFromOtherWay(recipient: Recipient, nick: String) {
         AmeDispatcher.io.dispatch {
@@ -604,7 +604,7 @@ object RecipientProfileLogic {
     }
 
     /**
-     * 获取当前可用的任务数据
+     * 
      */
     @Synchronized
     private fun getAvailableTaskDataList(highQueue: Deque<TaskData>, queue: Deque<TaskData>, max: Int): List<TaskData> {

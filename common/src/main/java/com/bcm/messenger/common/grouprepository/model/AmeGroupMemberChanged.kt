@@ -23,7 +23,7 @@ data class AmeGroupMemberChanged(val groupId:Long, val messageId:Long) {
     lateinit var memberList: ArrayList<AmeGroupMemberInfo>
 
     /**
-     * true 我在join 名单中
+     * true join 
      */
     fun isMyJoin(): Boolean {
         if (action == JOIN){
@@ -37,7 +37,7 @@ data class AmeGroupMemberChanged(val groupId:Long, val messageId:Long) {
     }
 
     /**
-     * true 我在leave 名单中
+     * true leave 
      */
     fun isMyLeave(): Boolean {
         if (action == LEAVE){
@@ -89,7 +89,7 @@ data class AmeGroupMemberChanged(val groupId:Long, val messageId:Long) {
                 }
             }
             else -> {
-                //后续拓展 Action 处理
+                // Action 
             }
         }
         return detail

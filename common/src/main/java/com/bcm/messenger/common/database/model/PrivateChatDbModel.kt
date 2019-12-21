@@ -25,7 +25,7 @@ open class PrivateChatDbModel {
     @ColumnInfo(name = "date_sent")
     var dateSent = 0L
     var read = 0
-    var type = 0L // 消息本身的状态，比如Key错误，发送失败等
+    var type = 0L // ，Key，
     @ColumnInfo(name = "message_type")
     var messageType = 0
     var body = ""

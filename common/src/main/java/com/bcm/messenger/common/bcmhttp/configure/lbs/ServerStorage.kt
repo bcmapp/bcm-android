@@ -19,14 +19,14 @@ class ServerStorage(val type:String) {
     }
 
     /**
-     * 获取缓存的上次成功的主服务节点
+     * 
      */
     fun getLastServerList(): List<ServerNode> {
         return list
     }
 
     /**
-     * 保存上次成功的主服务器节点
+     * 
      */
     fun saveServerList(ipList:List<ServerNode>) {
         storeServerList(ipList)
@@ -35,13 +35,13 @@ class ServerStorage(val type:String) {
     private fun storeServerList(succeedList: List<ServerNode>) {
         ALog.i(TAG, "saveServerList ${succeedList.size}")
         val lastSuccess = list
-        //移除已经存在的节点
+        //
         lastSuccess.removeAll(succeedList)
 
         val oldList = lastSuccess.toList()
         val changed: Boolean
 
-        //最多保存IM_SERVER_MAX_SIZE条IM Server记录
+        //IM_SERVER_MAX_SIZEIM Server
         if (oldList.size + succeedList.size > IM_SERVER_MAX_SIZE) {
             lastSuccess.addAll(0, succeedList)
             changed = oldList.size != lastSuccess.size

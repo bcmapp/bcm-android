@@ -42,8 +42,8 @@ class ServerConnectionDaemon : IServerConnectionDaemon, IServerConnectionEvent, 
         private const val KEEPALIVE_TIMEOUT_MILLI = 60_000L
         private const val DAEMON_TIMER_MILLI = 10_000L
         private const val TAG = "ServerConnectionDaemon"
-        private const val CONN_METRICS_TOKEN = 1 //这次连接要统计
-        private const val CONN_DEFAULT_TOKEN = 0 //这次连接不需要统计
+        private const val CONN_METRICS_TOKEN = 1 //
+        private const val CONN_DEFAULT_TOKEN = 0 //
     }
 
     private val singleScheduler = Schedulers.from(Executors.newSingleThreadExecutor())
@@ -164,7 +164,7 @@ class ServerConnectionDaemon : IServerConnectionDaemon, IServerConnectionEvent, 
                     .subscribe({
                         val conn = serverConn
 
-                        //在连网状态下，尝试一次重连
+                        //，
                         if ((null == conn || conn.isDisconnect() || conn.isTimeout())
                                 && !retryCalled
                                 && NetworkUtil.isConnected()) {
@@ -286,7 +286,7 @@ class ServerConnectionDaemon : IServerConnectionDaemon, IServerConnectionEvent, 
             return
         }
 
-        //长链接不存在了或连接时间过长,尝试重新拉起来
+        //,
         if (null == conn || conn.isDisconnect() || conn.isTimeout()) {
             if (!doConnection(CONN_DEFAULT_TOKEN)) {
                 ALog.w(TAG, "daemonRun params error ${hostUri.length}")
@@ -379,9 +379,9 @@ class ServerConnectionDaemon : IServerConnectionDaemon, IServerConnectionEvent, 
         if (fetchIndex != this.lbsFetchIndex) {
             lbsFetchIndex = fetchIndex
 
-            //lbs 变更，重启长连接
+            //lbs ，
             if (succeed && serverConn?.isConnected() == true) {
-                //重启长链接
+                //
                 stopConnection()
                 startConnection()
             }

@@ -9,21 +9,21 @@ import android.view.View
 import androidx.annotation.Nullable
 
 /**
- * web进度条
+ * web
  */
 class WebProgressView @JvmOverloads constructor(context: Context, @Nullable attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
 
     private var mPaint: Paint? = null
     private var mWidth: Int = 0
     private var mHeight: Int = 0
-    private var progress: Int = 0//加载进度
+    private var progress: Int = 0//
 
     init {
         init()
     }
 
     private fun init() {
-        //初始化画笔
+        //
         mPaint = Paint()
         mPaint?.isDither = true
         mPaint?.isAntiAlias = true
@@ -46,9 +46,9 @@ class WebProgressView @JvmOverloads constructor(context: Context, @Nullable attr
     }
 
     /**
-     * 设置新进度 重新绘制
+     *  
      *
-     * @param newProgress 新进度
+     * @param newProgress 
      */
     fun setProgress(newProgress: Int) {
         this.progress = newProgress
@@ -56,9 +56,9 @@ class WebProgressView @JvmOverloads constructor(context: Context, @Nullable attr
     }
 
     /**
-     * 设置进度条颜色
+     * 
      *
-     * @param color 色值
+     * @param color 
      */
     fun setColor(color: Int) {
         mPaint?.color = color

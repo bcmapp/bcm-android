@@ -38,7 +38,7 @@ open class BcmHeaderInterceptor : Interceptor {
         val response = chain.proceed(requestBuilder.build())
         val adjust = (System.currentTimeMillis() - duration) / 2
 
-        //保存服务器的时间截
+        //
         saveServerTimeDelta(response.headers(), adjust)
 
         return response

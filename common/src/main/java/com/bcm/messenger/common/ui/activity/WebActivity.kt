@@ -14,7 +14,7 @@ import com.bcm.messenger.common.R
 import com.bcm.messenger.common.SwipeBaseActivity
 
 /**
- * 网页显示
+ * 
  * Created by zjl on 2017/3/29.
  */
 @Route(routePath = ARouterConstants.Activity.WEB)
@@ -89,7 +89,7 @@ class WebActivity : SwipeBaseActivity() {
 
     override fun onBackPressed() {
         if (mFragment?.checkGoBack() == true) {
-            // 不做任何事
+            // 
         } else {
             super.onBackPressed()
         }

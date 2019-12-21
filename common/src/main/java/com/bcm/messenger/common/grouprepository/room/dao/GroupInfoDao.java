@@ -18,7 +18,7 @@ public interface GroupInfoDao {
 
 
     /**
-     * 拿到群信息列表数据
+     * 
      *
      * @return
      */
@@ -26,7 +26,7 @@ public interface GroupInfoDao {
     List<GroupInfo> loadAll();
 
     /**
-     * 根据 gid 查询到群信息
+     *  gid 
      *
      * @param gid
      * @return
@@ -38,7 +38,7 @@ public interface GroupInfoDao {
     List<GroupInfo> loadGroupInfoListByGid(long[] gidList);
 
     /**
-     * 根据 shareUrl 查询到群信息
+     *  shareUrl 
      *
      * @param shareUrl
      * @return
@@ -48,7 +48,7 @@ public interface GroupInfoDao {
 
 
     /**
-     * 更新群消息的密钥
+     * 
      *
      * @return
      */
@@ -56,7 +56,7 @@ public interface GroupInfoDao {
     void updateGroupKey(long gid, long keyVersion, String key);
 
     /**
-     * 更新群Info的密钥
+     * Info
      *
      * @return
      */
@@ -67,7 +67,7 @@ public interface GroupInfoDao {
     void setProfileEncrypted(long gid, boolean isEncrypted);
 
     /**
-     * 查询群数量
+     * 
      *
      * @return The number of group
      */
@@ -89,8 +89,11 @@ public interface GroupInfoDao {
     @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET share_link = :shareLink WHERE gid = :gid ")
     void updateShareShortLink(long gid, String shareLink);
 
-    @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET name = :name, iconUrl = :icon WHERE gid = :gid ")
-    void updateNameAndAvatar(long gid, String name, String icon);
+    @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET name = :name WHERE gid = :gid ")
+    void updateName(long gid, String name);
+
+    @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET iconUrl = :icon WHERE gid = :gid ")
+    void updateAvatar(long gid, String icon);
 
     @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET member_sync_state = :syncSate WHERE gid = :gid ")
     void updateMemberSyncState(long gid, @NotNull String syncSate);

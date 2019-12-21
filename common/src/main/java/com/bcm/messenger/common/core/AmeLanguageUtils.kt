@@ -13,9 +13,6 @@ import java.util.*
 private var country: String? = null
 private var language: String? = null
 
-/**
- * 获取当前选中的locale
- */
 fun getSelectedLocale(context: Context?): Locale {
     context ?: return Locale.getDefault()
     if (country == null || language == null) {
@@ -60,7 +57,7 @@ fun setApplicationLanguage(context: Context?) {
         Locale.setDefault(locale)
     }
     context.applicationContext.resources.updateConfiguration(config, dm)
-    //更新语言的时候记得也要更新到SystemUtils中
+    
     SystemUtils.setUseLanguage(locale.language ?: language)
 }
 
@@ -70,9 +67,6 @@ fun onConfigurationChanged(context: Context?) {
     setApplicationLanguage(context)
 }
 
-/**
- * 更新语言
- */
 fun updateLanguage(context: Context?, newCountry: String?, newLanguage: String?) {
     context ?: return
     SuperPreferences.setLanguageString(context, newLanguage ?: language)
@@ -80,6 +74,6 @@ fun updateLanguage(context: Context?, newCountry: String?, newLanguage: String?)
     country = newCountry ?: country
     language = newLanguage ?: language
     setApplicationLanguage(AppContextHolder.APP_CONTEXT)
-    //更新语言的时候记得也要更新到SystemUtils中
+    
     SystemUtils.setUseLanguage(newLanguage ?: language)
 }

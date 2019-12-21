@@ -49,7 +49,7 @@ public class ThreadRecord extends DisplayRecord {
     final Context context;
     private @Nullable
     final Uri snippetUri;
-    //当前消息数？
+    //？
     private final long count;
     private int unreadCount;
     private final int distributionType;
@@ -94,7 +94,7 @@ public class ThreadRecord extends DisplayRecord {
     public boolean isFailed() {
         if (isNewGroup()) {
             AmeGroupMessage msg = AmeGroupMessage.Companion.messageFromJson(getBody().getBody());
-            //系统消息SystemContent 不判断状态
+            //SystemContent 
             return !(msg.getContent() instanceof AmeGroupMessage.SystemContent)
                     && type == AmeGroupMessageDetail.SendState.SEND_FAILED.getValue();
         }

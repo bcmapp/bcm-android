@@ -17,7 +17,7 @@ import java.util.HashMap
 
 
 /**
- * 扫描区域view
+ * view
  * Created by wjh on 2018/06/06
  */
 class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) {
@@ -50,21 +50,21 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     private val mMatrix = Matrix()
     private val tempPoint = FloatArray(2)
 
-    private var mLaserMove = 0 //激光条移动距离
-    private var mLaserCurrent = 0 //激光条当前位置
-    private var mLaserToBottom = true //激光条移动方向，true：向下，false： 向上
-    private var mLaserHeight = 0 //激光条宽度
+    private var mLaserMove = 0 //
+    private var mLaserCurrent = 0 //
+    private var mLaserToBottom = true //，true：，false： 
+    private var mLaserHeight = 0 //
     private var mLaserBitmap: Bitmap? = null
 
-    var drawLaser: Boolean = false //是否描绘激光条
-    var drawCorner: Boolean = false //是否描绘四角边框
-    var drawExterior: Boolean = false //是否描绘外界
-    var drawPoint: Boolean = false //是否描绘扫描点
-    var pauseDraw: Boolean = false //是否暂停描绘
+    var drawLaser: Boolean = false //
+    var drawCorner: Boolean = false //
+    var drawExterior: Boolean = false //
+    var drawPoint: Boolean = false //
+    var pauseDraw: Boolean = false //
     var useCameraFrame: Boolean = false
 
     /**
-     * 扫码提示
+     * 
      */
     private var mScanTip: CharSequence? = null
 
@@ -101,7 +101,7 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
 
     /**
-     * 设置扫码提示
+     * 
      */
     fun setScanTip(tip: CharSequence) {
         mScanTip = tip
@@ -146,11 +146,11 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         val width = width
         val height = height
 
-        //描绘模糊区域
+        //
         drawExterior(canvas, mFrame, width, height)
-        //描绘边框
+        //
         drawCorner(canvas, mFrame)
-        //描绘文本
+        //
         drawText(canvas, mFrame)
 
         drawLaser(canvas, mFrame)
@@ -190,27 +190,27 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         }
     }
 
-    //绘制边角
+    //
     private fun drawCorner(canvas: Canvas, frame: Rect?) {
         if (frame == null || !drawCorner) {
             return
         }
         laserPaint.color = cornerColor
-        //左上
+        //
         canvas.drawRect(frame.left.toFloat(), frame.top.toFloat(), (frame.left + cornerWidth).toFloat(), (frame.top + cornerHeight).toFloat(), laserPaint)
         canvas.drawRect(frame.left.toFloat(), frame.top.toFloat(), (frame.left + cornerHeight).toFloat(), (frame.top + cornerWidth).toFloat(), laserPaint)
-        //右上
+        //
         canvas.drawRect((frame.right - cornerWidth).toFloat(), frame.top.toFloat(), frame.right.toFloat(), (frame.top + cornerHeight).toFloat(), laserPaint)
         canvas.drawRect((frame.right - cornerHeight).toFloat(), frame.top.toFloat(), frame.right.toFloat(), (frame.top + cornerWidth).toFloat(), laserPaint)
-        //左下
+        //
         canvas.drawRect(frame.left.toFloat(), (frame.bottom - cornerWidth).toFloat(), (frame.left + cornerHeight).toFloat(), frame.bottom.toFloat(), laserPaint)
         canvas.drawRect(frame.left.toFloat(), (frame.bottom - cornerHeight).toFloat(), (frame.left + cornerWidth).toFloat(), frame.bottom.toFloat(), laserPaint)
-        //右下
+        //
         canvas.drawRect((frame.right - cornerWidth).toFloat(), (frame.bottom - cornerHeight).toFloat(), frame.right.toFloat(), frame.bottom.toFloat(), laserPaint)
         canvas.drawRect((frame.right - cornerHeight).toFloat(), (frame.bottom - cornerWidth).toFloat(), frame.right.toFloat(), frame.bottom.toFloat(), laserPaint)
     }
 
-    // 绘制扫描区边框 Draw a two pixel solid black border inside the framing rect
+    //  Draw a two pixel solid black border inside the framing rect
     private fun drawFrame(canvas: Canvas, frame: Rect?) {
         if (frame == null || !drawCorner) {
             return
@@ -222,7 +222,7 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         canvas.drawRect(frame.left.toFloat(), (frame.bottom - 1).toFloat(), (frame.right + 1).toFloat(), (frame.bottom + 1).toFloat(), maskPaint)
     }
 
-    // 绘制模糊区域 Draw the exterior (i.e. outside the framing rect) darkened
+    //  Draw the exterior (i.e. outside the framing rect) darkened
     private fun drawExterior(canvas: Canvas, frame: Rect?, width: Int, height: Int) {
         if (frame == null || !drawExterior) {
             return
@@ -235,7 +235,7 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     }
 
     /**
-     * 绘制文本
+     * 
      */
     private fun drawText(canvas: Canvas, frame: Rect?) {
         val tip = mScanTip?.toString()
@@ -251,7 +251,7 @@ class ScannerView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     }
 
     /**
-     * 描绘激光扫描
+     * 
      */
     private fun drawLaser(canvas: Canvas, rect: Rect?) {
 

@@ -53,7 +53,7 @@ public class AttachmentDownloadJob extends MasterSecretJob {
     private final long partUniqueId;
     private final boolean manual;
 
-    private int mTry = 0;//当前尝试次数
+    private int mTry = 0;
 
     public AttachmentDownloadJob(Context context, long messageId, AttachmentId attachmentId, boolean manual) {
         this(context, messageId, attachmentId.getRowId(), attachmentId.getUniqueId(), manual);
@@ -143,7 +143,7 @@ public class AttachmentDownloadJob extends MasterSecretJob {
             if (masterSecret != null) {
                 SignalServiceAttachmentPointer pointer = createAttachmentPointer(masterSecret, attachment);
                 FileInfo fileInfo = retrieveAttachment(masterSecret, pointer, attachmentFile, MAX_ATTACHMENT_SIZE, ((total, progress) -> {
-                    if (total == progress) {//减少一，不作为完整下载，需要等后面数据库插入完毕后再广播通知
+                    if (total == progress) {
                         EventBus.getDefault().post(new PartProgressEvent(attachment, total, progress - 1));
                     } else {
                         EventBus.getDefault().post(new PartProgressEvent(attachment, total, progress));
@@ -193,7 +193,7 @@ public class AttachmentDownloadJob extends MasterSecretJob {
 
         try {
             AsymmetricMasterSecret asymmetricMasterSecret = MasterSecretUtil.getAsymmetricMasterSecret(context, masterSecret);
-            //id 表示附件路径
+            //
             long id = Long.parseLong(attachment.getContentLocation());
             byte[] key = MediaKey.getDecrypted(masterSecret, asymmetricMasterSecret, attachment.getContentKey());
             String relay = null;

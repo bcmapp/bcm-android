@@ -25,7 +25,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /**
- * 聊天数据信息返回
  * Created by zjl on 2018/3/14.
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_GROUP_BASE)

@@ -66,7 +66,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
 /**
- * AME系统联系人类，管理所有联系人相关信息
+ * AME，
  *
  * @author wjh
  */
@@ -143,7 +143,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     };
 
     /**
-     * 获取默认的联系人排序器
+     * 
      * @return
      */
     public static Comparator<Recipient> getRecipientComparator() {
@@ -168,7 +168,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 判断是否匹配keyword（用于搜索匹配）
+     * keyword（）
      * @param keyword
      * @param recipient
      * @return
@@ -181,11 +181,11 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 缓存删除触发的action
+     * action
      */
     public static final String RECIPIENT_CLEAR_ACTION = "com.bcm.messenger.common.database.RecipientFactory.CLEAR";
     /**
-     * 联系人profile更新触发的action
+     * profileaction
      */
     public static final String RECIPIENT_PROFILE_UPDATE = "com.bcm.messenger.common.database.RecipientFactory.PROFILE";
 
@@ -193,13 +193,13 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
 
 
     /**
-     * 将跟人信息转成json信息
+     * json
      */
     public static String toQRCode(Recipient recipient) {
         try {
             /**
-             * 版本1：个人二维码是传phone，之前传的版本号有问题，是传的应用版本号
-             * 版本2：个人二维码是传uid，现在版本号统一是独立的
+             * 1：phone，，
+             * 2：uid，
              */
             if (!recipient.isGroupRecipient()) {
                 RecipientQR qr = new RecipientQR(recipient.address.serialize());
@@ -214,7 +214,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 转成配置对象
+     * 
      */
     @Nullable
     public static RecipientSettings fromJson(@Nullable String jsonString) {
@@ -235,7 +235,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 获取本系统登录联系人信息
+     * 
      *
      * @param context
      * @param asynchronous
@@ -262,11 +262,11 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 根据address号码查询联系人信息（可能从缓存直接读取）
+     * address（）
      *
      * @param context
      * @param address
-     * @param asynchronous false表示直接从数据库加载，true表示启动后台线程加载，后续会通过回调通知
+     * @param asynchronous false，true，
      * @return
      */
     @NonNull
@@ -275,7 +275,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 根据address号码和其他配置来查询联系人信息（可能从缓存直接读取）
+     * address（）
      * @param context
      * @param address
      * @param settings
@@ -291,7 +291,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 读取当前的联系人信息（可以从缓存），并设置最新的配置信息
+     * （），
      *
      * @param context
      * @param address
@@ -305,7 +305,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 清理所有联系人缓存
+     * 
      * @param context
      */
     public static void clearCache(Context context) {
@@ -314,7 +314,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 清理自身的缓存
+     * 
      * @param context
      * @param address
      */
@@ -323,7 +323,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 新groupId 转换成 recipient
+     * groupId  recipient
      *
      * @param context
      * @param groupId
@@ -335,7 +335,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 新群id转成recipient（profile信息异步同步）
+     * idrecipient（profile）
      * @param context
      * @param groupId
      * @return
@@ -346,7 +346,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 通过群info信息转换成recipient(由于提供了groupInfo，所以会出发onModify，请注意)
+     * inforecipient(groupInfo，onModify，)
      * @param context
      * @param groupInfo
      * @return
@@ -369,11 +369,11 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     private final Set<RecipientModifiedListener> listeners = Collections.newSetFromMap(new WeakHashMap<RecipientModifiedListener, Boolean>());
 
     /**
-     * 是否需要刷新资料
+     * 
      */
     private boolean mNeedRefreshProfile = true;
     /**
-     * 是否需要刷新profile信息
+     * profile
      */
     public synchronized boolean needRefreshProfile() {
         return mNeedRefreshProfile;
@@ -384,9 +384,9 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     @NonNull
-    private final Address address;//唯一身份标识
+    private final Address address;//
     @NonNull
-    private final List<Recipient> participants = new LinkedList<>();//关联的联系人（用于群聊）
+    private final List<Recipient> participants = new LinkedList<>();//（）
     @Nullable
     private String groupTitle;
     @Nullable
@@ -415,24 +415,24 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     private String profileAvatar;
     private boolean profileSharing;
     @Nullable
-    private String localName;//本地备注名
+    private String localName;//
     @Nullable
-    private String localAvatar;//本地备注头像
+    private String localAvatar;//
 
     @NonNull
-    private PrivacyProfile privacyProfile = new PrivacyProfile();//隐私资料（昵称和头像等信息）
+    private PrivacyProfile privacyProfile = new PrivacyProfile();//（）
     @NonNull
-    private RecipientRepo.Relationship mRelationship = RecipientRepo.Relationship.STRANGER;//与联系人的关系
+    private RecipientRepo.Relationship mRelationship = RecipientRepo.Relationship.STRANGER;//
     @Nullable
     private BcmFeatureSupport featureSupport;
 
-    private boolean backgroundRequestAddFriendFlag = false;//后台请求加好友标识
+    private boolean backgroundRequestAddFriendFlag = false;//
     /**
-     *  根据address生成的唯一ID，可以用于作为adapter的StableId
+     *  addressID，adapterStableId
      */
     private long uniquenessId;
 
-    private long groupId = -1L;//群ID，只有是群组类型的时候才有值，否则是-1L
+    private long groupId = -1L;//ID，，-1L
 
     private IGroupModule mGroupProvider;
 
@@ -445,7 +445,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 构造函数
+     * 
      * @param address
      * @param stale
      * @param details
@@ -502,9 +502,9 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 设置后台任务
-     * @param current 当前详情
-     * @param future 异步处理回调
+     * 
+     * @param current 
+     * @param future 
      */
     private void updateRecipientDetails(@Nullable RecipientDetails current, @Nullable ListenableFutureTask<RecipientDetails> future) {
 
@@ -520,7 +520,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
                         Recipient.this.notifyAll();
                     }
 
-                    //对于FOLLOW关系的联系人，都判断下是否需要发送后台好友请求
+                    //FOLLOW，
                     IContactModule provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast();
                     provider.checkNeedRequestAddFriend(AppContextHolder.APP_CONTEXT, Recipient.this);
 
@@ -538,7 +538,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
             });
 
         }else {
-            //对于FOLLOW关系的联系人，都判断下是否需要发送后台好友请求
+            //FOLLOW，
             IContactModule provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast();
             provider.checkNeedRequestAddFriend(AppContextHolder.APP_CONTEXT, Recipient.this);
 
@@ -546,9 +546,9 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 更新详细信息
-     * @param details 详情
-     * @param notify 是否通知
+     * 
+     * @param details 
+     * @param notify 
      */
     void updateRecipientDetails(@Nullable RecipientDetails details, boolean notify) {
 
@@ -556,7 +556,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
             return;
         }
 
-        //有可能已经更新了一些信息，所以缓存也要更新下
+        //，
         PROVIDER.updateCache(address, this);
 
         synchronized (Recipient.this) {
@@ -594,7 +594,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 添加回调
+     * 
      * @param listener
      */
     public synchronized void addListener(RecipientModifiedListener listener) {
@@ -607,7 +607,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 删除回调
+     * 
      *
      * @param listener
      */
@@ -622,8 +622,8 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 填充联系人详细设置
-     * @param settings 配置
+     * 
+     * @param settings 
      */
     private boolean fillSettings(@Nullable RecipientSettings settings) {
         if (settings != null) {
@@ -641,7 +641,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
             this.mRelationship = RecipientRepo.Relationship.values()[settings.getRelationship()];
             this.featureSupport = settings.getFeatureSupport();
 
-            //老版本的兼容，因为老版本只有单向好友的概念，存在friend字段，而新版本是通过relationship字段表示关系，所以这里要做迁移
+            //，，friend，relationship，
             // FIXME: Remove or not
 //            if (this.mRelationship == RecipientRepo.Relationship.STRANGER && settings.isFriendFlag()) {
 //                this.mRelationship = RecipientRepo.Relationship.FOLLOW;
@@ -652,7 +652,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 判断此联系人是否自己
+     * 
      * @return
      */
     public boolean isSelf() {
@@ -660,7 +660,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 返回联系人对应的配置信息
+     * 
      * @return
      */
     @NonNull
@@ -705,7 +705,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 设置本地备注profile
+     * profile
      * @param name
      * @param avatar
      */
@@ -726,7 +726,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 设置AME系统profile信息
+     * AMEprofile
      *
      * @param profileName
      * @param profileAvatar
@@ -736,7 +736,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 设置AME系统profile信息
+     * AMEprofile
      *
      * @param profileKey
      * @param profileName
@@ -793,7 +793,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 获取名字首字
+     * 
      *
      * @return
      */
@@ -803,7 +803,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 获取名字首字母索引
+     * 
      * @return
      */
     public synchronized int getCharacterLetterIndex() {
@@ -820,7 +820,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 获取名字首字母
+     * 
      *
      * @return
      */
@@ -837,7 +837,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 获取联系人在BCM系统的头像（私密或明文， 可能为null）
+     * BCM（， null）
      * @return
      */
     @Nullable
@@ -864,7 +864,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 获取联系人在BCM系统的昵称(私密或明文，可能为null)
+     * BCM(，null)
      *
      * @return
      */
@@ -896,7 +896,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 获取当前优先展示的名称
+     * 
      * @return
      */
     @NonNull
@@ -925,7 +925,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 返回通用的avatar
+     * avatar
      * @return
      */
     @NonNull
@@ -947,7 +947,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 返回可用的隐私avatar
+     * avatar
      * @return
      */
     @Nullable
@@ -979,7 +979,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 是否允许陌生人聊天
+     * 
      * @return
      */
     public synchronized boolean isAllowStranger() {
@@ -987,7 +987,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 是否好友关系
+     * 
      * @return
      */
     public synchronized boolean isFriend() {
@@ -1210,7 +1210,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 广播所有监听者有更新（注意不要滥用，触发回调在主线程执行）
+     * （，）
      */
     public void notifyListeners() {
         Set<RecipientModifiedListener> localListeners;
@@ -1239,7 +1239,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 是否陈腐的，不新鲜的
+     * ，
      *
      * @return
      */

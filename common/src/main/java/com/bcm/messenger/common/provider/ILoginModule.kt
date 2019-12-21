@@ -88,7 +88,7 @@ interface ILoginModule: IAmeModule {
     fun serviceConnectedState(): ServiceConnectEvent.STATE
 
     /**
-     * true Pin 已经激活, false 已禁用了pin保护
+     * true Pin , false pin
      */
     fun isPinEnable(): Boolean
 

@@ -118,7 +118,7 @@ object EncryptedDatabaseMigration : IDatabaseMigration {
                 doMigrateNoteRecord()
                 it.onNext(19)
 
-                // 迁移成功，删掉旧数据库的数据
+                // ，
                 ALog.i(TAG, "Migrate success, clear old db tables")
 //                DatabaseFactory.getInstance(AppContextHolder.APP_CONTEXT).deleteAllDatabase()
 //                GroupDatabase.getInstance().clearAllTables()
@@ -136,7 +136,7 @@ object EncryptedDatabaseMigration : IDatabaseMigration {
                     .subscribe({
                         callback(it)
                     }, {
-                        // 迁移失败，把数据清掉，重启后再试
+                        // ，，
                         ALog.e(TAG, "Migrate failed", it)
 //                        UserDatabase.getDatabase().clearAllTables()
                         val returnCode = doMigrateFailed()

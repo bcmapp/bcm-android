@@ -27,7 +27,7 @@ class GlobalRinger(private val context: Context) {
         }
 
         if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL) {
-            // 手机当前是震动or静音，不播放音频
+            // or，
             return
         }
 

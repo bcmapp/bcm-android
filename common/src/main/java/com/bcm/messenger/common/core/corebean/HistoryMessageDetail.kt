@@ -20,7 +20,7 @@ class HistoryMessageDetail : NotGuard {
 
     class PswBean : NotGuard {
         /**
-         * type : 0：表示群聊加密方式；1：表示私聊加密方式
+         * type : 0：；1：
          * psw :
          */
         var type: Int = -1

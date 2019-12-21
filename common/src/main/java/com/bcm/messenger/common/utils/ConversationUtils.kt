@@ -13,7 +13,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /**
- * 聊天会话帮助类
+ * 
  * Created by wjh on 2018/8/16
  */
 object ConversationUtils {
@@ -21,7 +21,7 @@ object ConversationUtils {
     const val TAG = "ConversationUtils"
 
     /**
-     * 缓存
+     * 
      */
     private val mCache: LRUCache<Any, Any> = LRUCache(200)
 
@@ -45,7 +45,7 @@ object ConversationUtils {
     }
 
     /**
-     * 查询所有的会话状态
+     * 
      */
     fun checkConversationStatus(threadId: Long, callback: (isPin: Boolean, isAtMe: Boolean, hasNewJoinRequest: Boolean) -> Unit) {
         Observable.create(ObservableOnSubscribe<ConversationStatus> {
@@ -71,7 +71,7 @@ object ConversationUtils {
 
 
     /**
-     * 检查是否有@me
+     * @me
      */
     fun checkHasAtMe(groupMessage: AmeGroupMessageDetail?): Boolean {
         try {
@@ -84,7 +84,7 @@ object ConversationUtils {
 
 
     /**
-     * 获取会话id（异步回调）
+     * id（）
      * @param recipient
      * @param callback
      */
@@ -152,7 +152,7 @@ object ConversationUtils {
     }
 
     /**
-     * 检查是否锁定
+     * 
      * @param threadId
      * @param callback
      */
@@ -184,7 +184,7 @@ object ConversationUtils {
     }
 
     /**
-     * 设置是否锁定
+     * 
      */
     fun setPin(recipient: Recipient, isPinned: Boolean, callback: ((success: Boolean) -> Unit)? = null) {
         getThreadId(recipient) { threadId ->
@@ -193,7 +193,7 @@ object ConversationUtils {
     }
 
     /**
-     * 设置是否锁定
+     * 
      */
     @SuppressLint("CheckResult")
     fun setPin(threadId: Long, isPinned: Boolean, callback: ((success: Boolean) -> Unit)? = null) {
@@ -225,7 +225,7 @@ object ConversationUtils {
     }
 
     /**
-     * 删除会话缓存和数据库记录
+     * 
      */
     @SuppressLint("CheckResult")
     fun deleteConversation(recipient: Recipient?, threadId: Long, callback: ((success: Boolean) -> Unit)? = null) {
@@ -261,14 +261,14 @@ object ConversationUtils {
     }
 
     /**
-     * 从缓存判断是否存在会话记录
+     * 
      */
     fun checkHasConversationFromCache(recipient: Recipient): Boolean {
         return getCache(recipient.address) != null
     }
 
     /**
-     * 添加联系人与threadId的对应关系
+     * threadId
      */
     fun addConversationCache(recipient: Recipient?, threadId: Long) {
         val address = recipient?.address
@@ -278,7 +278,7 @@ object ConversationUtils {
     }
 
     /**
-     * 只删除会话相关缓存
+     * 
      */
     fun deleteConversationCache(recipient: Recipient?, threadId: Long) {
         val address = recipient?.address
@@ -315,7 +315,7 @@ object ConversationUtils {
     }
 
     /**
-     * 获取当前会话状态
+     * 
      */
     @Synchronized
     private fun getConversationStatus(threadId: Long): ConversationStatus {
@@ -330,12 +330,12 @@ object ConversationUtils {
     }
 
     /**
-     * 聊天状态
+     * 
      */
     internal class ConversationStatus(val threadId: Long) {
 
         var isPinned: Boolean = Repository.getThreadRepo().getPinTime(threadId) > 0L
-            //是否锁定
+            //
             @Synchronized set(value) {
                 if (field != value) {
                     if (value) {
@@ -348,11 +348,11 @@ object ConversationUtils {
             }
 
 
-        var isAtMe: Boolean = false//是否有人@我
+        var isAtMe: Boolean = false//@
             @Synchronized set
             @Synchronized get
 
-        var hasJoinRequest: Boolean = false//是否有入群申请
+        var hasJoinRequest: Boolean = false//
             @Synchronized set
             @Synchronized get
 

@@ -32,31 +32,31 @@ public class GroupInfo {
      * group_name
      */
     private String name;
-    //密钥
+    //
     @ColumnInfo(name = "key")
     private String currentKey;
     @ColumnInfo(name = "key_version")
     private long currentKeyVersion;
 
-    //channel 密钥
+    //channel 
     @ColumnInfo(name = "channel_key")
     private String channel_key;
     private int permission;
     private String iconUrl;
-    private int broadcast;//订阅开关
+    private int broadcast;//
     private long createTime;
-    private int status;//标识是否加密
+    private int status;//
     private long thread_id;
     private String share_url;
     private String share_content;
     private int member_count;
     private int subscriber_count;
     @ColumnInfo(name = "role")
-    private long role;//用户在群内的身份
+    private long role;//
     @ColumnInfo(name = "illegal")
     private int illegal;
     private int notification_enable;
-    //进群须知,群签名
+    //,
     private String notice_content;
     private long notice_update_time;
 
@@ -72,22 +72,22 @@ public class GroupInfo {
     @ColumnInfo(name = "share_and_owner_confirm_sig")
     private String shareSettingAndConfirmSign;
     @ColumnInfo (name = "group_info_secret")
-    private String infoSecret;//用来加密share_qr_code_setting的密码字段
+    private String infoSecret;//share_qr_code_setting
     @ColumnInfo(name = "share_enabled")
-    private Integer shareEnabled;//1 启用邀请码，0 不启用
+    private Integer shareEnabled;//1 ，0 
     @ColumnInfo(name = "share_code")
-    private String shareCode;//邀请码
+    private String shareCode;//
     @ColumnInfo(name = "share_epoch")
-    private Integer shareEpoch; //邀请码迭代编号
+    private Integer shareEpoch; //
     @ColumnInfo(name = "group_splice_name")
-    private String spliceName; // 拼接后缓存的名字
+    private String spliceName; // 
     @ColumnInfo(name = "chn_splice_name")
-    private String chnSpliceName; // 拼接后的中文缓存名字
+    private String chnSpliceName; // 
     @ColumnInfo(name = "splice_avatar")
-    private String spliceAvatar; // 拼接后的缓存头像文件路径
+    private String spliceAvatar; // 
     @ColumnInfo(name = "ephemeral_key")
     private String ephemeralKey;
-    private int version;//0表示旧群， 3表示新群
+    private int version;//0， 3
     @ColumnInfo(name = "profile_encrypted")
     private boolean profileEncrypted = false;
 
@@ -106,7 +106,7 @@ public class GroupInfo {
     public static final int SHOW_NOTICE = 0;
     public static final int NOT_SHOW_NOTICE = 1;
 
-    //置顶mid
+    //mid
     private long pinMid;
     private int hasPin;
 
@@ -507,7 +507,7 @@ public class GroupInfo {
         if (isNewGroup()) {
             return getGroupPrivateKey();
         } else  {
-            //旧群
+            //
             if (null == channelPrivateKey) {
                 genChannelKeyPair();
             }
@@ -521,7 +521,7 @@ public class GroupInfo {
         if (isNewGroup()) {
             return getGroupPublicKey();
         } else {
-            //旧群
+            //
             if (null == channelPublicKey) {
                 genChannelKeyPair();
             }
@@ -531,7 +531,7 @@ public class GroupInfo {
     }
 
     /**
-     * 根据群channel密码来派生key
+     * channelkey
      * @return
      */
     private void genChannelKeyPair() {

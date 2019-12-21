@@ -9,7 +9,7 @@ import com.bcm.messenger.utility.logger.ALog
 
 
 /**
- * 自定义线形悬浮粘性头部
+ * 
  * Created by wjh on 2019/7/4
  */
 class StickyLinearDecoration(val mCallback: StickyHeaderCallback) : RecyclerView.ItemDecoration() {
@@ -39,25 +39,25 @@ class StickyLinearDecoration(val mCallback: StickyHeaderCallback) : RecyclerView
             //ALog.d(TAG, "onDrawOver index: $i, itemIndex: $itemIndex")
 
             val headerData = mCallback.getHeaderData(itemIndex)
-            if (headerData == null) {//当headerData是空的时候，不绘制
+            if (headerData == null) {//headerData，
                 ALog.d(TAG, "onDrawOver index: $i, itemIndex: $itemIndex, headerData is null")
                 continue
             }
             val left = parent.paddingStart
             val right = parent.width - parent.paddingEnd
 
-            //屏幕上第一个可见的 ItemView 时，i == 0;
+            // ItemView ，i == 0;
             if (i == 0) {
-                //当 ItemView 是屏幕上第一个可见的View 时，不管它是不是组内第一个View
-                //它都需要绘制它对应的 StickyHeader。
+                // ItemView View ，View
+                // StickyHeader。
 
-                // 还要判断当前的 ItemView 是不是它组内的最后一个 View
+                //  ItemView  View
                 var top = parent.paddingTop
                 if (headerData.isLastView) {
                     val suggestTop = itemView.bottom - headerData.height
-                    // 当 ItemView 与 Header 底部平齐的时候，判断 Header 的顶部是否小于
-                    // parent 顶部内容开始的位置，如果小于则对 Header.top 进行位置更新，
-                    //否则将继续保持吸附在 parent 的顶部
+                    //  ItemView  Header ， Header 
+                    // parent ， Header.top ，
+                    // parent 
                     if (suggestTop < top) {
                         top = suggestTop
                     }
@@ -69,7 +69,7 @@ class StickyLinearDecoration(val mCallback: StickyHeaderCallback) : RecyclerView
 
             } else {
 
-                //只有组内的第一个ItemView之上才绘制
+                //ItemView
                 if (headerData.isFirstView) {
                     val top = itemView.top - headerData.height
                     val bottom = itemView.top
@@ -85,7 +85,7 @@ class StickyLinearDecoration(val mCallback: StickyHeaderCallback) : RecyclerView
         val position = parent.getChildAdapterPosition(view)
         val headerData = mCallback.getHeaderData(position)
         if (headerData != null) {
-            //如果是组内的第一个则将间距撑开为一个Header的高度，或者就是普通的分割线高度
+            //Header，
             if (headerData.isFirstView) {
                 outRect.top = headerData.height
             } else {
@@ -97,7 +97,7 @@ class StickyLinearDecoration(val mCallback: StickyHeaderCallback) : RecyclerView
     }
 
     /**
-     * 画header逻辑
+     * header
      */
     private fun drawHeader(canvas: Canvas?, headerData: StickyHeaderData, left: Int, top: Int, right: Int, bottom: Int) {
         canvas?.apply {

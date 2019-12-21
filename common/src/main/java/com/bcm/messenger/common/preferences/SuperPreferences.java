@@ -9,11 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * 超级preferences,退出登录不清除该数据
- *
- * @author ling
- */
+
 public class SuperPreferences {
 
     public static final String LOGIN_PROFILE_PREFERENCES = "login_profile_preferences";
@@ -32,9 +28,7 @@ public class SuperPreferences {
 
     public static final String METRICS = "metrics";
 
-    /**
-     * 判断是否有备份过账号信息
-     */
+    
     private static final String ACCOUNT_BACKUP_PREF = "pref_account_backup";
 
 
@@ -42,9 +36,7 @@ public class SuperPreferences {
         return context.getSharedPreferences(table, Context.MODE_PRIVATE);
     }
 
-    /**
-     * 查询全部账号
-     */
+    
     public static List<String> getAccountsProfileIntoSet(Context context) {
         String listString = context.getSharedPreferences(LOGIN_PROFILE_BACKUP_MODE_PREFERENCES, Context.MODE_PRIVATE).getString(LOGIN_PROFILE_SET_V2, "");
         if (!listString.isEmpty()) {
@@ -54,9 +46,7 @@ public class SuperPreferences {
         return new LinkedList<String>();
     }
 
-    /**
-     * 查询全部账号
-     */
+   
     public static List<String> getAccountsProfileIntoSetV1(Context context) {
         String listString = context.getSharedPreferences(LOGIN_PROFILE_BACKUP_MODE_PREFERENCES, Context.MODE_PRIVATE).getString(LOGIN_PROFILE_SET, "");
         if (!listString.isEmpty()) {
@@ -66,81 +56,40 @@ public class SuperPreferences {
         return new LinkedList<String>();
     }
 
-    /**
-     * 清理v1的账号数据
-     */
+   
     public static void clearAccountsV1Profile(Context context) {
         context.getSharedPreferences(LOGIN_PROFILE_BACKUP_MODE_PREFERENCES, Context.MODE_PRIVATE).edit().remove(LOGIN_PROFILE_SET).apply();
     }
 
-    /**
-     * 清理v2的账号数据
-     */
+    
     public static void clearAccountsV2Profile(Context context) {
         context.getSharedPreferences(LOGIN_PROFILE_BACKUP_MODE_PREFERENCES, Context.MODE_PRIVATE).edit().remove(LOGIN_PROFILE_SET_V2).apply();
 
     }
 
-    /**
-     * 设置账户(key + public key)是否备份
-     *
-     * @param context
-     * @param done
-     */
+    
     public static void setAccountBackupWithPublicKey(Context context, String publicKey, boolean done) {
         setBooleanPreference(context, ACCOUNT_BACKUP_PREF + publicKey, done);
     }
 
-    /**
-     * 读取账户(key public key)是否有备份过
-     * x
-     *
-     * @param context
-     */
     public static boolean isAccountBackupWithPublicKey(Context context, String publicKey) {
         return getBooleanPreference(context, ACCOUNT_BACKUP_PREF + publicKey, false);
     }
 
 
-    /**
-     * 设置账户(key + public key)是否备份
-     *
-     * @param context
-     * @param backup json format
-     */
     public static void setAccountBackupWithPublicKey2(Context context, String publicKey, String backup) {
         setAccountBackupWithPublicKey(context, publicKey, true);
         context.getSharedPreferences(LOGIN_PROFILE_PREFERENCES, 0).edit().putString(ACCOUNT_BACKUP_PREF + publicKey+"2", backup).apply();
     }
     
-    /**
-     * 读取账户(key public key)是否有备份过
-     * x
-     *
-     * @param context
-     * @return json format
-     */
     public static String getAccountBackupWithPublicKey2(Context context, String publicKey) {
         return context.getSharedPreferences(LOGIN_PROFILE_PREFERENCES, 0).getString(ACCOUNT_BACKUP_PREF + publicKey+"2", "");
     }
 
-
-    /**
-     * 设置备份账户是否显示提示红点
-     *
-     * @param context
-     * @param done
-     */
     public static void setAccountBackupRedPoint(Context context, String publicKey, boolean done) {
         setBooleanPreference(context, ACCOUNT_BACKUP_PREF + "_red_point" + publicKey, done);
     }
 
-    /**
-     * 读取账户是否显示备份红点
-     * x
-     *
-     * @param context
-     */
     public static boolean isAccountBackupWithRedPoint(Context context, String publicKey) {
         return getBooleanPreference(context, ACCOUNT_BACKUP_PREF + "_red_point" + publicKey, false);
     }

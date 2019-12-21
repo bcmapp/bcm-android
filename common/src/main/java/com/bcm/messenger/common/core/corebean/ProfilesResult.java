@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 
 
 /**
- * 用于建群时候查询成员idkey的返回结果类
+ * idkey
  */
 public class ProfilesResult implements NotGuard {
 

@@ -32,7 +32,7 @@ import java.io.FileInputStream
 import java.io.InputStream
 
 /**
- * 群消息管理器
+ * 
  */
 object MessageDataManager {
     private const val TAG = "MessageDataManager"
@@ -45,15 +45,15 @@ object MessageDataManager {
         return AMESelfData.isLogin
     }
 
-    // 设置为该群消息为已读状态
+    // 
     fun setGroupMessageRead(gid: Long) {
         getDao().setMessageRead(gid)
     }
 
-    //更新消息的附件 uri，用来存储本地地址
+    // uri，
     fun updateMessageAttachmentUri(gid: Long, indexId: Long, fileInfo: FileInfo) {
         if (gid <= 0) {
-            //notice 对于转发的历史记录消息，是没有gid，所以不处理
+            //notice ，gid，
             return
         }
         val message = getDao().queryOneMessageByIndex(gid, indexId) ?: return
@@ -106,7 +106,7 @@ object MessageDataManager {
 
 
     /*
-    * 清空某个群消息
+    * 
     * */
     fun deleteMessagesByGid(gid: Long) {
         val list = getDao().loadGroupMessageByGid(gid)
@@ -119,7 +119,7 @@ object MessageDataManager {
             }
             getDao().updateMessages(list)
 
-            //如果会话还存在，刷新会话
+            //，
             if (Repository.getThreadRepo().getThreadIdIfExist(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid)) > 0) {
                 notifyThreadUpdate(gid)
             }
@@ -127,9 +127,9 @@ object MessageDataManager {
     }
 
     /**
-     * 删除指定的群消息
+     * 
      *
-     * @param messageList 要删除的群消息
+     * @param messageList 
      */
     fun deleteMessages(gid: Long, messageList: List<GroupMessage>) {
         for (msg in messageList) {
@@ -143,11 +143,11 @@ object MessageDataManager {
     }
 
     /**
-     * 更新消息发送状态
+     * 
      * @param gid
      * @param indexId
      * @param send_state   SEND_SUCCESS = 1; SENDING = 2; SEND_FAILURE = 10000;
-     * @return -1 消息不存在 , 0:正常
+     * @return -1  , 0:
      */
     fun updateMessageSendStateByIndex(gid: Long, indexId: Long, send_state: Int): Int {
         val message = queryOneMessage(gid, indexId, false)
@@ -166,11 +166,11 @@ object MessageDataManager {
     }
 
     /**
-     * 更新消息发送的加密模式
+     * 
      * @param gid
      * @param indexId
-     * @param mode Mode.CHAT_MODE 成员聊天模式, Mode.SUB_MODE channel模式
-     * @return -1 消息不存在 , 0:正常
+     * @param mode Mode.CHAT_MODE , Mode.SUB_MODE channel
+     * @return -1  , 0:
      */
     fun updateMessageEncryptMode(gid: Long, indexId: Long, keyVersion:Long): Int {
         val message = queryOneMessage(gid, indexId, false)
@@ -186,14 +186,14 @@ object MessageDataManager {
     }
 
     /**
-     * 更新发送消息状态
+     * 
      */
     fun updateMessageSendResult(gid: Long, indexId: Long, mid: Long, createTime: Long, iv: String, text: String, sendState: Int) {
         val message = queryOneMessage(gid, indexId, false)
         if (message != null) {
             message.mid = mid
             message.create_time = createTime
-            // 增加身份标示向量的添加
+            // 
             message.identityIvString = iv
             message.text = text
             message.send_state = sendState
@@ -209,8 +209,8 @@ object MessageDataManager {
 
 
     /**
-     * 根据 indexId 查询一条消息
-     * 用于上层拉取更新发送状态
+     *  indexId 
+     * 
      * @param gid
      * @param indexId
      */
@@ -219,8 +219,8 @@ object MessageDataManager {
     }
 
     /**
-     * 根据 indexId 查询一条可见消息
-     * 用于上层拉取更新发送状态
+     *  indexId 
+     * 
      * @param gid
      * @param indexId
      */
@@ -229,30 +229,30 @@ object MessageDataManager {
     }
 
     /**
-     * 根据mid 查询一条消息
-     * 用于上层回复类型消息读取媒体失败的时候从数据查询原生的一条
+     * mid 
+     * 
      */
     fun fetchOneMessageByGidAndMid(gid: Long, mid: Long): AmeGroupMessageDetail? {
         return GroupMessageTransform.transformToModel(getDao().queryOneMessageByMid(gid, mid))
     }
 
     /**
-     * 根据mid 查询一条已经被确认要显示的消息
-     * 用于上层回复类型消息读取媒体失败的时候从数据查询原生的一条
+     * mid 
+     * 
      */
     fun fetchOneMessageByMidConfirm(gid: Long, mid: Long): AmeGroupMessageDetail? {
         return GroupMessageTransform.transformToModel(getDao().queryOneMessageByMidConfirm(gid, mid))
     }
 
     /**
-     * 分页拉取消息
+     * 
      * @param gid
-     * @param indexId 上次拉取消息位置，为-1时表示第一次拉取消息
-     * @param count 默认拉取的消息条数
-     * @return 拉取到的消息列表
+     * @param indexId ，-1
+     * @param count 
+     * @return 
      */
     fun fetchMessageByGidAndIndexId(gid: Long, indexId: Long, count: Int): List<AmeGroupMessageDetail> {
-        if (indexId == -1L) {//拉取最新的消息
+        if (indexId == -1L) {//
             val lastId = getDao().queryMaxIndexId(gid)
             return GroupMessageTransform.transformToModelList(getDao().loadMessagesByGidAndIndexId(gid, lastId + 1, count))
         }
@@ -261,12 +261,12 @@ object MessageDataManager {
 
 
     /**
-     * 分页拉取图片或视频消息消息
+     * 
      * @param gid
-     * @param formIndexId 上次拉取消息位置，为-1时表示第一次拉取消息
-     * @param count 默认拉取的消息条数
-     * @param isBackWord 是否是向后拉
-     * @return 拉取到的消息列表
+     * @param formIndexId ，-1
+     * @param count 
+     * @param isBackWord 
+     * @return 
      */
     fun fetchImageOrVideoMessage(gid: Long, formIndexId: Long, count: Int, isBackWord: Boolean): List<AmeGroupMessageDetail> {
         if (isBackWord) {
@@ -277,12 +277,12 @@ object MessageDataManager {
     }
 
     /**
-     * 分页拉取文字消息
+     * 
      * @param gid
-     * @param formIndexId 上次拉取消息位置，为-1时表示第一次拉取消息
-     * @param count 默认拉取的消息条数
-     * @param isBackWord 是否是向后拉
-     * @return 拉取到的消息列表
+     * @param formIndexId ，-1
+     * @param count 
+     * @param isBackWord 
+     * @return 
      */
     fun fetchTextMessage(gid: Long, formIndexId: Long, count: Int, isBackWord: Boolean): List<AmeGroupMessageDetail> {
         return if (isBackWord) {
@@ -294,10 +294,10 @@ object MessageDataManager {
 
 
     /**
-     * 拉取所有文件消息
+     * 
      *
-     * @param gid 群ID
-     * @return 查询到的所有文件消息
+     * @param gid ID
+     * @return 
      */
     fun fetchFileMessages(gid: Long): List<AmeGroupMessageDetail> {
         return GroupMessageTransform.transformToModelList(getDao().loadAllFileMessages(gid))
@@ -305,20 +305,20 @@ object MessageDataManager {
 
 
     /**
-     * 拉取所有链接消息
+     * 
      *
-     * @param gid 群ID
-     * @return 查询到的所有链接消息
+     * @param gid ID
+     * @return 
      */
     fun fetchLinkMessages(gid: Long): List<AmeGroupMessageDetail> {
         return GroupMessageTransform.transformToModelList(getDao().loadAllLinkMessages(gid))
     }
 
     /**
-     * 拉取所有已经下载到本地的群图片和视频
+     * 
      *
-     * @param gid 群ID
-     * @return 查询到的所有图片和视频
+     * @param gid ID
+     * @return 
      */
     fun fetchMediaMessages(gid: Long): List<AmeGroupMessageDetail> {
         return GroupMessageTransform.transformToModelList(getDao().loadAllImageOrVideoMessages(gid))
@@ -326,7 +326,7 @@ object MessageDataManager {
 
 
     /**
-     * 查询多媒体消息存储占用情况
+     * 
      */
     fun fetchMediaMessageStorageSize(gid: Long): ConversationStorage {
         val list = GroupMessageTransform.transformToModelList(getDao().loadAllMediaMessages(gid))
@@ -349,7 +349,7 @@ object MessageDataManager {
     }
 
     /**
-     * 删除所有多媒体消息
+     * 
      */
     fun deleteAllMediaMessage(gid: Long, type: Int) {
         val list = getDao().loadAllMediaMessages(gid)
@@ -373,16 +373,16 @@ object MessageDataManager {
     }
 
     /**
-     * 拉去从fromMid到（包含）toMid的消息列表，主要用于回复定位
+     * fromMid（）toMid，
      */
     fun fetchMessageFromToMid(gid: Long, fromMid: Long, toMid: Long): List<AmeGroupMessageDetail> {
         return GroupMessageTransform.transformToModelList(getDao().loadMessageFromTo(gid, fromMid, toMid))
     }
 
     /**
-     * 拉取最后一条消息，用于会话列表展示
+     * ，
      * @param gid
-     * @return 最新的一条消息
+     * @return 
      */
     fun fetchLastMessage(gid: Long): GroupMessage? {
         return getDao().queryLastMessageByGid(gid)
@@ -418,7 +418,7 @@ object MessageDataManager {
         val indexId = indexId
     }
 
-    //发送时插入消息
+    //
     fun insertSendMessage(sendMessage: GroupMessage, visible: Boolean = true): Long {
         if (!visible) {
             sendMessage.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
@@ -428,7 +428,7 @@ object MessageDataManager {
         sendMessage.id = indexId
         notifyThreadUpdate(sendMessage.gid)
 
-        //只有确认的消息才广播到UI层展示
+        //UI
         if (sendMessage.is_confirm == GroupMessage.CONFIRM_MESSAGE) {
             val messageDetail = GroupMessageTransform.transformToModel(sendMessage)
             messageDetail?.let {
@@ -439,9 +439,9 @@ object MessageDataManager {
     }
 
     /**
-     * 插入一条消息，用于收到的推送消息插入
+     * ，
      * @param message
-     * @return 0：正常插入信息，-2:需要主动拉消息, -3: 重复消息
+     * @return 0：，-2:, -3: 
      */
     fun insertReceiveMessage(message: GroupMessage): InsertMessageResult {
         checkMessageVisibleState(message)
@@ -458,18 +458,18 @@ object MessageDataManager {
         } else if (message.content_type.toLong() == AmeGroupMessage.SYSTEM_INFO) {
             message.read_state = GroupMessage.READ_STATE_READ
 
-            //屏蔽退群消息
+            //
             val msg = AmeGroupMessage.messageFromJson(message.text)
             val content = msg.content as AmeGroupMessage.SystemContent
             if (content.tipType == AmeGroupMessage.SystemContent.TIP_KICK) {
                 val groupInfo = GroupInfoDataManager.queryOneGroupInfo(message.gid)
-                //只有群主和退群本人能看到退群消息
+                //
                 if (AMESelfData.uid != groupInfo?.owner && !content.theOperator.any { AMESelfData.uid == it }) {
                     message.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
                 }
             } else if(content.tipType == AmeGroupMessage.SystemContent.TIP_SUBSCRIBE
                     || content.tipType == AmeGroupMessage.SystemContent.TIP_UNSUBSCRIBE) {
-                //订阅消息不可见
+                //
                 message.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
             }
         } else if (message.content_type.toLong() == AmeGroupMessage.GROUP_SHARE_SETTING_REFRESH) {
@@ -482,7 +482,7 @@ object MessageDataManager {
         }
 
         if (message.is_confirm == GroupMessage.CONFIRM_MESSAGE) {
-            //初始化 ThreadId
+            // ThreadId
             val groupRecipient = Recipient.from(AppContextHolder.APP_CONTEXT,
                     GroupUtil.addressFromGid(message.gid),
                     false)
@@ -503,7 +503,7 @@ object MessageDataManager {
                     notifyThreadUpdate(message.gid)
                 return InsertMessageResult(INSERT_SUCCESS, message.gid, -1, -1, indexId)
             } else {
-                //生成占位消息，后续拉回来再更新占位消息
+                //，
                 var i = 1
                 do {
                     val unconfirmedMessage = GroupMessage()
@@ -521,7 +521,7 @@ object MessageDataManager {
                     notifyThreadUpdate(message.gid)
                 }
                 EventBus.getDefault().post(GroupMessageMissedEvent(message.gid, savedMaxMid, message.mid-1))
-                //需要主动拉断层信息,拉到以后更新消息确认状态
+                //,
                 return InsertMessageResult(INSERT_SUCCESS, message.gid, savedMaxMid, message.mid, indexId)
             }
         } else {
@@ -535,7 +535,7 @@ object MessageDataManager {
                     if (isNotify) {
                         notifyThreadUpdate(message.gid)
                     }
-                    //只有确认的消息才广播到UI层展示
+                    //UI
                     GroupMessageTransform.transformToModel(message)?.let {
                         EventBus.getDefault().post(MessageEvent(message.gid, message.id, MessageEvent.EventType.RECEIVE_MESSAGE_INSERT, listOf(it)))
                     }
@@ -545,7 +545,7 @@ object MessageDataManager {
                 }
                 return InsertMessageResult(UPDATE_SUCCESS, message.gid, -1, -1, message.id)
             }
-            //重复消息丢弃
+            //
             return InsertMessageResult(REPLAY_MESSAGE, message.gid, -1, -1, -1)
 
         }
@@ -554,7 +554,7 @@ object MessageDataManager {
 
 
     /**
-     * 拉取消息回来插入
+     * 
      * @param message GroupMessage
      */
     fun insertFetchedMessages(message: GroupMessage) {
@@ -568,7 +568,7 @@ object MessageDataManager {
     }
 
     /**
-     * 拉取中的消息标识占位状态
+     * 
      * @param gid Long
      * @param fromMid Long
      * @param toMid Long
@@ -583,7 +583,7 @@ object MessageDataManager {
                 .forEach { list ->
                     val listExist = getDao().queryMessageByMidList(gid, list.toLongArray()).map { it.mid }
                     for (j in list) {
-                        //已经在数据库中存在了，不用插入
+                        //，
                         if (listExist.contains(j)) {
                             continue
                         }
@@ -599,13 +599,13 @@ object MessageDataManager {
     }
 
     /**
-     * 获取最大的mid
+     * mid
      */
     fun queryMixMid(gid: Long): Long {
         return getDao().queryMaxMid(gid)
     }
 
-    //查询群内的某一条消息，一般用来更新该消息状态位
+    //，
     fun queryOneMessage(gid: Long, id: Long, hasMid: Boolean): GroupMessage? {
         if (hasMid) {
             val message = getDao().queryOneMessageByMid(gid, id)
@@ -629,7 +629,7 @@ object MessageDataManager {
         return GroupMessageTransform.transformToModel(message)
     }
 
-    //查询第一条未读消息
+    //
     fun queryMinReadMessage(gid: Long): GroupMessage? {
         val groupList = getDao().queryMinReadMessage(gid, 1)
         if (groupList != null && groupList.size > 0) {
@@ -639,7 +639,7 @@ object MessageDataManager {
     }
 
 
-    //查询下拉数据
+    //
     fun loadMessagesByGidAfter(gid: Long, indexId: Long, count: Int): List<AmeGroupMessageDetail> {
         return if (count == -1) {
             GroupMessageTransform.transformToModelList(getDao().loadMessagesByGidAndIndexIdAfter(gid, indexId))
@@ -648,7 +648,7 @@ object MessageDataManager {
         }
     }
 
-    //拉取某个时间段，某个用户发过的 text 消息
+    //， text 
     fun loadMessagesBySenderAndPeriod(gid: Long, uid: String, startTime: Long, endTime: Long):List<GroupMessage>{
         return getDao().fetchMessagesBySenderAndPeriod(gid,uid,startTime,endTime)
     }
@@ -678,14 +678,14 @@ object MessageDataManager {
     }
 
     /**
-     * 向群发送一条本地显示的通知
+     * 
      */
     fun systemNotice(groupId: Long, content: AmeGroupMessage.SystemContent, read: Boolean = true, visible:Boolean = true): Long {
         ALog.d(TAG, "systemNotice groupId: $groupId, read: $read, type: ${content.tipType}")
         val messageDetail = AmeGroupMessageDetail().apply {
             gid = groupId
             sendTime = AmeTimeUtil.getMessageSendTime()
-            sendState = AmeGroupMessageDetail.SendState.SEND_FAILED //本地显示的消息，不需要发送，标记为失败状态
+            sendState = AmeGroupMessageDetail.SendState.SEND_FAILED //，，
             senderId = AMESelfData.uid
             isSendByMe = true
             attachmentUri = ""

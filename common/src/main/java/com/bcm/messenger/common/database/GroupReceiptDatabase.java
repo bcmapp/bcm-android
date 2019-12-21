@@ -36,9 +36,7 @@ public class GroupReceiptDatabase extends Database {
             "CREATE INDEX IF NOT EXISTS group_receipt_mms_id_index ON " + TABLE_NAME + " (" + MMS_ID + ");",
     };
 
-    /**
-     * 删除表的sql语句
-     */
+    
     public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
     public GroupReceiptDatabase(Context context, SQLiteOpenHelper databaseHelper) {
@@ -90,10 +88,7 @@ public class GroupReceiptDatabase extends Database {
         db.delete(TABLE_NAME, MMS_ID + " = ?", new String[]{String.valueOf(mmsId)});
     }
 
-    /**
-     * 删除多个群组消息
-     * @param mmsIds
-     */
+    
     void deleteRowsForMessages(long... mmsIds) {
         StringBuilder builder = new StringBuilder();
         for(int i = 0; i < mmsIds.length; i++) {

@@ -98,9 +98,9 @@ class FileBrowserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
         PermissionUtil.checkStorage(v.context) {
             if (it) {
                 mediaBrowseData?.let {
-                    if (it.msgSource is AmeGroupMessageDetail) {  //群聊
+                    if (it.msgSource is AmeGroupMessageDetail) {  //
                         groupItemClick(v, it.msgSource)
-                    } else if (it.msgSource is MessageRecord) {  //私聊
+                    } else if (it.msgSource is MessageRecord) {  //
                         privateItemClick(v, it.msgSource)
                     }
                 }

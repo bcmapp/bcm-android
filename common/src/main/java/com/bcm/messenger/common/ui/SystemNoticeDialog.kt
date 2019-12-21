@@ -19,14 +19,14 @@ import com.bcm.route.api.BcmRouter
 import java.lang.ref.WeakReference
 
 /**
- * 系统推送通知dialog
+ * dialog
  * Created by wjh on 2018/10/29
  */
 object SystemNoticeDialog {
 
     private val TAG = SystemNoticeDialog::class.java.simpleName
 
-    //上一次展示的dialog，防止各种特殊情况，所以先持有，用弱饮用，防止内存泄漏
+    //dialog，，，，
     private var sLastDialogRef: WeakReference<Dialog>? = null
 
     internal class SystemNoticeDialog(context: Context, theme: Int = R.style.CommonLoadingStyle) : Dialog(context, theme) {
@@ -77,7 +77,7 @@ object SystemNoticeDialog {
     }
 
     /**
-     * 展示系统通知弹窗
+     * 
      */
     fun show(context: Context, alert: AmePushProcess.SystemNotifyData.WebAlertData) {
 
@@ -97,7 +97,7 @@ object SystemNoticeDialog {
     }
 
     /**
-     * 展示系统通知弹窗
+     * 
      */
     fun show(context: Context, alert: AmePushProcess.SystemNotifyData.TextAlertData) {
         try {
@@ -106,7 +106,7 @@ object SystemNoticeDialog {
             config.content = alert.content
             if (alert.buttons == null || alert.buttons.isEmpty()) {
                 config.okTitle = context.getString(R.string.common_popup_ok)
-            } else {  //暂时只支持一个按钮的点击
+            } else {  //
                 config.cancelTitle = context.getString(R.string.common_cancel)
                 config.okTitle = context.getString(R.string.common_confirm_detail)
                 config.ok = {

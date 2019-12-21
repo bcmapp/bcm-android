@@ -14,7 +14,7 @@ import com.bcm.messenger.common.utils.*
 
 
 /*
- * 快速定位导航栏
+ * 
  * Created by wjh, 2018-02-28
  */
 class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
@@ -34,10 +34,10 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
 
     private var mListener: OnTouchingLetterChangedListener? = null
 
-    private val mTextRect: Rect = Rect() //用于计算导航字母的尺寸
+    private val mTextRect: Rect = Rect() //
 
-    private var mRelativeRecyclerView: RecyclerView? = null     //对应的列表view
-    private var mFastScrollHelper: FastScrollHelper? = null     //对应的快速导航帮助类
+    private var mRelativeRecyclerView: RecyclerView? = null     //view
+    private var mFastScrollHelper: FastScrollHelper? = null     //
     private var mRecyclerViewScrollListener: RecyclerView.OnScrollListener? = null
 
     private var mHintSize = 0f
@@ -47,7 +47,7 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     private var mHintRect: RectF = RectF()
     private var mTouchWidth = 22.dp2Px()
 
-    private var mFromTouching = false //表示是否因为touch导致的字符选择
+    private var mFromTouching = false //touch
     private var mNoTouchRunnable = Runnable {
         mFromTouching = false
         invalidate()
@@ -83,7 +83,7 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
                 return
             }
         }
-        if (mLetterList.isEmpty()) {    //空的不绘制
+        if (mLetterList.isEmpty()) {    //
             return
         }
         if (height == 0) {
@@ -94,13 +94,13 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
         }
         mPaint.typeface = Typeface.DEFAULT_BOLD
 
-        val sh = height - mHintSize // 获取对应一个字母栏的高度
-        val sw = mTouchWidth  // 获取对应字母栏的宽度
+        val sh = height - mHintSize // 
+        val sw = mTouchWidth  // 
         val halfW = sw / 2.0f
         val halfHintSize = mHintSize / 2.0f
 
-        var singleHeight = sh / mLetterList.size   // 获取每一个字母的高度
-        singleHeight -= singleHeight / mLetterList.size //解决最后一个字母的选中状态时候的圆显示不全
+        var singleHeight = sh / mLetterList.size   // 
+        singleHeight -= singleHeight / mLetterList.size //
         val radius = if (singleHeight < sw) {
             singleHeight / 2.0f
         } else {
@@ -111,11 +111,11 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
             val letterText = mLetterList[i]
             mPaint.getTextBounds(letterText, 0, letterText.length, mTextRect)
 
-            // x坐标等于中间-字符串宽度的一半.
+            // x-.
             val xPos = width - halfW - mTextRect.width() / 2.0f
             val yPos = singleHeight * i + singleHeight + halfHintSize
 
-            // 选中的状态
+            // 
             if (i == mSelectedIndex) {
 
                 val cx = width - halfW
@@ -124,7 +124,7 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
                 canvas.drawCircle(cx, cy, radius, mPaint)
 
                 if (mFromTouching) {
-                    //描绘hint
+                    //hint
                     mHintRect.left = 0.0f
                     mHintRect.top = cy - halfHintSize
                     mHintRect.right = mHintSize
@@ -152,12 +152,12 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         val lastIndex = mSelectedIndex
         val listener = mListener
-        // 点击y坐标所占总高度的比例*字符数组的长度就等于sideList点击中的个数.
+        // y*sideList.
         val touchY = (event.y - mHintSize / 2.0f) / (height - mHintSize)
         ALog.i(TAG, "dispatchTouchEvent touchY: $touchY")
         val index = ( touchY * mLetterList.size).toInt()
         ALog.i(TAG, "dispatchTouchEvent index: $index")
-        if (event.x >= (width - mTouchWidth - 5.dp2Px()) && event.x <= width) { //只有点击在可点击的区域才可触发定位
+        if (event.x >= (width - mTouchWidth - 5.dp2Px()) && event.x <= width) { //
             when (event.action) {
                 MotionEvent.ACTION_UP -> {
                 }
@@ -168,7 +168,7 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
                         pos = listener?.onLetterChanged(mLetterList[index]) ?: -1
                     }
                     ALog.i(TAG, "dispatchTouchEvent pos: $pos, selectIndex: $index")
-                    if (pos >= 0) {// 如果match，标示选中某个side字符，应该黑圈显示，同时应该延长展示时间
+                    if (pos >= 0) {// match，side，，
                         mSelectedIndex = index
                         showHint(true, 0)
                         listener?.onLetterScroll(pos)
@@ -195,7 +195,7 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
                 val view = mRelativeRecyclerView ?: return
                 if (!isDragging && view.layoutManager is LinearLayoutManager) {
                     val layoutManager = view.layoutManager as LinearLayoutManager
-                    //选中当前列表显示的第一个item对应的字母
+                    //item
                     selectLetter(mFastScrollHelper?.findSideLetter(layoutManager.findFirstVisibleItemPosition())
                             ?: return)
                 }
@@ -219,21 +219,21 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     }
 
     /**
-     * 展示
+     * 
      */
     fun show() {
         this.visibility = VISIBLE
     }
 
     /**
-     * 隐藏
+     * 
      */
     fun hide() {
         this.visibility = INVISIBLE
     }
 
     /**
-     * 设置快速导航相关帮助类
+     * 
      */
     fun setFastScrollHelper(recyclerView: RecyclerView, scrollHelper: FastScrollHelper) {
         if (mRelativeRecyclerView !== recyclerView) {
@@ -247,7 +247,7 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     }
 
     /**
-     * 设置触摸首字母变更回调
+     * 
      * @param listener
      * @return
      */
@@ -257,7 +257,7 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     }
 
     /**
-     * 设置导航字母
+     * 
      */
     fun setLetterList(list: List<String>): Sidebar {
         mLetterList = list
@@ -265,7 +265,7 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     }
 
     /**
-     * 设置文本尺寸
+     * 
      * @param textSize
      * @return
      */
@@ -275,7 +275,7 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     }
 
     /**
-     * 设置文本字体颜色和选中时颜色
+     * 
      * @param normalColor
      * @param selectedColor
      * @return
@@ -287,7 +287,7 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     }
 
     /**
-     * 选中指定的字符
+     * 
      * @param target
      */
     fun selectLetter(target: String?) {
@@ -301,7 +301,7 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     }
 
     /**
-     * 展示选中提示
+     * 
      */
     private fun showHint(show: Boolean, delay: Long) {
         removeCallbacks(mNoTouchRunnable)
@@ -314,7 +314,7 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     }
 
     /**
-     * 触摸触发的字符改变回调
+     * 
      */
     interface OnTouchingLetterChangedListener {
         fun onLetterChanged(letter: String): Int
@@ -322,21 +322,21 @@ class Sidebar @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     }
 
     /**
-     * 快速定位帮助类
+     * 
      */
     interface FastScrollHelper {
         /**
-         * 找出指定位置的字母
+         * 
          */
-        fun findSideLetter(position: Int): String?       //根据位置查找指定的字母
+        fun findSideLetter(position: Int): String?       //
 
         /**
-         * 查询指定字母的位置，如果不存在则应该返回-1
+         * ，-1
          */
-        fun findSidePosition(letter: String): Int       //根据字母查找指定的位置
+        fun findSidePosition(letter: String): Int       //
 
         /**
-         * 是否展示sidebar
+         * sidebar
          */
         fun showSideBar(): Boolean
     }

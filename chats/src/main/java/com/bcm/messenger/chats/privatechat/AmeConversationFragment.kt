@@ -34,7 +34,7 @@ import kotlinx.android.synthetic.main.chats_conversation_fragment.*
 import java.util.*
 
 /**
- * 私聊对应的fragment
+ * 
  */
 class AmeConversationFragment : Fragment(), RecipientModifiedListener {
 

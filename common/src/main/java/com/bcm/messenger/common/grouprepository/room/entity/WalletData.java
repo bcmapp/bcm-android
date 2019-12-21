@@ -5,7 +5,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 /**
- * BCM专属钱包记录表
+ * BCM
  * Created by wjh on 2018/8/3
  */
 @Entity(tableName = WalletData.TABLE_NAME)
@@ -21,26 +21,26 @@ public class WalletData {
     public static final String COLUMN_EXTRA = "extra";
 
     /**
-     * 自增ID
+     * ID
      */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(index = true, name = COLUMN_ID)
     private long id;
 
     /**
-     * 钱包所有者
+     * 
      */
     @ColumnInfo(index = true, name = COLUMN_OWNER)
     private String owner;
 
     /**
-     * 余额
+     * 
      */
     @ColumnInfo(name = COLUMN_BALANCE)
     private String balance;
 
     /**
-     * 附加信息
+     * 
      */
     @ColumnInfo(name = COLUMN_EXTRA)
     private String extra;

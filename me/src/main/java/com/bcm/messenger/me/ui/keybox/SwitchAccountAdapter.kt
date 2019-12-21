@@ -109,7 +109,7 @@ class SwitchAccountAdapter {
             return
         }
 
-        val switchForLogOut = (uid == AMESelfData.uid)//true 登出， false 切换帐号
+        val switchForLogOut = (uid == AMESelfData.uid)
         val viewCreator = SwitchPopupHeader(switchTo, switchForLogOut)
 
         var option = activity.getString(R.string.me_logout_tip_out)

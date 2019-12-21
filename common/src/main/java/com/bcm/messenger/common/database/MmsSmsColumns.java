@@ -55,8 +55,6 @@ public interface MmsSmsColumns {
         protected static final long MESSAGE_FORCE_SMS_BIT = 0x40;
 
 
-        //TODO: 添加一种 type 用来标识是 location
-        //FIXME: 对应到置 1 的位也要进行处理
         protected static final long KEY_LOCATION_BIT = 0x8400;
         // Key Exchange Information
         protected static final long KEY_EXCHANGE_MASK = 0xFF00;

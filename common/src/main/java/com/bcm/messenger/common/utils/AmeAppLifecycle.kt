@@ -17,17 +17,17 @@ import com.bcm.messenger.utility.logger.ALog
 import java.lang.ref.WeakReference
 
 /**
- * 当前应用生命周期监控
+ * 
  * Created by bcm.social.01 on 2018/6/30.
  */
 object AmeAppLifecycle : Application.ActivityLifecycleCallbacks {
     private const val TAG = "ActivityLifecycle"
 
-    //记录当前活跃的activity
+    //activity
     private var weakRefCurrentStartActivity: WeakReference<Activity?>? = null
     private var weakRefCurrentFocusActivity: WeakReference<Activity?>? = null
 
-    //暂存后台状态下的弹窗
+    //
     private var popConfig: AmeCenterPopup.PopConfig? = null
     private var needShowLoading: Boolean = false
 
@@ -36,7 +36,7 @@ object AmeAppLifecycle : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 获取当前活跃的activity
+     * activity
      */
     fun current(): Activity? {
         return weakRefCurrentFocusActivity?.get() ?: return weakRefCurrentStartActivity?.get()
@@ -73,7 +73,7 @@ object AmeAppLifecycle : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 展示成功的自定义的toast
+     * toast
      */
     fun succeed(result: String, dark: Boolean) {
         val activity = current()
@@ -83,7 +83,7 @@ object AmeAppLifecycle : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 展示成功的自定义的toast
+     * toast
      */
     fun succeed(result: String, dark: Boolean, dismissCallback: () -> Unit) {
         val activity = current()
@@ -93,7 +93,7 @@ object AmeAppLifecycle : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 展示失败的自定义的toast
+     * toast
      */
     fun failure(result: String, dark: Boolean) {
         val activity = current()
@@ -103,7 +103,7 @@ object AmeAppLifecycle : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 展示失败的自定义的toast
+     * toast
      */
     fun failure(result: String, dark: Boolean, dismissCallback: () -> Unit) {
         val activity = current()
@@ -113,7 +113,7 @@ object AmeAppLifecycle : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 展示loading
+     * loading
      */
     fun showLoading() {
         val activity = current()
@@ -126,7 +126,7 @@ object AmeAppLifecycle : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 隐藏loading
+     * loading
      */
     fun hideLoading() {
         val activity = current()

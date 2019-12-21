@@ -10,7 +10,7 @@ import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
 
 
 /**
- * 使用便捷的recyclerview(集成了adapter)
+ * 
  * Created by wjh on 2018/4/13
  */
 abstract class ConvenientRecyclerView<T : Any> : RecyclerView, Sidebar.FastScrollHelper {
@@ -68,15 +68,15 @@ abstract class ConvenientRecyclerView<T : Any> : RecyclerView, Sidebar.FastScrol
     }
 
     override fun setAdapter(adapter: Adapter<*>?) {
-        // 屏蔽上层接口
+        // 
     }
 
     override fun setLayoutManager(layout: LayoutManager?) {
-        // 屏蔽上层接口
+        // 
     }
 
     /**
-     * 是否垂直
+     * 
      */
     open fun isVertical(): Boolean {
         return true
@@ -87,33 +87,29 @@ abstract class ConvenientRecyclerView<T : Any> : RecyclerView, Sidebar.FastScrol
     }
 
     /**
-     * 添加头部
+     * 
      */
     fun addHeader(header: View, notify: Boolean = false): Int {
         return mAdapter.addHeader(header, notify)
     }
 
     /**
-     * 添加尾部
+     * 
      */
     fun addFooter(footer: View, notify: Boolean = false): Int {
         return mAdapter.addFooter(footer, notify)
     }
 
     /**
-     * 是否展示指定的头部
-     * @param viewType 类型
-     * @param show true展示，false不展示
+     * 
+     * @param viewType 
+     * @param show true show，false hide
      */
     fun showHeader(viewType: Int, show: Boolean, notify: Boolean = true) {
         mAdapter.showHeader(viewType, show, notify)
     }
 
-    /**
-     * 是否展示指定的尾部
-     * @param viewType 类型
-     * @param show true展示，false不展示
-     */
+    
     fun showFooter(viewType: Int, show: Boolean, notify: Boolean = true) {
         mAdapter.showFooter(viewType, show, notify)
     }
@@ -126,15 +122,13 @@ abstract class ConvenientRecyclerView<T : Any> : RecyclerView, Sidebar.FastScrol
         return mAdapter.getItemViewType(position)
     }
 
-    /**
-     * 获取数据源
-     */
+    
     open fun getDataList(): List<T>? {
         return mAdapter.getTrueDataList()
     }
 
     /**
-     * 设置数据源
+     * 
      */
     open fun setDataList(dataList: List<T>?) {
         mAdapter.setDataList(dataList)
@@ -145,7 +139,7 @@ abstract class ConvenientRecyclerView<T : Any> : RecyclerView, Sidebar.FastScrol
     }
 
     /**
-     * 找出指定位置的字母
+     * 
      */
     override fun findSideLetter(position: Int): String? {
         return findAppropriateLetter(position)
@@ -165,7 +159,7 @@ abstract class ConvenientRecyclerView<T : Any> : RecyclerView, Sidebar.FastScrol
     }
 
     /**
-     * 查询指定字母的位置，如果不存在则应该返回-1
+     * 
      */
     override fun findSidePosition(letter: String): Int {
         var current: LinearBaseAdapter.BaseLinearData<T>? = null

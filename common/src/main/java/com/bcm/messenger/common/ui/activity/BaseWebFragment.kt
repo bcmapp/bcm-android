@@ -26,7 +26,7 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 
 /**
- * 基础的web fragment
+ * web fragment
  * Created by wjh on 2019-09-21
  */
 open class BaseWebFragment : BaseFragment() {
@@ -118,11 +118,11 @@ open class BaseWebFragment : BaseFragment() {
 
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                ALog.d(TAG, "网页重写地址：" + request.url)
+                ALog.d(TAG, "：" + request.url)
                 try {
                     val host = request.url.host
                     val scheme = request.url.scheme
-                    ALog.d(TAG, "网页重写地址：${request.url}, host: $host, scheme: $scheme, part: ${request.url.path}")
+                    ALog.d(TAG, "：${request.url}, host: $host, scheme: $scheme, part: ${request.url.path}")
                     if (scheme.equals("http", ignoreCase = true) || scheme.equals("https", ignoreCase = true)) {
                         return false
                     } else {
@@ -134,13 +134,13 @@ open class BaseWebFragment : BaseFragment() {
                         return true
                     }
                 } catch (ex: Exception) {
-                    ALog.e("网页重加载失败", ex)
+                    ALog.e("", ex)
                 }
                 return super.shouldOverrideUrlLoading(view, request)
             }
 
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                ALog.d(TAG, "网页重写地址：$url")
+                ALog.d(TAG, "：$url")
                 if (TextUtils.isEmpty(url)) {
                     return true
                 }
@@ -148,7 +148,7 @@ open class BaseWebFragment : BaseFragment() {
                 try {
                     val host = uri.host
                     val scheme = uri.scheme
-                    ALog.d(TAG, "网页重写地址：$url, host: $host, scheme: $scheme, part: ${uri.path}")
+                    ALog.d(TAG, "：$url, host: $host, scheme: $scheme, part: ${uri.path}")
                     if (scheme.equals("http", ignoreCase = true) || scheme.equals("https", ignoreCase = true)) {
                         return false
                     } else {
@@ -161,7 +161,7 @@ open class BaseWebFragment : BaseFragment() {
                     }
 
                 } catch (ex: Exception) {
-                    ALog.e("网页重加载失败", ex)
+                    ALog.e("", ex)
                 }
                 return super.shouldOverrideUrlLoading(view, url)
             }

@@ -49,7 +49,6 @@ class ShowQRCodeActivity : SwipeBaseActivity()  {
         var genKeyTime = 0L
         var backupTime = 0L
 
-        //新老帐号兼容
         val account = AmeLoginLogic.getAccount(uid)
         if (account != null){
             genKeyTime = account.genKeyTime

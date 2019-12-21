@@ -57,7 +57,7 @@ class AmeProgressPopup : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 隐藏
+     * 
      */
     fun dismiss() {
         dismissInner(popup)
@@ -106,7 +106,7 @@ class AmeProgressPopup : Application.ActivityLifecycleCallbacks {
                 dialog.setCanceledOnTouchOutside(false)
 
                 dialog.window?.let { window ->
-                    window.setBackgroundDrawableResource(android.R.color.transparent)    //设置Dialog背景透明效果
+                    window.setBackgroundDrawableResource(android.R.color.transparent)    //Dialog
                     window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
 
                     val windowParams = window.attributes

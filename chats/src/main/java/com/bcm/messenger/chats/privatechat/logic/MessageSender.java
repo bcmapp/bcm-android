@@ -53,7 +53,7 @@ public class MessageSender {
     private static final String TAG = MessageSender.class.getSimpleName();
 
     /**
-     * 发送消息
+     * 
      * @param context Context.
      * @param message Message to sent.
      * @param threadId Current thread id.
@@ -75,11 +75,11 @@ public class MessageSender {
             allocatedThreadId = threadId;
         }
 
-        //消息插入数据库
+        //
         long messageId = chatRepo.insertOutgoingTextMessage(allocatedThreadId,
                 message, AmeTimeUtil.INSTANCE.getMessageSendTime(), insertListener);
 
-        // 如果对方不是好友且开启陌生人免打扰模式，则不能实际发送消息
+        // 
         if (!recipient.isFriend() && !recipient.isAllowStranger()) {
             chatRepo.setMessageSendFail(messageId);
         }else {
@@ -89,7 +89,7 @@ public class MessageSender {
         return allocatedThreadId;
     }
 
-    // silent消息不会触发服务器推送
+    // 
     public static long sendSilently(final Context context,
                                     final OutgoingTextMessage message,
                                     final long threadId,
@@ -105,7 +105,7 @@ public class MessageSender {
             allocatedThreadId = threadId;
         }
 
-        //消息插入数据库
+        //
         long messageId = chatRepo.insertOutgoingTextMessage(allocatedThreadId,
                 message, AmeTimeUtil.INSTANCE.getMessageSendTime(), insertListener);
 
@@ -115,9 +115,9 @@ public class MessageSender {
     }
 
     /**
-     * 发送不需要UI显示的消息，会保存在chat_hide_msg表里面
+     * 
      * @param context Context
-     * @param message 要发送的消息
+     * @param message 
      */
     public static void sendHideMessage(final Context context, final OutgoingLocationMessage message) {
         ALog.i(TAG, "Send hide message");
@@ -138,7 +138,7 @@ public class MessageSender {
     }
 
     /**
-     * 发送媒体类消息
+     * send message
      * @param context Context.
      * @param masterSecret Current user's master secret to encrypt attachments.
      * @param message Message to send.
@@ -165,7 +165,7 @@ public class MessageSender {
             Recipient recipient = message.getRecipient();
             long messageId = chatRepo.insertOutgoingMediaMessage(allocatedThreadId, masterSecret, message, insertListener);
 
-            // 如果对方不是好友且开启陌生人免打扰模式，则不能实际发送消息
+            
             if (!recipient.isFriend() && !recipient.isAllowStranger()) {
                 chatRepo.setMessageSendFail(messageId);
             }else {
@@ -185,7 +185,7 @@ public class MessageSender {
     }
 
     /**
-     * 消息重发
+     * resend message
      * @param context Context.
      * @param masterSecret Current user's master secret to encrypt or decrypt.
      * @param messageRecord Message to resend.
@@ -196,7 +196,7 @@ public class MessageSender {
             long expiresIn = messageRecord.getExpiresTime();
             Recipient recipient = messageRecord.getRecipient();
 
-            // 判断对方是否好友或者是否允许陌生人聊天
+            // 
             if (recipient.isFriend() || recipient.isAllowStranger()) {
                 Repository.getChatRepo().updateDateSentForResending(messageRecord.getId(), AmeTimeUtil.INSTANCE.getMessageSendTime());
                 if (messageRecord.isMediaMessage()) {

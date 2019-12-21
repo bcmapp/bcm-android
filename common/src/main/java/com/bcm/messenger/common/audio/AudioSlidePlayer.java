@@ -63,7 +63,7 @@ public class AudioSlidePlayer implements SensorEventListener {
     AttachmentServer audioAttachmentServer;
     private long startTime;
 
-    private boolean forSensor = false;//是否听筒引起的关闭
+    private boolean forSensor = false;//
 
     public synchronized static AudioSlidePlayer createFor(@NonNull Context context,
                                                           MasterSecret masterSecret,
@@ -228,9 +228,9 @@ public class AudioSlidePlayer implements SensorEventListener {
     }
 
     /**
-     * 关闭语音
+     * 
      *
-     * @param forSensor true表示听筒模式引起的关闭，false表示正常的关闭
+     * @param forSensor true，false
      */
     private synchronized void stop(boolean forSensor) {
         this.forSensor = forSensor;

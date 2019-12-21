@@ -43,7 +43,6 @@ import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
 
 /**
- * 聊天数据信息返回
  * Created by zjl on 2018/3/14.
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_CONVERSATION_BASE)

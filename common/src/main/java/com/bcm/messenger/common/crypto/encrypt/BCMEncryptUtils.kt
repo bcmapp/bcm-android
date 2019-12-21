@@ -62,25 +62,25 @@ object BCMEncryptUtils {
         masterSecret = null
     }
 
-    //获取我的私钥
+    //
     fun getMyPrivateKey(context: Context): ByteArray {
         val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(context)
         return (myKeyPair.privateKey as DjbECPrivateKey).privateKey
     }
 
-    //获取我的公钥
+    //
     fun getMyPublicKey(context: Context): ByteArray {
         val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(context)
         return (myKeyPair.publicKey.publicKey as DjbECPublicKey).publicKey
     }
 
-    //获取我的公钥
+    //
     fun getMyIdentityKey(context: Context): ByteArray {
         return IdentityKeyUtil.getIdentityKeyPair(context).publicKey.serialize()
     }
 
     /**
-     * 对otherKey进行签名
+     * otherKey
      * @param context
      * @param otherKey
      * @return
@@ -95,7 +95,7 @@ object BCMEncryptUtils {
         return null
     }
 
-    //和被邀请人公钥 DH 出一个密钥
+    // DH 
     fun calculateAgreementKeyWithMe(context: Context, otherPublicKey: ByteArray): ByteArray? {
         try {
             return Curve25519.getInstance(Curve25519.BEST).calculateAgreement(otherPublicKey, getMyPrivateKey(context))
@@ -106,7 +106,7 @@ object BCMEncryptUtils {
     }
 
 
-    //生成群主自己的加密密钥
+    //
     fun calculateMySelfAgreementKey(context: Context, myTempPrivateKey: ByteArray): ByteArray? {
         try {
             return Curve25519.getInstance(Curve25519.BEST).calculateAgreement(getMyPublicKey(context), myTempPrivateKey)
@@ -200,23 +200,23 @@ object BCMEncryptUtils {
     }
 
 
-    //对群密钥进行加密
+    //
     fun encryptGroupPk(groupPk: ByteArray, ecdhPassword: ByteArray?): String {
         return encodeByteArray(encryptByAES256(groupPk, ecdhPassword))
     }
 
 
     /**
-     * 对内容进行AES加密
+     * AES
      * @param content
      * @param aesKey
-     * @return 返回Base64
+     * @return Base64
      */
     fun encryptByAES256(content: ByteArray, aesKey: ByteArray?): ByteArray {
         val sha512Data = EncryptUtils.encryptSHA512(aesKey)
         val aesKey256 = ByteArray(32)
         val iv = ByteArray(16)
-        //ecdhPassword 前面16字节给 aesKey128，后16字节给 iv
+        //ecdhPassword 16 aesKey128，16 iv
         System.arraycopy(sha512Data, 0, aesKey256, 0, 32)
         System.arraycopy(sha512Data, 48, iv, 0, 16)
         return EncryptUtils.encryptAES(content, aesKey256, CBC_MODE, iv)
@@ -226,24 +226,24 @@ object BCMEncryptUtils {
         val sha512Data = EncryptUtils.encryptSHA512(aesKey)
         val aesKey256 = ByteArray(32)
         val iv = ByteArray(16)
-        //ecdhPassword 前面16字节给 aesKey128，后16字节给 iv
+        //ecdhPassword 16 aesKey128，16 iv
         System.arraycopy(sha512Data, 0, aesKey256, 0, 32)
         System.arraycopy(sha512Data, 48, iv, 0, 16)
         return EncryptUtils.decryptAES(content, aesKey256, CBC_MODE, iv)
     }
 
-    //生成群密钥，创建时使用
+    //，
     fun generate64BitKey(): ByteArray {
         return EncryptUtils.getSecretBytes(64)
     }
 
-    //base64 encode 数据
+    //base64 encode 
     fun encodeByteArray(input: ByteArray): String {
         return Base64.encodeBytes(input)
     }
 
     /**
-     * 解密群密钥
+     * 
      *
      * @param encryptedKey
      * @return
@@ -262,7 +262,7 @@ object BCMEncryptUtils {
                 val sha512Data = EncryptUtils.encryptSHA512(ecdhPassword)
                 val aesKey256 = ByteArray(32)
                 val iv = ByteArray(16)
-                //ecdhPassword 前面16字节给 aesKey128，后16字节给 iv
+                //ecdhPassword 16 aesKey128，16 iv
                 System.arraycopy(sha512Data, 0, aesKey256, 0, 32)
                 System.arraycopy(sha512Data, 48, iv, 0, 16)
                 Pair(encodeByteArray(EncryptUtils.decryptAES(Base64.decode(encryptKeySpec.encrypt_key), aesKey256, CBC_MODE, iv)), GroupInfo.LEGITIMATE_GROUP)
@@ -280,11 +280,11 @@ object BCMEncryptUtils {
 
 
     /**
-     * 解密文件
+     * 
      *
-     * @param gid  群id
-     * @param path 群路径
-     * @param path 解压后的路径
+     * @param gid  id
+     * @param path 
+     * @param path 
      */
     fun decodeFile(gid: Long?, path: String, sign: String, keyParam: GroupKeyParam): String {
         try {
@@ -301,11 +301,11 @@ object BCMEncryptUtils {
 
 
     /**
-     * 解密文件
+     * 
      *
-     * @param gid  群id
-     * @param path 群路径
-     * @param path 解压后的路径
+     * @param gid  id
+     * @param path 
+     * @param path 
      */
     fun decodeFile(gid: Long?, path: String, destPath: String, sign: String, keyParam: GroupKeyParam?): String {
         if (keyParam != null) {
@@ -323,8 +323,8 @@ object BCMEncryptUtils {
                 System.arraycopy(oneTimePassword, 0, aesKey256, 0, 32)
                 System.arraycopy(oneTimePassword, 48, iv, 0, 16)
 
-                BcmFileUtils.createFile(AmeFileUploader.DECRYPT_DIRECTORY, destPath)  //创建目标文件
-                //Cipher.ENCRYPT_MODE表示加密模式，Cipher.DECRYPT_MODE表示解密模式
+                BcmFileUtils.createFile(AmeFileUploader.DECRYPT_DIRECTORY, destPath)  //
+                //Cipher.ENCRYPT_MODE，Cipher.DECRYPT_MODE
                 val isSuccess = decryptFile(path, destPath, aesKey256, iv)
                 if (isSuccess) {
                     return destPath
@@ -343,11 +343,11 @@ object BCMEncryptUtils {
     }
 
     /**
-     * 加密文件
+     * 
      *
-     * @param gid  群id
-     * @param path 本地文件地址
-     * @return 加密文件本地地址
+     * @param gid  id
+     * @param path 
+     * @return 
      */
     fun encodeFile(gid: Long?, path: String, keyParam: GroupKeyParam?, callback: Function2<String, String, Unit>) {
         if (keyParam != null) {
@@ -368,8 +368,8 @@ object BCMEncryptUtils {
                 System.arraycopy(oneTimePassword, 0, aesKey256, 0, 32)
                 System.arraycopy(oneTimePassword, 48, iv, 0, 16)
 
-                BcmFileUtils.createFile(AmeFileUploader.ENCRYPT_DIRECTORY, extension)  //创建目标文件
-                //Cipher.ENCRYPT_MODE表示加密模式，Cipher.DECRYPT_MODE表示解密模式
+                BcmFileUtils.createFile(AmeFileUploader.ENCRYPT_DIRECTORY, extension)  //
+                //Cipher.ENCRYPT_MODE，Cipher.DECRYPT_MODE
                 //                    boolean isSuccess = AESCipher(Cipher.ENCRYPT_MODE, path, destPath, aesKey256, iv);
                 val isSuccess = encryptFile(path, destPath, aesKey256, iv)
                 if (isSuccess)
@@ -389,7 +389,7 @@ object BCMEncryptUtils {
     }
 
     /**
-     * 根据ECDH之后算出的密码来通过AES256加密文件
+     * ECDHAES256
      * @param fromFilePath
      * @param toFilePath
      * @param keyBytes
@@ -405,7 +405,7 @@ object BCMEncryptUtils {
     }
 
     /**
-     * 根据ECDH之后算出的密码来通过AES256解密文件
+     * ECDHAES256
      * @param fromFilePath
      * @param toFilePath
      * @param keyBytes
@@ -423,9 +423,9 @@ object BCMEncryptUtils {
 
 
     /**
-     * 加密文件
+     * 
      *
-     * @return 是否加密成功
+     * @return 
      */
     fun encryptFile(originFile: File, oneTimePassword: ByteArray, destFile: File): Boolean {
         val aesKey256 = ByteArray(32)
@@ -436,7 +436,7 @@ object BCMEncryptUtils {
     }
 
     /**
-     * 解密带加密的路径上的文件到指定路径
+     * 
      * @param path
      * @param psw
      * @return
@@ -454,8 +454,8 @@ object BCMEncryptUtils {
             System.arraycopy(oneTimePassword, 0, aesKey256, 0, 32)
             System.arraycopy(oneTimePassword, 48, iv, 0, 16)
 
-            BcmFileUtils.createFile(AmeFileUploader.DECRYPT_DIRECTORY, destPath)  //创建目标文件
-            //Cipher.ENCRYPT_MODE表示加密模式，Cipher.DECRYPT_MODE表示解密模式
+            BcmFileUtils.createFile(AmeFileUploader.DECRYPT_DIRECTORY, destPath)  //
+            //Cipher.ENCRYPT_MODE，Cipher.DECRYPT_MODE
             val isSuccess = decryptFile(path, destPath, aesKey256, iv)
             if (isSuccess) {
                 return destPath
@@ -486,13 +486,13 @@ object BCMEncryptUtils {
 
 
     /**
-     * 加密解密文件
+     * 
      *
-     * @param cipherMode     Cipher.ENCRYPT_MODE表示加密模式，Cipher.DECRYPT_MODE表示解密模式
-     * @param sourceFilePath 原文件
-     * @param targetFilePath 加密后文件
-     * @param seed           密钥
-     * @param iv             向量
+     * @param cipherMode     Cipher.ENCRYPT_MODE，Cipher.DECRYPT_MODE
+     * @param sourceFilePath 
+     * @param targetFilePath 
+     * @param seed           
+     * @param iv             
      * @return
      */
     fun AESCipher(cipherMode: Int, sourceFilePath: String,
@@ -522,13 +522,13 @@ object BCMEncryptUtils {
 
             val byteData = ByteBuffer.allocate(1024)
             while (sourceFC!!.read(byteData) != -1) {
-                // 通过通道读写交叉进行。
-                // 将缓冲区准备为数据传出状态
+                // 。
+                // 
                 byteData.flip()
 
                 val byteList = ByteArray(byteData.remaining())
                 byteData.get(byteList, 0, byteList.size)
-                //此处，若不使用数组加密解密会失败，因为当byteData达不到1024个时，加密方式不同对空白字节的处理也不相同，从而导致成功与失败。
+                //，，byteData1024，，。
                 val bytes = mCipher.doFinal(byteList)
                 targetFC!!.write(ByteBuffer.wrap(bytes))
                 byteData.clear()
@@ -564,7 +564,7 @@ object BCMEncryptUtils {
     }
 
     /**
-     * 初始化 AES Cipher
+     *  AES Cipher
      *
      * @param
      * @param cipherMode
@@ -576,7 +576,7 @@ object BCMEncryptUtils {
         try {
             val key = SecretKeySpec(seed, "AES")
             cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
-            //初始化
+            //
             cipher!!.init(cipherMode, key, IvParameterSpec(iv))
         } catch (e: NoSuchAlgorithmException) {
             e.printStackTrace()  //To change body of catch statement use File | Settings | File Templates.
@@ -594,7 +594,7 @@ object BCMEncryptUtils {
 
     private fun encryptFile(sourceFilePath: String,
                             targetFilePath: String, seed: ByteArray, iv: ByteArray): Boolean {
-        //新建临时加密文件
+        //
         var inputStream: InputStream? = null
         var outputStream: OutputStream? = null
         try {
@@ -619,7 +619,7 @@ object BCMEncryptUtils {
     fun encryptStream(inputStream: InputStream,
                       outputStream: OutputStream, seed: ByteArray, iv: ByteArray): Boolean {
         val cipher = initAESCipher(Cipher.ENCRYPT_MODE, seed, iv)
-        //以加密流写入文件
+        //
         val cipherInputStream = CipherInputStream(inputStream, cipher)
         val cache = ByteArray(1024)
         var nRead = 0
@@ -677,42 +677,42 @@ object BCMEncryptUtils {
     }
 
     /**
-     * 使用一个安全的随机数来产生一个密匙,密匙加密使用的
+     * ,
      *
-     * @param seed 密钥种子（字节）
-     * @return 得到的安全密钥
+     * @param seed （）
+     * @return 
      * @throws NoSuchAlgorithmException
      */
     @Deprecated("Call must throw NoSuchAlgorithmException, Android 9 removed SHA1PRNG Crypto.")
     @Throws(NoSuchAlgorithmException::class, NoSuchProviderException::class)
     private fun getRawKey(seed: ByteArray): ByteArray {
-        // 获得一个随机数，传入的参数为默认方式。
+        // ，。
         val sr = SecureRandom.getInstance("SHA1PRNG", "Crypto")
-        //网上博客添加"Crypto" 后方能使用
-        // 设置一个种子,一般是用户设定的密码
+        //"Crypto" 
+        // ,
         sr.setSeed(seed)
-        // 获得一个key生成器（AES加密模式）
+        // key（AES）
         val keyGen = KeyGenerator.getInstance("AES")
-        // 设置密匙长度256位
+        // 256
         keyGen.init(256, sr)
-        // 获得密匙
+        // 
         val key = keyGen.generateKey()
-        // 返回密匙的byte数组供加解密使用
+        // byte
         return key.encoded
     }
 
 
     /**
-     * 生成一个密钥对，用我的公钥和临时私钥 DH 出密钥来加密 plainPassword
-     * 加密后，把我的公钥和临时私钥，以及加密后的 key 打包成 json
-     * base64 处理后返回
+     * ， DH  plainPassword
+     * ，， key  json
+     * base64 
      *
      * @param plainPassword
      * @return
      */
     fun generateMyEncryptKeyString(plainPassword: ByteArray): String {
         val myPublicKeyString = encodeByteArray(getMyPublicKey(AppContextHolder.APP_CONTEXT))
-        //生成群主自己的加密密钥
+        //
         val tempKeyPair = Curve25519.getInstance(Curve25519.BEST).generateKeyPair()
         val dhKey = calculateMySelfAgreementKey(AppContextHolder.APP_CONTEXT, tempKeyPair.privateKey)
         val encryptKey = encryptGroupPk(plainPassword, dhKey)
@@ -782,14 +782,14 @@ object BCMEncryptUtils {
     }
 
     /**
-     * 隐藏发送者需求解密私聊和推送的加密消息体
-     * @param encryptSource 加密的消息体
-     * @return 解密的消息体
-     * @throws DecryptSourceException 解密失败异常
+     * 
+     * @param encryptSource 
+     * @return 
+     * @throws DecryptSourceException 
      */
     @Throws(DecryptSourceException::class)
     fun decryptSource(encryptSource: ByteArray): String {
-        // Version暂时不需要
+        // Version
         try {
             val decodeString = String(Base64.decode(encryptSource), StandardCharsets.UTF_8)
             val `object` = JSONObject(decodeString)

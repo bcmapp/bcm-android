@@ -10,7 +10,7 @@ import androidx.appcompat.widget.PopupMenu
 import java.lang.ref.WeakReference
 
 /**
- * 可以在指定位置弹出的PopupMenu，基于PopupWindow
+ * PopupMenu，PopupWindow
  *
  * Created by Kin on 2019/7/2
  */
@@ -89,8 +89,8 @@ class BcmPopupMenu {
         }
 
         /**
-         * 在给定的x y偏移量弹出菜单
-         * x y一般是rawX和y - view.height
+         * x y
+         * x yrawXy - view.height
          */
         fun show(x: Int, y: Int) {
             config.x = x
@@ -99,7 +99,7 @@ class BcmPopupMenu {
         }
 
         /**
-         * 按照PopupMenu的默认方式弹出菜单
+         * PopupMenu
          */
         fun show() {
             getInstance().showMenu(config)

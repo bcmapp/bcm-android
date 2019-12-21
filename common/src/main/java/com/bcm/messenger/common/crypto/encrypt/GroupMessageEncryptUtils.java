@@ -33,7 +33,7 @@ public class GroupMessageEncryptUtils {
     public static final int SUCCESS_CHAT_LEVEL_CODE = 202;
 
     /**
-     * 加密消息
+     * 
      *
      * @param plainMessageBody
      * @param encryptKeySpec
@@ -41,24 +41,24 @@ public class GroupMessageEncryptUtils {
      */
     public static Triple<Boolean, String, Integer> encryptMessageProcess(String plainMessageBody, GroupKeyParam encryptKeySpec) {
         if (encryptKeySpec == null) {
-            // 加密失败，群信息密码配置为空
+            // ，
             return new Triple<>(false, plainMessageBody, PASSWORD_NOT_FOUND_CODE);
         }
         try {
 
-            //对用 password 聊天信息进行加密
+            // password 
             Pair<String, String> encryptMessageBody = encryptMessage(plainMessageBody, encryptKeySpec.getKey());
             String encryptMessage = encapsulateEncryptMessage(encryptMessageBody, encryptKeySpec );
             return new Triple<>(true, encryptMessage, SUCCESS_CHAT_LEVEL_CODE);
         } catch (Exception e) {
-            //加密时出现异常
+            //
         }
         return new Triple<>(false, plainMessageBody, ENCRYPT_OR_DECRYPT_ERROR_CODE);
 
     }
 
     /**
-     * 解包和解密消息
+     * 
      *
      * @return
      */
@@ -88,7 +88,7 @@ public class GroupMessageEncryptUtils {
 
 
     /**
-     * 封装加密消息体，加版本号，header
+     * ，，header
      *
      * @param encryptMessageBody
      * @return
@@ -106,7 +106,7 @@ public class GroupMessageEncryptUtils {
 
 
     /**
-     * 解封装加密消息
+     * 
      *
      * @param encapsulatedMessage
      * @return
@@ -126,7 +126,7 @@ public class GroupMessageEncryptUtils {
     }
 
     /**
-     * 加密消息
+     * 
      *
      * @param plainText
      * @param groupPassword
@@ -157,7 +157,7 @@ public class GroupMessageEncryptUtils {
      * @throws IOException
      */
     private static String decryptMessage(String digest, String encryptMessageBody, byte[] groupPassword) throws IOException {
-        //获取 onetimePassword
+        // onetimePassword
         byte[] random = Base64.decode(digest);
         byte[] oneTimePassword = EncryptUtils.encryptSHA512(byteMerger(groupPassword, random));
         byte[] aesKey256 = new byte[32];
@@ -177,7 +177,7 @@ public class GroupMessageEncryptUtils {
     }
 
     /**
-     * 合并两个 ByteArray
+     *  ByteArray
      *
      * @param byte_1
      * @param byte_2
@@ -197,7 +197,7 @@ public class GroupMessageEncryptUtils {
 
 
     /**
-     * 由chat key 生成 channelKey
+     * chat key  channelKey
      *
      * @param password
      * @return

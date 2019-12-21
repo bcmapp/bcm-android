@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.common_center_popup_base_layout.*
 import java.lang.ref.WeakReference
 
 /**
- * 自定义选择确认窗
+ * 
  * Created by bcm.social.01 on 2018/5/31.
  */
 class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
@@ -107,7 +107,7 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
     }
 
     fun show(activity: FragmentActivity?, config: PopConfig) {
-        //当前的弹窗不能被dismiss
+        //dismiss
         if (popup != null && popup?.config?.topMost == true) {
             ALog.w("AmeCenterPopup", "show fail, lat popup is topMost, can not dismiss")
             return
@@ -138,7 +138,7 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 隐藏
+     * 
      */
     fun dismiss() {
         dismissInner(popup)
@@ -195,7 +195,7 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
             activity?.let {
                 val dialog = Dialog(it, R.style.CommonCenterPopupWindow)
                 dialog.window?.let { window ->
-                    window.setBackgroundDrawableResource(android.R.color.transparent)    //设置Dialog背景透明效果
+                    window.setBackgroundDrawableResource(android.R.color.transparent)    //Dialog
                     window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                     window.setWindowAnimations(R.style.CommonDropWindowAnimation)
 
@@ -313,7 +313,7 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
         var warningTitle: String? = null
         var viewCreator: CustomViewCreator? = null
         var cancelable: Boolean = true
-        var topMost: Boolean = false //最顶层弹窗,不能被其它弹窗覆盖
+        var topMost: Boolean = false //,
         var dismissListener: () -> Unit = {}
         var contentAlignment: Int = View.TEXT_ALIGNMENT_CENTER
     }

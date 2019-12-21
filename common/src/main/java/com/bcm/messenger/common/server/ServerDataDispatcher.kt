@@ -39,7 +39,7 @@ class ServerDataDispatcher() : IServerConnectionEvent, IServerDataDispatcher {
         private const val CIPHER_TEXT_OFFSET = IV_OFFSET + IV_LENGTH
     }
 
-    //为了性能，这里不要做线程安全
+    //，
     private val listener = WeakListeners<IServerDataListener>()
 
     override fun addListener(listener: IServerDataListener) {
@@ -67,7 +67,7 @@ class ServerDataDispatcher() : IServerConnectionEvent, IServerDataDispatcher {
         when (type) {
             KickEvent.OTHER_LOGIN -> {
                 val deviceInfo = try {
-                    //info是经过base64加密的，需要解析
+                    //infobase64，
                     if (info == null) {
                         null
                     } else {

@@ -373,10 +373,10 @@ class ScanFragment : BaseFragment(), TextureView.SurfaceTextureListener {
         }
         var localBitmap: Bitmap? = null
         try {
-            // DecodeHintType 和EncodeHintType
+            // DecodeHintType and EncodeHintType
             val hints = Hashtable<DecodeHintType, Any>()
             if (mScanCharSet != null) {
-                hints[DecodeHintType.CHARACTER_SET] = mScanCharSet // 设置二维码内容的编码
+                hints[DecodeHintType.CHARACTER_SET] = mScanCharSet 
 
             }
 //            hints[DecodeHintType.TRY_HARDER] = true

@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import com.bcm.route.api.IRouteProvider
 
 /**
- * 基本的第三方库工具接口
+ * 
  * Created by wjh on 2019-09-16
  */
 interface IUmengModule : IRouteProvider {

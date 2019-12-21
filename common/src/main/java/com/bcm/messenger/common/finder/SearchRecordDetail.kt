@@ -8,7 +8,7 @@ import java.io.Serializable
  * Created by wjh on 2019/4/3
  */
 class SearchRecordDetail : SearchRecord {
-    var tag: Any? = null//对应的数据
+    var tag: Any? = null//
 
     constructor() {
 
@@ -24,10 +24,10 @@ class SearchRecordDetail : SearchRecord {
 
 open class SearchRecord() : Serializable, NotGuard {
 
-    var times: Long = 0//搜索次数
+    var times: Long = 0//
 
-    var date: Long = 0//初次搜索时间
+    var date: Long = 0//
 
-    var type: BcmFinderType = BcmFinderType.ADDRESS_BOOK//搜索类型
+    var type: BcmFinderType = BcmFinderType.ADDRESS_BOOK//
 
 }

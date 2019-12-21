@@ -58,8 +58,8 @@ public abstract class MessageRecord extends DisplayRecord {
     public int payloadType = 0;
     public String uid;
 
-    private long mDuration;//时长
-    private int mCommunicationType;//通话类型
+    private long mDuration;//
+    private int mCommunicationType;//
 
     MessageRecord(Context context, long id, Body body, Recipient conversationRecipient,
                   Recipient individualRecipient, int recipientDeviceId,
@@ -82,7 +82,7 @@ public abstract class MessageRecord extends DisplayRecord {
     }
 
     /**
-     * 是否语音通话
+     * 
      *
      * @return
      */
@@ -91,7 +91,7 @@ public abstract class MessageRecord extends DisplayRecord {
     }
 
     /**
-     * 是否视频通话
+     * 
      *
      * @return
      */
@@ -100,7 +100,7 @@ public abstract class MessageRecord extends DisplayRecord {
     }
 
     /**
-     * 获取通话类型
+     * 
      *
      * @return
      */

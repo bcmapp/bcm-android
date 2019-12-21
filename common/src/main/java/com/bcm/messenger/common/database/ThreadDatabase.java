@@ -123,9 +123,7 @@ public class ThreadDatabase extends Database {
             "CREATE INDEX IF NOT EXISTS archived_count_index ON " + TABLE_NAME + " (" + ARCHIVED + ", " + MESSAGE_COUNT + ");",
     };
 
-    /**
-     * 删除表的sql语句
-     */
+    
     public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
     private static final String[] THREAD_PROJECTION = {
@@ -176,7 +174,7 @@ public class ThreadDatabase extends Database {
         }
     }
 
-    //根据联系人信息创建 Thread,新群组采用新的 ditributionType = DistributionTypes.NEW_GROUP
+    
     private long createThreadForRecipient(Address address, boolean group, int distributionType) {
         ContentValues contentValues = new ContentValues(5);
         long date = System.currentTimeMillis();
@@ -326,13 +324,6 @@ public class ThreadDatabase extends Database {
         }
     }
 
-
-    /**
-     * 私聊设置已读
-     * @param threadId
-     * @param lastSeen
-     * @return
-     */
     public List<MarkedMessageInfo> setRead(long threadId, boolean lastSeen) {
         ContentValues contentValues = new ContentValues(1);
         contentValues.put(READ, 1);
@@ -356,11 +347,7 @@ public class ThreadDatabase extends Database {
         }};
     }
 
-    /**
-     * 设置已读列表
-     * @param threads
-     * @param lastSeen
-     */
+   
     public void setReadList(List<ThreadRecord> threads, boolean lastSeen) {
         ContentValues contentValues = new ContentValues(1);
         contentValues.put(READ, 1);
@@ -389,13 +376,7 @@ public class ThreadDatabase extends Database {
     }
 
 
-    /**
-     * 设置新群消息已读
-     *
-     * @param threadId
-     * @param gid
-     * @param lastSeen
-     */
+  
     public void setReadForNewGroup(long threadId, long gid, long lastSeen) {
         MessageDataManager.INSTANCE.setGroupMessageRead(gid);
         ContentValues contentValues = new ContentValues(3);
@@ -434,7 +415,7 @@ public class ThreadDatabase extends Database {
     }
 
 
-    //获取群类型
+    
     public int getDistributionType(long threadId) {
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME, new String[]{TYPE}, ID_WHERE, new String[]{String.valueOf(threadId)}, null, null, null);
@@ -547,7 +528,7 @@ public class ThreadDatabase extends Database {
             if (cursor != null && cursor.moveToNext()) {
                 return cursor.getLong(cursor.getColumnIndexOrThrow(PIN));
             }
-            //默认关闭
+            
             return 0;
         } catch (Exception ex) {
             return 0;
@@ -599,11 +580,6 @@ public class ThreadDatabase extends Database {
         notifyConversationListListeners();
     }
 
-    /**
-     * 更新解密失败弹窗的弹出时间，此处更新不需要通知UI
-     *
-     * @param threadId 要更新的对话ID
-     */
     public void setDecryptFailData(long threadId, String dataJson) {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues(1);
@@ -668,9 +644,7 @@ public class ThreadDatabase extends Database {
         }
     }
 
-    /*
-     * 删除 新群聊天数据
-     * */
+ 
     public void deleteConversationContentForNewGroup(long gid, long threadId) {
         DatabaseFactory.getDraftDatabase(context).clearDrafts(threadId);
         deleteThread(threadId);
@@ -679,11 +653,7 @@ public class ThreadDatabase extends Database {
         notifyConversationListListeners();
     }
 
-    /**
-     * 清空群会话记录，不清空会话
-     *
-     * @param threadId 会话id
-     */
+  
     public void deleteConversationForNewGroup(long gid, long threadId) {
         DatabaseFactory.getDraftDatabase(context).clearDrafts(threadId);
         GroupLiveInfoManager.Companion.getInstance().deleteLiveInfoWhenLeaveGroup(gid);
@@ -691,11 +661,7 @@ public class ThreadDatabase extends Database {
         notifyConversationListListeners();
     }
 
-    /**
-     * 清空会话记录，不清空会话
-     *
-     * @param threadId 会话id
-     */
+   
     public void clearConversationContent(long threadId) {
         DatabaseFactory.getSmsDatabase(context).deleteThread(threadId);
         DatabaseFactory.getMmsDatabase(context).deleteThread(threadId);
@@ -709,12 +675,7 @@ public class ThreadDatabase extends Database {
         notifyConversationListListeners();
     }
 
-    /**
-     * 删除除了指定消息id和threadId外的所有会话记录
-     *
-     * @param threadId
-     * @param messageId
-     */
+   
     public void clearConversationExcept(long threadId, long... messageId) {
         DatabaseFactory.getSmsDatabase(context).deleteMessagesExcept(threadId, messageId);
         DatabaseFactory.getMmsDatabase(context).deleteAllExcept(threadId);
@@ -747,16 +708,10 @@ public class ThreadDatabase extends Database {
         deleteAllThreads();
     }
 
-    /**
-     * 已存在会话，获取会话的ThreadId
-     */
     public long getThreadIdIfExistsFor(Recipient recipient) {
         return getThreadIdIfExistsFor(recipient.getAddress());
     }
 
-    /**
-     * 已存在会话，获取会话的ThreadId
-     */
     public long getThreadIdIfExistsFor(Address address) {
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where = ADDRESS + " = ?";
@@ -787,8 +742,6 @@ public class ThreadDatabase extends Database {
         }
     }
 
-
-    //触发创建 Thread 的方法，如果是新群聊填入新群聊的 type
     public long getThreadIdFor(Recipient recipient, int distributionType) {
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where = ADDRESS + " = ?";
@@ -835,12 +788,7 @@ public class ThreadDatabase extends Database {
         return null;
     }
 
-    /**
-     * 设置已经发送
-     *
-     * @param threadId
-     * @param hasSent
-     */
+   
     public void setHasSent(long threadId, boolean hasSent) {
         ContentValues contentValues = new ContentValues(1);
         contentValues.put(HAS_SENT, hasSent ? 1 : 0);
@@ -850,11 +798,7 @@ public class ThreadDatabase extends Database {
 
     }
 
-    /**
-     * 新群聊未读消息更新
-     * @param threadId
-     * @param unreadCount
-     */
+  
     void updateReadStateForNewGroup(long threadId, int unreadCount) {
         ALog.i(TAG, "updateReadStateForNewGroup threadId: " + threadId + ", unreadCount: " + unreadCount);
         ContentValues contentValues = new ContentValues();
@@ -882,7 +826,7 @@ public class ThreadDatabase extends Database {
 
     }
 
-    //更新群直播状态
+    
     public void updateLiveState(long gid, int liveState) {
         long threadId;
         if (liveState == GroupLiveInfo.LiveStatus.REMOVED.getValue() || liveState == GroupLiveInfo.LiveStatus.STOPED.getValue()||liveState == GroupLiveInfo.LiveStatus.EMPTY.getValue()) {
@@ -900,9 +844,7 @@ public class ThreadDatabase extends Database {
         notifyConversationListListeners();
     }
 
-    /**
-     * 更新会话列表的数据
-     */
+   
     public boolean update(long threadId, boolean unarchive) {
         MmsSmsDatabase mmsSmsDatabase = DatabaseFactory.getMmsSmsDatabase(context);
         MmsSmsDatabase.Reader reader = null;
@@ -914,7 +856,7 @@ public class ThreadDatabase extends Database {
                 final Slide snipSlide = getAttachmentFor(record);
                 ALog.i(TAG, "update threadId " + threadId + ", snipSlide is null: " + (snipSlide == null));
                 Uri uri = snipSlide != null ? (snipSlide.getThumbnailUri() == null ? snipSlide.getUri() : snipSlide.getThumbnailUri()) : null;
-                // 由于可能当前的多媒体还没有下载下来，所有uri可能为空，但是为了在消息列表里能正常显示快照，这里可能要做下处理，直接读取attachmentId来拼接uri
+                
                 if (uri == null && snipSlide != null) {
                     try {
                         Attachment att = snipSlide.asAttachment();
@@ -941,7 +883,7 @@ public class ThreadDatabase extends Database {
                 return false;
 
             } else {
-                // 如果没有快照信息，则不更新会话列表，防止无内容的会话一直往上顶
+                
 //                updateThread(threadId, count, "", null,
 //                        System.currentTimeMillis(), -1, 0, -2136997865
 //                        , true, 0, 0);
@@ -964,15 +906,12 @@ public class ThreadDatabase extends Database {
         }
     }
 
-    /**
-     * 用于新群
-     * 收到消息更新 Thread 数据库
-     */
+ 
     public void updateByNewGroup(long gid) {
         AmeGroupMessageDetail message = GroupMessageTransform.INSTANCE.transformToModel(MessageDataManager.INSTANCE.fetchLastMessage(gid));
         long threadId = getThreadIdIfExistsFor(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid));
         if (threadId == -1L && (null == message || null == message.getMessage())) {
-            //即不存在会话，也不存在消息，就不update了
+            
             ALog.i(TAG, "updateByNewGroup gid: " + gid + ", no thread, no message, return");
             return;
         } else if(threadId == -1L) {
@@ -994,9 +933,7 @@ public class ThreadDatabase extends Database {
         }
     }
 
-    /**
-     * 更新新群组会话信息
-     */
+   
     private void updateByNewGroup(long threadId, long count, String body, String attachmentUri, AmeGroupMessageDetail.SendState state, long date) {
         updateThread(threadId, count, body, Uri.parse(attachmentUri),
                 date, -1, 0, state.getValue()
@@ -1004,11 +941,7 @@ public class ThreadDatabase extends Database {
         notifyConversationListListeners();
     }
 
-    /**
-     * 获取全部的未读会话个数
-     *
-     * @return
-     */
+  
     public int getAllUnreadThreadCount() {
         return getAllUnreadThread().size();
     }
@@ -1131,7 +1064,7 @@ public class ThreadDatabase extends Database {
         public static final int INBOX_ZERO = 4;
         public static final int NEW_GROUP = 5;
 
-        //FIXME 添加一个有人@我的分布类型
+        
 
     }
 
@@ -1182,7 +1115,7 @@ public class ThreadDatabase extends Database {
 
             DisplayRecord.Body body;
             if (distributionType == DistributionTypes.NEW_GROUP) {
-                body = getPlaintextBodyForNewGroup(cursor);//不进行解密
+                body = getPlaintextBodyForNewGroup(cursor);
             } else {
                 body = getPlaintextBody(cursor);
             }
@@ -1218,12 +1151,12 @@ public class ThreadDatabase extends Database {
 
             Recipient recipient = Recipient.from(context, address, true);
 
-            // wangjianhong 把联系人和会话id绑定起来，方便后续搜索的时候能快速查询哪些是有会话记录，方便排序
+            
             ConversationUtils.INSTANCE.addConversationCache(recipient, threadId);
 
             DisplayRecord.Body body;
             if (distributionType == DistributionTypes.NEW_GROUP) {
-                body = getPlaintextBodyForNewGroup(cursor);//不进行解密
+                body = getPlaintextBodyForNewGroup(cursor);
             } else {
                 body = getPlaintextBody(cursor);
             }

@@ -15,7 +15,7 @@ object AmeProvider {
                 ALog.i(TAG, "$providerName provider instance failed")
             }
             return provider
-        }catch (ex: Exception) {//某些特殊原因导致ARouter还没有初始化完毕，所以这时候调用ARouter是会抛异常，这里捕获一下，返回null
+        }catch (ex: Exception) {//ARouter，ARouter，，null
             ALog.e(TAG, "getProvider $providerName fail", ex)
         }
         return null

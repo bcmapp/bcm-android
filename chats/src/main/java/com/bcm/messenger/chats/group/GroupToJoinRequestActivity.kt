@@ -19,7 +19,6 @@ import com.bcm.route.annotation.Route
 import kotlinx.android.synthetic.main.chats_activity_join_request.*
 
 /**
- * 进群申请页面
  * Created by wjh on 2019/6/3
  */
 @Route(routePath = ARouterConstants.Activity.GROUP_JOIN_REQUEST)

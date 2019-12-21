@@ -39,7 +39,7 @@ import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * 群分享配置页面
+ * 
  * Created by wjh on 2019/6/6
  */
 class GroupShareSettingsActivity : SwipeBaseActivity() {
@@ -254,7 +254,7 @@ class GroupShareSettingsActivity : SwipeBaseActivity() {
                     AmeAppLifecycle.failure(getString(R.string.chats_group_share_save_fail), true)
                 }
                 .subscribe {
-                    // 刷新MediaStore
+                    
                     MediaScannerConnection.scanFile(this, arrayOf(it), arrayOf(BcmFileUtils.IMAGE_PNG), null)
                     AmeAppLifecycle.succeed(getString(R.string.chats_group_share_save_success), true)
                 }

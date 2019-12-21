@@ -7,7 +7,7 @@ import org.whispersystems.signalservice.api.push.exceptions.NonSuccessfulRespons
 import java.io.IOException;
 
 /**
- * 版本太低的异常
+ * 
  * Created by wjh on 2019/7/11
  */
 public class VersionTooLowException extends BaseHttp.HttpErrorException {

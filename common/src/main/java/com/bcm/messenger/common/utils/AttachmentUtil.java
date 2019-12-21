@@ -48,7 +48,7 @@ public class AttachmentUtil {
   }
 
   private static @NonNull Set<String> getAllowedAutoDownloadTypes(@NonNull Context context) {
-    if(!AppForeground.INSTANCE.foreground()) return Collections.emptySet();//在后台的时候，不开启自动下载
+    if(!AppForeground.INSTANCE.foreground()) return Collections.emptySet();//，
     else if (isConnectedWifi(context))    return TextSecurePreferences.getWifiMediaDownloadAllowed(context);
     else if (isConnectedRoaming(context)) return TextSecurePreferences.getRoamingMediaDownloadAllowed(context);
     else if (isConnectedMobile(context))  return TextSecurePreferences.getMobileMediaDownloadAllowed(context);

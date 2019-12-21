@@ -7,7 +7,7 @@ import com.bcm.messenger.utility.proguard.NotGuard
 import com.bcm.messenger.common.settingrepository.dao.AUTO_CLEAR
 
 /**
- * 自动清理数据
+ * 
  * Created by zjl on 2018/9/25.
  */
 

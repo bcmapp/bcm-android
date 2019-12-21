@@ -671,13 +671,12 @@ object BcmChatCore {
         return OutgoingPushMessageList(recipient.number, timestamp, recipient.relay.orNull(), messages)
     }
 
-    //构造加密消息，根据设备 ID 构造加密消息
+    //
     @Throws(IOException::class, UntrustedIdentityException::class)
     private fun getEncryptedMessage(recipient: SignalServiceAddress, deviceId: Int, plaintext: ByteArray, pushPurpose: PushPurpose): OutgoingPushMessage {
         val signalProtocolAddress = SignalProtocolAddress(recipient.number, deviceId)
         val cipher = SignalServiceCipher(mySignalAddress(), store)
 
-        //纠正session register id 为 0 的情况
         var containsSession = store.containsSession(signalProtocolAddress)
         if (containsSession) {
             val sessionRecord = store.loadSession(signalProtocolAddress)

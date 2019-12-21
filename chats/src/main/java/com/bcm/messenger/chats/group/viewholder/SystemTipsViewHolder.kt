@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.chats_tip_message_item.view.*
 import org.json.JSONObject
 
 /**
- * 提示消息处理
+ * 
  * Created by zjl on 2018/4/3.
  */
 class SystemTipsViewHolder(containerView: View) : RecyclerView.ViewHolder(containerView), RecipientModifiedListener {

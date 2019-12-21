@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import com.bcm.messenger.utility.EncryptUtils
 
 @Entity(tableName = GroupJoinRequestInfo.TABLE_NAME, indices = [Index(value = ["uid", "gid", "mid"], unique = true)])
-class GroupJoinRequestInfo(var mid: Long, //每个请求都对应一条消息记录
+class GroupJoinRequestInfo(var mid: Long, //
                            var gid: Long,
                            var uid: String) {
     companion object {
@@ -30,10 +30,10 @@ class GroupJoinRequestInfo(var mid: Long, //每个请求都对应一条消息记
     var reqId: Long = 0
     @ColumnInfo(name = "identity_key")
     var uidIdentityKey = ""
-    var inviter: String = ""//邀请者，如果主动申请，则为空
+    var inviter: String = ""//，，
     @ColumnInfo(name = "inviter_identity_key")
     var inviterIdentityKey = ""
-    var read: Int = 0 //1 已读，0 未读
+    var read: Int = 0 //1 ，0 
     var timestamp: Long = 0L
     var status: Int = 0
     var comment: String = ""

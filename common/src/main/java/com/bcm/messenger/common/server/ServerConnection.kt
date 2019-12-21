@@ -17,8 +17,8 @@ import java.io.IOException
 
 class ServerConnection(private val userAgent: String) {
 
-    private val RESPONSE_REFUSE = 403//长连接被拒绝的状态码
-    private val RESPONSE_GONE = 410//账号已不存在
+    private val RESPONSE_REFUSE = 403//
+    private val RESPONSE_GONE = 410//
 
     private val TAG = "ServerConnection"
 
@@ -37,7 +37,7 @@ class ServerConnection(private val userAgent: String) {
 
     private var connectingTime = 0L
     /**
-     * 设置连接状态监听
+     * 
      *
      * @param listener
      */
@@ -243,7 +243,7 @@ class ServerConnection(private val userAgent: String) {
 
                 if (code == RESPONSE_REFUSE) {
                     val info = response.header("X-Online-Device")
-                    //认证失败，需重新登录
+                    //，
                     connectionEvent?.onClientForceLogout(KickEvent.OTHER_LOGIN, info)
 
                 } else if (code == RESPONSE_GONE) {

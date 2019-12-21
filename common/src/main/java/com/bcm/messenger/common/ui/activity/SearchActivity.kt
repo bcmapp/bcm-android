@@ -21,7 +21,7 @@ import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.common_activity_search.*
 
 /**
- * 全局搜索页面
+ * 
  * @created by wjh 2019-04-04
  */
 class SearchActivity : SwipeBaseActivity(), ISearchCallback {
@@ -31,7 +31,7 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
         const val REQUEST_SEARCH_MORE = 1
 
         /**
-         * 请求搜索页面
+         * 
          */
         fun callSearchActivity(context: Context, keyword: String, displayAll: Boolean, hasPrevious: Boolean, searchClass: String, recentClass: String?, requestCode: Int) {
             val intent = Intent(context, SearchActivity::class.java)
@@ -54,8 +54,8 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
         }
     }
 
-    private var mHasPrevious = false//是否有上一个页面
-    private var mDisplayAll = false//是否显示全部，false表示只显示前几个，可点击跳转更多
+    private var mHasPrevious = false//
+    private var mDisplayAll = false//，false，
 
     private var mRecentFragmentClazz: String? = null
     private var mCurrentFragmentClazz: String? = null
@@ -159,7 +159,7 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
     }
 
     /**
-     * 展示最近搜索结果
+     * 
      */
     private fun displayRecent() {
         if (mDisplayFragment == mRecentSearchFragment && mDisplayFragment != null) {
@@ -184,7 +184,7 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
     }
 
     /**
-     * 展示当前搜索结果
+     * 
      */
     private fun displaySearch(keyword: String) {
         if (mDisplayFragment == mCurrentSearchFragment && mDisplayFragment != null) {

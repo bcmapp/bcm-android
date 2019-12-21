@@ -96,7 +96,7 @@ public abstract class GroupDatabase extends RoomDatabase {
     public abstract GroupLiveInfoDao groupLiveInfo();
 
     /**
-     * 钱包相关dao
+     * dao
      *
      * @return
      */
@@ -104,7 +104,7 @@ public abstract class GroupDatabase extends RoomDatabase {
     public abstract WalletDao walletDao();
 
     /**
-     * BCM 好友数据库
+     * BCM 
      *
      * @return
      */
@@ -112,55 +112,55 @@ public abstract class GroupDatabase extends RoomDatabase {
     public abstract BcmFriendDao bcmFriendDao();
 
     /**
-     * 私聊发送端控制消息或不显示的消息数据库
+     * 
      *
-     * @return 数据库DAO
+     * @return DAO
      */
     public abstract ChatHideMessageDao chatControlMessageDao();
 
     /**
-     * 好友请求数据库表
+     * 
      *
-     * @return 数据库DAO
+     * @return DAO
      */
     public abstract FriendRequestDao friendRequestDao();
 
     /**
-     * 群头像拼接表
+     * 
      *
-     * @return 数据库DAO
+     * @return DAO
      */
     public abstract GroupAvatarParamsDao groupAvatarParamsDao();
 
     /**
-     * 记事本记录
+     * 
      *
-     * @return 数据库DAO
+     * @return DAO
      */
     public abstract NoteRecordDao noteRecordDao();
 
 
     /**
-     * AdHoc频道DAO
+     * AdHocDAO
      *
-     * @return 数据库DAO
+     * @return DAO
      */
     public abstract AdHocChannelDao adHocChannelDao();
 
     /**
-     * AdHoc会话DAO
+     * AdHocDAO
      * @return Dao
      */
     public abstract AdHocSessionDao adHocSessionDao();
 
     /**
-     * AdHoc频道消息DAO
-     * @return 数据库DAO
+     * AdHocDAO
+     * @return DAO
      */
     public abstract AdHocMessageDao adHocMessageDao();
 
     /**
-     * 进群申请数据库
+     * 
      *
      * @return
      */
@@ -168,7 +168,7 @@ public abstract class GroupDatabase extends RoomDatabase {
     public abstract GroupJoinInfoDao groupJoinInfoDao();
 
     /**
-     * 群密码数据库
+     * 
      *
      * @return
      */
@@ -180,14 +180,14 @@ public abstract class GroupDatabase extends RoomDatabase {
     private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-            //groupInfo 添加字段
+            //groupInfo 
             database.execSQL("ALTER TABLE group_info "
                     + " ADD COLUMN 'channel_key' TEXT");
             database.execSQL("ALTER TABLE group_info "
                     + " ADD COLUMN 'role' INTEGER NOT NULL DEFAULT 0");
             database.execSQL("ALTER TABLE group_info "
                     + " ADD COLUMN 'illegal' INTEGER NOT NULL DEFAULT 0");
-            //message 添加字段
+            //message 
             database.execSQL("ALTER TABLE group_message "
                     + " ADD COLUMN 'encrypt_level' INTEGER NOT NULL DEFAULT 0");
         }
@@ -196,14 +196,14 @@ public abstract class GroupDatabase extends RoomDatabase {
     private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-            //groupMessage 添加字段
+            //groupMessage 
             database.execSQL("ALTER TABLE group_message "
                     + " ADD COLUMN 'ext_content' TEXT");
         }
     };
 
     /**
-     * 数据库迁移，添加了群公告 和群公告更新时间字段
+     * ， 
      */
     private static final Migration MIGRATION_3_4 = new Migration(3, 4) {
         @Override
@@ -223,7 +223,7 @@ public abstract class GroupDatabase extends RoomDatabase {
 
 
     /**
-     * 数据库升级，添加了grouplive 表
+     * ，grouplive 
      */
     private static final Migration MIGRATION_4_5 = new Migration(4, 5) {
         @Override
@@ -241,7 +241,7 @@ public abstract class GroupDatabase extends RoomDatabase {
 
 
     /**
-     * 数据库迁移，添加了群直播状态，群直播当前进度，群直播上一条 action 的时间字段
+     * ，，， action 
      */
     private static final Migration MIGRATION_5_6 = new Migration(5, 6) {
         @Override
@@ -261,7 +261,7 @@ public abstract class GroupDatabase extends RoomDatabase {
     };
 
     /**
-     * 数据库迁移，添加了群直播状态，群直播当前进度，群直播上一条 action 的时间字段
+     * ，，， action 
      */
     private static final Migration MIGRATION_6_7 = new Migration(6, 7) {
         @Override
@@ -277,7 +277,7 @@ public abstract class GroupDatabase extends RoomDatabase {
     };
 
     /**
-     * 数据库迁移，修正群成员索引
+     * ，
      */
     private static final Migration MIGRATION_7_8 = new Migration(7, 8) {
         @Override
@@ -572,7 +572,7 @@ public abstract class GroupDatabase extends RoomDatabase {
         return sInstance;
     }
 
-    //重置数据库
+    //
     public static synchronized void resetInstance() {
         try {
             if (null != sInstance) {

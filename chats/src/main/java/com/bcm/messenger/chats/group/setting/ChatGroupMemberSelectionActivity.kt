@@ -20,7 +20,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
 /**
- * 群用户选择列表
+ 
  * Created by bcm.social.01 on 2018/5/25.
  */
 

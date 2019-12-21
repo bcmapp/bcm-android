@@ -164,9 +164,7 @@ public class MmsDatabase extends MessagingDatabase {
 
     private final JobManager jobManager;
 
-    /**
-     * 删除表的sql语句
-     */
+    
     public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
     public MmsDatabase(Context context, SQLiteOpenHelper databaseHelper) {
@@ -666,7 +664,7 @@ public class MmsDatabase extends MessagingDatabase {
                     return new OutgoingExpirationUpdateMessage(recipient, timestamp, expiresIn);
                 }
 
-                //FIXME 添加多类型的媒体消息（用于定位等情况）
+                
                 OutgoingMediaMessage message = new OutgoingComplexMediaMessage(recipient, body, attachments,
                         timestamp, subscriptionId, expiresIn, distributionType,
                         Types.isLocationType(outboxType), Types.isSecureType(outboxType));
@@ -853,7 +851,7 @@ public class MmsDatabase extends MessagingDatabase {
             type |= Types.EXPIRATION_TIMER_UPDATE_BIT;
         }
 
-        //FIXME 添加定位支持
+        
         if (message.isLocation()) {
             type |= Types.KEY_LOCATION_BIT;
         }
@@ -972,18 +970,13 @@ public class MmsDatabase extends MessagingDatabase {
         database.delete(TABLE_NAME, ID_WHERE, new String[]{messageId + ""});
         boolean threadDeleted = DatabaseFactory.getThreadDatabase(context).update(threadId, false);
 
-        // 删除消息广播一下,而不是采用notify
+        
         EventBus.getDefault().post(new MessageDeletedEvent(threadId, Collections.singletonList(messageId)));
 
         return threadDeleted;
     }
 
-    /**
-     * 删除指定的消息
-     * @param threadId
-     * @param messageIds
-     * @return
-     */
+ 
     public boolean delete(long threadId, long... messageIds) {
 
         AttachmentDatabase attachmentDatabase = DatabaseFactory.getAttachmentDatabase(context);
@@ -1007,18 +1000,13 @@ public class MmsDatabase extends MessagingDatabase {
 
         boolean threadDeleted = DatabaseFactory.getThreadDatabase(context).update(threadId, false);
 
-        // 删除消息广播一下，而不是采用notify
+        
         EventBus.getDefault().post(new MessageDeletedEvent(threadId, deletedList));
 
         return threadDeleted;
     }
 
-    /**
-     * 删除所有消息，除了指定的消息
-     * @param threadId
-     * @param messageIds
-     * @return
-     */
+   
     public void deleteAllExcept(long threadId, long... messageIds) {
 
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -1163,7 +1151,7 @@ public class MmsDatabase extends MessagingDatabase {
         try {
             cursor = getAllMessage(threadId);
             if(cursor != null) {
-                // 这个地方可以不逐条删的
+                
                 while(cursor.moveToNext()){
                     Attachment attachment = DatabaseFactory.getAttachmentDatabase(context).getAttachment(masterSecret, cursor);
 

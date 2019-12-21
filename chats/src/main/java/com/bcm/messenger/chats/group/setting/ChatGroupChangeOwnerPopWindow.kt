@@ -21,7 +21,7 @@ import org.greenrobot.eventbus.EventBus
 import java.lang.ref.WeakReference
 
 /**
- * 群组变更管理员弹窗
+ 
  * Created by bcm.social.01 on 2018/5/31.
  */
 object ChatGroupChangeOwnerPopWindow {

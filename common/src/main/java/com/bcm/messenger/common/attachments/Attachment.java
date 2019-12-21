@@ -12,7 +12,7 @@ public abstract class Attachment {
     private final String contentType;
     private final int transferState;
     private final long size;
-    private long duration;//时长
+    private long duration;//
 
     @Nullable
     private final String fileName;

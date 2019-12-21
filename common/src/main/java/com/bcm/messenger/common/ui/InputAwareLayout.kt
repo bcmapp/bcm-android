@@ -7,7 +7,7 @@ import android.widget.EditText
 import com.bcm.messenger.common.utils.*
 
 /**
- * 协调输入框布局
+ * 
  */
 class InputAwareLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : KeyboardAwareLinearLayout(context, attrs, defStyle), KeyboardAwareLinearLayout.OnKeyboardShownListener {
 

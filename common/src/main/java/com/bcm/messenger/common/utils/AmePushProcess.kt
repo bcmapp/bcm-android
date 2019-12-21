@@ -38,7 +38,7 @@ import org.greenrobot.eventbus.EventBus
 
 
 /**
- * 推送通知进程帮助类
+ * 
  * Created by bcm.social.01 on 2018/6/28.
  */
 object AmePushProcess {
@@ -56,17 +56,17 @@ object AmePushProcess {
     private const val downloadNotificationId = 3
 
     private var pushInitTime = 0L
-    private var offlineUnreadSet = mutableSetOf<String>() //有网时候的会话未读数（群和私）
-    private var adhocOfflineUnreadSet = mutableSetOf<String>() //无网时候的会话未读数
-    private var friendReqUnreadCount = 0 //好友请求未读数
+    private var offlineUnreadSet = mutableSetOf<String>() //（）
+    private var adhocOfflineUnreadSet = mutableSetOf<String>() //
+    private var friendReqUnreadCount = 0 //
 
     private var lastNotifyTime = 0L
 
-    private var mChatNotification: Notification? = null //用于聊天的通知栏
-    private var mFriendReqNotification: Notification? = null //用于好友请求的通知栏
+    private var mChatNotification: Notification? = null //
+    private var mFriendReqNotification: Notification? = null //
 
     /**
-     * 系统通知数据
+     * 
      */
     class SystemNotifyData(val type: String, val id: Long, val activity_id: Long, val content: String) : Parcelable, NotGuard {
 
@@ -117,7 +117,7 @@ object AmePushProcess {
     }
 
     /**
-     * 私聊通知数据
+     * 
      */
     class ChatNotifyData(var uid: String?) : Parcelable, NotGuard {
         constructor(parcel: Parcel) : this(parcel.readString())
@@ -143,7 +143,7 @@ object AmePushProcess {
     }
 
     /**
-     * 群聊通知数据
+     * 
      */
     class GroupNotifyData(val mid: Long?, val gid: Long?, var isAt: Boolean? = false) : Parcelable, NotGuard {
 
@@ -203,7 +203,7 @@ object AmePushProcess {
     }
 
     /**
-     * 无网通知
+     * 
      */
     class AdHocNotifyData(val session: String, var isAt: Boolean = false) : Parcelable, NotGuard {
         constructor(parcel: Parcel) : this(parcel.readString(), parcel.readInt() == 1)
@@ -242,7 +242,7 @@ object AmePushProcess {
 
         if (AMESelfData.isLogin && null != notify) {
             if (TextSecurePreferences.isNotificationsEnabled(AppContextHolder.APP_CONTEXT) &&
-                    TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT)) { //通知打开了
+                    TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT)) { //
                 Observable.create<Unit> {
                     if (needShowOffline()) {
                         incrementOfflineUnreadCount(notify)
@@ -292,7 +292,7 @@ object AmePushProcess {
                     }
                 }
 
-                //FIXME 对于离线推送的消息，默认作为是@标识
+                //FIXME ，@
                 notify.bcmdata.groupChat?.isAt = true
                 processPush(notify, true)
 
@@ -305,7 +305,7 @@ object AmePushProcess {
     }
 
     /**
-     * 检测是否有系统Banner消息通知
+     * Banner
      */
     fun checkSystemBannerNotice() {
         AmeDispatcher.io.dispatch {
@@ -319,7 +319,7 @@ object AmePushProcess {
     }
 
     /**
-     * 读取未读数
+     * 
      */
     private fun incrementOfflineUnreadCount(data: BcmData) {
         if (!AppForeground.foreground()) {
@@ -382,14 +382,14 @@ object AmePushProcess {
     }
 
     /**
-     * 判断当前是否可展示系统消息
+     * 
      */
     private fun canNotifySystemMsg(current: Long, start: Long, end: Long): Boolean {
         return start == -1L || start == 0L || current in start..end
     }
 
     /**
-     * 处理系统级的通知
+     * 
      */
     private fun handleNotify(notifyData: SystemNotifyData?) {
         if(notifyData == null) {
@@ -398,7 +398,7 @@ object AmePushProcess {
         val oldJsonData = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMESelfData.uid + "_" + notifyData.type, "")
         if (!oldJsonData.isNullOrEmpty()) {
             val oldData = GsonUtils.fromJson(oldJsonData, SystemNotifyData::class.java)
-            if (oldData.id >= notifyData.id) { //显示消息号最大的
+            if (oldData.id >= notifyData.id) { //
                 ALog.i(TAG, "oldData.id = ${oldData.id} ,newNotifyData.id = ${notifyData.id}")
                 return
             }
@@ -426,13 +426,13 @@ object AmePushProcess {
                     }
                 }
             }
-            if (!AppForeground.foreground()) { //Umeng存活，App挂掉，通过Umeng拉起
+            if (!AppForeground.foreground()) { //Umeng，App，Umeng
                 val builder = AmeNotification.getDefaultNotificationBuilder(AppContextHolder.APP_CONTEXT)
                 setAlarm(builder, null, RecipientDatabase.VibrateState.ENABLED)
                 notifySystemMessageBar(builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
                         AmeNotificationService.ACTION_HOME)
             }
-            //确认已经收到过这条系统消息
+            //
             PushUtil.confirmSystemMessages(notifyData.id).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -450,7 +450,7 @@ object AmePushProcess {
 
 
     /**
-     * 设置通知栏播放声音与震动
+     * 
      */
     private fun setAlarm(builder: NotificationCompat.Builder, ringtone: Uri?, vibrate: RecipientDatabase.VibrateState) {
         if (System.currentTimeMillis() - lastNotifyTime > 6000) {
@@ -471,7 +471,7 @@ object AmePushProcess {
     }
 
     /**
-     * 处理私聊通知
+     * 
      */
     private fun handleNotify(notifyData: ChatNotifyData?) {
         if (null != notifyData) {
@@ -498,7 +498,7 @@ object AmePushProcess {
     }
 
     /**
-     * 处理群聊通知
+     * 
      */
     private fun handleNotify(notifyData: GroupNotifyData?) {
         if (null != notifyData && notifyData.gid ?: 0 > 0) {
@@ -551,7 +551,7 @@ object AmePushProcess {
     }
 
     /**
-     * 处理无网通知
+     * 
      */
     private fun handleNotify(notifyData: AdHocNotifyData?) {
         if (notifyData != null) {
@@ -568,7 +568,7 @@ object AmePushProcess {
     }
 
     /**
-     * 展示通知
+     * 
      */
     private fun notifyBar(builder: NotificationCompat.Builder, msg: Parcelable, context: Context?, notificationId: Int, action: Int) {
         try {
@@ -665,10 +665,10 @@ object AmePushProcess {
     }
 
     /**
-     * 是否展示通知
+     * 
      */
     private fun needShowOffline(): Boolean {
-        //登录成功5秒内，触发离线通知
+        //5，
         if (System.currentTimeMillis() - pushInitTime > 5000 && pushInitTime != 0L) {
             if (!AppForeground.foreground()) {
                 return true
@@ -678,7 +678,7 @@ object AmePushProcess {
     }
 
     /**
-     * 清理所有通知
+     * 
      */
     fun clearNotificationCenter() {
         ALog.i(TAG, "clearNotificationCenter")
@@ -693,7 +693,7 @@ object AmePushProcess {
     }
 
     /**
-     * 清理好友请求通知
+     * 
      */
     fun clearFriendRequestNotification() {
         ALog.i(TAG, "clearFriendRequestNotification")
@@ -705,7 +705,7 @@ object AmePushProcess {
     }
 
     /**
-     * 通知下载进度
+     * 
      */
     fun notifyDownloadApkNotification(contentText: String, isCompleted: Boolean, installPath: String) {
         ALog.i(TAG, "notifyDownloadApkNotification isComplete: $isCompleted")
@@ -727,7 +727,7 @@ object AmePushProcess {
     }
 
     /**
-     * 更新应用角标信息
+     * 
      */
     fun updateAppBadge(context: Context, count: Int) {
         try {
@@ -751,7 +751,7 @@ object AmePushProcess {
     }
 
     /**
-     * 设置应用角标
+     * 
      */
     private fun updateAppBadge(context: Context, chatCount: Int, friendReqCount: Int) {
         try {

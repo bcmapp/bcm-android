@@ -8,7 +8,7 @@ import android.view.View
 import androidx.customview.widget.ViewDragHelper
 
 /**
- * 具有下拉功能的ConstraintLayout
+ * 
  * Created by Kin on 2018/11/5
  */
 class DragLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {

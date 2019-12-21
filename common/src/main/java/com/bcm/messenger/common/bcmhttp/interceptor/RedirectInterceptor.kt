@@ -16,7 +16,7 @@ import okhttp3.Response
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * ip迭代拦截器
+ * ip
  */
 class RedirectInterceptor(private val lbsType: String, private val defaultServer: IMServerUrl) : Interceptor {
     private var lbsFetchIndex = 0
@@ -81,7 +81,7 @@ class RedirectInterceptor(private val lbsType: String, private val defaultServer
         if (response?.isSuccessful == true) {
             failedTimes.set(0)
         } else if (serverOrNetWorkFailed(response)) {
-            //达到3次接口请求失败，切换服务器
+            //3，
             val times = failedTimes.get()
             if (times >= 3) {
                 failedTimes.set(0)
@@ -103,7 +103,7 @@ class RedirectInterceptor(private val lbsType: String, private val defaultServer
 
     private fun serverOrNetWorkFailed(response: Response?): Boolean {
         if (!NetworkUtil.isConnected()) {
-            //网络断开了，不统计到网络不正常的情况
+            //，
             return false
         }
 
@@ -121,7 +121,7 @@ class RedirectInterceptor(private val lbsType: String, private val defaultServer
 
 
     fun getCurrentServer(): IMServerUrl {
-        //如果迭代器失效，刷新lbs
+        //，lbs
         if (!serverIterator.isValid()) {
             LBSManager.query(lbsType, lbsFetchIndex, listener)
         }
@@ -131,7 +131,7 @@ class RedirectInterceptor(private val lbsType: String, private val defaultServer
     private fun getNextServer(): IMServerUrl {
         currentServer = serverIterator.next()
 
-        //如果迭代器失效，刷新lbs
+        //，lbs
         if (!serverIterator.isValid()) {
             LBSManager.query(lbsType, lbsFetchIndex, listener)
         }

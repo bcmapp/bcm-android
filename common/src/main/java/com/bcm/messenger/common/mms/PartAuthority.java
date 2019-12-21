@@ -52,7 +52,7 @@ public class PartAuthority {
     }
 
 
-    //取附件流内容
+    //
     public static InputStream getAttachmentStream(@NonNull Context context, MasterSecret masterSecret, @NonNull Uri uri)
             throws IOException {
         int match = uriMatcher.match(uri);

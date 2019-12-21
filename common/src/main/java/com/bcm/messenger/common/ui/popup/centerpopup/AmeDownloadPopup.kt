@@ -13,7 +13,7 @@ import com.bcm.messenger.utility.logger.ALog
 import java.lang.ref.WeakReference
 
 /**
- * 自定义的downloading窗口
+ * downloading
  * Created by zjl on 2018/8/27.
  */
 class AmeDownloadPopup : Application.ActivityLifecycleCallbacks {
@@ -56,7 +56,7 @@ class AmeDownloadPopup : Application.ActivityLifecycleCallbacks {
 
 
     /**
-     * 隐藏
+     * 
      */
     fun dismiss() {
         dismissInner(popup)
@@ -111,7 +111,7 @@ class AmeDownloadPopup : Application.ActivityLifecycleCallbacks {
                 dialog.setCanceledOnTouchOutside(false)
 
                 dialog.window?.let { window ->
-                    window.setBackgroundDrawableResource(android.R.color.transparent)    //设置Dialog背景透明效果
+                    window.setBackgroundDrawableResource(android.R.color.transparent)    //Dialog
                     window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
 
                     val windowParams = window.attributes

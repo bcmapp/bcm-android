@@ -20,18 +20,18 @@ import java.io.ObjectOutputStream
 
 /**
  * Created by bcm.social.01 on 2019/4/8.
- * 检索管理器
+ * 
  * eg
- *  检索联系人和群
+ *  
  *  val resultMap = BcmFinderManager.get().find("abc", listOf(BcmFinderType.ADDRESS_BOOK, BcmFinderType.GROUP))
  *
  *  for( (type, result) in resultMap ) {
- *      val top10List = result.topN(10) //读取type检索器的前10个检索结果
+ *      val top10List = result.topN(10) //type10
  *
- *      val allList = result.toList() //读取type检索器的所有的检索结果
+ *      val allList = result.toList() //type
  *
  *      if(result.count > 0) {
- *          val top1 = result.get(0)  //读取type检索器的第一个检索结果
+ *          val top1 = result.get(0)  //type
  *      }
  *  }
  */
@@ -46,14 +46,14 @@ class BcmFinderManager {
 
          private const val SEARCH_TABLE = "table_search_whole_"
          private const val RECORD_KEY = "key_record"
-         private const val mSearchLimit: Int = 3//目前限制显示的结果数，如果是0表示不限制
-         private const val mRecentLimit: Int = 10//目前最近搜索条件的top数目
+         private const val mSearchLimit: Int = 3//，0
+         private const val mRecentLimit: Int = 10//top
 
 
          private val manager:BcmFinderManager = BcmFinderManager()
 
          /**
-          * Finder管理对象
+          * Finder
           */
          fun get(): BcmFinderManager {
              return manager
@@ -64,8 +64,8 @@ class BcmFinderManager {
     private var mRecordMap: MutableMap<String, SearchRecord>? = null
 
     /**
-     * 注册检索器
-     * @param finder 检索器
+     * 
+     * @param finder 
      */
     fun registerFinder(finder: IBcmFinder) {
         ALog.d(TAG, "registerFinder: ${finder.type()}")
@@ -73,7 +73,7 @@ class BcmFinderManager {
     }
 
     /**
-     * 注销检索器
+     * 
      */
     fun unRegisterFinder(finder: IBcmFinder) {
         if (finder == finderMap[finder.type()]) {
@@ -87,9 +87,9 @@ class BcmFinderManager {
     }
 
     /**
-     * @param key 要检索的关键字
-     * @param fromTypes 要从哪些Finder中检索
-     * @return 匹配结果列表
+     * @param key 
+     * @param fromTypes Finder
+     * @return 
      */
     fun find(key:String, fromTypes: Array<BcmFinderType>): Map<BcmFinderType, IBcmFindResult> {
         val resultMap = HashMap<BcmFinderType, IBcmFindResult>()
@@ -107,9 +107,9 @@ class BcmFinderManager {
     }
 
     /**
-     * @param key 要检索的关键字
-     * @param fromTypes 要从哪些Finder中检索
-     * @return 匹配结果列表
+     * @param key 
+     * @param fromTypes Finder
+     * @return 
      */
     fun findWithTarget(key:String, targetAddress:Address, fromTypes:Array<BcmFinderType>) :Map<BcmFinderType, IBcmFindResult> {
         val resultMap = HashMap<BcmFinderType, IBcmFindResult>()
@@ -134,14 +134,14 @@ class BcmFinderManager {
     }
 
     /**
-     * 清理所有最近搜索记录
+     * 
      */
     fun clearRecord() {
         getAccountPreferences(AppContextHolder.APP_CONTEXT).edit().clear().commit()
     }
 
     /**
-     * 查找最近搜索记录
+     * 
      */
     @SuppressLint("CheckResult")
     fun querySearchRecord(checker: SearchRecordChecker, callback: (result: List<SearchRecordDetail>) -> Unit) {
@@ -159,7 +159,7 @@ class BcmFinderManager {
                 r
             }.sortedWith(Comparator<SearchRecordDetail> { o1, o2 ->
                 when {
-                    // 目前只按最近的来搜素
+                    // 
                     o2.date < o1.date -> -1
                     o2.date > o1.date -> 1
                     else -> 0
@@ -184,7 +184,7 @@ class BcmFinderManager {
     }
 
     /**
-     * 查找搜索结果
+     * 
      */
     @SuppressLint("CheckResult")
     fun querySearchResultLimit(keyword: String, types: Array<BcmFinderType>, callback: (result: List<SearchItemData>) -> Unit) {
@@ -216,7 +216,7 @@ class BcmFinderManager {
     }
 
     /**
-     * 查找搜索结果
+     * 
      */
     @SuppressLint("CheckResult")
     fun querySearchResult(keyword: String, types: Array<BcmFinderType>, callback: (result: List<SearchItemData>) -> Unit) {
@@ -249,7 +249,7 @@ class BcmFinderManager {
     }
 
     /**
-     * 查找对应类型的搜索结果
+     * 
      */
     private fun findSearchResult(isLimit: Boolean, type: BcmFinderType, findResult: IBcmFindResult): List<SearchItemData> {
         ALog.d(TAG, "findSearchResult isLimit: $isLimit type: $type")
@@ -277,7 +277,7 @@ class BcmFinderManager {
     }
 
     /**
-     * bcmFindData转化为SearchData
+     * bcmFindDataSearchData
      */
     private fun transform(type: BcmFinderType, data: BcmFindData<*>): SearchItemData? {
         return when(type) {
@@ -310,7 +310,7 @@ class BcmFinderManager {
     }
 
     /**
-     * 保存当前的搜索记录
+     * 
      */
     @SuppressLint("CheckResult")
     fun saveRecord(type: BcmFinderType, key: String) {
@@ -326,7 +326,7 @@ class BcmFinderManager {
                 record.date = System.currentTimeMillis()
                 map[nk] = record
             }else {
-                // 只按最近搜索，所以需要更新时间
+                // ，
                 record.date = System.currentTimeMillis()
                 record.times++
             }
@@ -392,7 +392,7 @@ class BcmFinderManager {
     }
 
     /**
-     * 基于当前登录账号的pref
+     * pref
      */
     private fun getAccountPreferences(context: Context): SharedPreferences {
         ALog.d(TAG, "getAccountPreferences table: $SEARCH_TABLE${AMESelfData.uid}")

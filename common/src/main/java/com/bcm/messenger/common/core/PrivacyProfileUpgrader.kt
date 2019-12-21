@@ -12,7 +12,7 @@ import okhttp3.Call
 import java.io.File
 
 /**
- * 隐私profile升级帮助类
+ * profile
  * Created by wjh on 2019/5/8
  */
 class PrivacyProfileUpgrader {
@@ -22,7 +22,7 @@ class PrivacyProfileUpgrader {
     private val PREF_AVATAR_UPGRADE = "pref_avatar_upgrade_done"
 
     /**
-     * 检测是否需要升级
+     * 
      */
     fun checkNeedUpgrade(recipient: Recipient) {
         ALog.i(TAG, "checkNeedUpgrade")
@@ -39,7 +39,7 @@ class PrivacyProfileUpgrader {
         }
         if (privacyProfile.encryptedAvatarLD.isNullOrEmpty() && privacyProfile.encryptedAvatarHD.isNullOrEmpty()) {
             avatarUpload = recipient.profileAvatar ?: ""
-            if (avatarUpload.isNotEmpty()) {//如果连老版本的头像都为空，则不升级
+            if (avatarUpload.isNotEmpty()) {//，
                 avatarUpgrade = true
             }
         }
@@ -88,14 +88,14 @@ class PrivacyProfileUpgrader {
 
 
     /**
-     * 获取升级前的临时下载地址
+     * 
      */
     private fun getTempUpgradePath(recipient: Recipient): String {
         return "${recipient.address.serialize()}_${System.currentTimeMillis()}_avatarOld.jpg"
     }
 
     /**
-     * 下载旧版本的头像
+     * 
      */
     private fun downloadAvatarOld(context: Context, url: String, path: String, callback: (result: Bitmap?) -> Unit) {
 

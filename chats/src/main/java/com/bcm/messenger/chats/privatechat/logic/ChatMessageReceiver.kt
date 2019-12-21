@@ -183,7 +183,7 @@ class ChatMessageReceiver : IServerDataListener {
     }
 
     private fun getRealUid(encryptSource: ByteArray): String? {
-        // Version暂时不需要
+        //
         return try {
             val decodeString = String(Base64.decode(encryptSource), StandardCharsets.UTF_8)
             val json = JSONObject(decodeString)

@@ -7,7 +7,7 @@ import com.bcm.messenger.common.metrics.ReportUtil
 import okhttp3.Request
 
 /**
- * 文件接口成功率打点
+ * 
  */
 class FileMetricsInterceptor : MetricsInterceptor() {
     override fun onComplete(req: Request, succeed: Boolean, code: Int, duration: Long) {

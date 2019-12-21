@@ -85,7 +85,7 @@ class IMServerErrorCodeInterceptor : BcmErrorInterceptor() {
             }
         }
 
-        //对于收到的错误码，不要记着展示，为了用户体验，先通过mainThread的队列特性来填入缓存，等待合适时机展示
+        //，，，mainThread，
         ServerCodeUtil.storeErrorCode(response.code())
     }
 }

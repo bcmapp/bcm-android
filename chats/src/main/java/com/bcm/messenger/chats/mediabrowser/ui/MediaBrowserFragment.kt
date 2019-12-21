@@ -84,7 +84,7 @@ class MediaBrowserFragment : Fragment(), IMediaBrowserMenuProxy {
     }
 
     private fun init(context: Context, address: Address, viewModel: BaseMediaBrowserViewModel, handleViewModel: MediaHandleViewModel) {
-        //初始化媒体显示列表
+        //
         media_browser_recycler_view.layoutManager = GridLayoutManager(context, 3)
         val browserAdapter = MediaBrowserAdapter(viewModel, handleViewModel, no_conten_page, isDeleteMode, context) { dataList ->
             indexId.let {
@@ -146,7 +146,7 @@ class MediaBrowserFragment : Fragment(), IMediaBrowserMenuProxy {
             intent.putExtra(MediaViewActivity.THREAD_ID, msg.threadId)
             intent.putExtra(MediaViewActivity.INDEX_ID, msg.id)
             intent.putExtra(MediaViewActivity.DATA_TYPE, MediaViewActivity.TYPE_PRIVATE_BROWSER)
-            if (MediaUtil.isGif(data.mediaType)) {  //gif图不使用material过渡效果
+            if (MediaUtil.isGif(data.mediaType)) {  //
                 act.startActivity(intent)
             } else {
                 act.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(act, mediaView, ShareElements.Activity.MEDIA_PREIVEW + msg.id).toBundle())
@@ -163,7 +163,7 @@ class MediaBrowserFragment : Fragment(), IMediaBrowserMenuProxy {
             intent.putExtra(MediaViewActivity.THREAD_ID, msg.gid)
             intent.putExtra(MediaViewActivity.INDEX_ID, msg.indexId)
             intent.putExtra(MediaViewActivity.DATA_TYPE, MediaViewActivity.TYPE_GROUP_BROWSER)
-            if (MediaUtil.isGif(data.mediaType)) {  //gif图不使用material过渡效果
+            if (MediaUtil.isGif(data.mediaType)) {  //
                 act.startActivity(intent)
             } else {
                 act.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(act, mediaView, ShareElements.Activity.MEDIA_PREIVEW + msg.indexId).toBundle())

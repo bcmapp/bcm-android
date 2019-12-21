@@ -17,7 +17,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /**
- * 群组缓存类
  * Created by bcm.social.01 on 2018/6/26.
  */
 @SuppressLint("CheckResult")

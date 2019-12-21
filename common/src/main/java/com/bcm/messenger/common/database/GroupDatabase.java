@@ -68,9 +68,7 @@ public class GroupDatabase extends Database {
       "CREATE UNIQUE INDEX IF NOT EXISTS group_id_index ON " + TABLE_NAME + " (" + GROUP_ID + ");",
   };
 
-  /**
-   * 删除表的sql语句
-   */
+  
   public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
   private static final String[] GROUP_PROJECTION = {

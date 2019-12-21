@@ -14,7 +14,6 @@ import android.view.ViewParent
 
 
 /**
- * 聊天窗自定义长按时间解决movementMethod
  */
 class ClickSpanTouchHandler() : View.OnTouchListener {
 

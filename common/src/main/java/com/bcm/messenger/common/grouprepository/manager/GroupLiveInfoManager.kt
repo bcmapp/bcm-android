@@ -20,7 +20,7 @@ class GroupLiveInfoManager internal constructor() {
 
     private val GID = "gid"
 
-    //上层正在播放直播的 gid
+    // gid
     private var currentPlayingGid: Long = -1
 
     companion object {
@@ -68,7 +68,7 @@ class GroupLiveInfoManager internal constructor() {
     }
 
 
-    //发送开启直播消息暂存
+    //
     fun stashLiveInfo(gid: Long, liveId: Long, sourceType: GroupLiveInfo.LiveSourceType, sourceUrl: String, actionTime: Long, duration: Long): Long {
         val groupLiveInfo = GroupLiveInfo()
         groupLiveInfo.gid = gid
@@ -84,12 +84,12 @@ class GroupLiveInfoManager internal constructor() {
         return dao.insert(groupLiveInfo)
     }
 
-    //开启直播失败后清除暂存信息
+    //
     fun clearStashLiveInfo(index: Long) {
         dao.delete(dao.loadLiveInfoByIndexId(index))
     }
 
-    //根据发送消息成功后更新数据库
+    //
     fun updateWhenSendLiveMessage(index: Long, message: AmeGroupMessage.LiveContent) {
         val groupLiveInfo = dao.loadLiveInfoByIndexId(index)
         if (groupLiveInfo != null) {
@@ -130,30 +130,30 @@ class GroupLiveInfoManager internal constructor() {
 
     }
 
-    //=================================== 上面是群主发送相关，下面是接收消息相关  ================================================
-    //收到群直播消息分发
+    //=================================== ，  ================================================
+    //
     fun handleReceiveLiveMessage(gid: Long, message: AmeGroupMessage.LiveContent, isOfflineMessage: Boolean) {
-        //判断直播信息是否是最新的，如果是，进行分发，如果不是，直接丢掉。
+        //，，，，。
         val groupLiveInfo = dao.loadLatestLiveInfoByGid(gid)
         if (groupLiveInfo == null) {
             createAndChangeLiveStateByMessage(gid, message, isOfflineMessage)
         } else if (groupLiveInfo.liveId > message.id) {
-            //旧直播的指令,直接丢弃
+            //,
             return
-        } else if (groupLiveInfo.liveId == message.id) {//当前直播的指令
-            if (message.actionTime <= groupLiveInfo.currentActionTime) {//过期指令
+        } else if (groupLiveInfo.liveId == message.id) {//
+            if (message.actionTime <= groupLiveInfo.currentActionTime) {//
                 return
-            } else {//当前直播的有效指令
+            } else {//
                 changeLiveStateByMessage(groupLiveInfo, message)
             }
         } else if (message.id > groupLiveInfo.liveId) {
-            //TODO:开启新直播,更改直播状态
+            //TODO:,
             createAndChangeLiveStateByMessage(gid, message, isOfflineMessage)
         }
     }
 
 
-    //收到新直播的状态更新消息，创建新直播，并更新状态
+    //，，
     private fun createAndChangeLiveStateByMessage(gid: Long, message: AmeGroupMessage.LiveContent, isOfflineMessage: Boolean) {
         val groupLiveInfo = GroupLiveInfo()
         groupLiveInfo.gid = gid
@@ -188,19 +188,19 @@ class GroupLiveInfoManager internal constructor() {
             }
         }
         dao.insert(groupLiveInfo)
-        //直播事件通知
+        //
         updateLiveModel(groupLiveInfo)
-        //Thread 通知
+        //Thread 
         updateThreadLiveState(gid, groupLiveInfo.liveStatus)
         executeAutoStopLiveTask(groupLiveInfo, isOfflineMessage)
 
     }
 
 
-    //收到消息改变当前直播状态
+    //
     private fun changeLiveStateByMessage(groupLiveInfo: GroupLiveInfo, message: AmeGroupMessage.LiveContent) {
         when {
-            message.isRemoveLive() -> {//删除直播
+            message.isRemoveLive() -> {//
                 groupLiveInfo.liveStatus = GroupLiveInfo.LiveStatus.REMOVED.value
                 groupLiveInfo.currentActionTime = message.actionTime
             }
@@ -215,7 +215,7 @@ class GroupLiveInfoManager internal constructor() {
                 groupLiveInfo.liveStatus = GroupLiveInfo.LiveStatus.LIVING.value
             }
             message.isStartLive() -> {
-                //重复消息丢弃
+                //
             }
             message.isRemovePlayback() -> {
                 groupLiveInfo.currentActionTime = message.actionTime
@@ -229,7 +229,7 @@ class GroupLiveInfoManager internal constructor() {
         updateThreadLiveState(groupLiveInfo.gid, groupLiveInfo.liveStatus)
     }
 
-    //获取当前群回放信息
+    //
     fun getCurrentPlaybackInfo(gid: Long): GroupLiveInfo? {
         val groupLiveInfo = getCurrentLiveInfo(gid)
         if (groupLiveInfo == null
@@ -242,11 +242,11 @@ class GroupLiveInfoManager internal constructor() {
 
     }
 
-    //获取最新直播信息
+    //
     fun getCurrentLiveInfo(gid: Long): GroupLiveInfo? {
         val groupLiveInfo = dao.loadLatestLiveInfoByGid(gid)
         if (groupLiveInfo == null) return groupLiveInfo
-        //判断直播是否结束
+        //
         if (groupLiveInfo.isLiveStatus && groupLiveInfo.livePlayHasDone()) {
             groupLiveInfo.liveStatus = GroupLiveInfo.LiveStatus.STOPED.value
             updateLiveStopToDbAndInsertMessage(groupLiveInfo)
@@ -256,7 +256,7 @@ class GroupLiveInfoManager internal constructor() {
     }
 
 
-    //加载所有直播状态并更新到 ThreadDataBase 中
+    // ThreadDataBase 
     fun loadAndUpdateThreadLiveinfo() {
 
     }
@@ -286,7 +286,7 @@ class GroupLiveInfoManager internal constructor() {
         }
     }
 
-    //更新stop状态到数据库
+    //stop
     private fun updateLiveStopToDbAndInsertMessage(groupLiveInfo: GroupLiveInfo?, isOfflineMessage: Boolean = false) {
         groupLiveInfo?.let {
             if (it.liveStatus != GroupLiveInfo.LiveStatus.STOPED.value) {

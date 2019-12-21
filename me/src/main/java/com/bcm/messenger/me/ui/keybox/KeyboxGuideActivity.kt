@@ -45,7 +45,6 @@ class KeyboxGuideActivity : SwipeBaseActivity() {
             }
 
             override fun onClickRight() {
-                // 采用新的扫一扫
                 callScanActivity()
             }
         })
@@ -54,7 +53,6 @@ class KeyboxGuideActivity : SwipeBaseActivity() {
                 BcmRouter.getInstance().get(ARouterConstants.Activity.ME_KEYBOX).navigation(this)
                 finish()
             } else {
-                // 采用新的扫一扫
                 callScanActivity()
             }
 
@@ -64,12 +62,12 @@ class KeyboxGuideActivity : SwipeBaseActivity() {
             env_test_layout.visibility = View.VISIBLE
             env_export_account_list.setOnClickListener {
                 AmeLoginLogic.accountHistory.export()
-                ToastUtil.show(this@KeyboxGuideActivity, "导出成功")
+                ToastUtil.show(this@KeyboxGuideActivity, "import succeed")
             }
 
             env_import_account_list.setOnClickListener {
                 AmeLoginLogic.accountHistory.import()
-                ToastUtil.show(this@KeyboxGuideActivity, "导入成功")
+                ToastUtil.show(this@KeyboxGuideActivity, "import failed")
             }
         }
     }
@@ -92,7 +90,6 @@ class KeyboxGuideActivity : SwipeBaseActivity() {
 
         AmeLoginLogic.saveBackupFromExportModelWithWarning(qrCode ?: return) { accountId ->
             if (!accountId.isNullOrEmpty()) {
-                //扫码成功，跳转到keybox页面
                 BcmRouter.getInstance().get(ARouterConstants.Activity.ME_KEYBOX).navigation(this)
                 finish()
             }

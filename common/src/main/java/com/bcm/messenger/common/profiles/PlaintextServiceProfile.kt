@@ -7,7 +7,7 @@ import org.whispersystems.signalservice.internal.util.Base64
 import java.nio.charset.Charset
 
 /**
- * 明文的联系人profile信息
+ * profile
  * Created by wjh on 2018/7/4
  */
 class PlaintextServiceProfile : ISignalProfile {

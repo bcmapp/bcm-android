@@ -24,13 +24,13 @@ import kotlin.jvm.functions.Function0;
 import com.bcm.messenger.utility.logger.ALog;
 
 /**
- * 联系人提供器
+ * 
  */
 class RecipientProvider {
 
     private static final String TAG = RecipientProvider.class.getSimpleName();
 
-    private static RecipientCache reserveCache = null;//后备缓存（所有，包括群组里的陌生人, 目前考虑全部联系人都用这种缓存)
+    private static RecipientCache reserveCache = null;//（，, )
 
     private static final ExecutorService asyncRecipientResolver = Util.newSingleThreadedLifoExecutor();
 
@@ -39,7 +39,7 @@ class RecipientProvider {
     }
 
     /**
-     * 清理所有缓存
+     * 
      */
     void clearCache() {
         reserveCache.reset();
@@ -47,7 +47,7 @@ class RecipientProvider {
 
 
     /**
-     * 从缓存读取联系人信息
+     * 
      * @param address
      * @return
      */
@@ -60,7 +60,7 @@ class RecipientProvider {
     }
 
     /**
-     * 更新缓存（主要几种情况，自身，陌生人，以及本身通讯录的联系人）
+     * （，，，）
      * @param address
      * @param recipient
      */
@@ -73,7 +73,7 @@ class RecipientProvider {
     }
 
     /**
-     * 检查是否使用缓存
+     * 
      * @param cachedRecipient
      * @param asynchronous
      * @return
@@ -99,7 +99,7 @@ class RecipientProvider {
         RecipientDetails newDetail = details == null ? new RecipientDetails(null, null, null, null) : details;
 
         Recipient current = findCache(address);
-        if (!useCache(current, asynchronous)) {//如果不用缓存的数据，则重新生成recipient，并从数据库加载setting（同步或异步由asynchronous来定）
+        if (!useCache(current, asynchronous)) {//，recipient，setting（asynchronous）
 
             ListenableFutureTask<RecipientDetails> futureTask = null;
             if (asynchronous) {
@@ -184,14 +184,14 @@ class RecipientProvider {
     }
 
     /**
-     * 联系人详情信息
+     * 
      */
     public static class RecipientDetails {
 
         @Nullable
-        String customName;//针对群组是群组名称，针对个人是手机通讯录名称
+        String customName;//，
         @Nullable
-        String customAvatar;//针对群组是群组头像，针对个人是手机通讯录名称
+        String customAvatar;//，
         @Nullable
         List<Recipient> participants;
         @Nullable
@@ -245,7 +245,7 @@ class RecipientProvider {
     }
 
     /**
-     * 联系人缓存信息
+     * 
      */
     private static class RecipientCache {
         

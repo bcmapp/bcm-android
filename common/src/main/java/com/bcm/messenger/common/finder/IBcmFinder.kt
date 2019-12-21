@@ -5,22 +5,22 @@ import com.google.gson.reflect.TypeToken
 
 /**
  * Created by bcm.social.01 on 2019/4/8.
- * 检索器接口
+ * 
  */
 interface IBcmFinder {
     /**
-     * 查询检索器类型
+     * 
      * return finder type #BcmFinderType
      */
     fun type(): BcmFinderType
 
     /**
-     * 检索数据
+     * 
      */
     fun find(key:String): IBcmFindResult
 
     /**
-     * 检索指定address的数据
+     * address
      */
     fun findWithTarget(key:String, targetAddress:Address) :IBcmFindResult {
         return object :IBcmFindResult {
@@ -44,7 +44,7 @@ interface IBcmFinder {
     }
 
     /**
-     * 取消检索
+     * 
      */
     fun cancel()
 

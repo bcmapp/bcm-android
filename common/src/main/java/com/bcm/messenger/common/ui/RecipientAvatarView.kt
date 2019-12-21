@@ -31,7 +31,7 @@ import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import java.io.File
 
 /**
- * 联系对象的avatar展示控件（包含个人和群组）
+ * 
  *
  * Created by Kin on 2019/6/10
  */
@@ -62,9 +62,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         super.onDetachedFromWindow()
     }
 
-    /**
-     * 展示联系对象的avatar（个人和群组）
-     */
+    
     fun showRecipientAvatar(recipient: Recipient) {
         if (recipient.isGroupRecipient) {
             showGroupAvatar(recipient.groupId)
@@ -73,12 +71,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
-    /**
-     * 展示群头像，已设置优先，否则显示拼接头像
-     * @param gid 要显示的群ID
-     * @param showSplice 显示拼接头像
-     * @param path 拼接头像路径
-     */
+   
     fun showGroupAvatar(gid: Long, showSplice: Boolean = true, path: String = "") {
         ALog.i(TAG, "Show group avatar")
 
@@ -144,9 +137,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
-    /**
-     * 设置已缓存的拼接头像
-     */
+    
     private fun setCacheAvatar(path: String) {
         group_splice_avatar.visibility = View.VISIBLE
         member_single_avatar.visibility = View.GONE
@@ -227,7 +218,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     /**
-     * 清除数据，onDestroy或unbind的时候调用
+     * 
      */
     fun clear() {
         privateRecipient?.removeListener(this)

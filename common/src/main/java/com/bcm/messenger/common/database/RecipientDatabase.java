@@ -63,7 +63,7 @@ public class RecipientDatabase extends Database {
 
     static final String TABLE_NAME = "recipient_preferences";
     public static final String ID = "_id";
-    //身份标识
+    
     public static final String ADDRESS = "recipient_ids";
     public static final String BLOCK = "block";
     public static final String NOTIFICATION = "notification";
@@ -75,36 +75,36 @@ public class RecipientDatabase extends Database {
     public static final String EXPIRE_MESSAGES = "expire_messages";
     public static final String REGISTERED = "registered";
     public static final String PROFILE_KEY = "profile_key";
-    //用于平台昵称
+    
     public static final String PROFILE_NAME = "signal_profile_name";
-    //用于平台头像
+    
     public static final String PROFILE_AVATAR = "signal_profile_avatar";
 
-    //用于是否共享profile信息，默认共享
+    
     public static final String PROFILE_SHARING = "profile_sharing_approval";
-    //用于表示是否本地通讯录好友（多个contact以竖线隔开，默认为0）
+    
     public static final String SYSTEM_CONTACT_ID = "system_contact_id";
 
-    //用于本地通讯录名称
+    
     public static final String SYSTEM_NAME = "system_display_name";
-    //用于本地通讯录头像
+    
     public static final String SYSTEM_AVATAR = "system_avatar";
 
-    //用于本地备注名称
+    
     public static final String LOCAL_NAME = "local_name";
-    //用于本地备注头像
+    
     public static final String LOCAL_AVATAR = "local_avatar";
 
 
-    //绑定的手机号（多个以竖线隔开）
+    
     public static final String PHONE = "bind_phone";
-    //是否bcm好友关系(旧版本遗留)
+    
     public static final String FRIEND_FLAG = "is_friend";
-    //隐私的profile信息
+    
     public static final String PRIVACY_PROFILE = "privacy_profile";
-    //与此联系人的关系
+    
     public static final String RELATIONSHIP = "relationship";
-    //支持的功能
+    
     public static final String SUPPORT_FEATURES = "support_features";
 
     private static final String[] RECIPIENT_PROJECTION = new String[]{
@@ -153,9 +153,7 @@ public class RecipientDatabase extends Database {
         }
     }
 
-    /**
-     * 关系状态
-     */
+   
     public enum Relationship {
         STRANGER(0), FRIEND(1), FOLLOW(2), REQUEST(3), FOLLOW_REQUEST(4), BREAK(5);
 
@@ -174,9 +172,7 @@ public class RecipientDatabase extends Database {
         }
     }
 
-    /**
-     * 创建表SQL
-     */
+    
     public static final String CREATE_TABLE =
             "CREATE TABLE " + TABLE_NAME +
                     " (" + ID + " INTEGER PRIMARY KEY, " +
@@ -205,14 +201,9 @@ public class RecipientDatabase extends Database {
                     FRIEND_FLAG + " INTEGER DEFAULT 0, "  +
                     SUPPORT_FEATURES + " TEXT DEFAULT NULL);";
 
-    /**
-     * 删除表SQL
-     */
+    
     public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
-    /**
-     * 修改表，增加隐私profile字段
-     */
     public static final String ALTER_TABLE_ADD_PRIVACY = "ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + PRIVACY_PROFILE + " TEXT";
     public static final String ALTER_TABLE_ADD_RELATIONSHIP = "ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + RELATIONSHIP + " INTEGER";
     public static final String ALTER_TABLE_ADD_SUPPORT_FEATURES = "ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + SUPPORT_FEATURES + " TEXT DEFAULT NULL";
@@ -221,26 +212,15 @@ public class RecipientDatabase extends Database {
         super(context, databaseHelper);
     }
 
-    /**
-     * 设置cursor接收群组变更的通知
-     * @param cursor
-     */
+   
     public void setGroupNotification(@NonNull Cursor cursor) {
         cursor.setNotificationUri(context.getContentResolver(), Uri.parse(URI_GROUP));
     }
 
-    /**
-     * 设置指定cursor接收好友变更的通知
-     * @param cursor
-     */
     public void setFriendNotification(@NonNull Cursor cursor) {
         cursor.setNotificationUri(context.getContentResolver(), Uri.parse(URI_FRIEND));
     }
 
-    /**
-     * 设置指定cursor接收陌生人变更的通知
-     * @param cursor
-     */
     public void setStrangerNotification(@NonNull Cursor cursor) {
         cursor.setNotificationUri(context.getContentResolver(), Uri.parse(URI_STRANGER));
     }
@@ -281,12 +261,6 @@ public class RecipientDatabase extends Database {
         return null;
     }
 
-    /**
-     * 根据cursor读取联系人配置信息
-     *
-     * @param cursor
-     * @return
-     */
     @Nullable
     public static RecipientSettings getRecipientSettings(@NonNull Cursor cursor) {
 
@@ -401,21 +375,17 @@ public class RecipientDatabase extends Database {
         recipient.resolve().setBlocked(blocked);
 
         try {
-            //生成block 消息
+        
             createBlockMessage(recipient, blocked);
         }catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    /**
-     * 生成block消息
-     * @param recipient
-     * @param blocked
-     */
+    
     private void createBlockMessage(@NonNull Recipient recipient, boolean blocked) {
 
-        if (recipient.isSelf()) {//如果是自己就不处理（不能block自己）
+        if (recipient.isSelf()) {
             return;
         }
         String blockMessage;
@@ -435,7 +405,7 @@ public class RecipientDatabase extends Database {
 
         DatabaseFactory.getEncryptingSmsDatabase(AppContextHolder.APP_CONTEXT).markAsSent(messageId, true);
 
-        // 生成一条消息，这时候有可能这个用户是没有对话过的，所以threadId是新的，需要广播给AmeConversationActivity来触发更新
+        
         RxBus.INSTANCE.post(recipient.getAddress().serialize(), threadId);
 
     }
@@ -509,14 +479,7 @@ public class RecipientDatabase extends Database {
         recipient.resolve().setProfileSharing(enabled);
     }
 
-    /**
-     * 更新平台的profile信息
-     *
-     * @param recipient
-     * @param profileKey
-     * @param profileName
-     * @param profileAvatar
-     */
+ 
     public void setProfile(@NonNull Recipient recipient, @Nullable byte[] profileKey, @Nullable String profileName, @Nullable String profileAvatar, @NonNull RegisteredState registeredState) {
         ContentValues params = new ContentValues();
         params.put(PROFILE_KEY, profileKey == null ? null : Base64.encodeBytes(profileKey));
@@ -541,12 +504,7 @@ public class RecipientDatabase extends Database {
         recipient.resolve().updateName(name);
     }
 
-    /**
-     * 更新本地的profile信息
-     * @param recipient
-     * @param profileName
-     * @param profileAvatar
-     */
+  
     public void setLocalProfile(@NonNull Recipient recipient, @Nullable String profileName, @Nullable String profileAvatar) {
         ContentValues params = new ContentValues(2);
         params.put(LOCAL_NAME, profileName);
@@ -556,11 +514,7 @@ public class RecipientDatabase extends Database {
         notifyFriendChanged();
     }
 
-    /**
-     * 保存identityKey
-     * @param address
-     * @param identityKeyValue
-     */
+   
     private void setIdentityKey(Address address, String identityKeyValue) {
         try {
             if (TextUtils.isEmpty(identityKeyValue)) {
@@ -584,10 +538,7 @@ public class RecipientDatabase extends Database {
         }
     }
 
-    /**
-     * 查询好友（通讯录中）
-     * @return
-     */
+  
     @NonNull
     public Cursor getFriendsFromContact() {
         return getRecipients(2);
@@ -598,30 +549,18 @@ public class RecipientDatabase extends Database {
         return getRecipients(5);
     }
 
-    /**
-     * 查询本地所有bcm用户
-     * @return
-     */
+
     @NonNull
     public Cursor getAllBcmUser() {
         return getRecipients(3);
     }
 
-    /**
-     * 查询所有黑名单用户
-     * @return
-     */
+
     @NonNull
     public Cursor getBlockedUser() {
         return getRecipients(4);
     }
 
-    /**
-     * 根据条件查询联系人信息
-     * @param filter 0: 查询所有， 1: 查询双向好友， 2: 查询双向和单向好友, 3: 查询已注册的用户, 4: 查询所有黑名单用户, 5: 查询所有单端关系的用户
-     * @param addresses
-     * @return
-     */
     public @NonNull
     Cursor getRecipients(int filter, @Nullable String... addresses) {
         String localNumber = AMESelfData.INSTANCE.getUid();
@@ -646,20 +585,20 @@ public class RecipientDatabase extends Database {
                     " not like '" + GroupUtil.ENCODED_SIGNAL_GROUP_PREFIX + "%' and " + ADDRESS + " not like '" + GroupUtil.ENCODED_MMS_GROUP_PREFIX + "%'";
         }
         switch (filter) {
-            case 1: //查询好友（只有双向）
+            case 1: 
                 sql += " and " + RELATIONSHIP + " == " + Relationship.FRIEND.type + "";
                 break;
-            case 2: //查询好友（兼容老版本单向）
+            case 2: 
                 sql += " and (" + RELATIONSHIP + " == " + Relationship.FRIEND.type +
                         " or " + RELATIONSHIP + " == " + Relationship.FOLLOW.type +
                         " or " + RELATIONSHIP + " == " + Relationship.FOLLOW_REQUEST.type +
                         " or " + RELATIONSHIP + " == " + Relationship.BREAK.type +
                         " or 1 == " + FRIEND_FLAG + ")";
                 break;
-            case 3: //查询所有已经注册的用户
+            case 3: 
                 sql += " and " + REGISTERED + " == " + RegisteredState.REGISTERED.id;
                 break;
-            case 4: //查询所有黑名单用户
+            case 4: 
                 sql += " and " + REGISTERED + " == " + RegisteredState.REGISTERED.id + " and " + BLOCK + " = 1 ";
                 break;
             case 5:
@@ -685,12 +624,7 @@ public class RecipientDatabase extends Database {
         return results;
     }
 
-    /**
-     * 查询所有群组联系
-     *
-     * @param
-     * @return
-     */
+   
     public @NonNull
     Cursor getGroupRecipients() {
         String sql = "select * from " + TABLE_NAME + " where " + ADDRESS + " like '" + GroupUtil.ENCODED_TT_GROUP_PREFIX + "%' or " + ADDRESS +
@@ -726,11 +660,7 @@ public class RecipientDatabase extends Database {
         return results;
     }
 
-    /**
-     * 离开群组
-     *
-     * @param groupIds
-     */
+   
     public void leaveGroup(long... groupIds) {
         List<String> addressList = new ArrayList<>(groupIds.length);
         for (long groupId : groupIds) {
@@ -739,11 +669,6 @@ public class RecipientDatabase extends Database {
         delete(addressList);
     }
 
-    /**
-     * 保存隐私profile到数据库
-     * @param recipient
-     * @param profile
-     */
     public void setPrivacyProfile(@NonNull Recipient recipient, @NonNull PrivacyProfile profile) {
         ContentValues contentValues = new ContentValues(2);
         contentValues.put(PRIVACY_PROFILE, profile.toString());
@@ -756,23 +681,20 @@ public class RecipientDatabase extends Database {
         setBcmContacts(settingList, false);
     }
 
-    /**
-     * 设置好友通讯录信息（如果配置中存在临时昵称，也通过判断当前是否有昵称来决定是否填入数据库）
-     * @param settingList 好友配置列表
-     */
+    
     public void setBcmContacts(@NonNull List<RecipientSettings> settingList, boolean notifyRecipient) {
 
         class UpdateSettings {
-            public RecipientSettings settings;//最新的联系人配置
-            public boolean createFriendMsg;//是否生成好友消息
-            public boolean createBlockMsg;//是否执行block操作
+            public RecipientSettings settings;
+            public boolean createFriendMsg;
+            public boolean createBlockMsg;
         }
 
         if (settingList.isEmpty()) {
             return;
         }
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        Map<String, UpdateSettings> updateMap = new HashMap<>(settingList.size());//当前更新的联系人表
+        Map<String, UpdateSettings> updateMap = new HashMap<>(settingList.size());
         String sql = "select * from " + TABLE_NAME;
         UpdateSettings updateSettings;
         RecipientSettings s = null;
@@ -807,10 +729,10 @@ public class RecipientDatabase extends Database {
                         if (TextUtils.isEmpty(ns.signalProfileName)) {
                             ns.setSignalProfile(ns.getProfileKey(), s.getProfileName(), ns.getProfileAvatar());
                         }
-                        if (s.getRelationship() == Relationship.STRANGER) {//如果变成了陌生人，需要清理本地备注名，profile等信息
+                        if (s.getRelationship() == Relationship.STRANGER) {
                             ns.setLocalProfile("", "");
 
-                            if (!TextUtils.equals(ns.uid, AMESelfData.INSTANCE.getUid())) {//如果该联系人不是当前登录账号
+                            if (!TextUtils.equals(ns.uid, AMESelfData.INSTANCE.getUid())) {
                                 PrivacyProfile privacyProfile = ns.getPrivacyProfile();
                                 privacyProfile.setName("");
                                 privacyProfile.setNameKey("");
@@ -833,7 +755,7 @@ public class RecipientDatabase extends Database {
                             }
 
                         }else if (s.getRelationship() == Relationship.FRIEND) {
-                            //如果对方删除你后又把你添加回来，也不需要生成好友消息
+                            
                             if (ns.getRelationship() == Relationship.REQUEST) {
                                 updateSettings.createFriendMsg = true;
                             }
@@ -884,7 +806,7 @@ public class RecipientDatabase extends Database {
                     recipient = Recipient.from(context, Address.fromSerialized(ns.uid), true);
 //                    recipient = Recipient.fromSnapshot(context, Address.fromSerialized(ns.uid), ns);
                     if (updateSettings.createFriendMsg) {
-                        //当关系变更的时候，需要生成灰条消息（只有成为好友和成为陌生人才需要）
+                        
                         if (ns.getRelationship() == Relationship.FRIEND) {
                             createFriendMessage(recipient, true);
                         } else if (ns.getRelationship() == Relationship.STRANGER) {
@@ -893,7 +815,7 @@ public class RecipientDatabase extends Database {
                             ALog.d(TAG, "notifyRecipient uid: " + ns.uid + ", relation: " + ns.getRelationship());
                         }
                     }
-                    //如果需要处理block，则根据当前的关系来决定是加黑名单还是移除黑名单
+                    
                     if (updateSettings.createBlockMsg) {
                         if (ns.getRelationship() == Relationship.FRIEND) {
                             setBlocked(recipient, false);
@@ -908,7 +830,6 @@ public class RecipientDatabase extends Database {
     }
 
     /**
-     * 更新本地通讯录的相关信息
      * @param newContactList
      */
     public void updateLocalContacts(@NonNull List<RecipientSettings> newContactList) {
@@ -918,7 +839,7 @@ public class RecipientDatabase extends Database {
         List<RecipientSettings> updateList = new ArrayList<>();
         RecipientSettings find = null;
         try {
-            //查询所有好友或通讯录好友
+            
             String localNumber = AMESelfData.INSTANCE.getUid();
             String sql = "select * from " + TABLE_NAME + " where " + ADDRESS + " <> '" + localNumber + "' ";
             sql += " and " + ADDRESS + " not like '" + GroupUtil.ENCODED_TT_GROUP_PREFIX + "%' and " + ADDRESS +
@@ -934,20 +855,20 @@ public class RecipientDatabase extends Database {
                 if (setting == null) {
                     continue;
                 }
-                //首先查询当前数据库中的联系人是否存在与刚得到的本地系统通讯录中
+                
                 int index = newContactList.indexOf(setting);
                 if(index >= 0) {
                     find = newContactList.get(index);
                 }
-                if(find == null) {//如果不存在，表示本地数据库中的人已经不在系统通讯录中了
-                    if(setting.isFriendFlag()) {//如果是好友关系，则直接重置系统通讯录名称等属性，但不会删除
+                if(find == null) {
+                    if(setting.isFriendFlag()) {
                         setting.setSystemProfile("", "", "");
                         setting.setPhone("");
                         updateList.add(setting);
-                    }else {//否则放入要删除的列表
+                    }else {
                         removeSet.add(setting.uid);
                     }
-                }else {//如果存在，则直接更新通讯录Id、名称等信息
+                }else {
                     setting.setSystemProfile(find.systemContactId, find.systemName, find.systemAvatar);
                     setting.setPhone(find.phone);
                     setting.setRegistered(find.registered);
@@ -955,7 +876,7 @@ public class RecipientDatabase extends Database {
                 }
             }
 
-            //因为存在新的联系人信息存在于newContactList而不存在于数据库，所以还是需要遍历newContactList
+            
             for(RecipientSettings ns : newContactList) {
                 if(!updateList.contains(ns)) {
                     updateList.add(ns);
@@ -969,10 +890,10 @@ public class RecipientDatabase extends Database {
             if (!removeSet.isEmpty()) {
                 List<String> removeList = new ArrayList<>();
                 removeList.addAll(removeSet);
-                delete(removeList);//删除需要删除的联系人
+                delete(removeList);
             }
 
-            setLocalContacts(updateList);//更新需要更新的联系人
+            setLocalContacts(updateList);
 
         } finally {
             if (cursor != null) {
@@ -981,9 +902,7 @@ public class RecipientDatabase extends Database {
         }
     }
 
-    /**
-     * 保存手机号用户(即非Bcm用户)
-     */
+ 
     public void savePhoneContacts(List<RecipientSettings> phoneContactList) {
         ALog.i(TAG, "save phone Contacts list");
         if (null != phoneContactList && !phoneContactList.isEmpty()) {
@@ -992,10 +911,6 @@ public class RecipientDatabase extends Database {
         }
     }
 
-    /**
-     * 设置本地通讯录信息
-     * @param settingList
-     */
     private void setLocalContacts(@NonNull List<RecipientSettings> settingList) {
         ContentValues params;
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -1028,7 +943,7 @@ public class RecipientDatabase extends Database {
                 Address address = Address.fromSerialized(setting.uid);
                 updateOrInsert(db, address, params);
 
-                //FIXME 暂时不清理缓存，提升用户体验
+                
 //                Recipient.clearCache(AppContextHolder.APP_CONTEXT, address);
             }
             db.setTransactionSuccessful();
@@ -1038,21 +953,17 @@ public class RecipientDatabase extends Database {
         }
     }
 
-    /**
-     * 生成好友消息
-     * @param recipient
-     * @param isFriend
-     */
+    
     private void createFriendMessage(@NonNull Recipient recipient, boolean isFriend) {
 
-        //对于是自己的操作则不需要上报和生成消息
+        
         if (recipient.isSelf()) {
             ALog.d(TAG, "address: " + recipient.getAddress().serialize() + " set self friend: " + isFriend);
             ALog.i(TAG, "set self friend: " + isFriend);
         }else {
             ALog.d(TAG, "setFriend uid: " + recipient.getAddress().serialize() + ", isFriend: " + isFriend);
             ALog.i(TAG, "setFriend isFriend: " + isFriend);
-            //添加或删除好友，都需要生成消息
+            
             final AmeGroupMessage.FriendContent content = new AmeGroupMessage.FriendContent(isFriend ? AmeGroupMessage.FriendContent.ADD : AmeGroupMessage.FriendContent.DELETE,
                     recipient.getAddress().serialize());
             final AmeGroupMessage messageBody = new AmeGroupMessage<AmeGroupMessage.FriendContent>(AmeGroupMessage.FRIEND, content);
@@ -1071,15 +982,11 @@ public class RecipientDatabase extends Database {
 
             DatabaseFactory.getEncryptingSmsDatabase(AppContextHolder.APP_CONTEXT).markAsSent(messageId, true);
 
-            // 增删好友，会生成一条消息，这时候有可能这个用户是没有对话过的，所以threadId是新的，需要广播给AmeConversationActivity来触发更新
+            
             RxBus.INSTANCE.post(recipient.getAddress().serialize(), threadId);
         }
     }
 
-    /**
-     * 删除联系人
-     * @param addressList 要删除的地址数组
-     */
     private void delete(List<String> addressList) {
         String localNumber = AMESelfData.INSTANCE.getUid();
         String sql = "DELETE FROM " + TABLE_NAME + " WHERE " + ADDRESS + " <> '" + localNumber + "' ";
@@ -1108,11 +1015,6 @@ public class RecipientDatabase extends Database {
         database.execSQL(sql);
     }
 
-    /**
-     * 添加或更新
-     * @param address
-     * @param contentValues
-     */
     private void updateOrInsert(Address address, ContentValues contentValues) {
 
         SQLiteDatabase database = databaseHelper.getWritableDatabase();
@@ -1123,7 +1025,7 @@ public class RecipientDatabase extends Database {
         database.endTransaction();
 
         if (!isUpdate) {
-            //如果是插入数据，且当前是数组类型address，则广播
+        
             if (address.isGroup() || address.isMmsGroup()) {
                 notifyGroupChanged();
             }
@@ -1132,10 +1034,6 @@ public class RecipientDatabase extends Database {
         context.getContentResolver().notifyChange(Uri.parse(RECIPIENT_PREFERENCES_URI), null);
     }
 
-    /**
-     * 更新或添加
-     * @return  true标示更新，false 表示添加
-     */
     private boolean updateOrInsert(SQLiteDatabase database, Address address, ContentValues contentValues) {
         int updated = database.update(TABLE_NAME, contentValues, ADDRESS + " = ?", new String[]{address.serialize()});
         if (updated < 1) {
@@ -1157,7 +1055,7 @@ public class RecipientDatabase extends Database {
         }
 
         public void setDisplayName(@NonNull Recipient recipient, @Nullable String displayName) {
-            //FIXME signal遗留，先屏蔽
+            
 //            ContentValues contentValues = new ContentValues(1);
 //            contentValues.put(LOCAL_NAME, displayName);
 //            updateOrInsert(recipient.getAddress(), contentValues);
@@ -1173,9 +1071,7 @@ public class RecipientDatabase extends Database {
         }
     }
 
-    /**
-     * 联系人配置信息
-     */
+   
     public static class RecipientSettings {
 
         @Expose
@@ -1216,7 +1112,7 @@ public class RecipientDatabase extends Database {
 
         @Deprecated
         @SerializedName("friendFlag")
-        private boolean friendFlag;//老版本的好友标记
+        private boolean friendFlag;
 
         @SerializedName("identityKey")
         private @Nullable
@@ -1287,12 +1183,11 @@ public class RecipientDatabase extends Database {
             this.featureSupport = featureSupport;
             this.friendFlag = friendFlag;
 
-            //兼容旧版本，如果friend是true，但是relationship是陌生人，则设置为FOLLOW关注
+            
             if (this.friendFlag && this.relationship == Relationship.STRANGER) {
                 this.relationship = Relationship.FOLLOW;
             }
 
-            //获取identityKey
             try {
                 IdentityDatabase.IdentityRecord record = DatabaseFactory.getIdentityDatabase(AppContextHolder.APP_CONTEXT).getIdentity(Address.fromSerialized(uid)).orNull();
                 if (record != null) {
@@ -1423,46 +1318,26 @@ public class RecipientDatabase extends Database {
             return featureSupport;
         }
 
-        /**
-         * 更新系统通讯录信息
-         * @param contactId
-         * @param systemName
-         * @param systemAvatar
-         */
+       
         public void setSystemProfile(@Nullable String contactId, @Nullable String systemName, @Nullable String systemAvatar) {
             this.systemContactId = contactId;
             this.systemName = systemName;
             this.systemAvatar = systemAvatar;
         }
 
-        /**
-         * 更新平台profile信息
-         *
-         * @param profileKey
-         * @param name
-         * @param avatar
-         */
+      
         public void setSignalProfile(@Nullable byte[] profileKey, @Nullable String name, @Nullable String avatar) {
             this.profileKey = profileKey;
             this.signalProfileName = name;
             this.signalProfileAvatar = avatar;
         }
 
-        /**
-         * 设置本地备注信息
-         * @param name
-         * @param avatar
-         */
+    
         public void setLocalProfile(@Nullable String name, @Nullable String avatar) {
             this.localName = name;
             this.localAvatar = avatar;
         }
 
-        /**
-         * 设置临时的资料
-         * @param name
-         * @param avatar
-         */
         public void setTemporaryProfile(@Nullable String name, @Nullable String avatar) {
             if (TextUtils.isEmpty(signalProfileName)) {
                 signalProfileName = name;
@@ -1559,18 +1434,14 @@ public class RecipientDatabase extends Database {
 
     public static class PrivacyProfile implements NotGuard {
 
-        public static final int CURRENT_VERSION = 1;//目前代码的版本号
+        public static final int CURRENT_VERSION = 1;
         public static final int MAX_LD_AVATAR_SIZE = AppUtilKotlinKt.dp2Px(55);
 
         private static final String SHARE_SHORT_LINK_PRE =
-//                "http://39.108.124.60:9200/member/"; //测试
+//                "http://39.108.124.60:9200/member/"; 
                 "https://s.bcm.social/member/";
 
-        /**
-         * 是否短链
-         * @param url
-         * @return
-         */
+       
         public static Boolean isShortLink(@Nullable String url) {
             if (url == null) {
                 return false;
@@ -1581,37 +1452,37 @@ public class RecipientDatabase extends Database {
         @Nullable
         private String encryptedName;
         @Nullable
-        private String name;//昵称
+        private String name;
         @Nullable
         private String encryptedAvatarLD;
         @Nullable
-        private String avatarLD;//头像地址（低清）
+        private String avatarLD;
         @Nullable
-        private String avatarLDUri;//保存路径uri
-        private boolean isAvatarLdOld;//标识低清头像是否旧的
+        private String avatarLDUri;
+        private boolean isAvatarLdOld;
         @Nullable
         private String encryptedAvatarHD;
         @Nullable
-        private String avatarHD;//头像地址（高清）
+        private String avatarHD;
         @Nullable
-        private String avatarHDUri;//保存路径uri
-        private boolean isAvatarHdOld;//标识高清头像是否旧的
+        private String avatarHDUri;
+        private boolean isAvatarHdOld;
         @Nullable
-        private String namePubKey;//用于DH出nameKey的外部公钥
+        private String namePubKey;
         @Nullable
-        private String nameKey;//昵称解密密钥
+        private String nameKey;
         @Nullable
-        private String avatarPubKey;//用于DH出avatarKey的外部公钥
+        private String avatarPubKey;
         @Nullable
-        private String avatarKey;//头像解密密钥
+        private String avatarKey;
         @Nullable
-        private String shortLink;//二维码短链
+        private String shortLink;
 
-        private boolean allowStranger = true;//允许陌生人聊天
+        private boolean allowStranger = true;
 
-        private int version = CURRENT_VERSION;//当前privacy profile版本
+        private int version = CURRENT_VERSION;
 
-        private boolean needKeys = false;//是否需要profile解密的最新key
+        private boolean needKeys = false;
 
         public PrivacyProfile() {
             this.version = CURRENT_VERSION;
@@ -1774,10 +1645,6 @@ public class RecipientDatabase extends Database {
             this.shortLink = SHARE_SHORT_LINK_PRE + shortIndex + "#" + hashBase62;
         }
 
-        /**
-         * 获取需要上报的各种资料的外部pubKey（json）
-         * @return
-         */
         public String getUploadPubKeys() {
             try {
                 JSONObject json = new JSONObject();
@@ -1794,10 +1661,7 @@ public class RecipientDatabase extends Database {
             return "";
         }
 
-        /**
-         * 拷贝副本
-         * @return
-         */
+      
         public RecipientDatabase.PrivacyProfile copy() {
             PrivacyProfile newProfile = new PrivacyProfile();
             newProfile.name = name;

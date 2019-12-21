@@ -11,14 +11,14 @@ import com.bcm.messenger.common.grouprepository.room.entity.WalletTransaction;
 import java.util.List;
 
 /**
- * BCM专属钱包表的操作dao
+ * BCMdao
  * Created by wjh on 2018/8/3
  */
 @Dao
 public interface WalletDao {
 
     /**
-     * 查询钱包信息（余额等）
+     * （）
      *
      * @return
      */
@@ -26,7 +26,7 @@ public interface WalletDao {
     WalletData queryWalletData(String owner);
 
     /**
-     * 查询钱包交易记录
+     * 
      *
      * @return
      */
@@ -35,7 +35,7 @@ public interface WalletDao {
 
 
     /**
-     * 插入钱包记录
+     * 
      *
      * @param wallet
      * @return
@@ -44,9 +44,9 @@ public interface WalletDao {
     long insertWallet(WalletData wallet);
 
     /**
-     * 插入交易记录
+     * 
      *
-     * @param transactions 交易记录
+     * @param transactions 
      * @return
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)

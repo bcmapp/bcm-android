@@ -23,7 +23,6 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 /**
- * 入群请求审核页面
  * Created by wjh on 2019/6/3
  */
 @Route(routePath = ARouterConstants.Activity.GROUP_JOIN_CHECK)
@@ -34,8 +33,8 @@ class GroupJoiningReviewActivity : SwipeBaseActivity() {
     private var mMessageId: Long = 0
     private var mJoiningRequestList: List<BcmGroupJoinRequest> = listOf()
     private var mAdapter: JoiningRequestAdapter? = null
-    private var mUnHandleCount: Int = 0 //当前未处理个数
-    private var mUnReadCount: Int = 0 //当前未读个数
+    private var mUnHandleCount: Int = 0 
+    private var mUnReadCount: Int = 0 
 
     override fun onDestroy() {
         super.onDestroy()
@@ -172,7 +171,7 @@ class GroupJoiningReviewActivity : SwipeBaseActivity() {
             var unHandleCount = 0
             var unReadCount = 0
             if (position == (mAdapter?.itemCount
-                            ?: 0) - 1 && mMessageId != 0L) { //如果消息ID不为0，表示是某个入群消息的详情，这时候才需要判断是否显示more，否则都直接不显示
+                            ?: 0) - 1 && mMessageId != 0L) { 
                 val newUnHandleCount = (mGroupModel?.getJoinRequestCount() ?: 0)
                 if (newUnHandleCount > 0 && newUnHandleCount != mUnHandleCount) {
                     unHandleCount = newUnHandleCount

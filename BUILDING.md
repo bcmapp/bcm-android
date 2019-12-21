@@ -15,7 +15,7 @@ The following steps should help you (re)build BCM from the command line.
 
 1. Checkout the BCM-Android project source with the command:
 
-        git clone https://github.com/bcm2019/im-android.git
+        git clone https://github.com/bcmapp/bcm-android.git
 
 2. Make sure you have the [Android SDK](https://developer.android.com/sdk/index.html) installed.
 3. Ensure that the following packages are installed from the Android SDK manager:
@@ -44,7 +44,7 @@ Setting up a development environment
 3. From the Quickstart panel, choose "Configure" then "SDK Manager".
 4. In the SDK Tools tab of the SDK Manager, make sure that the "Android Support Repository" is installed, and that the latest "Android SDK build-tools" are installed. Click "OK" to return to the Quickstart panel.
 5. From the Quickstart panel, choose "Checkout from Version Control" then "git".
-6. Paste the URL for the im-android project when prompted (https://github.com/bcm2019/im-android.git).
+6. Paste the URL for the im-android project when prompted (https://github.com/bcmapp/bcm-android.git).
 7. Android studio should detect the presence of a project file and ask you whether to open it. Click "yes".
 9. Default config options should be good enough.
 10. Project initialisation and build should proceed.

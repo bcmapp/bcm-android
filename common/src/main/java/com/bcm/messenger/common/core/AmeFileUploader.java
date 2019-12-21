@@ -33,7 +33,7 @@ import java.util.Map;
 import okhttp3.Call;
 
 /**
- * bcm 文件上传、下载和内部临时资源的统一路径的帮助类（包括路径统一）
+ * bcm 、（）
  * Created by zjl on 2018/6/5.
  */
 public class AmeFileUploader {
@@ -45,7 +45,7 @@ public class AmeFileUploader {
     public static final String GROUP_AVATAR_PATH = "/v1/profile/uploadGroupAvatar";
     public static final String AWS_UPLOAD_INFO_PATH = "/v1/attachments/s3/upload_certification"; // Path to get AWS S3 certification data in IM server
 
-    public static String AME_PATH = AMESelfData.INSTANCE.getAmeDir();//不受限账号的bcm沙箱路径
+    public static String AME_PATH = AMESelfData.INSTANCE.getAmeDir();//bcm
     public static String DOWNLOAD_PATH = "";
     public static String AUDIO_DIRECTORY;
     public static String THUMBNAIL_DIRECTORY;
@@ -53,8 +53,8 @@ public class AmeFileUploader {
     public static String VIDEO_DIRECTORY;
     public static String MAP_DIRECTORY;
     public static String ENCRYPT_DIRECTORY;
-    public static String DECRYPT_DIRECTORY;//账号相关的所有已解密附件（图片视频文件）的沙箱存放路径
-    public static String TEMP_DIRECTORY;//账号相关的所有内部临时文件的沙箱存放路径
+    public static String DECRYPT_DIRECTORY;//（）
+    public static String TEMP_DIRECTORY;//
     public static String CHAT_FILE_DIRECTORY; // Directory of encrypted chat files with MasterSecret
     public static final String APK_DIRECTORY = Environment.getExternalStorageDirectory().getAbsolutePath() + "/bcm" + "/apk";
     public static final String DCIM_DIRECTORY = Environment.getExternalStorageDirectory().getAbsolutePath() + "/DCIM/bcm/";
@@ -76,7 +76,7 @@ public class AmeFileUploader {
     }
 
     /**
-     * 初始化下载路径，必须在APP启动时初始化
+     * ，APP
      *
      * @param context Application Context
      */
@@ -178,7 +178,7 @@ public class AmeFileUploader {
         }
     }
 
-    //对单个文件上传结果标识，用于多文件上传，记录上传结果
+    //，，
     public static class FileUploadResult {
 
         public FileUploadResult(boolean isSuccess, String location, String id) {
@@ -192,7 +192,7 @@ public class AmeFileUploader {
         public final String id;
     }
 
-    //多文件上传回调
+    //
     public  interface MultiFileUploadCallback {
 
         void onFailed(Map<String, FileUploadResult> resultMap);
@@ -208,9 +208,9 @@ public class AmeFileUploader {
 
 
     /**
-     * 多文件上传，请求全部完成后调用回调,回调 map 中包含所有上传文件路径，及上传结果，成功后 url
-     * 回调 onSuccess 则代表全部成功，回调 onFailed 则代表有上传失败的情况
-     * 回调在子线程
+     * ，, map ，， url
+     *  onSuccess ， onFailed 
+     * 
      * @param context Context.
      * @param type Attachment type
      * @param filePaths Will be uploaded files paths.
@@ -374,7 +374,7 @@ public class AmeFileUploader {
     }
 
     /**
-     * 上传群头像（回调在主线程）
+     * （）
      * @param context
      * @param file
      * @param callback
@@ -431,7 +431,7 @@ public class AmeFileUploader {
     }
 
     /**
-     * 实际下载文件接口（回调在子线程）
+     * （）
      * @param context
      * @param url
      * @param callback
@@ -448,7 +448,7 @@ public class AmeFileUploader {
     }
 
 
-    //给上层调用，上层只需要发出请求，写结果接收回调即可，无需关心其他业务
+    //，，，
     public static class FileUploadCallback {
 
         public void onUploadSuccess(String url, String id) {
@@ -459,7 +459,7 @@ public class AmeFileUploader {
         }
 
         public void onProgressChange(float currentProgress) {
-            //空实需要时重写
+            //
         }
     }
 

@@ -51,7 +51,6 @@ class DestroyAccountActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        //屏蔽返回
         if (supportFragmentManager.backStackEntryCount > 0) {
             super.onBackPressed()
         }
@@ -59,7 +58,7 @@ class DestroyAccountActivity : AppCompatActivity() {
 
     fun gotoLogin() {
         if (AMESelfData.isLogin) {
-            ALog.e(TAG, "登录态还没释放完")
+            ALog.e(TAG, "login state wrong")
             return
         }
 

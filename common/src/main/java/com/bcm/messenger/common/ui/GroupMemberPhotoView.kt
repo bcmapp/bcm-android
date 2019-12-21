@@ -15,7 +15,6 @@ import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.utility.AppContextHolder
 
 /**
- * 群成员头像（可根据角色设置描边）
  * Created by bcm.social.01 on 2018/5/25.
  */
 class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
@@ -48,14 +47,14 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
     }
 
     /**
-     * 清理地址相关的回调
+     * 
      */
     fun clearAddressListener() {
         this.recipient?.removeListener(this)
     }
 
     /**
-     * 设置个人联系人的avatar
+     * 
      */
     fun setRecipient(recipient: Recipient?, nickname: String? = null) {
         this.recipient = recipient
@@ -65,7 +64,7 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
 
 
     /**
-     * 旧的avatar设置入口
+     * 
      */
     fun setAvatar(role: Long?, address: Address?, keyConfig: AmeGroupMemberInfo.KeyConfig? = null, nickname:String? = null) {
         setAvatar(address, keyConfig, nickname)
@@ -77,7 +76,7 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
     }
 
     /**
-     * avatar设置入口
+     * 
      */
     fun setAvatar(address: Address?, keyConfig: AmeGroupMemberInfo.KeyConfig? = null, nickname: String? = null) {
         if (address == null) {
@@ -100,14 +99,14 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
     }
 
     /**
-     * avatar设置入口
+     * 
      */
     fun setAvatar(address: Address?) {
        setAvatar(address, null, null)
     }
 
     /**
-     * 设置指定的avatar
+     * 
      */
     fun setAvatar(resId: Int) {
 

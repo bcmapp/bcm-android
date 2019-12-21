@@ -17,7 +17,7 @@ import java.util.List;
 
 
 /**
- * signal遗留的加载联系人profile信息的工作类（包括旧群组包含的联系人）
+ * signalprofile（）
  */
 public class RetrieveProfileJob extends ContextJob {
 
@@ -48,10 +48,10 @@ public class RetrieveProfileJob extends ContextJob {
 
         ALog.i(TAG, "onRun");
 
-        // 为了兼容旧版本signal的查询profile工作（部分场景主要是为了更新identityKey）
+        // signalprofile（identityKey）
         List<Recipient> recipientList = new ArrayList<Recipient>(mRecipientList.size());
         for (Recipient recipient : mRecipientList) {
-            if (recipient.isGroupRecipient()) {//如果是群组，则把所有相关的联系人一并查询
+            if (recipient.isGroupRecipient()) {//，
 
             } else {
                 recipientList.add(recipient);

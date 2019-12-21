@@ -20,7 +20,7 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.MultiClickObserver
 
 /**
- * 文本消息行为处理
+ *
  * Created by wjh on 2018/10/23
  */
 open class ChatMessageHolderAction() : BaseChatHolderAction<EmojiTextView>() {

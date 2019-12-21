@@ -2,7 +2,7 @@ package com.bcm.messenger.common.provider.bean
 
 /**
  * Created by bcm.social.01 on 2018/11/21.
- * 会话的占用的存储容量 单位byte
+ *  byte
  */
 class ConversationStorage(var videoSize:Long, var imageSize:Long, var fileSize:Long) {
     companion object {

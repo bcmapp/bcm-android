@@ -59,7 +59,7 @@ class AmeHistoryMessageDetail : AmeGroupMessageDetail() {
             val pathPair = content.getPath()
             val thumbnailPathPair = content.getThumbnailPath()
             var useThumbnail = true
-            //对于群聊的gif图，不能显示缩略图，只能显示原图，所以这里直接下载原图
+            //gif，，，
             val isExist = if (content.thumbnail_url.isNullOrEmpty() || MediaUtil.isGif(content.mimeType)) {
                 useThumbnail = false
                 content.isExist()

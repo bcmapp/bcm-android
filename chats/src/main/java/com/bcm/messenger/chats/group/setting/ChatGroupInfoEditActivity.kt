@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
 /**
- * 群组信息设置页面
+ 
  * Created by bcm.social.01 on 2018/5/29.
  */
 class ChatGroupProfileActivity : SwipeBaseActivity() {

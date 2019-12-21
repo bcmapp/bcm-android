@@ -4,7 +4,7 @@ import androidx.room.*
 import com.bcm.messenger.common.settingrepository.entity.AutoClearBean
 
 /**
- * 自动清理表
+ * 
  * Created by zjl on 2018/9/25.
  */
 const val AUTO_CLEAR = "auto_clear"

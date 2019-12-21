@@ -14,15 +14,11 @@ import com.bcm.messenger.common.R
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getColor
 
-/**
- * 角标布局类
- * Created by wjh on 2019/6/28
- */
 class BadgeLayout : ConstraintLayout {
 
-    private var mDotView: View? = null//圆点角标
-    private var mFigureView: TextView? = null//数字角标
-    private var mLocatePosId: Int = 0//需要依附的控件ID
+    private var mDotView: View? = null//
+    private var mFigureView: TextView? = null//
+    private var mLocatePosId: Int = 0//
     private var mLocatePosGap: Int = 0
 
     constructor(context: Context) : this(context, null) {}
@@ -37,9 +33,7 @@ class BadgeLayout : ConstraintLayout {
 
     }
 
-    /**
-     * 初始化圆点角标（如果没初始化过的话）
-     */
+ 
     private fun initDot() {
         var dotView = mDotView
         if (dotView == null) {
@@ -54,9 +48,7 @@ class BadgeLayout : ConstraintLayout {
         }
     }
 
-    /**
-     * 初始化数字角标(如果没有初始化过的话)
-     */
+    
     private fun initFigure() {
         var figureView = mFigureView
         if (figureView == null) {
@@ -77,9 +69,7 @@ class BadgeLayout : ConstraintLayout {
         }
     }
 
-    /**
-     * 展示红点
-     */
+   
     fun showDot() {
         initDot()
         mFigureView?.visibility = View.GONE
@@ -87,9 +77,7 @@ class BadgeLayout : ConstraintLayout {
         measureGap(mDotView ?: return)
     }
 
-    /**
-     * 展示数字
-     */
+   
     fun showFigure(figure: Int) {
         initFigure()
         if (figure <= 0) {
@@ -107,17 +95,13 @@ class BadgeLayout : ConstraintLayout {
         }
     }
 
-    /**
-     * 隐藏角标
-     */
+    
     fun hideBadge() {
         mFigureView?.visibility = View.GONE
         mDotView?.visibility = View.GONE
     }
 
-    /**
-     * 获取当前角标数字（红点对应1）
-     */
+  
     fun getBadgeCount(): Int {
         return if (mFigureView?.visibility == View.VISIBLE) {
             (mFigureView?.tag as? Int) ?: 0
@@ -128,16 +112,11 @@ class BadgeLayout : ConstraintLayout {
         }
     }
 
-    /**
-     * 是否有展示角标
-     */
+    
     fun isBadgeShowing(): Boolean {
         return mFigureView?.visibility == View.VISIBLE || mDotView?.visibility == View.VISIBLE
     }
 
-    /**
-     * 计算角标的移动距离
-     */
     private fun measureGap(targetView: View) {
         if (mLocatePosGap == 0) {
             targetView.post {

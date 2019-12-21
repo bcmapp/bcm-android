@@ -44,7 +44,7 @@ import kotlinx.android.synthetic.main.bcm_scan_activity.*
 import java.util.*
 
 /**
- * 扫码页面
+ * 
  * Created by wjh on 2018/06/06
  */
 class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -60,7 +60,7 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
         const val INTENT_EXTRA_MYCODE = "scan_mycode"
         const val INTENT_EXTRA_TITLE = "scan_title"
 
-        const val INTENT_EXTRA_BACKUP = "scan_backup"//表示是否来源于备份账号
+        const val INTENT_EXTRA_BACKUP = "scan_backup"//
 
         private const val VIBRATE_DURATION = 50L
         private const val AUTO_FOCUS_INTERVAL_MS = 2500L
@@ -83,22 +83,22 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
     private lateinit var cameraHandler: Handler
 
     /**
-     * 解析编码
+     * 
      */
     private var mScanCharSet: String? = null
 
     /**
-     * flash 是否on
+     * flash on
      */
     private var mTorchOn = false
 
     /**
-     * 是否展示my code入口
+     * my code
      */
     private var mShowMyCode = false
 
     /**
-     * 相机运行任务类
+     * 
      */
     private val openRunnable = object : Runnable {
         override fun run() {
@@ -159,7 +159,7 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
     }
 
     /**
-     * 相机关闭任务类
+     * 
      */
     private val closeRunnable = Runnable {
         cameraHandler.removeCallbacksAndMessages(null)
@@ -406,7 +406,7 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
     }
 
     /**
-     * 处理扫码返回
+     * 
      * @param scanResult
      */
     fun handleResult(scanResult: Result) {
@@ -426,7 +426,7 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
     }
 
     /**
-     * 打开账号备份相关信息页面
+     * 
      */
     private fun openBackupInfo() {
         val userProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigationWithCast<IUserModule>()
@@ -434,7 +434,7 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
     }
 
     /**
-     * 打开系统相册去加载指定的二维码文件
+     * 
      */
     private fun openAlbum() {
 
@@ -448,7 +448,7 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
     }
 
     /**
-     * 切换闪光灯
+     * 
      */
     private fun switchTorch(torch: Boolean) {
         try {
@@ -466,8 +466,8 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
     }
 
     /**
-     * 从相册选择图片扫描二维码
-     * @param path 图片路径
+     * 
+     * @param path 
      * @return
      */
     @Throws(Exception::class)
@@ -477,11 +477,11 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
         }
         var localBitmap: Bitmap? = null
         try {
-            //需要压缩图片，防止内存溢出
-            // DecodeHintType 和EncodeHintType
+            //，
+            // DecodeHintType EncodeHintType
             val hints = Hashtable<DecodeHintType, Any>()
             if (mScanCharSet != null) {
-                hints[DecodeHintType.CHARACTER_SET] = mScanCharSet // 设置二维码内容的编码
+                hints[DecodeHintType.CHARACTER_SET] = mScanCharSet // 
 
             }
 //            hints[DecodeHintType.TRY_HARDER] = true
@@ -490,13 +490,13 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
             val width = localBitmap.width
             val height = localBitmap.height
 
-            // 采用YUV而不是RGB的方式来扫描二维码，提供成功率
+            // YUVRGB，
             val bmpYUVBytes = getBitmapYUVBytes(localBitmap)
             return QRCodeReader().decode(BinaryBitmap(HybridBinarizer(PlanarYUVLuminanceSource(bmpYUVBytes, width, height, 0, 0, width, height, false))))
 
 
         } finally {
-            //回收bitmap
+            //bitmap
             if (localBitmap?.isRecycled == false) {
                 localBitmap.recycle()
             }
@@ -504,10 +504,10 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
     }
 
     /**
-     * 得到bitmap的YUV数据
+     * bitmapYUV
      *
-     * @param sourceBmp 原始bitmap
-     * @return yuv数据
+     * @param sourceBmp bitmap
+     * @return yuv
      */
     private fun getBitmapYUVBytes(sourceBmp: Bitmap?): ByteArray? {
         if (null != sourceBmp) {
@@ -526,22 +526,22 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
     }
 
     /**
-     * 将bitmap里得到的argb数据转成yuv420sp格式
-     * 这个yuv420sp数据就可以直接传给MediaCodec, 通过AvcEncoder间接进行编码
+     * bitmapargbyuv420sp
+     * yuv420spMediaCodec, AvcEncoder
      *
-     * @param yuv420sp 用来存放yuv429sp数据
-     * @param argb     传入argb数据
+     * @param yuv420sp yuv429sp
+     * @param argb     argb
      * @param width    bmpWidth
      * @param height   bmpHeight
      */
     private fun encodeYUV420SP(yuv420sp: ByteArray, argb: IntArray, width: Int, height: Int) {
-        // 帧图片的像素大小
+        // 
         val frameSize = width * height
-        // Y的index从0开始
+        // Yindex0
         var yIndex = 0
-        // UV的index从frameSize开始
+        // UVindexframeSize
         var uvIndex = frameSize
-        // YUV数据, ARGB数据
+        // YUV, ARGB
         var Y: Int
         var U: Int
         var V: Int
@@ -550,7 +550,7 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
         var G: Int
         var B: Int
         var argbIndex = 0
-        // ---循环所有像素点，RGB转YUV---
+        // ---，RGBYUV---
         for (j in 0 until height) {
             for (i in 0 until width) {
 

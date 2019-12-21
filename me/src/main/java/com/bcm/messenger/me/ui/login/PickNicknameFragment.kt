@@ -46,7 +46,7 @@ class PickNicknameFragment : AbsRegistrationFragment() {
 
             val name = new_nickname.text.toString().trim()
             if (name.isEmpty()){
-                AmePopup.result.failure(activity, "昵称不能为空")
+                AmePopup.result.failure(activity, "nickname can't empty")
                 AmePopup.loading.dismiss()
                 return@setOnClickListener
             }

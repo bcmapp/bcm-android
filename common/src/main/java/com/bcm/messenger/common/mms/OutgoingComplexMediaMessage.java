@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 复杂的媒体消息（用于小群）
+ * （）
  */
 public class OutgoingComplexMediaMessage extends OutgoingMediaMessage {
 

@@ -18,7 +18,7 @@ public interface GroupMessageDao {
 
 
     /**
-     * 查一个群里面的所有未读消息
+     * 
      *
      * @param gid
      * @return
@@ -28,57 +28,57 @@ public interface GroupMessageDao {
 
 
     /**
-     * 查询指定的一段范围内的消息
-     * index 从大到小
+     * 
+     * index 
      *
      * @param gid
-     * @param indexId 初始位置 Id
-     * @param count   一次取消息条数
+     * @param indexId  Id
+     * @param count   
      * @return
      */
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE _id < :indexId AND gid = :gid AND is_confirm = " + GroupMessage.CONFIRM_MESSAGE + " ORDER BY _id DESC " + " LIMIT 0 ,:count ")
     List<GroupMessage> loadMessagesByGidAndIndexId(long gid, long indexId, int count);
 
     /**
-     * 查询指定的一段范围内的消息
-     * index 从大到小
+     * 
+     * index 
      *
      * @param gid
-     * @param indexId 初始位置 Id
-     * @param count   一次取消息条数
+     * @param indexId  Id
+     * @param count   
      * @return
      */
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE _id > :indexId AND gid = :gid AND is_confirm = " + GroupMessage.CONFIRM_MESSAGE + " ORDER BY _id DESC " + " LIMIT 0 ,:count ")
     List<GroupMessage> loadMessagesByGidAndIndexIdAfter(long gid, long indexId, int count);
 
     /**
-     * 查询某index之后的所有消息
-     * index 从大到小
+     * index
+     * index 
      *
      * @param gid
-     * @param indexId 初始位置 Id
+     * @param indexId  Id
      * @return
      */
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE _id > :indexId AND gid = :gid AND is_confirm = " + GroupMessage.CONFIRM_MESSAGE + " ORDER BY _id DESC ")
     List<GroupMessage> loadMessagesByGidAndIndexIdAfter(long gid, long indexId);
 
     /**
-     * 查询指定的一段范围内的视频或图片消息消息,向前查
+     * ,
      *
      * @param gid
-     * @param indexId 初始位置 Id
-     * @param count   一次取消息条数
+     * @param indexId  Id
+     * @param count   
      * @return
      */
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE _id < :indexId AND gid = :gid AND is_confirm = " + GroupMessage.CONFIRM_MESSAGE + " AND( content_type = 2 " + " OR content_type = 4)" + " ORDER BY _id DESC " + " LIMIT 0 ,:count ")
     List<GroupMessage> loadImageOrVideoMessagesBeforeIndexId(long gid, long indexId, int count);
 
     /**
-     * 查询指定的一段范围内的文字消息,向前查
+     * ,
      *
      * @param gid
-     * @param indexId 初始位置 Id
-     * @param count   一次取消息条数
+     * @param indexId  Id
+     * @param count   
      * @return
      */
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE _id < :indexId AND gid = :gid AND is_confirm = " + GroupMessage.CONFIRM_MESSAGE + " AND( content_type = 1)" + " ORDER BY _id DESC " + " LIMIT 0 ,:count ")
@@ -86,42 +86,42 @@ public interface GroupMessageDao {
 
 
     /**
-     * 查询指定的一段范围内的视频或图片消息，向后查
+     * ，
      *
      * @param gid
-     * @param indexId 初始位置 Id
-     * @param count   一次取消息条数
+     * @param indexId  Id
+     * @param count   
      * @return
      */
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE _id > :indexId AND gid = :gid AND is_confirm = " + GroupMessage.CONFIRM_MESSAGE + " AND( content_type = 2 " + " OR content_type = 4)" + " LIMIT 0 ,:count ")
     List<GroupMessage> loadImageOrVideoMessagesAfterIndexId(long gid, long indexId, int count);
 
     /**
-     * 查询指定的一段范围内的文字信息，向后查
+     * ，
      *
      * @param gid
-     * @param indexId 初始位置 Id
-     * @param count   一次取消息条数
+     * @param indexId  Id
+     * @param count   
      * @return
      */
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE _id > :indexId AND gid = :gid AND is_confirm = " + GroupMessage.CONFIRM_MESSAGE + " AND( content_type = 1)" + " LIMIT 0 ,:count ")
     List<GroupMessage> loadTextMessagesAfterIndexId(long gid, long indexId, int count);
 
     /**
-     * 查询指定群的所有图片和视频消息
+     * 
      *
-     * @param gid 群ID
-     * @return 所有的图片和视频消息
+     * @param gid ID
+     * @return 
      * @author Kin
      */
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE gid = :gid AND is_confirm =" + GroupMessage.CONFIRM_MESSAGE + " AND (content_type = 2 OR content_type = 4) ORDER BY _id DESC")
     List<GroupMessage> loadAllImageOrVideoMessages(long gid);
 
     /**
-     * 查询指定群的所有文件消息
+     * 
      *
-     * @param gid 群ID
-     * @return 所有的文件消息
+     * @param gid ID
+     * @return 
      * @author Kin
      */
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE gid = :gid AND is_confirm =" + GroupMessage.CONFIRM_MESSAGE + " AND (content_type = 3) ORDER BY _id DESC")
@@ -129,10 +129,10 @@ public interface GroupMessageDao {
 
 
     /**
-     * 查询指定群的多媒体消息
+     * 
      *
-     * @param gid 群ID
-     * @return 所有的多媒体消息
+     * @param gid ID
+     * @return 
      * @author Kin
      */
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE gid = :gid AND is_confirm =" + GroupMessage.CONFIRM_MESSAGE + " AND (content_type = 3 or content_type = 2 OR content_type = 4) ORDER BY _id DESC")
@@ -140,17 +140,17 @@ public interface GroupMessageDao {
 
 
     /**
-     * 查询指定群的所有链接消息
+     * 
      *
-     * @param gid 群ID
-     * @return 所有的链接消息
+     * @param gid ID
+     * @return 
      * @author Kin
      */
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE gid = :gid AND is_confirm =" + GroupMessage.CONFIRM_MESSAGE + " AND (content_type = 7) ORDER BY _id DESC")
     List<GroupMessage> loadAllLinkMessages(long gid);
 
     /**
-     * 查询从fromMid到（包含）toMid的消息
+     * fromMid（）toMid
      *
      * @param gid
      * @param fromMid
@@ -161,10 +161,10 @@ public interface GroupMessageDao {
     List<GroupMessage> loadMessageFromTo(long gid, long fromMid, long toMid);
 
     /**
-     * 查询指定类型的消息
+     * 
      *
      * @param gid
-     * @param type 1.chat 消息，不公开，订阅者不可见; 2.pub 公开，订阅者可见
+     * @param type 1.chat ，，; 2.pub ，
      * @return
      */
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE gid =" + " :gid" + " AND type =" + " :type" + " AND is_confirm = " + GroupMessage.CONFIRM_MESSAGE)
@@ -172,7 +172,7 @@ public interface GroupMessageDao {
 
 
     /**
-     * 查询指定群的未读消息数量
+     * 
      *
      * @param gid
      * @return
@@ -182,7 +182,7 @@ public interface GroupMessageDao {
 
 
     /**
-     * 查询指定群的未读消息数量
+     * 
      *
      * @param gid
      * @return
@@ -191,7 +191,7 @@ public interface GroupMessageDao {
     long countUnreadFromLastSeen(long gid, long lastSeen);
 
     /**
-     * 获取未读的消息列表数
+     * 
      *
      * @return
      */
@@ -199,7 +199,7 @@ public interface GroupMessageDao {
     int getAllUnreadThreadCount();
 
     /**
-     * 查询指定群的消息数量
+     * 
      *
      * @param gid
      * @return
@@ -210,7 +210,7 @@ public interface GroupMessageDao {
 
 
     /**
-     * 查询指定群的消息数量
+     * 
      *
      * @param gid
      * @return
@@ -219,7 +219,7 @@ public interface GroupMessageDao {
     long countUnconfirmedMessagesByGid(long gid);
 
     /**
-     * 根据 mid 查询指定的一条消息
+     *  mid 
      *
      * @param gid
      * @param mid
@@ -229,7 +229,7 @@ public interface GroupMessageDao {
     GroupMessage queryOneMessageByMid(long gid, long mid);
 
     /**
-     * 根据 mid 查询确认要显示的一条消息
+     *  mid 
      *
      * @param gid
      * @param mid
@@ -246,7 +246,7 @@ public interface GroupMessageDao {
     List<GroupMessage> queryMinReadMessage(long gid, int count);
 
     /**
-     * 根据 index 查询指定的一条消息
+     *  index 
      *
      * @param gid
      * @param index
@@ -257,7 +257,7 @@ public interface GroupMessageDao {
 
 
     /**
-     * 根据 index 查询指定的一条可显示消息
+     *  index 
      *
      * @param gid
      * @param index
@@ -297,7 +297,7 @@ public interface GroupMessageDao {
     List<GroupMessage> fetchMessagesBySenderAndPeriod(long gid, String from_uid, long startTime, long endTime);
 
     /**
-     * 更新一条消息
+     * 
      *
      * @param message
      */

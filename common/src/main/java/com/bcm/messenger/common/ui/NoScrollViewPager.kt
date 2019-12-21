@@ -6,7 +6,7 @@ import android.view.MotionEvent
 import androidx.viewpager.widget.ViewPager
 
 /**
- * 禁止滑动ViewPager
+ * 
  * Created by zjl on 2018/3/2.
  */
 class NoScrollViewPager : ViewPager {

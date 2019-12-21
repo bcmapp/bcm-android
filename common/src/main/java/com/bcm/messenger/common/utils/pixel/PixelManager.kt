@@ -12,7 +12,7 @@ import java.lang.ref.WeakReference
 import com.bcm.messenger.utility.AppContextHolder
 
 /**
- * 一像素管理类
+ * 
  * Created by wjh on 2019-08-30
  */
 class PixelManager private constructor(target: Class<out Activity>?, bundle: Bundle?) {
@@ -49,7 +49,7 @@ class PixelManager private constructor(target: Class<out Activity>?, bundle: Bun
         override fun onReceive(context: Context, intent: Intent) {
 
             ALog.i(TAG, "action: ${intent.action}")
-            /*开锁*/
+            /**/
             if (Intent.ACTION_USER_PRESENT == intent.action) {
                 doOnScreenOn()
             } else if (Intent.ACTION_SCREEN_OFF == intent.action) {

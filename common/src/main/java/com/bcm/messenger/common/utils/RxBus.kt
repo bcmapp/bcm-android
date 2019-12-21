@@ -12,7 +12,7 @@ import java.lang.Exception
 import java.util.*
 
 /**
- * 用于分发事件的轻量工具
+ * 
  * Created by wjh on 2018/12/14
  */
 object RxBus {
@@ -24,7 +24,7 @@ object RxBus {
     private val mSubscriptionMap = HashMap<String, Disposable>()
 
     /**
-     * 订阅，事件在主线程回调
+     * ，
      */
     fun <T : Any> subscribe(tag: String, callback: (event: T) -> Unit) {
         ALog.d(TAG, "subscribe tag: $tag")
@@ -47,7 +47,7 @@ object RxBus {
     }
 
     /**
-     * 订阅，事件在异步线程回调
+     * ，
      */
     fun <T : Any> subscribeAsync(tag: String, callback: (event: T) -> Unit) {
         ALog.d(TAG, "subscribeAsync tag: $tag")
@@ -85,7 +85,7 @@ object RxBus {
     }
 
     /**
-     * 发送事件（针对指定tag的订阅者）
+     * （tag）
      */
     fun post(tag: String, event: Any) {
         ALog.d(TAG, "post tag: $tag")
@@ -93,7 +93,7 @@ object RxBus {
     }
 
     /**
-     * 发送事件（针对所有订阅者）
+     * （）
      */
     fun post(event: Any) {
         ALog.d(TAG, "post tag: null")
@@ -101,7 +101,7 @@ object RxBus {
     }
 
     /**
-     * 取消订阅
+     * 
      */
     fun unSubscribe(tag: String) {
         val disposable = mSubscriptionMap[tag]

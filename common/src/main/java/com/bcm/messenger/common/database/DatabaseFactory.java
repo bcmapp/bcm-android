@@ -39,21 +39,19 @@ import java.util.Locale;
  */
 public class DatabaseFactory {
     private static final String TAG = "DatabaseFactory";
-    /**
-     * 当前数据库版本
-     */
+   
     private static final int DATABASE_VERSION = 59;
 
     private static final int UNREAD_COUNT_VERSION = 46;
     private static final int ATTACHMENT_UPDATE_VERSION = 47;
 
-    //此版本主要是针对通话增加了语音视频分类以及时长字段
+
     private static final int SMS_CALL_VERSION = 49;
 
-    //此版本主要是增加了联系人区分本地好友相关的字段
+    
     private static final int RECIPIENT_UPDATE_VERSION = 51;
 
-    //本地联系人增加本地昵称和头像备注版本
+    
     private static final int RECIPEINT_LOCAL_VERSION = 52;
 
     private static final int INTRODUCED_MESSAGE_PAYLOAD_TYPE = 53;
@@ -62,20 +60,16 @@ public class DatabaseFactory {
 
     private static final int GROUP_LIVE_VERSION = 55;
 
-    // 增加解密失败弹窗字段
+    
     private static final int DECRYPT_FAIL_VERSION = 56;
 
-    /**
-     * 增加加密的隐私profile字段
-     */
+    
     private static final int ADD_PRIVACY_PROFILE_VERSION = 57;
 
-    /**
-     * 增加联系人关系字段版本
-     */
+    
     private static final int ADD_RELATIONSHIP_VERSION = 58;
 
-    // 切换成AWS S3存储的版本
+    
     private static final int AWS_ATTACHMENT_VERSION = 59;
 
     private static final String DATABASE_NAME = "messages%s.db";
@@ -200,18 +194,10 @@ public class DatabaseFactory {
 //        UserDatabase.Companion.getDatabase();
     }
 
-    /**
-     * 所有数据库重置
-     *
-     * @param context
-     */
+    
     public void reset(Context context, String uid) {
         ALog.d(TAG, "reset " + uid);
-//        if (uid.equals(this.uid) || TextUtils.isEmpty(uid)) {
-//            // 无论如何都需要reset，因为MasterSecret可能会更改
-//            UserDatabase.Companion.resetDatabase();
-//            return;
-//        }
+
 
         try {
             this.uid = uid;
@@ -250,9 +236,7 @@ public class DatabaseFactory {
         return String.format(Locale.US, DATABASE_NAME, uid);
     }
 
-    /**
-     * 删除所有数据库数据
-     */
+    
     public void deleteAllDatabase() {
         this.databaseHelper.getWritableDatabase().execSQL("DELETE FROM " + SmsDatabase.TABLE_NAME);
         this.databaseHelper.getWritableDatabase().execSQL("DELETE FROM " + MmsDatabase.TABLE_NAME);
@@ -303,12 +287,7 @@ public class DatabaseFactory {
             executeStatements(db, GroupReceiptDatabase.CREATE_INDEXES);
         }
 
-        /**
-         * 低版本到58版本的升级
-         * @param db
-         * @param oldVersion
-         * @param newVersion
-         */
+       
         private void doRecipientMigrationTo58(SQLiteDatabase db, int oldVersion, int newVersion) {
             if (oldVersion >= RECIPEINT_LOCAL_VERSION && oldVersion < ADD_RELATIONSHIP_VERSION) {
                 db.execSQL(RecipientDatabase.ALTER_TABLE_ADD_RELATIONSHIP);
@@ -316,12 +295,7 @@ public class DatabaseFactory {
             }
         }
 
-        /**
-         * 低版本到57版本的升级
-         * @param db
-         * @param oldVersion
-         * @param newVersion
-         */
+     
         private void doRecipientMigrationTo57(SQLiteDatabase db, int oldVersion, int newVersion) {
             if (oldVersion >= RECIPEINT_LOCAL_VERSION && oldVersion < ADD_PRIVACY_PROFILE_VERSION) {
                 db.execSQL(RecipientDatabase.ALTER_TABLE_ADD_PRIVACY);
@@ -329,7 +303,7 @@ public class DatabaseFactory {
         }
 
         private void doRecipientMigrationTo52(SQLiteDatabase db, int oldVersion, int newVersion) {
-            //联系人数据库增加了字段，要重构
+            
             if (oldVersion < RECIPEINT_LOCAL_VERSION) {
                 db.execSQL(RecipientDatabase.DROP_TABLE);
                 db.execSQL(RecipientDatabase.CREATE_TABLE);
@@ -337,7 +311,7 @@ public class DatabaseFactory {
         }
 
         private void doSMSMigrationTo49(SQLiteDatabase db, int oldVersion, int newVersion) {
-            //sms数据库增加了语音视频分类，通话时长字段，重构
+            
             if (oldVersion < SMS_CALL_VERSION) {
                 db.execSQL(SmsDatabase.DROP_TABLE);
                 db.execSQL(SmsDatabase.CREATE_TABLE);
@@ -345,7 +319,7 @@ public class DatabaseFactory {
         }
 
         private void doAttachmentMigrationTo47(SQLiteDatabase db, int oldVersion, int newVersion) {
-            //附件数据库更新了，增加了时长字段，所以要删除
+            
             if (oldVersion < ATTACHMENT_UPDATE_VERSION) {
                 db.execSQL(AttachmentDatabase.DROP_TABLE);
                 db.execSQL(AttachmentDatabase.CREATE_TABLE);
@@ -368,13 +342,7 @@ public class DatabaseFactory {
 
         }
 
-        /**
-         * 过往遗产的数据转移
-         *
-         * @param db
-         * @param oldVersion
-         * @param newVersion
-         */
+        
         private void doLegacyMigration(SQLiteDatabase db, int oldVersion, int newVersion) {
 
             if (oldVersion < UNREAD_COUNT_VERSION) {

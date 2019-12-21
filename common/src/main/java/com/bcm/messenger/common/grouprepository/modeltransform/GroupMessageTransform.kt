@@ -6,7 +6,7 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 
 /**
- * 群消息数据库与上层展示层的数据结构转换帮助类
+ * 
  */
 object GroupMessageTransform {
 
@@ -23,7 +23,7 @@ object GroupMessageTransform {
         ameMessage.attachmentUri = message.attachment_uri
         ameMessage.sendTime = message.create_time
         ameMessage.serverIndex = message.mid
-        ameMessage.type = message.type //chat 消息或 public 消息
+        ameMessage.type = message.type //chat  public 
         ameMessage.isFileEncrypted = message.isFileEncrypted
         ameMessage.dataRandom = message.dataRandom
         ameMessage.dataHash = message.dataHash
@@ -31,10 +31,10 @@ object GroupMessageTransform {
         ameMessage.thumbHash = message.thumbHash
         ameMessage.attachmentSize = message.attachmentSize
 
-        // 解析extContent
+        // extContent
         ameMessage.extContentString = message.extContent
 
-        // 读取身份向量
+        // 
         ameMessage.identityIvString = message.identityIvString
 
        ameMessage.keyVersion = message.key_version
@@ -58,7 +58,7 @@ object GroupMessageTransform {
     }
 
     /**
-     * 将上层的群组详情信息转化成底层的群消息实体
+     * 
      */
     fun transformToEntity(messageDetail: AmeGroupMessageDetail): GroupMessage {
 
@@ -70,7 +70,7 @@ object GroupMessageTransform {
         }
 
         msg.mid = messageDetail.serverIndex
-        //TODO :判断是否是加密群，解密消息
+        //TODO :，
         msg.text = messageDetail.message.toString()
         msg.type = messageDetail.type
         msg.attachment_uri = messageDetail.attachmentUri
@@ -107,10 +107,10 @@ object GroupMessageTransform {
             msg.thumbnailUri = messageDetail.thumbnailUri.toString()
         }
 
-        // 转化@列表字段
+        // @
         msg.extContent = messageDetail.extContentString
 
-        // 存储身份向量
+        // 
         msg.identityIvString = messageDetail.identityIvString
 
         msg.dataRandom = messageDetail.dataRandom

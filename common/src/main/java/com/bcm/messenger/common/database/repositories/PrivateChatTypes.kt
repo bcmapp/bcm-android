@@ -34,8 +34,8 @@ const val MESSAGE_ATTRIBUTE_MASK: Long = 0xE0
 const val MESSAGE_FORCE_SMS_BIT: Long = 0x40
 
 
-//TODO: 添加一种 type 用来标识是 location
-//FIXME: 对应到置 1 的位也要进行处理
+//TODO:  type  location
+//FIXME:  1 
 const val KEY_LOCATION_BIT: Long = 0x8400
 // Key Exchange Information
 const val KEY_EXCHANGE_MASK: Long = 0xFF00

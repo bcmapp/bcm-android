@@ -24,7 +24,7 @@
         android:id="@+id/proxy_test_run"
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        app:setting_item_name="启用代理"
+        app:setting_item_name="run proxy"
         app:setting_item_name_color="#379BFF"
         app:setting_item_right="none"
         app:setting_item_switch="off"

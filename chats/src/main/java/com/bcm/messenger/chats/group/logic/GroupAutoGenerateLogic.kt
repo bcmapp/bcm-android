@@ -124,7 +124,7 @@ class GroupAutoGenerateLogic {
                             gInfo.spliceName = combineName
                             gInfo.chnSpliceName = chnCombineName
                             gInfo.spliceAvatar = path
-                            GroupLogic.updateGroupNameAndAvatar2Cache(gid, combineName, chnCombineName, path)
+                            GroupLogic.updateAutoGenGroupNameAndAvatar(gid, combineName, chnCombineName, path)
 
                             if (TextUtils.isEmpty(oldPath)) {
                                 BcmFileUtils.delete(oldPath)
@@ -136,7 +136,7 @@ class GroupAutoGenerateLogic {
 
                             generatingSet.remove(gid)
 
-                            GroupLogic.updateGroupNameAndAvatar2Cache(gid, combineName, chnCombineName, "")
+                            GroupLogic.updateAutoGenGroupNameAndAvatar(gid, combineName, chnCombineName, "")
 
                             val newInfo = GroupInfoDataManager.queryOneGroupInfo(gid)
                                     ?: return@doOnError

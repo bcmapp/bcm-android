@@ -88,6 +88,10 @@ dependencies {
     kapt 'com.bcm.router:processor:1.0.0'
 
 //    api project(':thirdpart:signal-protocol')
+    api("com.sdk.crashreport:crashreport:2.2.6-bcm") {
+        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
+    }
+
     api('org.whispersystems.signalservice:signal:1.0.0') {
         exclude group: 'androidx.core', module: 'core'
         exclude group: 'androidx.fragment', module: 'fragment'
@@ -178,9 +182,6 @@ dependencies {
     // Others
     api 'org.greenrobot:eventbus:3.0.0'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
-    api("com.sdk.crashreport:crashreport:2.2.6-bcm") {
-        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
-    }
     api('com.davemorrissey.labs:subsampling-scale-image-view:3.10.0') {
         exclude group: 'com.android.support'
     }

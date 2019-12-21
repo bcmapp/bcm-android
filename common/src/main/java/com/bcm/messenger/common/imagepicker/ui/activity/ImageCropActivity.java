@@ -36,7 +36,7 @@ import com.bcm.messenger.common.utils.AppUtilKotlinKt;
 
 
 /**
- * 截取头像
+ * 
  */
 public class ImageCropActivity extends FragmentActivity implements View.OnClickListener {
 

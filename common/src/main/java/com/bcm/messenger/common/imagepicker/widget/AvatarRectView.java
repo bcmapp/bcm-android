@@ -66,7 +66,7 @@ public class AvatarRectView extends View {
         super.onDraw(canvas);
 
         canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
-        mPaint.setFlags(Paint.ANTI_ALIAS_FLAG);//去掉锯齿
+        mPaint.setFlags(Paint.ANTI_ALIAS_FLAG);//
         this.mRect.left = ((getWidth() - this.mAvatarSize) / 2);
         this.mRect.right = ((getWidth() + this.mAvatarSize) / 2);
         this.mRect.top = ((getHeight() - this.mAvatarSize) / 2);

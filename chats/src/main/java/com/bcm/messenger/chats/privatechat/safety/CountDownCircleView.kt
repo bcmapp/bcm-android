@@ -16,7 +16,7 @@ import com.bcm.messenger.common.utils.dp2Px
 import java.util.*
 
 /**
- * 圆倒计时功能
+ * count down view
  * Created by zjl on 2018/8/29.
  */
 class CountDownCircleView : AppCompatTextView {

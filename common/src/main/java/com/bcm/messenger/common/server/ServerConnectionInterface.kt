@@ -7,7 +7,7 @@ import org.whispersystems.signalservice.internal.websocket.WebSocketProtos
 import java.io.IOException
 
 /**
- * 服务长连接相关接口和状态
+ * 
  * Created by wjh on 2019-11-06
  */
 
@@ -37,8 +37,8 @@ interface IServerDataListener {
 }
 
 enum class KickEvent {
-    OTHER_LOGIN,//其他设备登录
-    ACCOUNT_GONE//账号已销毁
+    OTHER_LOGIN,//
+    ACCOUNT_GONE//
 }
 
 enum class ConnectState {

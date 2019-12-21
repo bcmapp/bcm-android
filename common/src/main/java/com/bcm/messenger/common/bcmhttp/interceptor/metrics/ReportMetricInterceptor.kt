@@ -5,7 +5,7 @@ import okhttp3.Request
 
 /**
  * Created by Kin on 2019/11/25
- * 统计上报接口打点
+ * 
  */
 class ReportMetricInterceptor : MetricsInterceptor() {
     override fun onComplete(req: Request, succeed: Boolean, code: Int, duration: Long) {

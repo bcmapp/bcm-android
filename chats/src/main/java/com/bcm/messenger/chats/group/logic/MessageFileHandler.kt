@@ -31,7 +31,6 @@ import java.io.FileInputStream
 import java.util.*
 
 /**
- * 消息媒体资源处理类
  * Created by bcm.social.01 on 2018/8/8.
  */
 object MessageFileHandler {

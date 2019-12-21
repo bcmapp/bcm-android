@@ -37,10 +37,10 @@ import java.util.Locale;
 import com.bcm.messenger.utility.logger.ALog;
 
 /**
- * 定制修改UI的ExoPlayer控制器
- * 注释已被删除，若有需要请看未修改的源代码
- * Line 137 修改layout文件
- * Line 178 开始修改Controller的样式
+ * UIExoPlayer
+ * ，
+ * Line 137 layout
+ * Line 178 Controller
  * <p>
  * Created by Kin on 2018/7/21
  */
@@ -62,7 +62,7 @@ public class CustomizeControlView extends FrameLayout {
     }
 
     public interface PlayIconOnclickListener {
-        // 返回True表示消费了事件！！！
+        // True！！！
         boolean playIconClicked();
     }
 
@@ -152,7 +152,7 @@ public class CustomizeControlView extends FrameLayout {
     public CustomizeControlView(
             Context context, AttributeSet attrs, int defStyleAttr, AttributeSet playbackAttrs) {
         super(context, attrs, defStyleAttr);
-        // controllerLayoutId是控制器的UI layout ID
+        // controllerLayoutIdUI layout ID
         int controllerLayoutId = R.layout.video_player_controller;
         rewindMs = DEFAULT_REWIND_MS;
         fastForwardMs = DEFAULT_FAST_FORWARD_MS;
@@ -193,7 +193,7 @@ public class CustomizeControlView extends FrameLayout {
         LayoutInflater.from(context).inflate(controllerLayoutId, this);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
 
-        // 修改按钮样式在此
+        // 
         durationView = findViewById(R.id.exo_duration);
         positionView = findViewById(R.id.exo_position);
         timeBar = findViewById(R.id.exo_progress);

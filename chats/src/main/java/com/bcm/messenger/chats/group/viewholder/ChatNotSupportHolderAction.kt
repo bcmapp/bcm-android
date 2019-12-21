@@ -8,7 +8,7 @@ import com.bcm.messenger.common.ui.emoji.EmojiTextView
 import com.bcm.messenger.common.utils.getColorCompat
 
 /**
- * 文本消息行为处理
+ * 
  * Created by wjh on 2018/10/23
  */
 open class ChatNotSupportHolderAction : BaseChatHolderAction<EmojiTextView>() {

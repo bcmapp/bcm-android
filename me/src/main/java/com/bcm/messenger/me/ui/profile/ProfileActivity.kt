@@ -131,7 +131,7 @@ class ProfileActivity : SwipeBaseActivity(), RecipientModifiedListener {
             profile_title_bar?.setCenterText(getString(R.string.me_profile_title))
             profile_id_item?.setTip(InputLengthFilter.filterString(AMESelfData.uid, 15), 0)
             if (!isReleaseBuild()) {
-                // 非正式包允许长按复制ID，方便查问题
+                
                 profile_id_item?.setOnLongClickListener {
                     saveTextToBoard(AMESelfData.uid)
                     ToastUtil.show(this, "User ID has been copied to clipboard")
@@ -162,7 +162,6 @@ class ProfileActivity : SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun handleNameEdit(forLocal: Boolean) {
-        //如果是自己，则进入的是个人编辑页面，这里可以点击，否则是其他联系人的个人资料页面，这里无法点击，必须是备注那里才可以点击
         if (forLocal || recipient.isSelf) {
             startActivity(Intent(this, EditNameActivity::class.java).apply {
                 putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)

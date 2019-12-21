@@ -9,20 +9,19 @@ import androidx.core.app.NotificationCompat
 import com.bcm.messenger.utility.AppContextHolder
 
 /**
- * 默认通知item生成类
  * Created by bcm.social.01 on 2018/6/27.
  */
 object AmeNotification {
     private val notificationManager = AppContextHolder.APP_CONTEXT.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    private var CHANNEL_CHAT = ""//用于聊天的channel
-    private var CHANNEL_UPDATE = ""//用于更新的channel
+    private var CHANNEL_CHAT = ""//
+    private var CHANNEL_UPDATE = ""//
     private var CHANNEL_FRIEND = ""
     private var CHANNEL_ADHOC = ""
-    private var CHANNEL_WALLET = ""//用于钱包
+    private var CHANNEL_WALLET = ""//
 
     /**
-     * 获取默认通知通道
+     * 
      */
     fun getDefaultChannel(context: Context): String {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -96,7 +95,6 @@ object AmeNotification {
     }
 
     /**
-     * 获取默认通知builder
      */
     fun getDefaultNotificationBuilder(context: Context): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, getDefaultChannel(context))

@@ -10,7 +10,7 @@ import java.lang.ref.WeakReference
 
 /**
  *
- * RecycleView基础适配器（针对LinearLayoutManager， 可添加多个头部和尾部)
+ * RecycleView（LinearLayoutManager， )
  * Created by wjh on 2018/3/8
  */
 abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
@@ -18,7 +18,7 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
 
     companion object {
         private const val TAG = "LinearBaseAdapter"
-        const val ITEM_TYPE_DATA = 0//表示数据类型,大于0是header，小于0是footer
+        const val ITEM_TYPE_DATA = 0//,0header，0footer
     }
 
     private val mContextRef: WeakReference<Context?> = WeakReference(context)
@@ -68,7 +68,7 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     }
 
     /**
-     * 通知整个列表的更新（数据，header和footer一起）
+     * （，headerfooter）
      */
     fun notifyMainChanged() {
         mMainList.clear()
@@ -119,7 +119,7 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     }
 
     /**
-     * 设置真实数据源
+     * 
      */
     fun setDataList(contentList: List<T>?) {
         mContentList.clear()
@@ -128,7 +128,7 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     }
 
     /**
-     * 指定位置是否是数据item
+     * item
      * @param position
      */
     fun isDataItem(position: Int): Boolean {
@@ -136,7 +136,7 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     }
 
     /**
-     * 指定位置是否是头部item
+     * item
      * @param position
      */
     fun isHeaderItem(position: Int): Boolean {
@@ -144,7 +144,7 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     }
 
     /**
-     * 指定位置是否是尾部item
+     * item
      * @param position
      */
     fun isFooterItem(position: Int): Boolean {
@@ -152,8 +152,8 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     }
 
     /**
-     * 添加头部
-     * @return 返回类型
+     * 
+     * @return 
      */
     fun addHeader(v: View? = null, notify: Boolean = false): Int {
         val type = mHeaderList.size + 1
@@ -165,9 +165,9 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     }
 
     /**
-     * 是否展示指定的头部
-     * @param type 类型
-     * @param show true展示，false不展示
+     * 
+     * @param type 
+     * @param show true，false
      */
     fun showHeader(type: Int, show: Boolean = true, notify: Boolean = true) {
         var data: BaseLinearData<T>
@@ -184,8 +184,8 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     }
 
     /**
-     * 添加尾部
-     * @return 返回类型
+     * 
+     * @return 
      */
     fun addFooter(v: View? = null, notify: Boolean = false): Int {
         val type = -(mFooterList.size + 1)
@@ -197,9 +197,9 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     }
 
     /**
-     * 是否展示指定的尾部
-     * @param type 类型
-     * @param show 是否展示
+     * 
+     * @param type 
+     * @param show 
      */
     fun showFooter(type: Int, show: Boolean, notify: Boolean = true) {
         var data: BaseLinearData<T>
@@ -224,16 +224,16 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     }
 
     /**
-     * 获取可见头部个数
-     * @return 可见头部个数
+     * 
+     * @return 
      */
     fun getShowedHeaderCount(): Int {
         return mHeaderList.count { it.show }
     }
 
     /**
-     * 获取可见尾部个数
-     * @return 可见尾部个数
+     * 
+     * @return 
      */
     fun getShowedFooterCount(): Int {
         return mFooterList.count { it.show }
@@ -244,9 +244,9 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     }
 
     /**
-     * 查询当前装饰字母的位置
+     * 
      * @param letter
-     * @return 如果找不到则返回-1
+     * @return -1
      */
     override fun findSidePosition(letter: String): Int {
         for(i in 0 until  itemCount) {
@@ -258,14 +258,14 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     }
 
     /**
-     * 获取哦当前数据的抬头字母
+     * 
      */
     open fun getLetter(data: T): String {
         return ""
     }
 
     /**
-     * 查询当前位置所属最近的装饰字母
+     * 
      * @param position
      * @return
      */
@@ -343,11 +343,11 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
         var letter: String = ""
         var previousLetter: String = ""
         var data: T? = null
-        var previousData: T? = null//上一个数据，可能为空
+        var previousData: T? = null//，
     }
 
     /**
-     * 数据item
+     * item
      */
     data class BaseLinearData<T>(val type: Int, var view: View?, val data: T?, var letter: String, var show: Boolean)
 

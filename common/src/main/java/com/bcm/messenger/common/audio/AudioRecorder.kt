@@ -35,15 +35,15 @@ class AudioRecorder(private val context: Context, private val maxPlayTime: Long,
     private var recordTimer:Disposable? = null
 
     /**
-     * 设置录音回调
+     * 
      */
     fun setListener(listener:IRecorderListener) {
         this.listener = listener
     }
 
     /**
-     * 启动录音
-     * 启动成功，在主线程上抛onRecorderStarted事件, 启动失败 上抛onRecorderFailed事件
+     * 
+     * ，onRecorderStarted,  onRecorderFailed
      */
     fun startRecording() {
         ALog.i(TAG, "startRecording()")
@@ -78,8 +78,8 @@ class AudioRecorder(private val context: Context, private val maxPlayTime: Long,
     }
 
     /**
-     * 停止录音
-     * 停止后，会触发onRecorderFinished事件
+     * 
+     * ，onRecorderFinished
      */
     fun stopRecording() {
         ALog.i(TAG, "stopRecording()")
@@ -91,8 +91,8 @@ class AudioRecorder(private val context: Context, private val maxPlayTime: Long,
     }
 
     /**
-     * 取消录音
-     * 取消后，会触发onRecorderCanceled事件
+     * 
+     * ，onRecorderCanceled
      */
     fun cancelRecording() {
         ALog.i(TAG, "cancelRecording()")

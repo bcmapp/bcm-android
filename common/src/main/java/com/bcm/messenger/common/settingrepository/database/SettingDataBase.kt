@@ -8,7 +8,7 @@ import com.bcm.messenger.common.settingrepository.entity.AutoClearBean
 import com.bcm.messenger.utility.AppContextHolder
 
 /**
- * 设置资料数据库
+ * 
  * Created by zjl on 2018/9/25.
  */
 @Database(entities = [(AutoClearBean::class)], version = SettingDataBase.SETTING_DATABASE_VERSION, exportSchema = false)

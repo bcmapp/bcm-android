@@ -286,11 +286,7 @@ public class MmsSmsDatabase extends Database {
         return queryTables(PROJECTION, selection, order, "1");
     }
 
-    /**
-     * 获取媒体类型会话
-     * @param threadId
-     * @return
-     */
+   
     public Cursor getConversationForMedia(long threadId) {
         String order = MmsSmsColumns.NORMALIZED_DATE_SENT + " DESC";
         String selection = MmsSmsColumns.THREAD_ID + " = " + threadId + " and " +
@@ -302,11 +298,7 @@ public class MmsSmsDatabase extends Database {
     }
 
 
-    /**
-     * 获取文件类型会话
-     * @param threadId
-     * @return
-     */
+    
     public Cursor getConversationForFile(long threadId) {
         String order = MmsSmsColumns.NORMALIZED_DATE_SENT + " DESC";
         String selection = MmsSmsColumns.THREAD_ID + " = " + threadId + " and " +
@@ -322,10 +314,7 @@ public class MmsSmsDatabase extends Database {
         return DatabaseFactory.getSmsDatabase(AppContextHolder.APP_CONTEXT).getLinkMessagesByConversation(threadId);
     }
 
-    /**
-     * 读取未读的消息
-     * @return
-     */
+  
     public Cursor getUnread() {
         String order = MmsSmsColumns.NORMALIZED_DATE_RECEIVED + " ASC";
         String selection = MmsSmsColumns.READ + " = 0 AND " + MmsSmsColumns.NOTIFIED + " = 0";
@@ -333,11 +322,6 @@ public class MmsSmsDatabase extends Database {
         return queryTables(PROJECTION, selection, order, null);
     }
 
-    /**
-     * 读取未读个数
-     * @param threadId
-     * @return
-     */
     public int getUnreadCount(long threadId) {
         String selection = MmsSmsColumns.READ + " = 0 AND " + MmsSmsColumns.NOTIFIED + " = 0 AND " + MmsSmsColumns.THREAD_ID + " = " + threadId;
         Cursor cursor = queryTables(PROJECTION, selection, null, null);
@@ -350,10 +334,6 @@ public class MmsSmsDatabase extends Database {
         }
     }
 
-    /**
-     * 获取未读的消息列表数
-     * @return
-     */
     public int getAllUnreadThreadCount() {
         String groupBy = MmsSmsColumns.THREAD_ID;
         String having = "count(" + MmsSmsColumns.THREAD_ID + ")>0";

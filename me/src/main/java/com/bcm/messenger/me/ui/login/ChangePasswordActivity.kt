@@ -32,7 +32,7 @@ class ChangePasswordActivity : SwipeBaseActivity() {
     }
 
 
-    //点击完成
+    
     private fun handleChangePasswordDoneClick() {
         AmePopup.loading.show(this)
         if (checkInputLegitimate()) {
@@ -42,7 +42,7 @@ class ChangePasswordActivity : SwipeBaseActivity() {
         }
     }
 
-    //检测输入合法性
+    
     private fun checkInputLegitimate(): Boolean {
         if (TextUtils.isEmpty(origin_psw_edit.text)
                 || TextUtils.isEmpty(new_psw_edit.text)
@@ -63,7 +63,7 @@ class ChangePasswordActivity : SwipeBaseActivity() {
         return true
     }
 
-    //检测新密码和确认新密码是否一致
+    
     private fun checkLegitimateForNewPassword(): Boolean {
         if (TextUtils.equals(new_psw_edit.text, confirm_psw_edit.text))
             return true

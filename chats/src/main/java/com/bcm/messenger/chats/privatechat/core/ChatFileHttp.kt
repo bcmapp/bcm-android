@@ -25,7 +25,7 @@ object ChatFileHttp : SyncHttpWrapper(BcmBaseHttp()) {
     private const val TAG = "ChatFileHttp"
     private val bigFileHttp = SyncHttpWrapper(BcmBaseHttp())
 
-    private const val BIG_FILE_SIZE = 6*1024*1024 //>6M算大文件，由于私聊是阻塞串行上传下载，影响体验.后续优化
+    private const val BIG_FILE_SIZE = 6*1024*1024 
 
     init {
         val client = OkHttpClient.Builder()

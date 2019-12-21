@@ -26,7 +26,7 @@ import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
 
 /**
- * 搜索栏组件
+ * 
  * Created by wjh on 2018/4/10
  */
 open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionListener {
@@ -40,8 +40,8 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
 
     private var mTextWatcher: TextWatcher? = null
 
-    private var mLastSearchText: String? = null//上次的搜索文本
-    private var mLastSearchList: List<T>? = null//上次的搜索结果（用于加大搜索精度的时候提高搜索效率）
+    private var mLastSearchText: String? = null//
+    private var mLastSearchList: List<T>? = null//
 
     private var mSearchingAnim: ObjectAnimator? = null
 
@@ -114,7 +114,7 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 回收资源
+     * 
      */
     fun recycle() {
         hideSearching()
@@ -125,7 +125,7 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 是否激活输入面板的检索按钮
+     * 
      */
     fun enableIMESearch(enable: Boolean) {
         mIMESearchable = enable
@@ -137,7 +137,7 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 请求搜索栏的焦点
+     * 
      */
     fun requestSearchFocus() {
         common_search_text.requestFocus()
@@ -149,14 +149,14 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 获取当前的索索字段
+     * 
      */
     fun getSearchText(): CharSequence {
         return common_search_text.text.toString()
     }
 
     /**
-     * 设置搜索字段
+     * 
      */
     fun setSearchText(searchText: CharSequence) {
         post {
@@ -168,7 +168,7 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 设置提示的样式
+     * 
      */
     fun setTipAppearance(textSize: Int, textColor: Int) {
         common_search_tips.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.toFloat())
@@ -176,7 +176,7 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 设置搜索栏的样式
+     * 
      */
     fun setSearchAppearance(textSize: Int, textColor: Int) {
         common_search_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.toFloat())
@@ -184,14 +184,14 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 设置搜索栏提示语颜色
+     * 
      */
     fun setSearchHintColor(color: Int) {
         common_search_text.setHintTextColor(color)
     }
 
     /**
-     * 设置是否展示提示，默认不展示
+     * 
      */
     fun showTip(show: Boolean) {
         common_search_tips.visibility = if (show) {
@@ -202,49 +202,49 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 隐藏Tip布局
+     * 
      */
     fun hideTip() {
         common_search_tips.visibility = View.GONE
     }
 
     /**
-     * 设置搜索tip
+     * 
      */
     fun setSearchTip(tip: CharSequence) {
         common_search_tips.text = tip
     }
 
     /**
-     * 设置搜索hint
+     * 
      */
     fun setSearchHint(hint: CharSequence) {
         common_search_text.hint = hint
     }
 
     /**
-     * 设置搜索栏回调
+     * 
      */
     fun setOnSearchActionListener(listener: OnSearchActionListener<T>?) {
         mListener = listener
     }
 
     /**
-     * 设置要过滤的数据列表
+     * 
      */
     fun setSourceList(dataList: List<T>?) {
         mSourceList = dataList
     }
 
     /**
-     * 读取原本要过滤的数据列表
+     * 
      */
     fun getSourceList(): List<T>? {
         return mSourceList
     }
 
     /**
-     * 展示搜索中图标
+     * 
      */
     private fun showSearching() {
         common_searching_iv?.post {
@@ -254,7 +254,7 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 隐藏搜索中图标
+     * 
      */
     private fun hideSearching() {
         common_searching_iv?.post {
@@ -264,7 +264,7 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 创建搜索栏的订阅
+     * 
      */
     private fun createSearchObservable() {
         ALog.i(TAG, "createSearchObservable")
@@ -279,9 +279,9 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
                     }
 
                     val searchText = s.toString()
-                    hideSearching() //触发新的搜索条件，先隐藏loading
-                    mHasSearchChanged = true //设置属性为已经变更
-                    mSearchDispose?.dispose() //把之前等待的先停掉，展开新的搜索任务
+                    hideSearching() //
+                    mHasSearchChanged = true //
+                    mSearchDispose?.dispose() //
                     mSearchDispose = Observable.just(1).delaySubscription(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                             .subscribe({
                                 handleSearchAction(searchText)
@@ -304,11 +304,11 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 处理检索行为
+     * 
      */
     private fun handleSearchAction(searchText: String) {
         ALog.i(TAG, "handleSearchAction searchText: $searchText")
-        if (searchText == getSearchText()) { //如果搜索的文本已经不一样，就没必要开展搜索任务
+        if (searchText == getSearchText()) { //
             if (searchText.isEmpty()) {
                 post {
                     hideSearching()
@@ -322,9 +322,9 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
                 val listener = mListener
                 if (listener != null) {
                     try {
-                        mHasSearchChanged = false //开始新的搜索，属性要重置
-                        showSearching() //搜索开始，展示loading
-                        //如果sourceList数量很大的时候，检索有点慢，为了加快速度，这里采用分线程的来提高速度
+                        mHasSearchChanged = false //
+                        showSearching() //
+                        //
                         val searchList = if (!mLastSearchText.isNullOrEmpty() && searchText.startsWith(mLastSearchText ?: "")) {
                             mLastSearchList ?: mSourceList?.toList() ?: listOf()
                         }else {
@@ -355,7 +355,7 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
                                 }
                                 ALog.i(TAG, "handleSearchAction job, start: $start, end: $end")
                                 for (n in start until end) {
-                                    if (mHasSearchChanged) { //如果搜索条件已经变化，则直接break，尽快释放线程
+                                    if (mHasSearchChanged) { //
                                         break
                                     }
                                     if (listener.onMatch(searchList[n], searchText)) {
@@ -371,10 +371,10 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
                                 resultList.addAll(jobArray[i].await())
                             }
                             ALog.i(TAG, "handleSearchAction finish search")
-                            if (searchText == getSearchText()) { //如果最终的搜索文本已经不一样，则结果丢弃不能返回
-                                mLastSearchText = searchText //把结果设置到最近的搜索条件和搜索结果
+                            if (searchText == getSearchText()) { //
+                                mLastSearchText = searchText //
                                 mLastSearchList = resultList
-                                hideSearching() //隐藏loading
+                                hideSearching() //
                                 listener.onSearchResult(searchText, resultList)
                                 requestSearchFocus()
                             }
@@ -393,7 +393,7 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 取消搜索栏的订阅
+     * 
      */
     private fun destroySearchObservable() {
         ALog.i(TAG, "destroySearchObservable")
@@ -404,13 +404,13 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     }
 
     /**
-     * 搜索栏输入触发回调类
+     * 
      */
     abstract class OnSearchActionListener<in T> {
-        abstract fun onSearchResult(filter: String, results: List<T>)    //返回结果列表
-        abstract fun onSearchNull(results: List<T>)   //标示搜索栏为空的情况
-        abstract fun onMatch(data: T, compare: String): Boolean  //判断指定数据与输入字符串是否匹配
-        open fun onSearchClick(searchText: String) {//点击软键盘的搜索触发的
+        abstract fun onSearchResult(filter: String, results: List<T>)    //
+        abstract fun onSearchNull(results: List<T>)   //
+        abstract fun onMatch(data: T, compare: String): Boolean  //
+        open fun onSearchClick(searchText: String) {//
 
         }
     }

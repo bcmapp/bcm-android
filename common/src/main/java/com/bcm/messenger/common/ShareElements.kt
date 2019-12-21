@@ -1,9 +1,6 @@
 package com.bcm.messenger.common
 
-/**
- * 共享元素设计
- * Created by zjl on 2018/6/30.
- */
+
 object ShareElements {
 
     object Activity {

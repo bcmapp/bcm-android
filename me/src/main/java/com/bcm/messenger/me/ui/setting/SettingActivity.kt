@@ -52,7 +52,6 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        //从各种设置详情回来的时候，需要刷新下data，因为有可能配置已经变更
         initData()
     }
 
@@ -103,7 +102,7 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
             if (QuickOpCheck.getDefault().isQuick){
                 return@setOnClickListener
             }
-            // Android O及之后版本需要跳转到系统通知设置页面。MIUI需要MIUI 10或更新版本，MIUI 9的Android O走老方法
+           
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && (!RomUtil.isMiui() || RomUtil.getMIUIVersionCode() >= 8)) {
                 gotoNotificationChannelSetting(AmeNotification.getDefaultChannel(baseContext))
             } else {
@@ -124,7 +123,7 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
             }
 
             try {
-                // 首先尝试打开TTS设置页
+            
                 val intent = Intent().apply {
                     action = "com.android.settings.TTS_SETTINGS"
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -133,7 +132,7 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
                 overridePendingTransition(R.anim.common_slide_from_right, R.anim.utility_slide_silent)
 
             } catch (e: Exception) {
-                // 打开TTS设置页失败，尝试打开无障碍设置页面
+                
                 try {
                     val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -142,7 +141,7 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     overridePendingTransition(R.anim.common_slide_from_right, R.anim.utility_slide_silent)
 
                 } catch (e: Exception) {
-                    // 都失败，提示手动进入设置页进行设置
+                    
                     AmeAppLifecycle.failure(getString(R.string.me_setting_tts_cannot_open), true)
                 }
             }

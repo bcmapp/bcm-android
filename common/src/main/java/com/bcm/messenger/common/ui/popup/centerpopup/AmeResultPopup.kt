@@ -19,14 +19,14 @@ import kotlinx.android.synthetic.main.common_result_popup_layout_new.*
 import java.lang.ref.WeakReference
 
 /**
- * 自定义的吐司类
+ * 
  * Created by bcm.social.01 on 2018/5/31.
  */
 class AmeResultPopup : Application.ActivityLifecycleCallbacks {
 
     companion object {
         private const val TAG = "AmeResultPopup"
-        private const val DURATION_POPUP = 2000L //popup展示时长
+        private const val DURATION_POPUP = 2000L //popup
     }
 
     private var popup: PopupWindow? = null
@@ -40,56 +40,56 @@ class AmeResultPopup : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 展示成功的吐司
+     * 
      */
     fun succeed(activity: FragmentActivity?, result: String?) {
         succeed(activity, result, true) {}
     }
 
     /**
-     * 展示失败的吐司
+     * 
      */
     fun failure(activity: FragmentActivity?, result: String?) {
         failure(activity, result, true) {}
     }
 
     /**
-     * 展示成功的吐司
+     * 
      */
     fun succeed(activity: FragmentActivity?, result: String?, dismiss: () -> Unit) {
         succeed(activity, result, true, dismiss)
     }
 
     /**
-     * 展示失败的吐司
+     * 
      */
     fun failure(activity: FragmentActivity?, result: String?, dismiss: () -> Unit) {
         failure(activity, result, true, dismiss)
     }
 
     /**
-     * 展示成功的吐司
+     * 
      */
     fun succeed(activity: FragmentActivity?, result: String?, dark: Boolean) {
         succeed(activity, result, dark) {}
     }
 
     /**
-     * 展示失败的吐司
+     * 
      */
     fun failure(activity: FragmentActivity?, result: String?, dark: Boolean) {
         failure(activity, result, dark) {}
     }
 
     /**
-     * 展示无图标的吐司提示
+     * 
      */
     fun notice(activity: FragmentActivity?, result: String?, dark: Boolean = true) {
         notice(activity, result, dark) {}
     }
 
     /**
-     * 展示无图标的吐司提示
+     * 
      */
     fun notice(activity: FragmentActivity?, result: String?, dark: Boolean = true, dismiss: () -> Unit) {
         val config = PopConfig()
@@ -101,7 +101,7 @@ class AmeResultPopup : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 展示成功的吐司
+     * 
      */
     fun succeed(activity: FragmentActivity?, result: String?, dark: Boolean, dismiss: () -> Unit) {
         val config = PopConfig()
@@ -113,7 +113,7 @@ class AmeResultPopup : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 展示失败的吐司
+     * 
      */
     fun failure(activity: FragmentActivity?, result: String?, dark: Boolean, dismiss: () -> Unit) {
         if (null == result) {
@@ -131,7 +131,7 @@ class AmeResultPopup : Application.ActivityLifecycleCallbacks {
     private fun show(activity: FragmentActivity?, config: PopConfig) {
 
         /**
-         * 展示Toast之前先检查服务状态码缓存，是否存在需要特殊展示的错误
+         * Toast，
          */
         fun checkServerCodeState(config: PopConfig): PopConfig {
 
@@ -167,7 +167,7 @@ class AmeResultPopup : Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * 隐藏
+     * 
      */
     fun dismiss() {
         dismissInner(popup)
@@ -225,7 +225,7 @@ class AmeResultPopup : Application.ActivityLifecycleCallbacks {
         }
 
         /**
-         * 根据配置更新UI
+         * UI
          */
         private fun updateUI() {
             common_result_root.postDelayed({

@@ -84,21 +84,14 @@ public class SmsDatabase extends MessagingDatabase {
     public static final String SUBJECT = "subject";
     public static final String SERVICE_CENTER = "service_center";
 
-    /**
-     * 通话时长
-     */
+    
     public static final String DURATION = "call_duration";
-    /**
-     * 通话类型（0 : 语音，1: 视频）
-     */
+  
     public static final String COMMUNICATION_TYPE = "communication_type";
 
-    //消息实体类型
+    
     public static final String PAYLOAD_TYPE = "payload_type";
 
-    /**
-     * 创建sms相关的语句
-     */
     public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" + ID + " integer PRIMARY KEY, " +
             THREAD_ID + " INTEGER, " + ADDRESS + " TEXT, " + ADDRESS_DEVICE_ID + " INTEGER DEFAULT 1, " + PERSON + " INTEGER, " +
             DATE_RECEIVED + " INTEGER, " + DATE_SENT + " INTEGER, " + PROTOCOL + " INTEGER, " + READ + " INTEGER DEFAULT 0, " +
@@ -117,9 +110,7 @@ public class SmsDatabase extends MessagingDatabase {
             "CREATE INDEX IF NOT EXISTS sms_thread_date_index ON " + TABLE_NAME + " (" + THREAD_ID + ", " + DATE_RECEIVED + ");"
     };
 
-    /**
-     * 删除表的sql语句
-     */
+   
     public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
     private static final String[] MESSAGE_PROJECTION = new String[]{
@@ -469,7 +460,7 @@ public class SmsDatabase extends MessagingDatabase {
         return setMessagesRead(READ + " = 0", null);
     }
 
-    // 过滤截屏消息的未读状态
+    
     public void setMessageUnUnread(long threadId, long messageId){
         ContentValues contentValues = new ContentValues();
         contentValues.put(READ, 0);
@@ -489,7 +480,7 @@ public class SmsDatabase extends MessagingDatabase {
             cursor = database.query(TABLE_NAME, new String[]{ID, ADDRESS, DATE_SENT, TYPE, EXPIRES_IN, EXPIRE_STARTED}, where, arguments, null, null, null);
 
             while (cursor != null && cursor.moveToNext()) {
-                if (Types.isSecureType(cursor.getLong(3))) {//第三列标示是否是安全类型
+                if (Types.isSecureType(cursor.getLong(3))) {
                     SyncMessageId syncMessageId = new SyncMessageId(Address.fromSerialized(cursor.getString(1)), cursor.getLong(2));
                     ExpirationInfo expirationInfo = new ExpirationInfo(cursor.getLong(0), cursor.getLong(4), cursor.getLong(5), false);
 
@@ -562,12 +553,7 @@ public class SmsDatabase extends MessagingDatabase {
         }
     }
 
-    /**
-     * 更新通话时长和类型
-     *
-     * @param id
-     * @param duration
-     */
+  
     public void markCallDetail(long id, long duration, int communicationType) {
 
         ContentValues contentValues = new ContentValues();
@@ -667,7 +653,7 @@ public class SmsDatabase extends MessagingDatabase {
         else if (message.isIdentityDefault())
             type |= Types.KEY_EXCHANGE_IDENTITY_DEFAULT_BIT;
 
-        try {//因为有可能DatabaseFactory.getThreadDatabase(context)因为退出登录而导致为空，所以需要try catch处理一下
+        try {
             Recipient recipient = Recipient.from(context, message.getSender(), true);
             Recipient groupRecipient;
 
@@ -681,11 +667,11 @@ public class SmsDatabase extends MessagingDatabase {
                     message.isSecureMessage() || message.isGroup() || message.isPreKeyBundle()) &&
                     !message.isIdentityUpdate() && !message.isIdentityDefault() && !message.isIdentityVerified();
 
-            // 临时方案 截屏时不需要进入未读数(小灰条都不计入未读数)
+            //todo fix 1001
             if (message instanceof IncomingLocationMessage) {
                 unread = false;
             }
-            // 临时方案 截屏时不需要进入未读数(小灰条都不计入未读数)--end
+            
 
             long threadId;
 
@@ -765,7 +751,7 @@ public class SmsDatabase extends MessagingDatabase {
         } else if (message.isSecureMessage()) {
             type |= (Types.SECURE_MESSAGE_BIT | Types.PUSH_MESSAGE_BIT);
             if (message.isLocation()) {
-                //type 插入相应的位
+                
                 type |= Types.KEY_LOCATION_BIT;
             }
         } else if (message.isEndSession()) {
@@ -884,20 +870,14 @@ public class SmsDatabase extends MessagingDatabase {
         db.delete(TABLE_NAME, ID_WHERE, new String[]{messageId + ""});
         boolean threadDeleted = DatabaseFactory.getThreadDatabase(context).update(threadId, false);
 
-        // 删除消息广播一下,而不是采用notify
+        
         EventBus.getDefault().post(new MessageDeletedEvent(threadId, Collections.singletonList(messageId)));
 
         //notifyConversationListeners(threadId);
         return threadDeleted;
     }
 
-    /**
-     * 删除多个文本消息
-     *
-     * @param threadId
-     * @param messageIds
-     * @return
-     */
+    
     public boolean deleteMessages(long threadId, long... messageIds) {
         Log.w("MessageDatabase", "Deleting multi message " + threadId);
         ArrayList<Long> deletedList = new ArrayList<>();
@@ -915,19 +895,14 @@ public class SmsDatabase extends MessagingDatabase {
 
         boolean threadDeleted = DatabaseFactory.getThreadDatabase(context).update(threadId, false);
 
-        // 删除消息广播一下,而不是采用notify
+        
         EventBus.getDefault().post(new MessageDeletedEvent(threadId, deletedList));
 
         //notifyConversationListeners(threadId);
         return threadDeleted;
     }
 
-    /**
-     * 删除多个文本消息除了指定的消息ID
-     * @param threadId
-     * @param messageIds
-     * @return
-     */
+   
     public boolean deleteMessagesExcept(long threadId, long... messageIds) {
 
         StringBuilder builder = new StringBuilder();

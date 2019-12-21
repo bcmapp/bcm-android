@@ -3,9 +3,6 @@ package com.bcm.messenger.chats.group.core.group;
 import com.bcm.messenger.utility.proguard.NotGuard;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * 单纯用于接受identityKey的实体类（用于建群）
- */
 public class SimpleProfile implements NotGuard {
 
     /**

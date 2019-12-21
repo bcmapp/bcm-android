@@ -20,27 +20,25 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 
 
 /**
- * 自定义可滚动的标题栏，继承于AppBarLayout(要配合CoordinatorLayout使用）
- *
  * Created by wjh on 2018/3/8
  */
 class ScrollTitleBarLayout : AppBarLayout {
 
     private lateinit var mCollapsingToolbar: CollapsingToolbarLayout
     private lateinit var mToolbar: Toolbar
-    private lateinit var mBigTitleView: TextView //大标题
-    private lateinit var mTitleView: TextView //收起时标题
-    private lateinit var mLineView: View //标线
-    private lateinit var mNoticeView: TextView//提示view
-    private var mNoticeHeight: Int = 0 //提示栏高度
+    private lateinit var mBigTitleView: TextView //
+    private lateinit var mTitleView: TextView //
+    private lateinit var mLineView: View //
+    private lateinit var mNoticeView: TextView//
+    private var mNoticeHeight: Int = 0 //
 
-    private var mNoticeAnimator: ValueAnimator? = null //提示栏当前动画
+    private var mNoticeAnimator: ValueAnimator? = null //
 
-    private var mState = AppBarStateChangeListener.IDLE //当前状态
+    private var mState = AppBarStateChangeListener.IDLE //
     private var mListener: AppBarStateChangeListener? = null
-    private val mHandler = Handler() //用于处理一些延时的任务
+    private val mHandler = Handler() //
 
-    private var mCollapsingHeight: Int = 0 //可展开的toolbar高度
+    private var mCollapsingHeight: Int = 0 //
 
     private val mStateChangedListener = OnOffsetChangedListener { appBarLayout, verticalOffset ->
         if (verticalOffset == 0) {
@@ -96,7 +94,7 @@ class ScrollTitleBarLayout : AppBarLayout {
 
 
     /**
-     * 初始化属性和组件
+     * 
      */
     private fun init(context: Context) {
         LayoutInflater.from(context).inflate(R.layout.common_scroll_title_layout, this)
@@ -123,14 +121,14 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 获取展开的高度
+     * 
      */
     fun getCollapsingHeight(): Int {
         return mCollapsingHeight
     }
 
     /**
-     * 设置标题样式
+     * 
      * @param size
      * @param color
      */
@@ -141,7 +139,7 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 设置大标题样式
+     * 
      * @param size
      * @param color
      */
@@ -154,7 +152,7 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 设置提示栏样式
+     * 
      * @param size
      * @param color
      * @param backgroundColor
@@ -167,9 +165,9 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 展示提示
-     * @param content 提示文案
-     * @param duration 提示多久之后隐藏，单位毫秒，如果0表示一直展示
+     * 
+     * @param content 
+     * @param duration ，，0
      */
     fun showNotice(content: CharSequence, duration: Long = 0) {
         if (mNoticeView.visibility == View.VISIBLE) {
@@ -204,7 +202,7 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 隐藏提示
+     * 
      */
     fun hideNotice() {
 
@@ -230,14 +228,14 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 返回toolbar
+     * toolbar
      */
     fun getToolbar(): Toolbar {
         return mToolbar
     }
 
     /**
-     * 设置是否可滚动
+     * 
      * @param enable
      */
     fun setScrollFlag(enable: Boolean) {
@@ -253,7 +251,7 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 设置折叠状态监听类
+     * 
      */
     fun setOnStateChangedListener(listener: AppBarStateChangeListener): ScrollTitleBarLayout {
         mListener = listener
@@ -261,7 +259,7 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 设置标题
+     * 
      * @param title
      */
     fun setTitle(title: CharSequence): ScrollTitleBarLayout {
@@ -274,14 +272,14 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 获取当前appbar状态
+     * appbar
      */
     fun getAppBarState(): Int {
         return mState
     }
 
     /**
-     * 设置返回键图标
+     * 
      * @param iconResId
      */
     fun setNavigationIcon(iconResId: Int): ScrollTitleBarLayout {
@@ -290,7 +288,7 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 设置返回键点击触发
+     * 
      * @param clickListener
      */
     fun setNavigationOnClickListener(clickListener: OnClickListener): ScrollTitleBarLayout {
@@ -299,7 +297,7 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 添加toolbar右菜单
+     * toolbar
      * @param menuResId
      * @param clickListener
      */
@@ -320,10 +318,10 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 根据标题改变尺寸样式
+     * 
      */
     private fun changeByTitle() {
-        //重新计算高度
+        //
 //        val textPaint = mBigTitleView.paint
 //        val bounds = Rect()
 //        textPaint.getTextBounds(mBigTitleView.text.toString(), 0, mBigTitleView.text.length, bounds)
@@ -346,7 +344,7 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * 根据状态改变样式
+     * 
      */
     private fun changeByState(state: Int) {
         val lp = mLineView.layoutParams as FrameLayout.LayoutParams
@@ -365,14 +363,14 @@ class ScrollTitleBarLayout : AppBarLayout {
     }
 
     /**
-     * appbar状态监听类
+     * appbar
      */
     interface AppBarStateChangeListener {
 
         companion object {
-            const val IDLE = 0 //过度
-            const val EXPANDED = 1 //展开
-            const val COLLAPSED = 2 //收起
+            const val IDLE = 0 //
+            const val EXPANDED = 1 //
+            const val COLLAPSED = 2 //
         }
 
         fun onStateChanged(appBarLayout: AppBarLayout, state: Int)

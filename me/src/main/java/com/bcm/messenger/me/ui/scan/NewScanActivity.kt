@@ -25,7 +25,7 @@ class NewScanActivity : SwipeBaseActivity() {
     class ScanResumeEvent
 
     private val TAG = "NewScanActivity"
-    private var mScanResultHandleDelegate: Boolean = false//是否委托处理扫码结果
+    private var mScanResultHandleDelegate: Boolean = false
     private var mScanType: Int = ARouterConstants.PARAM.SCAN.TYPE_OTHER
 
     override fun onDestroy() {

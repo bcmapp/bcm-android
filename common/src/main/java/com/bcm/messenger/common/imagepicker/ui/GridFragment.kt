@@ -37,15 +37,15 @@ class GridFragment : Fragment() {
         RxBus.subscribe<Any>(GRID_TAG) {
             when (it) {
                 is PickPhotoLoadFinishEvent -> {
-                    // 数据拉去完成，刷新UI
+                    // ，UI
                     reloadData()
                 }
                 is PickPhotoListChangeEvent -> {
-                    // 文件夹更改，刷新UI
+                    // ，UI
                     reloadData()
                 }
                 is PickPhotoEvent -> {
-                    // 预览页面选取了图片，更新UI
+                    // ，UI
                     photoList[it.index].isSelected = it.isSelected
                     pick_photo_grid_list.adapter?.notifyItemChanged(it.index)
                 }
@@ -85,7 +85,7 @@ class GridFragment : Fragment() {
 
     private inner class GridViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         init {
-            // 更改每一项大小
+            // 
             val screenWidth = AppUtil.getRealScreenWidth()
             val scaleSize = screenWidth / config.spanCount
             itemView.pick_photo_grid_image.layoutParams = itemView.pick_photo_grid_image.layoutParams.apply {
@@ -95,12 +95,12 @@ class GridFragment : Fragment() {
 
             itemView.setOnClickListener {
                 if (config.multiSelect) {
-                    // 多选时可以打开预览界面
+                    // 
                     startActivity(Intent(activity, PickPhotoPreviewActivity::class.java).apply {
                         putExtra("index", adapterPosition)
                     })
                 } else {
-                    // 非多选则直接选取
+                    // 
                     onItemSelected(adapterPosition)
                 }
             }
@@ -163,18 +163,18 @@ class GridFragment : Fragment() {
     private fun onItemSelected(position: Int) {
         val model = photoList[position]
         if (config.multiSelect) {
-            // 可以多选
+            // 
             if (model.isSelected) {
-                // 取消选中
+                // 
                 model.isSelected = false
                 BcmPickHelper.selectedPhotos.remove(model.toSelectedModel())
             } else {
                 if (config.pickPhotoLimit > BcmPickHelper.selectedPhotos.size) {
-                    // 数量未达上限，选中
+                    // ，
                     model.isSelected = true
                     BcmPickHelper.selectedPhotos.add(model.toSelectedModel())
                 } else {
-                    // 到达上限，不允许选中
+                    // ，
                     activity?.let {
                         ToastUtil.show(it, getString(R.string.common_pick_photo_size_limit, config.pickPhotoLimit))
                     }
@@ -182,7 +182,7 @@ class GridFragment : Fragment() {
             }
             pick_photo_grid_list.adapter?.notifyItemChanged(position)
         } else {
-            // 不允许多选，直接返回结果
+            // ，
             BcmPickHelper.selectedPhotos.add(model.toSelectedModel())
             RxBus.post(PICK_TAG, PickPhotoFinishEvent())
         }

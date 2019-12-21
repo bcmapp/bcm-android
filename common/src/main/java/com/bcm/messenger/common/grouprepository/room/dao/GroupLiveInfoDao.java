@@ -19,7 +19,7 @@ public interface GroupLiveInfoDao {
     GroupLiveInfo loadLiveInfoByGidAndLiveId(long gid, long liveId);
 
     /**
-     * 加载最新的直播数据
+     * 
      *
      * @param gid
      * @return

@@ -136,7 +136,7 @@ class GroupCache(val cacheReady: () -> Unit) {
         if (group.role != role) {
             group.role = role
             if (role == AmeGroupMemberInfo.VISITOR) {
-                //已经不在群里了，清掉直播状态
+            
                 GroupLiveInfoManager.getInstance().deleteLiveInfoWhenLeaveGroup(gid)
                 GroupInfoDataManager.clearShareSetting(group.gid)
             }
@@ -259,7 +259,7 @@ class GroupCache(val cacheReady: () -> Unit) {
         }
     }
 
-    fun updateGroupNameAndAvatar2Cache(gid: Long, combineName: String, chnCombineName: String, path: String?) {
+    fun updateAutoGenGroupNameAndAvatar(gid: Long, combineName: String, chnCombineName: String, path: String?) {
         val groupInfo = getGroupInfo(gid)
         if (null != groupInfo) {
             if (combineName.isNotEmpty()) {
@@ -308,10 +308,25 @@ class GroupCache(val cacheReady: () -> Unit) {
         GroupInfoDataManager.setProfileEncrypted(gid, isEncrypted)
     }
 
-    fun updateGroupNameAndAvatar(gid: Long, newName: String, newIcon: String) {
-        val groupInfo = getGroupInfo(gid)
-        groupInfo?.name = newName
-        groupInfo?.iconUrl = newIcon
-        GroupInfoDataManager.updateGroupNameAndAvatar(gid, newName, newIcon)
+    fun updateGroupName(gid: Long, newName: String) {
+        val groupInfo = getGroupInfo(gid)?:return
+        if (newName.isNotEmpty()) {
+            groupInfo.name = newName
+
+            val recipient = Recipient.recipientFromNewGroup(AppContextHolder.APP_CONTEXT, groupInfo)
+            Repository.getRecipientRepo()?.setProfile(recipient, null, groupInfo.name, groupInfo.iconUrl)
+            GroupInfoDataManager.updateGroupName(gid, newName)
+        }
+    }
+
+    fun updateGroupAvatar(gid: Long, newIcon: String) {
+        val groupInfo = getGroupInfo(gid)?:return
+        if (newIcon.isNotEmpty()) {
+            groupInfo.iconUrl = newIcon
+
+            val recipient = Recipient.recipientFromNewGroup(AppContextHolder.APP_CONTEXT, groupInfo)
+            Repository.getRecipientRepo()?.setProfile(recipient, null, groupInfo.name, groupInfo.iconUrl)
+            GroupInfoDataManager.updateGroupAvatar(gid, newIcon)
+        }
     }
 }

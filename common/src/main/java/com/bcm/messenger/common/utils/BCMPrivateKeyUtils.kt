@@ -24,7 +24,7 @@ import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 
 /**
- * BCM账号生成，公私钥对生成相关帮助类
+ * BCM，
  */
 object BCMPrivateKeyUtils {
 
@@ -36,7 +36,7 @@ object BCMPrivateKeyUtils {
 
     private const val FINGERPRINT_LENGHT = 4
     private const val HEADER_SIZE = 5
-    private const val SALT_LENGTH_03 = 4//盐的长度
+    private const val SALT_LENGTH_03 = 4//
 
     private const val HASH_SIZE = 32
     private const val BASE58_VERSION = 0
@@ -66,7 +66,7 @@ object BCMPrivateKeyUtils {
     }
 
     /**
-     * 根据公钥转化成UID
+     * UID
      */
     fun provideUid(publicKey: ByteArray): String {
         val keyBytes = if (publicKey.size > 32) {
@@ -91,7 +91,7 @@ object BCMPrivateKeyUtils {
     }
 
     /**
-     * 根据signal的identityKey转化成UID
+     * signalidentityKeyUID
      */
     fun provideUid(identityKey: String): String {
         val identityKeyArray = Base64.decode(identityKey)
@@ -119,21 +119,21 @@ object BCMPrivateKeyUtils {
     }
 
     /**
-     * 生成open id key pair
+     * open id key pair
      */
     fun generateKeyPair(): ECKeyPair {
         return Curve.generateKeyPair()
     }
 
     /**
-     * 签名
+     * 
      */
     fun sign(pk: ECPrivateKey, msg: String): String {
         return Base64.encodeBytes(Curve.calculateSignature(pk, msg.toByteArray()))
     }
 
     /**
-     * 签名
+     * 
      */
     fun sign(pk: ECPrivateKey, data: ByteArray): ByteArray {
         return Curve.calculateSignature(pk, data)
@@ -166,13 +166,13 @@ object BCMPrivateKeyUtils {
     }
 
     /**
-     * 解密open id private key
-     * 加密逆过程
-     * 输入：加密数据的 hex 字串，pin 值
-     * 对 pin 做 hash 截取前 128位作为解密密钥
-     * 对加密数据去头，进行 AES 解密
-     * 解密后取出后缀hash ，对比 hash 是否和 pin 计算出的 hash 相同
-     * 相同则密钥正确，返回解密后的私钥，不同则解密失败
+     * open id private key
+     * 
+     * ： hex ，pin 
+     *  pin  hash  128
+     * ， AES 
+     * hash ， hash  pin  hash 
+     * ，，
      *
      */
     @Throws(ErrorPinException::class)
@@ -186,12 +186,12 @@ object BCMPrivateKeyUtils {
             val key = parseAESKey128(pinHashData)
 
 
-            //提取头部
+            //
             val dataStream = ByteArrayInputStream(encryptedData)
             val header = parseHeader(dataStream)
 
             if (String(header).startsWith("BCM")) {
-                //提取加密数据
+                //
                 val encryptData = ByteArray(encryptedData.size - HEADER_SIZE)
                 dataStream.read(encryptData, 0, encryptData.size)
 
@@ -205,7 +205,7 @@ object BCMPrivateKeyUtils {
                 val decryptedHashData = parseDecryptedHash(decryptedStream)
 
                 if (!TextUtils.equals(HexUtil.toString(decryptedHashData), HexUtil.toString(pinHashData))) {
-                    //如果两个 hash 值不一致，说明 pin 码错误，解密失败
+                    // hash ， pin ，
                     throw ErrorPinException()
                 }
                 return privateKey
@@ -220,7 +220,7 @@ object BCMPrivateKeyUtils {
     }
 
     /**
-     * 根据seed产生私钥
+     * seed
      */
     fun generatePrivateKey(seed: ByteArray): ByteArray? {
         val curveProvider = getCurve25519Provider()
@@ -250,7 +250,7 @@ object BCMPrivateKeyUtils {
     }
 
     /**
-     * 根据现有私钥产生公钥
+     * 
      */
     fun generatePublicKey(privateKey: ByteArray): ByteArray? {
         val curveProvider = getCurve25519Provider()
@@ -279,7 +279,7 @@ object BCMPrivateKeyUtils {
     }
 
     /**
-     * 根据现有私钥产生公钥
+     * 
      */
     fun generatePublicKeyWithDJB(privateKey: ByteArray): ByteArray? {
         val pubKey = generatePublicKey(privateKey)
@@ -297,7 +297,7 @@ object BCMPrivateKeyUtils {
     }
 
     /**
-     * 输入 pin 对私钥进行加密，返回加密后字串
+     *  pin ，
      *
      * @param privateKey
      * @param pin
@@ -305,29 +305,29 @@ object BCMPrivateKeyUtils {
      * Pair<encryptPrivateKey,plainSalt>
      */
     fun encryptPrivateKey(privateKey: ByteArray, pin: ByteArray): String {
-        //获取 pin 的 hash
+        // pin  hash
         val pin_hash = EncryptUtils.computeSHA256(pin)
-        //生成安全随机数
+        //
         val plainSalt = Util.getSecretBytes(SALT_LENGTH_03)
-        //FIXME:方便调试盐先用4 byte 0
+        //FIXME:4 byte 0
 //        val plainSalt = ByteArray(SALT_LENGTH_03)
-        //KDF 迭代衍生密钥
+        //KDF 
         val derivativePk = excuteKdfs(pin_hash, plainSalt, KDF_ITERATION_COUNT)
-        //在 privateKey 后面添加指纹
+        // privateKey 
         val realPrivateKey = addSuffixForPlainPrivateKey(privateKey)
-        //用衍生密钥对 privateKey 进行加密
+        // privateKey 
         val encryptPrivateKey = encryptWithAES(realPrivateKey, derivativePk)
-        //为加密后密钥添加头部,添加盐到尾部
+        //,
         val encapsulatedPrivateKey = encapsulatedForEncryptData(encryptPrivateKey,plainSalt)
 //        Log.e(TAG,"encapsulation privateKey=== "+ Base64.encodeBytes(encapsulatedPrivateKey))
         return Base64.encodeBytes(encapsulatedPrivateKey)
     }
 
     /**
-     * 解密数据，从二维码读出数据，需要加密后私钥
+     * ，，
      * @param encapsulatedPrivateKey String
      * @param pin ByteArray
-     * @return Boolean:isSuccess; ByteArray:解密后私钥; Int: 错误码
+     * @return Boolean:isSuccess; ByteArray:; Int: 
      */
     fun decryptPrivateKey(encapsulatedPrivateKey: String, pin: ByteArray): Triple<Boolean, ByteArray?, Int> {
         return decryptPrivateKey(Base64.decode(encapsulatedPrivateKey), pin)
@@ -335,23 +335,23 @@ object BCMPrivateKeyUtils {
 
     private fun decryptPrivateKey(encapsulatedPrivateKey: ByteArray, pin: ByteArray): Triple<Boolean, ByteArray?, Int> {
         val pin_hash = EncryptUtils.computeSHA256(pin)
-        //对私钥进行解封装处理，返回头部信息和实体信息
+        //，
         val encrypteprivateKeyTriple:  Triple<ByteArray, ByteArray,ByteArray> = decapsulationPrivateKey(encapsulatedPrivateKey)
         val header = encrypteprivateKeyTriple.first
         val encryptBody = encrypteprivateKeyTriple.second
         val plainSalt = encrypteprivateKeyTriple.third
-        //FIXME: 判断加密数据版本号
+        //FIXME: 
         if (header.contentEquals(getKeyHeader(KEY_V3))) {
             ALog.i("BCMPrivateKeyUtils", "V3 version")
-            //计算衍生密钥
+            //
             val derivativePk = excuteKdfs(pin_hash, plainSalt, KDF_ITERATION_COUNT)
-            //解密私钥密文
+            //
             val decryptedPrivateKey = decryptWithAES(encryptBody, derivativePk)
-            //分离私钥明文和指纹，进行验证
+            //，
             val privateKeyAndFingerprintPair: Pair<ByteArray, ByteArray> = parseSuffixFromPrivateKey(decryptedPrivateKey)
             val privateKey = privateKeyAndFingerprintPair.first
             val suffix = privateKeyAndFingerprintPair.second
-            //计算私钥指纹
+            //
             val privateKeyFingerprint = getFingerprint(privateKey)
             if (privateKeyFingerprint.contentEquals(suffix)) {
                 return Triple(true, privateKey, 200)
@@ -394,7 +394,7 @@ object BCMPrivateKeyUtils {
     }
 
     /**
-     * 用衍生密钥对私钥进行加密
+     * 
      *
      * @param plainData
      * @param derivativePk
@@ -411,7 +411,7 @@ object BCMPrivateKeyUtils {
 
 
     /**
-     * 用衍生密钥对私钥进行解密
+     * 
      *
      * @param encryptData
      * @param derivativePk
@@ -427,7 +427,7 @@ object BCMPrivateKeyUtils {
     }
 
     /**
-     * 在私钥后面添加私钥的指纹，用于解密时验证解密正确性
+     * ，
      *
      * @param privateKey
      * @return
@@ -459,7 +459,7 @@ object BCMPrivateKeyUtils {
     }
 
     /**
-     * 添加 header 和 salt 到加密后密钥
+     *  header  salt 
      * @param encryptData ByteArray
      * @param salt ByteArray
      * @return ByteArray
@@ -489,7 +489,7 @@ object BCMPrivateKeyUtils {
     }
 
     /**
-     * 获取私钥的指纹
+     * 
      *
      * @param privateKey
      * @return
@@ -504,10 +504,10 @@ object BCMPrivateKeyUtils {
 
 
     /**
-     * @param password   原密钥
-     * @param salt       盐
-     * @param iterations 迭代次数
-     * @return kdf 衍生密钥
+     * @param password   
+     * @param salt       
+     * @param iterations 
+     * @return kdf 
      */
     private fun excuteKdfs(password: ByteArray, salt: ByteArray, iterations: Int): ByteArray {
         var temp = password

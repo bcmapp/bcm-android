@@ -23,8 +23,6 @@ import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_activity_send_contact.*
 
 /**
- * 发送名片选择联系人页
- *
  * Created by Kin on 2018/8/15
  */
 @Route(routePath = ARouterConstants.Activity.CONTACT_SEND)

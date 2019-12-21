@@ -60,12 +60,10 @@ class RegistrationActivity : SwipeBaseActivity() {
             arg.putString(RE_LOGIN_ID, lastLoginUid)
             f.arguments = arg
 
-            //重登陆页面
             supportFragmentManager.beginTransaction()
                     .add(R.id.register_container, f, "relogin")
                     .commitNowAllowingStateLoss()
         } else {
-            //登陆校验验证码页面
             val f = StartupFragment()
             val arg = Bundle()
             f.arguments = arg

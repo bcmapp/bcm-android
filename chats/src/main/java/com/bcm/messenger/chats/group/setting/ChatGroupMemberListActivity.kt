@@ -33,7 +33,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
 /**
- * 群成员管理
+ 
  * Created by bcm.social.01 on 2018/5/25.
  */
 class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<AmeGroupMemberInfo> {

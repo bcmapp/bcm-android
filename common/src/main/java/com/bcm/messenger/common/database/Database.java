@@ -32,9 +32,9 @@ public abstract class Database {
     private static final String CONVERSATION_URI = "content://"+ BuildConfig.BCM_APPLICATION_ID + "_secure/thread/";
     private static final String CONVERSATION_LIST_URI = "content://"+ BuildConfig.BCM_APPLICATION_ID + "_secure/conversation-list";
 
-    static final String URI_FRIEND = "content://"+ BuildConfig.BCM_APPLICATION_ID + "_secure/friends"; //用于通知新好友添加或变更
-    static final String URI_STRANGER = "content://"+ BuildConfig.BCM_APPLICATION_ID + "_secure/strangers"; //用于通知陌生人请求或变更
-    static final String URI_GROUP = "content://"+ BuildConfig.BCM_APPLICATION_ID + "_secure/group";//用于通知群组变更
+    static final String URI_FRIEND = "content://"+ BuildConfig.BCM_APPLICATION_ID + "_secure/friends"; 
+    static final String URI_STRANGER = "content://"+ BuildConfig.BCM_APPLICATION_ID + "_secure/strangers"; 
+    static final String URI_GROUP = "content://"+ BuildConfig.BCM_APPLICATION_ID + "_secure/group";
 
     protected SQLiteOpenHelper databaseHelper;
     protected final Context context;
@@ -70,23 +70,17 @@ public abstract class Database {
         this.databaseHelper = databaseHelper;
     }
 
-    /**
-     * 触发好友变更的通知
-     */
+ 
     public static void notifyFriendChanged() {
         AppContextHolder.APP_CONTEXT.getContentResolver().notifyChange(Uri.parse(URI_FRIEND), null);
     }
 
-    /**
-     * 触发陌生人变更的通知
-     */
+
     public static void notifyStrangerChanged() {
         AppContextHolder.APP_CONTEXT.getContentResolver().notifyChange(Uri.parse(URI_STRANGER), null);
     }
 
-    /**
-     * 触发群组变更的通知
-     */
+   
     public static void notifyGroupChanged() {
         AppContextHolder.APP_CONTEXT.getContentResolver().notifyChange(Uri.parse(URI_GROUP), null);
     }

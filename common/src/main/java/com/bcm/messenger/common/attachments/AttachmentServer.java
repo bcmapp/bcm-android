@@ -188,7 +188,7 @@ public class AttachmentServer implements Runnable {
     }
 
     protected void execute() throws IOException {
-      if (attachment.getDataUri() == null) { //防止uri为空
+      if (attachment.getDataUri() == null) { //uri
         ALog.e(TAG, attachment.toString());
         return;
       }

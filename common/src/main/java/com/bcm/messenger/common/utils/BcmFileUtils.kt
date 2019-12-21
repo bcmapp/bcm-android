@@ -36,7 +36,7 @@ import kotlin.experimental.and
 
 
 /**
- * 文件工具类
+ * 
  * Created by zjl on 2018/5/21.
  */
 object BcmFileUtils {
@@ -127,7 +127,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 通过文件名字查找MIME_TYPE
+     * MIME_TYPE
      */
     fun getMimeTypeByNme(fileName: String): String {
         try {
@@ -155,7 +155,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 安装应用
+     * 
      */
     fun installApk(context: Context, filePath: String) {
         try {
@@ -176,7 +176,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 是否bcm支持的图片类型
+     * bcm
      */
     fun isImageType(mineType: String): Boolean {
         return when (mineType) {
@@ -186,9 +186,9 @@ object BcmFileUtils {
     }
 
     /**
-     * 通过url去获取视频的第一帧(异步)
-     * Android 原生给我们提供了一个MediaMetadataRetriever类
-     * 提供了获取url视频第一帧的方法,返回Bitmap对象
+     * url()
+     * Android MediaMetadataRetriever
+     * url,Bitmap
      *
      * @param uri
      * @param result
@@ -223,7 +223,7 @@ object BcmFileUtils {
                 retriever.release()
             }
 
-            if (null != previewBmp) {//对于获取到的第一帧图，尝试保存到一个临时路径
+            if (null != previewBmp) {//，
                 tmpPath = saveBitmap2File(previewBmp, name)
             }
 
@@ -247,7 +247,7 @@ object BcmFileUtils {
 
 
     /**
-     * 获取视频首帧图片（同步）
+     * （）
      */
     fun getVideoFrameBitmap(context: Context, uri: Uri?): Bitmap? {
 
@@ -266,9 +266,9 @@ object BcmFileUtils {
             var previewBmp: Bitmap? = null
             val retriever = MediaMetadataRetriever()
             try {
-                //根据文件路径获取缩略图
+                //
                 retriever.setDataSource(videoPath)
-                //获得第一帧图片
+                //
                 previewBmp = retriever.frameAtTime
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -276,7 +276,7 @@ object BcmFileUtils {
                 retriever.release()
             }
 
-            if (null != previewBmp) {//对于获取到的第一帧图，尝试保存到一个临时路径
+            if (null != previewBmp) {//，
                 saveBitmap2File(previewBmp, name)
             }
             return previewBmp
@@ -284,7 +284,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 获取视频首帧图片的保存地址
+     * 
      */
     fun getVideoFramePath(context: Context, uri: Uri): String? {
         var path: String? = null
@@ -295,7 +295,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 获取当前视频首帧信息
+     * 
      */
     fun getVideoFrameInfo(context: Context, path: String?, result: (previewPath: String?, width: Int, height: Int) -> Unit) {
         if (path == null) {
@@ -315,9 +315,9 @@ object BcmFileUtils {
             var previewBmp: Bitmap? = null
             val retriever = MediaMetadataRetriever()
             try {
-                //根据文件路径获取缩略图
+                //
                 retriever.setDataSource(path)
-                //获得第一帧图片
+                //
                 previewBmp = retriever.frameAtTime
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -325,7 +325,7 @@ object BcmFileUtils {
                 retriever.release()
             }
 
-            if (null != previewBmp) {//对于获取到的第一帧图，尝试保存到一个临时路径
+            if (null != previewBmp) {//，
                 previewPath = saveBitmap2File(previewBmp, name)
             }
         }
@@ -351,7 +351,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 获取首帧图像(同步回调)
+     * ()
      */
     fun getVideoFrameInfo(context: Context, uri: Uri?, result: (previewPath: String?, width: Int, height: Int) -> Unit) {
         getVideoFrameInfo(context, getFileAbsolutePath(context, uri), result)
@@ -370,7 +370,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 根据Uri获取文件的绝对路径(解决Android4.4以上版本Uri转换)，如果uri是content uri且获取不到，则把流输出到指定的临时路径并返回该临时路径
+     * Uri(Android4.4Uri)，uricontent uri，
      * @param context
      * @param fileUri
      */
@@ -435,7 +435,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 根据content uri获取数据路径，如果不存在则构建文件路径
+     * content uri，
      */
     private fun getContentDataPath(context: Context, uri: Uri?, selection: String?, selectionArgs: Array<String>?): String? {
         uri ?: return null
@@ -444,8 +444,8 @@ object BcmFileUtils {
             cursor = context.contentResolver.query(uri, null, selection, selectionArgs, null)
             if (cursor != null && cursor.moveToFirst()) {
                 val fileName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
-                val mimeType = MediaUtil.getMimeType(context, uri)//读取mimeType
-                val destName = if (fileName.isNullOrEmpty()) {//如果原文件名读取不到，则自己生成一个临时文件名，根据mimetype生成后缀
+                val mimeType = MediaUtil.getMimeType(context, uri)//mimeType
+                val destName = if (fileName.isNullOrEmpty()) {//，，mimetype
                     "temp_${System.currentTimeMillis()}" + (if (mimeType.isNullOrEmpty()) ".dat" else {
                         val part = mimeType.split("/")
                         if (part.size > 1) {
@@ -457,11 +457,11 @@ object BcmFileUtils {
                 }else {
                     fileName
                 }
-                //目标路径采用bcm默认的
+                //bcm
                 val destPath = AmeFileUploader.DECRYPT_DIRECTORY ?: AmeFileUploader.AME_PATH
                 val resultPath = destPath + File.separator + destName
                 createFile(destPath, resultPath)
-                //复制输入流到指定的临时文件地址
+                //
                 copy(context.contentResolver.openInputStream(uri), FileOutputStream(resultPath))
                 return resultPath
 
@@ -475,7 +475,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 把流从in写入到out
+     * inout
      * @param `in`
      * @param out
      * @return
@@ -505,7 +505,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 保存图像到指定路径
+     * 
      */
     fun saveBitmap2File(bitmap: Bitmap, imgName: String? = null, directory: String = AmeFileUploader.TEMP_DIRECTORY): String? {
 
@@ -541,7 +541,7 @@ object BcmFileUtils {
         val dir = File(directory)
         if (!dir.exists()) {
             try {
-                //按照指定的路径创建文件夹
+                //
                 dir.mkdirs()
             } catch (e: Exception) {
                 // TODO: handle exception
@@ -552,7 +552,7 @@ object BcmFileUtils {
         val file = File(path)
         if (!file.exists()) {
             try {
-                //在指定的文件夹中创建文件
+                //
                 file.createNewFile()
             } catch (e: Exception) {
             }
@@ -562,13 +562,13 @@ object BcmFileUtils {
     }
 
     /**
-     * 获取地址对应的uri并检测是否存在，不存在则生成空文件
+     * uri，
      */
     fun getFileUri(path: String): Uri {
         val file = File(path)
         if (!file.exists()) {
             try {
-                //在指定的文件夹中创建文件
+                //
                 file.createNewFile()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -578,7 +578,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 删除文件
+     * 
      */
     fun delete(path: String?): Boolean {
         if (TextUtils.isEmpty(path)){
@@ -593,7 +593,7 @@ object BcmFileUtils {
                 file = File(absolutePath)
             }
 
-            //只删自己下载的文件
+            //
             if (file.absolutePath.contains(AppContextHolder.APP_CONTEXT.packageName)){
                 file.delete()
             }
@@ -605,7 +605,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 删除文件夹
+     * 
      */
     fun deleteDir(dir: File?): Boolean {
         if (dir != null && dir.isDirectory) {
@@ -620,14 +620,14 @@ object BcmFileUtils {
     }
 
     /**
-     * 路径是否存在
+     * 
      */
     fun isExist(path: String?): Boolean {
         if (TextUtils.isEmpty(path)) {
             return false
         }
         var finalPath = path
-        // 首先尝试判断是否是uri
+        // uri
         try {
             val uri = Uri.parse(path)
             if (ContentResolver.SCHEME_CONTENT == uri.scheme) {
@@ -649,7 +649,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 根据路径获取对应的mimetype
+     * mimetype
      */
     fun getMimeType(context: Context, filePath: String?): String {
         if (filePath == null) {
@@ -666,7 +666,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 获取路径对应文件的类型
+     * 
      */
     fun getFileTypeString(filePath: String?): String {
         try {
@@ -679,14 +679,14 @@ object BcmFileUtils {
     }
 
     /**
-     * 文件大小自动转化为KB，MB，GB
+     * KB，MB，GB
      */
     fun formatSize(context: Context, target_size: Long): String {
         return Formatter.formatFileSize(context, target_size)
     }
 
     /**
-     * 把秒转换成：1：20：30这样的形式
+     * ：1：20：30
      * @param timeMs
      * @return
      */
@@ -702,7 +702,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 二进制转化为16进制
+     * 16
      */
     private fun bytes2hex(bytes: ByteArray): String {
         val hex = StringBuilder()
@@ -717,11 +717,11 @@ object BcmFileUtils {
     }
 
     /**
-     * 读取文件头
+     * 
      */
     @Throws(IOException::class)
     private fun getFileHeader(filePath: String): String {
-        val b = ByteArray(28)//这里需要注意的是,每个文件的magic word的长度都不相同,因此需要使用startwith
+        val b = ByteArray(28)//,magic word,startwith
         var inputStream: InputStream? = null
         inputStream = FileInputStream(filePath)
         inputStream.read(b, 0, 28)
@@ -731,7 +731,7 @@ object BcmFileUtils {
     }
 
     /**
-     * 判断文件类型
+     * 
      */
     @Throws(IOException::class)
     private fun getFileType(filePath: String?): FileType? {

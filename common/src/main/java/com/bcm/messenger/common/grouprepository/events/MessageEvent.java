@@ -5,7 +5,7 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail;
 import java.util.List;
 
 /**
- * 群消息事件
+ * 
  */
 public class MessageEvent {
 

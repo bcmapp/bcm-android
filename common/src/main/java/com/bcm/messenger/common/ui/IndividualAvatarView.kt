@@ -41,7 +41,7 @@ import kotlin.math.min
 
 /**
  *
- * 联系人头像显示组件
+ * 
  *
  * Created by wjh on 2018/3/12
  */
@@ -51,13 +51,13 @@ class IndividualAvatarView : CardView {
 
         const val TAG = "IndividualAvatarView"
 
-        const val DEFAULT_PHOTO_TYPE = 0//默认，优先avatar，没有就随机
+        const val DEFAULT_PHOTO_TYPE = 0//
         const val LOCAL_PHOTO_TYPE = 2
         const val PROFILE_PHOTO_TYPE = 3
-        const val KEYBOX_PHOTO_TYPE = 4//优先avatar，没有就随机
-        const val NAME_CARD_TYPE = 5//名片模式
+        const val KEYBOX_PHOTO_TYPE = 4//
+        const val NAME_CARD_TYPE = 5//
 
-        //随机的默认头像链接map
+        //
         private val portraitMap by lazy {
             val map = hashMapOf<String, String>()
             for ((i, char) in ('A'..'Z').withIndex()) {
@@ -76,7 +76,7 @@ class IndividualAvatarView : CardView {
         }
 
         /**
-         * 获取本地备注头像
+         * 
          */
         fun getLocalAvatarObj(recipient: Recipient?): Any? {
             val avatar = recipient?.localAvatar
@@ -88,10 +88,10 @@ class IndividualAvatarView : CardView {
         }
 
         /**
-         * 获取联系人对应的avatar的缩略图地址
+         * 
          */
         fun getAvatarThumbnailUrl(recipient: Recipient?, width: Int? = null, height: Int? = null): String? {
-            //判断是群组还是个人
+            //
             val fullAvatar = if (recipient?.isGroupRecipient == true) {
                 return recipient.profileAvatar
             } else if (recipient == null) {
@@ -112,7 +112,7 @@ class IndividualAvatarView : CardView {
         }
 
         /**
-         * 获取avatar缩略图的地址
+         * 
          */
         fun getAvatarThumbnailUrl(avatar: String?, width: Int? = null, height: Int? = null): String? {
             try {
@@ -133,14 +133,14 @@ class IndividualAvatarView : CardView {
         }
 
         /**
-         * 获取默认背景
+         * 
          */
         fun getDefaultBackgroundDrawable(): Drawable {
             return ColorDrawable(Color.parseColor("#5F768C"))
         }
 
         /**
-         * 获取联系人默认随机头像
+         * 
          */
         fun getDefaultPortraitUrl(recipient: Recipient?): String {
             val address = recipient?.address?.serialize()
@@ -149,11 +149,11 @@ class IndividualAvatarView : CardView {
         }
 
         /**
-         * 获取默认的头像
-         * @param letter 显示的文本
-         * @param size 尺寸
-         * @param color 文字颜色
-         * @param background 背景色
+         * 
+         * @param letter 
+         * @param size 
+         * @param color 
+         * @param background 
          */
         fun createConvertText(resources: Resources, letter: String, size: Int, fontSize: Int, color: Int, background: Int): BitmapDrawable {
 
@@ -174,7 +174,7 @@ class IndividualAvatarView : CardView {
         }
 
         /**
-         * 在bitmap上绘制字符
+         * 
          */
         fun createCoverText(resources: Resources, bitmap: Bitmap, letter: String, textColor: Int): BitmapDrawable {
             val width = bitmap.width
@@ -202,21 +202,20 @@ class IndividualAvatarView : CardView {
     }
 
     /**
-     * 头像样式（first是文字尺寸，second是文字颜色）
      */
     private var mTextAppearance: Pair<Int, Int>
 
-    private var mCurrentRecipient: Recipient? = null//当前的联系人主体
-    private var mCurrentRequestObj: Any? = null//当前的图片请求主体
-    private var mCurrentText: String? = null //当前可显示文字
+    private var mCurrentRecipient: Recipient? = null//
+    private var mCurrentRequestObj: Any? = null//
+    private var mCurrentText: String? = null //
 
     /**
-     * 当前glide的请求管理类
+     * 
      */
     private var mRequestManager: GlideRequests? = null
 
     /**
-     * 当前等待的任务
+     * 
      */
     private var mWaitingRunnable: Runnable? = null
 
@@ -279,16 +278,16 @@ class IndividualAvatarView : CardView {
 
 
     /**
-     * 设置头像相关回调
+     * 
      */
     fun setCallback(callback: RecipientPhotoCallback?) {
         mCallback = callback
     }
 
     /**
-     * 设置名称所占大小
-     * @param size 所占大小（像素）
-     * @param color 文字颜色
+     * 
+     * @param size 
+     * @param color 
      */
     fun setNameAppearance(size: Int, color: Int) {
         mTextAppearance = Pair(size, color)
@@ -302,7 +301,7 @@ class IndividualAvatarView : CardView {
     }
 
     /**
-     * 清理变量
+     * 
      */
     private fun clearArgument() {
         mCurrentRequestObj = null
@@ -358,7 +357,7 @@ class IndividualAvatarView : CardView {
     }
 
     /**
-     * 设置明好吃呢个和头像
+     * 
      */
     fun setPhoto(recipient: Recipient?, alterName: String?, photoType: Int) {
         try {
@@ -373,7 +372,7 @@ class IndividualAvatarView : CardView {
     }
 
     /**
-     * 设置名称和头像
+     * 
      * @param recipient
      */
     fun setPhoto(recipient: Recipient?) {
@@ -390,7 +389,7 @@ class IndividualAvatarView : CardView {
     }
 
     /**
-     * 设置名称和头像
+     * 
      * @param recipient
      * @param photoType
      */
@@ -408,7 +407,7 @@ class IndividualAvatarView : CardView {
     }
 
     /**
-     * 请求图片资源
+     * 
      */
     fun requestPhoto(photoObj: Any?, placeHolderResource: Int, errorHolderResource: Int) {
         if (mCurrentRequestObj == photoObj) {
@@ -481,7 +480,7 @@ class IndividualAvatarView : CardView {
     }
 
     /**
-     * 清理文本，不展示
+     * 
      */
     private fun clearText() {
         mTextView?.visibility = View.GONE
@@ -504,11 +503,11 @@ class IndividualAvatarView : CardView {
     }
 
     /**
-     * 请求头像展示
+     * 
      */
     private fun requestPhoto(requestManager: GlideRequests, recipient: Recipient?, alterName: String?, photoType: Int = DEFAULT_PHOTO_TYPE) {
         val size = getCurrentSize()
-        //如果图片尺寸小于等于0，则表示还没获取到当前的尺寸，则需要等view加载完再获取
+        //
         if (size <= 0) {
             if (mWaitingRunnable != null) {
                 removeCallbacks(mWaitingRunnable)
@@ -524,7 +523,7 @@ class IndividualAvatarView : CardView {
             return
         }
 
-        var needLetter = false //是否需要字母显示
+        var needLetter = false //
         val desireHD = size > PrivacyProfile.getMaxLDSize()
         val photoObj = when (photoType) {
 
@@ -600,7 +599,7 @@ class IndividualAvatarView : CardView {
             StringAppearanceUtil.getFirstCharacter(n ?: recipient?.address?.format()
             ?: Recipient.UNKNOWN_LETTER)
         }
-        if (mCurrentRecipient == recipient && mCurrentText == name && photoObj == mCurrentRequestObj) { //如果请求主体相同且联系人相同，则不需要再请求
+        if (mCurrentRecipient == recipient && mCurrentText == name && photoObj == mCurrentRequestObj) { //
             ALog.d(TAG, "recipient: ${recipient?.address?.serialize()} same, not update avatar, photoObj: $photoObj")
             return
         }

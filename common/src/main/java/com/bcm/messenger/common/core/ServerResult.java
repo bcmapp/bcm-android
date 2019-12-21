@@ -31,10 +31,10 @@ public class ServerResult<T> implements NotGuard {
     public T data;
 
     /**
-     * 判断接口请求是否成功
-     * true:返回值大于等于0；false：else
+     * 
+     * true:0；false：else
      *
-     * @return 是否成功
+     * @return 
      */
     public boolean isSuccess() {
         return code == RESULT_SUCCESS;

@@ -156,7 +156,7 @@ open class KeyboardAwareLinearLayout @JvmOverloads constructor(context: Context,
                 } else {
                     keyboardPortraitHeight = keyboardHeight
                 }
-                //键盘高度变更的时候，如果当前键盘是开启的话，需要通知UI更新高度
+                //
                 if (isKeyboardOpen) {
                     onKeyboardOpen(this.keyboardHeight)
                 }

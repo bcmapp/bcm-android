@@ -25,14 +25,7 @@ import org.whispersystems.libsignal.ecc.DjbECPublicKey
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-/**
- * Metrics工具，提供事件和接口的统计和记录
- *
- * 由于接口限制，需要在登录成功后有UID和公钥的情况下才能开始收集数据
- * 登出时需要清理数据和停止收集
- *
- * Created by Kin on 2019/8/19
- */
+
 object ReportUtil : LBSFetcher.ILBSFetchResult {
     private const val TAG = "ReportUtil"
 
@@ -73,7 +66,7 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
             val sliceJson = preference.getString("slice", "")
 
             if (!sliceJson.isNullOrBlank()) {
-                // 有缓存，使用缓存的规则
+            
                 ALog.i(TAG, "Found cache slices")
                 val sliceStorage = GsonUtils.fromJson(sliceJson, SliceStorage::class.java)
                 sliceStorage.sliceList.forEach { slice ->
@@ -81,7 +74,7 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
                 }
             } else {
                 ALog.i(TAG, "Cache slices not found, add default config")
-                // 构造默认的分段规则
+                
                 slicesMap["Default1"] = TimeSlice("Default1").apply {
                     cfgVersion = 1
                     timeSlice = listOf(100, 200, 500, 1000, 3000)
@@ -96,7 +89,7 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
                 }
             }
             if (!configJson.isNullOrBlank()) {
-                // 使用缓存的设置
+                
                 ALog.i(TAG, "Found cache configs")
                 val configStorage = GsonUtils.fromJson(configJson, ConfigStorage::class.java)
                 configStorage.configList.forEach { pair ->
@@ -110,7 +103,7 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
                 .subscribe()
     }
 
-    // 登录后调用
+    
     fun init() {
         Observable.create<Unit> {
             ALog.i(TAG, "Login init")
@@ -131,7 +124,7 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
                 })
     }
 
-    // 登出时调用
+    
     fun unInit() {
         Observable.create<Unit> {
             ALog.i(TAG, "Logout unInit")
@@ -357,7 +350,7 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
         ALog.i(TAG, "Init configs")
         uploader = MetricsUploader()
 
-        // 获取分段规则和统计规则
+        
         val uid = AMESelfData.uid
         val publicKey = IdentityKeyUtil.getIdentityKey(AppContextHolder.APP_CONTEXT)
         val pubKey = Base64.encodeBytes((publicKey.publicKey as DjbECPublicKey).serialize())
@@ -411,7 +404,6 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
     }
 
     private fun checkAndCreateHistogramMap(serverIp: String, topic: String, protoKey: String, returnCode: String) {
-        // 检查相关key的map是否存在，不存在就创建
         var topicMap = networkReportMap[serverIp]
         if (topicMap == null) {
             topicMap = mutableMapOf()
@@ -486,7 +478,7 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
         val histogramList = mutableListOf<Histogram>()
         val counterList = mutableListOf<Counter>()
 
-        // 遍历获取所有的上报数据
+        
         networkReportMap.values.forEach { topicMap ->
             topicMap.values.forEach { protoKeyMap ->
                 protoKeyMap.values.forEach { codeMap ->
@@ -509,7 +501,7 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
         try {
             val area = RedirectInterceptorHelper.imServerInterceptor.getCurrentServer().area.toString()
             if (histogramList.size + counterList.size <= 100) {
-                // 总数量少于等于100, 直接上报
+                
                 val signature = Base64.encodeBytes(BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, uid.toByteArray()))
                 val reportData = ReportData(1, uid, pubKey, signature,
                         ClientInfo(area, netType.typeName),
@@ -521,33 +513,33 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
             } else {
                 val reportDataList = mutableListOf<ReportData>()
                 while (histogramList.size > 0 || counterList.size > 0) {
-                    // 数据仍然没处理完
+                    
                     val signature = Base64.encodeBytes(BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, uid.toByteArray()))
                     if (histogramList.size > 100) {
-                        // Histogram数量大于100, 先构造一个ReportData
+                        
                         val subList = histogramList.subList(0, 100)
                         val reportData = ReportData(protoVersion, uid, pubKey, signature,
                                 ClientInfo(area, netType.typeName),
                                 subList, emptyList())
                         reportDataList.add(reportData)
-                        // 清掉前100条
+                        
                         histogramList.removeAll(subList)
                     } else {
-                        // Histogram数量小于100, 先填充所有Histogram再填充Counter
+                        
                         val endSize = if (100 - histogramList.size > counterList.size) counterList.size else 100 - histogramList.size
                         val subList = counterList.subList(0, endSize)
                         val reportData = ReportData(protoVersion, uid, pubKey, signature,
                                 ClientInfo(area, netType.typeName),
                                 histogramList, subList)
                         reportDataList.add(reportData)
-                        // Histogram不大于100条，直接清掉
+                        
                         histogramList.clear()
-                        // 清掉已添加的Counter
+                        
                         counterList.removeAll(subList)
                     }
                 }
                 reportDataList.forEach {
-                    // 这里用同步请求防止之后误清空数据
+                    
                     if (!realReport(it)) {
                         ALog.i(TAG, "Report data failed")
                         return
@@ -556,7 +548,7 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
             }
 
             ALog.i(TAG, "Report data success, clear temp data")
-            // 汇报成功，清空数据
+            
             networkReportMap.clear()
             counterReportMap.clear()
 

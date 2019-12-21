@@ -252,7 +252,7 @@ class RecipientRepo {
     }
 
     /**
-     * 更新通讯录信息（notify: 是否产生block，好友信息等附加消息）
+     * （notify: block，）
      */
     private fun realUpdateBcmContacts(settingList: List<RecipientSettings>, notify: Boolean) {
 
@@ -279,7 +279,7 @@ class RecipientRepo {
                     dbSettings.setTemporaryProfile(newSettings.profileName, dbSettings.profileAvatar)
                     hasUpdate = true
                 }
-                if (newSettings.contactVersion == RecipientSettings.CONTACT_SYNC_VERSION) { //只有当前配置的版本是相同的时候才处理，否则可能是旧版本的同步数据，旧版本数据不全，不做处理
+                if (newSettings.contactVersion == RecipientSettings.CONTACT_SYNC_VERSION) { //，，，
                     if (dbSettings.localName != newSettings.localName) {
                         dbSettings.localName = newSettings.localName
                         hasUpdate = true

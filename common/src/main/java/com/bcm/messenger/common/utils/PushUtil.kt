@@ -65,9 +65,9 @@ object PushUtil {
             return false
         }
 
-        if (umengToken.isNotEmpty()) { //注册系统信息为友盟渠道
+        if (umengToken.isNotEmpty()) { //
             initUmengSystemTag()
-        } else if (gcmToken.isNotEmpty()) {  //注册系统信息为gcm渠道
+        } else if (gcmToken.isNotEmpty()) {  //gcm
             initFCMSystemTag()
         }
 
@@ -128,7 +128,7 @@ object PushUtil {
     }
 
     /**
-     * 进App拉取系统消息
+     * App
      */
     private fun getSystemMessages(): Observable<ServerResult<SystemMessageList>> {
         return RxIMHttp.get<ServerResult<SystemMessageList>>(BcmHttpApiHelper.getApi(SYSTEM_MESSAGE_GET),
@@ -136,7 +136,7 @@ object PushUtil {
     }
 
     /**
-     * 返回告诉服务器系统消息拉取成功，要求删除记录
+     * ，
      */
     fun confirmSystemMessages(maxMid: Long): Observable<AmeEmpty> {
         return RxIMHttp.delete<AmeEmpty>(BcmHttpApiHelper.getApi(String.format(SYSTEM_MESSAGE_DELETE_MAXID, maxMid)),
@@ -152,7 +152,7 @@ object PushUtil {
                     if (result.isSuccess && result.data != null &&  result.data.msgs.size > 0) {
                         val dataMap = HashMap<String, AmePushProcess.SystemNotifyData>()
                         result.data.msgs.forEach {
-                            if (it.id > maxSystemMsgId) {  //比对最大的系统推送id，是顺序的，保证启动后过滤一次后获得当前最大id
+                            if (it.id > maxSystemMsgId) {  //id，，id
                                 maxSystemMsgId = it.id
                                 if (!dataMap.containsKey(it.type))
                                     dataMap[it.type] = it

@@ -8,7 +8,7 @@ import com.bcm.messenger.utility.logger.ALog
 import com.google.gson.reflect.TypeToken
 
 /**
- * 上一次未完成的好友数据持久化处理类（用于同步到数据库）
+ * （）
  * Created by bcm.social.01 on 2019/3/13.
  */
 class BcmFriendManager {
@@ -21,7 +21,7 @@ class BcmFriendManager {
         dao().clearHandlingList()
     }
     /**
-     * 保存未上报成功的列表
+     * 
      */
     fun saveHandlingList(list: List<BcmFriend>) {
         val dao = dao()
@@ -34,14 +34,14 @@ class BcmFriendManager {
     }
 
     /**
-     * 读取未上报成功的列表
+     * 
      */
     fun getHandingList(): List<BcmFriend> {
         return dao().queryHandingList()
     }
 
     /**
-     * 保存当前上报的hash表
+     * hash
      */
     fun saveSyncHashMap(map: Map<String, Long>) {
         val bcm = BcmFriend()
@@ -52,7 +52,7 @@ class BcmFriendManager {
     }
 
     /**
-     * 读取上一次上报的hash表
+     * hash
      */
     fun loadLastSyncHashMap(): Map<String, Long>? {
         val tmp = dao().queryFriend(FRIEND_HASH_MAP)

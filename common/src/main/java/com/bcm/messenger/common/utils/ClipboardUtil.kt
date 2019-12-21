@@ -18,7 +18,7 @@ import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
 
 /**
- * 剪贴板检测工具类
+ * 
  * Created by Kin on 2019/7/18
  */
 
@@ -39,7 +39,7 @@ object ClipboardUtil {
     }
 
     /**
-     * 初始化
+     * 
      */
     fun initClipboardUtil() {
         ALog.i(TAG, "Init clipboard util")
@@ -56,7 +56,7 @@ object ClipboardUtil {
     }
 
     /**
-     * 检测粘贴板
+     * 
      */
     fun checkClipboard(activity: Activity) {
         ALog.i(TAG, "Start to check clipboard data")
@@ -81,7 +81,7 @@ object ClipboardUtil {
     }
 
     /**
-     * 分享邀请
+     * 
      */
     fun shareInviteText() {
         val text = AppContextHolder.APP_CONTEXT.getString(R.string.common_invite_user_message, AMESelfData.uid)
@@ -94,7 +94,7 @@ object ClipboardUtil {
     }
 
     /**
-     * 检测个人邀请
+     * 
      */
     private fun checkIndividual(activity: Activity, clipText: CharSequence): Boolean {
         ALog.d(TAG, "checkIndividual clipText: $clipText")
@@ -131,7 +131,7 @@ object ClipboardUtil {
     }
 
     /**
-     * 检测进群申请
+     * 
      */
     private fun checkGroup(activity: Activity, clipText: CharSequence): Boolean {
         ALog.d(TAG, "checkGroup clipText: $clipText")

@@ -22,7 +22,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
 /**
- * 群须知页面
+ * 
  */
 class ChatGroupNoticeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 

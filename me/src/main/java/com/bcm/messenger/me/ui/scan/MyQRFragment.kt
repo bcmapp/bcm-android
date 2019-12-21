@@ -132,7 +132,6 @@ class MyQRFragment : BaseFragment(), RecipientModifiedListener {
                     AmePopup.result.failure(activity, getString(R.string.me_save_fail), true)
                 }
                 .subscribe {
-                    // 刷新MediaStore
                     MediaScannerConnection.scanFile(activity, arrayOf(it), arrayOf(BcmFileUtils.IMAGE_PNG), null)
                     AmePopup.result.succeed(activity, getString(R.string.me_save_success), true)
                 }

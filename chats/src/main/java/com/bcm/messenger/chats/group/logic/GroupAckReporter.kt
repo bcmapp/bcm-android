@@ -7,7 +7,6 @@ import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.schedulers.Schedulers
 
 /**
- * 群消息ack上报
  * Created by bcm.social.01 on 2018/5/23.
  */
 class GroupAckReporter {

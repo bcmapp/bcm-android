@@ -5,7 +5,7 @@ import com.bcm.messenger.common.ARouterConstants
 
 
 /**
- * 全局登录相关信息
+ * 
  */
 object AMESelfData {
 

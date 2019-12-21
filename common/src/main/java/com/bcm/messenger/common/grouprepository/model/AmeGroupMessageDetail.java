@@ -52,8 +52,8 @@ public class AmeGroupMessageDetail {
     }
 
     private Long gid;
-    private Long serverIndex = 0L;//服务器上的消息，可能为0，mid
-    private long indexId;//数据库索引
+    private Long serverIndex = 0L;//，0，mid
+    private long indexId;//
     private String senderId;
 
     private long sendTime;
@@ -68,9 +68,9 @@ public class AmeGroupMessageDetail {
 
     private long keyVersion = 0;
 
-    private boolean isRead = false;//是否已读
+    private boolean isRead = false;//
     /**
-     * 扩展内容
+     * 
      */
     private @Nullable
     String extContentString;
@@ -85,7 +85,7 @@ public class AmeGroupMessageDetail {
 
     private boolean isFileEncrypted;
 
-    //FIXME 用于临时告知是否在下载附件中，不保存到数据库
+    //FIXME ，
     private boolean isAttachmentDownloading = false;
 
     private String dataHash;
@@ -109,7 +109,7 @@ public class AmeGroupMessageDetail {
         isAttachmentDownloading = attachmentDownloading;
     }
 
-    //FIXME 用于告知缩略图是否下载中，不保存数据库
+    //FIXME ，
     private boolean isThumbnailDownloading = false;
 
     public boolean isThumbnailDownloading() {
@@ -120,7 +120,7 @@ public class AmeGroupMessageDetail {
         isThumbnailDownloading = thumbnailDownloading;
     }
 
-    private int isLabel = LABEL_NONE;  //0是无状态，1是回复闪，2是置顶闪
+    private int isLabel = LABEL_NONE;  //0，1，2
     public static final int LABEL_NONE = 0;
     public static final int LABEL_REPLY = 1;
     public static final int LABEL_PIN = 2;
@@ -331,7 +331,7 @@ public class AmeGroupMessageDetail {
     }
 
     /**
-     * 判断是否已经存在下载好的附件
+     * 
      *
      * @return
      */
@@ -355,7 +355,7 @@ public class AmeGroupMessageDetail {
     }
 
     /**
-     * attachmentUri string转成uri对象
+     * attachmentUri stringuri
      *
      * @return
      */
@@ -375,12 +375,12 @@ public class AmeGroupMessageDetail {
         return null;
     }
 
-    //是否可转发:音频不可转发，附件没有下载完不可转发
+    //:，
     public boolean isForwardable() {
         if (message == null)
             return false;
 
-        //Fixme 转发的消息不能再转发
+        //Fixme 
         if (message.getType() == AmeGroupMessage.CHAT_HISTORY) {
             return false;
         }
@@ -389,7 +389,7 @@ public class AmeGroupMessageDetail {
             return false;
         }
 
-        //FIXME: 暂不做 image 状态判断，待文件管理做完后统一处理
+        //FIXME:  image ，
         if (message.isImage()) {
             return true;
         } else {
@@ -400,17 +400,17 @@ public class AmeGroupMessageDetail {
 
     }
 
-    //是否可 copy
+    // copy
     public boolean isCopyable() {
         return message != null && (message.isText() || message.isLink() || message.isGroupShare());
     }
 
-    // 是否可撤回
+    // 
     public boolean isRecallable() {
         return message != null && isSendByMe() && isSendSuccess();
     }
 
-    // 是否可重编辑
+    // 
     public boolean isReeditable() {
         return message != null && message.isText();
     }
@@ -494,7 +494,7 @@ public class AmeGroupMessageDetail {
     }
 
     /**
-     * 把@列表转成recipient列表，并判断是否需要加载profile信息
+     * @recipient，profile
      */
     private void checkAtRecipientList() {
         List<String> atList = this.extContent == null ? null : this.extContent.getAtList();
@@ -542,7 +542,7 @@ public class AmeGroupMessageDetail {
     }
 
     /**
-     * 扩展内容
+     * 
      */
     public static class ExtensionContent {
 

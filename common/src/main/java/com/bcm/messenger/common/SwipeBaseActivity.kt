@@ -27,10 +27,6 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper
 import java.util.concurrent.TimeUnit
 
-/**
- * 基础可左滑回退的activity
- * Created by bcm.social.01 on 2018/11/8.
- */
 open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     private val TAG = "SwipeBaseActivity"
 
@@ -169,9 +165,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         disabledLightStatusBar = true
     }
 
-    /**
-     * 初始化内部fragment
-     */
+    
     fun <T : Fragment> initFragment(@IdRes target: Int,
                                             fragment: T,
                                             extras: Bundle?): T {

@@ -27,25 +27,25 @@ public class GroupLiveInfo {
 
     private long gid;
 
-    //已废弃，不再使用，直播状态增多
+    //，，
     private boolean isLiving;
 
-    private String source_url = "";//直播视频源
-    private int source_type;//直播资源类型资源类型
-    private long start_time;//直播开始时间
-    private long duration;//直播视频源时长
+    private String source_url = "";//
+    private int source_type;//
+    private long start_time;//
+    private long duration;//
     @ColumnInfo(index = true)
-    private long liveId; //直播编号，每次直播的唯一标识
+    private long liveId; //，
 
-    private int liveStatus;//直播状态，具体状态对应 LiveStatus 的值
-    private long currentSeekTime; //当前进度，记录暂停或者重播时的进度
+    private int liveStatus;//， LiveStatus 
+    private long currentSeekTime; //，
 
-    private long currentActionTime;//当前操作的时间，记录重新播放时间，用来计算进度
+    private long currentActionTime;//，，
 
-    private boolean confirmed; //是否是开启成功的直播
+    private boolean confirmed; //
 
 
-    //已废弃
+    //
     public boolean isLiving() {
         return isLiving;
     }
@@ -155,7 +155,7 @@ public class GroupLiveInfo {
 
 
     /**
-     * -2:群主开播暂存状态，-1：直播被删除，0：没有直播，1：正在直播，2：直播暂停，3：直播结束
+     * -2:，-1：，0：，1：，2：，3：
      */
     public enum LiveStatus {
 
@@ -191,7 +191,7 @@ public class GroupLiveInfo {
     }
 
     /**
-     * Unsupported :不支持的类型，Deprecated：兼容旧版本，original，原生资源，可直接播放，youtube资源，需要解析实际资源地址
+     * Unsupported :，Deprecated：，original，，，youtube，
      */
     public enum LiveSourceType {
 

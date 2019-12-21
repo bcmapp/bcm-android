@@ -29,7 +29,7 @@ class BcmJSInterface : NotGuard {
     }
 
     /**
-     * 获取当前客户端版本
+     * 
      */
     @JavascriptInterface
     fun versionName(): String {
@@ -37,14 +37,14 @@ class BcmJSInterface : NotGuard {
     }
 
     /**
-     * 获取当前客户端构建版本
+     * 
      */
     fun versionCode(): Int {
         return AppUtil.getVersionCode(AppContextHolder.APP_CONTEXT)
     }
 
     /**
-     * 调用加群
+     * 
      */
     @JavascriptInterface
     fun route(api: String, json: String): Boolean {

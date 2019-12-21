@@ -24,22 +24,22 @@ public class GroupMessage {
     @ColumnInfo(name = COLUMN_ID)
     public long id;
 
-    //消息阅读状态
+    //
     public static final int READ_STATE_UNREAD = 0;
     public static final int READ_STATE_READ = 1;
 
-    //是否确定消息内容
-    public static final int CONFIRM_MESSAGE = 0;//从服务端拉取到的确认消息
-    public static final int UNCONFIRM_MESSAGE = 1;// 未确认占位消息
-    public static final int CONFIRM_BUT_NOT_SHOW = 2;//确认过的消息，但是页面不显示
-    public static final int DELETED_MESSAGE = 3;//本地删除消息，
-    public static final int FETCHING_MESSAGE = 4;//正在拉取中的消息
+    //
+    public static final int CONFIRM_MESSAGE = 0;//
+    public static final int UNCONFIRM_MESSAGE = 1;// 
+    public static final int CONFIRM_BUT_NOT_SHOW = 2;//，
+    public static final int DELETED_MESSAGE = 3;//，
+    public static final int FETCHING_MESSAGE = 4;//
 
-    //发送型消息或接收型消息
+    //
     public static final int SEND = 0;
     public static final int RECEIVE = 1;
 
-    //消息状态
+    //
     public static final int SEND_SUCCESS = 1;
     public static final int SENDING = 2;
     public static final int RECEIVE_SUCCESS = 3;
@@ -55,7 +55,7 @@ public class GroupMessage {
     private long mid;
 
     /**
-     * 发送者 id
+     *  id
      */
     private String from_uid;
 
@@ -63,7 +63,7 @@ public class GroupMessage {
     public static final int CHAT_MESSAGE = 1;
     public static final int PUB_MESSAGE = 2;
     /**
-     * type: 1.chat 消息，不公开，订阅者不可见; 2.pub 公开，订阅者可见
+     * type: 1.chat ，，; 2.pub ，
      * default：1
      */
     private int type = 1;
@@ -76,17 +76,17 @@ public class GroupMessage {
 
 
     /**
-     * 1.发送成功；2.发送中  3.10000 发送失败
+     * 1.；2.  3.10000 
      */
     private int send_state;
 
     /**
-     * 0：未读，1：已读
+     * 0：，1：
      */
     private int read_state = READ_STATE_UNREAD;
 
 
-    //是否是确认过的消息，用来判断接收消息是否填充了数据
+    //，
     private int is_confirm = CONFIRM_MESSAGE;
 
 
@@ -110,7 +110,7 @@ public class GroupMessage {
     public static final int FILE_ENCRYPTED = 5;
 
     /**
-     * 本地文件是否加密，0未加密，5已加密（用5是避免与旧字段冲突）
+     * ，0，5（5）
      */
     @ColumnInfo(name = "encrypt_level")
     private int fileEncrypted;
@@ -121,7 +121,7 @@ public class GroupMessage {
     private int send_or_receive = -1;
 
     /**
-     * 扩展内容（目前只有@内容）
+     * （@）
      */
     @ColumnInfo(name = "ext_content")
     private String extContent;

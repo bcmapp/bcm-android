@@ -26,7 +26,7 @@ import com.bcm.route.annotation.Route
 import kotlinx.android.synthetic.main.chats_activity_webrtc_call.*
 
 /**
- * 语音或视频通话页面
+ * 
  * Created by wjh on 2018/04/16
  */
 @Route(routePath = ARouterConstants.Activity.CHAT_CALL_PATH)

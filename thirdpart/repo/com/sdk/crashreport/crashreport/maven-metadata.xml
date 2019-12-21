@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.sdk.crashreport</groupId>
+  <artifactId>crashreport</artifactId>
+  <versioning>
+    <release>2.2.6-bcm</release>
+    <versions>
+      <version>2.2.5-lulubox</version>
+      <version>2.2.6-lulubox</version>
+      <version>2.2.6-lua</version>
+      <version>2.2.6-bcm</version>
+    </versions>
+    <lastUpdated>20191219110240</lastUpdated>
+  </versioning>
+</metadata>

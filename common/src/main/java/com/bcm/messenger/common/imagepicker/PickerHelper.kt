@@ -50,13 +50,13 @@ object BcmPickPhotoConstants {
 }
 
 /**
- * BCM选图/拍照/裁图
+ * BCM//
  *
- * 根据Builder设置即可，OnActivityResult和Intent的Constants在BcmPickPhotoConstants里面
- * 如果设置了CapturePhoto，那只能再设置CropPhoto，会自动屏蔽选图
- * 如果设置了PickPhoto和CropPhoto，会自动把Limit设成1
- * 如果设置了CropPhoto，则通过CropPhotoCallback返回裁剪后的Bitmap
- * 如果仅仅是选图和拍照，则通过OnActivityResult返回
+ * Builder，OnActivityResultIntentConstantsBcmPickPhotoConstants
+ * CapturePhoto，CropPhoto，
+ * PickPhotoCropPhoto，Limit1
+ * CropPhoto，CropPhotoCallbackBitmap
+ * ，OnActivityResult
  */
 class BcmPickPhotoView private constructor(private val builder: Builder) {
     fun start() {
@@ -155,7 +155,7 @@ object BcmTakePhotoHelper {
     }
 
     private fun createImageSaveFile(): File {
-        // 如果是6.0以下版本，文件保存在DCIM/bcm下面，因为6.0不支持分享沙箱文件给第三方应用
+        // 6.0，DCIM/bcm，6.0
         val pic = File(if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) AmeFileUploader.DCIM_DIRECTORY else AmeFileUploader.DECRYPT_DIRECTORY)
         if (!pic.exists()) {
             pic.mkdirs()

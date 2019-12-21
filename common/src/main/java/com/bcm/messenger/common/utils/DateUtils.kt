@@ -7,13 +7,13 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
- * 时间帮助类
+ * 
  * Created by wjh on 2018/4/17
  */
 object DateUtils {
 
     /**
-     * 将时间转成分和秒的字符串（格式：x:xx)
+     * （：x:xx)
      */
     fun convertMinuteAndSecond(time: Long): String {
         val hour = time / 3600000
@@ -28,7 +28,7 @@ object DateUtils {
     }
 
     /**
-     * 将时间转成分和秒的字符串（格式：xx:xx)
+     * （：xx:xx)
      */
     fun convertTimingMinuteAndSecond(time: Long): String {
         val hour = time / 3600000
@@ -47,14 +47,14 @@ object DateUtils {
     }
 
     /**
-     * 获取默认格式的时间字符串
+     * 
      */
     fun formatHourTime(time: Long): String {
         return getFormattedDateTime(time, "HH:mm", Locale.getDefault())
     }
 
     /**
-     * 获取默认格式的时间字符串
+     * 
      */
     fun formatDefaultTime(time: Long): String {
         return getFormattedDateTime(time, "yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -85,18 +85,18 @@ object DateUtils {
     }
 
     /**
-     * 返回日记类时间格式
+     * 
      */
     fun getNoteTimSpan(context: Context, timestamp: Long, locale: Locale): String {
         return if (!AppUtil.is24HourFormat(context)) {
             if (locale.language == Locale.CHINESE.language) {
-                getFormattedDateTime(timestamp, "yyyy年M月d日 hh:mm", locale) + " ${getPeriodText(context, locale, timestamp)}"
+                getFormattedDateTime(timestamp, "yyyyMd hh:mm", locale) + " ${getPeriodText(context, locale, timestamp)}"
             }else {
                 getFormattedDateTime(timestamp, "d MMM yyyy hh:mm", locale) + " ${getPeriodText(context, locale, timestamp)}"
             }
         } else {
             if (locale.language == Locale.CHINESE.language) {
-                getFormattedDateTime(timestamp, "yyyy年M月d日 HH:mm", locale)
+                getFormattedDateTime(timestamp, "yyyyMd HH:mm", locale)
             }else {
                 getFormattedDateTime(timestamp, "d MMM yyyy HH:mm", locale)
             }
@@ -104,7 +104,7 @@ object DateUtils {
     }
 
     /**
-     * 返回聊天窗时间格式字符串
+     * 
      */
     fun getConversationTimeSpan(context: Context, timestamp: Long, locale: Locale): String {
         return if (!AppUtil.is24HourFormat(context)) {
@@ -125,7 +125,7 @@ object DateUtils {
     }
 
     /**
-     * 返回消息列表时间格式字符串
+     * 
      */
     fun getThreadMessageTimeSpan(context: Context, timestamp: Long, locale: Locale): String {
         return if (!AppUtil.is24HourFormat(context)) {

@@ -105,12 +105,12 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
             env_test_layout.visibility = View.VISIBLE
             env_export_account_list.setOnClickListener {
                 AmeLoginLogic.accountHistory.export()
-                ToastUtil.show(this@KeyBoxControlActivity, "导出成功")
+                ToastUtil.show(this@KeyBoxControlActivity, "import failed")
             }
 
             env_import_account_list.setOnClickListener {
                 AmeLoginLogic.accountHistory.import()
-                ToastUtil.show(this@KeyBoxControlActivity, "导入成功")
+                ToastUtil.show(this@KeyBoxControlActivity, "import succeed")
             }
         }
 
@@ -120,10 +120,10 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
 
         Observable.create<List<KeyBoxItem>> {
             val dataList = mutableListOf<KeyBoxItem>()
-            if (AmeLoginLogic.isLogin()) { //判断是否已经登录
+            if (AmeLoginLogic.isLogin()) { 
                 val list = AmeLoginLogic.getAccountList()
                 if (list.isNotEmpty()) {
-                    dataList.add(KeyBoxItem(KeyBoxItem.CURRENT_ITEM_TITLE, Unit)) //添加顶部
+                    dataList.add(KeyBoxItem(KeyBoxItem.CURRENT_ITEM_TITLE, Unit))
                     if (list.size == 1) {
                         dataList.add(KeyBoxItem(KeyBoxItem.ACCOUNT_DATA, list[0]))
                     } else {
@@ -137,7 +137,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
                     }
                 }
 
-            } else { //非登录
+            } else { 
                 dataList.add(KeyBoxItem(KeyBoxItem.INACTIVE_ITEM_TITLE, Unit))
                 val list = AmeLoginLogic.getAccountList()
                 list.forEach { any ->
@@ -262,7 +262,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
                 }
 
                 val id = accountData?.getAccountID()
-                if (!AMESelfData.isLogin) { //非登录状态
+                if (!AMESelfData.isLogin) { 
 
                     startActivity(Intent(this@KeyBoxControlActivity, VerifyKeyActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK

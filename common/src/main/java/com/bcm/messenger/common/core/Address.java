@@ -94,7 +94,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
     }
 
     /**
-     * 是否当前登录的address
+     * address
      * @return
      */
     public boolean isCurrentLogin() {
@@ -102,7 +102,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
     }
 
     /**
-     * 是否群组
+     * 
      * @return
      */
     public boolean isGroup() {
@@ -113,7 +113,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
     }
 
     /**
-     * 是否bcm新群组
+     * bcm
      * @return
      */
     public boolean isNewGroup() {
@@ -133,7 +133,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
     }
 
     /**
-     * 是否个人
+     * 
      * @return
      */
     public boolean isIndividual() {
@@ -141,7 +141,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
     }
 
     /**
-     * 是否UID
+     * UID
      * @return
      */
     public boolean isPublicKey() {

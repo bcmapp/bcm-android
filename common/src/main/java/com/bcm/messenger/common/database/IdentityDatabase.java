@@ -60,9 +60,7 @@ public class IdentityDatabase extends Database {
             VERIFIED + " INTEGER DEFAULT 0, " +
             NONBLOCKING_APPROVAL + " INTEGER DEFAULT 0);";
 
-    /**
-     * 删除表的sql语句
-     */
+  
     public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
     public enum VerifiedStatus {

@@ -32,7 +32,6 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper
 import java.util.concurrent.TimeUnit
 
 /**
- * 基础可左滑回退的activity
  * Created by bcm.social.01 on 2018/11/8.
  */
 open class FullTransSwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
@@ -54,7 +53,7 @@ open class FullTransSwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBa
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isTranslucentOrFloating(this)) { //解决8.0全屏的透明activity在旋转屏幕时候的bug
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isTranslucentOrFloating(this)) { 
             fixOrientation(this)
         }
         if (!disableDefaultTransition) {
@@ -183,7 +182,7 @@ open class FullTransSwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBa
     }
 
     /**
-     * 初始化内部fragment
+    
      */
     protected fun <T : Fragment> initFragment(@IdRes target: Int,
                                             fragment: T,
@@ -233,12 +232,7 @@ open class FullTransSwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBa
                 }
     }
 
-    /**
-     * 针对 Android 27 的情况进行处理
-     * 横竖屏设置了方向会崩溃的问题
-     *
-     * @return
-     */
+
     private fun isTranslucentOrFloating(activity: Activity): Boolean {
         var isTranslucentOrFloating = false
         try {
@@ -255,10 +249,6 @@ open class FullTransSwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBa
         return isTranslucentOrFloating
     }
 
-    /**
-     * 修复横竖屏 crash 的问题
-     * @return
-     */
     private fun fixOrientation(activity: Activity): Boolean {
         try {
             val field = Activity::class.java.getDeclaredField("mActivityInfo")

@@ -11,11 +11,11 @@ object UserDataManager {
     private const val IS_DIRTY = "IS_DIRTY"
 
     /**
-     * 群内成员身份变更
+     * 
      * @param gid
      * @param uid
-     * @param role: 1群主 ，2 管理员，3 一般成员，4 订阅者, 0和群无关人员，default：0
-     * @return -1:群成员不存在,0:正常
+     * @param role: 1 ，2 ，3 ，4 , 0，default：0
+     * @return -1:,0:
      */
     fun updateGroupMemberRole(gid: Long, uid: String, role: Long): Int {
         val groupUser = getDao().queryGroupMember(gid, uid)
@@ -55,7 +55,7 @@ object UserDataManager {
     /**
 
      * @param gid
-     * @param role: 0群主 ，1 管理员，2 一般成员，3 订阅者，-1 和群无关人员，default：-1
+     * @param role: 0 ，1 ，2 ，3 ，-1 ，default：-1
      * @return
      */
     fun queryGroupMemberByRole(gid: Long, role: Int): ArrayList<AmeGroupMemberInfo> {

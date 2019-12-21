@@ -15,14 +15,11 @@ import com.bcm.messenger.common.R
 import kotlinx.android.synthetic.main.common_password_layout.view.*
 
 /**
- * 公共的密码框组件
  * Created by wjh on 2018/6/6
  */
 class CommonPasswordInputLayout : ConstraintLayout {
 
-    /**
-     * 隐私模式，是否可见密码
-     */
+   
     private var showSecret: Boolean = false
 
     constructor(context: Context) : this(context, null) {}
@@ -64,37 +61,23 @@ class CommonPasswordInputLayout : ConstraintLayout {
         password_text.removeTextChangedListener(passwordWatcher)
     }
 
-    /**
-     * 获取当前的密码
-     */
+ 
     fun getPassword(): CharSequence {
         return password_text.text.toString()
     }
 
-    /**
-     * 设置密码
-     */
     fun setPassword(password: CharSequence?) {
         this.password_text.setText(password)
     }
 
-    /**
-     * 获取当前密码提示
-     */
     fun getHint(): CharSequence {
         return password_text.hint
     }
 
-    /**
-     * 设置密码提示
-     */
     fun setHint(hint: CharSequence?) {
         this.password_text.hint = hint
     }
 
-    /**
-     * 设置是否可操作密码可见性
-     */
     fun setSecretEnable(enable: Boolean) {
         if (enable) {
             password_eye.visibility = View.VISIBLE
@@ -103,16 +86,13 @@ class CommonPasswordInputLayout : ConstraintLayout {
         }
     }
 
-    /**
-     * 显示loading图标
-     */
     fun showLoading(show: Boolean) {
         if (show) {
             password_action.visibility = View.VISIBLE
             val anim = RotateAnimation(0f, 359f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
             anim.interpolator = LinearInterpolator()
-            anim.repeatCount = Animation.INFINITE//无限
-            anim.duration = 1200//一周时长
+            anim.repeatCount = Animation.INFINITE
+            anim.duration = 1200
             anim.fillAfter = true
             password_action.clearAnimation()
             password_action.startAnimation(anim)
@@ -122,9 +102,6 @@ class CommonPasswordInputLayout : ConstraintLayout {
         }
     }
 
-    /**
-     * 显示警告提示
-     */
     fun showWarning(warningTip: CharSequence?) {
         if (warningTip == null) {
             password_warning.visibility = View.GONE
@@ -145,9 +122,7 @@ class CommonPasswordInputLayout : ConstraintLayout {
         //setBackgroundResource(R.drawable.common_password_bg)
     }
 
-    /**
-     * 展开密码可见眼睛
-     */
+   
     fun openPasswordEye(open: Boolean) {
         this.showSecret = open
         if (open) {

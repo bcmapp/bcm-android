@@ -184,7 +184,7 @@ public class VideoPlayer extends FrameLayout {
      * Stop playing video
      */
     public void stopVideo() {
-        if (exoPlayer != null && exoPlayer.getPlayWhenReady()) {  //播放为true，暂停为false
+        if (exoPlayer != null && exoPlayer.getPlayWhenReady()) {  //true，false
             exoPlayer.setPlayWhenReady(false);
         }
     }

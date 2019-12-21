@@ -78,7 +78,6 @@ class SetPasswordFragment : AbsRegistrationFragment() {
         })
     }
 
-    //检测输入合法性
     private fun checkInputLegitimate(): Boolean {
         if (new_password_edit.length() < ARouterConstants.PASSWORD_LEN_MIN) {
             AmePopup.result.failure(activity, getString(R.string.common_password_too_short_warning), true)

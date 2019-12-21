@@ -39,7 +39,7 @@ import kotlin.collections.HashMap
 import kotlin.math.min
 
 /**
- * 公共私聊群聊消息实体
+ * 
  * Created by bcm.social.01 on 2018/6/13.
  */
 class AmeGroupMessage<out T : AmeGroupMessage.Content>(
@@ -227,7 +227,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     open class ThumbnailContent(url: String = "", sign: String = "", size: Long = 0L, var thumbnail_url: String = "", var sign_thumbnail: String = "", mimeType: String = "") : AttachmentContent(url, sign, size, mimeType) {
 
         /**
-         * 获取缩略图后缀
+         * 
          */
         fun getThumbnailExtension(): String {
             val thumb = if (thumbnail_url.isEmpty()) {
@@ -277,11 +277,11 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     abstract class AttachmentContent(var url: String = "", var sign: String = "", var size: Long = 0L, var mimeType: String = "") : Content() {
-        companion object {//附加限制的最大大小
+        companion object {//
             const val SIZE_MAX = 64 * 1024 * 1024
         }
         /**
-         * 获取默认附件的后缀
+         * 
          */
         fun getExtension(): String {
             val index = url.lastIndexOf(File.separator)
@@ -293,7 +293,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         }
 
         /**
-         * 获取下载下来的地址以及解密后的地址
+         * 
          */
         open fun getPath(): Pair<String, String> {
             return Pair(AmeFileUploader.ENCRYPT_DIRECTORY, AmeFileUploader.DECRYPT_DIRECTORY)
@@ -345,7 +345,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         }
 
         /**
-         * @param callback 如果为null，则删除之前的回调
+         * @param callback null，
          */
         open fun setRecipientCallback(callback: RecipientModifiedListener?) {
             mRecipientCallback = callback
@@ -404,7 +404,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
         companion object {
             /**
-             * 根据文件类型返回drawable
+             * drawable
              */
             fun getTypeDrawable(fileName: String, fileType: String?, overrideWidth: Int, textSize: Int, specifiedColor: Int = 0): Drawable {
 
@@ -415,7 +415,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             }
 
             /**
-             * 根据文件类型返回text
+             * text
              */
             fun getTypeName(fileName: String, fileType: String?): String {
                 val index = fileName.lastIndexOf(".") + 1
@@ -436,7 +436,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             }
 
             /**
-             * 根据文件类型返回颜色
+             * 
              */
             fun getTypeColor(ext: String): Int {
                 return when (ext) {
@@ -545,7 +545,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     /**
-     * 此类型是针对安卓的，因为iOS对于链接并没有LINK类型，而是TEXT类型，所以针对发送接收链接，要做些转换
+     * ，iOSLINK，TEXT，，
      */
     class LinkContent(val url: String = "", val text: String = "") : Content() {
         override fun getDescribe(gid: Long): CharSequence {
@@ -556,29 +556,29 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     class SystemContent(val tipType: Int = 0, var sender: String = "", var theOperator: List<String> = ArrayList(), var extra: String? = null) : Content() {
 
         companion object {
-            //提示类型
-            const val TIP_JOIN = 100      //加入群
-            const val TIP_UPDATE = 101    //群角色更新
-            const val TIP_KICK = 102      //踢出群
-            const val TIP_BLOCK = 103     //加入到黑名单
-            const val TIP_UNBLOCK = 104   //从黑名单移出
-            const val TIP_RECALL = 105    //撤回
-            const val TIP_SUBSCRIBE = 106  //订阅群
-            const val TIP_UNSUBSCRIBE = 107 //取消群订阅
-            const val TIP_GROUP_ILLEGAL = 108   //无效的群
-            const val TIP_LIVE_END = 109   // 直播结束
-            const val TIP_CHAT_STRANGER_RESTRICTION = 110 //不是好友关系，聊天受到限制
-            const val TIP_GROUP_INVITE_STRANGER = 111  //不是好友，进群受限制
-            const val TIP_JOIN_GROUP_REQUEST = 112 //进群请求消息(群主侧在审核状态下，收到加群请求时，在消息列表插入这条消息)
-            const val TIP_GROUP_NAME_UPDATE = 113    //群名称更新了
-            const val TIP_DECRYPT_FAIL = 114    //解密失败
+            //
+            const val TIP_JOIN = 100      //
+            const val TIP_UPDATE = 101    //
+            const val TIP_KICK = 102      //
+            const val TIP_BLOCK = 103     //
+            const val TIP_UNBLOCK = 104   //
+            const val TIP_RECALL = 105    //
+            const val TIP_SUBSCRIBE = 106  //
+            const val TIP_UNSUBSCRIBE = 107 //
+            const val TIP_GROUP_ILLEGAL = 108   //
+            const val TIP_LIVE_END = 109   // 
+            const val TIP_CHAT_STRANGER_RESTRICTION = 110 //，
+            const val TIP_GROUP_INVITE_STRANGER = 111  //，
+            const val TIP_JOIN_GROUP_REQUEST = 112 //(，，)
+            const val TIP_GROUP_NAME_UPDATE = 113    //
+            const val TIP_DECRYPT_FAIL = 114    //
         }
 
         private var operatorRecipientList: MutableList<Recipient>? = null
         private var senderRecipient: Recipient? = null
         private var groupMembers: Map<String, AmeGroupMemberInfo>? = null
-        private var ready: Boolean = false//群成员信息是否准备完毕
-        private var resultTip: CharSequence? = null//上一次完毕的description
+        private var ready: Boolean = false//
+        private var resultTip: CharSequence? = null//description
 
         override fun getDescribe(gid: Long): CharSequence {
             val resultTip = this.resultTip
@@ -765,7 +765,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         }
 
         /**
-         * 生成实际展示的成员信息
+         * 
          */
         private fun getViewNameFromOperators(context: Context, gid:Long, from: Recipient?, operators: MutableList<Recipient>): Pair<String, String> {
             if (groupMembers == null) {
@@ -778,7 +778,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             var fromInDoneList: Recipient? = null
             var fromViewName = ""
             if (from != null) {
-                //先从doneList去掉from
+                //doneListfrom
                 for (u in operators) {
                     if (from.address == u.address) {
                         fromInDoneList = u
@@ -828,14 +828,14 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         }
 
         /**
-         * 获取群成员昵称
+         * 
          */
         private fun groupMemberName(recipient: Recipient, member:AmeGroupMemberInfo?) :String {
             return BcmGroupNameUtil.getGroupMemberName(recipient, member)
         }
 
         /**
-         * 同步群成员信息
+         * 
          */
         private fun syncMemberInfo(gid: Long, uidList: List<String>) {
             AmeProvider.get<IGroupModule>(ARouterConstants.Provider.PROVIDER_GROUP_BASE)?.getMembers(gid, uidList) {
@@ -883,7 +883,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     /**
-     * 私人名片
+     * 
      */
     class ContactContent(val nickName: String = "", @SerializedName("phoneNumber") val uid: String = "", val url: String = "") : Content() {
         override fun getDescribe(gid: Long): CharSequence {
@@ -892,7 +892,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     /**
-     * 群分享名片
+     * 
      */
     class GroupShareContent(val groupId: Long, val groupName: String?, val groupIcon: String?, val shareCode: String, val shareSignature: String, val ekey: String?, val timestamp: Long, var shareLink: String?) : Content() {
 
@@ -923,7 +923,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             }
 
             /**
-             * 从链接获取到content
+             * content
              */
             fun fromLink(linkUrl: String): GroupShareContent? {
                 return try {
@@ -949,7 +949,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             }
 
             /**
-             * 从跳转bcm的链接读取到content
+             * bcmcontent
              */
             fun fromBcmSchemeUrl(bcmUrl: String): GroupShareContent? {
                 return try {
@@ -988,7 +988,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
         fun toOldLink(): String {
             return try {
-                // 生成分享链接，测试数据
+                // ，
                 "$SHARE_LINK?gid=$groupId&name=${URLEncoder.encode(if(groupName.isNullOrEmpty())
                     getString(R.string.common_chats_group_default_name) else groupName, "UTF-8")}&code=${URLEncoder.encode(shareCode, "UTF-8")}" +
                         "&signature=${URLEncoder.encode(shareSignature, "UTF-8")}&ekey=${URLEncoder.encode(ekey, "UTF-8")}&timestamp=$timestamp"
@@ -1032,7 +1032,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     /*
-     * 聊天历史记录信息
+     * 
      */
     class HistoryContent(val messageList: List<HistoryMessageDetail> = ArrayList()) : Content() {
         override fun getDescribe(gid: Long): CharSequence {
@@ -1041,7 +1041,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     /**
-     * 回复类型消息
+     * 
      */
     class ReplyContent(@SerializedName("replyMid") val mid: Long, @SerializedName("replyUid") val uid: String,
                        @SerializedName("replyContent") val replyString: String, @SerializedName("replyText") val text: String) : Content() {
@@ -1079,7 +1079,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         }
 
         /**
-         * 获取回复的消息的描述
+         * 
          */
         fun getReplyDescribe(gid:Long, isOutgoing: Boolean): CharSequence {
             val contentBuilder = SpannableStringBuilder()
@@ -1152,7 +1152,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     /**
-     * bcm好友变更具体消息类型
+     * bcm
      */
     class FriendContent(val type: Int = 1, val otherUid: String = "") : Content() {
         companion object {

@@ -9,7 +9,7 @@ import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.utility.logger.ALog;
 
 /**
- * 应用启动广播监听器
+ * 
  */
 public class BootReceiver extends BroadcastReceiver {
 

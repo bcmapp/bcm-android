@@ -102,37 +102,17 @@ import static com.bcm.messenger.chats.privatechat.webrtc.CallNotificationBuilder
 import static com.bcm.messenger.chats.privatechat.webrtc.CallNotificationBuilder.TYPE_INCOMING_RINGING;
 import static com.bcm.messenger.chats.privatechat.webrtc.CallNotificationBuilder.TYPE_OUTGOING_RINGING;
 
-/**
- * WebRtc服务
- */
+
 public class WebRtcCallService extends Service implements PeerConnection.Observer, DataChannel.Observer, BluetoothStateManager.BluetoothStateListener, PeerConnectionWrapper.CameraEventListener {
 
     private static final String TAG = "WebRtcCallService";
 
     public enum CallState {
-        /**
-         * 默认状态
-         */
         STATE_IDLE,
-        /**
-         * 本地拨打中
-         */
         STATE_DIALING,
-        /**
-         * 接听中
-         */
         STATE_ANSWERING,
-        /**
-         * 已拨打成功，对方响铃中
-         */
         STATE_REMOTE_RINGING,
-        /**
-         * 本地已收到接听，响铃中
-         */
         STATE_LOCAL_RINGING,
-        /**
-         * 已经成功连接通话
-         */
         STATE_CONNECTED
     }
 
@@ -173,63 +153,35 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     public static final String ACTION_ICE_CONNECTED = "ICE_CONNECTED";
 
     public static final String ACTION_GRANTED_AUDIO = "GRANTED_AUDIO";
-
-    /**
-     * 标准延迟
-     */
     public static final long FINISH_DELAY = 1000L;
-    /**
-     * 繁忙时延迟
-     */
     public static final long FINISH_BUSY_DELAY = 5000L;
-
-    /**
-     * 对于错过的通话不采用通知栏提示
-     */
     static final int NOTIFICATION_NONE = 0;
-    /**
-     * 采用普通通知栏
-     */
     static final int NOTIFICATION_SIMPLY = 1;
-    /**
-     * 采用带反馈的通知栏
-     */
+   
     static final int NOTIFICATION_IMPORTANT = 2;
-
-    //上次记录的尝试打开通话界面的通话类型
     private static int sCurrentCallType = -1;
-
-    /**
-     * 检测是否有web通话
-     */
     public static void checkHasWebRtcCall() {
         if (sCurrentCallType != -1) {
             startCallActivity(sCurrentCallType);
         }
     }
 
-    /**
-     * 清理标识
-     */
+
     public static void clearWebRtcCallType() {
         sCurrentCallType = -1;
     }
 
-    /**
-     * 启动通话页面
-     */
+    
     private static void startCallActivity(int callType) {
         sCurrentCallType = callType;
-        ALog.i(TAG, "收到通话请求，启动页面:" + callType);
-        //启动通话页面
+        ALog.i(TAG, "start call activity:" + callType);
+        
         IChatModule provider = (IChatModule) BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONVERSATION_BASE).navigation();
         provider.startRtcCallActivity(AppContextHolder.APP_CONTEXT, callType);
     }
 
-    private AtomicReference<CallState> callState = new AtomicReference<>(CallState.STATE_IDLE); //当前通话状态
-    /**
-     * 标示是来自于接听还是拨打
-     */
+    private AtomicReference<CallState> callState = new AtomicReference<>(CallState.STATE_IDLE); 
+   
     private AtomicBoolean mIncoming = new AtomicBoolean(false);
 
     private CameraState localCameraState = CameraState.UNKNOWN;
@@ -276,11 +228,11 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     private ScheduledExecutorService timeoutExecutor = Executors.newScheduledThreadPool(1);
 
     /**
-     * 计时器future类
+     * 
      */
     private ScheduledFuture timeoutFuture;
     /**
-     * 接通后的时间戳
+     * 
      */
     private long mBeginTimestamp = 0;
 
@@ -288,7 +240,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
     private String currentMetric = "";
 
-    private AtomicBoolean mMsgInserted = new AtomicBoolean(false); //miss消息是否已经插入
+    private AtomicBoolean mMsgInserted = new AtomicBoolean(false); //
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -491,7 +443,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     }
 
     /**
-     * 处理过期的来电
+     * 
      *
      * @param intent
      */
@@ -870,7 +822,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             return;
         }
 
-        //通话连接了，也尝试打开页面
+        
         startCallActivity(CameraState.Direction.NONE.ordinal());
         setCallInProgressNotification(TYPE_ESTABLISHED, recipient);
 
@@ -902,7 +854,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     }
 
     /**
-     * 当前在忙，无法接听
+     *
      *
      * @param intent
      */
@@ -915,7 +867,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     }
 
     /**
-     * 接收到对方繁忙的消息
+     * 
      *
      * @param intent
      */
@@ -977,12 +929,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         }
     }
 
-    /**
-     * 处理错过的通话记录
-     *
-     * @param recipient
-     * @param notifyType
-     */
     private void insertMissedCall(@NonNull Recipient recipient, int notifyType) {
         if (!mMsgInserted.getAndSet(true)) {
             ALog.logForSecret(TAG, "insertMissedCall address: " + recipient.getAddress() + ", incoming: " + mIncoming);
@@ -1003,16 +949,10 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         }
     }
 
-    /**
-     * 处理各种错过的通话记录
-     *
-     * @param recipient
-     * @param remoteHangup
-     */
     private void insertMissedCallFromHangup(@NonNull Recipient recipient, boolean remoteHangup) {
         if (!mMsgInserted.getAndSet(true)) {
             ALog.logForSecret(TAG, "insertMissedCallFromHangup address: " + recipient.getAddress() + ", incoming: " + mIncoming + ", remoteHangup: " + remoteHangup);
-            //对方挂断自己的和自己挂断自己的不应该提示
+            
             Pair<Long, Long> result = null;
             if (mIncoming.get()) {
                 result = Repository.getChatRepo().insertIncomingMissedCall(recipient.getAddress().serialize());
@@ -1050,11 +990,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         handleCallConnected(intent);
     }
 
-    /**
-     * 对方拒绝通话
-     *
-     * @param intent
-     */
     private void handleDenyCall(Intent intent) {
 
         try {
@@ -1131,7 +1066,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     }
 
     private void handleSetMuteAudio(Intent intent) {
-        //检查权限
+        
         if (!PermissionUtil.INSTANCE.checkAudio(this)) {
             return;
         }
@@ -1146,7 +1081,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
     private void handleSetMuteVideo(Intent intent) {
 
-        // 收到MuteVideo事件，需要检测权限
         if (!PermissionUtil.INSTANCE.checkCamera(this)) {
             return;
         }
@@ -1187,7 +1121,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
     private void handleSetCameraFlip(Intent intent) {
         ALog.i(TAG, "handleSetCameraFlip...");
-        // 收到CameraFlip事件，需要检测权限
+        
         if (!PermissionUtil.INSTANCE.checkCamera(this)) {
             return;
         }
@@ -1262,11 +1196,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         }
     }
 
-    /**
-     * 是否通话繁忙
-     *
-     * @return
-     */
+    
     private boolean isBusy() {
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         return callState.get() != CallState.STATE_IDLE || (telephonyManager != null && telephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE);
@@ -1301,22 +1231,13 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
     }
 
-    /**
-     * 把服务设置为前置模式，并展示通知栏
-     *
-     * @param type
-     */
+   
     private void setCallNotification(int type) {
         ALog.d(TAG, "setCallNotification type: " + type);
         startForeground(CallNotificationBuilder.WEBRTC_NOTIFICATION, CallNotificationBuilder.getCallDefaultNotification(this));
     }
 
-    /**
-     * 把服务设置为前置模式，并展示通知栏
-     *
-     * @param type
-     * @param recipient
-     */
+   
     private void setCallInProgressNotification(int type, @Nullable Recipient recipient) {
         if (mCurrentNotificationType != TYPE_CALL_DEFAULT && type == TYPE_CALL_DEFAULT) {
             return;
@@ -1328,9 +1249,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         }
     }
 
-    /**
-     * 停止通话并释放资源
-     */
     private synchronized void terminate() {
         ALog.i(TAG, "terminate");
         try {
@@ -1413,13 +1331,9 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         EventBus.getDefault().postSticky(new WebRtcViewModel(state, recipient, identityKey, localCameraState, localRenderer, remoteRenderer, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled));
     }
 
-    /**
-     * 用于处理通话时长的记录和保存
-     *
-     * @param state
-     */
+  
     private void handleForCallTime(@NonNull WebRtcViewModel.State state, @NonNull Recipient recipient) {
-        //记录下开始时间
+        
         if (state == WebRtcViewModel.State.CALL_CONNECTED && mBeginTimestamp == 0) {
             mBeginTimestamp = System.currentTimeMillis();
         } else if (state == WebRtcViewModel.State.CALL_DISCONNECTED && mBeginTimestamp > 0) {

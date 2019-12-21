@@ -37,7 +37,7 @@ import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.chats_activity_media_view.*
 
 /**
- * 媒体资源展示页面
+ * 
  * Created by Kin on 2018/10/31
  */
 class MediaViewActivity : AppCompatActivity() {

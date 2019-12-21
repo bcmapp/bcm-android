@@ -12,7 +12,7 @@ import java.util.List;
 @Dao
 public interface GroupMemberDao {
     /**
-     * 根据 gid 和 uid 查询一个群成员
+     *  gid  uid 
      *
      * @param uid
      * @param gid
@@ -23,7 +23,7 @@ public interface GroupMemberDao {
 
 
     /**
-     * 根据 gid 和 uid 查询一个群成员
+     *  gid  uid 
      *
      * @param uidList
      * @param gid
@@ -33,7 +33,7 @@ public interface GroupMemberDao {
     List<GroupMember> queryGroupMemberList(Long gid, String[] uidList);
 
     /**
-     * 根据 gid 和成员类型 查找群内的成员
+     *  gid  
      *
      * @param gid
      * @param role
@@ -49,7 +49,7 @@ public interface GroupMemberDao {
     List<GroupMember> queryGroupMemberByPage(int page);
 
     /**
-     * 根据 gid 查找群内的成员
+     *  gid 
      *
      * @param gid
      * @return
@@ -58,7 +58,7 @@ public interface GroupMemberDao {
     List<GroupMember> loadGroupMembers(long gid);
 
     /**
-     * 更新一个群成员信息
+     * 
      *
      * @param user
      */
@@ -66,7 +66,7 @@ public interface GroupMemberDao {
     void deleteGroupMember(GroupMember user);
 
     /**
-     * 更新一个群成员信息
+     * 
      *
      * @param users
      */
@@ -74,19 +74,19 @@ public interface GroupMemberDao {
     void deleteGroupMember(List<GroupMember> users);
 
     /**
-     * 清理所群的成员
+     * 
      */
     @Query("DELETE FROM " + GroupMember.TABLE_NAME + " WHERE gid = :gid ")
     void clear(long gid);
 
     /**
-     * 删除指定的成员
+     * 
      */
     @Query("DELETE FROM " + GroupMember.TABLE_NAME + " WHERE gid = :gid AND uid in (:mlist) ")
     void deleteGroupMember(long gid, List<String> mlist);
 
     /**
-     * 更新一个群成员信息
+     * 
      *
      * @param user
      */
@@ -94,7 +94,7 @@ public interface GroupMemberDao {
     void insertGroupMember(GroupMember user);
 
     /**
-     * 更新一个群成员信息
+     * 
      *
      * @param users
      */
@@ -102,7 +102,7 @@ public interface GroupMemberDao {
     void insertGroupMember(List<GroupMember> users);
 
     /**
-     * 更新一个群成员信息
+     * 
      *
      * @param user
      */
@@ -110,7 +110,7 @@ public interface GroupMemberDao {
     void updateGroupMember(GroupMember user);
 
     /**
-     * 更新一批群成员信息
+     * 
      *
      * @param users
      */

@@ -70,7 +70,7 @@ import java.util.zip.ZipOutputStream
 
 
 /**
- * 常用方法帮助类
+ * 
  * Created by wjh on 2018/3/8
  */
 object AppUtil {
@@ -86,7 +86,7 @@ object AppUtil {
     }
 
     /**
-     * 获取应用详情页面intent（如果找不到要跳转的界面，也可以先把用户引导到系统设置页面）
+     * intent（，）
      *
      * @return
      */
@@ -99,7 +99,7 @@ object AppUtil {
     }
 
     /**
-     * 获取某个应用包名的intent
+     * intent
      */
     fun getLaunchAppIntent(context: Context, packageName: String): Intent? {
         return context.packageManager.getLaunchIntentForPackage(packageName)?.apply {
@@ -108,7 +108,7 @@ object AppUtil {
     }
 
     /**
-     * 是否apk文件
+     * apk
      */
     fun isApkFile(context: Context, path: String): Boolean {
         return try {
@@ -122,7 +122,7 @@ object AppUtil {
     }
 
     /**
-     * 判断是否有安装权限
+     * 
      */
     fun checkInstallPermission(context: Context): Boolean {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -153,7 +153,7 @@ object AppUtil {
     }
 
     /**
-     * 启动服务
+     * 
      */
     @Deprecated(message = "Use Context.startServiceCompat() instead", replaceWith = ReplaceWith("Context.startServiceCompat"))
     fun startServiceIfBackground(context: Context, intent: Intent) {
@@ -198,7 +198,7 @@ object AppUtil {
         fout.createNewFile()
 
         val outputStream = FileOutputStream(fout)
-        //清空文件
+        //
         val fileChannel = outputStream.channel
         fileChannel.truncate(0)
         fileChannel.close()
@@ -237,7 +237,7 @@ object AppUtil {
     }
 
     /**
-     * context转化成activity
+     * contextactivity
      */
     private fun context2Activity(context: Context): Activity? {
         try {
@@ -278,7 +278,7 @@ object AppUtil {
     }
 
     /**
-     * 获取粘贴板的内容
+     * 
      * @param context
      */
     fun getCodeFromBoard(context: Context?): CharSequence {
@@ -299,7 +299,7 @@ object AppUtil {
     }
 
     /**
-     * 保存内容至粘贴板
+     * 
      * @param context
      * @param srcText
      */
@@ -316,7 +316,7 @@ object AppUtil {
     }
 
     /**
-     * 复制uri到剪贴板
+     * uri
      *
      * @param uri uri
      */
@@ -331,9 +331,9 @@ object AppUtil {
     }
 
     /**
-     * 获取剪贴板的uri
+     * uri
      *
-     * @return 剪贴板的uri
+     * @return uri
      */
     fun getUriFromBoard(context: Context?): Uri? {
         try {
@@ -350,9 +350,9 @@ object AppUtil {
     }
 
     /**
-     * 复制意图到剪贴板
+     * 
      *
-     * @param intent 意图
+     * @param intent 
      */
     fun saveIntentToBoard(context: Context?, intent: Intent) {
         try {
@@ -365,9 +365,9 @@ object AppUtil {
     }
 
     /**
-     * 获取剪贴板的意图
+     * 
      *
-     * @return 剪贴板的意图
+     * @return 
      */
     fun getIntentFromBoard(context: Context?): Intent? {
         try {
@@ -384,7 +384,7 @@ object AppUtil {
     }
 
     /**
-     * 估算一个字符串的长度
+     * 
      */
     fun measureText(content: String): Int {
         val paint = Paint()
@@ -402,7 +402,7 @@ object AppUtil {
     }
 
     /**
-     * 单位转换：dp转px
+     * ：dppx
      * @param res
      * @param dp
      * @return
@@ -413,7 +413,7 @@ object AppUtil {
     }
 
     /**
-     * 单位转换：dp转px
+     * ：dppx
      * @param res
      * @param dp
      * @return
@@ -424,7 +424,7 @@ object AppUtil {
     }
 
     /**
-     * 单位转换：sp转px
+     * ：sppx
      * @param res
      * @param sp
      * @return
@@ -435,7 +435,7 @@ object AppUtil {
     }
 
     /**
-     * 单位转换：px转dp
+     * ：pxdp
      * @param res
      * @param px
      * @return
@@ -447,7 +447,7 @@ object AppUtil {
     }
 
     /**
-     * 单位转换：px转sp
+     * ：pxsp
      * @param res
      * @param px
      * @return
@@ -490,7 +490,7 @@ object AppUtil {
     }
 
     /**
-     * 获取颜色值
+     * 
      * @param res
      * @param resId
      */
@@ -504,7 +504,7 @@ object AppUtil {
     }
 
     /**
-     * 获取图像
+     * 
      */
     fun getDrawable(res: Resources, resId: Int): Drawable {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -515,7 +515,7 @@ object AppUtil {
     }
 
     fun getCircleDrawable(fillColor: Int, size: Int): Drawable {
-        val gd = GradientDrawable()//创建drawable
+        val gd = GradientDrawable()//drawable
         gd.setColor(fillColor)
         gd.shape = GradientDrawable.OVAL
         gd.setSize(size, size)
@@ -531,10 +531,10 @@ object AppUtil {
     }
 
     /**
-     * 根据传入控件的坐标和用户的焦点坐标，判断是否隐藏键盘，如果点击的位置在控件内，则不隐藏键盘
+     * ，，，
      * @param activity
-     * @param event 焦点位置
-     * @param focusView 当前焦点view
+     * @param event 
+     * @param focusView view
      */
     fun hideKeyboard(activity: Activity?, event: MotionEvent?, focusView: View?) {
         try {
@@ -551,9 +551,9 @@ object AppUtil {
                 val right = left + focusView.width
                 val bottom = top + focusView.height
 
-                // 判断焦点位置坐标是否在空间内，如果位置在控件外，则隐藏键盘
+                // ，，
                 if (event.rawX < left || event.rawX > right || event.rawY < top || event.rawY > bottom) {
-                    // 隐藏键盘
+                    // 
                     val token = focusView.windowToken
                     val inputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                     inputMethodManager?.hideSoftInputFromWindow(token, InputMethodManager.HIDE_NOT_ALWAYS)
@@ -566,7 +566,7 @@ object AppUtil {
     }
 
     /**
-     * 隐藏软键盘
+     * 
      *
      * @param activity activity
      */
@@ -583,9 +583,9 @@ object AppUtil {
     }
 
     /**
-     * 显示软键盘
+     * 
      *
-     * @param view 接收输入的view
+     * @param view view
      */
     @Deprecated(replaceWith = ReplaceWith("View.showKeyboard()"), message = "Use View.showKeyboard() instead")
     fun showKeyboard(view: View) {
@@ -595,7 +595,7 @@ object AppUtil {
 
     /**
      * Gets the content:// URI from the given corresponding path to a file
-     * 绝对路径转uri
+     * uri
      *
      * @param context
      * @param filePath
@@ -621,7 +621,7 @@ object AppUtil {
     }
 
     /**
-     * uri转绝对路径
+     * uri
      */
     fun getImagePathFromURI(context: Context, contentURI: Uri): String {
         val result: String
@@ -633,7 +633,7 @@ object AppUtil {
                     MediaStore.Images.ImageColumns.DATE_ADDED + " desc limit 1"
             )
         } else {
-            // 数据改变时查询数据库中最后加入的一条数据
+            // 
             context.contentResolver.query(
                     MediaStore.Images.Media.INTERNAL_CONTENT_URI,
                     arrayOf(MediaStore.Images.ImageColumns.DATA), null, null,
@@ -653,7 +653,7 @@ object AppUtil {
 
 
     /**
-     * 检测悬浮窗权限
+     * 
      * @param context
      * @return
      */
@@ -674,15 +674,15 @@ object AppUtil {
     }
 
     /**
-     * 请求悬浮窗权限
+     * 
      * @param fragment
      * @param requestCode
-     * @return true表示执行跳转，false表示没有
+     * @return true，false
      */
     fun requestOverlaysPermission(fragment: Fragment, requestCode: Int): Boolean {
         try {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                //如果不支持浮窗，需要授权
+                //，
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + fragment.context?.packageName))
                 fragment.startActivityForResult(intent, requestCode)
                 true
@@ -701,16 +701,16 @@ object AppUtil {
     }
 
     /**
-     * 请求悬浮窗权限
+     * 
      * @param activity
      * @param requestCode
-     * @return true表示执行跳转，false表示没有
+     * @return true，false
      */
     @Deprecated(replaceWith = ReplaceWith("Activity.requestOverlaysPermission(requestCode: Int)"), message = "Use Activity.requestOverlaysPermission(requestCode: Int) instead")
     fun requestOverlaysPermission(activity: Activity, requestCode: Int): Boolean {
         try {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                //如果不支持浮窗，需要授权
+                //，
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + activity.packageName))
                 activity.startActivityForResult(intent, requestCode)
                 true
@@ -793,11 +793,11 @@ object AppUtil {
     }
 
     /**
-     * 设置状态栏透明
+     * 
      */
     @Deprecated(replaceWith = ReplaceWith("Window.setTranslucentStatus()"), message = "Use Window.setTranslucentStatus() instead")
     private fun setTranslucentStatus(window: Window) {
-        // 5.0以上系统状态栏透明
+        // 5.0
         when {
             RomUtil.isMiui() || RomUtil.isFlyme() -> {
                 window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
@@ -812,9 +812,9 @@ object AppUtil {
     }
 
     /**
-     * 修改状态栏的沉侵样式
+     * 
      * @param window
-     * @param dark 状态栏文本颜色
+     * @param dark 
      */
     @Deprecated(replaceWith = ReplaceWith("Window.transparencyBar(dark: Boolean)"), message = "Use Window.transparencyBar(dark: Boolean) instead")
     fun transparencyBar(window: Window, dark: Boolean = true) {
@@ -827,8 +827,8 @@ object AppUtil {
     }
 
     /**
-     * 设置状态栏黑色字体图标，
-     * 适配4.4以上版本MIUIV、Flyme和6.0以上版本其他Android
+     * ，
+     * 4.4MIUIV、Flyme6.0Android
      *
      * @param window
      * @return 1:MIUUI 2:Flyme 3:android6.0
@@ -868,8 +868,8 @@ object AppUtil {
     }
 
     /**
-     * 已知系统类型时，设置状态栏黑色字体图标。
-     * 适配4.4以上版本MIUIV、Flyme和6.0以上版本其他Android
+     * ，。
+     * 4.4MIUIV、Flyme6.0Android
      *
      * @param window
      * @param type   1:MIUUI 2:Flyme 3:android6.0
@@ -890,7 +890,7 @@ object AppUtil {
     }
 
     /**
-     * 清除MIUI或flyme或6.0以上版本状态栏黑色字体
+     * MIUIflyme6.0
      */
     @Deprecated(replaceWith = ReplaceWith("Window.setStatusBarDarkMode(type: Int)"), message = "Use Window.setStatusBarDarkMode(type: Int) instead")
     fun setStatusBarDarkMode(window: Window, type: Int) {
@@ -905,12 +905,12 @@ object AppUtil {
 
 
     /**
-     * 设置状态栏图标为深色和魅族特定的文字风格
-     * 可以用来判断是否为Flyme用户
+     * 
+     * Flyme
      *
-     * @param window 需要设置的窗口
-     * @param dark   是否把状态栏字体及图标颜色设置为深色
-     * @return boolean 成功执行返回true
+     * @param window 
+     * @param dark   
+     * @return boolean true
      */
     @Deprecated(replaceWith = ReplaceWith("Window.setStatusBarLightModeForFlyme(dark: Boolean)"), message = "Use Window.setStatusBarLightModeForFlyme(dark: Boolean) instead")
     private fun setStatusBarLightModeForFlyme(window: Window?, dark: Boolean): Boolean {
@@ -942,11 +942,11 @@ object AppUtil {
     }
 
     /**
-     * 设置状态栏字体图标为深色，需要MIUIV6以上
+     * ，MIUIV6
      *
-     * @param window 需要设置的窗口
-     * @param dark   是否把状态栏字体及图标颜色设置为深色
-     * @return boolean 成功执行返回true
+     * @param window 
+     * @param dark   
+     * @return boolean true
      */
     @Deprecated(replaceWith = ReplaceWith("Window.setStatusBarLightModeForMIUI(dark: Boolean)"), message = "Use Window.setStatusBarLightModeForMIUI(dark: Boolean) instead")
     private fun setStatusBarLightModeForMIUI(window: Window?, dark: Boolean): Boolean {
@@ -960,14 +960,14 @@ object AppUtil {
                 darkModeFlag = field.getInt(layoutParams)
                 val extraFlagField = clazz.getMethod("setExtraFlags", Int::class.javaPrimitiveType, Int::class.javaPrimitiveType)
                 if (dark) {
-                    extraFlagField.invoke(window, darkModeFlag, darkModeFlag)//状态栏透明且黑色字体
+                    extraFlagField.invoke(window, darkModeFlag, darkModeFlag)//
                 } else {
-                    extraFlagField.invoke(window, 0, darkModeFlag)//清除黑色字体
+                    extraFlagField.invoke(window, 0, darkModeFlag)//
                 }
                 result = true
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    //开发版 7.7.13 及以后版本采用了系统API，旧方法无效但不会报错，所以两个方式都要加上
+                    // 7.7.13 API，，
                     if (dark) {
                         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                     } else {
@@ -983,7 +983,7 @@ object AppUtil {
 
 
     /**
-     * 获取屏幕大小
+     * 
      *
      * @param context
      * @return
@@ -995,7 +995,7 @@ object AppUtil {
     }
 
     /**
-     * 获取屏幕宽度
+     * 
      * @param context Context
      * @return Screen width pixels
      */
@@ -1005,7 +1005,7 @@ object AppUtil {
     }
 
     /**
-     * 获取屏幕高度，不含状态栏和导航栏
+     * ，
      * @param context Context
      * @return Screen height pixels, exclude status bar and navigation bar
      */
@@ -1015,7 +1015,7 @@ object AppUtil {
     }
 
     /**
-     * 获取屏幕真实宽度
+     * 
      * @return Screen width pixels
      */
     fun getRealScreenWidth(): Int {
@@ -1026,7 +1026,7 @@ object AppUtil {
     }
 
     /**
-     * 获取屏幕真实高度，包含状态栏和导航栏
+     * ，
      * @return Screen height pixels, include status bar and navigation bar
      */
     fun getRealScreenHeight(): Int {
@@ -1072,7 +1072,7 @@ object AppUtil {
     }
 
     /**
-     * 获取当前栈顶activity， 5.x
+     * activity， 5.x
      *
      * @param context
      * @return
@@ -1081,7 +1081,7 @@ object AppUtil {
         val START_TASK_TO_FRONT = 2
         var field: Field? = null
         try {
-            field = ActivityManager.RunningAppProcessInfo::class.java.getDeclaredField("processState")//通过反射获取进程状态字段.
+            field = ActivityManager.RunningAppProcessInfo::class.java.getDeclaredField("processState")//.
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -1093,10 +1093,10 @@ object AppUtil {
             for (i in runningAppProcesses.indices) {
                 val process = runningAppProcesses[i]
                 if (process.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                    // 前台运行进程
+                    // 
                     var state: Int? = null
                     try {
-                        state = field!!.getInt(process)//反射调用字段值的方法,获取该进程的状态.
+                        state = field!!.getInt(process)//,.
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -1116,10 +1116,10 @@ object AppUtil {
     }
 
     /**
-     * 实现高斯模糊
+     * 
      * @param context
-     * @param bitmap 要实现高斯模糊的bitmap
-     * @param blurRadius 实现高斯模糊度
+     * @param bitmap bitmap
+     * @param blurRadius 
      */
     fun blurBitmap(context: Context, bitmap: Bitmap, blurRadius: Float): Bitmap {
 
@@ -1157,10 +1157,10 @@ object AppUtil {
 
 
     /**
-     * 实现高斯模糊
+     * 
      * @param view
-     * @param url 要实现高斯模糊的图片地址
-     * @param blurRadius 实现高斯模糊度
+     * @param url 
+     * @param blurRadius 
      */
     fun blurBitmap(view: ImageView?, url: String?, blurRadius: Float) {
         if (null == view || null == url || null == view.context) {
@@ -1199,13 +1199,13 @@ object AppUtil {
 
                     })
         } catch (ex: Exception) {
-            Logger.e(ex, "ChatRtcCallScreen 显示图片失败")
+            Logger.e(ex, "ChatRtcCallScreen ")
         }
     }
 
 
     /**
-     * 返回 app的名字
+     *  app
      */
     fun getApplicationName(context: Context): String {
         val applicationInfo = context.applicationInfo
@@ -1219,14 +1219,14 @@ object AppUtil {
     }
 
     /**
-     * 返回 app的version code
+     *  appversion code
      */
     fun getVersionCode(context: Context): Int {
         return getPackageInfo(context).versionCode
     }
 
     /**
-     * 返回 app的version name
+     *  appversion name
      */
     fun getVersionName(context: Context): String {
         return getPackageInfo(context).versionName
@@ -1234,7 +1234,7 @@ object AppUtil {
 
 
     /**
-     * true 开发版本
+     * true 
      */
     fun isDevBuild(): Boolean {
         val provider = AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)
@@ -1242,7 +1242,7 @@ object AppUtil {
     }
 
     /**
-     * true 公测版本
+     * true 
      */
     fun isBetaBuild(): Boolean {
         val provider = AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)
@@ -1250,7 +1250,7 @@ object AppUtil {
     }
 
     /**
-     * true 发布版本
+     * true 
      */
     fun isReleaseBuild(): Boolean {
         val provider = AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)
@@ -1258,7 +1258,7 @@ object AppUtil {
     }
 
     /**
-     * true 发布版本(发布到google play 平台的版本)
+     * true (google play )
      */
     fun isSupportGooglePlay(): Boolean {
         val provider = AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)
@@ -1266,7 +1266,7 @@ object AppUtil {
     }
 
     /**
-     * true lbs激活
+     * true lbs
      */
     fun isLbsEnable(): Boolean {
         val provider = AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)
@@ -1274,7 +1274,7 @@ object AppUtil {
     }
 
     /**
-     * 返回版本构建时间
+     * 
      */
     fun lastBuildTime(): Long {
         val provider = AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)
@@ -1282,7 +1282,7 @@ object AppUtil {
     }
 
     /**
-     * true 开启测试环境，false 是生产环境
+     * true ，false 
      */
     fun isTestEnvEnable(): Boolean {
         val provider = AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)
@@ -1290,7 +1290,7 @@ object AppUtil {
     }
 
     /**
-     * 返回是否采用开发者链路
+     * 
      */
     fun useDevBlockChain(): Boolean {
         val provider = AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)
@@ -1313,7 +1313,7 @@ object AppUtil {
     }
 
     /**
-     * 检测是否不可用地址
+     * 
      * @param addressString（ipv4）
      * @return
      */
@@ -1359,7 +1359,7 @@ object AppUtil {
     }
 
     /**
-     * return true 在主进程
+     * return true 
      */
     fun isMainProcess(): Boolean {
         val am = AppContextHolder.APP_CONTEXT.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
@@ -1389,7 +1389,7 @@ object AppUtil {
     }
 
     /**
-     * 生成Activity的截图
+     * Activity
      */
     @Deprecated(replaceWith = ReplaceWith("Activity.createScreenShot()"), message = "Use Activity.createScreenShot() instead")
     fun createScreenShot(activity: Activity): Bitmap {
@@ -1403,7 +1403,7 @@ object AppUtil {
     }
 
     /**
-     * 生成View的截图
+     * View
      */
     @Deprecated(replaceWith = ReplaceWith("View.createScreenShot()"), message = "Use View.createScreenShot() instead")
     fun createScreenShot(view: View): Bitmap {
@@ -1465,26 +1465,26 @@ object AppUtil {
 
     fun getLowCriteria(): Criteria {
         val criteria = Criteria()
-        criteria.accuracy = Criteria.ACCURACY_COARSE//低精度，如果设置为高精度，依然获取不了location。
-        criteria.isAltitudeRequired = false//不要求海拔
-        criteria.isBearingRequired = false//不要求方位
-        criteria.isCostAllowed = true//允许有花费
-        criteria.powerRequirement = Criteria.POWER_LOW//低功耗
+        criteria.accuracy = Criteria.ACCURACY_COARSE//，，location。
+        criteria.isAltitudeRequired = false//
+        criteria.isBearingRequired = false//
+        criteria.isCostAllowed = true//
+        criteria.powerRequirement = Criteria.POWER_LOW//
         return criteria
     }
 
 
     fun getHighCriteria(): Criteria {
         val criteria = Criteria()
-        criteria.accuracy = Criteria.ACCURACY_HIGH//低精度，如果设置为高精度，依然获取不了location。
-        criteria.isAltitudeRequired = false//不要求海拔
-        criteria.isBearingRequired = false//不要求方位
-        criteria.isCostAllowed = true//允许有花费
-        criteria.powerRequirement = Criteria.POWER_LOW//低功耗
+        criteria.accuracy = Criteria.ACCURACY_HIGH//，，location。
+        criteria.isAltitudeRequired = false//
+        criteria.isBearingRequired = false//
+        criteria.isCostAllowed = true//
+        criteria.powerRequirement = Criteria.POWER_LOW//
         return criteria
     }
 
-    //判断GPS是否打开
+    //GPS
     fun isGpsEnabled(context: Context): Boolean {
         val locationManager = context
                 .getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -1492,23 +1492,23 @@ object AppUtil {
     }
 
     /**
-     * 获取最好的定位方式
+     * 
      */
     fun getBestLocation(context: Context, criteriaParam: Criteria?): Location? {
 
         /**
-         * network获取定位方式
+         * network
          */
         fun getNetWorkLocation(context: Context): Location? {
             var location: Location? = null
             try {
                 val manager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                //高版本的权限检查
+                //
                 if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return null
                 }
-                if (manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {//是否支持Network定位
-                    //获取最后的network定位信息
+                if (manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {//Network
+                    //network
                     location = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                 }
             }catch (ex: Exception) {
@@ -1526,14 +1526,14 @@ object AppUtil {
             }
             val provider = manager.getBestProvider(criteria, true)
             location = if (provider.isNullOrEmpty()) {
-                //如果找不到最适合的定位，使用network定位
+                //，network
                 getNetWorkLocation(context)
             } else {
-                //高版本的权限检查
+                //
                 if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return null
                 }
-                //获取最适合的定位方式的最后的定位权限
+                //
                 manager.getLastKnownLocation(provider)
             }
         }catch (ex: Exception) {

@@ -88,7 +88,7 @@ public class AttachmentDatabase extends Database {
     static final String UNIQUE_ID = "unique_id";
     static final String DIGEST = "digest";
     static final String VOICE_NOTE = "voice_note";
-    static final String DURATION = "data_duration";//音视频时长
+    static final String DURATION = "data_duration";
     static final String URL = "url"; // AWS S3 download url
     public static final String FAST_PREFLIGHT_ID = "fast_preflight_id";
 
@@ -117,7 +117,7 @@ public class AttachmentDatabase extends Database {
             VOICE_NOTE + " INTEGER DEFAULT 0, " + DURATION + " INTEGER DEFAULT 0, " +
             URL + " TEXT);";
 
-    public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;//删除表SQL
+    public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
     public static final String[] CREATE_INDEXS = {
             "CREATE INDEX IF NOT EXISTS part_mms_id_index ON " + TABLE_NAME + " (" + MMS_ID + ");",
@@ -268,7 +268,6 @@ public class AttachmentDatabase extends Database {
     }
 
     /**
-     * 删除多个附件消息
      * @param mmsIds
      */
     public void deleteAttachmentsForMessages(long... mmsIds) {
@@ -339,7 +338,7 @@ public class AttachmentDatabase extends Database {
         }
         Pair<File, Long> partData = setAttachmentData(masterSecret, tempInputStream);
         ContentValues values = new ContentValues();
-        //data value 中存入 附件文件的绝对路径
+        
         values.put(DATA, partData.first.getAbsolutePath());
         values.put(SIZE, partData.second);
         values.put(TRANSFER_STATE, TRANSFER_PROGRESS_DONE);
@@ -351,7 +350,7 @@ public class AttachmentDatabase extends Database {
         } else {
             Attachment attachment = getAttachment(masterSecret, attachmentId);
             if(attachment != null) {
-                //FIXME 真正的下载完成
+                
                 long total = partData.first.length();
 //                EventBus.getDefault().post(new PartProgressEvent(attachment, total, total));
 
@@ -383,7 +382,7 @@ public class AttachmentDatabase extends Database {
         return file;
 
     }
-    //以 messageId 为索引，插入 mms 对应的附件信息
+    
     void insertAttachmentsForMessage(@NonNull MasterSecretUnion masterSecret,
                                      long mmsId,
                                      @NonNull List<Attachment> attachments)
@@ -435,13 +434,7 @@ public class AttachmentDatabase extends Database {
                 databaseAttachment.isVoiceNote());
     }
 
-    /**
-     * 更新附件时长
-     *
-     * @param masterSecret
-     * @param attachmentId
-     * @param duration
-     */
+   
     public void updateAttachmentDuration(@NonNull MasterSecret masterSecret, @NonNull AttachmentId attachmentId, long duration) {
         SQLiteDatabase database = databaseHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues(1);
@@ -640,7 +633,7 @@ public class AttachmentDatabase extends Database {
         Pair<File, Long> partData = null;
         long uniqueId = System.currentTimeMillis();
         String fileName = null;
-        long duration = 0;//时长
+        long duration = 0;
 
         if (masterSecret.getMasterSecret().isPresent() && attachment.getDataUri() != null) {
             partData = setAttachmentData(masterSecret.getMasterSecret().get(), attachment.getDataUri());
@@ -723,7 +716,7 @@ public class AttachmentDatabase extends Database {
 
         try {
             if (cursor != null && cursor.moveToFirst()) {
-                //FIXME 视频的缩略图下载完成
+                
                 long total = thumbnailFile.first.length();
                 final Attachment attachment = getAttachment(masterSecret, attachmentId);
                 if(attachment != null) {

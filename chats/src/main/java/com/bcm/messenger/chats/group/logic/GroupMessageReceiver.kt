@@ -37,9 +37,6 @@ import org.whispersystems.signalservice.internal.websocket.GroupMessageProtos
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-/**
- * 接收到群消息之后的处理job
- */
 class GroupMessageReceiver : IServerDataListener {
     private val TAG = "GroupMessageReceiver"
 

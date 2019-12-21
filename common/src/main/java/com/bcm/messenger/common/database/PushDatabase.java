@@ -38,9 +38,7 @@ public class PushDatabase extends Database {
     public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" + ID + " INTEGER PRIMARY KEY, " +
             TYPE + " INTEGER, " + SOURCE + " TEXT, " + DEVICE_ID + " INTEGER, " + LEGACY_MSG + " TEXT, " + CONTENT + " TEXT, " + SOURCE_REG_ID + " INTEGER, " + TIMESTAMP + " INTEGER );";
 
-    /**
-     * 删除表的sql语句
-     */
+   
     public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
     public PushDatabase(Context context, SQLiteOpenHelper databaseHelper) {
