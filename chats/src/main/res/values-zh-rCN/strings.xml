@@ -277,6 +277,7 @@
     <string name="chats_group_actor_creator">群主</string>
     <string name="chats_group_setting_mute">通知静音</string>
     <string name="chats_new_group_chat">新建群聊</string>
+    <string name="chats_group_contact_title">群组</string>
     <string name="chats_group_member_add_success">操作完成</string>
     <string name="chats_group_member_invite_wating_review">请求发送成功，等待管理员通过</string>
     <string name="chats_contact_add_time">你把%s添加到了%s</string>

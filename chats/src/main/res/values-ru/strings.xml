@@ -270,6 +270,7 @@
     <string name="chats_group_actor_creator">Владелец</string>
     <string name="chats_group_setting_mute">Откл. звук уведомл.</string>
     <string name="chats_new_group_chat">Нов. групп. чат</string>
+    <string name="chats_group_contact_title">Группы</string>
     <string name="chats_group_member_add_success">Добавлен</string>
     <string name="chats_group_member_invite_wating_review">Запрос отпр., ожидаем утвержд. администр.</string>
     <string name="chats_contact_add_time">Вы доб. %s в %s</string>

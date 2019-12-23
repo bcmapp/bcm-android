@@ -270,6 +270,7 @@
     <string name="chats_group_actor_creator">मालिक</string>
     <string name="chats_group_setting_mute">अधिसूचनाएं म्यूट करें</string>
     <string name="chats_new_group_chat">नया ग्रूप चैट</string>
+    <string name="chats_group_contact_title">समूह</string>
     <string name="chats_group_member_add_success">पूरा जोड़ें</string>
     <string name="chats_group_member_invite_wating_review">आग्रह भेजा गया, एडमिन की स्वीकृति की प्रतीक्षा हो रही है</string>
     <string name="chats_contact_add_time">आप %s को %s पर जोड़ें</string>

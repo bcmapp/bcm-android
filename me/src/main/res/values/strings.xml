@@ -21,9 +21,6 @@
 
     <string name="me_more_title">More</string>
     <string name="me_more_account_title">Accounts</string>
-    <string name="me_more_data_vault_title">Data Vault</string>
-    <string name="me_more_wallet_title">Wallet</string>
-    <string name="me_more_settings_title">Settings</string>
     <string name="me_more_scan">Scan</string>
 
     <string name="me_take_phone">Take Photo</string>

@@ -270,6 +270,7 @@
     <string name="chats_group_actor_creator">مالك</string>
     <string name="chats_group_setting_mute">كتم الإشعارات</string>
     <string name="chats_new_group_chat">مجموعة دردشة جديدة</string>
+    <string name="chats_group_contact_title">مجموعات</string>
     <string name="chats_group_member_add_success">تمت الإضافة</string>
     <string name="chats_group_member_invite_wating_review">تم إرسال الطلب، في انتظار موافقة المسؤول</string>
     <string name="chats_contact_add_time">قمت بإضافة %s على %s</string>

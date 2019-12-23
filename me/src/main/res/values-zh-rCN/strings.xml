@@ -29,10 +29,6 @@
 
     <string name="me_more_title">更多</string>
     <string name="me_more_account_title">账户</string>
-    <string name="me_more_data_vault_title">数据保险箱</string>
-    <string name="me_more_wallet_title">钱包</string>
-    <string name="me_more_settings_title">设置</string>
-
     <string name="me_more_scan">扫描</string>
 
     <string name="me_take_phone">拍摄照片</string>

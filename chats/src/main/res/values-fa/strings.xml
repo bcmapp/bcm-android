@@ -270,6 +270,7 @@
     <string name="chats_group_actor_creator">مالک</string>
     <string name="chats_group_setting_mute">بی‌صدا کردن اعلان‌ها</string>
     <string name="chats_new_group_chat">چت گروهی جدید</string>
+    <string name="chats_group_contact_title">گروه‌ها</string>
     <string name="chats_group_member_add_success">افزوده شد</string>
     <string name="chats_group_member_invite_wating_review">درخواست ارسال شد؛ در انتظار تأیید مدیر</string>
     <string name="chats_contact_add_time">%s را در %s اضافه کردید</string>

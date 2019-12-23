@@ -103,7 +103,7 @@ class NewChatActivity : SwipeBaseActivity() {
             }
         })
 
-        mGroupsView = LayoutInflater.from(this).inflate(R.layout.chats_new_chat_group, null)
+        mGroupsView = LayoutInflater.from(this).inflate(R.layout.chats_layout_new_chat_group, null)
         mGroupsView?.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         mGroupsView?.setOnClickListener {
             BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_CONTACT_MAIN).navigation(this)
