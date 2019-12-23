@@ -93,7 +93,7 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
 
     }
 
-    private fun init(callback: (() -> Unit)? = null) {
+    private fun init() {
         ALog.i(TAG, "init")
 
         fun doAfterFirstSync() {
