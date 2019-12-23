@@ -38,11 +38,12 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.channels.FileChannel
 import java.util.regex.Pattern
-import java.util.regex.PatternSyntaxException
 
 
 @Route(routePath = APP_DEV_SETTING)
 class DevSettingsActivity : SwipeBaseActivity() {
+    private val TAG = "DevSettingsActivity"
+
     private val curEnv = EnvSettingLogic.getEnvSetting().copy()
     private val connChecker = IMServerConnectionChecker()
 
@@ -66,7 +67,7 @@ class DevSettingsActivity : SwipeBaseActivity() {
 
         edit_selection.setOnClickListener {
             val builder = AmePopup.bottom.newBuilder()
-                    .withTitle("Select server")
+                    .withTitle(getString(R.string.dev_settings_ip_select_title))
             for (env in EnvSettingLogic.EnvList){
                 builder.withPopItem(AmeBottomPopup.PopupItem(env){
                     curEnv.server = env
@@ -94,7 +95,7 @@ class DevSettingsActivity : SwipeBaseActivity() {
 
         dev_setting_dev_crash.setOnClickListener {
             val outOfBoundsException: ArrayList<String> = ArrayList()
-            ALog.i("crashTest", outOfBoundsException[0])
+            ALog.i(TAG, outOfBoundsException[0])
         }
 
         dev_setting_dev_anr.setOnClickListener {
@@ -112,7 +113,7 @@ class DevSettingsActivity : SwipeBaseActivity() {
         }
 
         dev_setting_dev_pull_data.setOnClickListener {
-            val dirs = arrayOf("messages%s.db", "new_group%s")
+            val dirs = arrayOf("messages%s.db", "new_group%s", "user_%s")
             for (i in dirs) {
                 val name = String.format(i, AMESelfData.uid)
                 val dbFile = AppContextHolder.APP_CONTEXT.getDatabasePath(name)
@@ -139,7 +140,7 @@ class DevSettingsActivity : SwipeBaseActivity() {
                         source?.close()
                         destination?.close()
                     } catch (e:Throwable) {
-
+                        ALog.e(TAG, e)
                     }
                 }
             }
@@ -167,7 +168,7 @@ class DevSettingsActivity : SwipeBaseActivity() {
         dev_setting_dev_sign.setOnClickListener {
             val hash = EncryptUtils.computeSHA256(packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures[0].toByteArray())
             ToastUtil.show(this, HexUtil.toString(hash))
-            ALog.i("DevSettingsActivity", "hash:${HexUtil.toString(hash)}")
+            ALog.i(TAG, "hash:${HexUtil.toString(hash)}")
         }
 
 
@@ -176,9 +177,9 @@ class DevSettingsActivity : SwipeBaseActivity() {
 
             if (url.trim().isEmpty()) {
                 AmePopup.center.newBuilder()
-                        .withTitle("Tip")
-                        .withContent("Where to go")
-                        .withOkTitle("Got it!")
+                        .withTitle(getString(R.string.dev_settings_webview_test_dialog_title))
+                        .withContent(getString(R.string.dev_settings_webview_test_dialog_content))
+                        .withOkTitle(getString(R.string.dev_settings_webview_test_dialog_ok))
                         .show(this)
                 return@setOnClickListener
             }
@@ -237,7 +238,7 @@ class DevSettingsActivity : SwipeBaseActivity() {
             }
 
             AmePopup.center.newBuilder()
-                    .withTitle("Save settings?")
+                    .withTitle(getString(R.string.dev_settings_save_settings_title))
                     .withOkTitle(getString(R.string.common_popup_ok))
                     .withCancelTitle(getString(R.string.common_cancel))
                     .withCancelListener {
@@ -306,12 +307,8 @@ class DevSettingsActivity : SwipeBaseActivity() {
             if (matcher.group() == trimHost) {
                 return true
             }
-        } catch (e: PatternSyntaxException) {
-
-        } catch (e1: IllegalArgumentException) {
-
-        } catch (e2: IllegalStateException) {
-
+        } catch (tr: Throwable) {
+            ALog.e(TAG, tr)
         }
         return false
     }

@@ -89,4 +89,27 @@
     <string name="tabless_ui_intro_text_1"><Data><![CDATA[<font color=#C5F4F7>Introducing the new</font><br><font color=#FFFFFF><b>Tabless UI</b></font>]]></Data></string>
     <string name="tabless_ui_intro_text_2"><Data><![CDATA[<font color=#FFFFFF><b>Friends list</b></font> <font color=#C5F4F7>is moved to<br>the</font> <font color=#FFFFFF><b>New Chat</b></font>]]></Data></string>
     <string name="tabless_ui_intro_text_3"><Data><![CDATA[<font color=#C5F4F7>Find</font> <font color=#FFFFFF><b>More</b></font> <font color=#C5F4F7>in your</font> <font color=#FFFFFF><b>Avatar</b></font>]]></Data></string>
+
+    <!-- Dev Settings -->
+    <string name="dev_settings_title">Dev Settings</string>
+    <string name="dev_settings_test_crash">Test crash log</string>
+    <string name="dev_settings_test_anr">Test ANR</string>
+    <string name="dev_settings_test_connection">Test connection</string>
+    <string name="dev_settings_export_data">Export data</string>
+    <string name="dev_settings_wallet_test_chain">Enable wallet test chain</string>
+    <string name="dev_settings_signature">Show APP signature</string>
+    <string name="dev_settings_enable_https">Enable HTTPS</string>
+    <string name="dev_settings_enable_lbs">Enable LBS</string>
+    <string name="dev_settings_enable_vpn">Enable VPN</string>
+    <string name="dev_settings_enable_test_env">Enable test env</string>
+    <string name="dev_settings_env_enter_url_hint">Enter IP(e.g. 127.0.0.1:8080)</string>
+    <string name="dev_settings_ip_select_title">Select IP</string>
+    <string name="dev_settings_ip_select">Select</string>
+    <string name="dev_settings_webview_test">WebView Test</string>
+    <string name="dev_settings_enter_url_hint">Enter URL(e.g. https://bcm.social/)</string>
+    <string name="dev_settings_webview_test_go">GO!</string>
+    <string name="dev_settings_webview_test_dialog_title">Tip</string>
+    <string name="dev_settings_webview_test_dialog_content">Hey Bro, where do you want to go?</string>
+    <string name="dev_settings_webview_test_dialog_ok">Got it!</string>
+    <string name="dev_settings_save_settings_title">Save Settings?</string>
 </resources>

@@ -799,7 +799,7 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program. 
 If not, see http://www.gnu.org/licenses/.
 ---------------------------------------------------------------------------------------------
-ShadowsocksR has included third party open source projects listed below:
+ShadowsocksR includes third party open source projects listed below:
 shadowsocks-libev licensed under GPLv3.
 tun2socks licensed under BSD.
 redsocks licensed under Apache 2.0 License.

@@ -16,6 +16,7 @@ import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_fragment_forward_contact.*
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.utils.setStatusBarLightMode
 
 class ForwardContactFragment : Fragment(), IContactsCallback {
     private var callback: ForwardSelectCallback? = null
@@ -30,6 +31,8 @@ class ForwardContactFragment : Fragment(), IContactsCallback {
                 fragmentManager?.popBackStack()
             }
         })
+
+        activity?.window?.setStatusBarLightMode()
     }
 
     override fun onStart() {
