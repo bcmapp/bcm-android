@@ -84,6 +84,9 @@ dependencies {
     api project(':utility')
     api project(":netswitchy")
 
+    api files('libs/caton-2.2.6-bcm.aar')
+    api files('libs/crashreport-2.2.6-bcm.aar')
+
     api 'com.bcm.router:router:1.0.0'
     kapt 'com.bcm.router:processor:1.0.0'
 
