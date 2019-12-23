@@ -86,6 +86,7 @@
     <color name="common_10_transparent">#1A000000</color>
     <color name="common_20_transparent">#33000000</color>
     <color name="common_30_transparent">#4D000000</color>
+    <color name="common_60_transparent">#9A000000</color>
     <color name="common_70_transparent">#B3000000</color>
     <color name="common_color_F6F7F9">#F6F7F9</color>
 
