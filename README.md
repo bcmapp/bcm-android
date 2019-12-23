@@ -1,5 +1,5 @@
 # BCM Android 
-## BCM is a highly secure communication platform. Each message is strictly encrypted, and no third party can decipher the content. Below are the highlight features:
+BCM is a highly secure communication platform. Each message is strictly encrypted, and no third party can decipher the content. Below are the highlight features:
 ### Privacy Protection
 1. Sign up to BCM without phone-number or email.
 2. No access to your phone contacts.
