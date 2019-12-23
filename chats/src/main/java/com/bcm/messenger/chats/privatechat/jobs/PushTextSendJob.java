@@ -97,6 +97,8 @@ public class PushTextSendJob extends PushSendJob {
         } finally {
             checkMessageType(record);
         }
+
+
     }
 
     @Override
@@ -132,6 +134,7 @@ public class PushTextSendJob extends PushSendJob {
             } else {
                 BcmChatCore.INSTANCE.sendSilentMessage(address, textSecureMessage);
             }
+
         } catch (UnregisteredUserException e) {
             ALog.e(TAG, e);
             EventBus.getDefault().post(new UserOfflineEvent(message.getRecipient().getAddress()));

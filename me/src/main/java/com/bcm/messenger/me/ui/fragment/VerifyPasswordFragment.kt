@@ -13,13 +13,11 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
-import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.common.utils.showKeyboard
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.ui.login.backup.VerifyFingerprintActivity
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.ViewUtils
@@ -196,8 +194,8 @@ class VerifyPasswordFragment : Fragment() {
                         ViewUtils.fadeIn(verify_pin_error, 300)
                     }
                 }, {
-                    verify_pin_input_go.visibility = View.VISIBLE
-                    verify_pin_loading.visibility = View.GONE
+                    ViewUtils.fadeIn(verify_pin_input_go, 250)
+                    ViewUtils.fadeOut(verify_pin_loading, 250)
                     verify_pin_loading.stopAnim()
 
                     verify_pin_error.text = getString(R.string.me_fingerprint_wrong_password)

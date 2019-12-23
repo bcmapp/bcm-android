@@ -184,9 +184,7 @@ class ZoomingImageView @JvmOverloads constructor(context: Context, attrs: Attrib
                     try {
                         if (MediaUtil.isGif(contentType)) {
                             setImageScaleType(mStandardImageView, size.width, size.height)
-                            postDelayed({
-                                setGifUri(masterSecret, glideRequests, uri)
-                            }, 500)
+                            setGifUri(masterSecret, glideRequests, uri)
 
                         } else if (size.width <= mMaxTextureSize && size.height <= mMaxTextureSize) {
                             setImageScaleType(mStandardImageView, size.width, size.height)

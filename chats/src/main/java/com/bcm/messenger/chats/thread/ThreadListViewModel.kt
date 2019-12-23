@@ -143,7 +143,7 @@ class ThreadListViewModel : ViewModel() {
             })
             var unreadCount = 0
             tl.forEach {r ->
-                ALog.d(TAG, "uid: ${r.uid}, mute: ${r.getRecipient().mutedUntil}, unread: ${r.unreadCount}")
+                //ALog.d(TAG, "uid: ${r.uid}, mute: ${r.getRecipient().mutedUntil}, unread: ${r.unreadCount}")
                 if (!r.getRecipient().isMuted && r.unreadCount > 0) {
                     unreadCount++
                 }
