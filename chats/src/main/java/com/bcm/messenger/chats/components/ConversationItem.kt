@@ -1034,7 +1034,6 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                             .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_resend)) {
                                 if (!groupThread && (messageRecord.isFailed() || messageRecord.isPendingInsecureFallback())) {
                                     Observable.create<Unit> {
-                                        // TODO: Change resend code
                                         if (messageRecipient.isPushGroupRecipient) {
 //                                        MessageSender.resendGroupMessage(context, messageRecord, messageRecipient.address)
                                         } else {
