@@ -71,18 +71,7 @@ class VerifyPasswordFragment : Fragment() {
         verify_pin_input_text.addTextChangedListener(object : TextWatcher {
 
             override fun afterTextChanged(s: Editable?) {
-                if (s != null && s.isNotEmpty()) {
-                    verify_pin_input_clear.alpha = 1f
-                    verify_pin_input_clear.isEnabled = true
-                    verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_icon)
-                    verify_pin_input_go.isEnabled = true
-                    verify_pin_error.visibility = View.GONE
-                } else {
-                    verify_pin_input_clear.alpha = 0.7f
-                    verify_pin_input_clear.isEnabled = false
-                    verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_disabled_icon)
-                    verify_pin_input_go.isEnabled = false
-                }
+                updateVerifyInput(s != null && s.isNotEmpty())
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -91,6 +80,8 @@ class VerifyPasswordFragment : Fragment() {
         })
 
         fetchProfile(arguments?.getString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID))
+
+        updateVerifyInput(verify_pin_input_text.text.isNotEmpty())
 
         verify_pin_input_text.postDelayed({
             verify_pin_input_text?.setSelection(0)
@@ -122,6 +113,21 @@ class VerifyPasswordFragment : Fragment() {
         verifyCallback = null
     }
 
+    private fun updateVerifyInput(hasText: Boolean) {
+        if (hasText) {
+            verify_pin_input_clear.alpha = 1f
+            verify_pin_input_clear.isEnabled = true
+            verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_icon)
+            verify_pin_input_go.isEnabled = true
+            verify_pin_error.visibility = View.GONE
+        } else {
+            verify_pin_input_clear.alpha = 0.7f
+            verify_pin_input_clear.isEnabled = false
+            verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_disabled_icon)
+            verify_pin_input_go.isEnabled = false
+        }
+    }
+
     private fun fetchProfile(accountId: String?) {
         if (!accountId.isNullOrEmpty()) {
             val account = AmeLoginLogic.accountHistory.getAccount(accountId)
@@ -151,6 +157,7 @@ class VerifyPasswordFragment : Fragment() {
                             weakThis.get()?.verify_pin_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
                         }, {})
             }
+
         } else {
             activity?.finish()
         }
