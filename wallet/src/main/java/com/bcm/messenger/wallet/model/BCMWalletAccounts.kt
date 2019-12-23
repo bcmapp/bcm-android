@@ -45,4 +45,23 @@ class BCMWalletAccounts : Serializable, NotGuard {
     fun isAccountExist(coinType: String): Boolean {
         return getAccount(coinType)?.coinList?.isNotEmpty() == true
     }
+
+    /**
+     * refresh， remove no source file wallet
+     */
+    fun refresh() {
+
+        fun check(iterator: MutableIterator<BCMWallet>) {
+            var wallet: BCMWallet
+            while (iterator.hasNext()) {
+                wallet = iterator.next()
+                if (!wallet.getSourceFile().exists()) {
+                    iterator.remove()
+                }
+            }
+        }
+
+        check(BTC.coinList.iterator())
+        check(ETH.coinList.iterator())
+    }
 }

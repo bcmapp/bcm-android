@@ -377,6 +377,8 @@ object BCMWalletManager {
             getAccountPreferences(AppContextHolder.APP_CONTEXT).edit().putInt(KEY_WALLET_VERSION, BCM_WALLET_VERSION).apply()
         }
 
+        mWalletAccounts.get()?.refresh()
+
         if (initIfNeed) {
             mLastInitResult = null
         }

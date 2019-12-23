@@ -1,6 +1,8 @@
 package com.bcm.messenger.wallet.utils
 
 import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.btc.WalletEx
 import com.bcm.messenger.wallet.model.BCMWallet
 import com.bcm.messenger.wallet.model.WalletDisplay
@@ -10,15 +12,15 @@ import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.FutureCallback
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.Service
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.utility.AppContextHolder
 import org.bitcoinj.core.*
 import org.bitcoinj.core.listeners.DownloadProgressTracker
 import org.bitcoinj.kits.WalletAppKit
 import org.bitcoinj.net.discovery.DnsDiscovery
 import org.bitcoinj.protocols.channels.StoredPaymentChannelClientStates
 import org.bitcoinj.protocols.channels.StoredPaymentChannelServerStates
-import org.bitcoinj.store.*
+import org.bitcoinj.store.BlockStore
+import org.bitcoinj.store.BlockStoreException
+import org.bitcoinj.store.SPVBlockStore
 import org.bitcoinj.utils.MonetaryFormat
 import org.bitcoinj.wallet.KeyChainGroup
 import org.bitcoinj.wallet.Wallet
@@ -518,7 +520,13 @@ class BtcWalletSyncHelper(val mParams: NetworkParameters) {
 
             wallet.autosaveToFile(saveFile, 5, TimeUnit.SECONDS, null)
 
-        } finally {
+        }
+        catch (ex: Exception) {
+            ALog.e(TAG, "loadWallet error", ex)
+            saveFile.delete()
+            throw ex
+        }
+        finally {
             walletStream.close()
         }
 
