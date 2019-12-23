@@ -7,6 +7,8 @@ import com.bcm.messenger.common.finder.IBcmFinder
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Created by bcm.social.01 on 2019/4/8.
@@ -14,28 +16,17 @@ import com.bcm.messenger.utility.logger.ALog
 class BcmThreadFinder: IBcmFinder {
 
     private val TAG = "BcmThreadFinder"
-    private val mLock = java.lang.Object()
+    private val mLock = AtomicReference(CountDownLatch(1))
     private var mRecipientList: List<Recipient>? = null
     private var mFindResult: ThreadFindResult? = null
 
     fun updateSource(recipientList: List<Recipient>, comparator: Comparator<Recipient>?) {
         ALog.d(TAG, "updateSource: ${recipientList.size}")
-        synchronized(mLock) {
-            var times = 0
-            do {
-                try {
-                    mRecipientList = recipientList.sortedWith(comparator ?: Recipient.getRecipientComparator())
-                    times = 2
-                }catch (ex: Exception) {
-                    ALog.e(TAG, "topN sort error", ex)
-                    times ++
-                    if (times >= 2) {
-                        mRecipientList = null
-                    }
-                }
-            }while (times < 2)
-            mLock.notifyAll()
+        if (mLock.get().count <= 0) {
+            mLock.set(CountDownLatch(1))
         }
+        mRecipientList = recipientList.sortedWith(comparator ?: Recipient.getRecipientComparator())
+        mLock.get().countDown()
     }
 
     override fun type(): BcmFinderType {
@@ -53,25 +44,14 @@ class BcmThreadFinder: IBcmFinder {
     }
 
     override fun cancel() {
-        synchronized(mLock) {
-            mRecipientList = null
-            mLock.notifyAll()
-        }
+        mLock.get().countDown()
     }
 
     fun getSourceList(): List<Recipient> {
-        synchronized(mLock) {
-            try {
-                if (mRecipientList == null) {
-                    mLock.wait()
-                }
-                return mRecipientList?.toList() ?: listOf()
-
-            }catch (ex: Exception) {
-                mLock.notifyAll()
-            }
-        }
-        return listOf()
+        try {
+            mLock.get().await()
+        }catch (ex: Exception) {}
+        return mRecipientList ?: listOf()
     }
 
     inner class ThreadFindResult(key: String) : IBcmFindResult {

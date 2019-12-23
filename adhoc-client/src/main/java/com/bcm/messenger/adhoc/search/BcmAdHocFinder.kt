@@ -8,6 +8,8 @@ import com.bcm.messenger.common.finder.IBcmFinder
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  *
@@ -16,33 +18,22 @@ import com.bcm.messenger.utility.logger.ALog
 class BcmAdHocFinder : IBcmFinder {
 
     private val TAG = "BcmAdHocFinder"
-    private val mSearchLock = java.lang.Object()
+    private val mSearchLock = AtomicReference(CountDownLatch(1))
     private var mSearchList: List<AdHocSession>? = null
     private var mFindResult: SessionFindResult? = null
 
     fun updateSource(sessionList: List<AdHocSession>) {
         ALog.d(TAG, "updateSource: ${sessionList.size}")
-        synchronized(mSearchLock) {
-            var times = 0
-            do {
-                try {
-                    mSearchList = sessionList.sortedWith(object : Comparator<AdHocSession> {
-                        private val map = mutableMapOf<AdHocSession, Int>()
-                        override fun compare(o1: AdHocSession, o2: AdHocSession): Int {
-                            return sort(map, o1, o2)
-                        }
-                    })
-                    times = 2
-                }catch (ex: Exception) {
-                    ALog.e(TAG, "updateSource error", ex)
-                    times ++
-                    if (times >= 2) {
-                        mSearchList = null
-                    }
-                }
-            }while (times < 2)
-            mSearchLock.notifyAll()
+        if (mSearchLock.get().count <= 0) {
+            mSearchLock.set(CountDownLatch(1))
         }
+        mSearchList = sessionList.sortedWith(object : Comparator<AdHocSession> {
+            private val map = mutableMapOf<AdHocSession, Int>()
+            override fun compare(o1: AdHocSession, o2: AdHocSession): Int {
+                return sort(map, o1, o2)
+            }
+        })
+        mSearchLock.get().countDown()
     }
 
     private fun sort(map: MutableMap<AdHocSession,Int>, entry1: AdHocSession, entry2: AdHocSession): Int {
@@ -89,25 +80,14 @@ class BcmAdHocFinder : IBcmFinder {
     }
 
     override fun cancel() {
-        synchronized(mSearchLock) {
-            mSearchList = null
-            mSearchLock.notifyAll()
-        }
+        mSearchLock.get().countDown()
     }
 
     fun getSourceList(): List<AdHocSession> {
-        synchronized(mSearchLock) {
-            try {
-                if (mSearchList == null) {
-                    mSearchLock.wait()
-                }
-                return mSearchList?.toList() ?: listOf()
-
-            }catch (ex: Exception) {
-                mSearchLock.notifyAll()
-            }
-        }
-        return listOf()
+        try {
+            mSearchLock.get().await()
+        }catch (ex: Exception) {}
+        return mSearchList ?: listOf()
     }
 
     inner class SessionFindResult(key: String) : IBcmFindResult {
