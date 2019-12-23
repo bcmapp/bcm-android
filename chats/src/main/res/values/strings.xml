@@ -345,7 +345,7 @@
     <string name="chats_message_add_contact">Add Contact</string>
 
     <!--forward-->
-    <string name="chats_forward_add_comment">Leave a comment</string>
+    <string name="chats_forward_add_comment">Leave a message</string>
     <string name="chats_forward_notice">Notice</string>
     <string name="chats_forward_cannot_send">Contact cannot send to group yet.</string>
     <string name="chats_forward_confirm_text">Make sure to forward?</string>

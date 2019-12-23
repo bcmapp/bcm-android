@@ -328,7 +328,7 @@
     <string name="chats_share_files_number">%d个文件</string>
 
     <!--forward-->
-    <string name="chats_forward_add_comment">添加评论</string>
+    <string name="chats_forward_add_comment">写个留言</string>
     <string name="chats_forward_notice">提示</string>
     <string name="chats_forward_cannot_send">联系人名片暂不能发送到群聊</string>
     <string name="chats_forward_confirm_text">确认要转发吗？</string>
