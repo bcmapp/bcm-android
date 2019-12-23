@@ -92,7 +92,7 @@ class ChatForwardDialog : DialogFragment() {
                 forward_image_layout.visibility = View.VISIBLE
                 forward_image_size.text = parseSize(size)
                 val uri = fileUri
-                if (isGroup || isShare) {
+                if (isShare) {
                     glideRequests?.asBitmap()
                             ?.load(uri)
                             ?.error(R.drawable.common_image_broken_img)
@@ -114,7 +114,7 @@ class ChatForwardDialog : DialogFragment() {
                 forward_video_size.text = parseSize(size)
                 forward_video_time.text = parseTime(duration)
                 val uri = fileUri
-                if (isGroup || isShare) {
+                if (isShare) {
                     if (uri != null) {
                         if (uri.scheme == "http" || uri.scheme == Uri.EMPTY.scheme) {
                             BcmFileUtils.getRemoteVideoFrameInfo(uri.toString()) { _, previewPath ->

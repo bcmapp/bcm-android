@@ -17,10 +17,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.repositories.ThreadRepo
-import com.bcm.messenger.common.mms.GlideApp
-import com.bcm.messenger.common.mms.OutgoingMediaMessage
-import com.bcm.messenger.common.mms.OutgoingSecureMediaMessage
-import com.bcm.messenger.common.mms.SlideDeck
+import com.bcm.messenger.common.mms.*
 import com.bcm.messenger.common.provider.IForwardSelectProvider.ForwardSelectCallback
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -50,11 +47,12 @@ class ForwardActivity : SwipeBaseActivity() {
         const val MULTI_INDEX_ID = "__multi_index_id"
         const val URI = "__uri"
     }
-    
+
     private var gid = 0L
     private var mode = NORMAL_MODE
     private var path = ""
     private lateinit var viewModel: ForwardViewModel
+    private lateinit var glide: GlideRequests
 
     override fun onCreate(savedInstanceState: Bundle?) {
         intent.putExtra(ARouterConstants.PARAM.PARAM_ENTER_ANIM, R.anim.common_slide_from_bottom_fast)
@@ -83,6 +81,7 @@ class ForwardActivity : SwipeBaseActivity() {
 
     private fun initResources() {
         viewModel = ViewModelProviders.of(this).get(ForwardViewModel::class.java)
+        glide = GlideApp.with(this)
 
         val uri = intent.getStringExtra(URI)
         if (uri != null) {
@@ -139,7 +138,7 @@ class ForwardActivity : SwipeBaseActivity() {
         if (isFinishing) return
         try {
             dialog.show(supportFragmentManager, DIALOG_TAG)
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "showForwardDialog error", ex)
         }
     }
@@ -158,15 +157,15 @@ class ForwardActivity : SwipeBaseActivity() {
             }
             viewModel.groupMessageList.size > 1 ->
                 ChatForwardDialog().setMasterSecret(getMasterSecret())
-                    .setRecipients(viewModel.selectRecipients)
-                    .setForwardGroupMultiple(viewModel.groupMessageList)
+                        .setRecipients(viewModel.selectRecipients)
+                        .setForwardGroupMultiple(viewModel.groupMessageList)
                         .setCallback { forwardHistory, commentText ->
                             viewModel.forwardMultipleMessages(gid, getMasterSecret(), forwardHistory, commentText) {
-                            AmeDispatcher.mainThread.dispatch {
-                                showSentToast(it)
+                                AmeDispatcher.mainThread.dispatch {
+                                    showSentToast(it)
+                                }
                             }
-                        }
-                    }.apply {
+                        }.apply {
                             showForwardDialog(this)
                         }
 
@@ -210,7 +209,7 @@ class ForwardActivity : SwipeBaseActivity() {
                 ALog.d(TAG, "PrivateMessage is an image.")
                 val uri = attachment.getThumbnailPartUri() ?: attachment.getPartUri()
                 if (uri != null) {
-                    dialog.setForwardImageDialog(uri, attachment.dataSize, GlideApp.with(this))
+                    dialog.setForwardImageDialog(uri, attachment.dataSize, glide)
                 }
             }
             message.isMediaMessage() && message.getVideoAttachment() != null -> {
@@ -218,7 +217,7 @@ class ForwardActivity : SwipeBaseActivity() {
                 ALog.d(TAG, "PrivateMessage is a video.")
                 val uri = attachment.getThumbnailPartUri() ?: attachment.getPartUri()
                 if (uri != null) {
-                    dialog.setForwardVideoDialog(uri, attachment.dataSize, attachment.duration, GlideApp.with(this))
+                    dialog.setForwardVideoDialog(uri, attachment.dataSize, attachment.duration, glide)
                 }
             }
             message.isLocation() -> {
@@ -269,18 +268,16 @@ class ForwardActivity : SwipeBaseActivity() {
             }
             is AmeGroupMessage.ImageContent -> {
                 ALog.d(TAG, "GroupMessage is an image.")
-                if (!message.attachmentUri.isNullOrBlank()) {
-                    var uri = Uri.parse(message.attachmentUri)
-                    if (uri.scheme.isNullOrBlank()) {
-                        uri = Uri.fromFile(File(message.attachmentUri))
-                    }
-                    dialog.setForwardImageDialog(uri, content.size, GlideApp.with(this))
+                if (message.thumbnailPartUri != null) {
+                    dialog.setForwardImageDialog(message.thumbnailPartUri!!, content.size, glide)
+                            .setMasterSecret(getMasterSecret())
                             .apply {
                                 showForwardDialog(this)
                             }
                 } else {
                     viewModel.downloadAndDecryptThumbnail { uri ->
-                        dialog.setForwardImageDialog(uri, content.size, GlideApp.with(this))
+                        dialog.setForwardImageDialog(uri, content.size, glide)
+                                .setMasterSecret(getMasterSecret())
                                 .apply {
                                     showForwardDialog(this)
                                 }
@@ -289,18 +286,16 @@ class ForwardActivity : SwipeBaseActivity() {
             }
             is AmeGroupMessage.VideoContent -> {
                 ALog.d(TAG, "GroupMessage is a video.")
-                if (!message.attachmentUri.isNullOrBlank()) {
-                    var uri = Uri.parse(message.attachmentUri)
-                    if (uri.scheme.isNullOrBlank()) {
-                        uri = Uri.fromFile(File(message.attachmentUri))
-                    }
-                    dialog.setForwardVideoDialog(uri, content.size, content.duration, GlideApp.with(this))
+                if (message.thumbnailPartUri != null) {
+                    dialog.setForwardVideoDialog(message.thumbnailPartUri!!, content.size, content.duration, glide)
+                            .setMasterSecret(getMasterSecret())
                             .apply {
                                 showForwardDialog(this)
                             }
                 } else {
                     viewModel.downloadAndDecryptThumbnail { uri ->
-                        dialog.setForwardVideoDialog(uri, content.size, content.duration, GlideApp.with(this))
+                        dialog.setForwardVideoDialog(uri, content.size, content.duration, glide)
+                                .setMasterSecret(getMasterSecret())
                                 .apply {
                                     showForwardDialog(this)
                                 }
@@ -375,7 +370,7 @@ class ForwardActivity : SwipeBaseActivity() {
             ThreadListViewModel.getThreadId(recipient) { threadId ->
                 try {
                     val uri = Uri.fromFile(File(path))
-                    val slide = AttachmentUtils.getImageSlide(this, uri)?:return@getThreadId
+                    val slide = AttachmentUtils.getImageSlide(this, uri) ?: return@getThreadId
                     val expiresIn = (recipient.expireMessages * 1000).toLong()
                     val deck = SlideDeck()
                     deck.addSlide(slide)

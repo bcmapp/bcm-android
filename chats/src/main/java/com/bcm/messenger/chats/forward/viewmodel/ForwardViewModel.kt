@@ -181,7 +181,6 @@ class ForwardViewModel : ViewModel() {
 
     @SuppressLint("CheckResult")
     fun forwardMultipleMessages(gid: Long, masterSecret: MasterSecret, enableHistory: Boolean, commentText: String, result: (succeed: Boolean) -> Unit) {
-
         if (enableHistory) {
             AmeAppLifecycle.showLoading()
             Observable.create<List<HistoryMessageDetail>> {
@@ -198,9 +197,8 @@ class ForwardViewModel : ViewModel() {
                     }
                 } else {
                     val emitter = it
-                    ForwardMessageEncapsulator.encapsulatePrivateHistoryMessages(AppContextHolder.APP_CONTEXT, masterSecret, privateMessageList) {
-                        succeed, messageList ->
-                        if (succeed){
+                    ForwardMessageEncapsulator.encapsulatePrivateHistoryMessages(AppContextHolder.APP_CONTEXT, masterSecret, privateMessageList) { succeed, messageList ->
+                        if (succeed) {
                             emitter.onNext(messageList)
                             emitter.onComplete()
                         } else {
@@ -230,14 +228,14 @@ class ForwardViewModel : ViewModel() {
                                     val contentStr = AmeGroupMessage(AmeGroupMessage.CHAT_HISTORY, content).toString()
                                     val locationMessage = OutgoingLocationMessage(recipient, contentStr,
                                             recipient.expireMessages * 1000L)
-                                    Observable.create<Long> {
+                                    Observable.create<Long> { emitter ->
 
                                         val id = MessageSender.send(AppContextHolder.APP_CONTEXT,
                                                 locationMessage, threadId, null)
                                         ForwardController.sendPrivateCommentMessage(commentText, recipient, masterSecret, threadId)
 
-                                        it.onNext(id)
-                                        it.onComplete()
+                                        emitter.onNext(id)
+                                        emitter.onComplete()
 
                                     }.subscribeOn(Schedulers.io())
                                             .observeOn(AndroidSchedulers.mainThread())
@@ -279,16 +277,13 @@ class ForwardViewModel : ViewModel() {
         val groupMessage = groupMessageList[0]
 
         MessageFileHandler.downloadThumbnail(groupMessage, object : MessageFileHandler.MessageFileCallback {
-
             override fun onResult(success: Boolean, uri: Uri?) {
-                if(success) {
+                if (success) {
                     callback(uri ?: Uri.EMPTY)
-                }else {
+                } else {
                     callback(Uri.EMPTY)
                 }
             }
-
         })
-
     }
 }
