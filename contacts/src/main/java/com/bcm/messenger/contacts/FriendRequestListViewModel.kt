@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.event.FriendRequestEvent
-import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.RxBus
@@ -58,7 +57,6 @@ class FriendRequestsListViewModel : ViewModel() {
 
     fun queryData() {
         AmePushProcess.clearFriendRequestNotification()
-        RxBus.post(HomeTabEvent(HomeTabEvent.TAB_CONTACT, showFigure = 0))
         Observable.create<List<BcmFriendRequest>> {
             it.onNext(dao.queryAll())
             it.onComplete()

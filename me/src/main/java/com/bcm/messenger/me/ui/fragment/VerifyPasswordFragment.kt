@@ -14,6 +14,7 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.utils.BcmFileUtils
+import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.common.utils.showKeyboard
 import com.bcm.messenger.login.logic.AmeLoginLogic
@@ -167,6 +168,7 @@ class VerifyPasswordFragment : Fragment() {
      * @param inputPassword 用户输入的密码
      */
     private fun verifyPassword(inputPassword: String) {
+        activity?.hideKeyboard()
         ViewUtils.fadeOut(verify_pin_input_go, 250)
         ViewUtils.fadeIn(verify_pin_loading, 250)
         verify_pin_loading.startAnim()

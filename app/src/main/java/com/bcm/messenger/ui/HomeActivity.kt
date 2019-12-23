@@ -108,72 +108,33 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         RxBus.subscribe<HomeTabEvent>(TAG) {
 
             ALog.i(TAG, "receive HomeTabEvent position: ${it.position}, figure: ${it.showFigure}")
-            fun updateBadge(showFigure: Int, showDot: Boolean, badgeCount: Int) {
-                when {
-                    showFigure > 0 -> {
-//                        home_toolbar_badge?.unreadCount = showFigure
-                        home_profile_layout.unreadCount = showFigure
-                    }
-                    else -> {
-//                        home_toolbar_badge?.unreadCount = 0
-                        home_profile_layout.unreadCount = 0
-                    }
-                }
-                ALog.i(TAG, "updateBadge: $badgeCount")
-                AmePushProcess.updateAppBadge(AppContextHolder.APP_CONTEXT, badgeCount)
-            }
 
-            var showFigure = 0
-            var showDot = false
-            var badgeCount = 0
-            var updateBadge = false
             when (it.position) {
                 TAB_CHAT -> {
 
                     if ((it.showFigure != null || it.showDot != null) && !mAdHocModule.isAdHocMode()) {
-                        updateBadge = true
-                        showFigure = it.showFigure ?: 0
-                        showDot = it.showDot ?: false
-                        badgeCount = showFigure
-
+                        home_profile_layout?.chatUnread = it.showFigure ?: 0
                     }
                 }
                 TAB_CONTACT -> {
 
                     if ((it.showFigure != null || it.showDot != null) && !mAdHocModule.isAdHocMode()) {
-                        updateBadge = true
-                        showFigure = it.showFigure ?: 0
-                        showDot = it.showDot ?: false
-                        badgeCount = showFigure
-
+                        home_profile_layout?.friendReqUnread = it.showFigure ?: 0
                     }
 
                 }
                 TAB_ME -> {
-
-                    if ((it.showFigure != null || it.showDot != null) && !mAdHocModule.isAdHocMode()) {
-                        updateBadge = true
-                        showFigure = it.showFigure ?: 0
-                        showDot = it.showDot ?: false
-                        badgeCount = showFigure
-
-                    }
-
                 }
                 TAB_ADHOC -> {
 
                     if ((it.showFigure != null || it.showDot != null) && mAdHocModule.isAdHocMode()) {
-                        updateBadge = true
-                        showFigure = it.showFigure ?: 0
-                        showDot = it.showDot ?: false
-                        badgeCount = showFigure
-
+                        home_profile_layout?.friendReqUnread = 0
+                        home_profile_layout?.chatUnread = it.showFigure ?: 0
                     }
+
                 }
             }
-            if (updateBadge) {
-                updateBadge(showFigure, showDot, badgeCount)
-            }
+
         }
 
         checkSchemeLaunch()
@@ -207,12 +168,19 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
             mPixelManager = PixelManager.Builder().target(PixelActivity::class.java).build()
             mPixelManager?.start(AppContextHolder.APP_CONTEXT)
+
+            home_profile_layout?.friendReqUnread = 0
+            home_profile_layout?.chatUnread = 0
+
             return true
 
         } else {
             if (null != adHocMainFragment) {
                 val removeFragment = supportFragmentManager.beginTransaction()
                 removeFragment.remove(adHocMainFragment).commitNow()
+
+                home_profile_layout?.friendReqUnread = 0
+                home_profile_layout?.chatUnread = 0
             }
 
             home_adhoc_main.visibility = View.GONE
@@ -368,10 +336,10 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         }
 
         messageListFragment = MessageListFragment()
-        messageListFragment!!.arguments = Bundle().apply {
+        messageListFragment?.arguments = Bundle().apply {
             putParcelable(ARouterConstants.PARAM.PARAM_MASTER_SECRET, getMasterSecret())
         }
-        messageListFragment!!.callback = object : MessageListFragment.MessageListCallback {
+        messageListFragment?.callback = object : MessageListFragment.MessageListCallback {
             override fun onRecyclerViewCreated(recyclerView: BcmRecyclerView) {
                 home_pull_down_layout.setScrollView(recyclerView)
             }
@@ -381,7 +349,9 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
             }
         }
 
-        initFragment(R.id.home_chats_main, messageListFragment!!, messageListFragment!!.arguments)
+        messageListFragment?.let {
+            initFragment(R.id.home_chats_main, it, it.arguments)
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

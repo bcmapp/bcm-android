@@ -12,7 +12,6 @@ import com.bcm.messenger.common.database.records.RecipientSettings
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.FriendRequestEvent
-import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.event.ServiceConnectEvent
 import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
@@ -614,7 +613,6 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
                             }
 
                             val unreadCount = friendDao.queryUnreadCount()
-                            RxBus.post(HomeTabEvent(HomeTabEvent.TAB_CONTACT, showFigure = unreadCount))
                             RxBus.post(FriendRequestEvent(unreadCount))
 
                             AmePushProcess.processPush(AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.FRIEND_NOTIFY, null, null,

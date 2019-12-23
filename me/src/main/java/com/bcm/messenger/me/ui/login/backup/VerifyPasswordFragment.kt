@@ -125,6 +125,7 @@ class VerifyPasswordFragment : AbsRegistrationFragment() {
                 return@setOnClickListener
             }
             if (!TextUtils.isEmpty(verify_pin_input_text.text)) {
+                activity?.hideKeyboard()
                 ViewUtils.fadeOut(verify_pin_input_go, 250)
                 ViewUtils.fadeIn(verify_pin_loading, 250)
                 verify_pin_loading.startAnim()

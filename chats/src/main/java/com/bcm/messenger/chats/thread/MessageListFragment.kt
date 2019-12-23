@@ -360,6 +360,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
                 .subscribe {
                     ALog.i(TAG, "checkUnHandledFriendRequest, unHandled: ${it.first}, unread: ${it.second}")
                     mAdapter?.updateFriendRequest(it.first, it.second)
+                    RxBus.post(HomeTabEvent(HomeTabEvent.TAB_CONTACT, showFigure = it.second))
                 }
     }
 }

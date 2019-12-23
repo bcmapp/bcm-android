@@ -18,11 +18,14 @@ import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAdHocModule
 import com.bcm.messenger.common.provider.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.getStatusBarHeight
 import com.bcm.messenger.me.ui.scan.NewScanActivity
+import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.home_profile_layout.view.*
 
@@ -48,11 +51,29 @@ class HomeProfileView @JvmOverloads constructor(context: Context, attrs: Attribu
                 home_profile_backup_icon.visibility = View.GONE
             }
         }
-    var unreadCount = 0
+
+    var chatUnread = 0
         set(value) {
-            field = value
-            home_profile_unread.unreadCount = value
+            if (field != value) {
+                field = value
+                updateHomeUnread(field + friendReqUnread)
+            }
         }
+
+    var friendReqUnread = 0
+        set(value) {
+            if (field != value) {
+                field = value
+                updateHomeUnread(field + chatUnread)
+            }
+        }
+
+    private fun updateHomeUnread(unread: Int) {
+        ALog.i(TAG, "updateHomeUnread: $unread")
+        home_profile_unread.unreadCount = unread
+        AmePushProcess.updateAppBadge(AppContextHolder.APP_CONTEXT, unread)
+
+    }
 
     private fun showAnimation() = AnimatorSet().apply {
         val updateListener = ValueAnimator.AnimatorUpdateListener {

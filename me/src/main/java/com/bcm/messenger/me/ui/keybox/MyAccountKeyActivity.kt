@@ -1,4 +1,4 @@
-package com.bcm.messenger.me.ui.login.backup
+package com.bcm.messenger.me.ui.keybox
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -26,7 +26,6 @@ import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.login.logic.QRExport
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.provider.UserModuleImp
-import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
 import com.bcm.messenger.me.utils.MeConfirmDialog
 import com.bcm.messenger.utility.*
 import com.bcm.messenger.utility.logger.ALog

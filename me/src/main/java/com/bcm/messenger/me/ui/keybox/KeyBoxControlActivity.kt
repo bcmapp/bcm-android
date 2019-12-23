@@ -27,7 +27,6 @@ import com.bcm.messenger.login.bean.KeyBoxItem
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.login.RegistrationActivity
-import com.bcm.messenger.me.ui.login.backup.MyAccountKeyActivity
 import com.bcm.messenger.me.ui.login.backup.VerifyFingerprintActivity
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.logger.ALog

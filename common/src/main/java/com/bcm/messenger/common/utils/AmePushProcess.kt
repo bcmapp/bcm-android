@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat
 import com.bcm.messenger.common.AmeNotification
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.RecipientDatabase
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.repositories.Repository
@@ -19,7 +20,6 @@ import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.common.push.AmeNotificationService
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.GsonUtils
@@ -731,7 +731,7 @@ object AmePushProcess {
      */
     fun updateAppBadge(context: Context, count: Int) {
         try {
-            ALog.i(TAG, "updateAppBadge count: $count")
+            ALog.i(TAG, "updateAppBadge with totalCount: $count")
             if (RomUtil.isMiui()) {
                 ALog.i(TAG, "xiaomi updateAppBadge count: $count")
                 ShortcutBadger.applyNotification(context, mChatNotification ?: mFriendReqNotification, count)
@@ -770,7 +770,7 @@ object AmePushProcess {
 
             } else {
                 val count = chatCount + friendReqCount
-                ALog.i(TAG, "updateAppBadge count: $count")
+                ALog.i(TAG, "updateAppBadge with chatCount: $chatCount, friendReqCount: $friendReqCount")
                 if (count <= 0) {
                     ShortcutBadger.removeCount(context)
                 } else {
