@@ -27,6 +27,10 @@ object EncryptMediaUtils {
         fun isValid() = groupFileInfo != null && localFileInfo != null
     }
 
+    class StreamEncryptResult(val localFileInfo: FileInfo?, val groupStreamInfo: GroupStreamInfo?, val width: Int, val height: Int) {
+        fun isValid() = groupStreamInfo != null && localFileInfo != null
+    }
+
     fun encryptVideo(masterSecret: MasterSecret, gid: Long, videoPath: String): Pair<EncryptResult?, EncryptResult?> {
         val triple = BcmFileUtils.getVideoFrameInfo(videoPath)
         val groupInfo = GroupInfoDataManager.queryOneGroupInfo(gid) ?: return Pair(null, null)
@@ -58,6 +62,38 @@ object EncryptMediaUtils {
         return Pair(null, null)
     }
 
+    // For next version to enable
+//    fun encryptVideo(masterSecret: MasterSecret, gid: Long, videoPath: String): Pair<StreamEncryptResult?, StreamEncryptResult?> {
+//        val triple = BcmFileUtils.getVideoFrameInfo(videoPath)
+//        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(gid) ?: return Pair(null, null)
+//        val keyParam = GroupKeyParam(groupInfo.currentKey.base64Decode(), groupInfo.currentKeyVersion)
+//        try {
+//            if (triple.first != null) {
+//                val compressedData = compressBitmap(triple.first!!, triple.second, triple.third, true)
+//
+//                val thumbnailFile = ChatFileEncryptDecryptUtil.encryptGroupFileStream(compressedData.first, keyParam)
+//                val thumbnailLocal = ChatFileEncryptDecryptUtil.encryptLocalFile(masterSecret, FileInputStream(compressedData.first))
+//                File(triple.first).delete()
+//                File(compressedData.first).delete()
+//
+//                val videoFile = ChatFileEncryptDecryptUtil.encryptGroupFileStream(videoPath, keyParam)
+//                val videoLocal = ChatFileEncryptDecryptUtil.encryptLocalFile(masterSecret, FileInputStream(videoPath))
+//
+//                return Pair(StreamEncryptResult(videoLocal, videoFile, triple.second, triple.third),
+//                        StreamEncryptResult(thumbnailLocal, thumbnailFile, compressedData.second, compressedData.third))
+//            } else {
+//                val videoFile = ChatFileEncryptDecryptUtil.encryptGroupFileStream(videoPath, keyParam)
+//                val videoLocal = ChatFileEncryptDecryptUtil.encryptLocalFile(masterSecret, FileInputStream(videoPath))
+//                return Pair(StreamEncryptResult(videoLocal, videoFile, triple.second, triple.third),
+//                        StreamEncryptResult(null, null, 0, 0))
+//            }
+//        } catch (tr: Throwable) {
+//            ALog.w(TAG, "Encrypt video failed. ${tr.message}")
+//        }
+//
+//        return Pair(null, null)
+//    }
+
     fun encryptImage(masterSecret: MasterSecret, gid: Long, path: String): Pair<EncryptResult?, EncryptResult?> {
         val groupInfo = GroupInfoDataManager.queryOneGroupInfo(gid) ?: return Pair(null, null)
         val keyParam = GroupKeyParam(groupInfo.currentKey.base64Decode(), groupInfo.currentKeyVersion)
@@ -87,6 +123,36 @@ object EncryptMediaUtils {
         return Pair(null, null)
     }
 
+    // For next version to enable
+//    fun encryptImage(masterSecret: MasterSecret, gid: Long, path: String): Pair<StreamEncryptResult?, StreamEncryptResult?> {
+//        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(gid) ?: return Pair(null, null)
+//        val keyParam = GroupKeyParam(groupInfo.currentKey.base64Decode(), groupInfo.currentKeyVersion)
+//
+//        val options = BitmapFactory.Options()
+//        options.inJustDecodeBounds = true
+//        BitmapFactory.decodeFile(path, options)
+//        val width = options.outWidth
+//        val height = options.outHeight
+//
+//        val compressedData = compressBitmap(path, width, height, false)
+//
+//        try {
+//            val imageFile = ChatFileEncryptDecryptUtil.encryptGroupFileStream(path, keyParam)
+//            val imageLocal = ChatFileEncryptDecryptUtil.encryptLocalFile(masterSecret, FileInputStream(path))
+//
+//            val thumbnailFile = ChatFileEncryptDecryptUtil.encryptGroupFileStream(compressedData.first, keyParam)
+//            val thumbnailLocal = ChatFileEncryptDecryptUtil.encryptLocalFile(masterSecret, FileInputStream(compressedData.first))
+//            File(compressedData.first).delete()
+//
+//            return Pair(StreamEncryptResult(imageLocal, imageFile, width, height),
+//                    StreamEncryptResult(thumbnailLocal, thumbnailFile, compressedData.second, compressedData.third))
+//        } catch (tr: Throwable) {
+//            ALog.w(TAG, "Encrypt image failed. ${tr.message}")
+//        }
+//
+//        return Pair(null, null)
+//    }
+
     fun encryptFile(masterSecret: MasterSecret, gid: Long, filePath: String): EncryptResult? {
         val groupInfo = GroupInfoDataManager.queryOneGroupInfo(gid) ?: return null
         val keyParam = GroupKeyParam(groupInfo.currentKey.base64Decode(), groupInfo.currentKeyVersion)
@@ -102,6 +168,23 @@ object EncryptMediaUtils {
 
         return null
     }
+
+    // For next version to enable
+//    fun encryptFile(masterSecret: MasterSecret, gid: Long, filePath: String): StreamEncryptResult? {
+//        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(gid) ?: return null
+//        val keyParam = GroupKeyParam(groupInfo.currentKey.base64Decode(), groupInfo.currentKeyVersion)
+//
+//        try {
+//            val remoteFile = ChatFileEncryptDecryptUtil.encryptGroupFileStream(filePath, keyParam)
+//            val localFile = ChatFileEncryptDecryptUtil.encryptLocalFile(masterSecret, FileInputStream(filePath))
+//
+//            return StreamEncryptResult(localFile, remoteFile, 0, 0)
+//        } catch (tr: Throwable) {
+//            ALog.w(TAG, "Encrypt file failed. ${tr.message}")
+//        }
+//
+//        return null
+//    }
 
     private fun compressBitmap(path: String, currentWidth: Int, currentHeight: Int, isVideo: Boolean): Triple<String, Int, Int> {
         val destWidth: Int

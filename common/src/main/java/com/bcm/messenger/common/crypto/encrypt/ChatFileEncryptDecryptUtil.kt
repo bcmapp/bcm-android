@@ -40,6 +40,14 @@ data class GroupFileInfo(
         val mimeType: String,
         val sign: String)
 
+data class GroupStreamInfo(
+        val inputStream: InputStream,
+        val size: Long,
+        val name: String,
+        val mimeType: String,
+        val sign: String
+)
+
 object ChatFileEncryptDecryptUtil {
     private const val TAG = "ChatFileEncryptUtil"
 
@@ -90,6 +98,27 @@ object ChatFileEncryptDecryptUtil {
             val destFile = File(uri.path)
             realEncryptGroupFile(originFile, destFile, oneTimePsw)
             return GroupFileInfo(destFile, destFile.length(), originFile.name,
+                    MimeTypeMap.getSingleton().getMimeTypeFromExtension(originFile.extension)
+                            ?: "application/octet-stream", Base64.encodeBytes(digest))
+        } catch (tr: Throwable) {
+            throw RuntimeException("Encrypt file failed", tr)
+        }
+    }
+
+    @Throws(AssertionError::class, RuntimeException::class)
+    @WorkerThread
+    @JvmStatic
+    fun encryptGroupFileStream(path: String, keyParam: GroupKeyParam?): GroupStreamInfo {
+        keyParam ?: throw AssertionError("Key param is null")
+        try {
+            val originFile = File(path)
+            val originInputStream = FileInputStream(originFile)
+            val digest = EncryptUtils.encryptSHA512(FileInputStream(originFile))
+            val oneTimePsw = EncryptUtils.encryptSHA512(GroupMessageEncryptUtils.byteMerger(keyParam.key, digest))
+
+            val encryptedStream = getEncryptGroupFileStream(originInputStream, oneTimePsw)
+            val streamLength = (originFile.length() / 16 + 1) * 16
+            return GroupStreamInfo(encryptedStream, streamLength, originFile.name,
                     MimeTypeMap.getSingleton().getMimeTypeFromExtension(originFile.extension)
                             ?: "application/octet-stream", Base64.encodeBytes(digest))
         } catch (tr: Throwable) {

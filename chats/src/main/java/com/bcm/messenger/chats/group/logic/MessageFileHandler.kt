@@ -436,8 +436,14 @@ object MessageFileHandler {
             filePaths.add(StreamUploadData(FileInputStream(videoResult.groupFileInfo!!.file), videoResult.groupFileInfo!!.name, videoResult.groupFileInfo!!.mimeType, videoResult.groupFileInfo!!.size))
             filePaths.add(StreamUploadData(FileInputStream(thumbResult.groupFileInfo!!.file), thumbResult.groupFileInfo!!.name, thumbResult.groupFileInfo!!.mimeType, thumbResult.groupFileInfo!!.size))
 
+//            filePaths.add(StreamUploadData(videoResult.groupStreamInfo!!.inputStream, videoResult.groupStreamInfo!!.name, videoResult.groupStreamInfo!!.mimeType, videoResult.groupStreamInfo!!.size))
+//            filePaths.add(StreamUploadData(thumbResult.groupStreamInfo!!.inputStream, thumbResult.groupStreamInfo!!.name, thumbResult.groupStreamInfo!!.mimeType, thumbResult.groupStreamInfo!!.size))
+
             val videoUploadResult = UploadResult("", videoResult.localFileInfo!!, videoResult.groupFileInfo!!.sign, videoResult.width, videoResult.height)
             val thumbUploadResult = UploadResult("", thumbResult.localFileInfo!!, thumbResult.groupFileInfo!!.sign, thumbResult.width, thumbResult.height)
+
+//            val videoUploadResult = UploadResult("", videoResult.localFileInfo!!, videoResult.groupStreamInfo!!.sign, videoResult.width, videoResult.height)
+//            val thumbUploadResult = UploadResult("", thumbResult.localFileInfo!!, thumbResult.groupStreamInfo!!.sign, thumbResult.width, thumbResult.height)
 
             AmeFileUploader.uploadMultiStreamToAws(AmeFileUploader.AttachmentType.GROUP_MESSAGE, filePaths, object : AmeFileUploader.MultiStreamUploadCallback {
                 override fun onFailed(resultMap: MutableMap<StreamUploadData, AmeFileUploader.FileUploadResult>?) {
@@ -477,10 +483,14 @@ object MessageFileHandler {
                 val filePaths = mutableListOf<StreamUploadData>()
 
                 val groupFileInfo = imageResult.groupFileInfo!!
+//                val groupFileInfo = imageResult.groupStreamInfo!!
                 filePaths.add(StreamUploadData(FileInputStream(groupFileInfo.file), groupFileInfo.name, groupFileInfo.mimeType, groupFileInfo.size))
+//                filePaths.add(StreamUploadData(groupFileInfo.inputStream, groupFileInfo.name, groupFileInfo.mimeType, groupFileInfo.size))
 
                 val thumbGroupFileInfo = thumbResult.groupFileInfo!!
+//                val thumbGroupFileInfo = thumbResult.groupStreamInfo!!
                 filePaths.add(StreamUploadData(FileInputStream(thumbGroupFileInfo.file), thumbGroupFileInfo.name, thumbGroupFileInfo.mimeType, thumbGroupFileInfo.size))
+//                filePaths.add(StreamUploadData(thumbGroupFileInfo.inputStream, thumbGroupFileInfo.name, thumbGroupFileInfo.mimeType, thumbGroupFileInfo.size))
 
                 val imageUploadResult = UploadResult("", imageResult.localFileInfo!!, groupFileInfo.sign, imageResult.width, imageResult.height)
                 val thumbUploadResult = UploadResult("", thumbResult.localFileInfo!!, thumbGroupFileInfo.sign, thumbResult.width, thumbResult.height)
@@ -523,8 +533,10 @@ object MessageFileHandler {
         val fileResult = EncryptMediaUtils.encryptFile(masterSecret, groupId, filePath)
 
         if (fileResult != null && fileResult.isValid()) {
+//            val groupFileInfo = fileResult.groupStreamInfo!!
             val groupFileInfo = fileResult.groupFileInfo!!
             val fileUploadResult = UploadResult("", fileResult.localFileInfo!!, groupFileInfo.sign, 0, 0)
+//            val uploadData = StreamUploadData(groupFileInfo.inputStream, groupFileInfo.name, groupFileInfo.mimeType, groupFileInfo.size)
             val uploadData = StreamUploadData(FileInputStream(groupFileInfo.file), groupFileInfo.name, groupFileInfo.mimeType, groupFileInfo.size)
 
             AmeFileUploader.uploadStreamToAws(AmeFileUploader.AttachmentType.GROUP_MESSAGE, uploadData, object : AmeFileUploader.StreamUploadCallback() {
