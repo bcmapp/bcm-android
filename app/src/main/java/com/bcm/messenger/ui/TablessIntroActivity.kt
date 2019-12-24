@@ -1,5 +1,6 @@
 package com.bcm.messenger.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Html
 import android.text.SpannableString
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.bcm.messenger.R
+import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.setTranslucentStatus
@@ -46,6 +48,10 @@ class TablessIntroActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         // Cannot back
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(setLocale(newBase))
     }
 
     private inner class IntroPagerAdapter : PagerAdapter() {
