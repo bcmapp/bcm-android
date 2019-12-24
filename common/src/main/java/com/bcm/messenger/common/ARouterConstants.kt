@@ -434,6 +434,8 @@ object ARouterConstants {
             const val HANDLE_DELEGATE = "scan_handle_delegate"
             const val SCAN_CHARSET = "scan_charset"
             const val SCAN_RESULT = "scan_result"
+
+            const val TAB = "scan_page_tab"
         }
 
         object HOME {
