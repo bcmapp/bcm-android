@@ -180,6 +180,7 @@ class NewChatActivity : SwipeBaseActivity() {
                 new_chat_title_bar.setRightTextColor(getColorCompat(R.color.common_app_primary_color))
                 new_chat_title_bar.setLeftText(getString(R.string.chats_cancel))
                 new_chat_title_bar.setLeftTextColor(getColorCompat(R.color.common_color_black))
+                new_chat_title_bar.setLeftTextSize(15.0f)
 
                 try {
                     //自己是不需要再选的

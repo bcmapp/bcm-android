@@ -351,6 +351,10 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
         title_bar_left_text.setTextColor(color)
     }
 
+    fun setLeftTextSize(size: Float) {
+        title_bar_left_text.setTextSize(size)
+    }
+
     fun setLeftClickable(isClickable: Boolean) {
         title_bar_left_zone.isClickable = isClickable
     }
@@ -470,6 +474,10 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
 
     fun setRightTextColor(color: Int) {
         title_bar_right_text.setTextColor(color)
+    }
+
+    fun setRightTextSize(size: Float) {
+        title_bar_right_text.setTextSize(size)
     }
 
     fun setRightClickable(isClickable: Boolean) {
