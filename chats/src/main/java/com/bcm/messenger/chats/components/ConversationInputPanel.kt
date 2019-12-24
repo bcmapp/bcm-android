@@ -1108,7 +1108,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
     private fun createAtPart(recipient: Recipient, groupId: Long): CharSequence {
         val model = GroupLogic.getModel(groupId)
-        return ARouterConstants.CHAT_AT_CHAR + BcmGroupNameUtil.getGroupMemberName(recipient, model?.getGroupMember(recipient.address.serialize()))
+        return ARouterConstants.CHAT_AT_CHAR + BcmGroupNameUtil.getGroupMemberAtName(recipient, model?.getGroupMember(recipient.address.serialize()))
     }
 
     private class TempAtData(var recipient: Recipient?, var index: Int = -1) {
