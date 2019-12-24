@@ -25,6 +25,7 @@ import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmeNoteLogic
 import com.bcm.messenger.me.logic.AmePinLogic
 import com.bcm.messenger.me.ui.keybox.SwitchAccountAdapter
+import com.bcm.messenger.me.ui.login.RegistrationActivity
 import com.bcm.messenger.me.utils.MeConfirmDialog
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -229,6 +230,12 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
                 AmeDispatcher.io.dispatch {
                     AmeLoginLogic.quit(false)
 
+                    AmeDispatcher.mainThread.dispatch {
+                        //登出了，跳到注册界面
+                        BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                .navigation()
+                    }
                 }
                 return
             }
