@@ -28,6 +28,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
     }
 
     fun initLogic() {
+        ALog.i(TAG, "AmePinLogic")
     }
 
     fun isLocked(): Boolean {

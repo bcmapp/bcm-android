@@ -168,34 +168,39 @@ class AmeAccountHistory {
 
         fun fixCurrentAndLastAccount(): Boolean {
             var needUpdate = false
-            var fixCur = mCurAccount == null
-            var fixLast = mLastAccount == null
 
             val oldCur = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_CURRENT_LOGIN)
             val oldLast = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_LAST_LOGIN)
 
-            if (fixCur || fixLast) {
-                needUpdate = true
+            for ((k, v) in accountMap) {
 
-                for ((k, v) in accountMap) {
-                    if (fixCur) {
-                        if (v.uid == oldCur) {
-                            v.curLogin = true
-                            mCurAccount = v
-                            fixCur = false
-                        }
-                    }
-                    if (fixLast) {
-                        if (v.uid == oldLast) {
-                            v.lastLogin = true
-                            mLastAccount = v
-                            fixLast = false
-                        }
-                    }
-                    if (!fixCur && !fixLast) {
-                        break
-                    }
+                if (v.curLogin || (oldCur.isNotEmpty() && v.uid == oldCur)) {
+                    mCurAccount?.curLogin = false
+                    v.curLogin = true
+                    mCurAccount = v
+
+                }else {
+                    v.curLogin = false
                 }
+
+                if (v.lastLogin || (oldLast.isNotEmpty() && v.uid == oldLast)) {
+                    mLastAccount?.lastLogin = false
+                    v.lastLogin = true
+                    mLastAccount = v
+
+                }else {
+                    v.lastLogin = false
+                }
+            }
+
+            if (mCurAccount != null && mLastAccount?.uid != mCurAccount?.uid) {
+                mLastAccount?.lastLogin = false
+                mLastAccount = mCurAccount
+                mLastAccount?.lastLogin = true
+                mLastAccount?.let {
+                    SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_LAST_LOGIN, it.uid)
+                }
+                needUpdate = true
             }
 
             if (mCurAccount != null && BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) == null) {
@@ -204,13 +209,12 @@ class AmeAccountHistory {
                 needUpdate = true
             }
 
-            if (oldCur.isNullOrEmpty()) {
+            if (oldCur.isEmpty()) {
                 mCurAccount?.let {
                     SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_CURRENT_LOGIN, it.uid)
-
                 }
             }
-            if (oldLast.isNullOrEmpty()) {
+            if (oldLast.isEmpty()) {
                 mLastAccount?.let {
                     SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_LAST_LOGIN, it.uid)
                 }
@@ -225,7 +229,7 @@ class AmeAccountHistory {
 
                 accountMap.clear()
                 val accountListString = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_ACCOUNT_LIST)
-                if (!accountListString.isNullOrEmpty()) {
+                if (accountListString.isNotEmpty()) {
                     accountMap.putAll(Gson().fromJson(accountListString, object : TypeToken<HashMap<String, AmeAccountData>>() {}.type))
                 }
 

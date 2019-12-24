@@ -3,6 +3,8 @@ package com.bcm.messenger.common.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
+
 import com.bcm.messenger.utility.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 
@@ -122,6 +124,7 @@ public class SuperPreferences {
         context.getSharedPreferences(LOGIN_PROFILE_PREFERENCES, 0).edit().putString(key, value).commit();
     }
 
+    @NonNull
     public static String getStringPreference(Context context, String key) {
         return context.getSharedPreferences(LOGIN_PROFILE_PREFERENCES, 0).getString(key, "");
     }

@@ -245,6 +245,9 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
             if(!TextSecurePreferences.isSignedPreKeyRegistered(AppContextHolder.APP_CONTEXT)) {
                 AmeModuleCenter.accountJobMgr()?.add(CreateSignedPreKeyJob(AppContextHolder.APP_CONTEXT))
             }
+
+        }else {
+            ALog.i(TAG, "checkLoginAccountState not login, pass")
         }
     }
 

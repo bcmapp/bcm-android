@@ -37,13 +37,11 @@
     <string name="contacts_requests_empty_notice_text">When new friend requests will show up here</string>
 
     <string name="contacts_invites_empty_text">No result</string>
-
     <string name="contacts_invites_action_text">Invite</string>
     <string name="contacts_requests_action_to_text">Add</string>
     <string name="contacts_requests_action_done_text">Added</string>
     <string name="contacts_invites_action_to_text">Add</string>
     <string name="contacts_invites_action_done_text">Added</string>
-
     <string name="contacts_invites_search_hint">Enter a Phone Number</string>
 
     <string name="contacts_invites_add_friend_success">Invite Friend Success!</string>
@@ -68,6 +66,8 @@
 
     <string name="contacts_new_channel">New Channel</string>
     <string name="contacts_new_group_chat">New Group Chat</string>
+    
+    <string name="contacts_group_invite_version_low_description">The user\'s version is too old to be invited</string>
 
     <!-- 请求好友 -->
     <string name="contacts_request_friend_title">Friend Request</string>
@@ -95,5 +95,7 @@
     <string name="contacts_user_unblock_success">Chat User is Unblock</string>
     <string name="contacts_user_block_fail">Chat User Block failed</string>
     <string name="contacts_user_unblock_fail">Chat User Unblock failed</string>
+
+    
 
 </resources>

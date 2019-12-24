@@ -222,7 +222,7 @@ class RecipientRecyclerView @JvmOverloads constructor(
                 if (mMultiSelect) {
                     val state = enableChecker.checkState(r.address)
                     if (state == SelectionEnableChecker.STATE.DISABLE) {
-                        AmeAppLifecycle.failure("This user version is too low to invite a group chat", true)
+                        AmeAppLifecycle.failure(it.context.getString(R.string.contacts_group_invite_version_low_description), true)
                         return@setOnClickListener
                     }
 

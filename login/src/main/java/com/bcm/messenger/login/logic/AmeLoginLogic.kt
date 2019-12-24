@@ -81,7 +81,6 @@ object AmeLoginLogic {
     init {
         accountHistory.init()
 
-
         val functions = arrayOf(BcmFeatureSupport.FEATURE_ENABLE,
                 BcmFeatureSupport.FEATURE_BIDIRECTIONAL_CONTACT,
                 BcmFeatureSupport.FEATURE_AWS, BcmFeatureSupport.GROUP_SECURE_V3)
@@ -560,8 +559,6 @@ object AmeLoginLogic {
                                 password: String,
                                 passwordHint: String) {
 
-        accountHistory.saveCurrentLoginUid(uid)
-
         val gcmToken = if (PlayServicesUtil.getPlayServicesStatus(AppContextHolder.APP_CONTEXT) == PlayServicesUtil.PlayServicesStatus.SUCCESS) {
             FcmUtil.getToken()
         } else {
@@ -583,7 +580,6 @@ object AmeLoginLogic {
         if (passwordHint.isNotBlank()) {
             accountData.passwordHint = passwordHint
         }
-
         accountData.uid = uid
         accountData.lastLoginTime = System.currentTimeMillis() / 1000
         accountData.mode = AmeAccountData.ACCOUNT_MODE_NORMAL
@@ -596,13 +592,11 @@ object AmeLoginLogic {
         accountData.signalPassword = signalPassword
         accountData.signalingKey = signalKey
         accountData.signedPreKeyRegistered = true
-        accountData.curLogin = true
-        accountData.lastLogin = true
-
         accountHistory.saveAccount(accountData)
+        accountHistory.saveCurrentLoginUid(uid)
+        accountHistory.saveLastLoginUid(uid)
 
         TextSecurePreferences.setIntegerPrefrence(AppContextHolder.APP_CONTEXT, TextSecurePreferences.ACCOUNT_DATA_VERSION, AmeAccountData.V4)
-
     }
 
     private fun initCreatePhrase(context: Context, ecKeyPair: ECKeyPair) {
@@ -611,7 +605,6 @@ object AmeLoginLogic {
         if (MasterSecretUtil.isPassphraseInitialized(context)) {
             return
         }
-
         try {
             val passphrase = MasterSecretUtil.UNENCRYPTED_PASSPHRASE
             val masterSecret = MasterSecretUtil.generateMasterSecret(context, passphrase)

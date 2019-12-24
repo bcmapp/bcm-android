@@ -56,6 +56,8 @@
     <string name="contacts_new_group_chat">新建群聊</string>
     <string name="contacts_new_channel">新建广播</string>
 
+    <string name="contacts_group_invite_version_low_description">此用户版本过低，无法邀请入群</string>
+
 
     <!-- 请求好友 -->
     <string name="contacts_request_friend_title">好友请求</string>
