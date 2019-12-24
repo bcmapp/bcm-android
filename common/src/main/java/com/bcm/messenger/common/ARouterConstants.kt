@@ -329,6 +329,9 @@ object ARouterConstants {
         const val PARAM_ACCOUNT_ID = "param_account_id"
         const val PARAM_DATA = "param_transfer_data"
 
+        const val PARAM_PREVIOUS_ENTER_ANIM = "previous_enter_anim"//previous activity enter anim
+        const val PARAM_PREVIOUS_EXIT_ANIM ="previous_exist_anim"//previous activity exist anim
+
 
         object CONTACTS_SELECT {
 
