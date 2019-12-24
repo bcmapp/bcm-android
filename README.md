@@ -29,14 +29,14 @@ Currently available on the Play store.
 <a href='https://play.google.com/store/apps/details?id=com.bcm.messenger'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height='80px'/></a>
 
 
-Contributing Bug reports
-------------------------
+## Contributing Bug reports
+
 We use GitHub for bug tracking. Please search the existing issues for your bug and create a new one if the issue is not yet tracked!
 
 https://github.com/bcmapp/bcm-android/issues
 
-Joining the Beta
-----------------
+## Joining the Beta
+
 Want to live life on the bleeding edge and help out with testing?
 
 You can subscribe to BCM Android Beta releases here:
@@ -45,23 +45,23 @@ https://play.google.com/apps/testing/com.bcm.messenger
 If you're interested in a life of peace and tranquility, stick with the standard releases.
 
 ## Contributing Code
+
 Instructions on how to setup your development environment and build BCM can be found in  [BUILDING.md](https://github.com/bcmapp/bcm-android/blob/master/BUILDING.md).
 
 If you're new to the BCM codebase, we recommend going through our issues and picking out a simple bug to fix (check the "easy" label in our issues) in order to get yourself familiar. 
 
 
-Acknowledgments
----------------
+## Acknowledgments
+
 Special thanks to Signal, some of the BCM code is based on Signal project.
 
-Legal things
-------------
-## Cryptography Notice
+## Legal things
+### Cryptography Notice
 
 This distribution includes cryptographic software. The country in which you currently reside may have restrictions on the import, possession, use, and/or re-export to another country, of encryption software.
 BEFORE using any encryption software, please check your country's laws, regulations and policies concerning the import, possession, or use, and re-export of encryption software, to see if this is permitted.
 
-## License
+### License
 
 Copyright 2019 BCM
 
