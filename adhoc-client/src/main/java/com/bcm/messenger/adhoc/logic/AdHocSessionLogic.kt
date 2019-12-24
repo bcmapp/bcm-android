@@ -6,9 +6,9 @@ import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import java.util.concurrent.atomic.AtomicInteger
 
-object AdHocSessionLogic: AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHocSessionEventListener {
+object AdHocSessionLogic : AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHocSessionEventListener {
     private const val TAG = "AdHocSessionLogic"
-    private var listener:IAdHocSessionListener? = null
+    private var listener: IAdHocSessionListener? = null
     private val sdk = AdHocSDK.messengerSdk
     private lateinit var sessionCache: AdHocSessionCache
 
@@ -30,7 +30,7 @@ object AdHocSessionLogic: AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHo
         sdk.addEventListener(this)
         AdHocChannelLogic.instance().addListener(object : AdHocChannelLogic.IAdHocChannelListener {
             override fun onReady() {
-                 checkInitFinish(initFinish.addAndGet(1))
+                checkInitFinish(initFinish.addAndGet(1))
             }
         })
         sessionCache = AdHocSessionCache {
@@ -50,7 +50,7 @@ object AdHocSessionLogic: AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHo
                     sdk.addChannel(channel.channelName, channel.passwd) { }
                 }
             } else if (it.uid.isNotEmpty()) {
-                sdk.addChat(it.uid){}
+                sdk.addChat(it.uid) {}
             }
         }
 
@@ -80,19 +80,19 @@ object AdHocSessionLogic: AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHo
     }
 
 
-    fun updateLastMessage(sessionId: String, text:String, state: Int) {
+    fun updateLastMessage(sessionId: String, text: String, state: Int) {
         ALog.i(TAG, "updateLastMessage sessionId: $sessionId, text: $text, state: $state")
         AmeDispatcher.mainThread.dispatch {
-            if(sessionCache.updateLastMessage(sessionId, text, state)) {
+            if (sessionCache.updateLastMessage(sessionId, text, state)) {
                 listener?.onSessionListChanged()
             }
         }
     }
 
 
-    fun updateDraft(sessionId: String, draft:String) {
+    fun updateDraft(sessionId: String, draft: String) {
         AmeDispatcher.mainThread.dispatch {
-            if(sessionCache.updateDraft(sessionId, draft)) {
+            if (sessionCache.updateDraft(sessionId, draft)) {
                 listener?.onSessionListChanged()
             }
         }
@@ -100,7 +100,7 @@ object AdHocSessionLogic: AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHo
 
     fun updatePin(sessionId: String, pin: Boolean) {
         AmeDispatcher.mainThread.dispatch {
-            if(sessionCache.updatePin(sessionId, pin)) {
+            if (sessionCache.updatePin(sessionId, pin)) {
                 listener?.onSessionListChanged()
             }
         }
@@ -108,7 +108,7 @@ object AdHocSessionLogic: AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHo
 
     fun updateMute(sessionId: String, mute: Boolean) {
         AmeDispatcher.mainThread.dispatch {
-            if(sessionCache.updateMute(sessionId, mute)) {
+            if (sessionCache.updateMute(sessionId, mute)) {
                 listener?.onSessionListChanged()
             }
         }
@@ -118,7 +118,7 @@ object AdHocSessionLogic: AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHo
 
     fun updateUnreadCount(sessionId: String, count: Int) {
         AmeDispatcher.mainThread.dispatch {
-            if(sessionCache.updateUnreadCount(sessionId, count)) {
+            if (sessionCache.updateUnreadCount(sessionId, count)) {
                 listener?.onSessionListChanged()
             }
         }
@@ -127,7 +127,7 @@ object AdHocSessionLogic: AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHo
 
     fun updateAtMeStatus(sessionId: String, hasAtMe: Boolean) {
         AmeDispatcher.mainThread.dispatch {
-            if(sessionCache.updateAtMeStatus(sessionId, hasAtMe)) {
+            if (sessionCache.updateAtMeStatus(sessionId, hasAtMe)) {
                 listener?.onSessionListChanged()
             }
         }
@@ -137,7 +137,7 @@ object AdHocSessionLogic: AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHo
     fun deleteSession(sessionId: String) {
         AmeDispatcher.mainThread.dispatch {
             val session = getSession(sessionId)
-            if(null != session) {
+            if (null != session) {
                 sessionCache.deleteSession(sessionId)
                 listener?.onSessionListChanged()
             }
@@ -160,12 +160,12 @@ object AdHocSessionLogic: AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHo
         }
     }
 
-    fun addChannelSession(name: String, passwd: String, result: (sessionId:String) -> Unit) {
+    fun addChannelSession(name: String, passwd: String, result: (sessionId: String) -> Unit) {
         sdk.addChannel(name, passwd) {
             if (it.isNotEmpty()) {
                 AdHocChannelLogic.addChannel(name, passwd)
                 AmeDispatcher.mainThread.dispatch {
-                    sessionCache.saveChannelSession(it, AdHocChannel.cid(name, passwd)) {changed ->
+                    sessionCache.saveChannelSession(it, AdHocChannel.cid(name, passwd)) { changed ->
                         if (changed) {
                             listener?.onSessionListChanged()
                         }
@@ -184,7 +184,7 @@ object AdHocSessionLogic: AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHo
         sdk.addChat(uid) {
             AmeDispatcher.mainThread.dispatch {
                 if (it.isNotEmpty()) {
-                    sessionCache.saveChatSession(it, uid) {changed ->
+                    sessionCache.saveChatSession(it, uid) { changed ->
                         if (changed) {
                             listener?.onSessionListChanged()
                         }

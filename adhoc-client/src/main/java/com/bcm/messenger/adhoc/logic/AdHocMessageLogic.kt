@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * adhoc logic class
  */
-object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChannelLogic.IAdHocChannelListener, AdHocMessageModel.OnModelListener {
+object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChannelLogic.IAdHocChannelListener, AdHocMessageModel.OnModelListener {
 
     /**
      * wait for resend queue
@@ -69,7 +69,7 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
         if (mModel == null && !activity.isFinishing && !activity.isDestroyed) {
             mModel = ViewModelProviders.of(activity).get(AdHocMessageModel::class.java)
         }
-        mModel?.init(mCache, session,this@AdHocMessageLogic)
+        mModel?.init(mCache, session, this@AdHocMessageLogic)
     }
 
     fun instance() {
@@ -79,7 +79,7 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
     fun myAdHocId(): String? {
         return try {
             Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true).address.serialize()
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             null
         }
     }
@@ -166,7 +166,7 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
             message.isRead = true
             message.sendByMe = true
             message.time = System.currentTimeMillis()
-            addStoreForOutgoing(message) {finalMessage ->
+            addStoreForOutgoing(message) { finalMessage ->
                 if (finalMessage == null) {
                     ALog.w(TAG, "send message sessionId: $sessionId fail, addStoreFoOutgoing fail")
                     callback?.invoke(null)
@@ -206,9 +206,9 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
                         }
                     }
 
-                }else {
+                } else {
                     messengerSdk.send(finalMessage.sessionId, finalMessage.nickname, finalMessage.atList
-                            ?: setOf(), message.getMessageBodyJson()) {mid, succeed ->
+                            ?: setOf(), message.getMessageBodyJson()) { mid, succeed ->
                         ALog.i(TAG, "send text success: $succeed, mid: $mid")
                         finalMessage.mid = mid
                         finalMessage.success = succeed
@@ -220,8 +220,7 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
                     }
                 }
             }
-        }
-        else {
+        } else {
             ALog.w(TAG, "send message failed, not ready")
             message.success = false
             message.isSending = true
@@ -279,7 +278,8 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
     override fun onSendFileFailed(sessionId: String, mid: String) {
         ALog.i(TAG, "onSendFileFailed sessionId: $sessionId, mid: $mid")
         Observable.create<AdHocMessageDetail> {
-            val m = mCache.getMessageDetail(sessionId, mid) ?: throw Exception("AdHocMessageDetail is null")
+            val m = mCache.getMessageDetail(sessionId, mid)
+                    ?: throw Exception("AdHocMessageDetail is null")
             m.isAttachmentDownloading = false
             m.attachmentState = false
             m.isSending = false
@@ -303,9 +303,9 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
     /**
      * receive message
      */
-    override fun onReceiveMessage(sessionId: String, atMe:Boolean, message: AdHocChatMessage) {
+    override fun onReceiveMessage(sessionId: String, atMe: Boolean, message: AdHocChatMessage) {
 
-        fun gotoReceive(sessionId: String, atMe:Boolean, message: AdHocChatMessage) {
+        fun gotoReceive(sessionId: String, atMe: Boolean, message: AdHocChatMessage) {
             val adHockMessage = AdHocMessageDetail(0, sessionId, message.fromId).apply {
                 mid = message.messageId
                 sendByMe = false
@@ -331,12 +331,12 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
                 AdHocSessionLogic.addChatSession(message.fromId) {
                     if (it == sessionId) {
                         gotoReceive(sessionId, atMe, message)
-                    }else {
+                    } else {
                         ALog.w(TAG, "onReceiveMessage fail, sessionId not same")
                     }
                 }
             }
-        }else {
+        } else {
             gotoReceive(sessionId, atMe, message)
         }
 
@@ -364,7 +364,7 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
             var current = it.unreadCount
             if (reset) {
                 current = unread
-            }else {
+            } else {
                 current += unread
             }
             AdHocSessionLogic.updateUnreadCount(session, current)
@@ -378,7 +378,7 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
             return
         }
         if (queueData.waitDisposable == null || queueData.waitDisposable?.isDisposed == true) {
-            queueData.waitDisposable = Observable.create<AdHocMessageDetail> {emiter ->
+            queueData.waitDisposable = Observable.create<AdHocMessageDetail> { emiter ->
 
                 val queue = queueData.queue
                 var m: AdHocMessageDetail? = null
@@ -394,11 +394,11 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
                 loop@ do {
                     m = queue.poll()
                     if (m != null) {
-                        when(queueData.ready.get()) {
+                        when (queueData.ready.get()) {
                             AdHocSessionStatus.READY.ordinal -> {
                                 count++
                                 val self = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)
-                                send(m.sessionId, self.name, m) {new ->
+                                send(m.sessionId, self.name, m) { new ->
                                     response(complete.addAndGet(1))
                                 }
                             }
@@ -421,10 +421,10 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
                                 }
                             }
                         }
-                    }else {
+                    } else {
                         if (isWaited) {
                             break
-                        }else {
+                        } else {
                             isWaited = true
                             Thread.sleep(1000)
                         }
@@ -442,13 +442,13 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
                     .doOnError {
                         queueData.waitDisposable = null
                     }
-                    .subscribe({result ->
+                    .subscribe({ result ->
                         ALog.i(TAG, "tryHandleWaitingQueue subscribe: session: ${result.sessionId}, message: ${result.getMessageBodyJson()}")
                     }, {
                         ALog.e(TAG, "tryHandleWaitingQueue fail", it)
                     })
 
-        }else {
+        } else {
             ALog.w(TAG, "tryHandleWaitingQueue do nothing, waitDisposable is exist")
         }
     }
@@ -477,8 +477,7 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
         if (data.ready.get() == AdHocSessionStatus.READY.ordinal) {
             ALog.i(TAG, "handleForWaitQueue, ready, tryHandleWaitingQueue")
             tryHandleWaitingQueue(key)
-        }
-        else if (data.ready.get() == AdHocSessionStatus.TIMEOUT.ordinal) {
+        } else if (data.ready.get() == AdHocSessionStatus.TIMEOUT.ordinal) {
             if (session.isChat()) {
                 AdHocSessionLogic.addChatSession(session.uid) {
                     ALog.i(TAG, "handleForWaitQueue finish, addChatSession result: $it")
@@ -492,7 +491,7 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
         if (data == null) {
             data = WaitQueueData(AtomicInteger(status), ConcurrentLinkedQueue())
             mWaitQueueMap[key] = data
-        }else {
+        } else {
             data.ready.set(status)
         }
         if (status == AdHocSessionStatus.READY.ordinal || status == AdHocSessionStatus.TIMEOUT.ordinal) {
@@ -513,7 +512,7 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
                     if (it.sessionId == model?.getSessionId()) {
                         if (add) {
                             model.onReceiveMessage(listOf(it))
-                        }else {
+                        } else {
                             model.onUpdateMessage(listOf(it))
                         }
                     }
@@ -557,10 +556,10 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
                         }
                         it.onNext(m)
 
-                    }else {
+                    } else {
                         if (isWaited) {
                             break
-                        }else {
+                        } else {
                             isWaited = true
                         }
                         ALog.w(TAG, "addStoreQueue poll message null, wait 1 second")
@@ -578,7 +577,7 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
                     .doOnError {
                         mAddingDisposable = null
                     }
-                    .subscribe({result ->
+                    .subscribe({ result ->
                         val model = getModel()
                         if (result.sessionId == model?.getSessionId()) {
                             model.onReceiveMessage(listOf(result))
@@ -591,8 +590,7 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
                     }, {
                         ALog.e(TAG, "addStoreQueue fail", it)
                     })
-        }
-        else {
+        } else {
             ALog.w(TAG, "addStoreQueue nothing, mAddingDisposable is exist")
         }
     }
@@ -606,7 +604,7 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
             val m = mCache.mergeCacheForAttachment(sessionId, mid, progress, uri)
             if (m != null) {
                 it.onNext(m)
-            }else {
+            } else {
                 ALog.w(TAG, "onAttachmentHandle getMessage null: session: $sessionId, mid: $mid")
             }
             it.onComplete()
@@ -618,13 +616,12 @@ object AdHocMessageLogic: AdHocSessionSDK.IAdHocSessionEventListener, AdHocChann
                     if (model?.getSessionId() == sessionId) {
                         if (progress < 1.0f) {
                             model.onAttachmentProgress(it, progress)
-                        }else {
+                        } else {
                             model.onUpdateMessage(listOf(it)) //notify chat window
                         }
                     }
                 }, {
                     ALog.e(TAG, "onAttachmentHandle error", it)
                 })
-
     }
 }

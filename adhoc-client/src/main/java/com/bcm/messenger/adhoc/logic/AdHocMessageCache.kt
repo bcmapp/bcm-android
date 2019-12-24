@@ -56,7 +56,7 @@ class AdHocMessageCache {
                 detail.attachmentUri = null
                 detail.thumbnailUri = null
 
-            }else {
+            } else {
                 detail.attachmentState = checkAttachmentLegal(result, detail.attachmentDigest)
                 if (detail.attachmentState) {
                     detail.attachmentUri = result.toString()
@@ -65,7 +65,7 @@ class AdHocMessageCache {
                     } else {
                         detail.thumbnailUri = detail.attachmentUri
                     }
-                }else {
+                } else {
                     detail.attachmentUri = null
                     detail.thumbnailUri = null
                 }
@@ -73,7 +73,7 @@ class AdHocMessageCache {
             mHandingMap.remove(key)
             mFinishMap.remove(key)
             return updateMessage(detail)
-        }else {
+        } else {
             ALog.i(TAG, "mergeCacheFroAttachment sessionId: $sessionId, mid: $mid, add handlingMap")
             mHandingMap[key] = detail
             return detail
@@ -98,28 +98,37 @@ class AdHocMessageCache {
                 m.isSending = true
                 m.isAttachmentDownloading = false
 
-            }else {
+            } else {
                 m.isAttachmentDownloading = true
                 m.isSending = false
             }
 
-        }else {
+        } else {
             m.isSending = false
             m.isAttachmentDownloading = false
             if (uri != null) {
                 m.attachmentState = checkAttachmentLegal(uri, m.attachmentDigest)
                 if (m.attachmentState) {
-                    m.attachmentUri = uri.toString()
+                    var localUri = uri.toString()
+                    if (localUri.endsWith("=\n")) {
+                        localUri = localUri.replace("=\n", "")
+                        File(uri.path).renameTo(File(Uri.parse(localUri).path))
+                    }
+                    if (localUri.endsWith("%3D%0A")) {
+                        localUri = localUri.replace("%3D%0A", "")
+                        File(uri.path).renameTo(File(Uri.parse(localUri).path))
+                    }
+                    m.attachmentUri = localUri
                     if (m.getMessageBody()?.isVideo() == true) { //for video, need first frame
-                        m.thumbnailUri = Uri.fromFile(File(BcmFileUtils.getVideoFramePath(AppContextHolder.APP_CONTEXT, uri))).toString()
+                        m.thumbnailUri = Uri.fromFile(File(BcmFileUtils.getVideoFramePath(AppContextHolder.APP_CONTEXT, Uri.parse(localUri)))).toString()
                     } else {
                         m.thumbnailUri = m.attachmentUri
                     }
-                }else {
+                } else {
                     m.attachmentUri = null
                     m.thumbnailUri = null
                 }
-            }else {
+            } else {
                 m.attachmentState = false
                 m.attachmentUri = null
                 m.thumbnailUri = null
@@ -136,11 +145,12 @@ class AdHocMessageCache {
             return true
         }
         return try {
-            val file = File(BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, uri) ?: throw Exception("getAttachmentFilePath fail"))
+            val file = File(BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, uri)
+                    ?: throw Exception("getAttachmentFilePath fail"))
             val result = AdHocUtil.digest(file)
             ALog.i(TAG, "checkAttachmentLegal result: $result, remote: $digest")
             result == digest
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "checkAttachmentLegal fail", ex)
             false
         }
@@ -160,7 +170,7 @@ class AdHocMessageCache {
         val entity = getDao().findLastSeen(sessionId)
         return if (entity != null) {
             transform(entity)
-        }else {
+        } else {
             null
         }
     }
@@ -191,7 +201,7 @@ class AdHocMessageCache {
             returnMessage.attachmentDigest = message.attachmentDigest
             AdHocSessionLogic.updateLastMessage(message.sessionId, returnMessage.getMessageBody()?.content?.getDescribe().toString(), returnMessage.getLastSessionState())
 
-        }else {
+        } else {
             val maxIndex = getDao().queryMaxIndexId(message.sessionId)
             ALog.i(TAG, "updateMessage maxIndex: $maxIndex")
             if (maxIndex == indexId) {
@@ -208,7 +218,7 @@ class AdHocMessageCache {
     fun fetchMessageList(sessionId: String, indexId: Long, limit: Int): List<AdHocMessageDetail> {
         val newIndex = if (indexId == -1L) {
             getDao().queryMaxIndexId(sessionId) + 1
-        }else {
+        } else {
             indexId
         }
         val list = getDao().loadMessageBefore(sessionId, newIndex, limit)

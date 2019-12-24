@@ -45,8 +45,7 @@ open class AdHocPreviewClickListener : ChatComponentListener {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(v.context as Activity, v, "${ShareElements.Activity.MEDIA_PREIVEW}${messageRecord.indexId}").toBundle()
                 gotoActivity(v.context, intent, bundle)
-
-            } else  {
+            } else {
                 val uri = messageRecord.toAttachmentUri() ?: return
                 doForOtherUri(v.context, uri, messageRecord.getContentType())
             }
@@ -61,13 +60,13 @@ open class AdHocPreviewClickListener : ChatComponentListener {
                     context.startActivity(Intent(context, ApkInstallRequestActivity::class.java).apply {
                         putExtra(ARouterConstants.PARAM.PARAM_APK, path)
                     })
-                }else {
+                } else {
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.addCategory(Intent.CATEGORY_DEFAULT)
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     val type = if (mimeType.isNullOrEmpty()) {
                         BcmFileUtils.getMimeType(context, path)
-                    }else {
+                    } else {
                         mimeType
                     }
                     intent.setDataAndType(uri, type)
@@ -77,7 +76,8 @@ open class AdHocPreviewClickListener : ChatComponentListener {
 
             AmeAppLifecycle.showLoading()
             Observable.create<Pair<Uri, String?>> {
-                val filePath = BcmFileUtils.getFileAbsolutePath(context, uri) ?: throw Exception("get file path fail")
+                val filePath = BcmFileUtils.getFileAbsolutePath(context, uri)
+                        ?: throw Exception("get file path fail")
                 val targetUri = FileProvider.getUriForFile(context, BuildConfig.BCM_APPLICATION_ID + ".fileprovider", File(filePath))
                 it.onNext(Pair(targetUri, filePath))
                 it.onComplete()
@@ -89,37 +89,31 @@ open class AdHocPreviewClickListener : ChatComponentListener {
                         ALog.e(TAG, "doForOtherUri error", it)
                         handle(uri, null)
                     })
-
         }
 
         private fun gotoActivity(context: Context, intent: Intent, bundle: Bundle?) {
             try {
-                if(context is Activity) {
+                if (context is Activity) {
                     context.startActivity(intent, bundle)
-                }else {
+                } else {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(intent, bundle)
                 }
-            }catch (ex: Exception) {
+            } catch (ex: Exception) {
                 ALog.e(TAG, "gotoActivity error", ex)
                 ToastUtil.show(context, context.getString(R.string.chats_there_is_no_app_available_to_handle_this_link_on_your_device))
             }
         }
-
     }
-
 
 
     override fun onClick(v: View, data: Any) {
         try {
-            if(data is AdHocMessageDetail) {
+            if (data is AdHocMessageDetail) {
                 doForAdHoc(v, data)
             }
-        }
-        catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "onClick error", ex)
         }
     }
-
-
 }

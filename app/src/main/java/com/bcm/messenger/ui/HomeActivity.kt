@@ -349,7 +349,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (home_pull_down_layout.isTopViewExpanded()) {
+            if (home_pull_down_layout.isTopViewExpanded() && !mAdHocModule.isAdHocMode()) {
                 home_pull_down_layout.closeTopViewAndCallback()
                 return true
             }

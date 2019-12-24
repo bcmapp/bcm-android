@@ -19,12 +19,12 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 
-class AdHocSessionSDK: IAdHocMessageListener.Stub() {
+class AdHocSessionSDK : IAdHocMessageListener.Stub() {
     companion object {
         private const val TAG = "AdHocSessionSDK"
     }
 
-    private var sdkApi:IAdHocBinder? = null
+    private var sdkApi: IAdHocBinder? = null
     private val eventListenerSet = Collections.newSetFromMap(WeakHashMap<IAdHocSessionEventListener, Boolean>())
     private val sendingMap = HashMap<String, SendingChat>()
     private var transferFileThread: Scheduler? = null
@@ -51,7 +51,7 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
     /**
      * send text
      */
-    fun send(sessionId: String, myName: String, atList: Set<String>, message: String, result:(mid:String, succeed:Boolean)->Unit) {
+    fun send(sessionId: String, myName: String, atList: Set<String>, message: String, result: (mid: String, succeed: Boolean) -> Unit) {
         AmeDispatcher.singleScheduler.scheduleDirect {
             try {
                 val chat = AdHocMessagePack.ChatMessage(atList.toList(), message)
@@ -63,13 +63,13 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
                 } else {
                     result(mid, true)
                 }
-            } catch (e:Throwable) {
+            } catch (e: Throwable) {
                 ALog.e(TAG, "send", e)
             }
         }
     }
 
-    private fun sendAck(sessionId: String, mid:String) {
+    private fun sendAck(sessionId: String, mid: String) {
         AmeDispatcher.singleScheduler.scheduleDirect {
             try {
                 val chat = AdHocMessagePack.ACKMessage(mid)
@@ -77,17 +77,17 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
                 if (id.isNullOrEmpty()) {
                     ALog.e(TAG, "send ack failed $sessionId $mid")
                 }
-            } catch (e:Throwable) {
+            } catch (e: Throwable) {
                 ALog.e(TAG, "send", e)
             }
         }
     }
 
-    fun sendChannelFileMessage(sessionId: String, myName: String, file: File, message: String,result:(mid:String, succeed:Boolean)->Unit) {
+    fun sendChannelFileMessage(sessionId: String, myName: String, file: File, message: String, result: (mid: String, succeed: Boolean) -> Unit) {
         AmeDispatcher.singleScheduler.scheduleDirect {
             try {
                 val sdk = this.sdkApi
-                if (sdk ==null ) {
+                if (sdk == null) {
                     ALog.e(TAG, "sendChannelFileMessage failed: sdk not ready")
                     result("", false)
                     return@scheduleDirect
@@ -107,24 +107,24 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
                     ALog.e(TAG, "sendChannelFileMessage failed: mid $mid")
                     result("", false)
                 } else {
-                    transferFileThread?.scheduleDirect ({
+                    transferFileThread?.scheduleDirect({
                         ALog.i(TAG, "sendChannelFileMessage sending: mid $mid")
                         sdk.sendFile(sessionId, mid, file.absolutePath, 0)
                     }, 500, TimeUnit.MICROSECONDS)
                     result(mid, true)
                 }
-            } catch (e:Throwable) {
+            } catch (e: Throwable) {
                 ALog.e(TAG, "sendChannelFileMessage", e)
                 result("", false)
             }
         }
     }
 
-    fun sendChatFileMessage(sessionId: String, myName: String, file: File, message: String, result:(mid:String, succeed:Boolean)->Unit) {
+    fun sendChatFileMessage(sessionId: String, myName: String, file: File, message: String, result: (mid: String, succeed: Boolean) -> Unit) {
         AmeDispatcher.singleScheduler.scheduleDirect {
             try {
                 val sdk = this.sdkApi
-                if (sdk ==null ) {
+                if (sdk == null) {
                     ALog.e(TAG, "sendChatFileMessage failed: sdk not ready")
                     result("", false)
                     return@scheduleDirect
@@ -143,28 +143,28 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
                     ALog.e(TAG, "sendChatFileMessage failed: mid $mid")
                     result("", false)
                 } else {
-                    transferFileThread?.scheduleDirect ({
+                    transferFileThread?.scheduleDirect({
                         ALog.i(TAG, "sendChatFileMessage sending: mid $mid")
                         sdk.sendFile(sessionId, mid, file.absolutePath, 0)
                     }, 500, TimeUnit.MICROSECONDS)
                     result(mid, true)
                 }
-            } catch (e:Throwable) {
+            } catch (e: Throwable) {
                 ALog.e(TAG, "send", e)
                 result("", false)
             }
         }
     }
 
-    fun addChannel(channelName:String, passwd:String, result:(sessionId:String)->Unit): Boolean {
+    fun addChannel(channelName: String, passwd: String, result: (sessionId: String) -> Unit): Boolean {
         if (!AdHocSDK.isReady()) {
             return false
         }
         AmeDispatcher.singleScheduler.scheduleDirect {
             try {
                 val sessionId = sdkApi?.addChannel(channelName, passwd)
-                result(sessionId?:"")
-            } catch (e:Throwable) {
+                result(sessionId ?: "")
+            } catch (e: Throwable) {
                 ALog.e(TAG, "addChannel", e)
 
                 result("")
@@ -178,21 +178,21 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
         AmeDispatcher.singleScheduler.scheduleDirect {
             try {
                 sdkApi?.removeChannel(sessionId)
-            } catch (e:Throwable) {
+            } catch (e: Throwable) {
                 ALog.e(TAG, "removeChannel", e)
             }
         }
     }
 
-    fun addChat(uid:String, result: (sessionId: String) -> Unit):Boolean {
+    fun addChat(uid: String, result: (sessionId: String) -> Unit): Boolean {
         if (!AdHocSDK.isReady()) {
             return false
         }
         AmeDispatcher.singleScheduler.scheduleDirect {
             try {
                 val sessionId = sdkApi?.addChat(uid)
-                result(sessionId?:"")
-            } catch (e:Throwable) {
+                result(sessionId ?: "")
+            } catch (e: Throwable) {
                 ALog.e(TAG, "send", e)
 
                 result("")
@@ -214,7 +214,7 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
     fun getSessionStatus(sessionId: String): AdHocSessionStatus {
         if (AdHocSDK.isReady()) {
             val status = sdkApi?.getSessionState(sessionId)
-            return when(status) {
+            return when (status) {
                 SessionStatus.Established.value -> AdHocSessionStatus.READY
                 SessionStatus.NoneExist.value -> AdHocSessionStatus.NOT_EXIST
 //                SessionStatus.Timeout.value -> AdHocSessionStatus.TIMEOUT
@@ -228,11 +228,9 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
     override fun onSessionStateChanged(sessionId: String, status: Int) {
         val sessionStatus = if (status == SessionStatus.Established.value) {
             AdHocSessionStatus.READY
-        }
-        else if (status == SessionStatus.Closed.value) {
+        } else if (status == SessionStatus.Closed.value) {
             AdHocSessionStatus.CLOSED
-        }
-        else {
+        } else {
             AdHocSessionStatus.CONNECTING
         }
 
@@ -243,7 +241,7 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
         }
     }
 
-    override fun onReceiveMessage(sessionId:String, message: String) {
+    override fun onReceiveMessage(sessionId: String, message: String) {
         ALog.i(TAG, "onReceiveMessage message: $message")
         try {
             val proto = GsonUtils.fromJson<MessageStore.Message>(message, MessageStore.Message::class.java)
@@ -254,7 +252,7 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
             }
 
             when (content) {
-                is AdHocMessagePack.ChatMessage ->  {
+                is AdHocMessagePack.ChatMessage -> {
                     handleChatMessage(proto, sessionId, content)
                 }
                 is AdHocMessagePack.ACKMessage -> {
@@ -264,7 +262,7 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
                     handleFileChatMessage(proto, sessionId, content)
                 }
             }
-        } catch (e:Throwable) {
+        } catch (e: Throwable) {
             ALog.e(TAG, "onReceiveMessage", e)
         }
     }
@@ -337,7 +335,7 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
         }
     }
 
-    private fun handleChatMessage(proto:MessageStore.Message, sessionId: String, content: AdHocMessagePack.ChatMessage) {
+    private fun handleChatMessage(proto: MessageStore.Message, sessionId: String, content: AdHocMessagePack.ChatMessage) {
         if (content.message.isNullOrEmpty()) {
             ALog.e(TAG, "adhoc message is empty $sessionId")
             return
@@ -363,10 +361,10 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
         }
     }
 
-    private fun handleAckMessage(sessionId: String, mid:String) {
+    private fun handleAckMessage(sessionId: String, mid: String) {
         AmeDispatcher.singleScheduler.scheduleDirect {
             val sending = sendingMap.remove(mid)
-            if(sending != null && sessionId == sending.sessionId) {
+            if (sending != null && sessionId == sending.sessionId) {
                 if (!sending.timeExpire.isDisposed) {
                     sending.timeExpire.dispose()
                 }
@@ -381,21 +379,21 @@ class AdHocSessionSDK: IAdHocMessageListener.Stub() {
 
 
     interface IAdHocSessionEventListener {
-        fun onReceiveMessage(sessionId: String, atMe:Boolean, message:AdHocChatMessage) {}
-        fun onSessionStatusChanged(sessionId:String, status:AdHocSessionStatus){}
-        fun onAtMeNotify(sessionId: String){}
+        fun onReceiveMessage(sessionId: String, atMe: Boolean, message: AdHocChatMessage) {}
+        fun onSessionStatusChanged(sessionId: String, status: AdHocSessionStatus) {}
+        fun onAtMeNotify(sessionId: String) {}
 
-        fun onReceivingFile(sessionId: String, mid:String, total:Long, progress: Long){}
-        fun onReceiveFileComplete(sessionId: String, mid: String, uri:Uri){}
-        fun onReceiveFileFailed(sessionId: String, mid: String, reason:Int){}
-        fun onSendFileComplete(sessionId: String, mid: String){}
-        fun onSendFileFailed(sessionId: String, mid: String){}
+        fun onReceivingFile(sessionId: String, mid: String, total: Long, progress: Long) {}
+        fun onReceiveFileComplete(sessionId: String, mid: String, uri: Uri) {}
+        fun onReceiveFileFailed(sessionId: String, mid: String, reason: Int) {}
+        fun onSendFileComplete(sessionId: String, mid: String) {}
+        fun onSendFileFailed(sessionId: String, mid: String) {}
 
     }
 
     private inner class SendingChat(val sessionId: String,
                                     val timeExpire: Disposable,
-                                    val callback:(mid:String, succeed:Boolean) -> Unit)
+                                    val callback: (mid: String, succeed: Boolean) -> Unit)
 
 
 }
