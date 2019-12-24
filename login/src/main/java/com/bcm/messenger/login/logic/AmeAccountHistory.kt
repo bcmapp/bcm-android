@@ -193,6 +193,16 @@ class AmeAccountHistory {
                 }
             }
 
+            if (mCurAccount != null && mLastAccount?.uid != mCurAccount?.uid) {
+                mLastAccount?.lastLogin = false
+                mLastAccount = mCurAccount
+                mLastAccount?.lastLogin = true
+                mLastAccount?.let {
+                    SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_LAST_LOGIN, it.uid)
+                }
+                needUpdate = true
+            }
+
             if (mCurAccount != null && BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) == null) {
                 mCurAccount?.curLogin = false
                 mCurAccount = null
@@ -226,15 +236,6 @@ class AmeAccountHistory {
                 if (loadAccountFromOldVersion(accountMap)) {
                     ALog.i(TAG, "loadAccountFromOldVersion return: true")
                     needUpdate = true
-                }
-
-                for ((key, data) in accountMap) {
-                    if (data.curLogin) {
-                        mCurAccount = data
-                    }
-                    if (data.lastLogin) {
-                        mLastAccount = data
-                    }
                 }
 
                 if (fixCurrentAndLastAccount()) {
@@ -297,6 +298,7 @@ class AmeAccountHistory {
         ALog.logForSecret(TAG, "last uid :$uid")
         val accountData = accountMap[uid]
         if (accountData != mLastAccount) {
+            ALog.i(TAG, "saveLastLoginUid reset")
             mLastAccount?.lastLogin = false
             mLastAccount = accountData
             mLastAccount?.lastLogin = true
@@ -310,6 +312,7 @@ class AmeAccountHistory {
         ALog.logForSecret(TAG, "current uid :$uid")
         val accountData = accountMap[uid]
         if (accountData != mCurAccount) {
+            ALog.i(TAG, "saveCurrentLoginUid reset")
             mCurAccount?.curLogin = false
             mCurAccount = accountData
             mCurAccount?.curLogin = true
