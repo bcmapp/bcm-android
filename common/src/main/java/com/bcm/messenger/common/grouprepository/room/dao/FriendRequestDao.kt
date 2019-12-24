@@ -4,7 +4,7 @@ import androidx.room.*
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
 
 /**
- * Created by HunTZ on 2019/5/17
+ * Created by Kin on 2019/5/17
  */
 
 @Dao

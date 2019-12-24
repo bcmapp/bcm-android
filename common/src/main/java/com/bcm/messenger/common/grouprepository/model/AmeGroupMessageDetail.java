@@ -395,7 +395,6 @@ public class AmeGroupMessageDetail {
         if (message == null)
             return false;
 
-        //Fixme 
         if (message.getType() == AmeGroupMessage.CHAT_HISTORY) {
             return false;
         }
@@ -404,15 +403,8 @@ public class AmeGroupMessageDetail {
             return false;
         }
 
-        //FIXME:  image ，
-        if (message.isImage()) {
-            return true;
-        } else {
-            boolean exist = isAttachmentComplete();
-            return !message.isAudio()
-                    && (!message.isMediaMessage() || exist);
-        }
-
+        boolean exist = isAttachmentComplete();
+        return !message.isAudio() && (!message.isMediaMessage() || exist);
     }
 
     // check copable

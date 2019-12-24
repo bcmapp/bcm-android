@@ -211,18 +211,22 @@ class MediaViewActivity : AppCompatActivity() {
     }
 
     private fun showSheet() {
-        AmePopup.bottom.newBuilder()
-                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_forward)) {
-                    forwardMedia()
-                })
-                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_save)) {
-                    saveMedia()
-                })
-                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_delete)) {
-                    deleteMedia()
-                })
+        val popup = AmePopup.bottom.newBuilder()
                 .withDoneTitle(getString(R.string.chats_cancel))
-                .show(this)
+
+        val data = (adapter.getCurrentFragment() as? MediaViewFragment)?.getData()
+        if (data != null && data.msgType == MSG_TYPE_GROUP && (data.sourceMsg as AmeGroupMessageDetail).isAttachmentComplete) {
+            popup.withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_forward)) {
+                forwardMedia()
+            })
+        }
+        popup.withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_save)) {
+            saveMedia()
+        }).withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_delete)) {
+            deleteMedia()
+        })
+
+        popup.show(this)
     }
 
     private fun forwardMedia() {

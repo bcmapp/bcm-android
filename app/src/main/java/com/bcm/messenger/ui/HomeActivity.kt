@@ -111,30 +111,24 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
             when (it.position) {
                 TAB_CHAT -> {
-
                     if ((it.showFigure != null || it.showDot != null) && !mAdHocModule.isAdHocMode()) {
                         home_profile_layout?.chatUnread = it.showFigure ?: 0
                     }
                 }
                 TAB_CONTACT -> {
-
                     if ((it.showFigure != null || it.showDot != null) && !mAdHocModule.isAdHocMode()) {
                         home_profile_layout?.friendReqUnread = it.showFigure ?: 0
                     }
-
                 }
                 TAB_ME -> {
                 }
                 TAB_ADHOC -> {
-
                     if ((it.showFigure != null || it.showDot != null) && mAdHocModule.isAdHocMode()) {
                         home_profile_layout?.friendReqUnread = 0
                         home_profile_layout?.chatUnread = it.showFigure ?: 0
                     }
-
                 }
             }
-
         }
 
         checkSchemeLaunch()
@@ -173,7 +167,6 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
             home_profile_layout?.chatUnread = 0
 
             return true
-
         } else {
             if (null != adHocMainFragment) {
                 val removeFragment = supportFragmentManager.beginTransaction()
@@ -297,7 +290,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         if (schemeLaunchIntent != null) {
             ALog.i(TAG, "Found unhandled outLaunch intent, continue handling")
             mLaunchHelper.route(schemeLaunchIntent)
-        }else {
+        } else {
             ALog.i(TAG, "Try handle current intent，check called by other app")
             mLaunchHelper.route(intent)
         }

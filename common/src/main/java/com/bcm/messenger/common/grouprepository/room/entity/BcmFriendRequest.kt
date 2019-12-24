@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * Created by HunTZ on 2019/5/17
+ * Created by Kin on 2019/5/17
  */
 private const val FRIEND_REQUEST_TABLE_NAME = "friend_request"
 

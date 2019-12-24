@@ -17,7 +17,6 @@ import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.RecipientAvatarView
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
 import com.bcm.messenger.common.ui.emoji.EmojiTextView
-import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 import io.reactivex.Observable
