@@ -198,6 +198,9 @@
     <string name="common_later">بعداً</string>
     <string name="common_copied"> کپی شد</string>
     <string name="common_open">باز کردن</string>
+    <string name="common_help">کمک</string>
+    <string name="common_multi_select">چندانتخابی</string>
+    <string name="common_save_to_album">ذخیره در آلبوم</string>
     <string name="common_connection_lost">درحال اتصال&#8230;</string>
     <string name="common_group_get_member_fail">خطا در دریافت اعضای گروه چت</string>
     <string name="common_search_hint">جستجو</string>
@@ -386,5 +389,7 @@
     <!-- 二维码相关 -->
     <string name="common_unsupported_qr_code_description">نسخه حساب خارج از پشتیبانی</string>
 
+    <string name="common_save_success">ذخیره شد</string>
+    <string name="common_save_fail">ذخیره نشد</string>
 
 </resources>

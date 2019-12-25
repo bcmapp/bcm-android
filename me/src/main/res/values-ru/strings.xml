@@ -11,7 +11,6 @@
     <string name="me_notification_head">Уведомление</string>
     <string name="me_backup_head">Аккаунт</string>
     <string name="me_security_head">Безопасн. и конфиденц.</string>
-    <string name="me_setting_help_title">ЧаВо</string>
     <string name="me_support_head">Отзыв</string>
     <string name="me_about_head">О нас</string>
     <string name="me_device_switch_head">Сменить устр.</string>
@@ -20,8 +19,6 @@
     <string name="me_new_version_description">Доступна новая версия</string>
     <string name="me_more_title">Еще</string>
     <string name="me_more_account_title">Аккаунты</string>
-    <string name="me_setting_feedback_title">Отзыв</string>
-    <string name="me_setting_about_title">О программе</string>
     <string name="me_more_scan">Скан.</string>
     <string name="me_take_phone">Сделать снимок</string>
     <string name="me_choose_phone">Выберите фото</string>
@@ -51,6 +48,18 @@
     <string name="me_scan_code_add_me">Скан. QR-код и доб. меня</string>
     <string name="me_switch_notice">Скан. QR-код и введите пароль на новом устр. для входа.\nНа этом устр. будет выполнен выход.</string>
     <string name="me_default_password_content">Этот пароль (не менее 8 символов) использ. для шифрования ключа аккаунта. Внимание: пароли НЕЛЬЗЯ сбросить.</string>
+
+    <!-- change pwd -->
+    <string name="me_change_password_notice_part">ВНИМАНИЕ! Если вы забыли пароль, его НЕЛЬЗЯ сбросить. </string>
+    <string name="me_change_password_notce_action">Подробнее</string>
+    <string name="me_change_password_same_origin_warning">новый пароль совпадает со старым</string>
+    <string name="me_change_password_success">пароль успешно изменен</string>
+    <string name="me_change_password_error">Вы неправильно ввели текущий пароль.</string>
+    <string name="me_change_password_strong_description">Надежный</string>
+    <string name="me_change_password_weak_description">Ненадежный</string>
+    <string name="me_change_password_match_description">Совпадает</string>
+    <string name="me_change_password_not_match_description">Не совпадает</string>
+
     <string name="me_version_head">BCM %1$s</string>
     <string name="me_problem_describe">Опишите проблему(ы)</string>
     <string name="me_submit">Отправ.</string>
@@ -87,6 +96,8 @@
     <string name="me_about_new_version_status">Повысить</string>
     <string name="me_about_latest_version_status">Последняя версия</string>
     <string name="me_about_security_support">Поддержка безоп.</string>
+    <string name="me_about_open_source_licenses">Лицензии ПО с открытым исходным кодом</string>
+
     <string name="me_change_password">Сменить пароль</string>
     <string name="me_account_key">Ключ аккаунта</string>
     <string name="me_log_out">Выйти</string>
@@ -112,8 +123,6 @@
     <string name="me_input_password_can_not_empty">Пароль не может быть пустым</string>
     <string name="me_save">Сохранить</string>
     <string name="me_psw_not_equals_confirm_psw">Ваш пароль и его подтверждение не совпадают.</string>
-    <string name="me_change_password_success">пароль успешно изменен</string>
-    <string name="me_change_password_error">Вы неправильно ввели текущий пароль.</string>
     <string name="me_account_key_anim_tips">Ваш ключ аккаунта - это\n ваш пропуск в BCM</string>
     <string name="me_donate_us">Пожертв.</string>
     <string name="me_generating_key">Создаем ключ аккаунта \n Нажмите \"Стоп\" для получ.</string>
@@ -136,6 +145,13 @@
     <string name="me_str_my_account_key">Мой ключ акк.</string>
     <string name="me_str_version_update">Обновл. версии</string>
     <string name="me_text_register_failed">Не зарегистрир.</string>
+
+    <string name="me_account_verify_title">Удостоверить личность</string>
+    <string name="me_account_backup_action">Создать рез. копию в альбоме</string>
+    <string name="me_account_not_backup_warning">Рез. копия не создана. </string>
+    <string name="me_account_backup_help_description">Как выполнять рез. копирование / перекл. устр-во?</string>
+
+    <!-- update -->
     <string name="me_update_dialog_title">Доступна новая версия %s</string>
     <string name="me_update_dialog_content">Доступна новая версия %s, скачать?</string>
     <string name="me_update_dialog_downloading">Идет скачивание новой версии, после завершения она будет установлена</string>
@@ -146,12 +162,17 @@
     <string name="me_update_notification_failed">Обновление не скачано</string>
     <string name="me_update_notification_canceled">Скачивание обновления отменено</string>
     <string name="me_update_install">устанавливать</string>
+
+    <!-- backup -->
     <string name="me_backup_notice">Уведомление</string>
     <string name="me_backup_have_no_notes_app">Прилож. \"Заметки\" и т.п. не найдено в сист.</string>
     <string name="me_backup_share_to">Поделиться с</string>
     <string name="me_backup_cannot_copy_qr_code">Функция копир. QR-кода доступна только для Android 7.0 и выше.</string>
     <string name="me_backup_str_copy">Копир.</string>
     <string name="me_backup_copy_content">Этот QR-код будет скопирован и автомат. вставлен приложением \"Заметки\" в системе.</string>
+    <string name="me_backup_after_change_pwd_notice">После смены пароля создайте рез. копию обновленного ключа аккаунта.</string>
+    <string name="me_backup_after_change_pwd_action">Создать рез. копию</string>
+
     <!--keybox-->
     <string name="me_keybox">KeyBox</string>
     <string name="me_keybox_qr_into">Скан. QR-код ключа аккаунта для импорта ключей акк. в Keybox.</string>
@@ -179,6 +200,7 @@
     <string name="me_fingerprint_unknown_error">Неизв. ошибка</string>
     <string name="me_fingerprint_fail_cancel">Отменено польз.</string>
     <string name="me_fingerprint_wrong_password">Неверный пароль</string>
+    <string name="me_fingerprint_enter_pwd_hint">Введите пароль</string>
     <!--generate key-->
     <string name="me_login_generate_hash_calculation">НАЧАТЬ расчет хэша</string>
     <string name="me_login_generate_target">Цель</string>
@@ -191,12 +213,16 @@
     <string name="me_profile_picture">Аватар</string>
     <string name="me_profile_nickname">Ник</string>
     <string name="me_profile_add_me">Доб. меня</string>
+    <string name="me_profile_account_title">Мой ключ акк.</string>
+    <string name="me_profile_change_pwd_title">Сменить пароль</string>
+    <string name="me_profile_alias_save_success">Псевдоним изменен</string>
     <!--Ban password reset-->
     <string name="me_ban_reset_password_title">Нельзя сбросить пароль</string>
     <string name="me_ban_reset_password_content">Для безопасности аккаунта каждый ключ аккаунта шифруется и хранится локально, данные не отправляются на сервер. Таким образом, сбросить пароль нельзя.</string>
     <string name="me_ban_reset_password_back">Можно вернуться на пред. страницу и повторить или создать новый аккаунт.</string>
     <string name="me_create_account">Создать аккаунт</string>
     <string name="me_text_account_created">Аккаунт создан</string>
+    <string name="me_ban_reset_back_action">Вернитесь и повторите попытку</string>
     <!-- local profile -->
     <string name="me_local_profile_title">Изм. отобр. профиль</string>
     <string name="me_other_local_display_title">ОТОБРАЖ. ПРОФИЛЬ</string>
@@ -250,6 +276,16 @@
     <string name="me_setting_privacy_head">ПОВЫШ. УР. ЗАЩИТЫ</string>
     <string name="me_setting_rtc_p2p_title">Всегда перед. зв.</string>
     <string name="me_setting_rtc_p2p_sub_title">Перед. все звонки через BCM-сервер, чтобы не показывать свой IP-адрес контакту. Качество звонка ухудшится.</string>
+    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
+    <string name="me_setting_adhoc_title">AirChat</string>
+    <string name="me_setting_adhoc_sub_title">Общайтесь в чате без Интернета.</string>
+    <string name="me_setting_proxy_title">Proxy</string>
+    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
+    <string name="me_setting_others_head">ДРУГИЕ</string>
+    <string name="me_setting_feedback_title">Отзыв</string>
+    <string name="me_setting_about_title">О программе</string>
+    <string name="me_setting_help_title">ЧаВо</string>
+
 
     <!--Notification Setting-->
     <string name="me_notification_setting_title">Уведомление</string>
@@ -344,7 +380,6 @@
     <string name="me_unlock_app_description">BCM исп. биом. данные для разбл. прил.</string>
     <string name="me_unlock_account_key">Разблок. ключ акк.</string>
     <string name="me_unlock_account_key_description">BCM исп. биометр. данные для разблок. ключа акк.</string>
-    <string name="me_setting_proxy_title">Proxy</string>
     <string name="me_test_proxy_usability">Run Usability Test</string>
     <string name="me_proxy_configurations">PROXY CONFIGURATIONS</string>
     <string name="me_add_proxy_title">Add Proxy</string>
@@ -357,8 +392,6 @@
     <string name="me_setting_proxy_item_testing">Testing…</string>
     <string name="me_setting_proxy_action_add">Add</string>
     <string name="me_test_proxy_usability_describe">All proxies added will be used for connecting server when needed, each proxy will take about a few seconds.</string>
-    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
-    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
     <string name="me_add_proxy_edit_title">Edit Proxy</string>
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>

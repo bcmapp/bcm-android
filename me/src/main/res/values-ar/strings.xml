@@ -11,7 +11,6 @@
     <string name="me_notification_head">إخطار</string>
     <string name="me_backup_head">حساب</string>
     <string name="me_security_head">الحماية والخصوصية</string>
-    <string name="me_setting_help_title">أسئلة شائعة</string>
     <string name="me_support_head">التعقيب</string>
     <string name="me_about_head">عن</string>
     <string name="me_device_switch_head">تبديل الجهاز</string>
@@ -20,8 +19,6 @@
     <string name="me_new_version_description">متاح إصدار جديد</string>
     <string name="me_more_title">المزيد</string>
     <string name="me_more_account_title">حسابات</string>
-    <string name="me_setting_feedback_title">التعقيب</string>
-    <string name="me_setting_about_title">عن</string>
     <string name="me_more_scan">مسح</string>
     <string name="me_take_phone">التقط صورة</string>
     <string name="me_choose_phone">اختر صورة</string>
@@ -51,6 +48,18 @@
     <string name="me_scan_code_add_me">مسح رمز QR لإضافتي</string>
     <string name="me_switch_notice">امسح رمز QR وأدخل كلمة السر على الجهاز الجديد لتسجيل الدخول.\n سيقوم هذا الجهاز بتسجيل الخروج بمجرد الانتهاء.</string>
     <string name="me_default_password_content">كلمات السر هذه (8 أحرف على الأقل) مخصصة لتشفير مفتاح الحساب. يرجى ملاحظة أنه لا يمكن إعادة تعيين كلمات السر.</string>
+
+    <!-- change pwd -->
+    <string name="me_change_password_notice_part">ملاحظة: لا يمكن إعادة ضبط كلمة السر إذا نسيتها. </string>
+    <string name="me_change_password_notce_action">تعلم المزيد</string>
+    <string name="me_change_password_same_origin_warning">كلمة السر الجديدة هي نفسها كلمة السر الأصلية</string>
+    <string name="me_change_password_strong_description">قوية</string>
+    <string name="me_change_password_weak_description">ضعيفة</string>
+    <string name="me_change_password_match_description">مطابقة</string>
+    <string name="me_change_password_not_match_description">عدم تطابق</string>
+    <string name="me_change_password_success">تم تغيير كلمة السر بنجاح</string>
+    <string name="me_change_password_error">كلمة السر الأصلية التي أدخلتها غير صحيحة.</string>
+
     <string name="me_version_head">BCM %1$s</string>
     <string name="me_problem_describe">صِف المشكلة (المشاكل)</string>
     <string name="me_submit">إرسال</string>
@@ -83,10 +92,13 @@
     <string name="me_account_unsupported_qr_warning_description">رمز QR هذا ليس مفتاح حساب صالح، يرجى التحقق والمحاولة مرة أخرى</string>
     <string name="me_account_import_qr_warning_title">استيراد مفتاح الحساب</string>
     <string name="me_account_import_qr_warning_description">رمز QR هذا هو مفتاح حساب. إنه ليس لإضافة صديق. إذا كنت ترغب في استيراد مفتاح الحساب هذا، يرجى الذهاب إلى \&quot;حسابات\&quot; في علامة التبويب \&quot;المزيد\&quot;</string>
+
     <!--about-->
     <string name="me_about_new_version_status">ترقية</string>
     <string name="me_about_latest_version_status">أحدث إصدار</string>
     <string name="me_about_security_support">دعم الحماية</string>
+    <string name="me_about_open_source_licenses">تراخيص المصادر المفتوحة</string>
+
     <string name="me_change_password">تغيير كلمة السر</string>
     <string name="me_account_key">مفتاح الحساب</string>
     <string name="me_log_out">تسجيل الخروج</string>
@@ -112,8 +124,6 @@
     <string name="me_input_password_can_not_empty">لا يمكن لكلمة السر أن تكون فارغة</string>
     <string name="me_save">حفظ</string>
     <string name="me_psw_not_equals_confirm_psw">كلمة السر وكلمة سر التأكيد غير متطابقتين.</string>
-    <string name="me_change_password_success">تم تغيير كلمة السر بنجاح</string>
-    <string name="me_change_password_error">كلمة السر الأصلية التي أدخلتها غير صحيحة.</string>
     <string name="me_account_key_anim_tips">مفتاح الحساب الخاص بك هو \n مفتاح المرور الوحيد في BCM</string>
     <string name="me_donate_us">تبرع</string>
     <string name="me_generating_key">لإنشاء مفتاح حساب انقر على \n علامة التبويب \&quot;توقف\&quot; للحصول على المفتاح الخاص بك.</string>
@@ -136,6 +146,12 @@
     <string name="me_str_my_account_key">مفتاح حسابي</string>
     <string name="me_str_version_update">تحديث الإصدار</string>
     <string name="me_text_register_failed">فشل التسجيل</string>
+
+    <string name="me_account_verify_title">التحقق من الهوية</string>
+    <string name="me_account_backup_action">عمل نسخة احتياطية في الألبوم</string>
+    <string name="me_account_not_backup_warning">لم يتم عمل نسخة احتياطية. </string>
+    <string name="me_account_backup_help_description">كيف يتم عمل نسخة احتياطية/تبديل الجهاز؟</string>
+
     <string name="me_update_dialog_title">متاح إصدار %sجديد</string>
     <string name="me_update_dialog_content">متاح إصدار %s جديد، هل تريد التنزيل الآن؟</string>
     <string name="me_update_dialog_downloading">يتم تنزيل الإصدار الجديد وسيُثبت عند انتهاء التنزيل</string>
@@ -146,12 +162,17 @@
     <string name="me_update_notification_failed">فشل تنزيل التحديث</string>
     <string name="me_update_notification_canceled">تم إلغاء تنزيل التحديث</string>
     <string name="me_update_install">تثبيت</string>
+
+    <!-- backup -->
     <string name="me_backup_notice">إشعار</string>
     <string name="me_backup_have_no_notes_app">تعذر العثور على نظام تطبيق Memopad/Notes.</string>
     <string name="me_backup_share_to">مشاركة في</string>
     <string name="me_backup_cannot_copy_qr_code">يتوفر نسخ ميزة رمز QR فقط لنظام آندرويد 7.0 والإصدارات الأحدث.</string>
     <string name="me_backup_str_copy">نسخ</string>
     <string name="me_backup_copy_content">سيتم نسخ رمز QR ولصقه تلقائيا في نظام تطبيق Memopad/Notes.</string>
+    <string name="me_backup_after_change_pwd_notice">يرجى عمل نسخة احتياطية لمفتاح حسابك الذي تم تحديثه بعد تغيير كلمة السر.</string>
+    <string name="me_backup_after_change_pwd_action">قم بعمل نسخة احتياطية الآن</string>
+
     <!--keybox-->
     <string name="me_keybox">KeyBox</string>
     <string name="me_keybox_qr_into">قم بمسح رمز QR لحساب المفتاح لاستيراد مفاتيح الحساب إلى Keybox.</string>
@@ -179,6 +200,7 @@
     <string name="me_fingerprint_unknown_error">خطأ غير معروف</string>
     <string name="me_fingerprint_fail_cancel">تم إلغاؤه من المستخدم</string>
     <string name="me_fingerprint_wrong_password">كلمة سر خاطئة</string>
+    <string name="me_fingerprint_enter_pwd_hint">أدخل كلمة السر</string>
     <!--generate key-->
     <string name="me_login_generate_hash_calculation">بدء حساب إعادة الصياغة</string>
     <string name="me_login_generate_target">هدف</string>
@@ -191,12 +213,16 @@
     <string name="me_profile_picture">أفاتار</string>
     <string name="me_profile_nickname">الاسم المستعار</string>
     <string name="me_profile_add_me">أضفني</string>
+    <string name="me_profile_account_title">مفتاح حسابي</string>
+    <string name="me_profile_change_pwd_title">تغيير كلمة السر</string>
+    <string name="me_profile_alias_save_success">تم تغيير الاسم المستعار</string>
     <!--Ban password reset-->
     <string name="me_ban_reset_password_title">لا يمكن إعادة تعيين كلمة السر</string>
     <string name="me_ban_reset_password_content">فيما يتعلق بسلامة الحساب، يتم تشفير كل مفتاح حساب وتخزينه محليًا، دون تحميل أي بيانات إلى أي خادم. ومع ذلك، لا يمكن إعادة تعيين كلمة السر.</string>
     <string name="me_ban_reset_password_back">عد للصفحة السابقة وحاول مجددًا، أو قم بإنشاء حساب جديد.</string>
     <string name="me_create_account">إنشاء حساب</string>
     <string name="me_text_account_created">تم إنشاء الحساب</string>
+    <string name="me_ban_reset_back_action">ارجع إلى الخلف وحاول مرة أخرى</string>
     <!-- local profile -->
     <string name="me_local_profile_title">تحرير عرض الملف الشخصي</string>
     <string name="me_other_local_display_title">عرض الملف الشخصي</string>
@@ -250,6 +276,15 @@
     <string name="me_setting_privacy_head">تعزيز الخصوصية</string>
     <string name="me_setting_rtc_p2p_title">ترحيل المكالمات دومًا</string>
     <string name="me_setting_rtc_p2p_sub_title">ترحيل جميع المكالمات من خلال خادم BCM لتجنب الكشف عن عنوان بروتوكول الانترنت الخاص بك لجهة اتصالك. سيتم تقليل جودة المكالمة.</string>
+    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
+    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
+    <string name="me_setting_adhoc_title">AirChat</string>
+    <string name="me_setting_adhoc_sub_title">دردش بدون اتصال بالانترنت.</string>
+    <string name="me_setting_others_head">خيارات أخرى</string>
+    <string name="me_setting_proxy_title">Proxy</string>
+    <string name="me_setting_feedback_title">التعقيب</string>
+    <string name="me_setting_about_title">عن</string>
+    <string name="me_setting_help_title">أسئلة شائعة</string>
 
     <!--Notification Setting-->
     <string name="me_notification_setting_title">إخطار</string>
@@ -346,8 +381,6 @@
     <string name="me_unlock_app_description">يستخدم BCM البيومترية لفتح التطبيق</string>
     <string name="me_unlock_account_key">فتح مفتاح الحساب</string>
     <string name="me_unlock_account_key_description">يستخدم BCM البيومترية لفتح مفتاح حسابك</string>
-    <string name="me_setting_adhoc_title">AirChat</string>
-    <string name="me_setting_proxy_title">Proxy</string>
     <string name="me_test_proxy_usability">Run Usability Test</string>
     <string name="me_proxy_configurations">PROXY CONFIGURATIONS</string>
     <string name="me_add_proxy_title">Add Proxy</string>
@@ -360,8 +393,7 @@
     <string name="me_setting_proxy_item_testing">Testing…</string>
     <string name="me_setting_proxy_action_add">Add</string>
     <string name="me_test_proxy_usability_describe">All proxies added will be used for connecting server when needed, each proxy will take about a few seconds.</string>
-    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
-    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
+
     <string name="me_add_proxy_edit_title">Edit Proxy</string>
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>

@@ -23,6 +23,8 @@
     <string name="chats_title">चैट</string>
     <string name="chats_no_conversation_main">अभी तक कोई बातचीत नहीं</string>
     <string name="chats_no_conversation_sub">किसी चैट को ऊपर स्ट्राइक करें और वह यहां दिखाई देगा</string>
+    <string name="chats_no_conversation_description">अभी तक कोई दोस्त नहीं? %s और अपना निजी चैट शुरू करें! </string>
+    <string name="chats_no_conversation_invite">अपने दोस्तों को बुलाओ</string>
     <string name="chats_no_nickname_set">आपने अभी तक अपना उपनाम सेट नहीं किया है।</string>
     <string name="chats_no_nickname_set_btn">अभी सेट करें</string>
     <string name="chats_network_connecting">कनेक्ट हो रहा है</string>
@@ -634,4 +636,10 @@
     <string name="chats_network_try_proxy">\nTry Proxy</string>
     <string name="chats_server_can_not_reach">Can\'t Reach Servers</string>
     <string name="chats_try_proxy_doing">Trying Proxies…</string>
+
+    <!--Media view-->
+    <string name="chats_media_view_image_expire">यह चित्र एक्सपायर हो गया है या डिलीट हो गया है</string>
+    <string name="chats_media_view_video_expire">यह वीडियो एक्सपायर हो गया है या डिलीट हो गया है</string>
+    <string name="chats_media_view_audio_expire">एक्सपायर हुए ऑडिए मैसेज</string>
+
 </resources>

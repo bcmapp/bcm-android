@@ -199,6 +199,9 @@
     <string name="common_later">बाद में</string>
     <string name="common_copied">कॉपी हुआ</string>
     <string name="common_open">खोलें</string>
+    <string name="common_help">सहायता</string>
+    <string name="common_multi_select">मल्टीसेलेक्ट</string>
+    <string name="common_save_to_album">एल्बम में सहेजें</string>
     <string name="common_connection_lost">कनेक्ट हो रहा है&#8230;</string>
     <string name="common_group_get_member_fail">चैट ग्रूप के सदस्य पाने में विफल</string>
     <string name="common_search_hint">खोजें</string>
@@ -386,6 +389,7 @@
     <!-- 二维码相关 -->
     <string name="common_unsupported_qr_code_description">खाता संस्करण असमर्थिति</string>
 
-
+    <string name="common_save_success">सफलतापूर्वक सहेजा गया</string>
+    <string name="common_save_fail">सहेजना विफल</string>
 
 </resources>

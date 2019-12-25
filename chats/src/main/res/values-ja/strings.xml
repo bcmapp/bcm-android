@@ -22,6 +22,8 @@
     <string name="chats_title">チャット</string>
     <string name="chats_no_conversation_main">まだ何も会話がありません</string>
     <string name="chats_no_conversation_sub">チャットを開始すると、ここに表示されます</string>
+    <string name="chats_no_conversation_description">フレンドないのか？%s一緒にチャットしましょう！</string>
+    <string name="chats_no_conversation_invite">フレンドを招待しましょう</string>
     <string name="chats_no_nickname_set">あなたはまだニックネームを設定していません。</string>
     <string name="chats_no_nickname_set_btn">今すぐ設定</string>
     <string name="chats_network_connecting">接続中…</string>
@@ -684,5 +686,10 @@
     <string name="chats_network_try_proxy">\nTry Proxy</string>
     <string name="chats_server_can_not_reach">Can\'t Reach Servers</string>
     <string name="chats_try_proxy_doing">Trying Proxies…</string>
+
+    <!--Media view-->
+    <string name="chats_media_view_image_expire">画像の期限が切れたり削除されたりしています</string>
+    <string name="chats_media_view_video_expire">ビデオの期限が切れたり削除されたりしています</string>
+    <string name="chats_media_view_audio_expire">音声チャットメッセージの期限が切れ</string>
 
 </resources>

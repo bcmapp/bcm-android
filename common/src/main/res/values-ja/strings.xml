@@ -238,6 +238,9 @@
     <string name="common_cancel">キャンセル</string>
     <string name="common_send">送信</string>
     <string name="common_open">開け</string>
+    <string name="common_help">ヘルフ</string>
+    <string name="common_save_to_album">アルバムに保存します</string>
+    <string name="common_multi_select">複数選択</string>
     <string name="common_later">あとで処理する</string>
     <string name="common_done">完了</string>
     <string name="common_copied">コピー済み</string>
@@ -457,6 +460,7 @@
     <!-- 二维码相关 -->
     <string name="common_unsupported_qr_code_description">未対応のアカウントバージョン</string>
 
-
+    <string name="common_save_success">保存成功</string>
+    <string name="common_save_fail">保存失敗</string>
 
 </resources>

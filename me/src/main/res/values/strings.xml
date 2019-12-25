@@ -80,8 +80,6 @@
     <string name="me_version">Version</string>
     <string name="me_copyright">Privacy</string>
 
-    <string name="me_nickname_placeholder">Nickname</string>
-
     <string name="me_name_title">Name</string>
     <string name="me_name_content">Hint: Please enter a new name.</string>
 
@@ -126,10 +124,8 @@
     <string name="me_about_open_source_licenses">Open source licenses</string>
 
     <string name="me_change_password">Change Password</string>
-
     <string name="me_account_key">Account Key</string>
     <string name="me_log_out">Log Out</string>
-
     <string name="me_enter_original_password">Enter original password</string>
     <string name="me_original_password">Original Password</string>
     <string name="me_new_password">New Password</string>
@@ -206,7 +202,6 @@
     <string name="me_backup_cannot_copy_qr_code">Copy QR code feature is only available for Android 7.0 and above.</string>
     <string name="me_backup_str_copy">Copy</string>
     <string name="me_backup_copy_content">This QR code will be copied and automatically pasted in the system Memopad/Notes App.</string>
-
     <string name="me_backup_after_change_pwd_notice">Please back up your updated Account Key after changing the password.</string>
     <string name="me_backup_after_change_pwd_action">Back Up Now</string>
 
@@ -250,6 +245,7 @@
     <string name="me_login_account_key_null_warning">Account key pair is empty</string>(
 
     <!--my profile-->
+    <string name="me_nickname_placeholder">Nickname</string>
     <string name="me_profile_title">My Profile</string>
     <string name="me_profile_picture">Avatar</string>
     <string name="me_profile_nickname">Alias</string>

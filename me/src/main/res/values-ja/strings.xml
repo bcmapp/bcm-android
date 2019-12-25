@@ -12,7 +12,6 @@
     <string name="me_notification_head">通知</string>
     <string name="me_backup_head">アカウント</string>
     <string name="me_security_head">セキュリティ &amp; プライバシー</string>
-    <string name="me_setting_help_title">FAQ</string>
     <string name="me_support_head">フィードバック</string>
     <string name="me_about_head">について</string>
     <string name="me_device_switch_head">スイッチ装置</string>
@@ -22,8 +21,6 @@
 
     <string name="me_more_title">もっと</string>
     <string name="me_more_account_title">アカウント</string>
-    <string name="me_setting_feedback_title">フィードバック</string>
-    <string name="me_setting_about_title">関する</string>
     <string name="me_more_scan">スキャン</string>
 
     <string name="me_take_phone">写真を撮る</string>
@@ -55,17 +52,24 @@
     <string name="me_scan_code_add_me">スキャンしてフレンドに追加する</string>
     <string name="me_switch_notice">新しい端末でQRコードをスキャンしてパスワードを入力することでログインできます。\n新しい端末でログインするとこのデバイスからは自動的にログアウトされます。</string>
     <string name="me_default_password_content">パスワード (少なくとも8文字以上が必要です)はアカウントキーの暗号化に使用されます。もし忘れてしまってもリセットすることはできません。</string>
+
+    <!-- change pwd -->
+    <string name="me_change_password_notice_part">注意：忘れれたパスワードをリセットできない。 </string>
+    <string name="me_change_password_notce_action">詳細はこちら</string>
+    <string name="me_change_password_same_origin_warning">新パスワードと旧パスワード同じ</string>
+    <string name="me_change_password_success">パスワードが変更されました</string>
+    <string name="me_change_password_error">入力した元のパスワードが間違っています。</string>
+    <string name="me_change_password_strong_description">強く</string>
+    <string name="me_change_password_weak_description">弱い</string>
+    <string name="me_change_password_match_description">一致します</string>
+    <string name="me_change_password_not_match_description">一致しません</string>
+
     <string name="me_version_head">BCM %1$s</string>
     <string name="me_problem_describe">問題を解決する</string>
     <string name="me_submit">送信</string>
 
     <string name="me_version">バージョン</string>
     <string name="me_copyright">プライバシー</string>
-
-    <string name="me_nickname_placeholder">ニックネーム</string>
-    <string name="me_profile_picture">プロフィール画像</string>
-    <string name="me_profile_nickname">ニックネーム</string>
-    <string name="me_profile_add_me">私をフレンドに追加して</string>
 
     <string name="me_name_title">名前</string>
     <string name="me_name_content">ヒント: 新しい名前を入力してください。</string>
@@ -102,9 +106,11 @@
     <string name="me_account_import_qr_warning_title">アカウントキーを導入</string>
     <string name="me_account_import_qr_warning_description">このQRコードはアカウントキーであり、フレンド追加用ではありません。もしこのアカウントキーを導入すれば、“もっと”ページの“アカウント”で操作してください</string>
 
+    <!-- about -->
     <string name="me_about_new_version_status">更新</string>
     <string name="me_about_latest_version_status">最新バージョン</string>
     <string name="me_about_security_support">安全支持</string>
+    <string name="me_about_open_source_licenses">ソースコードソースコード</string>
 
     <string name="me_account_key">現在のアカウントキー</string>
     <string name="me_log_out">ログアウト</string>
@@ -136,8 +142,6 @@
 
     <string name="me_save">保存</string>
     <string name="me_psw_not_equals_confirm_psw">入力されたパスワードの確認が一致しません。</string>
-    <string name="me_change_password_success">パスワードが変更されました</string>
-    <string name="me_change_password_error">入力した元のパスワードが間違っています。</string>
     <string name="me_account_key_anim_tips">アカウントキーはBCMにログインする唯一の手段です。</string>
 
     <string name="me_donate_us">寄付</string>
@@ -164,6 +168,11 @@
     <string name="me_str_version_update">更新</string>
     <string name="me_text_register_failed">登録に失敗しました</string>
 
+    <string name="me_account_verify_title">身份検証</string>
+    <string name="me_account_backup_action">Back up to album</string>
+    <string name="me_account_not_backup_warning">未バックアップ。</string>
+    <string name="me_account_backup_help_description">どうバックアップ/デバイス切り替える？</string>
+
     <string name="me_update_dialog_title">新しいバージョン %s が見つかりました</string>
     <string name="me_update_dialog_content">新しいバージョン %s が見つかりました。ダウンロードしますか？</string>
     <string name="me_update_dialog_downloading">新しいバージョンがダウンロードされその後インストールされます。</string>
@@ -175,12 +184,15 @@
     <string name="me_update_notification_canceled">アップデートのダウンロードがキャンセルされました</string>
     <string name="me_update_install">インストール</string>
 
+    <!-- backup -->
     <string name="me_backup_notice">お知らせ</string>
     <string name="me_backup_have_no_notes_app">システムのメモ帳やノートアプリを見つけることができませんでした。</string>
     <string name="me_backup_share_to">共有</string>
     <string name="me_backup_cannot_copy_qr_code">QRコードのコピー機能はAndroid 7.0以上でのみ利用可能です。</string>
     <string name="me_backup_str_copy">コピー</string>
     <string name="me_backup_copy_content">QRコードはコピーされ自動的にシステムのメモ帳やノートアプリに貼り付けられます。</string>
+    <string name="me_backup_after_change_pwd_notice">パスワード変更後、，更新後のアカウントキーをバックアップしてください。</string>
+    <string name="me_backup_after_change_pwd_action">すぐバックアップ</string>
 
     <!--keybox-->
     <string name="me_keybox">KeyBox</string>
@@ -210,6 +222,7 @@
     <string name="me_fingerprint_unknown_error">未知のエラー</string>
     <string name="me_fingerprint_fail_cancel">ユーザーによってキャンセルされました</string>
     <string name="me_fingerprint_wrong_password">間違ったパスワード</string>
+    <string name="me_fingerprint_enter_pwd_hint">パスワードを入力</string>
 
     <!--generate key-->
     <string name="me_login_generate_hash_calculation">ハッシュ計算を開始しました</string>
@@ -222,6 +235,13 @@
 
     <!--my profile-->
     <string name="me_profile_title">私のプロフィール</string>
+    <string name="me_nickname_placeholder">ニックネーム</string>
+    <string name="me_profile_picture">プロフィール画像</string>
+    <string name="me_profile_nickname">ニックネーム</string>
+    <string name="me_profile_add_me">私をフレンドに追加して</string>
+    <string name="me_profile_account_title">マイアカウントキー</string>
+    <string name="me_profile_change_pwd_title">パスワード変更</string>
+    <string name="me_profile_alias_save_success">ニックネーム修正成功</string>
 
     <!--Ban password reset-->
     <string name="me_ban_reset_password_title">パスワードはリセットできません</string>
@@ -229,6 +249,7 @@
     <string name="me_ban_reset_password_back">前のページに戻って再試行するか、新しいアカウントを作成してください。</string>
     <string name="me_create_account">アカウントを作成</string>
     <string name="me_text_account_created">アカウントは作成されました</string>
+    <string name="me_ban_reset_back_action">戻って再試行して下さい</string>
 
     <!-- local profile -->
     <string name="me_local_profile_title">プロフィールを編集</string>
@@ -286,6 +307,16 @@
     <string name="me_setting_privacy_head">プライバシー</string>
     <string name="me_setting_rtc_p2p_title">ずっとサーバーで通話を中継する</string>
     <string name="me_setting_rtc_p2p_sub_title">BCMサーバをですべての通話を中継できるけれど、あなたのIPを取得することを防止するために、通話品質を低下させる。</string>
+    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
+    <string name="me_setting_proxy_title">Proxy</string>
+    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
+    <string name="me_setting_adhoc_title">AirChat</string>
+    <string name="me_setting_adhoc_sub_title">ネットなしにチャットできる。</string>
+    <string name="me_setting_others_head">ほか</string>
+    <string name="me_setting_feedback_title">フィードバック</string>
+    <string name="me_setting_about_title">関する</string>
+    <string name="me_setting_help_title">FAQ</string>
+
 
     <!--Notification Setting-->
     <string name="me_notification_setting_title">通知</string>
@@ -390,7 +421,6 @@
     <string name="me_unlock_app_description">BCMは生体認識機能でロックを解除</string>
     <string name="me_unlock_account_key">アカウントキーのロック解除</string>
     <string name="me_unlock_account_key_description">BCMはあなたの生体認証機能でアカウントキーをアンロックする</string>
-    <string name="me_setting_proxy_title">Proxy</string>
     <string name="me_test_proxy_usability">Run Usability Test</string>
     <string name="me_proxy_configurations">PROXY CONFIGURATIONS</string>
     <string name="me_add_proxy_title">Add Proxy</string>
@@ -403,8 +433,6 @@
     <string name="me_setting_proxy_item_testing">Testing…</string>
     <string name="me_setting_proxy_action_add">Add</string>
     <string name="me_test_proxy_usability_describe">All proxies added will be used for connecting server when needed, each proxy will take about a few seconds.</string>
-    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
-    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
     <string name="me_add_proxy_edit_title">Edit Proxy</string>
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>

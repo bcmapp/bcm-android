@@ -23,6 +23,8 @@
     <string name="chats_title">چت‌ها</string>
     <string name="chats_no_conversation_main">هنوز مکالمه‌ای نیست</string>
     <string name="chats_no_conversation_sub">چتی را که شروع کنید اینجا نمایش داده می‌شود</string>
+    <string name="chats_no_conversation_description">هنوز دوستی وجود ندارد؟ %s و چت خصوصی شما شروع شود! </string>
+    <string name="chats_no_conversation_invite">دعوت از دوستان شما</string>
     <string name="chats_no_nickname_set">هنوز نام مستعار برای خود تعیین نکرده‌اید.</string>
     <string name="chats_no_nickname_set_btn">تعیین کنید</string>
     <string name="chats_network_connecting">درحال اتصال…</string>
@@ -635,4 +637,10 @@
     <string name="chats_network_try_proxy">\nTry Proxy</string>
     <string name="chats_server_can_not_reach">Can\'t Reach Servers</string>
     <string name="chats_try_proxy_doing">Trying Proxies…</string>
+
+    <!--Media view-->
+    <string name="chats_media_view_image_expire">این تصویر منقضی یا پاک شده است</string>
+    <string name="chats_media_view_video_expire">این ویدیئو منقضی یا پاک شده است</string>
+    <string name="chats_media_view_audio_expire">پیام صوتی منقضی شده</string>
+
 </resources>

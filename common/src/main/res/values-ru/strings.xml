@@ -211,6 +211,9 @@
     <string name="common_later">Позже</string>
     <string name="common_copied">Скопировано</string>
     <string name="common_open">Открыть</string>
+    <string name="common_help">Помощь</string>
+    <string name="common_multi_select">Множественный выбор</string>
+    <string name="common_save_to_album">Сохр. в альбом</string>
     <string name="common_connection_lost">Подключение&#8230;</string>
     <string name="common_group_get_member_fail">Данные чл. гр. чата не получ.</string>
     <string name="common_search_hint">Поиск</string>
@@ -399,6 +402,7 @@
     <!-- 二维码相关 -->
     <string name="common_unsupported_qr_code_description">Неподдерж. версия акк-та</string>
 
-
+    <string name="common_save_success">Сохранил</string>
+    <string name="common_save_fail">Не сохр.</string>
 
 </resources>

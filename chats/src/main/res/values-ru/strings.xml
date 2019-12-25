@@ -23,6 +23,8 @@
     <string name="chats_title">Чаты</string>
     <string name="chats_no_conversation_main">Бесед пока нет</string>
     <string name="chats_no_conversation_sub">начните чат, и он появится здесь</string>
+    <string name="chats_no_conversation_description">Еще нет друзей? %s и начните общение в частном чате! </string>
+    <string name="chats_no_conversation_invite">Пригласите друзей</string>
     <string name="chats_no_nickname_set">Вы еще не ввели свой ник.</string>
     <string name="chats_no_nickname_set_btn">Ввести</string>
     <string name="chats_network_connecting">Подключаем…</string>
@@ -634,4 +636,10 @@
     <string name="chats_network_try_proxy">\nTry Proxy</string>
     <string name="chats_server_can_not_reach">Can\'t Reach Servers</string>
     <string name="chats_try_proxy_doing">Trying Proxies…</string>
+
+    <!--Media view-->
+    <string name="chats_media_view_image_expire">Это изображение устарело или удалено</string>
+    <string name="chats_media_view_video_expire">Это видео устарело или удалено</string>
+    <string name="chats_media_view_audio_expire">Старое аудиосообщение</string>
+
 </resources>

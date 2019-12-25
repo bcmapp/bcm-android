@@ -11,7 +11,6 @@
     <string name="me_notification_head">اعلان</string>
     <string name="me_backup_head">حساب</string>
     <string name="me_security_head">امنیت و حریم خصوصی</string>
-    <string name="me_setting_help_title">سؤالات متداول</string>
     <string name="me_support_head">بازخورد</string>
     <string name="me_about_head">درباره</string>
     <string name="me_device_switch_head">تعویض دستگاه</string>
@@ -20,8 +19,6 @@
     <string name="me_new_version_description">نسخه جدید موجود است</string>
     <string name="me_more_title">بیشتر</string>
     <string name="me_more_account_title">حساب‌ها</string>
-    <string name="me_setting_feedback_title">بازخورد</string>
-    <string name="me_setting_about_title">درباره</string>
     <string name="me_more_scan">اسکن</string>
     <string name="me_take_phone">گرفتن عکس</string>
     <string name="me_choose_phone">انتخاب عکس</string>
@@ -51,6 +48,18 @@
     <string name="me_scan_code_add_me">برای افزودن من، کد QR را اسکن کنید</string>
     <string name="me_switch_notice">برای ورود با دستگاه جدید، کد QR را اسکن و رمز عبور را وارد کنید.\nپس از آن، دستگاه کنونی از حساب خارج می‌شود.</string>
     <string name="me_default_password_content">این رمز عبور (حداقل 8 کاراکتر) مختص رمزنگاری کلید حساب است. لطفاً توجه کنید که امکان بازنشانی رمز عبور وجود ندارد.</string>
+
+    <!-- change pwd -->
+    <string name="me_change_password_notice_part">توجه: در صورتی فراموش کردن کلمه عبرو، امکان بازیابی آن وجود ندارد. </string>
+    <string name="me_change_password_notce_action">فراگیری بیشتر</string>
+    <string name="me_change_password_same_origin_warning">کلمه عبور جدید همان مورد اولیه است</string>
+    <string name="me_change_password_success">تغییر رمزعبور موفق بود</string>
+    <string name="me_change_password_error">رمز عبور اصلی واردشده اشتباه است.</string>
+    <string name="me_change_password_strong_description">قوی</string>
+    <string name="me_change_password_weak_description">ضعیف</string>
+    <string name="me_change_password_match_description">منطبق</string>
+    <string name="me_change_password_not_match_description">غیرمنطبق</string>
+
     <string name="me_version_head">BCM %1$s</string>
     <string name="me_problem_describe">مشکل(ها) را شرح دهید</string>
     <string name="me_submit">ارسال</string>
@@ -87,6 +96,8 @@
     <string name="me_about_new_version_status">ارتقا</string>
     <string name="me_about_latest_version_status">آخرین نسخه</string>
     <string name="me_about_security_support">پشتیبانی امنیتی</string>
+    <string name="me_about_open_source_licenses">بازکردن مجوزهای منبع</string>
+
     <string name="me_change_password">تغییر رمز عبور</string>
     <string name="me_account_key">کلید حساب</string>
     <string name="me_log_out">خروج</string>
@@ -112,8 +123,6 @@
     <string name="me_input_password_can_not_empty">رمزعبور نباید خالی باشد</string>
     <string name="me_save">ذخیره</string>
     <string name="me_psw_not_equals_confirm_psw">رمزعبور شما با تکرار رمزعبور مطابقت ندارد.</string>
-    <string name="me_change_password_success">تغییر رمزعبور موفق بود</string>
-    <string name="me_change_password_error">رمز عبور اصلی واردشده اشتباه است.</string>
     <string name="me_account_key_anim_tips">کلید حساب شما \n تنها رمزتان در BCM است</string>
     <string name="me_donate_us">اهدای کمک</string>
     <string name="me_generating_key">ایجاد کلید حساب \n برای دریافت کلید حساب خودتان، روی «توقف» بزنید.</string>
@@ -134,8 +143,15 @@
     <string name="me_str_backup_date_import">تاریخ پشتیبان‌گیری(ورودی): %s</string>
     <string name="me_show_qr_code">نمایش کد QR</string>
     <string name="me_str_my_account_key">کلید حساب من</string>
-    <string name="me_str_version_update">بروزرسانی نسخه</string>
     <string name="me_text_register_failed">ثبت ناموفق بود</string>
+
+    <string name="me_account_verify_title">تایید هویت</string>
+    <string name="me_account_backup_action">بازگشت آلبوم</string>
+    <string name="me_account_not_backup_warning">فاقد پشتیبانی. </string>
+    <string name="me_account_backup_help_description">چگونگی پشتیبانی گرفتن از/تغییر دستگاه?</string>
+
+    <!-- update -->
+    <string name="me_str_version_update">بروزرسانی نسخه</string>
     <string name="me_update_dialog_title">نسخه جدید %s موجود است</string>
     <string name="me_update_dialog_content">نسخه جدید %s موجود است، دانلود شود؟</string>
     <string name="me_update_dialog_downloading">نسخه جدید در حال دانلود است و پس از دانلود، نصب خواهد شد</string>
@@ -146,12 +162,17 @@
     <string name="me_update_notification_failed">دانلود بروزرسانی انجام نشد</string>
     <string name="me_update_notification_canceled">دانلود بروزرسانی لغو شد</string>
     <string name="me_update_install">نصب</string>
+
+    <!-- backup -->
     <string name="me_backup_notice">اطلاعیه</string>
     <string name="me_backup_have_no_notes_app">برنامه Memopad/Notes در سیستم یافت نشد.</string>
     <string name="me_backup_share_to">اشتراک با</string>
     <string name="me_backup_cannot_copy_qr_code">ویژگی کپی کردن کد QR فقط در اندروید 7.0 به بالا امکان‌پذیر است.</string>
     <string name="me_backup_str_copy">کپی</string>
     <string name="me_backup_copy_content">این کد QR بطور خودکار کپی و در برنامه Memopad/Notes سیستم چسبانده خواهد شد.</string>
+    <string name="me_backup_after_change_pwd_notice">لطفاً بعد از تغییر کلمه عبور، از کلید حساب به روزشده خود پشتیبانی بگیرید.</string>
+    <string name="me_backup_after_change_pwd_action">همین حالا پشتیبانی بگیرید</string>
+
     <!--keybox-->
     <string name="me_keybox">جعبه کلید</string>
     <string name="me_keybox_qr_into">با اسکن کردن کد QR کلید حساب، کلیدهای حساب را وارد جعبه کلید کنید.</string>
@@ -179,6 +200,7 @@
     <string name="me_fingerprint_unknown_error">خطای ناشناخته</string>
     <string name="me_fingerprint_fail_cancel">توسط کاربر لغو شد</string>
     <string name="me_fingerprint_wrong_password">رمزعبور نادرست</string>
+    <string name="me_fingerprint_enter_pwd_hint">رمزعبور را وارد کنید</string>
     <!--generate key-->
     <string name="me_login_generate_hash_calculation">شروع محاسبه هش</string>
     <string name="me_login_generate_target">هدف</string>
@@ -191,12 +213,16 @@
     <string name="me_profile_picture">آواتار</string>
     <string name="me_profile_nickname">نام مستعار</string>
     <string name="me_profile_add_me">افزودن من</string>
+    <string name="me_profile_account_title">کلید حساب من</string>
+    <string name="me_profile_change_pwd_title">تغییر کلمه عبور</string>
+    <string name="me_profile_alias_save_success">تغییر نام مستعار</string>
     <!--Ban password reset-->
     <string name="me_ban_reset_password_title">بازنشانی رمزعبور ممکن نیست</string>
     <string name="me_ban_reset_password_content">برای مسائل ایمنی حساب، هریک از کلیدهای حساب رمزنگاری می‌شود و در حافظه داخلی ذخیره می‌گردد، بدون اینکه داده‌ای در سرورها بارگذاری شود. از این رو، امکان بازنشانی رمزعبورتان وجود ندارد.</string>
     <string name="me_ban_reset_password_back">می‌توانید به صفحه قبل برگردید و دوباره امتحان کنید، یا حساب جدیدی بسازید.</string>
     <string name="me_create_account">ایجاد حساب</string>
     <string name="me_text_account_created">حساب ایجاد شد</string>
+    <string name="me_ban_reset_back_action">بازگردید و دوباره تلاش کنید</string>
     <!-- local profile -->
     <string name="me_local_profile_title">ویرایش نمایش پروفایل</string>
     <string name="me_other_local_display_title">نمایش پروفایل</string>
@@ -250,6 +276,15 @@
     <string name="me_setting_privacy_head">تقویت حریم خصوصی</string>
     <string name="me_setting_rtc_p2p_title">همیشه تماس‌ها واگذاری شود</string>
     <string name="me_setting_rtc_p2p_sub_title">منتقل کردن کلیه تماس‌ها به سرور BCM جهت جلوگیری از فاش شدن آدرس IP شما برای مخاطب‌تان. کیفیت تماس افت خواهد کرد.</string>
+    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
+    <string name="me_setting_adhoc_title">AirChat</string>
+    <string name="me_setting_adhoc_sub_title">چت بدون اینترنت.</string>
+    <string name="me_setting_proxy_title">Proxy</string>
+    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
+    <string name="me_setting_others_head">سایر</string>
+    <string name="me_setting_feedback_title">بازخورد</string>
+    <string name="me_setting_about_title">درباره</string>
+    <string name="me_setting_help_title">سؤالات متداول</string>
 
     <!--Notification Setting-->
     <string name="me_notification_setting_title">اعلان</string>
@@ -344,7 +379,6 @@
     <string name="me_unlock_app_description">BCM از بیومتریک شما برای قفل‌گشایی برنامه استفاده می‌کند</string>
     <string name="me_unlock_account_key">قفل‌گشایی کلید حساب</string>
     <string name="me_unlock_account_key_description">BCM از بیومتریک شما برای قفل‌گشایی کلید حساب استفاده می‌کند</string>
-    <string name="me_setting_proxy_title">Proxy</string>
     <string name="me_test_proxy_usability">Run Usability Test</string>
     <string name="me_proxy_configurations">PROXY CONFIGURATIONS</string>
     <string name="me_add_proxy_title">Add Proxy</string>
@@ -357,8 +391,6 @@
     <string name="me_setting_proxy_item_testing">Testing…</string>
     <string name="me_setting_proxy_action_add">Add</string>
     <string name="me_test_proxy_usability_describe">All proxies added will be used for connecting server when needed, each proxy will take about a few seconds.</string>
-    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
-    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
     <string name="me_add_proxy_edit_title">Edit Proxy</string>
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>

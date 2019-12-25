@@ -23,6 +23,8 @@
     <string name="chats_title">دردشات</string>
     <string name="chats_no_conversation_main">لا محادثات حتى الان</string>
     <string name="chats_no_conversation_sub">اضغط على &quot;دردشة&quot; وستظهر هنا</string>
+    <string name="chats_no_conversation_description">أليس لديك أصدقاء بعد؟ %s وابدأ في الدردشة الخصوصية! </string>
+    <string name="chats_no_conversation_invite">ادعُ أصدقاءك</string>
     <string name="chats_no_nickname_set">لم تقم بتعيين اسمك المستعار حتى الآن.</string>
     <string name="chats_no_nickname_set_btn">تعيين الآن</string>
     <string name="chats_network_connecting">اتصال…</string>
@@ -634,4 +636,10 @@
     <string name="chats_network_try_proxy">\nTry Proxy</string>
     <string name="chats_server_can_not_reach">Can\'t Reach Servers</string>
     <string name="chats_try_proxy_doing">Trying Proxies…</string>
+
+    <!--Media view-->
+    <string name="chats_media_view_image_expire">انتهت صلاحية هذه الصورة أو تم حذفها</string>
+    <string name="chats_media_view_video_expire">انتهت صلاحية هذا الفيديو أو تم حذفه</string>
+    <string name="chats_media_view_audio_expire">انتهت صلاحية الرسالة الصوتية</string>
+
 </resources>

@@ -11,7 +11,6 @@
     <string name="me_notification_head">सूचना</string>
     <string name="me_backup_head">खाता</string>
     <string name="me_security_head">सुरक्षा &amp; निजता</string>
-    <string name="me_setting_help_title">अक्‍सर पूछे जाने वाले सवाल</string>
     <string name="me_support_head">प्रतिक्रिया</string>
     <string name="me_about_head">बारे में</string>
     <string name="me_device_switch_head">डिवाइस बदलें</string>
@@ -20,8 +19,6 @@
     <string name="me_new_version_description">नया संस्‍करण उपलब्‍ध है</string>
     <string name="me_more_title">अधिक</string>
     <string name="me_more_account_title">खाता</string>
-    <string name="me_setting_feedback_title">प्रतिक्रिया</string>
-    <string name="me_setting_about_title">बारे में</string>
     <string name="me_more_scan">स्कैन</string>
     <string name="me_take_phone">फोटो लें</string>
     <string name="me_choose_phone">फोटो चुनें</string>
@@ -51,6 +48,18 @@
     <string name="me_scan_code_add_me">मुझे जोड़ने के लिए क्यूआर कोड स्कैन करें</string>
     <string name="me_switch_notice">नए डिवाइस पर लॉगिन करने के लिए क्यूआर कोड स्कैन करें और पासवर्ड डालें।\nपूरा होने पर यह डिवाइस लॉगआउट हो जाएगा।</string>
     <string name="me_default_password_content">यह पासवर्ड (कम से कम 8 अक्षरों का) खाता कुंजी एनक्रिप्शन के लिए है। कृपया ध्यान दें कि पासवर्ड रीसेट नहीं किए जा सकते।</string>
+
+    <!-- change pwd -->
+    <string name="me_change_password_notice_part">ध्यान दें: यदि आप भूल गए तो पासवर्ड रीसेट नहीं किया जा सकता है। </string>
+    <string name="me_change_password_notce_action">और अधिक जानें</string>
+    <string name="me_change_password_same_origin_warning">नया पासवर्ड ओरिजिनल जैसा ही है</string>
+    <string name="me_change_password_success">पासवर्ड बदलना सफल</string>
+    <string name="me_change_password_error">आपने जो ओरिजिनल पासवर्ड डाला था वह गलत है।</string>
+    <string name="me_change_password_strong_description">मजबूत</string>
+    <string name="me_change_password_weak_description">कमजोर</string>
+    <string name="me_change_password_match_description">मैच</string>
+    <string name="me_change_password_not_match_description">मैच नहीं हो रहा है</string>
+
     <string name="me_version_head">BCM %1$s</string>
     <string name="me_problem_describe">समस्या का विवरण बताएं</string>
     <string name="me_submit">जमा करें</string>
@@ -87,6 +96,8 @@
     <string name="me_about_new_version_status">अपग्रेड करें</string>
     <string name="me_about_latest_version_status">नवीनतम संस्करण</string>
     <string name="me_about_security_support">सुरक्षा सहायता</string>
+    <string name="me_about_open_source_licenses">ओपन सोर्स लाइसेंस</string>
+
     <string name="me_change_password">पासवर्ड बदलें</string>
     <string name="me_account_key">खाता कुंजी</string>
     <string name="me_log_out">लॉग आउट</string>
@@ -112,8 +123,6 @@
     <string name="me_input_password_can_not_empty">पासवर्ड खाली नहीं रह सकता</string>
     <string name="me_save">सहेजें</string>
     <string name="me_psw_not_equals_confirm_psw">आपका पासवर्ड और पुष्टिकरण पासवर्ड मेल नहीं खाते।</string>
-    <string name="me_change_password_success">पासवर्ड बदलना सफल</string>
-    <string name="me_change_password_error">आपने जो ओरिजिनल पासवर्ड डाला था वह गलत है।</string>
     <string name="me_account_key_anim_tips">केवल आपका खाता कुंजी आपका \n BCM का पासवर्ड है</string>
     <string name="me_donate_us">दान देना</string>
     <string name="me_generating_key">खाता कुंजी बनाया जा रहा है \n \"बंद करें\" टैप कर अपना पाएं।</string>
@@ -134,8 +143,15 @@
     <string name="me_str_backup_date_import">बैकप की तिथि (इम्पोर्ट): %s</string>
     <string name="me_show_qr_code">क्यूआर कोड दिखाएं</string>
     <string name="me_str_my_account_key">मेरा खाता कुंजी</string>
-    <string name="me_str_version_update">संस्‍करण अपडेट</string>
     <string name="me_text_register_failed">पंजीकरण विफल</string>
+
+    <string name="me_account_verify_title">पहचान की पुष्टि करें</string>
+    <string name="me_account_backup_action">एलबम में बैकप करें</string>
+    <string name="me_account_not_backup_warning">बैकप नहीं है। </string>
+    <string name="me_account_backup_help_description">डिवाइस को कैसे बैकप करें/बदलें?</string>
+
+    <!-- update -->
+    <string name="me_str_version_update">संस्‍करण अपडेट</string>
     <string name="me_update_dialog_title">नया संस्‍करण %s उपलब्‍ध है</string>
     <string name="me_update_dialog_content">नया संस्करण %s उपलब्ध है, अभी डाउनलोड करें?</string>
     <string name="me_update_dialog_downloading">नया संस्करण डाउनलोड हो रहा है और पूरा होने पर इन्स्टॉल किया जाएगा</string>
@@ -146,12 +162,17 @@
     <string name="me_update_notification_failed">अपडेट डाउनलोड विफल</string>
     <string name="me_update_notification_canceled">अपडेट डाउनलोड रद्द हो गई है</string>
     <string name="me_update_install">स्थापित करें</string>
+
+    <!-- backup -->
     <string name="me_backup_notice">सूचना</string>
     <string name="me_backup_have_no_notes_app">सिस्टम मेमोपैड/नोट्स ऐप नहीं मिल सका</string>
     <string name="me_backup_share_to">से साझा करें</string>
     <string name="me_backup_cannot_copy_qr_code">क्यूआर कोड फ़ीचर को कॉपी करने का विकल्प केवल एंड्रॉयड 7.0 या उससे ऊपर में उपलब्ध है।</string>
     <string name="me_backup_str_copy">प्रतिलिपि</string>
     <string name="me_backup_copy_content">इस क्यूआर कोड को कॉपी किया जाएगा और अपने आप सिस्टम मेमोपैड/नोट्स ऐप में पेस्ट कर दिया जाएगा।</string>
+    <string name="me_backup_after_change_pwd_notice">पासवर्ड बदलने के बाद कृपया अपने अपडेट हुए खाता कुंजी को बैकप करें।</string>
+    <string name="me_backup_after_change_pwd_action">अभी बैकप लें</string>
+
     <!--keybox-->
     <string name="me_keybox">कीबॉक्स</string>
     <string name="me_keybox_qr_into">खाता कुंजी क्यूआर कोड स्कैन कर खाता कुंजी को कीबॉक्स में इम्पोर्ट करें।</string>
@@ -179,6 +200,7 @@
     <string name="me_fingerprint_unknown_error">अज्ञात त्रुटि</string>
     <string name="me_fingerprint_fail_cancel">उपयोगकर्ता द्वारा रद्द</string>
     <string name="me_fingerprint_wrong_password">गलत पासवर्ड</string>
+    <string name="me_fingerprint_enter_pwd_hint">पासवर्ड डालें</string>
     <!--generate key-->
     <string name="me_login_generate_hash_calculation">हैश कैलकुलेशन शुरू करें</string>
     <string name="me_login_generate_target">लक्ष्‍य</string>
@@ -191,12 +213,17 @@
     <string name="me_profile_picture">अवतार</string>
     <string name="me_profile_nickname">उपनाम</string>
     <string name="me_profile_add_me">मुझे जोड़ें</string>
+    <string name="me_profile_account_title">मेरा खाता कुंजी</string>
+    <string name="me_profile_change_pwd_title">पासवर्ड बदलें</string>
+    <string name="me_profile_alias_save_success">उपनाम बदला गया</string>
     <!--Ban password reset-->
     <string name="me_ban_reset_password_title">पासवर्ड रीसेट नहीं हो सकती</string>
     <string name="me_ban_reset_password_content">सेफ़टी चिंताओं के चलते, हरेक खाता कुंजी को एनक्रिप्ट कर स्थानीय रूप से सहेजा जाता है, कोई भी डेटा किसी भी सर्वर पर अपलोड नहीं होती। इसीलिए, आपका पासवर्ड रीसेट नहीं हो सकता।</string>
     <string name="me_ban_reset_password_back">आप पिछले पेज पर जाकर फिर से कोशिश कर सकते हैं, या एक नया खाता बना सकते हैं।</string>
     <string name="me_create_account">खाता बनाएं</string>
     <string name="me_text_account_created">खाता बनाया गया</string>
+    <string name="me_ban_reset_back_action">वापस जाएं और फिर से कोशिश करें</string>
+
     <!-- local profile -->
     <string name="me_local_profile_title">डिसप्ले प्रोफाइल संपादित करें</string>
     <string name="me_other_local_display_title">प्रोफाइल दिखाएं</string>
@@ -250,6 +277,17 @@
     <string name="me_setting_privacy_head">निजता संवर्धन</string>
     <string name="me_setting_rtc_p2p_title">हमेशा रीले कॉल</string>
     <string name="me_setting_rtc_p2p_sub_title">अपने आईपी अड्रेस को संपर्क के देखने से बचाने के लिए सभी कॉल केवल BCM सर्वर से रीले करें। कॉल की गुणवत्ता कम रहेगी।</string>
+    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
+    <string name="me_setting_adhoc_title">AirChat</string>
+    <string name="me_setting_adhoc_sub_title">बिना इंटरनेट के चैट करें।</string>
+    <string name="me_setting_proxy_title">Proxy</string>
+    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
+    <string name="me_setting_others_head">अन्य</string>
+    <string name="me_setting_feedback_title">प्रतिक्रिया</string>
+    <string name="me_setting_about_title">बारे में</string>
+    <string name="me_setting_help_title">अक्‍सर पूछे जाने वाले सवाल</string>
+
+
     <!--Notification Setting-->
     <string name="me_notification_setting_title">सूचना</string>
     <string name="me_notification_push_title">पुश अधिसूचनाएं</string>
@@ -343,7 +381,6 @@
     <string name="me_unlock_app_description">BCM अपने बायोमेट्रिक का इस्तेमाल कर ऐप अनलॉक करें</string>
     <string name="me_unlock_account_key">खाता कुंजी अनलॉक करें</string>
     <string name="me_unlock_account_key_description">BCM अपने बायोमेट्रिक का इस्तेमाल कर अपना खाता कुंजी अनलॉक करें</string>
-    <string name="me_setting_proxy_title">Proxy</string>
     <string name="me_test_proxy_usability">Run Usability Test</string>
     <string name="me_proxy_configurations">PROXY CONFIGURATIONS</string>
     <string name="me_add_proxy_title">Add Proxy</string>
@@ -356,8 +393,6 @@
     <string name="me_setting_proxy_item_testing">Testing…</string>
     <string name="me_setting_proxy_action_add">Add</string>
     <string name="me_test_proxy_usability_describe">All proxies added will be used for connecting server when needed, each proxy will take about a few seconds.</string>
-    <string name="me_setting_proxy_item_describe">The proxies added will be automatically activated when BCM service is blocked.</string>
-    <string name="me_setting_connectivity_tip">CONNECTIVITY</string>
     <string name="me_add_proxy_edit_title">Edit Proxy</string>
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>

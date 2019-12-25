@@ -220,6 +220,9 @@
     <string name="common_later">لاحقًا</string>
     <string name="common_copied">تم النسخ</string>
     <string name="common_open">فتح</string>
+    <string name="common_help">مساعدة</string>
+    <string name="common_multi_select">تحديد متعدد</string>
+    <string name="common_save_to_album">حفظ إلى الألبوم</string>
     <string name="common_connection_lost">اتصال…</string>
     <string name="common_group_get_member_fail">فشل الحصول على أعضاء لمجموعة الدردشة</string>
     <string name="common_search_hint">بحث</string>
@@ -407,5 +410,7 @@
     <!-- 二维码相关 -->
     <string name="common_unsupported_qr_code_description">لا يدعم إصدار الحساب</string>
 
+    <string name="common_save_success">حفظ</string>
+    <string name="common_save_fail">فشل الحفظ</string>
 
 </resources>
