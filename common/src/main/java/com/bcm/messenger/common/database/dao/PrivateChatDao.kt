@@ -75,8 +75,8 @@ interface PrivateChatDao {
     @Query("SELECT * FROM ${PrivateChatDbModel.TABLE_NAME} WHERE thread_id = :threadId AND (type & $BASE_TYPE_MASK) = $BASE_FAIL_CANNOT_DECRYPT_TYPE AND date_sent > :lastShowTime")
     fun queryDecryptFailedMessages(threadId: Long, lastShowTime: Long): List<MessageRecord>
 
-    @Query("SELECT * FROM ${PrivateChatDbModel.TABLE_NAME} WHERE expires_time > 0")
-    fun queryExpirationMessages(): List<MessageRecord>
+    @Query("SELECT * FROM ${PrivateChatDbModel.TABLE_NAME} WHERE expires_start > 0")
+    fun queryExpirationStartedMessages(): List<MessageRecord>
 
     @Query("SELECT * FROM ${PrivateChatDbModel.TABLE_NAME} WHERE thread_id = :threadId AND message_type = 2")
     fun queryMediaMessages(threadId: Long): MutableList<MessageRecord>

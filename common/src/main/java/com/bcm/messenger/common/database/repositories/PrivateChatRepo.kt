@@ -73,7 +73,7 @@ class PrivateChatRepo {
 
     fun getMessages(ids: List<Long>) = chatDao.queryChatMessages(ids)
 
-    fun getExpirationMessages() = chatDao.queryExpirationMessages()
+    fun getExpirationStartedMessages() = chatDao.queryExpirationStartedMessages()
 
     fun getThreadIdForMessage(messageId: Long) = chatDao.queryChatMessage(messageId)?.threadId ?: -1
 

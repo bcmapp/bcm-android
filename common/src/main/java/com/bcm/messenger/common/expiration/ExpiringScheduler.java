@@ -43,11 +43,13 @@ public class ExpiringScheduler implements IExpiringScheduler {
 
   @Override
   public void scheduleDeletion(long id, boolean mms, long expiresInMillis) {
+    ALog.d(TAG, "scheduleDeletion id:" + id + " time:" + expiresInMillis);
     scheduleDeletion(id, mms, System.currentTimeMillis(), expiresInMillis);
   }
 
   @Override
   public void scheduleDeletion(long id, boolean mms, long startedAtTimestamp, long expiresInMillis) {
+    ALog.d(TAG, "scheduleDeletion id:" + id + " time:" + expiresInMillis + " start:" + startedAtTimestamp);
     long expiresAtMillis = startedAtTimestamp + expiresInMillis;
 
     synchronized (expiringMessageReferences) {
@@ -65,7 +67,7 @@ public class ExpiringScheduler implements IExpiringScheduler {
 
   private class LoadTask implements Runnable {
     public void run() {
-      List<MessageRecord> messageRecords = chatRepo.getExpirationMessages();
+      List<MessageRecord> messageRecords = chatRepo.getExpirationStartedMessages();
       for (MessageRecord record : messageRecords) {
         expiringMessageReferences.add(new ExpiringMessageReference(record.getId(), record.isMediaMessage(), record.getExpiresStartTime() + record.getExpiresTime()));
       }
@@ -149,5 +151,4 @@ public class ExpiringScheduler implements IExpiringScheduler {
       else                                                return 0;
     }
   }
-
 }
