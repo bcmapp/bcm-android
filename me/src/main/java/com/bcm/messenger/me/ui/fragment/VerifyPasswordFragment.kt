@@ -185,8 +185,9 @@ class VerifyPasswordFragment : Fragment() {
         }.subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    ViewUtils.fadeIn(verify_pin_input_go, 250)
                     ViewUtils.fadeOut(verify_pin_loading, 250)
+                    ViewUtils.fadeIn(verify_pin_input_go, 250)
+
                     verify_pin_loading.stopAnim()
 
                     if (it) {
@@ -196,8 +197,8 @@ class VerifyPasswordFragment : Fragment() {
                         ViewUtils.fadeIn(verify_pin_error, 300)
                     }
                 }, {
-                    ViewUtils.fadeIn(verify_pin_input_go, 250)
                     ViewUtils.fadeOut(verify_pin_loading, 250)
+                    ViewUtils.fadeIn(verify_pin_input_go, 250)
                     verify_pin_loading.stopAnim()
 
                     verify_pin_error.text = getString(R.string.me_fingerprint_wrong_password)

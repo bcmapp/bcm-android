@@ -161,19 +161,12 @@ class MediaViewActivity : AppCompatActivity() {
             }
 
             override fun moreOptionVisibilityChanged(isShow: Boolean) {
-//                val f = (adapter.getCurrentFragment() as? MediaViewFragment) ?: return
-//                if (isShow) {
-//                    f.hideController()
-//                } else {
-//                    f.showController()
-//                }
             }
         })
     }
 
     private val fragmentListener = object : MediaViewFragment.MediaViewFragmentActionListener {
         override fun videoPlaying() {
-            // TODO:
         }
 
         override fun clickImage() {

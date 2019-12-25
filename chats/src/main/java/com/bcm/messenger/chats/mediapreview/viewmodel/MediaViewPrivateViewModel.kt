@@ -149,19 +149,24 @@ class MediaViewPrivateViewModel : BaseMediaViewModel() {
         if (mediaUri != null && masterSecret != null) {
             Observable.create(ObservableOnSubscribe<Boolean> {
                 try {
-                    AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, masterSecret, mediaUri, slide.contentType, slide.fileName)
+                    AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, masterSecret, mediaUri, slide.contentType, slide.fileName) ?: throw Exception("saveAttachment fail")
                     it.onNext(true)
-                } catch (ex: Exception) {
-                    ALog.e(TAG, "download img error", ex)
-                    it.onNext(false)
-                } finally {
+
+                }
+                catch (ex: Exception) {
+                    it.onError(ex)
+                }
+                finally {
                     it.onComplete()
                 }
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
+                    .subscribe({
                         result?.invoke(it)
-                    }
+                    }, {
+                        ALog.e(TAG, "downloadImage fail", it)
+                        result?.invoke(false)
+                    })
         } else {
             ALog.e(TAG, "mediaUri is null ,mediaUrl is null")
             result?.invoke(false)
@@ -178,19 +183,23 @@ class MediaViewPrivateViewModel : BaseMediaViewModel() {
         if (mediaUri != null && masterSecret != null) {
             Observable.create(ObservableOnSubscribe<Boolean> {
                 try {
-                    AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, masterSecret, mediaUri, slide.contentType, slide.fileName)
+                    AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, masterSecret, mediaUri, slide.contentType, slide.fileName) ?: throw Exception("saveAttachment fail")
                     it.onNext(true)
-                } catch (ex: Exception) {
-                    ALog.e(TAG, "download video error", ex)
-                    it.onNext(false)
-                } finally {
+                }
+                catch (ex: Exception) {
+                    it.onError(ex)
+                }
+                finally {
                     it.onComplete()
                 }
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
+                    .subscribe( {
                         result?.invoke(it)
-                    }
+                    }, {
+                        ALog.e(TAG, "downloadVideo fail", it)
+                        result?.invoke(false)
+                    })
             return
         }
 
