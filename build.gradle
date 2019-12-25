@@ -79,8 +79,7 @@ allprojects {
 }
 
 static def getAppId() {
-    if (branch() == "origin/master" || branch() == "master" ||
-            branch() == "origin/ame-android_bugfix_feature" || branch() == "ame-android_bugfix_feature") {
+    if (branch().startsWith("origin/release") || branch().startsWith("release")) {
         return "com.bcm.messenger"
     } else if (branch().length() == 0) {
         return "com.bcm.messenger.local"
