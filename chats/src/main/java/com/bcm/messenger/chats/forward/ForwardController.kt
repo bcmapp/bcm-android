@@ -263,7 +263,7 @@ object ForwardController {
                     }
                     privateMessage.isMediaMessage() && privateMessage.getVideoAttachment() != null -> {
                         ALog.d(TAG, "PrivateMessage is a video")
-                        val attachment = privateMessage.getImageAttachment() ?: return
+                        val attachment = privateMessage.getVideoAttachment() ?: return
                         val slide = VideoSlide(AppContextHolder.APP_CONTEXT, attachment.getPartUri(), attachment.dataSize)
                         val slideUri = slide.asAttachment().dataUri
 
