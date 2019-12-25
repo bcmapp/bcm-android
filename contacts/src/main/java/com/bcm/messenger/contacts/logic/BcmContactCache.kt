@@ -5,7 +5,7 @@ import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.BcmFriendManager
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.contacts.net.BcmContactCore
@@ -55,7 +55,7 @@ class BcmContactCache() {
             if (readyFlag.count <= 0) {
                 mReadyCountDown.set(CountDownLatch(1))
             }
-            if (!AMESelfData.isLogin) {
+            if (!AMELogin.isLogin) {
                 ALog.w(TAG, "initCache fail, not login")
                 mReadyCountDown.get().countDown()
                 return
@@ -145,7 +145,7 @@ class BcmContactCache() {
     }
 
     private fun isCacheReady(): Boolean {
-        return mInitFlag.get() && mReadyCountDown.get().count <= 0 && AMESelfData.isLogin
+        return mInitFlag.get() && mReadyCountDown.get().count <= 0 && AMELogin.isLogin
     }
 
     fun waitCacheReady(): Boolean {

@@ -8,7 +8,7 @@ import com.bcm.messenger.common.grouprepository.manager.BcmGroupJoinManager
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.UserDataManager
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupJoinRequestTransform
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -131,7 +131,7 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
         val keys = memberList?.keys
         if (null != keys){
             for (uuid in keys){
-                if (uuid != AMESelfData.uid){
+                if (uuid != AMELogin.uid){
                     return memberList?.get(uuid)
                 }
             }
@@ -156,7 +156,7 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
                 }
 
                 if (null != remove){
-                    if (remove.uid.serialize() == AMESelfData.uid){
+                    if (remove.uid.serialize() == AMELogin.uid){
                         info.role = AmeGroupMemberInfo.VISITOR
                         AmeDispatcher.io.dispatch{
                             GroupInfoDataManager.updateGroupRole(info.gid, AmeGroupMemberInfo.VISITOR)
@@ -173,7 +173,7 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
             for (u in list){
                 memberList?.put(u.uid.serialize(), u)
 
-                if (u.uid.serialize() == AMESelfData.uid){
+                if (u.uid.serialize() == AMELogin.uid){
                     info.role = u.role
                     AmeDispatcher.io.dispatch {
                         GroupInfoDataManager.updateGroupRole(info.gid, u.role)
@@ -188,8 +188,8 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
     }
 
     fun updateMyInfo(newName: String?, newGroupName:String?, newKeyConfig: AmeGroupMemberInfo.KeyConfig?) {
-        val member = UserDataManager.queryGroupMember(info.gid, AMESelfData.uid)
-        val memoryMember = getMember(AMESelfData.uid)
+        val member = UserDataManager.queryGroupMember(info.gid, AMELogin.uid)
+        val memoryMember = getMember(AMELogin.uid)
         if (null != newName) {
             member?.nickname = newName
             memoryMember?.nickname = newName

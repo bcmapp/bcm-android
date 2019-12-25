@@ -12,7 +12,7 @@ import com.bcm.messenger.common.database.model.*
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.room.entity.*
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.logger.ALog
@@ -76,9 +76,9 @@ class MigrateDatabase {
 
     fun deleteDatabase() {
         helper.close()
-        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMESelfData.uid}.db").delete()
-        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMESelfData.uid}.db-shm").delete()
-        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMESelfData.uid}.db-wal").delete()
+        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db").delete()
+        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db-shm").delete()
+        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db-wal").delete()
     }
 
     fun insertThread(record: ThreadRecord): Long {
@@ -505,7 +505,7 @@ class MigrateDatabase {
         helper.writableDatabase.insert(GroupKey.TABLE_NAME, null, contentValues)
     }
 
-    class MigrateDatabaseHelper : SQLiteOpenHelper(AppContextHolder.APP_CONTEXT, "user_${AMESelfData.uid}.db", null, 1) {
+    class MigrateDatabaseHelper : SQLiteOpenHelper(AppContextHolder.APP_CONTEXT, "user_${AMELogin.uid}.db", null, 1) {
         private val TAG = "MigrateDatabaseHelper"
 
         override fun onCreate(db: SQLiteDatabase?) {

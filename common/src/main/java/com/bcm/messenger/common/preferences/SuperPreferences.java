@@ -29,11 +29,6 @@ public class SuperPreferences {
     private static final String HEIGHT_KEYBOARD_LANDSCAPE = "height_keyboard_landscape";
     private static final String TABLESS_INTRODUCTION_FLAG = "tabless_introduction_flag";
 
-    public static final String AME_LAST_LOGIN = "AME_LAST_LOGIN";
-    public static final String AME_ACCOUNT_LIST = "AME_ACCOUNT_LIST";
-    public static final String AME_LAST_BACKUP = "AME_LAST_BACKUP";
-    public static final String AME_CURRENT_LOGIN = "AME_CURRENT_LOGIN";
-
 
     public static final String METRICS = "metrics";
 

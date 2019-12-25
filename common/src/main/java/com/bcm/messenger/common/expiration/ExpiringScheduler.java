@@ -6,7 +6,7 @@ import android.util.Log;
 import com.bcm.messenger.common.database.records.MessageRecord;
 import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.utils.AppUtil;
 import com.bcm.messenger.utility.logger.ALog;
 
@@ -78,7 +78,7 @@ public class ExpiringScheduler implements IExpiringScheduler {
     public void run() {
       while (true) {
         ExpiringMessageReference expiredMessage = null;
-        if (!AMESelfData.INSTANCE.getUid().equals(uid)) {
+        if (!AMELogin.INSTANCE.getUid().equals(uid)) {
           ALog.w(TAG, "login state changed");
           break;
         }

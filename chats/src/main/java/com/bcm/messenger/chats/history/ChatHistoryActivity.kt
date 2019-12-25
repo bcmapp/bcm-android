@@ -24,7 +24,7 @@ import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
 import com.bcm.messenger.common.mms.GlideApp
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.CommonConversationAdapter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.dp2Px
@@ -173,7 +173,7 @@ class ChatHistoryActivity : SwipeBaseActivity() {
                         serverIndex = index
                         senderId = msg.sender
                         sendTime = msg.sendTime
-                        isSendByMe = msg.sender == AMESelfData.uid
+                        isSendByMe = msg.sender == AMELogin.uid
                         sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
                         this.message = AmeGroupMessage.messageFromJson(msg.messagePayload ?: "")
                         thumbPsw = msg.thumbPsw
@@ -221,7 +221,7 @@ class ChatHistoryActivity : SwipeBaseActivity() {
                         serverIndex = index
                         senderId = msg.sender
                         sendTime = msg.sendTime
-                        isSendByMe = msg.sender == AMESelfData.uid
+                        isSendByMe = msg.sender == AMELogin.uid
                         sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
                         this.message = AmeGroupMessage.messageFromJson(msg.messagePayload ?: "")
                         thumbPsw = msg.thumbPsw

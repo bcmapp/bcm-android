@@ -17,7 +17,7 @@ import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.push.AmeNotificationService
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AmeTimeUtil
@@ -240,7 +240,7 @@ object AmePushProcess {
 
     fun processPush(notify: BcmData?, fromPush: Boolean = false) {
 
-        if (AMESelfData.isLogin && null != notify) {
+        if (AMELogin.isLogin && null != notify) {
             if (TextSecurePreferences.isNotificationsEnabled(AppContextHolder.APP_CONTEXT) &&
                     TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT)) { //
                 Observable.create<Unit> {
@@ -275,7 +275,7 @@ object AmePushProcess {
 
     fun processPush(pushContent: String) {
         try {
-            if (!AMESelfData.isLogin) {
+            if (!AMELogin.isLogin) {
                 ALog.i(TAG, "processPush Current is not login")
                 return
             }
@@ -309,7 +309,7 @@ object AmePushProcess {
      */
     fun checkSystemBannerNotice() {
         AmeDispatcher.io.dispatch {
-            val lastMsg = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMESelfData.uid + "_" + SystemNotifyData.TYPE_BANNER, "")
+            val lastMsg = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.uid + "_" + SystemNotifyData.TYPE_BANNER, "")
             val msg = GsonUtils.fromJson(lastMsg, SystemNotifyData::class.java)
             if (lastMsg.isNotEmpty() && msg.type == SystemNotifyData.TYPE_BANNER) {
                 val data = BcmData(BcmNotify(SYSTEM_NOTIFY, null, null, null, null, msg))
@@ -395,7 +395,7 @@ object AmePushProcess {
         if(notifyData == null) {
             return
         }
-        val oldJsonData = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMESelfData.uid + "_" + notifyData.type, "")
+        val oldJsonData = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.uid + "_" + notifyData.type, "")
         if (!oldJsonData.isNullOrEmpty()) {
             val oldData = GsonUtils.fromJson(oldJsonData, SystemNotifyData::class.java)
             if (oldData.id >= notifyData.id) { //
@@ -444,7 +444,7 @@ object AmePushProcess {
         }catch (ex: Exception) {
             ALog.e(TAG, "handleNotify for system chat fail", ex)
         }finally {
-            TextSecurePreferences.setStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMESelfData.uid + "_" + notifyData.type, GsonUtils.toJson(notifyData))
+            TextSecurePreferences.setStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.uid + "_" + notifyData.type, GsonUtils.toJson(notifyData))
         }
     }
 

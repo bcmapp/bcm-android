@@ -9,7 +9,7 @@ import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.PreKeyUtil;
 import com.bcm.messenger.common.jobs.MasterSecretJob;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.utility.logger.ALog;
 
@@ -41,7 +41,7 @@ public class RotateSignedPreKeyJob extends MasterSecretJob {
     @Override
     public void onRun(MasterSecret masterSecret) throws Exception {
         Log.w(TAG, "Rotating signed prekey...");
-        if (AMESelfData.INSTANCE.isLogin()) {
+        if (AMELogin.INSTANCE.isLogin()) {
             IdentityKeyPair identityKey = IdentityKeyUtil.getIdentityKeyPair(context);
             SignedPreKeyRecord signedPreKeyRecord = PreKeyUtil.generateSignedPreKey(context, identityKey, false);
 
@@ -50,8 +50,8 @@ public class RotateSignedPreKeyJob extends MasterSecretJob {
             }
 
             PreKeyUtil.setActiveSignedPreKeyId(context, signedPreKeyRecord.getId());
-            AMESelfData.INSTANCE.setSignedPreKeyRegistered(true);
-            AMESelfData.INSTANCE.setSignedPreKeyFailureCount(0);
+            AMELogin.INSTANCE.setSignedPreKeyRegistered(true);
+            AMELogin.INSTANCE.setSignedPreKeyFailureCount(0);
 
             JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr();
             if (manager != null) {
@@ -69,6 +69,6 @@ public class RotateSignedPreKeyJob extends MasterSecretJob {
 
     @Override
     public void onCanceled() {
-        AMESelfData.INSTANCE.setSignedPreKeyFailureCount(AMESelfData.INSTANCE.getSignedPreKeyFailureCount() + 1);
+        AMELogin.INSTANCE.setSignedPreKeyFailureCount(AMELogin.INSTANCE.getSignedPreKeyFailureCount() + 1);
     }
 }

@@ -7,7 +7,7 @@ import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSFetcher
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.preferences.SuperPreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.utils.isUsingNetwork
 import com.bcm.messenger.utility.AppContextHolder
@@ -351,7 +351,7 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
         uploader = MetricsUploader()
 
         
-        val uid = AMESelfData.uid
+        val uid = AMELogin.uid
         val publicKey = IdentityKeyUtil.getIdentityKey(AppContextHolder.APP_CONTEXT)
         val pubKey = Base64.encodeBytes((publicKey.publicKey as DjbECPublicKey).serialize())
         val signature = Base64.encodeBytes(BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, uid.toByteArray()))
@@ -458,7 +458,7 @@ object ReportUtil : LBSFetcher.ILBSFetchResult {
         val uid: String
         val pubKey: String
         try {
-            uid = AMESelfData.uid
+            uid = AMELogin.uid
             val publicKey = IdentityKeyUtil.getIdentityKey(AppContextHolder.APP_CONTEXT)
             pubKey = Base64.encodeBytes((publicKey.publicKey as DjbECPublicKey).serialize())
 

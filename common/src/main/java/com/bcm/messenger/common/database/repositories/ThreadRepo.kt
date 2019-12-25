@@ -16,7 +16,7 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTransform
 import com.bcm.messenger.common.grouprepository.room.entity.GroupLiveInfo
 import com.bcm.messenger.common.mms.PartAuthority
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -279,7 +279,7 @@ class ThreadRepo {
 
             val state = if (messageContent is AmeGroupMessage.SystemContent && messageContent.tipType == AmeGroupMessage.SystemContent.TIP_JOIN_GROUP_REQUEST) {
                 BASE_JOIN_REQUEST
-            } else if (!message.isSendByMe && message.extContent?.isAtAll == true || message.extContent?.atList?.contains(AMESelfData.uid) == true) {
+            } else if (!message.isSendByMe && message.extContent?.isAtAll == true || message.extContent?.atList?.contains(AMELogin.uid) == true) {
                 BASE_AT_ME_TYPE
             } else if (drafts.isNotEmpty()) {
                 BASE_DRAFT_TYPE

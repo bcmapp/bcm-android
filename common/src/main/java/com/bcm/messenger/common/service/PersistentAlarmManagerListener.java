@@ -8,7 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 
 public abstract class PersistentAlarmManagerListener extends BroadcastReceiver {
 
@@ -31,7 +31,7 @@ public abstract class PersistentAlarmManagerListener extends BroadcastReceiver {
     Log.w(TAG, getClass() + " scheduling for: " + scheduledTime);
 
     alarmManager.cancel(pendingIntent);
-    if (AMESelfData.INSTANCE.isLogin()) {
+    if (AMELogin.INSTANCE.isLogin()) {
       alarmManager.set(AlarmManager.RTC_WAKEUP, scheduledTime, pendingIntent);
     }
   }

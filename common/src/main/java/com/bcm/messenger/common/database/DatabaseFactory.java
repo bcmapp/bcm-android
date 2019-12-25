@@ -25,7 +25,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 import com.bcm.messenger.common.contacts.ContactsDatabase;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.utility.logger.ALog;
 
 import java.io.File;
@@ -96,18 +96,18 @@ public class DatabaseFactory {
 
     public static DatabaseFactory getInstance(Context context) {
         synchronized (lock) {
-            String uid = AMESelfData.INSTANCE.getUid();
+            String uid = AMELogin.INSTANCE.getUid();
             if (instance == null) {
                 instance = new DatabaseFactory(context.getApplicationContext(), uid);
             } else if (!uid.equals(instance.uid)) {
-                instance.reset(context, AMESelfData.INSTANCE.getUid());
+                instance.reset(context, AMELogin.INSTANCE.getUid());
             }
             return instance;
         }
     }
 
     public static boolean isDatabaseExist(Context context) {
-        return new File(context.getFilesDir().getParent() + "/databases/messages" + AMESelfData.INSTANCE.getUid() + ".db").exists();
+        return new File(context.getFilesDir().getParent() + "/databases/messages" + AMELogin.INSTANCE.getUid() + ".db").exists();
     }
 
     public static MmsSmsDatabase getMmsSmsDatabase(Context context) {
@@ -156,7 +156,7 @@ public class DatabaseFactory {
 
     @Nullable
     public static RecipientDatabase getRecipientDatabase(Context context) {
-        if (!AMESelfData.INSTANCE.isLogin()) {
+        if (!AMELogin.INSTANCE.isLogin()) {
             return null;
         } else {
             return getInstance(context).recipientDatabase;

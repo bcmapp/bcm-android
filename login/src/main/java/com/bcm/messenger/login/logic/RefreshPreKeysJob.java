@@ -8,7 +8,7 @@ import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.PreKeyUtil;
 import com.bcm.messenger.common.jobs.MasterSecretJob;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 
 import org.whispersystems.jobqueue.JobManager;
@@ -46,14 +46,14 @@ public class RefreshPreKeysJob extends MasterSecretJob {
 
     @Override
     public void onRun(MasterSecret masterSecret) throws IOException {
-        if (!AMESelfData.INSTANCE.isPushRegistered()) return;
+        if (!AMELogin.INSTANCE.isPushRegistered()) return;
 
         int availableKeys = AmeLoginCore.INSTANCE.getAvailablePreKeys();
         if (availableKeys < 0) {
             throw new IOException("fetch prekey params failed");
         }
 
-        if (availableKeys >= PREKEY_MINIMUM && AMESelfData.INSTANCE.isSignedPreKeyRegistered()) {
+        if (availableKeys >= PREKEY_MINIMUM && AMELogin.INSTANCE.isSignedPreKeyRegistered()) {
             Log.w(TAG, "Available keys sufficient: " + availableKeys);
             return;
         }
@@ -69,7 +69,7 @@ public class RefreshPreKeysJob extends MasterSecretJob {
         }
 
         PreKeyUtil.setActiveSignedPreKeyId(context, signedPreKeyRecord.getId());
-        AMESelfData.INSTANCE.setSignedPreKeyRegistered(true);
+        AMELogin.INSTANCE.setSignedPreKeyRegistered(true);
 
         JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr();
         if (jobManager != null) {

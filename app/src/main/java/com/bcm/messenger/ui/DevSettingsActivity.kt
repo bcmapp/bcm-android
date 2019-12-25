@@ -12,7 +12,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ARouterConstants.Activity.APP_DEV_SETTING
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.bcmhttp.conncheck.IMServerConnectionChecker
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
@@ -115,7 +115,7 @@ class DevSettingsActivity : SwipeBaseActivity() {
         dev_setting_dev_pull_data.setOnClickListener {
             val dirs = arrayOf("messages%s.db", "new_group%s", "user_%s")
             for (i in dirs) {
-                val name = String.format(i, AMESelfData.uid)
+                val name = String.format(i, AMELogin.uid)
                 val dbFile = AppContextHolder.APP_CONTEXT.getDatabasePath(name)
                 val diskPath = Environment.getExternalStorageDirectory().absolutePath
                 val dbDestPath= diskPath + File.separatorChar + ARouterConstants.SDCARD_ROOT_FOLDER + File.separatorChar + name
@@ -244,7 +244,7 @@ class DevSettingsActivity : SwipeBaseActivity() {
                     .withCancelListener {
                         finish()
                     }.withOkListener {
-                        if (AMESelfData.isLogin) {
+                        if (AMELogin.isLogin) {
                             AmePopup.loading.show(this@DevSettingsActivity)
                             Observable.create(ObservableOnSubscribe<Boolean> {
                                 try {

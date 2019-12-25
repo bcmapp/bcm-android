@@ -34,7 +34,7 @@ import com.bcm.messenger.common.expiration.IExpiringScheduler;
 import com.bcm.messenger.common.grouprepository.room.dao.ChatHideMessageDao;
 import com.bcm.messenger.common.grouprepository.room.entity.ChatHideMessage;
 import com.bcm.messenger.common.mms.OutgoingMediaMessage;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.sms.OutgoingLocationMessage;
@@ -320,7 +320,7 @@ public class MessageSender {
     }
 
     private static boolean isSelfSend(Context context, Recipient recipient) {
-        if (!AMESelfData.INSTANCE.isPushRegistered()) {
+        if (!AMELogin.INSTANCE.isPushRegistered()) {
             return false;
         }
 
@@ -336,7 +336,7 @@ public class MessageSender {
             return;
         }
 
-        if (messageRecord.getRecipient().getAddress().toString().equals(AMESelfData.INSTANCE.getUid())) {
+        if (messageRecord.getRecipient().getAddress().toString().equals(AMELogin.INSTANCE.getUid())) {
             // Self message cannot recall
             return;
         }

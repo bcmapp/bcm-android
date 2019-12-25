@@ -1,6 +1,6 @@
 package com.bcm.messenger.common.bcmhttp.interceptor
 
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.logger.ALog
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -11,9 +11,9 @@ class BcmAuthHeaderInterceptor : BcmHeaderInterceptor() {
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = AMESelfData.token
+        val token = AMELogin.token
         if (token.isNotEmpty()) {
-            setHeader(HEAD_AUTH, AMESelfData.token)
+            setHeader(HEAD_AUTH, AMELogin.token)
         } else {
             ALog.w("BcmAuthHeaderInterceptor", "token missed")
         }

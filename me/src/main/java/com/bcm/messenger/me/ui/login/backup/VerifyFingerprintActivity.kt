@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.fragment.VerifyFingerprintFragment
 import com.bcm.messenger.me.ui.fragment.VerifyPasswordFragment
@@ -55,7 +55,7 @@ class VerifyFingerprintActivity : SwipeBaseActivity() {
                 .setHasLockout(lockout)
                 .setCallback(this::handleCallback)
         f.arguments = Bundle().apply {
-            putString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID, AMESelfData.uid)
+            putString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID, AMELogin.uid)
         }
         supportFragmentManager.beginTransaction()
                 .replace(R.id.container, f)

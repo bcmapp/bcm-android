@@ -11,7 +11,8 @@ import androidx.annotation.Nullable;
 import com.bcm.messenger.common.bcmhttp.FileHttp;
 import com.bcm.messenger.common.bcmhttp.IMHttp;
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptorHelper;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
+import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.GsonUtils;
 import com.bcm.messenger.utility.bcmhttp.call.callbuilder.individualbodybuilder.FileCallBuilder;
 import com.bcm.messenger.utility.bcmhttp.callback.Callback;
@@ -32,20 +33,14 @@ import java.util.Map;
 
 import okhttp3.Call;
 
-/**
- * bcm 、（）
- * Created by zjl on 2018/6/5.
- */
 public class AmeFileUploader {
 
     private static final String TAG = "AmeFileUploader";
 
     public static final String ATTACHMENT_URL = "http://ameim.bs2dl.yy.com/attachments/";
-    public static final String ATTACHMENT_PATH = "/v1/attachments/upload/";
-    public static final String GROUP_AVATAR_PATH = "/v1/profile/uploadGroupAvatar";
     public static final String AWS_UPLOAD_INFO_PATH = "/v1/attachments/s3/upload_certification"; // Path to get AWS S3 certification data in IM server
 
-    public static String AME_PATH = AMESelfData.INSTANCE.getAmeDir();//bcm
+    public static String DEFAULT_PATH = getDefaultPath();
     public static String DOWNLOAD_PATH = "";
     public static String AUDIO_DIRECTORY;
     public static String THUMBNAIL_DIRECTORY;
@@ -56,7 +51,6 @@ public class AmeFileUploader {
     public static String DECRYPT_DIRECTORY;//（）
     public static String TEMP_DIRECTORY;//
     public static String CHAT_FILE_DIRECTORY; // Directory of encrypted chat files with MasterSecret
-    public static final String APK_DIRECTORY = Environment.getExternalStorageDirectory().getAbsolutePath() + "/bcm" + "/apk";
     public static final String DCIM_DIRECTORY = Environment.getExternalStorageDirectory().getAbsolutePath() + "/DCIM/bcm/";
 
     public enum AttachmentType {
@@ -75,6 +69,15 @@ public class AmeFileUploader {
         }
     }
 
+    private static String getDefaultPath() {
+        String path = AppContextHolder.APP_CONTEXT.getFilesDir().getAbsolutePath() + "/BCM";
+        File dir = new File(path);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return path;
+    }
+
     /**
      * ，APP
      *
@@ -82,7 +85,8 @@ public class AmeFileUploader {
      */
     public static void initDownloadPath(Context context) {
 
-        DOWNLOAD_PATH = AMESelfData.INSTANCE.getAccountDir();
+        //todo wangshuhe
+        DOWNLOAD_PATH = "";//AMELogin.INSTANCE.getAccountDir();
         AUDIO_DIRECTORY = DOWNLOAD_PATH + "/audio";
         THUMBNAIL_DIRECTORY = DOWNLOAD_PATH + "/thumbnail";
         DOCUMENT_DIRECTORY = DOWNLOAD_PATH + "/document";

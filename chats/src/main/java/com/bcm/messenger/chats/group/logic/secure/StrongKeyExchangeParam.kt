@@ -2,7 +2,7 @@ package com.bcm.messenger.chats.group.logic.secure
 
 import com.bcm.messenger.chats.group.core.GroupMemberCore
 import com.bcm.messenger.common.crypto.storage.SignalProtocolStoreImpl
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.base64Decode
@@ -107,7 +107,7 @@ object StrongKeyExchangeParam {
     }
 
     fun strongKeyContentToGroupKey(content:GroupKeysContent.StrongKeyContent, infoSecretPublicKey:ByteArray):ByteArray? {
-        if(content.uid == AMESelfData.uid && content.key?.isNotEmpty() == true ) {
+        if(content.uid == AMELogin.uid && content.key?.isNotEmpty() == true ) {
             val params = GroupKeyExchange.StrongKeyParams.parseFrom(content.key.base64Decode())
             val parser = Parser()
             parser.withGroupInfoSecretPublicKey(infoSecretPublicKey)
@@ -186,7 +186,7 @@ object StrongKeyExchangeParam {
 
             builder.basePublicKey = ByteString.copyFrom(baseKeyPair.publicKey.serialize())
             builder.alicePublickey = ByteString.copyFrom(BCMEncryptUtils.getMyIdentityKey(AppContextHolder.APP_CONTEXT))
-            builder.aliceUid = AMESelfData.uid
+            builder.aliceUid = AMELogin.uid
             builder.signedPrekeyId = preKeyBundle.signedPreKeyId
 
             val encryptedKey = EncryptUtils.aes256Encrypt(groupKey, key)

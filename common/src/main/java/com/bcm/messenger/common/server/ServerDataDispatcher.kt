@@ -2,7 +2,7 @@ package com.bcm.messenger.common.server
 
 import com.bcm.messenger.common.event.ClientAccountDisabledEvent
 import com.bcm.messenger.common.event.ServerConnStateChangedEvent
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.listener.WeakListeners
 import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.AbstractMessage
@@ -90,11 +90,11 @@ class ServerDataDispatcher() : IServerConnectionEvent, IServerDataDispatcher {
             try {
                 val proto: AbstractMessage = when (message.path) {
                     "/api/v1/messages" -> {
-                        val plainProtoData = decryptPrivateProtoData(message.body.toByteArray(), AMESelfData.signalingKey)
+                        val plainProtoData = decryptPrivateProtoData(message.body.toByteArray(), AMELogin.signalingKey)
                         SignalServiceProtos.Mailbox.parseFrom(plainProtoData)
                     }
                     "/api/v1/message" -> {
-                        val plainProtoData = decryptPrivateProtoData(message.body.toByteArray(), AMESelfData.signalingKey)
+                        val plainProtoData = decryptPrivateProtoData(message.body.toByteArray(), AMELogin.signalingKey)
                         SignalServiceProtos.Envelope.parseFrom(plainProtoData)
                     }
                     "/api/v1/group_message" -> {

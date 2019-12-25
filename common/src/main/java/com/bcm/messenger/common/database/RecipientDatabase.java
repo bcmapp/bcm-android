@@ -20,7 +20,7 @@ import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.AmeGroupMessage;
 import com.bcm.messenger.common.crypto.MasterSecretUnion;
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.sms.OutgoingLocationMessage;
 import com.bcm.messenger.common.sms.OutgoingTextMessage;
@@ -565,7 +565,7 @@ public class RecipientDatabase extends Database {
 
     public @NonNull
     Cursor getRecipients(int filter, @Nullable String... addresses) {
-        String localNumber = AMESelfData.INSTANCE.getUid();
+        String localNumber = AMELogin.INSTANCE.getUid();
         String sql = "select * from " + TABLE_NAME + " where " + ADDRESS + " != '" + localNumber + "' ";
         if (addresses != null && addresses.length > 0) {
             StringBuilder selectionBuilder = new StringBuilder();
@@ -734,7 +734,7 @@ public class RecipientDatabase extends Database {
                         if (s.getRelationship() == Relationship.STRANGER) {
                             ns.setLocalProfile("", "");
 
-                            if (!TextUtils.equals(ns.uid, AMESelfData.INSTANCE.getUid())) {
+                            if (!TextUtils.equals(ns.uid, AMELogin.INSTANCE.getUid())) {
                                 PrivacyProfile privacyProfile = ns.getPrivacyProfile();
                                 privacyProfile.setName("");
                                 privacyProfile.setNameKey("");
@@ -842,7 +842,7 @@ public class RecipientDatabase extends Database {
         RecipientSettings find = null;
         try {
             
-            String localNumber = AMESelfData.INSTANCE.getUid();
+            String localNumber = AMELogin.INSTANCE.getUid();
             String sql = "select * from " + TABLE_NAME + " where " + ADDRESS + " <> '" + localNumber + "' ";
             sql += " and " + ADDRESS + " not like '" + GroupUtil.ENCODED_TT_GROUP_PREFIX + "%' and " + ADDRESS +
                     " not like '" + GroupUtil.ENCODED_SIGNAL_GROUP_PREFIX + "%' and " + ADDRESS + " not like '" + GroupUtil.ENCODED_MMS_GROUP_PREFIX + "%'";
@@ -990,7 +990,7 @@ public class RecipientDatabase extends Database {
     }
 
     private void delete(List<String> addressList) {
-        String localNumber = AMESelfData.INSTANCE.getUid();
+        String localNumber = AMELogin.INSTANCE.getUid();
         String sql = "DELETE FROM " + TABLE_NAME + " WHERE " + ADDRESS + " <> '" + localNumber + "' ";
         if (addressList != null && addressList.size() > 0) {
             StringBuilder selectionBuilder = new StringBuilder();

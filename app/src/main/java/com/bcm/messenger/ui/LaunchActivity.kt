@@ -11,7 +11,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.activity.DatabaseMigrateActivity
 import com.bcm.messenger.logic.SchemeLaunchHelper
 import com.bcm.messenger.me.ui.login.RegistrationActivity
@@ -85,7 +85,7 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun router() {
-        if (!AMESelfData.isLogin) {
+        if (!AMELogin.isLogin) {
             ALog.i(TAG, "route to register")
             BcmUpdateUtil.checkUpdate { hasUpdate, forceUpdate, _ ->
                 if (hasUpdate) {

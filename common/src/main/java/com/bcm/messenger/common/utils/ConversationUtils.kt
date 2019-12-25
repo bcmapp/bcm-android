@@ -3,7 +3,7 @@ package com.bcm.messenger.common.utils
 import android.annotation.SuppressLint
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.LRUCache
 import com.bcm.messenger.utility.logger.ALog
@@ -75,7 +75,7 @@ object ConversationUtils {
      */
     fun checkHasAtMe(groupMessage: AmeGroupMessageDetail?): Boolean {
         try {
-            return groupMessage?.extContent?.isAtAll == true || groupMessage?.extContent?.atList?.contains(AMESelfData.uid) == true
+            return groupMessage?.extContent?.isAtAll == true || groupMessage?.extContent?.atList?.contains(AMELogin.uid) == true
         } catch (ex: Exception) {
             ALog.e(TAG, "checkHasAtMe error", ex)
         }

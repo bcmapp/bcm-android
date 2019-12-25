@@ -27,10 +27,7 @@ class AmeAccountData : NotGuard {
     var pinLockTime: Int = APP_LOCK_5_MIN //pin lock enable time(app background run time)
     var passwordHint: String = ""
     var mode: Int = ACCOUNT_MODE_NORMAL
-    var curLogin: Boolean = false //current login succeed account uid, clear when log out
-    var lastLogin: Boolean = false //last login succeed account uid
 
-    var lastAppVersion: Long = 0
     var registrationId: Int = 0
     var gcmToken: String? = null
     var gcmTokenLastSetTime: Long = 0
@@ -84,56 +81,5 @@ class AmeAccountData : NotGuard {
         const val APP_LOCK_5_MIN = 5
         const val APP_LOCK_INSTANTLY = 0
         const val APP_LOCK_ONE_HOUR = 60
-
-        fun fromLoginProfileWithPassword(profile: LoginProfile, password: String): AmeAccountData? {
-
-            try {
-                val accountData = AmeAccountData()
-                val priKeyString = profile.privateKey ?: return null
-                val priKey = Curve.decodePrivatePoint(BCMPrivateKeyUtils.decodePrivateKey(priKeyString, password))
-                val newPriKey = BCMPrivateKeyUtils.encryptPrivateKey(priKey.serialize(), password.toByteArray())
-                val pubKeyArray = BCMPrivateKeyUtils.generatePublicKey(priKey.serialize())
-                        ?: return null
-
-                accountData.version = V4
-                accountData.uid = BCMPrivateKeyUtils.provideUid(pubKeyArray)
-                accountData.avatar = profile.loginAvatar ?: ""
-                accountData.name = profile.nickname ?: ""
-                accountData.phone = profile.e164number ?: ""
-                accountData.backupTime = profile.backupTime
-                accountData.genKeyTime = profile.keyGenTime
-                accountData.mode = profile.loginMode
-                accountData.priKey = newPriKey
-                accountData.pubKey = Base64.encodeBytes(pubKeyArray)
-                return accountData
-
-            } catch (e: Exception) {
-                ALog.e(TAG, e)
-            }
-            return null
-        }
-
-        fun fromLoginProfile(profile: LoginProfile, uid: String): AmeAccountData {
-            val accountData = AmeAccountData()
-            accountData.version = V2
-            accountData.uid = uid
-            accountData.avatar = profile.loginAvatar ?: ""
-            accountData.name = profile.nickname ?: ""
-            accountData.phone = profile.e164number ?: ""
-            accountData.backupTime = profile.backupTime
-            accountData.genKeyTime = profile.keyGenTime
-            accountData.mode = profile.loginMode
-            accountData.priKey = profile.privateKey ?: ""
-            accountData.pubKey = profile.publicKey ?: ""
-            if (uid.isEmpty() && accountData.pubKey.isNotEmpty()) {
-                try {
-                    val newUid = BCMPrivateKeyUtils.provideUid(Base64.decode(accountData.pubKey))
-                    accountData.uid = newUid
-                }catch (ex: Exception) {
-                    ALog.e(TAG, ex)
-                }
-            }
-            return accountData
-        }
     }
 }

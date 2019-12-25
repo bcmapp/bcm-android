@@ -39,7 +39,7 @@ import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage;
 import com.bcm.messenger.common.grouprepository.room.entity.NoteRecord;
 import com.bcm.messenger.common.grouprepository.room.entity.WalletData;
 import com.bcm.messenger.common.grouprepository.room.entity.WalletTransaction;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.utility.ClassHelper;
 
 import com.bcm.messenger.utility.AppContextHolder;
@@ -587,7 +587,7 @@ public abstract class GroupDatabase extends RoomDatabase {
 
     private static GroupDatabase allocDatabase() {
         return Room
-                .databaseBuilder(AppContextHolder.APP_CONTEXT, GroupDatabase.class, "new_group" + AMESelfData.INSTANCE.getUid())
+                .databaseBuilder(AppContextHolder.APP_CONTEXT, GroupDatabase.class, "new_group" + AMELogin.INSTANCE.getUid())
                 .addMigrations(MIGRATION_1_2)
                 .addMigrations(MIGRATION_2_3)
                 .addMigrations(MIGRATION_3_4)

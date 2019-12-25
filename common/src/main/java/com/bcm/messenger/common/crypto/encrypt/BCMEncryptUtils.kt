@@ -11,7 +11,7 @@ import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.crypto.MasterSecretUtil
 import com.bcm.messenger.common.exception.DecryptSourceException
 import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
@@ -46,7 +46,7 @@ object BCMEncryptUtils {
 
     @Synchronized
     fun getMasterSecret(context: Context): MasterSecret? {
-        if (masterSecret == null && AMESelfData.isLogin) {
+        if (masterSecret == null && AMELogin.isLogin) {
             try {
                 masterSecret = MasterSecretUtil.getMasterSecret(context, MasterSecretUtil.UNENCRYPTED_PASSPHRASE)
             } catch (e: Exception) {

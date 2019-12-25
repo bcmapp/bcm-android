@@ -1,7 +1,7 @@
 package com.bcm.messenger.chats.group.logic.sync
 
 import com.bcm.messenger.chats.group.logic.GroupLogic
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.logger.ALog
 
 class GroupOfflineJoinReqMessageSyncTask(val gid:Long, private var delay:Long = 300, private val needConfirm:Boolean) {
@@ -16,11 +16,11 @@ class GroupOfflineJoinReqMessageSyncTask(val gid:Long, private var delay:Long = 
     }
 
     private fun syncPage(start:String, count:Long, result: (finished:Boolean, succeed: Boolean) -> Unit) {
-        val queryUid = AMESelfData.uid
+        val queryUid = AMELogin.uid
         GroupLogic.fetchJoinRequestList(gid, delay, start, count) { succeed, list ->
             ALog.i("GroupOfflineJoinReqMessageSyncTask","syncPage join req $gid result:$succeed size:${list.size}")
 
-            if (queryUid != AMESelfData.uid) {
+            if (queryUid != AMELogin.uid) {
                 return@fetchJoinRequestList
             }
 

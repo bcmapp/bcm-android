@@ -16,7 +16,7 @@ import android.widget.Toast
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.activity.DatabaseMigrateActivity
@@ -258,7 +258,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
         relogin_input_pin_back.setOnClickListener {
             val act = activity ?: return@setOnClickListener
             if (uid != null) {
-                if (AMESelfData.isLogin) {
+                if (AMELogin.isLogin) {
                     act.finish()
                 } else {
                     act.hideKeyboard()

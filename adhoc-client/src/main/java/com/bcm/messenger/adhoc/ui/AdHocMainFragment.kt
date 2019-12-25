@@ -31,7 +31,7 @@ import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.event.HomeTabEvent
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonSearchBar
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -135,7 +135,7 @@ class AdHocMainFragment: BaseFragment(),
         }
 
         val titleSwitcher = adhoc_main_toolbar.getCenterView().second?.findViewById<TextSwitcher>(R.id.adhoc_main_text_title)
-        titleSwitcher?.setText(Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMESelfData.uid), true).name)
+        titleSwitcher?.setText(Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMELogin.uid), true).name)
 
         if (!AppUtil.isReleaseBuild()) {
             val settingGuide = adhoc_main_toolbar.getCenterView().second?.findViewById<View>(R.id.adhoc_setting_guide)

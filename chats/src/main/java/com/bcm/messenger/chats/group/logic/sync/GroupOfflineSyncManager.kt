@@ -5,7 +5,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.event.ServiceConnectEvent
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.ILoginModule
 import com.bcm.messenger.utility.logger.ALog
@@ -266,7 +266,7 @@ class GroupOfflineSyncManager(private val syncCallback: OfflineSyncCallback) {
         var objStream: ObjectOutputStream? = null
 
         try {
-            output = FileOutputStream(File(AMESelfData.accountDir, SERIALIZABLE_FILE_NAME))
+            output = FileOutputStream(File(AMELogin.accountDir, SERIALIZABLE_FILE_NAME))
             objStream = ObjectOutputStream(output)
             objStream.writeObject(messageSyncTaskList)
         } catch (e: Exception) {
@@ -286,7 +286,7 @@ class GroupOfflineSyncManager(private val syncCallback: OfflineSyncCallback) {
         var objStream: ObjectInputStream? = null
 
         try {
-            input = FileInputStream(File(AMESelfData.accountDir, SERIALIZABLE_FILE_NAME))
+            input = FileInputStream(File(AMELogin.accountDir, SERIALIZABLE_FILE_NAME))
             objStream = ObjectInputStream(input)
             val taskList = objStream.readObject() as? ArrayList<*>
             if (null != taskList) {
@@ -320,7 +320,7 @@ class GroupOfflineSyncManager(private val syncCallback: OfflineSyncCallback) {
 
                 for (gid in gidList) {
                     val groupInfo = GroupInfoDataManager.getGroupInfo(gid) ?: continue
-                    if (!groupInfo.newGroup || groupInfo.owner == AMESelfData.uid) {
+                    if (!groupInfo.newGroup || groupInfo.owner == AMELogin.uid) {
                         if (groupInfo.role == AmeGroupMemberInfo.OWNER && groupInfo.needConfirm == true) {
                             if (ownerListEmpty) {
                                 joinReqOwnerTaskList.add(GroupOfflineJoinReqMessageSyncTask(gid, 1000, true))
@@ -353,7 +353,7 @@ class GroupOfflineSyncManager(private val syncCallback: OfflineSyncCallback) {
             ALog.w(TAG, "syncJoinReq begin sync $gid")
 
             val groupInfo = GroupInfoDataManager.getGroupInfo(gid) ?: return@execute
-            if (!groupInfo.newGroup || groupInfo.owner == AMESelfData.uid) {
+            if (!groupInfo.newGroup || groupInfo.owner == AMELogin.uid) {
                 val needConfirm = groupInfo.role == AmeGroupMemberInfo.OWNER && groupInfo.needConfirm == true
                 if (needConfirm) {
                     GroupOfflineJoinReqMessageSyncTask(gid, 300, needConfirm).execute {

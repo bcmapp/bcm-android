@@ -11,7 +11,7 @@ import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.api.IContactsCallback
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.mms.GlideRequests
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.IForwardSelectProvider
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -73,7 +73,7 @@ class SystemShareActivity : SwipeBaseActivity(), IContactsCallback {
     }
 
     private fun handleIntent() {
-        if (!AMESelfData.isLogin) {
+        if (!AMELogin.isLogin) {
             ALog.e(TAG, "No login data detected.")
             BcmRouter.getInstance().get(ARouterConstants.Activity.APP_LAUNCH_PATH).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).navigation(this)
             return

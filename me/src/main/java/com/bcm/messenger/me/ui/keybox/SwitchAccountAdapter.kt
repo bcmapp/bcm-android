@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -109,7 +109,7 @@ class SwitchAccountAdapter {
             return
         }
 
-        val switchForLogOut = (uid == AMESelfData.uid)
+        val switchForLogOut = (uid == AMELogin.uid)
         val viewCreator = SwitchPopupHeader(switchTo, switchForLogOut)
 
         var option = activity.getString(R.string.me_logout_tip_out)

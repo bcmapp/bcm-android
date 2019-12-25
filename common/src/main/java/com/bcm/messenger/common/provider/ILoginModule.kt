@@ -1,23 +1,27 @@
 package com.bcm.messenger.common.provider
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.config.BcmFeatureSupport
 import com.bcm.messenger.common.event.ServiceConnectEvent
 
 /**
  * bcm.social.01 2018/9/20.
  */
-interface ILoginModule: IAmeModule {
+interface ILoginModule : IAmeModule {
     /**
      * return true login, false not login
      */
     fun isLogin(): Boolean
 
+    fun isAccountLogin(uid: String): Boolean
     /**
-     * return current login account uid
+     * return major login account uid
      */
-    fun loginUid(): String
+    fun majorUid(): String
 
-    fun registrationId(): Int
+    fun minorUidList(): List<String>
+
+    fun registrationId(uid: String): Int
 
     fun gcmToken(): String?
 
@@ -29,27 +33,23 @@ interface ILoginModule: IAmeModule {
 
     fun isGcmDisabled(): Boolean
 
-    fun isPushRegistered(): Boolean
+    fun isPushRegistered(uid:String): Boolean
 
-    fun signalingKey(): String?
+    fun signalingKey(uid: String): String?
 
-    fun isSignedPreKeyRegistered(): Boolean
+    fun isSignedPreKeyRegistered(uid: String): Boolean
 
-    fun setSignedPreKeyRegistered(registered: Boolean)
+    fun setSignedPreKeyRegistered(uid: String, registered: Boolean)
 
-    fun getSignedPreKeyFailureCount(): Int
+    fun getSignedPreKeyFailureCount(uid: String): Int
 
-    fun setSignedPreKeyFailureCount(count: Int)
+    fun setSignedPreKeyFailureCount(uid: String, count: Int)
 
-    fun getSignedPreKeyRotationTime(): Long
+    fun getSignedPreKeyRotationTime(uid: String): Long
 
-    fun setSignedPreKeyRotationTime(time: Long)
+    fun setSignedPreKeyRotationTime(uid: String, time: Long)
 
-    fun genTime(): Long
-    /**
-     * return account token
-     */
-    fun token(): String
+    fun genTime(uid: String): Long
 
     /**
      * param: uid
@@ -65,7 +65,7 @@ interface ILoginModule: IAmeModule {
     /**
      * quit account
      */
-    fun quit(clearHistory: Boolean, withLogOut: Boolean = true)
+    fun quit(accountContext: AccountContext, clearHistory: Boolean, withLogOut: Boolean = true)
 
     /**
      * clear login data
@@ -75,7 +75,7 @@ interface ILoginModule: IAmeModule {
     /**
      * auth password
      */
-    fun authPassword(): String
+    fun authPassword(uid: String): String
 
     /**
      * server connection state
@@ -112,5 +112,5 @@ interface ILoginModule: IAmeModule {
      */
     fun updateAllowReceiveStrangers(allow: Boolean, callback: ((succeed: Boolean) -> Unit)?)
 
-
+    fun getAccountContext(uid: String): AccountContext
 }

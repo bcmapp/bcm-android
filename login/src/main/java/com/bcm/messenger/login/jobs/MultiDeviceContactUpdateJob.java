@@ -20,7 +20,7 @@ import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.jobs.MasterSecretJob;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.recipients.Recipient;
 
 import org.whispersystems.jobqueue.JobParameters;
@@ -128,7 +128,7 @@ public class MultiDeviceContactUpdateJob extends MasterSecretJob {
             }
 
             if (ProfileKeyUtil.hasProfileKey(context)) {
-                out.write(new DeviceContact(AMESelfData.INSTANCE.getUid(),
+                out.write(new DeviceContact(AMELogin.INSTANCE.getUid(),
                         Optional.absent(), Optional.absent(),
                         Optional.absent(), Optional.absent(),
                         Optional.of(ProfileKeyUtil.getProfileKey(context))));

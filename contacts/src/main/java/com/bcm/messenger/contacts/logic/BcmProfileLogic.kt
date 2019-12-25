@@ -1246,7 +1246,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             }
 
             if (recipient.isSelf) {
-                if (supportFeatures != AMESelfData.mySupport.toString()) {
+                if (supportFeatures != AMELogin.mySupport.toString()) {
                     AmeProvider.get<ILoginModule>(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)?.refreshMySupport2Server()
                     ALog.i(TAG, "refreshMySupport2Server")
                 }

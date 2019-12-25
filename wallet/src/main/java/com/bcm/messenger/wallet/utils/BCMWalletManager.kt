@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.preferences.SuperPreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AppUtil
@@ -471,7 +471,7 @@ class BCMWalletManager(private val accountUid: String) {
             val addressMax = 2
             var currentIndex = 0
             var defaultWallet: Triple<BCMWallet, Boolean, Int>? = null
-            val seed = DeterministicSeed(privateKeyArray, "", AMESelfData.genTime)
+            val seed = DeterministicSeed(privateKeyArray, "", AMELogin.genTime)
             val hierarchy = KeyChainUtils.buildHierarchy(seed)
             val coinTypeList = arrayOf(WalletSettings.BTC, WalletSettings.ETH)
             var progress = 0
@@ -577,7 +577,7 @@ class BCMWalletManager(private val accountUid: String) {
         return try {
             val accountIndex = getCurrentAccountIndex(coinType)
             val utils = getWalletUtils(coinType)
-            val seed = DeterministicSeed(privateKeyArray, "", AMESelfData.genTime)
+            val seed = DeterministicSeed(privateKeyArray, "", AMELogin.genTime)
             val hierarchy = KeyChainUtils.buildHierarchy(seed)
             val address = KeyChainUtils.computeMainChildAddress(coinType, accountIndex, hierarchy)
             val w = BCMWallet(address, utils.getDestinationDirectory().absolutePath, coinType, accountIndex, System.currentTimeMillis()).apply {

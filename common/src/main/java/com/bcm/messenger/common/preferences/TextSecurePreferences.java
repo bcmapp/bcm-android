@@ -71,8 +71,6 @@ public class TextSecurePreferences {
 
     private static final String MIGRATE_FAILED_COUNT = "pref_migrate_failed_count";
 
-    public static final String ACCOUNT_DATA_VERSION = "pref_account_version";
-
     public static final String CONTACT_SYNC_VERSION = "pref_contact_sync_version";
 
     public static void clear(Context context) {
@@ -158,14 +156,12 @@ public class TextSecurePreferences {
         return getLongPreference(context, SIGNED_PREKEY_ROTATION_TIME_PREF, 0L);
     }
 
-    @Nullable
     public static String getPushServerPassword(Context context) {
-        return getStringPreference(context, GCM_PASSWORD_PREF, null);
+        return getStringPreference(context, GCM_PASSWORD_PREF, "");
     }
 
-    @Nullable
     public static String getSignalingKey(Context context) {
-        return getStringPreference(context, SIGNALING_KEY_PREF, null);
+        return getStringPreference(context, SIGNALING_KEY_PREF, "");
     }
 
     public static void setScreenSecurityEnabled(Context context, boolean value) {

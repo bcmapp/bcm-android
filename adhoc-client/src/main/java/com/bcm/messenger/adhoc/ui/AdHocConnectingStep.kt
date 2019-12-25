@@ -5,7 +5,7 @@ import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.adhoc.sdk.AdHocSDK
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.common.utils.AppUtil
 import io.reactivex.Observable
@@ -85,7 +85,7 @@ class AdHocConnectingStep {
         val clientConnected = AdHocSDK.getNetSnapshot().clientSet.isNotEmpty()
         val serverConnected = AdHocSDK.getNetSnapshot().myIp.isNotEmpty()
         if (clientConnected || serverConnected) {
-            return Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMESelfData.uid), false).name
+            return Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMELogin.uid), false).name
         }
 
         return when(currentStep) {
@@ -104,7 +104,7 @@ class AdHocConnectingStep {
             STEP.CONNECTED -> AppUtil.getString(R.string.adhoc_main_title_connected)
             STEP.CONNECTING_FAILED -> AppUtil.getString(R.string.adhoc_main_title_connect_failed)
             else -> {
-                Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMESelfData.uid), false).name
+                Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMELogin.uid), false).name
             }
         }
     }

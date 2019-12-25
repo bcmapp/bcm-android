@@ -8,7 +8,7 @@ import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.ProfileKeyUtil;
 import com.bcm.messenger.common.jobs.MasterSecretJob;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 
 import org.whispersystems.jobqueue.JobParameters;
 import org.whispersystems.jobqueue.requirements.NetworkRequirement;
@@ -52,7 +52,7 @@ public class MultiDeviceProfileKeyUpdateJob extends MasterSecretJob {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DeviceContactsOutputStream out = new DeviceContactsOutputStream(baos);
 
-        out.write(new DeviceContact(AMESelfData.INSTANCE.getUid(),
+        out.write(new DeviceContact(AMELogin.INSTANCE.getUid(),
                 Optional.<String>absent(),
                 Optional.<SignalServiceAttachmentStream>absent(),
                 Optional.<String>absent(),

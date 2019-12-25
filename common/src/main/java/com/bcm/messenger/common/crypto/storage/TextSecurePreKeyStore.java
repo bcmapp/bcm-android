@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.Log;
 
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.orhanobut.logger.Logger;
 
 import com.bcm.messenger.common.crypto.MasterCipher;
@@ -227,7 +227,7 @@ public class TextSecurePreKeyStore implements PreKeyStore, SignedPreKeyStore {
   }
 
   private File getRecordsDirectory(String directoryName) {
-    File directory = new File(AMESelfData.INSTANCE.getAccountDir(), directoryName);
+    File directory = new File(AMELogin.INSTANCE.getAccountDir(), directoryName);
 
     if (!directory.exists()) {
       if (!directory.mkdirs()) {

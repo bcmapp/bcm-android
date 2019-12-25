@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.Log;
 
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 
 import com.bcm.messenger.common.crypto.MasterCipher;
 import com.bcm.messenger.common.crypto.MasterSecret;
@@ -197,7 +197,7 @@ public class TextSecureSessionStore implements SessionStore {
   }
 
   private File getSessionDirectory() {
-    File directory = new File(AMESelfData.INSTANCE.getAccountDir(), SESSIONS_DIRECTORY_V2);
+    File directory = new File(AMELogin.INSTANCE.getAccountDir(), SESSIONS_DIRECTORY_V2);
 
     if (!directory.exists()) {
       if (!directory.mkdirs()) {

@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import androidx.annotation.NonNull;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils;
 import com.bcm.messenger.utility.Base64;
 import org.whispersystems.libsignal.IdentityKey;
@@ -51,7 +51,7 @@ public class IdentityKeyUtil {
     public static final String IDENTITY_PRIVATE_KEY_PREF = "pref_identity_private_v3";
 
     public static boolean hasIdentityKey(Context context) {
-        if (!AMESelfData.INSTANCE.isLogin()){
+        if (!AMELogin.INSTANCE.isLogin()){
             return false;
         }
         SharedPreferences preferences = context.getSharedPreferences(MasterSecretUtil.getPreferencesName(), 0);

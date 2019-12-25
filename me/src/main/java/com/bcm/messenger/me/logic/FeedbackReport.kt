@@ -6,7 +6,7 @@ import com.bcm.messenger.common.bcmhttp.configure.sslfactory.IMServerSSL
 import com.bcm.messenger.common.bcmhttp.interceptor.metrics.NormalMetricsInterceptor
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.SystemUtils
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.bcmhttp.facade.BaseHttp
@@ -29,7 +29,7 @@ object FeedbackReport {
 
     fun feedback(reportType: String, content: String, reportFileList: List<String>, result: (succeed: Boolean) -> Unit): Boolean {
         val data = NYyData("UFB", "[$reportType] $content",
-                AMESelfData.uid,
+                AMELogin.uid,
                 "0",
                 "",
                 AppUtil.getVersionName(AppContextHolder.APP_CONTEXT),

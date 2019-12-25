@@ -11,7 +11,7 @@ import com.bcm.messenger.common.database.model.*
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.room.dao.*
 import com.bcm.messenger.common.grouprepository.room.entity.*
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.utility.AppContextHolder
@@ -91,7 +91,7 @@ abstract class UserDatabase : RoomDatabase() {
             val masterSecret = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
             val options = SafeHelperFactory.Options.builder().setClearPassphrase(false).build()
             val factory = SafeHelperFactory(masterSecret?.encryptionKey?.encoded, options)
-            val dbBuilder = Room.databaseBuilder(AppContextHolder.APP_CONTEXT, UserDatabase::class.java, "user_${AMESelfData.uid}.db")
+            val dbBuilder = Room.databaseBuilder(AppContextHolder.APP_CONTEXT, UserDatabase::class.java, "user_${AMELogin.uid}.db")
                     .addMigrations(
                             MIGRATION_1_2,
                             MIGRATION_2_3
@@ -114,9 +114,9 @@ abstract class UserDatabase : RoomDatabase() {
                             db.close()
                         } catch (tr2: Throwable) {
                         }
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMESelfData.uid}.db").delete()
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMESelfData.uid}.db-shm").delete()
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMESelfData.uid}.db-wal").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db-shm").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db-wal").delete()
 
                         return openDatabase(false)
                     }

@@ -23,7 +23,7 @@ import com.bcm.imcore.im.util.secure.IDHHelper
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.common.AmeNotification
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
@@ -172,15 +172,15 @@ object AdHocSDK {
             }
 
             override fun getUid(): String {
-                return AMESelfData.uid
+                return AMELogin.uid
             }
 
             override fun getName(): String {
-                return Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMESelfData.uid), true).name
+                return Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMELogin.uid), true).name
             }
 
             override fun getAccountDir(): String {
-                val accountDir = AMESelfData.accountDir
+                val accountDir = AMELogin.accountDir
                 val dir =  File(accountDir, "airchat")
                 if (!dir.exists()) {
                     dir.mkdirs()

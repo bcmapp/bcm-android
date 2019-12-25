@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -153,7 +153,7 @@ class VerifyPasswordFragment : AbsRegistrationFragment() {
                             DELETE_BACKUP -> {
                                 AmeAppLifecycle.failure(getString(R.string.me_str_delete_account_key_success), true) {
                                     //删除备份
-                                    AmeLoginLogic.accountHistory.resetBackupState(AMESelfData.uid)
+                                    AmeLoginLogic.accountHistory.resetBackupState(AMELogin.uid)
                                     BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                             .navigation(activity)

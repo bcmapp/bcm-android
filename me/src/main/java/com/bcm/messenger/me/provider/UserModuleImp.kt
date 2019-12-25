@@ -333,7 +333,7 @@ class UserModuleImp : IUserModule {
     }
 
     override fun hasBackupAccount(): Boolean {
-        return AmeLoginLogic.accountHistory.getBackupTime(AMESelfData.uid) > 0
+        return AmeLoginLogic.accountHistory.getBackupTime(AMELogin.uid) > 0
     }
 
     override fun getUserPrivateKey(password: String): ByteArray? {
@@ -484,7 +484,7 @@ class UserModuleImp : IUserModule {
         ALog.i(TAG, "handleAccountExceptionLogout ${event.type}")
         val activity = AmeAppLifecycle.current() ?: return
         ALog.i(TAG, "handleAccountExceptionLogout 1 ${event.type}")
-        if (AMESelfData.isLogin) {
+        if (AMELogin.isLogin) {
             ALog.i(TAG, "handleAccountExceptionLogout 2 ${event.type}")
             try {
                 when (event.type) {
@@ -502,11 +502,11 @@ class UserModuleImp : IUserModule {
         expireDispose?.dispose()
         expireDispose = null
 
-        if (!AMESelfData.isLogin) {
+        if (!AMELogin.isLogin) {
             return
         }
 
-        val uid = AMESelfData.uid
+        val uid = AMELogin.uid
         ALog.i(TAG, "handleForceLogout 1")
         if (kickOutDispose == null) {
             ALog.i(TAG, "handleForceLogout 2")
@@ -535,14 +535,14 @@ class UserModuleImp : IUserModule {
     }
 
     private fun handleTokenExpire(activity: Activity) {
-        if (!AMESelfData.isLogin) {
+        if (!AMELogin.isLogin) {
             return
         }
 
         if (expireDispose == null && kickOutDispose == null) {
             expireDispose = Observable.create<Recipient> {
                 ALog.i(TAG, "handleTokenExpire 1")
-                if (AMESelfData.isLogin) {
+                if (AMELogin.isLogin) {
                     AmeProvider.get<ILoginModule>(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)?.quit(clearHistory = false, withLogOut = false)
                 } else {
                     throw java.lang.Exception("not login")
@@ -607,6 +607,6 @@ class UserModuleImp : IUserModule {
             return
         }
 
-        SwitchAccountAdapter().switchAccount(activity, AMESelfData.uid, Recipient.fromSelf(activity, true))
+        SwitchAccountAdapter().switchAccount(activity, AMELogin.uid, Recipient.fromSelf(activity, true))
     }
 }

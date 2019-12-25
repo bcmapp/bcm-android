@@ -3,7 +3,7 @@ package com.bcm.messenger.common.grouprepository.model
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.grouprepository.manager.UserDataManager
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.proguard.NotGuard
 
@@ -28,7 +28,7 @@ data class AmeGroupMemberChanged(val groupId:Long, val messageId:Long) {
     fun isMyJoin(): Boolean {
         if (action == JOIN){
             for (i in memberList){
-                if (i.uid.serialize() == AMESelfData.uid){
+                if (i.uid.serialize() == AMELogin.uid){
                     return true
                 }
             }
@@ -42,7 +42,7 @@ data class AmeGroupMemberChanged(val groupId:Long, val messageId:Long) {
     fun isMyLeave(): Boolean {
         if (action == LEAVE){
             for (i in memberList){
-                if (i.uid.serialize() == AMESelfData.uid){
+                if (i.uid.serialize() == AMELogin.uid){
                     return true
                 }
             }

@@ -1,6 +1,6 @@
 package com.bcm.messenger.wallet.utils
 
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.btc.WalletEx
@@ -46,7 +46,7 @@ class BtcWalletSyncHelper(private val mManager: BCMWalletManager) {
                 "BCM_chain_production"
             } else {
                 "BCM_chain_test"
-            } + "_" + AMESelfData.uid
+            } + "_" + AMELogin.uid
         }
 
         fun getCheckpointFile(params: NetworkParameters): String {
@@ -307,7 +307,7 @@ class BtcWalletSyncHelper(private val mManager: BCMWalletManager) {
                 }
                 try {
                     if (mEarliestKeyCreationTime <= 0) {
-                        mEarliestKeyCreationTime = AMESelfData.genTime
+                        mEarliestKeyCreationTime = AMELogin.genTime
                     }
                     ALog.d(TAG, "setEarliestKeyCreationTiem: $mEarliestKeyCreationTime")
 

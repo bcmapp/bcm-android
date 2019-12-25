@@ -20,7 +20,7 @@ import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.metrics.ReportUtil
 import com.bcm.messenger.common.preferences.SuperPreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.provider.accountmodule.IChatModule
@@ -201,7 +201,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
             if (SchemeLaunchHelper.hasIntent()) {
                 checkSchemeLaunch()
             }
-            checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(AMESelfData.uid) > 0)
+            checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(AMELogin.uid) > 0)
         }
 
         // check need fetch profile or avatar
@@ -372,7 +372,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     private fun initRecipientData() {
         updateRecipientData(recipient)
-        checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(AMESelfData.uid) > 0)
+        checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(AMELogin.uid) > 0)
     }
 
     private fun updateRecipientData(recipient: Recipient) {

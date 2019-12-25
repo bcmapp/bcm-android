@@ -8,7 +8,7 @@ import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.PreKeyUtil;
 import com.bcm.messenger.common.jobs.MasterSecretJob;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 
 import org.whispersystems.jobqueue.JobParameters;
@@ -41,12 +41,12 @@ public class CreateSignedPreKeyJob extends MasterSecretJob {
 
     @Override
     public void onRun(MasterSecret masterSecret) throws IOException {
-        if (AMESelfData.INSTANCE.isSignedPreKeyRegistered()) {
+        if (AMELogin.INSTANCE.isSignedPreKeyRegistered()) {
             Log.w(TAG, "Signed prekey already registered...");
             return;
         }
 
-        if (!AMESelfData.INSTANCE.isPushRegistered()) {
+        if (!AMELogin.INSTANCE.isPushRegistered()) {
             Log.w(TAG, "Not yet registered...");
             return;
         }

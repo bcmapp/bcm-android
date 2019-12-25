@@ -3,7 +3,7 @@ package com.bcm.messenger.chats.group.logic.secure
 import android.annotation.SuppressLint
 import com.bcm.messenger.chats.group.core.GroupManagerCore
 import com.bcm.messenger.chats.group.core.group.RefreshKeyResEntity
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.split
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -29,7 +29,7 @@ object GroupKeyRotate {
 
     fun rotateGroup(gidList: List<Long>) {
         ALog.i(TAG, "rotateGroup list invoke")
-        val uid = AMESelfData.uid
+        val uid = AMELogin.uid
         AmeDispatcher.singleScheduler.scheduleDirect {
             val syncList = gidList.filter { !rotatingMap.containsKey(it) }
             val syncingLit = gidList.filter { rotatingMap.containsKey(it) }
@@ -47,7 +47,7 @@ object GroupKeyRotate {
                 rotatingMap[i] = 0
             }
 
-            if (uid == AMESelfData.uid) {
+            if (uid == AMELogin.uid) {
                 rotateGroupImpl(uid, syncList, 0)
             }
         }
@@ -62,7 +62,7 @@ object GroupKeyRotate {
                 it.onNext(result)
             } else {
                 rotatingMap[gid] = 0
-                rotateGroupImpl(AMESelfData.uid, listOf(gid), 0)
+                rotateGroupImpl(AMELogin.uid, listOf(gid), 0)
                 it.onNext(result)
             }
             it.onComplete()
@@ -108,18 +108,18 @@ object GroupKeyRotate {
                 .observeOn(AmeDispatcher.singleScheduler)
                 .doOnError {
                     ALog.e(TAG, "rotateGroup refresh group key failed", it)
-                    if (uid == AMESelfData.uid) {
+                    if (uid == AMELogin.uid) {
                         checkComplete(syncList)
                     }
 
                 }
                 .doOnComplete {
-                    if (uid == AMESelfData.uid) {
+                    if (uid == AMELogin.uid) {
                         checkComplete(syncList)
                     }
                 }
                 .subscribe {
-                    if (uid != AMESelfData.uid) {
+                    if (uid != AMELogin.uid) {
                         return@subscribe
                     }
 
@@ -155,7 +155,7 @@ object GroupKeyRotate {
                     ALog.e(TAG, "waitForRotateFinishedCall", it)
                 }
                 .subscribe {
-                    if (uid != AMESelfData.uid) {
+                    if (uid != AMELogin.uid) {
                         return@subscribe
                     }
 

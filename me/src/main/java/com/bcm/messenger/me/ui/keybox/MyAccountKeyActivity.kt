@@ -15,7 +15,7 @@ import androidx.core.content.FileProvider
 import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -97,8 +97,8 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
         keybox_account_divider?.visibility = View.GONE
         keybox_account_qr?.visibility = View.VISIBLE
 
-        val genKeyTime = AmeLoginLogic.accountHistory.getGenKeyTime(AMESelfData.uid)
-        val backupTime = AmeLoginLogic.accountHistory.getBackupTime(AMESelfData.uid)
+        val genKeyTime = AmeLoginLogic.accountHistory.getGenKeyTime(AMELogin.uid)
+        val backupTime = AmeLoginLogic.accountHistory.getBackupTime(AMELogin.uid)
 
         // 新老帐号兼容
         val account = AmeLoginLogic.getAccount(accountId)

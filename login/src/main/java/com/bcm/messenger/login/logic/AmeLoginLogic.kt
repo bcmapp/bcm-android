@@ -36,7 +36,6 @@ import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.route.api.BcmRouter
 import com.google.gson.JsonSyntaxException
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -111,15 +110,15 @@ object AmeLoginLogic {
     /**
      * @return true login, false not login
      */
-    fun isLogin(): Boolean {
-        return accountHistory.currentLoginUid().isNotEmpty()
+    fun isLogin(uid: String): Boolean {
+        return accountHistory.isLogin(uid)
     }
 
     /**
      * @return current login account state
      */
     fun getCurrentAccount(): AmeAccountData? {
-        return accountHistory.currentLoginData()
+        return accountHistory.majorAccountData()
     }
 
     /**
@@ -140,7 +139,7 @@ object AmeLoginLogic {
      * save backup time
      */
     fun saveCurrentBackup(time: Long) {
-        val account = accountHistory.currentLoginData()
+        val account = accountHistory.majorAccountData()
         if (account != null) {
             var newTime = min(time, AmeTimeUtil.localTimeSecond())
             if (newTime <= 0) {
@@ -169,7 +168,7 @@ object AmeLoginLogic {
 
     }
 
-    private fun handleLocalLogin(context: Context) {
+    private fun handleLocalLogin(uid: String, context: Context) {
 
         val currentAccount = getCurrentAccount() ?: return
         RotateSignedPreKeyListener.schedule(context)
@@ -208,15 +207,14 @@ object AmeLoginLogic {
                             DatabaseFactory.getInstance(AppContextHolder.APP_CONTEXT).deleteAllDatabase()
                             GroupDatabase.getInstance().clearAllTables()
                         }
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMESelfData.uid}.db").delete()
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMESelfData.uid}.db-shm").delete()
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMESelfData.uid}.db-wal").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db-shm").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db-wal").delete()
 
                         TextSecurePreferences.clear(AppContextHolder.APP_CONTEXT)
                         MasterSecretUtil.clearMasterSecretPassphrase(AppContextHolder.APP_CONTEXT)
-                        val walletProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_WALLET_BASE).navigation() as IWalletModule
-                        walletProvider.destroyWallet()
-                        AmeModuleCenter.contact().clear()
+                        AmeModuleCenter.wallet(accountContext)?.destroyWallet()
+                        AmeModuleCenter.contact(accountContext)?.clear()
 
                     } catch (e: Throwable) {
                         ALog.logForSecret(TAG, "clear account history error", e)
@@ -232,7 +230,7 @@ object AmeLoginLogic {
             ALog.i(TAG, "just only clear current login uid")
         }
 
-        accountHistory.saveCurrentLoginUid("")
+        accountHistory.removeLoginAccountUid(accountContext.uid)
         loginTempData = null
     }
 
@@ -241,14 +239,14 @@ object AmeLoginLogic {
      */
     fun getAccountList(): List<Any> {
         return accountHistory.getAccountList().sortedWith(kotlin.Comparator { o1, o2 ->
-            if (o1.curLogin && !o2.curLogin) {
-                -1
-            } else if (!o1.curLogin && o2.curLogin) {
-                1
-            } else {
-                val o1t = max(o1.lastLoginTime, o1.backupTime)
-                val o2t = max(o2.lastLoginTime, o2.backupTime)
-                o2t.compareTo(o1t)
+            when {
+                isLogin() && o1.uid == accountHistory.majorAccountUid() -> -1
+                isLogin() && o2.uid == accountHistory.majorAccountUid() -> 1
+                else -> {
+                    val o1t = max(o1.lastLoginTime, o1.backupTime)
+                    val o2t = max(o2.lastLoginTime, o2.backupTime)
+                    o2t.compareTo(o1t)
+                }
             }
         })
     }
@@ -257,7 +255,7 @@ object AmeLoginLogic {
         mTmpToken = if (uid.isEmpty() || password.isEmpty()) {
             ""
         } else {
-            quit(AccountContext(accountHistory.currentLoginUid()),false)
+            quit(AccountContext(accountHistory.majorAccountUid()), false)
             genToken(uid, password)
         }
     }
@@ -462,7 +460,7 @@ object AmeLoginLogic {
                         registerSucceed(registrationId, uid, keyPair, signalingKey, signalPassword, password, passwordHint)
                     }
                     .doOnError {
-                        quit(AccountContext(accountHistory.currentLoginUid()),false)
+                        quit(AccountContext(accountHistory.majorAccountUid()), false)
                     }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -499,6 +497,8 @@ object AmeLoginLogic {
         } else {
             loginTempData = Triple(uid, ecKeyPair, password)
         }
+
+        accountHistory.saveLastLoginUid(uid)
     }
 
     fun initAfterLoginSuccess() {
@@ -534,7 +534,7 @@ object AmeLoginLogic {
 
         } catch (e: Exception) {
             ALog.logForSecret(TAG, "loginSucceed generate prekey or prekey upload failed, ${e.message}", e)
-            quit(AccountContext(accountHistory.currentLoginUid()),false)
+            quit(AccountContext(accountHistory.majorAccountUid()), false)
             ReportUtil.loginEnded(false)
             throw e
         }
@@ -596,11 +596,9 @@ object AmeLoginLogic {
         accountData.signalPassword = signalPassword
         accountData.signalingKey = signalKey
         accountData.signedPreKeyRegistered = true
-        accountHistory.saveAccount(accountData)
-        accountHistory.saveCurrentLoginUid(uid)
-        accountHistory.saveLastLoginUid(uid)
 
-        TextSecurePreferences.setIntegerPrefrence(AppContextHolder.APP_CONTEXT, TextSecurePreferences.ACCOUNT_DATA_VERSION, AmeAccountData.V4)
+        accountHistory.saveAccount(accountData)
+        accountHistory.setMajorLoginAccountUid(accountData.uid)
     }
 
     private fun initCreatePhrase(context: Context, ecKeyPair: ECKeyPair) {
@@ -625,23 +623,8 @@ object AmeLoginLogic {
         var error: String? = null
         try {
             val backupData = QRExport.parseAccountDataFromString(qrString)
-            val exportV2 = backupData as? QRExport.ExportModel
-            if (null != exportV2) {
-                if (!backupData.private.isNullOrEmpty()) {
-                    val accountData = exportV2.toAccountData()
-                    uid = accountData.priKey
-                }
-            }
-
-            val exportV3 = backupData as? QRExport.ExportModelV3
-            if (null != exportV3) {
-                val accountData = exportV3.toAccountData()
-                uid = accountData.uid
-            }
-
-            val exportV4 = backupData as? QRExport.ExportModelV4
-            if (null != exportV4) {
-                val accountData = exportV4.toAccountData()
+            if (backupData is QRExport.ExportModelV4) {
+                val accountData = backupData.toAccountData()
                 uid = accountData.uid
             }
 
@@ -662,6 +645,7 @@ object AmeLoginLogic {
     /**
      * parse account qr code（first: uid, second: error）
      */
+    @SuppressLint("CheckResult")
     private fun saveBackupFromExportModel(qrString: String, replace: Boolean = false, callback: (accountId: String?, isExist: Boolean, error: String?) -> Unit) {
         ALog.d(TAG, "saveBackupFromExportModel qrString: $qrString, replace: $replace")
 
@@ -671,42 +655,17 @@ object AmeLoginLogic {
 
             var uid: String? = null
             var error: String? = null
-            var exist: Boolean = false
+            var exist = false
             try {
                 val backupData = QRExport.parseAccountDataFromString(qrString)
-                val exportV2 = backupData as? QRExport.ExportModel
-                if (null != exportV2) {
-                    if (!backupData.private.isNullOrEmpty()) {
-                        val accountData = exportV2.toAccountData()
-                        uid = accountData.priKey
-                        if (!uid.isNullOrEmpty()) {
-                            if (!accountHistory.saveAccount(uid, accountData, replace) && !replace) {
-                                exist = true
-                            }
-                        }
-                    }
-                }
-
-                val exportV3 = backupData as? QRExport.ExportModelV3
-                if (null != exportV3) {
-                    val accountData = exportV3.toAccountData()
-                    accountData.version = AmeAccountData.V3
-                    uid = accountData.uid
-                    if (!accountHistory.saveAccount(accountData, replace) && !replace) {
-                        exist = true
-                    }
-                }
-
-                val exportV4 = backupData as? QRExport.ExportModelV4
-                if (null != exportV4) {
-                    val accountData = exportV4.toAccountData()
+                if (backupData is QRExport.ExportModelV4) {
+                    val accountData = backupData.toAccountData()
                     accountData.version = AmeAccountData.V4
                     uid = accountData.uid
                     if (!accountHistory.saveAccount(accountData, replace) && !replace) {
                         exist = true
                     }
                 }
-
             } catch (jse: JsonSyntaxException) {
                 ALog.logForSecret(TAG, "saveBackupFromExportModelWithWarning error", jse)
             } catch (ie: IllegalArgumentException) {
@@ -772,7 +731,7 @@ object AmeLoginLogic {
     fun token(): String {
         if (isLogin()) {
             val password = authPassword()
-            val uid = accountHistory.currentLoginUid()
+            val uid = accountHistory.majorAccountUid()
             if (password.isNotEmpty()) {
                 return genToken(uid, password)
             }
@@ -792,8 +751,8 @@ object AmeLoginLogic {
         return ""
     }
 
-    fun authPassword(): String {
-        return accountHistory.currentLoginData()?.signalPassword ?: ""
+    fun authPassword(uid: String): String {
+        return accountHistory.getAccount(uid)?.signalPassword ?: ""
     }
 
     /**
@@ -820,23 +779,23 @@ object AmeLoginLogic {
                     requestChallenge(it)
                 }.observeOn(Schedulers.io()).subscribe({
 
-            val difficulty = it.second.difficulty
-            if (difficulty > 32 || difficulty < 0) {
-                requestChallengeTarget(keypair, result)
-            } else {
-                mPrefixUid = it.first
-                mChallengeResult = it.second
+                    val difficulty = it.second.difficulty
+                    if (difficulty > 32 || difficulty < 0) {
+                        requestChallengeTarget(keypair, result)
+                    } else {
+                        mPrefixUid = it.first
+                        mChallengeResult = it.second
 
-                mMask = (Math.pow(2.0, 32.0 - difficulty) - 1).toLong().xor(0xffffffff)
-                val target = Base58.encode(ByteArray(4).apply {
-                    ByteUtil.longTo4ByteArray(this, 0, it.second.nonce and mMask)
+                        mMask = (Math.pow(2.0, 32.0 - difficulty) - 1).toLong().xor(0xffffffff)
+                        val target = Base58.encode(ByteArray(4).apply {
+                            ByteUtil.longTo4ByteArray(this, 0, it.second.nonce and mMask)
+                        })
+                        result(target)
+                    }
+                }, {
+                    result(null)
+                    ALog.e(TAG, "requestChallengeTarget fail", it)
                 })
-                result(target)
-            }
-        }, {
-            result(null)
-            ALog.e(TAG, "requestChallengeTarget fail", it)
-        })
     }
 
     private fun registerChallenge(keypair: ECKeyPair, result: (target: Long, hash: String, clientNotice: Long, isCalculate: Boolean) -> Unit) {

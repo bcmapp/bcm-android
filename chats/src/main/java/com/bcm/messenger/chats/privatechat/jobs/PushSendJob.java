@@ -13,10 +13,8 @@ import com.bcm.messenger.common.event.PartProgressEvent;
 import com.bcm.messenger.common.exception.TextSecureExpiredException;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
 import com.bcm.messenger.common.mms.PartAuthority;
-import com.bcm.messenger.common.preferences.TextSecurePreferences;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
-import com.bcm.messenger.common.provider.AMESelfData;
-import com.bcm.messenger.common.provider.AmeModuleCenter;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.recipients.Recipient;
 
 import org.greenrobot.eventbus.EventBus;
@@ -61,7 +59,7 @@ public abstract class PushSendJob extends SendJob {
 
     @Override
     protected final void onSend(MasterSecret masterSecret) throws Exception {
-        if (AMESelfData.INSTANCE.getSignedPreKeyFailureCount() > getRetryCount()) {
+        if (AMELogin.INSTANCE.getSignedPreKeyFailureCount() > getRetryCount()) {
             AmeModuleCenter.INSTANCE.login().rotateSignedPrekey();
             throw new TextSecureExpiredException("Too many signed prekey rotation failures");
         }

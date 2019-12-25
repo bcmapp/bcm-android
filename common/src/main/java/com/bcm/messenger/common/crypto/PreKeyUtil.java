@@ -20,11 +20,10 @@ package com.bcm.messenger.common.crypto;
 import android.content.Context;
 import android.util.Log;
 import com.bcm.messenger.common.crypto.storage.TextSecurePreKeyStore;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.utility.EncryptUtils;
 import com.bcm.messenger.utility.GsonUtils;
 import com.bcm.messenger.utility.proguard.NotGuard;
-import com.google.gson.Gson;
 
 import org.whispersystems.libsignal.IdentityKeyPair;
 import org.whispersystems.libsignal.InvalidKeyException;
@@ -202,7 +201,7 @@ public class PreKeyUtil {
   }
 
   private static File getKeysDirectory(Context context, String name) {
-    File directory = new File(AMESelfData.INSTANCE.getAccountDir(), name);
+    File directory = new File(AMELogin.INSTANCE.getAccountDir(), name);
 
     if (!directory.exists())
       directory.mkdirs();

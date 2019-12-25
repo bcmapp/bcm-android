@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.getColorCompat
@@ -160,7 +160,7 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
             ) { result, _ ->
                 if (result) {
                     AmePopup.loading.dismiss()
-                    AmeLoginLogic.accountHistory.resetBackupState(AMESelfData.uid)
+                    AmeLoginLogic.accountHistory.resetBackupState(AMELogin.uid)
                     AmePopup.result.succeed(activity, getString(R.string.me_change_password_success)) {
 
                         try {
@@ -174,7 +174,7 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
                                     }
                                     .withOkListener {
                                         val intent = Intent(activity, MyAccountKeyActivity::class.java)
-                                        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, AMESelfData.uid)
+                                        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, AMELogin.uid)
                                         startActivity(intent)
 
                                         activity?.finish()

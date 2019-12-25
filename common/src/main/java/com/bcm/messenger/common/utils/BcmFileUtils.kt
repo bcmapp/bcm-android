@@ -458,7 +458,7 @@ object BcmFileUtils {
                     fileName
                 }
                 //bcm
-                val destPath = AmeFileUploader.DECRYPT_DIRECTORY ?: AmeFileUploader.AME_PATH
+                val destPath = AmeFileUploader.DECRYPT_DIRECTORY ?: AmeFileUploader.DEFAULT_PATH
                 val resultPath = destPath + File.separator + destName
                 createFile(destPath, resultPath)
                 //

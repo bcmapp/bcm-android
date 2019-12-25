@@ -7,7 +7,7 @@ import com.bcm.messenger.common.database.db.MigrateDatabase
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.grouprepository.room.database.GroupDatabase
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.utility.AppContextHolder
@@ -405,7 +405,7 @@ object DatabaseMigration : IDatabaseMigration {
 
         // Do encryption if version is release build.
         if (isReleaseBuild()) {
-            SQLCipherUtils.encrypt(AppContextHolder.APP_CONTEXT, "user_${AMESelfData.uid}.db", masterSecret!!.encryptionKey.encoded)
+            SQLCipherUtils.encrypt(AppContextHolder.APP_CONTEXT, "user_${AMELogin.uid}.db", masterSecret!!.encryptionKey.encoded)
         }
 
         UserDatabase.resetDatabase()

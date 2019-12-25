@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.setStatusBarLightMode
@@ -71,7 +71,7 @@ class ForcedLogOutFragment : Fragment() {
     }
 
     private fun gotoLogin() {
-        if (AMESelfData.isLogin) {
+        if (AMELogin.isLogin) {
             ALog.e(TAG, "登录态还没释放完")
             activity?.finish()
             return

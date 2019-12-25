@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -50,7 +50,7 @@ class MyProfileFragment : Fragment(), RecipientModifiedListener {
         if (requestCode == VERIFY_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 val intent = Intent(activity, MyAccountKeyActivity::class.java)
-                intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, AMESelfData.uid)
+                intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, AMELogin.uid)
                 startActivity(intent)
             }
         }
@@ -156,11 +156,11 @@ class MyProfileFragment : Fragment(), RecipientModifiedListener {
 
 
         profile_title_bar?.setCenterText(getString(R.string.me_profile_title))
-        profile_id_item?.setTip(InputLengthFilter.filterString(AMESelfData.uid, 15), 0)
+        profile_id_item?.setTip(InputLengthFilter.filterString(AMELogin.uid, 15), 0)
         if (!isReleaseBuild()) {
             // 非正式包允许长按复制ID，方便查问题
             profile_id_item?.setOnLongClickListener {
-                it.context.saveTextToBoard(AMESelfData.uid)
+                it.context.saveTextToBoard(AMELogin.uid)
                 ToastUtil.show(it.context, "User ID has been copied to clipboard")
                 return@setOnLongClickListener true
             }

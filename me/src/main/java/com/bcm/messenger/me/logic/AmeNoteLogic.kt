@@ -5,7 +5,7 @@ import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.grouprepository.room.dao.NoteRecordDao
 import com.bcm.messenger.common.grouprepository.room.entity.NoteRecord
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.bean.BcmNote
@@ -96,7 +96,7 @@ class AmeNoteLogic : AppForeground.IForegroundEvent {
 
     @SuppressLint("CheckResult")
     private fun loadCache() {
-        if (!AMESelfData.isLogin) {
+        if (!AMELogin.isLogin) {
             return
         }
 
@@ -448,7 +448,7 @@ class AmeNoteLogic : AppForeground.IForegroundEvent {
     }
 
     private fun noteStorePath(): String {
-        return AMESelfData.accountDir + NOTE_LOCAL_DIR
+        return AMELogin.accountDir + NOTE_LOCAL_DIR
     }
 
     private fun getDao(): NoteRecordDao {

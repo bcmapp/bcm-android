@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 
 import java.util.concurrent.TimeUnit;
@@ -16,7 +16,7 @@ public class RotateSignedPreKeyListener extends PersistentAlarmManagerListener {
 
     @Override
     protected long getNextScheduledExecutionTime(Context context) {
-        return AMESelfData.INSTANCE.getSignedPreKeyRotationTime();
+        return AMELogin.INSTANCE.getSignedPreKeyRotationTime();
     }
 
     @Override
@@ -25,7 +25,7 @@ public class RotateSignedPreKeyListener extends PersistentAlarmManagerListener {
             AmeModuleCenter.INSTANCE.login().rotateSignedPrekey();
         }
         long nextTime = System.currentTimeMillis() + INTERVAL;
-        AMESelfData.INSTANCE.setSignedPreKeyRotationTime(nextTime);
+        AMELogin.INSTANCE.setSignedPreKeyRotationTime(nextTime);
 
         return nextTime;
     }

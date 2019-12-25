@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.login.LoginVerifyPinFragment
@@ -65,7 +65,7 @@ class VerifyKeyActivity : SwipeBaseActivity() {
             PinInputActivity.routerVerifyUnlock(this)
             finish()
         } else {
-            if (!AMESelfData.isLogin){
+            if (!AMELogin.isLogin){
                 hideKeyboard()
                 val intent = Intent(this, RegistrationActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK

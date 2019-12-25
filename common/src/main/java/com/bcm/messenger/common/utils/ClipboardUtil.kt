@@ -9,7 +9,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -84,7 +84,7 @@ object ClipboardUtil {
      * 
      */
     fun shareInviteText() {
-        val text = AppContextHolder.APP_CONTEXT.getString(R.string.common_invite_user_message, AMESelfData.uid)
+        val text = AppContextHolder.APP_CONTEXT.getString(R.string.common_invite_user_message, AMELogin.uid)
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, text)
@@ -105,7 +105,7 @@ object ClipboardUtil {
                 ALog.i(TAG, "Find BCM invite message!!")
                 val id = result.value
                 if (id.isNotBlank()) {
-                    if (id != AMESelfData.uid) {
+                    if (id != AMELogin.uid) {
                         val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
                         contactProvider.openContactDataActivity(activity, Address.fromSerialized(id))
                     }
@@ -119,7 +119,7 @@ object ClipboardUtil {
             if (json.isNotBlank()) {
                 val qrData = Recipient.RecipientQR.fromJson(json)
                 if (qrData != null) {
-                    if (qrData.uid != AMESelfData.uid) {
+                    if (qrData.uid != AMELogin.uid) {
                         val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
                         contactProvider.openContactDataActivity(activity, Address.fromSerialized(qrData.uid), qrData.name)
                     }

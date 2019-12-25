@@ -17,7 +17,7 @@ import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.MediaUtil
 import com.bcm.messenger.common.utils.base64Encode
@@ -371,7 +371,7 @@ object ForwardMessageEncapsulator {
         prepareMessage.historyMessage.sendTime = messageRecord.dateSent
 
         if (messageRecord.isOutgoing()) {
-            prepareMessage.historyMessage.sender = AMESelfData.uid
+            prepareMessage.historyMessage.sender = AMELogin.uid
         } else {
             prepareMessage.historyMessage.sender = messageRecord.getRecipient().address.serialize()
         }
@@ -497,7 +497,7 @@ object ForwardMessageEncapsulator {
     private fun smsMessage2HistoryMessage(message: MessageRecord): HistoryMessageDetail {
         val historyMessage = HistoryMessageDetail()
         if (message.isOutgoing()) {
-            historyMessage.sender = AMESelfData.uid
+            historyMessage.sender = AMELogin.uid
         } else {
             historyMessage.sender = message.getRecipient().address.serialize()
         }

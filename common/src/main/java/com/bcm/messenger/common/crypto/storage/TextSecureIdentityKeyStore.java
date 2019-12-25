@@ -9,7 +9,7 @@ import com.bcm.messenger.common.crypto.SessionUtil;
 import com.bcm.messenger.common.database.records.IdentityRecord;
 import com.bcm.messenger.common.database.repositories.IdentityRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 
 import org.whispersystems.libsignal.IdentityKey;
 import org.whispersystems.libsignal.IdentityKeyPair;
@@ -36,7 +36,7 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
 
     @Override
     public int getLocalRegistrationId() {
-        return AMESelfData.INSTANCE.getRegistrationId();
+        return AMELogin.INSTANCE.getRegistrationId();
     }
 
     public boolean saveIdentity(SignalProtocolAddress address, IdentityKey identityKey, boolean nonBlockingApproval) {
@@ -88,7 +88,7 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
     public boolean isTrustedIdentity(SignalProtocolAddress address, IdentityKey identityKey, Direction direction) {
         synchronized (LOCK) {
             IdentityRepo identityRepo = Repository.getIdentityRepo();
-            String ourNumber = AMESelfData.INSTANCE.getUid();
+            String ourNumber = AMELogin.INSTANCE.getUid();
             Address theirAddress = Address.from(context, address.getName());
 
             if (ourNumber.equals(address.getName()) || Address.fromSerialized(ourNumber).equals(theirAddress)) {

@@ -14,7 +14,7 @@ import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -186,10 +186,10 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     }
 
     private fun syncMyMemberInfo() {
-        GroupLogic.getGroupMemberInfo(groupId, AMESelfData.uid) { member, error ->
+        GroupLogic.getGroupMemberInfo(groupId, AMELogin.uid) { member, error ->
             if (member != null) {
                 try {
-                    if (member.uid.serialize() == AMESelfData.uid) {
+                    if (member.uid.serialize() == AMELogin.uid) {
                         val selfProfile = Recipient.self().privacyProfile
                         val myName = Recipient.self().name
                         var newName: String? = null
@@ -693,7 +693,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
         if (gid == groupId && memberList.isNotEmpty()) {
             modelCache.addMember(memberList)
             modelCache.info.memberCount += memberList.count()
-            val selfJoin = memberList.filter { it.uid.serialize() == AMESelfData.uid }
+            val selfJoin = memberList.filter { it.uid.serialize() == AMELogin.uid }
                     .takeIf {
                         it.isNotEmpty()
                     }?.first()
@@ -730,7 +730,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
 
             post(MemberListChangedEvent())
 
-            if (memberList.any { it.uid.serialize() == AMESelfData.uid }) {
+            if (memberList.any { it.uid.serialize() == AMELogin.uid }) {
                 AmeDispatcher.mainThread.dispatch {
                     post(MyRoleChangedEvent(AmeGroupMemberInfo.VISITOR))
                 }

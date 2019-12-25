@@ -2,7 +2,7 @@ package com.bcm.messenger.common.server
 
 import com.bcm.messenger.common.bcmhttp.WebSocketHttp
 import com.bcm.messenger.common.core.BcmHttpApiHelper
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.InvalidProtocolBufferException
 import com.orhanobut.logger.Logger
@@ -69,7 +69,7 @@ class ServerConnection(private val userAgent: String) {
             connectToken = token
             updateConnectState(ConnectState.CONNECTING)
 
-            val url = String.format(wsUri, AMESelfData.uid, AMESelfData.authPassword)
+            val url = String.format(wsUri, AMELogin.uid, AMELogin.authPassword)
             Logger.d("WebSocketConnection filledUri: $url")
 
             connectingTime = System.currentTimeMillis()

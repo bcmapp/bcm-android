@@ -2,6 +2,7 @@ package com.bcm.messenger.login.module
 
 import android.content.Intent
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSManager
 import com.bcm.messenger.common.config.BcmFeatureSupport
 import com.bcm.messenger.common.crypto.MasterSecretUtil
@@ -39,7 +40,7 @@ import java.io.File
  * bcm.social.01 2018/9/20.
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_LOGIN_BASE)
-class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStateChanged,IConnectionListener {
+class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStateChanged, IConnectionListener {
 
     private val TAG = "LoginProviderImplProxy"
 
@@ -68,23 +69,27 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
     }
 
     override fun isLogin(): Boolean {
-        return AmeLoginLogic.isLogin()
+        return AmeLoginLogic.isLogin(AmeLoginLogic.accountHistory.majorAccountUid())
     }
 
-    override fun loginUid(): String {
-        return AmeLoginLogic.accountHistory.currentLoginUid()
+    override fun isAccountLogin(uid: String): Boolean {
+        return AmeLoginLogic.isLogin(uid)
     }
 
-    override fun genTime(): Long {
-        return AmeLoginLogic.getCurrentAccount()?.genKeyTime ?: 0
+    override fun majorUid(): String {
+        return AmeLoginLogic.accountHistory.majorAccountUid()
     }
 
-    override fun registrationId(): Int {
+    override fun minorUidList(): List<String> {
+        return AmeLoginLogic.accountHistory.minorAccountList()
+    }
+
+    override fun genTime(uid: String): Long {
+        return AmeLoginLogic.accountHistory.getAccount(uid)?.genKeyTime ?: 0
+    }
+
+    override fun registrationId(uid: String): Int {
         return AmeLoginLogic.getCurrentAccount()?.registrationId ?: 0
-    }
-
-    override fun gcmToken(): String? {
-        return AmeLoginLogic.getCurrentAccount()?.gcmToken
     }
 
     override fun setGcmToken(token: String?) {
@@ -115,15 +120,15 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         return AmeLoginLogic.getCurrentAccount()?.pushRegistered ?: false
     }
 
-    override fun signalingKey(): String? {
+    override fun signalingKey(uid: String): String? {
         return AmeLoginLogic.getCurrentAccount()?.signalingKey
     }
 
-    override fun isSignedPreKeyRegistered(): Boolean {
+    override fun isSignedPreKeyRegistered(uid: String): Boolean {
         return AmeLoginLogic.getCurrentAccount()?.signedPreKeyRegistered ?: false
     }
 
-    override fun setSignedPreKeyRegistered(registered: Boolean) {
+    override fun setSignedPreKeyRegistered(uid: String, registered: Boolean) {
         val accountData = AmeLoginLogic.getCurrentAccount()
         if (accountData != null) {
             accountData.signedPreKeyRegistered = registered
@@ -131,11 +136,11 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         }
     }
 
-    override fun getSignedPreKeyFailureCount(): Int {
+    override fun getSignedPreKeyFailureCount(uid: String): Int {
         return AmeLoginLogic.getCurrentAccount()?.signedPreKeyFailureCount ?: 0
     }
 
-    override fun setSignedPreKeyFailureCount(count: Int) {
+    override fun setSignedPreKeyFailureCount(uid: String, count: Int) {
         val accountData = AmeLoginLogic.getCurrentAccount()
         if (accountData != null) {
             accountData.signedPreKeyFailureCount = count
@@ -143,11 +148,11 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         }
     }
 
-    override fun getSignedPreKeyRotationTime(): Long {
+    override fun getSignedPreKeyRotationTime(uid: String): Long {
         return AmeLoginLogic.getCurrentAccount()?.signedPreKeyRotationTime ?: 0L
     }
 
-    override fun setSignedPreKeyRotationTime(time: Long) {
+    override fun setSignedPreKeyRotationTime(uid: String, time: Long) {
         val accountData = AmeLoginLogic.getCurrentAccount()
         if (accountData != null) {
             accountData.signedPreKeyRotationTime = time
@@ -155,16 +160,12 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         }
     }
 
-    override fun token(): String {
-        return AmeLoginLogic.token()
-    }
-
     override fun accountDir(uid: String): String {
         return AmeLoginLogic.accountDir(uid)
     }
 
-    override fun quit(clearHistory: Boolean, withLogOut: Boolean) {
-        AmeLoginLogic.quit(clearHistory, withLogOut)
+    override fun quit(accountContext: AccountContext, clearHistory: Boolean, withLogOut: Boolean) {
+        AmeLoginLogic.quit(accountContext, clearHistory, withLogOut)
     }
 
     override fun clearAll() {
@@ -183,13 +184,13 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
             walletProvider.destroyWallet()
             AmeModuleCenter.contact().clear()
 
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "clearAll error", ex)
         }
     }
 
-    override fun authPassword(): String {
-        return AmeLoginLogic.authPassword()
+    override fun authPassword(uid: String): String {
+        return AmeLoginLogic.authPassword(uid)
     }
 
     override fun serviceConnectedState(): ServiceConnectEvent.STATE {
@@ -205,8 +206,8 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
     }
 
     override fun checkLoginAccountState() {
-        if (AMESelfData.isLogin) {
-            if (AMESelfData.uid != AmeLoginLogic.accountHistory.lastLoginUid()) {
+        if (AMELogin.isLogin) {
+            if (AMELogin.uid != AmeLoginLogic.accountHistory.lastLoginUid()) {
                 AmeDispatcher.io.dispatch {
                     AmeLoginLogic.quit(false)
 
@@ -221,12 +222,12 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
             }
 
             AmePushProcess.reset()
-            AmeModuleCenter.onLoginSucceed(AMESelfData.uid)
-            if(!TextSecurePreferences.isSignedPreKeyRegistered(AppContextHolder.APP_CONTEXT)) {
+            AmeModuleCenter.onLoginSucceed(AMELogin.uid)
+            if (!TextSecurePreferences.isSignedPreKeyRegistered(AppContextHolder.APP_CONTEXT)) {
                 AmeModuleCenter.accountJobMgr()?.add(CreateSignedPreKeyJob(AppContextHolder.APP_CONTEXT))
             }
 
-        }else {
+        } else {
             ALog.i(TAG, "checkLoginAccountState not login, pass")
         }
     }
@@ -247,6 +248,9 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         AmeLoginLogic.updateAllowReceiveStrangers(allow, callback)
     }
 
+    override fun getAccountContext(uid: String): AccountContext {
+        return AccountContext(uid, "", "")
+    }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -300,7 +304,7 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
             lastTryProxyTime = 0L
             serviceConnectedState = ServiceConnectEvent.STATE.CONNECTED
             delayCheckRunProxy?.dispose()
-        } else if(e.state == ServerConnStateChangedEvent.CONNECTING) {
+        } else if (e.state == ServerConnStateChangedEvent.CONNECTING) {
             serviceConnectedState = ServiceConnectEvent.STATE.CONNECTING
         } else {
             serviceConnectedState = ServiceConnectEvent.STATE.DISCONNECTED
@@ -318,7 +322,7 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
     override fun onNetWorkStateChanged() {
         if (networkType != NetworkUtil.netType()) {
             networkType = NetworkUtil.netType()
-            if (NetworkUtil.isConnected() && AMESelfData.isLogin) {
+            if (NetworkUtil.isConnected() && AMELogin.isLogin) {
                 //网络切换了，重新
                 if (ProxyManager.isProxyRunning()) {
                     ProxyManager.stopProxy()
@@ -338,7 +342,7 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
 
                 lastTryProxyTime = System.currentTimeMillis()
                 delayCheckRunProxy = AmeDispatcher.io.dispatch({
-                    if (AMESelfData.isLogin) {
+                    if (AMELogin.isLogin) {
                         when {
                             ProxyManager.isReady() -> ProxyManager.startProxy()
                             else -> ProxyManager.refresh()
@@ -359,7 +363,7 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         val provider = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
         if (provider?.isAdHocMode() != true) {
             if (!ProxyManager.isProxyRunning()) {
-                if (!AMESelfData.isLogin){
+                if (!AMELogin.isLogin) {
                     if (AppForeground.foreground() && !ProxyManager.isTesting()) {
                         AmeAppLifecycle.showProxyGuild {
                             BcmRouter.getInstance().get(ARouterConstants.Activity.PROXY_SETTING)
@@ -370,7 +374,7 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
                 }
             } else {
                 LBSManager.refresh()
-                if (AMESelfData.isLogin) {
+                if (AMELogin.isLogin) {
                     AmeModuleCenter.serverDaemon().checkConnection()
                 }
             }

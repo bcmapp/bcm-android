@@ -13,7 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
@@ -160,7 +160,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context, attrs: Attribu
             }
             BcmRouter.getInstance()
                     .get(ARouterConstants.Activity.PROFILE_EDIT)
-                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.from(context, AMESelfData.uid))
+                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.from(context, AMELogin.uid))
                     .navigation(context)
         }
         home_profile_wallet.setOnClickListener {

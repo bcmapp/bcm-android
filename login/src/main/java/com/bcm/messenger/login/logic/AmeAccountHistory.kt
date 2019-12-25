@@ -5,18 +5,15 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMESelfData
-import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.BcmFileUtils
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.login.bean.AmeAccountData
-import com.bcm.messenger.login.bean.KeyBoxAccountItem
-import com.bcm.messenger.login.bean.LoginProfile
 import com.bcm.messenger.utility.*
+import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.proguard.NotGuard
+import com.bcm.messenger.utility.storage.SPEditor
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
@@ -24,6 +21,8 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.*
+import kotlin.collections.HashMap
 import kotlin.math.min
 
 /**
@@ -34,249 +33,95 @@ class AmeAccountHistory {
     companion object {
         private const val TAG = "AmeAccountHistory"
 
+        private const val AME_LAST_LOGIN = "AME_LAST_LOGIN"
+        private const val AME_ACCOUNT_LIST = "AME_ACCOUNT_LIST"
+        private const val AME_MAJOR_LOGIN_ACCOUNT = "AME_CURRENT_LOGIN"
+        private const val AME_MINOR_LOGIN_ACCOUNT = "AME_MINOR_ACCOUNT_LIST"
+
         const val LIMIT_SIZE = 50
     }
 
-    private var accountMap: HashMap<String, AmeAccountData> = HashMap()
+    private var accountMap = Collections.synchronizedMap(HashMap<String, AmeAccountData>())
+    private var majorAccountUid: String = ""  //前端登录的主帐号
+    private var minorAccountUids: MutableList<String> = Collections.synchronizedList(mutableListOf()) //前端登录的其它帐号
 
-    private var mCurAccount: AmeAccountData? = null
-    private var mLastAccount: AmeAccountData? = null
+    private val storage = SPEditor(SuperPreferences.LOGIN_PROFILE_PREFERENCES)
 
     fun init() {
         ALog.i(TAG, "init")
-        fun fixDataComplement(): Boolean {
-            var needUpdate = false
-            val context = AppContextHolder.APP_CONTEXT
-            val lastVersion = TextSecurePreferences.getIntegerPreference(context, TextSecurePreferences.ACCOUNT_DATA_VERSION, 0)
-            if (lastVersion != AmeAccountData.V4) {
-
-                ALog.i(TAG, "fixDataComplement")
-                synchronized(this) {
-                    mCurAccount?.let {
-                        it.registrationId = TextSecurePreferences.getLocalRegistrationId(context)
-                        it.gcmToken = TextSecurePreferences.getGcmRegistrationId(context)
-                        it.gcmTokenLastSetTime = TextSecurePreferences.getGcmRegistrationIdLastSetTime(context)
-                        it.gcmDisabled = TextSecurePreferences.isGcmDisabled(context)
-                        it.pushRegistered = TextSecurePreferences.isPushRegistered(context)
-                        it.signalPassword = TextSecurePreferences.getPushServerPassword(context) ?: ""
-                        it.signalingKey = TextSecurePreferences.getSignalingKey(context) ?: ""
-                        it.signedPreKeyRegistered = TextSecurePreferences.isSignedPreKeyRegistered(context)
-                        it.signedPreKeyFailureCount = TextSecurePreferences.getSignedPreKeyFailureCount(context)
-                        it.signedPreKeyRotationTime = TextSecurePreferences.getSignedPreKeyRotationTime(context)
-                        it.lastAppVersion = AppUtil.getVersionCode(context).toLong()
-                        needUpdate = true
-                    }
-                }
-
-            }else {
-                synchronized(this) {
-                    mCurAccount?.let {
-                        val nowVersion = AppUtil.getVersionCode(context).toLong()
-                        if (it.lastAppVersion != nowVersion) {
-                            ALog.i(TAG, "fixDataComplement app version changed, reset gcmToken")
-
-                            it.gcmToken = null
-                            it.lastAppVersion = nowVersion
-                            needUpdate = true
-                        }
-                    }
-                }
-            }
-
-            if (needUpdate) {
-                TextSecurePreferences.setIntegerPrefrence(context, TextSecurePreferences.ACCOUNT_DATA_VERSION, AmeAccountData.V4)
-                saveAccountHistory()
-            }
-            return needUpdate
-        }
-
-        fun loadAccountFromOldVersion(accountMap: MutableMap<String, AmeAccountData>): Boolean {
-
-            var needUpdate = false
-            val v2List = SuperPreferences.getAccountsProfileIntoSet(AppContextHolder.APP_CONTEXT)
-            if (v2List.isEmpty()) {
-                val v1List = SuperPreferences.getAccountsProfileIntoSetV1(AppContextHolder.APP_CONTEXT)
-                v1List.forEach {
-
-                    val item = GsonUtils.fromJson<KeyBoxAccountItem>(it, KeyBoxAccountItem::class.java)
-                    if (item.profile.e164number.isNullOrEmpty()) {
-                        val map = GsonUtils.fromJson<HashMap<String, Any>>(it, object : TypeToken<HashMap<String, Any>>() {}.type)
-                        if (map.isNotEmpty()) {
-                            for (data in map.values) {
-                                if ((data as? Map<String, Any>)?.size ?: 0 > 1) {
-                                    val text = GsonUtils.toJson(data)
-                                    val profile = GsonUtils.fromJson(text, LoginProfile::class.java)
-                                    profile.privateKey?.let { privKey ->
-                                        accountMap[privKey] = AmeAccountData.fromLoginProfile(profile, "")
-                                        needUpdate = true
-                                    }
-                                }
-                            }
-                        }
-
-                    } else {
-                        item.backupTime = item.profile.backupTime
-                        item.profile.privateKey?.let { privKey ->
-                            accountMap[privKey] = AmeAccountData.fromLoginProfile(item.profile, "")
-                            needUpdate = true
-                        }
-                    }
-
-                }
-
-            } else {
-
-                v2List.forEach {
-                    val item = GsonUtils.fromJson<KeyBoxAccountItem>(it, KeyBoxAccountItem::class.java)
-                    item.profile.privateKey?.let { privKey ->
-                        accountMap[privKey] = AmeAccountData.fromLoginProfile(item.profile, "")
-                        needUpdate = true
-                    }
-
-                }
-
-            }
-
-            return needUpdate
-        }
-
-        fun fixBackupState(): Boolean {
-            var needUpdate = false
-            for ((k, v) in accountMap) {
-
-                if (0L == v.genKeyTime) {
-                    needUpdate = true
-                    v.genKeyTime = System.currentTimeMillis() / 1000
-                }
-
-                val json = SuperPreferences.getAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, k)
-                var state: OldBackupState?
-                if (!json.isNullOrEmpty()) {
-                    SuperPreferences.setAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, AMESelfData.uid, "")
-                    state = OldBackupState.fromJson(json)
-
-                    if (null != state && state.time != 0L) {
-                        needUpdate = true
-                        v.backupTime = state.time
-                    }
-                }
-
-                v.backupTime = min(v.backupTime, System.currentTimeMillis() / 1000)
-            }
-
-            return needUpdate
-        }
-
-        fun fixCurrentAndLastAccount(): Boolean {
-            var needUpdate = false
-
-            val oldCur = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_CURRENT_LOGIN)
-            val oldLast = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_LAST_LOGIN)
-
-            for ((k, v) in accountMap) {
-
-                if (v.curLogin || (oldCur.isNotEmpty() && v.uid == oldCur)) {
-                    mCurAccount?.curLogin = false
-                    v.curLogin = true
-                    mCurAccount = v
-
-                }else {
-                    v.curLogin = false
-                }
-
-                if (v.lastLogin || (oldLast.isNotEmpty() && v.uid == oldLast)) {
-                    mLastAccount?.lastLogin = false
-                    v.lastLogin = true
-                    mLastAccount = v
-
-                }else {
-                    v.lastLogin = false
-                }
-            }
-
-            if (mCurAccount != null && mLastAccount?.uid != mCurAccount?.uid) {
-                mLastAccount?.lastLogin = false
-                mLastAccount = mCurAccount
-                mLastAccount?.lastLogin = true
-                mLastAccount?.let {
-                    SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_LAST_LOGIN, it.uid)
-                }
-                needUpdate = true
-            }
-
-            if (mCurAccount != null && BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) == null) {
-                ALog.i(TAG, "fixCurrentAndLastAccount getMasterSecret fail, set current account null")
-                mCurAccount?.curLogin = false
-                mCurAccount = null
-                needUpdate = true
-            }
-
-            if (oldCur.isEmpty()) {
-                mCurAccount?.let {
-                    SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_CURRENT_LOGIN, it.uid)
-                }
-            }
-            if (oldLast.isEmpty()) {
-                mLastAccount?.let {
-                    SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_LAST_LOGIN, it.uid)
-                }
-            }
-
-            return needUpdate
-        }
-
         try {
-            var needUpdate = false
-            synchronized(this) {
-
-                accountMap.clear()
-                val accountListString = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_ACCOUNT_LIST)
-                if (!isReleaseBuild()) {
-                    ALog.i(TAG, "init accountListString: $accountListString")
-                }
-                if (accountListString.isNotEmpty()) {
-                    accountMap.putAll(Gson().fromJson(accountListString, object : TypeToken<HashMap<String, AmeAccountData>>() {}.type))
-                }
-
-                if (loadAccountFromOldVersion(accountMap)) {
-                    ALog.i(TAG, "loadAccountFromOldVersion return: true")
-                    needUpdate = true
-                }
-
-                if (fixCurrentAndLastAccount()) {
-                    ALog.i(TAG, "fixCurrentAndLastAccount return: true")
-                    needUpdate = true
-                }
-
-                if (fixBackupState()) {
-                    ALog.i(TAG, "fixBackupState return: true")
-                    needUpdate = true
-                }
+            val minorUidListString = storage.get(AME_MINOR_LOGIN_ACCOUNT, "")
+            if (minorUidListString.isNotEmpty()) {
+                minorAccountUids.addAll(Gson().fromJson(minorUidListString, object : TypeToken<List<String>>() {}.type))
             }
 
-            if (needUpdate) {
+            majorAccountUid = storage.get(AME_MAJOR_LOGIN_ACCOUNT, "")
+
+            val accountListString = storage.get(AME_ACCOUNT_LIST, "")
+            if (accountListString.isNotEmpty()) {
+                accountMap.putAll(Gson().fromJson(accountListString, object : TypeToken<HashMap<String, AmeAccountData>>() {}.type))
+            }
+
+            var changed = 0
+            for ((_, account) in accountMap) {
+                changed = changed.or(fixLoginState(account))
+                changed = changed.or(fixBackupTime(account))
+                changed = changed.or(fixGenTime(account))
+            }
+
+            if (changed > 0) {
                 saveAccountHistory()
-                SuperPreferences.clearAccountsV1Profile(AppContextHolder.APP_CONTEXT)
-                SuperPreferences.clearAccountsV2Profile(AppContextHolder.APP_CONTEXT)
             }
 
-            if (fixDataComplement()) {
-                ALog.i(TAG, "fixDataComplement return: true")
-            }
-
-            if (isReleaseBuild()) {
-                ALog.i(TAG, "init end")
-            }else {
-                ALog.d(TAG, "init end, currentLogin: ${mCurAccount?.uid}, lastLogin: ${mLastAccount?.uid}")
-            }
-        } catch (e: Exception) {
+            storage.remove(AME_LAST_LOGIN)
+        } catch (e: Throwable) {
             ALog.e(TAG, "init error", e)
         }
     }
 
-    @Synchronized
+    private fun fixLoginState(account: AmeAccountData): Int {
+        val context = AppContextHolder.APP_CONTEXT
+        if (account.uid == majorAccountUid() && account.signalPassword.isEmpty()) {
+            ALog.i(TAG, "fix login state")
+            account.registrationId = TextSecurePreferences.getLocalRegistrationId(context)
+            account.gcmToken = TextSecurePreferences.getGcmRegistrationId(context)
+            account.gcmTokenLastSetTime = TextSecurePreferences.getGcmRegistrationIdLastSetTime(context)
+            account.gcmDisabled = TextSecurePreferences.isGcmDisabled(context)
+            account.pushRegistered = TextSecurePreferences.isPushRegistered(context)
+            account.signalPassword = TextSecurePreferences.getPushServerPassword(context)
+            account.signalingKey = TextSecurePreferences.getSignalingKey(context)
+            account.signedPreKeyRegistered = TextSecurePreferences.isSignedPreKeyRegistered(context)
+            account.signedPreKeyFailureCount = TextSecurePreferences.getSignedPreKeyFailureCount(context)
+            account.signedPreKeyRotationTime = TextSecurePreferences.getSignedPreKeyRotationTime(context)
+            return 1
+        }
+        return 0
+    }
+
+    private fun fixBackupTime(account: AmeAccountData): Int {
+        val json = SuperPreferences.getAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, account.uid)
+        val state: OldBackupState?
+        if (!json.isNullOrEmpty()) {
+            SuperPreferences.setAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, AMELogin.uid, "")
+            state = OldBackupState.fromJson(json)
+            if (null != state && state.time != 0L) {
+                account.backupTime = state.time
+                return 1
+            }
+        }
+        return 0
+    }
+
+    private fun fixGenTime(account: AmeAccountData): Int {
+        if (account.genKeyTime == 0L) {
+            account.genKeyTime = System.currentTimeMillis() / 1000
+            return 1
+        }
+        return 0
+    }
+
     private fun saveAccountHistory() {
-        SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_ACCOUNT_LIST, GsonUtils.toJson(accountMap))
+        storage.set(AME_ACCOUNT_LIST, GsonUtils.toJson(accountMap))
     }
 
     fun getBackupTime(uid: String): Long {
@@ -287,47 +132,56 @@ class AmeAccountHistory {
         return getAccount(uid)?.genKeyTime ?: System.currentTimeMillis() / 1000
     }
 
-    @Synchronized
-    fun currentLoginUid(): String {
-        return mCurAccount?.uid ?: ""
-    }
-
-    @Synchronized
-    fun currentLoginData(): AmeAccountData? {
-        return mCurAccount
-    }
-
-    @Synchronized
-    fun lastLoginUid(): String {
-        return mLastAccount?.uid ?: ""
-    }
-
-    @Synchronized
-    fun saveLastLoginUid(uid: String) {
-        ALog.logForSecret(TAG, "last uid :$uid")
-        val accountData = accountMap[uid]
-        if (accountData != mLastAccount) {
-            ALog.i(TAG, "saveLastLoginUid reset")
-            mLastAccount?.lastLogin = false
-            mLastAccount = accountData
-            mLastAccount?.lastLogin = true
-            SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_LAST_LOGIN, uid)
-            saveAccountHistory()
+    fun majorAccountUid(): String {
+        if (majorAccountUid.isEmpty()) {
+            majorAccountUid = storage.get(AME_MAJOR_LOGIN_ACCOUNT, "")
         }
+        return majorAccountUid
     }
 
-    @Synchronized
-    fun saveCurrentLoginUid(uid: String) {
+    fun minorAccountList(): List<String> {
+        return minorAccountUids.toList()
+    }
+
+    fun majorAccountData(): AmeAccountData? {
+        return accountMap[majorAccountUid()]
+    }
+
+    fun isLogin(uid: String): Boolean {
+        return uid == majorAccountUid || minorAccountUids.contains(uid)
+    }
+
+    fun setMajorLoginAccountUid(uid: String) {
         ALog.logForSecret(TAG, "current uid :$uid")
-        val accountData = accountMap[uid]
-        if (accountData != mCurAccount) {
-            ALog.i(TAG, "saveCurrentLoginUid reset")
-            mCurAccount?.curLogin = false
-            mCurAccount = accountData
-            mCurAccount?.curLogin = true
-            SuperPreferences.setStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_CURRENT_LOGIN, uid)
-            saveAccountHistory()
-            upgradeOldAccountFlags()
+        val minorUid = storage.get(AME_MAJOR_LOGIN_ACCOUNT, "")
+        if (minorUid.isNotEmpty()) {
+            minorAccountUids.add(minorUid)
+            storage.set(AME_MINOR_LOGIN_ACCOUNT, GsonUtils.toJson(minorAccountUids))
+        }
+
+        majorAccountUid = uid
+        storage.set(AME_MAJOR_LOGIN_ACCOUNT, uid)
+        upgradeOldAccountFlags()
+    }
+
+    fun removeLoginAccountUid(uid: String) {
+        val logoutUid = if (uid.isEmpty()) {
+            majorAccountUid
+        } else {
+            uid
+        }
+
+        if (majorAccountUid == logoutUid) {
+            majorAccountUid = ""
+
+            if (minorAccountUids.isNotEmpty()) {
+                majorAccountUid = minorAccountUids.removeAt(0)
+                storage.set(AME_MINOR_LOGIN_ACCOUNT, GsonUtils.toJson(minorAccountUids))
+            }
+            storage.set(AME_MAJOR_LOGIN_ACCOUNT, majorAccountUid)
+        } else {
+            minorAccountUids.remove(uid)
+            storage.set(AME_MINOR_LOGIN_ACCOUNT, GsonUtils.toJson(minorAccountUids))
         }
     }
 
@@ -342,7 +196,7 @@ class AmeAccountHistory {
 
     @Synchronized
     fun saveAccount(key: String, data: AmeAccountData, replace: Boolean = true): Boolean {
-        var exist = accountMap[key]
+        val exist = accountMap[key]
         if (exist != null && exist.pubKey == data.pubKey) {
             if (!replace) {
                 return false
@@ -353,10 +207,9 @@ class AmeAccountHistory {
             data.genKeyTime = System.currentTimeMillis() / 1000
         }
         if (exist == null) {
-            exist = data
             accountMap[key] = data
 
-        }else {
+        } else {
             val newBackupTime = min(data.backupTime, AmeTimeUtil.localTimeSecond())
             if (newBackupTime > 0) {
                 exist.backupTime = newBackupTime
@@ -365,30 +218,9 @@ class AmeAccountHistory {
             if (data.name.isNotEmpty()) {
                 exist.name = data.name
             }
-            exist.curLogin = data.curLogin
-            exist.lastLogin = data.lastLogin
-        }
-        if (exist.curLogin && exist != mCurAccount) {
-            mCurAccount?.curLogin = false
-            mCurAccount = exist
-        }
-        if (exist.lastLogin && exist != mLastAccount) {
-            mLastAccount?.lastLogin = false
-            mLastAccount = exist
         }
         saveAccountHistory()
         return true
-    }
-
-    @Synchronized
-    fun updateAccount(data: AmeAccountData) {
-        if (data.uid.isNotEmpty()) {
-            accountMap.remove(data.priKey)
-            accountMap[data.uid] = data
-        }else {
-            accountMap[data.priKey] = data
-        }
-        saveAccountHistory()
     }
 
     @Synchronized
@@ -396,14 +228,6 @@ class AmeAccountHistory {
         ALog.logForSecret(TAG, "delete account uid :$uid")
         val accountData = accountMap[uid]
         if (accountData != null) {
-            if (accountData.curLogin) {
-                accountData.curLogin = false
-                mCurAccount = null
-            }
-            if (accountData.lastLogin) {
-                accountData.lastLogin = false
-                mLastAccount = null
-            }
             accountMap.remove(uid)
             saveAccountHistory()
         }
@@ -450,21 +274,21 @@ class AmeAccountHistory {
             val idKey = IdentityKeyUtil.getIdentityKey(AppContextHolder.APP_CONTEXT)
             val publicKey = HexUtil.toString(idKey.publicKey.serialize())
             val idKeyUid = BCMPrivateKeyUtils.provideUid(idKey.publicKey.serialize())
-            if (idKeyUid == currentLoginUid()) {
+            if (idKeyUid == majorAccountUid()) {
                 val json = SuperPreferences.getAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, publicKey)
                 if (!json.isNullOrEmpty()) {
                     SuperPreferences.setAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, publicKey, "")
-                    SuperPreferences.setAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, AMESelfData.uid, json)
+                    SuperPreferences.setAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, AMELogin.uid, json)
                 }
 
                 if (SuperPreferences.isAccountBackupWithPublicKey(AppContextHolder.APP_CONTEXT, publicKey)) {
                     SuperPreferences.setAccountBackupWithPublicKey(AppContextHolder.APP_CONTEXT, publicKey, false)
-                    SuperPreferences.setAccountBackupWithPublicKey(AppContextHolder.APP_CONTEXT, AMESelfData.uid, true)
+                    SuperPreferences.setAccountBackupWithPublicKey(AppContextHolder.APP_CONTEXT, AMELogin.uid, true)
                 }
 
                 if (SuperPreferences.isAccountBackupWithRedPoint(AppContextHolder.APP_CONTEXT, publicKey)) {
                     SuperPreferences.setAccountBackupRedPoint(AppContextHolder.APP_CONTEXT, publicKey, false)
-                    SuperPreferences.setAccountBackupRedPoint(AppContextHolder.APP_CONTEXT, AMESelfData.uid, true)
+                    SuperPreferences.setAccountBackupRedPoint(AppContextHolder.APP_CONTEXT, AMELogin.uid, true)
                 }
             }
         }

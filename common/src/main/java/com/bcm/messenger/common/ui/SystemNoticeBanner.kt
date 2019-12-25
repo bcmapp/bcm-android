@@ -13,7 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.utility.logger.ALog
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -62,7 +62,7 @@ class SystemNoticeBanner : ConstraintLayout {
 
         mCloseView.setOnClickListener {
             this.visibility = View.GONE
-            TextSecurePreferences.setStringPreference(context, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMESelfData.uid + "_" + AmePushProcess.SystemNotifyData.TYPE_BANNER, "")
+            TextSecurePreferences.setStringPreference(context, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.uid + "_" + AmePushProcess.SystemNotifyData.TYPE_BANNER, "")
         }
     }
 

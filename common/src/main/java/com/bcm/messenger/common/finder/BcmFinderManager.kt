@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.Base64
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -394,8 +394,8 @@ class BcmFinderManager {
      * pref
      */
     private fun getAccountPreferences(context: Context): SharedPreferences {
-        ALog.d(TAG, "getAccountPreferences table: $SEARCH_TABLE${AMESelfData.uid}")
-        return context.getSharedPreferences("$SEARCH_TABLE${AMESelfData.uid}", Context.MODE_PRIVATE)
+        ALog.d(TAG, "getAccountPreferences table: $SEARCH_TABLE${AMELogin.uid}")
+        return context.getSharedPreferences("$SEARCH_TABLE${AMELogin.uid}", Context.MODE_PRIVATE)
     }
 
 }

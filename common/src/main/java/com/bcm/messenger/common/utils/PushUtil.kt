@@ -6,7 +6,7 @@ import com.bcm.messenger.common.bcmhttp.RxIMHttp
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.core.ServerResult
 import com.bcm.messenger.common.gcm.FcmUtil
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IUmengModule
 import com.bcm.messenger.utility.AppContextHolder
@@ -38,7 +38,7 @@ object PushUtil {
     private const val SYSTEM_MESSAGE_DELETE_MAXID = "/v1/system/msgs/%s"
 
     fun registerPush(): Boolean {
-        if (!AMESelfData.isLogin){
+        if (!AMELogin.isLogin){
             return false
         }
         val status = PlayServicesUtil.getPlayServicesStatus(AppContextHolder.APP_CONTEXT)
@@ -51,7 +51,7 @@ object PushUtil {
 
     fun registerPush(gcmToken: String): Boolean {
         ALog.i(TAG, "registerPush")
-        if (!AMESelfData.isLogin){
+        if (!AMELogin.isLogin){
             return false
         }
         val umengToken = AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.getPushToken(AppContextHolder.APP_CONTEXT) ?: ""

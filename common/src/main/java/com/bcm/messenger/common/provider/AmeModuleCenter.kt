@@ -102,10 +102,10 @@ object AmeModuleCenter {
     }
 
     fun accountJobMgr(): JobManager? {
-        return if (AMESelfData.isLogin) {
+        return if (AMELogin.isLogin) {
             AccountJobManager.getManager(AppContextHolder.APP_CONTEXT,
                     DependencyInjector { },
-                    AMESelfData.uid)
+                    AMELogin.uid)
         } else null
     }
 

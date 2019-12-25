@@ -12,7 +12,7 @@ import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.MediaUtil
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -80,7 +80,7 @@ class MediaViewHistoryViewModel : BaseMediaViewModel() {
         val history = AmeHistoryMessageDetail().apply {
             senderId = it.sender
             sendTime = it.sendTime
-            isSendByMe = it.sender == AMESelfData.uid
+            isSendByMe = it.sender == AMELogin.uid
             sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
             this.message = AmeGroupMessage.messageFromJson(it.messagePayload ?: "")
             thumbPsw = it.thumbPsw

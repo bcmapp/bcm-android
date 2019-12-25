@@ -2,7 +2,7 @@ package com.bcm.messenger.me.logic
 
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.login.bean.AmeAccountData
@@ -71,7 +71,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
      * true pin set, false pin not set
      */
     fun hasPin(): Boolean {
-        if (!AMESelfData.isLogin) {
+        if (!AMELogin.isLogin) {
             return false
         }
         val accountData = AmeLoginLogic.getCurrentAccount()

@@ -3,7 +3,7 @@ package com.bcm.messenger.common.database.repositories;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 
 public class Repository {
     private static Repository sInstance = null;
@@ -48,7 +48,7 @@ public class Repository {
 
     @Nullable
     public static RecipientRepo getRecipientRepo() {
-        if (!AMESelfData.INSTANCE.isLogin()) {
+        if (!AMELogin.INSTANCE.isLogin()) {
             return null;
         }
         return getInstance().recipientRepo;

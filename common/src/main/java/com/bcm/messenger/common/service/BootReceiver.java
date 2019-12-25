@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.utility.logger.ALog;
 
@@ -17,7 +17,7 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         try {
             ALog.i("BootReceiver", "MessageRetrievalService");
-            if (AMESelfData.INSTANCE.isLogin()){
+            if (AMELogin.INSTANCE.isLogin()){
                 AmeModuleCenter.INSTANCE.serverDaemon().checkConnection(false);
             }
         } catch (Exception ex) {

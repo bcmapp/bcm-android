@@ -5,7 +5,7 @@ import com.bcm.messenger.chats.group.core.group.GroupMessageEntity
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.secure.GroupKeyRotate
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -32,14 +32,14 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
         ALog.i("GroupOfflineMessageSyncTask", "execute $gid delay$delay")
         executing = true
 
-        val queryUid = AMESelfData.uid
+        val queryUid = AMELogin.uid
         var stash:List<GroupMessageEntity> = listOf()
         GroupMessageCore.getMessagesWithRange(gid, fromMid, toMid)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .delaySubscription(getCompatibleDelay(), TimeUnit.MILLISECONDS, AmeDispatcher.ioScheduler)
                 .flatMap { serverResult ->
-                    if (!AMESelfData.isLogin || AMESelfData.uid != queryUid) {
+                    if (!AMELogin.isLogin || AMELogin.uid != queryUid) {
                         ALog.i("GroupOfflineMessageSyncTask", "sync failed $gid  from:$fromMid to:$toMid login state changed")
                         throw Exception("Sync failed")
                     }
@@ -77,7 +77,7 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
                 }
                 .observeOn(AmeDispatcher.ioScheduler)
                 .doOnComplete {
-                    if ( AMESelfData.isLogin && AMESelfData.uid == queryUid) {
+                    if ( AMELogin.isLogin && AMELogin.uid == queryUid) {
                         ALog.i("GroupOfflineMessageSyncTask", "sync succeed $gid  from:$fromMid to:$toMid succeed")
                         onComplete(this@GroupOfflineMessageSyncTask, stash)
                     } else {

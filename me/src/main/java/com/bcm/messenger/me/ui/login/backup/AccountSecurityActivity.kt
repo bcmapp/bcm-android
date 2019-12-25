@@ -10,7 +10,7 @@ import android.view.View
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.preferences.SuperPreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -148,7 +148,7 @@ class AccountSecurityActivity : SwipeBaseActivity(), RecipientModifiedListener {
             me_account_name.text = it.name
             account_generate_date.text = getString(R.string.me_str_generation_key_date, DateUtils.formatDayTime(it.genKeyTime))
             me_account_openid.text = "${getString(R.string.me_id_title)}: ${it.uid}"
-            val backupState = AmeLoginLogic.accountHistory.getBackupTime(AMESelfData.uid)
+            val backupState = AmeLoginLogic.accountHistory.getBackupTime(AMELogin.uid)
 
             val dateBuilder = SpannableStringBuilder()
             if (backupState > 0) {
@@ -184,7 +184,7 @@ class AccountSecurityActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     private fun showQrCode() {
         val intent = Intent(this, MyAccountKeyActivity::class.java)
-        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, AMESelfData.uid)
+        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, AMELogin.uid)
         startActivity(intent)
     }
 
@@ -194,7 +194,7 @@ class AccountSecurityActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     private fun handleLogout() {
         try {
-            SwitchAccountAdapter().switchAccount(this, AMESelfData.uid, Recipient.fromSelf(this, true))
+            SwitchAccountAdapter().switchAccount(this, AMELogin.uid, Recipient.fromSelf(this, true))
         }catch (ex: Exception) {
             ALog.e("AccountSecurity", "handleLogout error", ex)
         }

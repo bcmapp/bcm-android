@@ -17,7 +17,7 @@
 package com.bcm.messenger.common.jobs;
 
 import com.bcm.messenger.common.gcm.FcmUtil
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.PushUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -30,7 +30,7 @@ object GcmRefresh {
     private const val TAG = "GcmRefresh"
 
     fun refresh() {
-        if (AMESelfData.isGcmDisabled) {
+        if (AMELogin.isGcmDisabled) {
             ALog.i(TAG, "gcm is Disable, onRun return")
             return
         }
@@ -41,7 +41,7 @@ object GcmRefresh {
             if (result == ConnectionResult.SUCCESS) {
                 val gcmToken = FcmUtil.getToken()
                 if (gcmToken.isPresent) {
-                    val oldToken = AMESelfData.gcmToken
+                    val oldToken = AMELogin.gcmToken
                     if (gcmToken.get() != oldToken) {
                         val oldLength = oldToken?.length ?: 0
                         ALog.i(TAG, "Token changed. oldLength: " + oldLength + "  newLength: " + gcmToken.get().length)
@@ -49,12 +49,12 @@ object GcmRefresh {
                         ALog.i(TAG, "Token didn't change.");
                     }
 
-                    if (AMESelfData.isLogin) {
+                    if (AMELogin.isLogin) {
                         PushUtil.registerPush(gcmToken.get())
                     }
 
-                    AMESelfData.gcmToken = gcmToken.get()
-                    AMESelfData.gcmTokenLastSetTime = System.currentTimeMillis()
+                    AMELogin.gcmToken = gcmToken.get()
+                    AMELogin.gcmTokenLastSetTime = System.currentTimeMillis()
                 }
             }
         }, 2000)

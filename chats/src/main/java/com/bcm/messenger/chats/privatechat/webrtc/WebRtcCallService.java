@@ -35,7 +35,7 @@ import com.bcm.messenger.common.event.MessageReceiveNotifyEvent;
 import com.bcm.messenger.common.metrics.MetricsConstKt;
 import com.bcm.messenger.common.metrics.ReportUtil;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.accountmodule.IChatModule;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.utils.AppUtil;
@@ -1355,7 +1355,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     private ListenableFutureTask<Boolean> sendMessage(@NonNull final Recipient recipient,
                                                       @NonNull final SignalServiceCallMessage callMessage) {
 
-        if (recipient.getAddress().toString().equals(AMESelfData.INSTANCE.getUid())) {
+        if (recipient.getAddress().toString().equals(AMELogin.INSTANCE.getUid())) {
             // Don't send call message to self
             return null;
         }

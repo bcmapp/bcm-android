@@ -9,7 +9,7 @@ import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException
 import com.bcm.messenger.common.core.AddressUtil
 import com.bcm.messenger.common.crypto.SecurityEvent
 import com.bcm.messenger.common.crypto.storage.SignalProtocolStoreImpl
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -756,6 +756,6 @@ object BcmChatCore {
     }
 
     private fun mySignalAddress(): SignalServiceAddress {
-        return SignalServiceAddress(AMESelfData.uid)
+        return SignalServiceAddress(AMELogin.uid)
     }
 }

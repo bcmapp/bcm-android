@@ -6,7 +6,7 @@ import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.database.records.RecipientSettings
 import com.bcm.messenger.common.database.repositories.RecipientRepo
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
@@ -297,7 +297,7 @@ class BcmContactCore {
 
     fun sendAddFriendReq(targetUid: String, payload: String, callback: Callback<Response>) {
         val timestamp = AmeTimeUtil.serverTimeMillis()
-        val signatureString = "${AMESelfData.uid}$targetUid$timestamp$payload$REQUEST_ADD_FRIEND"
+        val signatureString = "${AMELogin.uid}$targetUid$timestamp$payload$REQUEST_ADD_FRIEND"
         val signature = BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, signatureString.toByteArray())
         val jsonObj = JSONObject()
         jsonObj.put("target", targetUid)
@@ -316,7 +316,7 @@ class BcmContactCore {
 
     fun sendAddFriendReply(approved: Boolean, proposer: String, payload: String, addFriendSignature: String, callback: Callback<Response>) {
         val timestamp = AmeTimeUtil.serverTimeMillis()
-        val signatureString = "${AMESelfData.uid}$approved$proposer$timestamp$payload$addFriendSignature$REQUEST_REPLAY_ADD_FRIEND"
+        val signatureString = "${AMELogin.uid}$approved$proposer$timestamp$payload$addFriendSignature$REQUEST_REPLAY_ADD_FRIEND"
         val signature = BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, signatureString.toByteArray())
         val jsonObj = JSONObject()
         jsonObj.put("approved", approved)
@@ -337,7 +337,7 @@ class BcmContactCore {
 
     fun sendDeleteFriendReq(targetUid: String, callback: Callback<Response>) {
         val timestamp = AmeTimeUtil.serverTimeMillis()
-        val signatureString = "${AMESelfData.uid}$targetUid$timestamp$REQUEST_DELETE_FRIEND"
+        val signatureString = "${AMELogin.uid}$targetUid$timestamp$REQUEST_DELETE_FRIEND"
         val signature = BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, signatureString.toByteArray())
         val jsonObj = JSONObject()
         jsonObj.put("target", targetUid)

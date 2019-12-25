@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bcm.messenger.common.core.Address;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +29,7 @@ public class AvatarHelper {
   }
 
   public static @NonNull File getAvatarFile(@NonNull Context context, @NonNull Address address) {
-    File avatarDirectory = new File(AMESelfData.INSTANCE.getAccountDir(), AVATAR_DIRECTORY);
+    File avatarDirectory = new File(AMELogin.INSTANCE.getAccountDir(), AVATAR_DIRECTORY);
     avatarDirectory.mkdirs();
 
     return new File(avatarDirectory, new File(address.serialize()).getName());

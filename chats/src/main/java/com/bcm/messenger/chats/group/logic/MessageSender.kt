@@ -17,7 +17,7 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTransform
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.base64Decode
@@ -159,7 +159,7 @@ class MessageSender {
         val messageDetail = AmeGroupMessageDetail().apply {
             gid = groupId
             sendTime = AmeTimeUtil.getMessageSendTime()
-            senderId = AMESelfData.uid
+            senderId = AMELogin.uid
             isSendByMe = true
             attachmentUri = ""
             this.extContent = extContent
@@ -372,7 +372,7 @@ class MessageSender {
                             .observeOn(Schedulers.io())
                             .subscribe({
                                 if (it.isSuccess) {
-                                    MessageDataManager.recallMessage(AMESelfData.uid, messageDetail.gid, messageDetail.serverIndex)
+                                    MessageDataManager.recallMessage(AMELogin.uid, messageDetail.gid, messageDetail.serverIndex)
                                 }
                                 emiter.onNext(it.isSuccess)
                                 emiter.onComplete()
@@ -413,7 +413,7 @@ class MessageSender {
                             .observeOn(Schedulers.io())
                             .subscribe({
                                 if (it.isSuccess) {
-                                    MessageDataManager.recallMessage(AMESelfData.uid, groupId, detail.serverIndex)
+                                    MessageDataManager.recallMessage(AMELogin.uid, groupId, detail.serverIndex)
                                 }
                                 emiter.onNext(it.isSuccess)
                                 emiter.onComplete()
@@ -458,7 +458,7 @@ class MessageSender {
         ALog.i(TAG, "sendTextMessage begin, indexId: ${messageDetail.indexId} gid: $groupId")
         messageDetail.apply {
             gid = groupId
-            senderId = AMESelfData.uid
+            senderId = AMELogin.uid
             isSendByMe = true
             attachmentUri = ""
         }
@@ -524,7 +524,7 @@ class MessageSender {
 
         message.apply {
             gid = groupId
-            senderId = AMESelfData.uid
+            senderId = AMELogin.uid
             isSendByMe = true
         }
 
@@ -710,7 +710,7 @@ class MessageSender {
         ALog.i(TAG, "sendMessage begin, gid: $groupId")
         val messageDetail = AmeGroupMessageDetail().apply {
             gid = groupId
-            senderId = AMESelfData.uid
+            senderId = AMELogin.uid
             isSendByMe = true
             attachmentUri = ""
             sendTime = AmeTimeUtil.getMessageSendTime()

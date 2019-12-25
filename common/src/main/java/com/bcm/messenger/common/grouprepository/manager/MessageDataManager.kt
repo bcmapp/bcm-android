@@ -16,7 +16,7 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTransform
 import com.bcm.messenger.common.grouprepository.room.dao.GroupMessageDao
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.bean.ConversationStorage
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.BcmFileUtils
@@ -38,11 +38,11 @@ object MessageDataManager {
     private const val TAG = "MessageDataManager"
 
     fun isMe(uid: String, mid: Long, gid: Long): Boolean {
-        return uid == AMESelfData.uid
+        return uid == AMELogin.uid
     }
 
     fun isLogined(): Boolean {
-        return AMESelfData.isLogin
+        return AMELogin.isLogin
     }
 
     // 
@@ -464,7 +464,7 @@ object MessageDataManager {
             if (content.tipType == AmeGroupMessage.SystemContent.TIP_KICK) {
                 val groupInfo = GroupInfoDataManager.queryOneGroupInfo(message.gid)
                 //
-                if (AMESelfData.uid != groupInfo?.owner && !content.theOperator.any { AMESelfData.uid == it }) {
+                if (AMELogin.uid != groupInfo?.owner && !content.theOperator.any { AMELogin.uid == it }) {
                     message.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
                 }
             } else if(content.tipType == AmeGroupMessage.SystemContent.TIP_SUBSCRIBE
@@ -690,7 +690,7 @@ object MessageDataManager {
             gid = groupId
             sendTime = AmeTimeUtil.getMessageSendTime()
             sendState = AmeGroupMessageDetail.SendState.SEND_FAILED //，，
-            senderId = AMESelfData.uid
+            senderId = AMELogin.uid
             isSendByMe = true
             attachmentUri = ""
             extContent = null

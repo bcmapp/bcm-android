@@ -36,7 +36,7 @@ import com.bcm.messenger.common.grouprepository.modeltransform.GroupMemberTransf
 import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
 import com.bcm.messenger.common.grouprepository.room.entity.GroupJoinRequestInfo
 import com.bcm.messenger.common.grouprepository.room.entity.JoinGroupReqComment
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
@@ -256,7 +256,7 @@ object GroupLogic {
                     val memberSecretStrings = BCMEncryptUtils.generateMembersEncryptKeys(stash.validList.map { it.identityKey }, stash.groupInfoSecretPlainBytes)
 
                     val channelKey = GroupMessageEncryptUtils.generateChannelKey(Base64.encodeBytes(stash.groupInfoSecretPlainBytes))
-                    val self = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMESelfData.uid), true)
+                    val self = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMELogin.uid), true)
                     val myName = self.bcmName
                     val nickname = EncryptUtils.aes256EncryptAndBase64(myName, channelKey.toByteArray())
                     val keyConfig = AmeGroupMemberInfo.KeyConfig()
@@ -284,7 +284,7 @@ object GroupLogic {
                         String(bytes)
                     }
 
-                    val ownerProof = GroupProof.encodeMemberProof(GroupProof.signMember(stash.groupInfo, AMESelfData.uid))
+                    val ownerProof = GroupProof.encodeMemberProof(GroupProof.signMember(stash.groupInfo, AMELogin.uid))
                     val encInfoSecret = stash.groupInfoSecretPlainBytes.aesEncode(stash.groupEphemeralKeyPlainBytes)!!.base64Encode().format()
                     val encEphemeralKey = stash.groupEphemeralKeyPlainBytes.aesEncode(stash.groupInfoSecretPlainBytes)!!.base64Encode().format()
 
@@ -324,7 +324,7 @@ object GroupLogic {
                     dbGroupInfo.createTime = 0
                     dbGroupInfo.iconUrl = icon
                     dbGroupInfo.name = name
-                    dbGroupInfo.owner = AMESelfData.uid
+                    dbGroupInfo.owner = AMELogin.uid
                     dbGroupInfo.broadcast = broadcast
                     dbGroupInfo.share_content = shareContent
                     dbGroupInfo.share_url = ""
@@ -424,7 +424,7 @@ object GroupLogic {
 
                     val channel_key = GroupMessageEncryptUtils.generateChannelKey(Base64.encodeBytes(groupPassword))
 
-                    val self = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMESelfData.uid), true)
+                    val self = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMELogin.uid), true)
                     val myName = self.bcmName
                     val nickname = EncryptUtils.aes256EncryptAndBase64(myName, channel_key.toByteArray())
                     val keyConfig = AmeGroupMemberInfo.KeyConfig()
@@ -468,7 +468,7 @@ object GroupLogic {
                         dbGroupInfo.createTime = 0
                         dbGroupInfo.iconUrl = icon
                         dbGroupInfo.name = name
-                        dbGroupInfo.owner = AMESelfData.uid
+                        dbGroupInfo.owner = AMELogin.uid
                         dbGroupInfo.broadcast = broadcast
                         dbGroupInfo.share_content = shareContent
                         dbGroupInfo.share_url = ""
@@ -618,7 +618,7 @@ object GroupLogic {
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .flatMap { groupEntity ->
                     if (groupEntity.isSuccess) {
-                        memberLoader.loadMember(groupId, AMESelfData.uid)
+                        memberLoader.loadMember(groupId, AMELogin.uid)
                                 .map {
                                     Pair(groupEntity.data, it)
                                 }
@@ -1167,7 +1167,7 @@ object GroupLogic {
                             updateNoticeShowState(it, true)
                         }.observeOn(AmeDispatcher.mainScheduler)
                         .subscribe({
-                            if (e.changed.fromUid != AMESelfData.uid) {
+                            if (e.changed.fromUid != AMELogin.uid) {
                                 listenerRef.get()?.onMemberLeave(change.groupId, change.memberList)
                             }
                         }, {
@@ -1746,7 +1746,7 @@ object GroupLogic {
                         groupInfo.gid = gid
                         groupInfo.infoSecret = infoSecretPlainBytes.base64Encode().format()
 
-                        val proof = GroupProof.encodeMemberProof(GroupProof.signMember(groupInfo, AMESelfData.uid))
+                        val proof = GroupProof.encodeMemberProof(GroupProof.signMember(groupInfo, AMELogin.uid))
                         val mySecretString = BCMEncryptUtils.generateMyEncryptKeyString(infoSecretPlainBytes)
                         GroupManagerCore.addMe(gid, mySecretString, proof)
                                 .subscribeOn(AmeDispatcher.ioScheduler)

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -72,7 +72,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
         }
         else if (requestCode == REQUEST_MY_ACCOUNT && resultCode == Activity.RESULT_OK) {
             val intent = Intent(this, MyAccountKeyActivity::class.java)
-            intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, AMESelfData.uid)
+            intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, AMELogin.uid)
             startActivity(intent)
         }
     }
@@ -269,7 +269,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
                 }
 
                 val id = accountData?.getAccountID()
-                if (!AMESelfData.isLogin) { 
+                if (!AMELogin.isLogin) {
 
                     startActivity(Intent(this@KeyBoxControlActivity, VerifyKeyActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -278,7 +278,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
                     })
 
                 } else {
-                    if (accountData?.uid == AMESelfData.uid) {
+                    if (accountData?.uid == AMELogin.uid) {
                         startActivityForResult(Intent(this@KeyBoxControlActivity, VerifyFingerprintActivity::class.java), REQUEST_MY_ACCOUNT)
                     }else {
                         SwitchAccountAdapter().switchAccount(it.context, id ?: "", recipient)
@@ -306,7 +306,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
                 }
                 val id = accountData?.getAccountID()
                 if (id != null) {
-                    if (accountData?.uid == AMESelfData.uid) {
+                    if (accountData?.uid == AMELogin.uid) {
                         startActivityForResult(Intent(this@KeyBoxControlActivity, VerifyFingerprintActivity::class.java), REQUEST_MY_ACCOUNT)
                     }else {
                         startActivity(Intent(this@KeyBoxControlActivity, VerifyKeyActivity::class.java).apply {

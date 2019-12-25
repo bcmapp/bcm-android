@@ -9,7 +9,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.utils.GroupUtil;
 import com.bcm.messenger.utility.DelimiterUtil;
 import com.bcm.messenger.utility.StringAppearanceUtil;
@@ -98,7 +98,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
      * @return
      */
     public boolean isCurrentLogin() {
-        return TextUtils.equals(address, AMESelfData.INSTANCE.getUid());
+        return TextUtils.equals(address, AMELogin.INSTANCE.getUid());
     }
 
     /**

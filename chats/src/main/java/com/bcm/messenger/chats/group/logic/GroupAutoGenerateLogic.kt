@@ -12,7 +12,7 @@ import com.bcm.messenger.common.grouprepository.manager.UserDataManager
 import com.bcm.messenger.common.grouprepository.room.dao.GroupAvatarParamsDao
 import com.bcm.messenger.common.grouprepository.room.entity.GroupAvatarParams
 import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
@@ -273,7 +273,7 @@ class GroupAutoGenerateLogic {
         var index = 0
         for (member in memberList) {
             val uid = member.uid.toString()
-            if (uid.isNotBlank() && uid != AMESelfData.uid) {
+            if (uid.isNotBlank() && uid != AMELogin.uid) {
                 val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, member.uid, true)
                 val name = BcmGroupNameUtil.getGroupMemberName(recipient, member)
                 spliceName += InputLengthFilter.filterSpliceName(name, 10)

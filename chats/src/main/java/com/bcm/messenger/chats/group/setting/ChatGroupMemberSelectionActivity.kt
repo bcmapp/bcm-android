@@ -12,7 +12,7 @@ import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
 import kotlinx.android.synthetic.main.chats_group_member_list.*
@@ -81,7 +81,7 @@ class ChatGroupMemberSelectionActivity : SwipeBaseActivity(), AmeRecycleViewAdap
     private fun updateMemberList() {
         val list = groupModel.getGroupMemberList()
         val listExcludeSelf = ArrayList<AmeGroupMemberInfo>()
-        list?.filterTo(listExcludeSelf) { it.uid.serialize() != AMESelfData.uid }
+        list?.filterTo(listExcludeSelf) { it.uid.serialize() != AMELogin.uid }
         memberDataSource.updateDataSource(listExcludeSelf)
     }
 

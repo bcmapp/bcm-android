@@ -24,7 +24,7 @@ import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.utility.Base64;
 import com.bcm.messenger.utility.Util;
 import org.whispersystems.libsignal.InvalidKeyException;
@@ -371,6 +371,6 @@ public class MasterSecretUtil {
     }
 
     public static String getPreferencesName(){
-        return PREFERENCES_NAME+ AMESelfData.INSTANCE.getUid();
+        return PREFERENCES_NAME+ AMELogin.INSTANCE.getUid();
     }
 }

@@ -9,7 +9,7 @@ import com.bcm.messenger.common.database.model.IdentityDbModel
 import com.bcm.messenger.common.database.model.RecipientDbModel
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.records.RecipientSettings
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.sms.OutgoingLocationMessage
 import com.bcm.messenger.common.utils.GroupUtil
@@ -226,11 +226,11 @@ class RecipientRepo {
     }
 
 
-    fun getFriendsFromContact() = recipientDao.queryAllFriendsAndFollowers(AMESelfData.uid)
+    fun getFriendsFromContact() = recipientDao.queryAllFriendsAndFollowers(AMELogin.uid)
 
-    fun getAllContacts() = recipientDao.queryAllIndividualRecipients(AMESelfData.uid)
+    fun getAllContacts() = recipientDao.queryAllIndividualRecipients(AMELogin.uid)
 
-    fun getBlockedUsers() = recipientDao.queryAllBlockedRecipients(AMESelfData.uid)
+    fun getBlockedUsers() = recipientDao.queryAllBlockedRecipients(AMELogin.uid)
 
     fun getGroupRecipients() = recipientDao.queryAllGroupRecipients()
 
@@ -238,7 +238,7 @@ class RecipientRepo {
 
     fun getRecipient(uid: String) = recipientDao.queryRecipient(uid)
 
-    fun getRecipientsLiveData() = recipientDao.queryFriendFollowersLiveData(AMESelfData.uid)
+    fun getRecipientsLiveData() = recipientDao.queryFriendFollowersLiveData(AMELogin.uid)
 
     fun leaveGroup(groupIds: Collection<Long>) {
         val groupList = groupIds.map { GroupUtil.addressFromGid(it).serialize() }
@@ -300,7 +300,7 @@ class RecipientRepo {
 
                     if (newSettings.relationship == Relationship.STRANGER.type) {
 
-                        if (dbSettings.uid != AMESelfData.uid) {
+                        if (dbSettings.uid != AMELogin.uid) {
                             dbSettings.localAvatar = ""
                             val privacyProfile = dbSettings.privacyProfile
                             privacyProfile.encryptedName = ""

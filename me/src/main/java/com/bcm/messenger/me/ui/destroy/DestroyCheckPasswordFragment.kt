@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -131,7 +131,7 @@ class DestroyCheckPasswordFragment : Fragment() {
                         MeConfirmDialog.showConfirm(it, it.getString(R.string.me_destroy_account_confirm_title),
                                 it.getString(R.string.me_destroy_account_confirm_notice), it.getString(R.string.me_destroy_account_confirm_button)) { _ ->
 
-                            if (AMESelfData.isLogin) {
+                            if (AMELogin.isLogin) {
                                 ALog.e(TAG, "登录态还没释放完")
                                 return@showConfirm
                             }

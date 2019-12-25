@@ -25,7 +25,7 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTransform
 import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
 import com.bcm.messenger.utility.AmeTimeUtil
@@ -80,7 +80,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
 
     @Subscribe
     fun onEvent(e: ServiceConnectEvent) {
-        if (AMESelfData.isLogin && e.state == ServiceConnectEvent.STATE.CONNECTED && inited) {
+        if (AMELogin.isLogin && e.state == ServiceConnectEvent.STATE.CONNECTED && inited) {
             syncOfflineMessage()
             offlineSyncManager.resetDelay()
         }
@@ -91,7 +91,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
     }
 
     override fun onForegroundChanged(isForeground: Boolean) {
-        if (AMESelfData.isLogin && isForeground && inited) {
+        if (AMELogin.isLogin && isForeground && inited) {
             offlineSyncManager.sync()
         }
     }
@@ -103,7 +103,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
             ALog.w(TAG, "receiveGroupMessage, but not have groupInfo, ignore gid: ${e.message.gid}")
             return
         }
-        val isAtMe = e.message?.extContent?.isAtAll == true || e.message?.extContent?.atList?.contains(AMESelfData.uid) == true
+        val isAtMe = e.message?.extContent?.isAtAll == true || e.message?.extContent?.atList?.contains(AMELogin.uid) == true
         if (e.message.type.toLong() != AmeGroupMessage.DECRYPT_FAIL) {
             val bcmData = AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, null, AmePushProcess.GroupNotifyData(e.message.serverIndex, e.message.gid, isAtMe), null, null))
             AmePushProcess.processPush(bcmData, false)
@@ -151,7 +151,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
             return
         }
 
-        val syncingUid = AMESelfData.uid
+        val syncingUid = AMELogin.uid
 
         offlineMessageSyncing = true
         GroupManagerCore.offlineMessageState
@@ -159,7 +159,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
                 .observeOn(Schedulers.io())
                 .subscribe({
                     ALog.i(TAG, "offline message state ${it.msg}, ${it.code}")
-                    if (syncingUid != AMESelfData.uid) {
+                    if (syncingUid != AMELogin.uid) {
                         offlineMessageSyncing = false
                         return@subscribe
                     }
@@ -184,7 +184,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
                         }
 
                         GroupLogic.queryGroupInfoByGids(refreshList) { succeed ->
-                            if (syncingUid != AMESelfData.uid) {
+                            if (syncingUid != AMELogin.uid) {
                                 offlineMessageSyncing = false
                                 return@queryGroupInfoByGids
                             }
@@ -359,7 +359,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
 
                 if (changed.action == AmeGroupMemberChanged.LEAVE || changed.action == AmeGroupMemberChanged.JOIN) {
                     if (changed.action == AmeGroupMemberChanged.LEAVE) {
-                        if (AMESelfData.uid != groupInfo?.owner && !changed.isMyLeave()) {
+                        if (AMELogin.uid != groupInfo?.owner && !changed.isMyLeave()) {
                             groupMessage.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
                         }
                     }
@@ -438,7 +438,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
 
         val detail = AmeGroupMessageDetail()
         detail.senderId = msg.getFinalSource(groupInfo)
-        if (detail.senderId == AMESelfData.uid) {
+        if (detail.senderId == AMELogin.uid) {
             return null
         }
 
@@ -500,7 +500,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
                 this.gid = gid
                 sendTime = AmeTimeUtil.getMessageSendTime()
                 sendState = AmeGroupMessageDetail.SendState.SEND_FAILED
-                senderId = AMESelfData.uid
+                senderId = AMELogin.uid
                 isSendByMe = true
                 attachmentUri = ""
                 extContent = null

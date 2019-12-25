@@ -36,7 +36,7 @@ import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.MultiSelectEvent
 import com.bcm.messenger.common.expiration.ExpirationManager
 import com.bcm.messenger.common.mms.GlideRequests
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -896,7 +896,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
 
         ConversationItemPopWindow.ItemPopWindowBuilder(context)
                 .withAnchorView(anchorView)
-                .withRecallVisible(!messageRecord.isFailed() && !messageRecord.isPending() && messageRecord.isOutgoing() && conversationRecipient.address.toString() != AMESelfData.uid)
+                .withRecallVisible(!messageRecord.isFailed() && !messageRecord.isPending() && messageRecord.isOutgoing() && conversationRecipient.address.toString() != AMELogin.uid)
                 .withCopyVisible(false)
                 .withForwardable(slide != null && slide.transferState == AttachmentDbModel.TransferState.DONE.state && !slide.isAudio()) // Only attachment downloaded and is not an audio can be forwarded
                 .withReplyable(false)
@@ -939,7 +939,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         ConversationItemPopWindow.ItemPopWindowBuilder(context)
                 .withAnchorView(anchorView)
                 .withForwardable(forwardable)
-                .withRecallVisible(!messageRecord.isFailed() && !messageRecord.isPending() && messageRecord.isOutgoing() && conversationRecipient.address.toString() != AMESelfData.uid)
+                .withRecallVisible(!messageRecord.isFailed() && !messageRecord.isPending() && messageRecord.isOutgoing() && conversationRecipient.address.toString() != AMELogin.uid)
                 .withCopyVisible(copyVisible)
                 .withReplyable(false)
                 .withOutgoing(messageRecord.isOutgoing())

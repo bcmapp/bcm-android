@@ -21,7 +21,7 @@ import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.MessageReceiveNotifyEvent
 import com.bcm.messenger.common.event.TextSendEvent
 import com.bcm.messenger.common.mms.OutgoingMediaMessage
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.sms.OutgoingLocationMessage
 import com.bcm.messenger.common.sms.OutgoingTextMessage
@@ -550,7 +550,7 @@ class AmeConversationViewModel : ViewModel() {
                     val threadId = Repository.getThreadRepo().getThreadIdFor(recipient)
 
                     val restrictBody = AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO,
-                            AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_CHAT_STRANGER_RESTRICTION, AMESelfData.uid, listOf(recipient.address.serialize()), ""))
+                            AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_CHAT_STRANGER_RESTRICTION, AMELogin.uid, listOf(recipient.address.serialize()), ""))
                     var expiresIn: Long = 0
                     if (recipient.expireMessages > 0) {
                         expiresIn = (recipient.expireMessages * 1000).toLong()

@@ -3,7 +3,7 @@ package com.bcm.messenger.contacts.logic
 import android.content.Context
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.contacts.net.BcmContactCore
 import com.bcm.messenger.utility.Base64
@@ -64,7 +64,7 @@ class BcmContactFilter(private val coreApi: BcmContactCore) {
                 virtualFriendList = createNewVirtualFriend(context)
             }
             mBloomFilter.updateDataArray(newBloomSize)
-            mBloomFilter.insert(AMESelfData.uid.toByteArray())
+            mBloomFilter.insert(AMELogin.uid.toByteArray())
             for (uid in virtualFriendList) {
                 mBloomFilter.insert(uid.toByteArray())
             }

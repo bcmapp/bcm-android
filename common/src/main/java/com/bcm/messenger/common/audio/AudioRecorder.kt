@@ -8,7 +8,7 @@ import android.os.Build
 import android.os.ParcelFileDescriptor
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.mms.PartAuthority
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.providers.PersistentBlobProvider
 import com.bcm.messenger.common.utils.MediaUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -200,7 +200,7 @@ class AudioRecorder(private val context: Context, private val maxPlayTime: Long,
         var output:FileOutputStream? = null
         try {
             input = PartAuthority.getAttachmentStream(context, masterSecret, captureUri)
-            val tmpFile = File(AMESelfData.accountDir, "aac_${System.currentTimeMillis()}")
+            val tmpFile = File(AMELogin.accountDir, "aac_${System.currentTimeMillis()}")
             tmpFile.createNewFile()
             output = FileOutputStream(tmpFile)
             output.write(input.readBytes())

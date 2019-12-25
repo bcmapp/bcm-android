@@ -24,7 +24,7 @@ import com.bcm.messenger.common.database.RecipientDatabase.VibrateState;
 import com.bcm.messenger.common.database.records.PrivacyProfile;
 import com.bcm.messenger.common.database.records.RecipientSettings;
 import com.bcm.messenger.common.database.repositories.RecipientRepo;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.IContactModule;
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule;
 import com.bcm.messenger.common.recipients.RecipientProvider.RecipientDetails;
@@ -243,7 +243,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
      */
     @NonNull
     public static Recipient fromSelf(@NonNull Context context, boolean asynchronous) throws Exception {
-        String localNumber = AMESelfData.INSTANCE.getUid();
+        String localNumber = AMELogin.INSTANCE.getUid();
         ALog.d(TAG, "localNumber:" + localNumber);
         if (TextUtils.isEmpty(localNumber)) {
             throw new Exception(("self number is null"));
@@ -253,7 +253,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
 
     @NonNull
     public static Recipient self() throws Exception {
-        String localNumber = AMESelfData.INSTANCE.getUid();
+        String localNumber = AMELogin.INSTANCE.getUid();
         ALog.d(TAG, "localNumber:" + localNumber);
         if (TextUtils.isEmpty(localNumber)) {
             throw new Exception(("self number is null 1"));

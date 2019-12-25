@@ -3,7 +3,7 @@ package com.bcm.messenger.google
 import android.content.Context
 import com.bcm.messenger.common.jobs.GcmRefresh
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.utility.logger.ALog
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -38,7 +38,7 @@ class FcmMessagingService : FirebaseMessagingService() {
             ALog.w(TAG, "onNewToken null")
             return
         }
-        if (!AMESelfData.isPushRegistered) {
+        if (!AMELogin.isPushRegistered) {
             ALog.i(TAG, "Got a new FCM token, but the user isn't registered.")
             return
         }

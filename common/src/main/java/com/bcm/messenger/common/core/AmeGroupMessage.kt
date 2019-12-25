@@ -12,7 +12,7 @@ import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
 import com.bcm.messenger.common.database.repositories.RecipientRepo
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -711,7 +711,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     }
                 }
                 TIP_RECALL -> {
-                    if (senderRecipient?.address?.serialize() == AMESelfData.uid) {
+                    if (senderRecipient?.address?.serialize() == AMELogin.uid) {
                         context.getString(R.string.common_chats_group_you_recall_message)
                     } else {
                         context.getString(R.string.common_chats_peer_recall_message, senderRecipient?.name ?: "")
@@ -794,7 +794,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                 }
 
                 fromViewName = groupMemberName(from, groupMembers?.get(from.address.serialize()))
-                if (from.address.serialize() == AMESelfData.uid) {
+                if (from.address.serialize() == AMELogin.uid) {
                     fromViewName = context.getString(R.string.common_chats_system_tip_you)
                 } else if (from.address.serialize() == "welcome") {
                     fromViewName = ""
@@ -803,7 +803,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
             var doneViewName = ""
             for ((index, u1) in operators.withIndex()) {
-                doneViewName += if (u1.address.serialize() != AMESelfData.uid) {
+                doneViewName += if (u1.address.serialize() != AMELogin.uid) {
                     groupMemberName(u1, groupMembers?.get(u1.address.serialize()))
                 } else {
                     context.getString(R.string.common_chats_system_tip_you_lower_case)
@@ -1237,7 +1237,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         fun getDescription(recipient: Recipient?): CharSequence {
             this.r = recipient
             this.r?.addListener(mRecipientCallback)
-            return if (recipient?.address?.serialize() == AMESelfData.uid) {
+            return if (recipient?.address?.serialize() == AMELogin.uid) {
                 AppContextHolder.APP_CONTEXT.getString(if (isStartLive()) R.string.common_live_start_live_tip_by_you else R.string.common_live_stop_live_tip_by_you)
             } else {
                 AppContextHolder.APP_CONTEXT.getString(if (isStartLive()) R.string.common_live_start_live_tip else R.string.common_live_stop_live_tip, recipient?.name

@@ -40,9 +40,8 @@ import com.bcm.messenger.common.mms.OutgoingMediaMessage;
 import com.bcm.messenger.common.mms.OutgoingSecureMediaMessage;
 import com.bcm.messenger.common.mms.SlideDeck;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
-import com.bcm.messenger.common.provider.AMESelfData;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
-import com.bcm.messenger.common.provider.AmeProvider;
 import com.bcm.messenger.common.provider.IContactModule;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.sms.IncomingEncryptedMessage;
@@ -183,7 +182,7 @@ public class PushDecryptJob extends ContextJob {
     private void handleMessage(MasterSecretUnion masterSecret, SignalServiceProtos.Envelope envelope, Optional<Long> smsMessageId) {
         try {
             SignalProtocolStore axolotlStore = new SignalProtocolStoreImpl(context);
-            SignalServiceAddress localAddress = new SignalServiceAddress(AMESelfData.INSTANCE.getUid());
+            SignalServiceAddress localAddress = new SignalServiceAddress(AMELogin.INSTANCE.getUid());
             SignalServiceCipher cipher = new SignalServiceCipher(localAddress, axolotlStore);
 
             if (localAddress.getNumber().equals(envelope.getSource())) {

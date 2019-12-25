@@ -13,7 +13,7 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMemberChanged
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupInfoTransform
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
-import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.server.IServerDataListener
 import com.bcm.messenger.common.utils.AmePushProcess
@@ -252,7 +252,7 @@ class GroupMessageReceiver : IServerDataListener {
     }
 
     private fun isMyQuitGroupEvent(message: GroupMessageProtos.GroupMemberUpdate): Boolean {
-        val loginUid = AMESelfData.uid
+        val loginUid = AMELogin.uid
         if (message.fromUid == loginUid && message.action == AmeGroupMemberChanged.LEAVE) {
             if (message.membersCount == 1) {
                 return message.getMembers(0).uid == loginUid
