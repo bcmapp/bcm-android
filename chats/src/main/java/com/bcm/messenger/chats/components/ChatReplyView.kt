@@ -14,6 +14,7 @@ import com.bcm.messenger.chats.group.viewholder.ChatViewHolder
 import com.bcm.messenger.chats.util.ChatComponentListener
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
+import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
@@ -110,7 +111,6 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
     }
 
     fun setAppearance(isOutgoing: Boolean) {
-
         if (isOutgoing) {
             reply_to.setTextColor(AppUtil.getColor(resources, R.color.common_color_white))
             reply_text.setTextColor(AppUtil.getColor(resources, R.color.common_color_white))
@@ -128,11 +128,9 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
 
             reply_line.setBackgroundColor(Color.parseColor("#E8E8E8"))
         }
-
     }
 
     private fun setReplaySnapshot(messageRecord: AmeGroupMessageDetail) {
-
         val content = messageRecord.message.content as? AmeGroupMessage.ReplyContent
         val replyContent = content?.getReplyMessage()?.content ?: return
         when {
@@ -155,7 +153,6 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                 reply_file.text = AmeGroupMessage.FileContent.getTypeName(replyContent.fileName
                         ?: replyContent.url, replyContent.mimeType)
                 reply_file.setTextColor(AmeGroupMessage.FileContent.getTypeColor(reply_file.text.toString()))
-
             }
             replyContent is AmeGroupMessage.ContactContent -> {
                 reply_file.visibility = View.GONE
@@ -176,8 +173,9 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                             return
                         }
                         if (mGroupMessage == messageRecord) {
-                            if (success) {
-                                buildThumbnailRequest(uri) {
+                            if (success && uri != null) {
+                                val masterSecret = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) ?: return
+                                buildThumbnailRequest(masterSecret, uri) {
                                     ALog.d(TAG, "buildThumbnailRequest uri: $uri fail, try again")
                                     Observable.create(ObservableOnSubscribe<AmeGroupMessage<*>> {
                                         val lastMsg = MessageDataManager.fetchOneMessageByGidAndMid(messageRecord.gid, content.mid)
@@ -186,7 +184,6 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                                             it.onNext(newMessage)
                                         }
                                         it.onComplete()
-
                                     }).subscribeOn(Schedulers.io())
                                             .observeOn(AndroidSchedulers.mainThread())
                                             .subscribe({
@@ -206,7 +203,6 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                             }
                         }
                     }
-
                 })
             }
             else -> {
@@ -215,26 +211,20 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                 reply_photo.visibility = View.GONE
             }
         }
-
     }
 
 
-    private fun buildThumbnailRequest(uri: Uri?, failCallback: (() -> Unit)? = null) {
+    private fun buildThumbnailRequest(masterSecret: MasterSecret, loadObj: Uri, failback: (() -> Unit)? = null) {
         try {
-            ALog.i(TAG, "buildThumbnailRequest: $uri")
+            ALog.i(TAG, "buildThumbnailRequest: $loadObj")
             reply_image.setCallback(object : IndividualAvatarView.RecipientPhotoCallback {
-
                 override fun onLoaded(recipient: Recipient?, bitmap: Bitmap?, success: Boolean) {
                     if (!success) {
-                        failCallback?.invoke()
+                        failback?.invoke()
                     }
                 }
-
             })
-
-            val loadObj = if (uri == null) null else DecryptableStreamUriLoader.DecryptableUri(BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) ?: return, uri)
-            reply_image.requestPhoto(loadObj, mImagePlaceHolder, mImageError)
-
+            reply_image.requestPhoto(DecryptableStreamUriLoader.DecryptableUri(masterSecret, loadObj), mImagePlaceHolder, mImageError)
         } catch (ex: Exception) {
             ALog.e(TAG, "buildThumbnailRequest error", ex)
         }

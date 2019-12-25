@@ -371,7 +371,7 @@ public class CustomizeControlView extends FrameLayout {
             centerPlayButton.setVisibility(VISIBLE);
             controlLayout.setVisibility(VISIBLE);
             if (visibilityListener != null) {
-                visibilityListener.onVisibilityChange(getVisibility());
+                visibilityListener.onVisibilityChange(View.VISIBLE);
             }
             updateAll();
             requestPlayPauseFocus();
@@ -386,7 +386,7 @@ public class CustomizeControlView extends FrameLayout {
             centerPlayButton.setVisibility(GONE);
             controlLayout.setVisibility(GONE);
             if (visibilityListener != null) {
-                visibilityListener.onVisibilityChange(getVisibility());
+                visibilityListener.onVisibilityChange(View.GONE);
             }
             removeCallbacks(updateProgressAction);
             removeCallbacks(hideAction);

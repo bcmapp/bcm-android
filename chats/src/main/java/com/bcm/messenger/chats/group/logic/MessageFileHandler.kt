@@ -184,6 +184,9 @@ object MessageFileHandler {
                                         } else {
                                             localResponse(true, Uri.fromFile(fileInfo.file))
                                         }
+
+                                        MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId,
+                                                if (messageDetail.isSendByMe) GroupMessage.SEND_SUCCESS else GroupMessage.RECEIVE_SUCCESS)
                                     } else {
                                         if (messageDetail !is AmeHistoryMessageDetail) {
                                             MessageDataManager.updateMessageThumbnailUri(messageDetail.gid, messageDetail.indexId, fileInfo)
@@ -192,8 +195,6 @@ object MessageFileHandler {
                                             localResponse(true, Uri.fromFile(fileInfo.file))
                                         }
                                     }
-                                    MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId,
-                                            if (messageDetail.isSendByMe) GroupMessage.SEND_SUCCESS else GroupMessage.RECEIVE_SUCCESS)
                                 } catch (ex: Exception) {
                                     ALog.e(TAG, "downloadThumbnail error", ex)
                                     BcmFileUtils.delete(destPath)
@@ -211,8 +212,6 @@ object MessageFileHandler {
 
     @SuppressLint("CheckResult")
     fun downloadThumbnail(gid: Long, indexId: Long, content: AmeGroupMessage.ThumbnailContent, keyVersion: Long, callback: MessageFileCallback? = null) {
-
-
         fun localResponse(success: Boolean, uri: Uri?) {
             if (Looper.myLooper() == Looper.getMainLooper()) {
                 callback?.onResult(success, uri)
@@ -279,6 +278,7 @@ object MessageFileHandler {
                                             BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT),
                                             response,
                                             AmeGroupMessageDetail().apply {
+                                                this.gid = gid
                                                 message = AmeGroupMessage(
                                                         if (content is AmeGroupMessage.ImageContent) AmeGroupMessage.IMAGE else AmeGroupMessage.VIDEO,
                                                         content
@@ -407,11 +407,12 @@ object MessageFileHandler {
                         if (messageDetail !is AmeHistoryMessageDetail) {
                             MessageDataManager.updateMessageAttachmentUri(messageDetail.gid, messageDetail.indexId, fileInfo)
                             localResponse(true, PartAuthority.getGroupAttachmentUri(messageDetail.gid, messageDetail.indexId))
+
+                            MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId,
+                                    if (messageDetail.isSendByMe) GroupMessage.SEND_SUCCESS else GroupMessage.RECEIVE_SUCCESS)
                         } else {
                             localResponse(true, Uri.fromFile(fileInfo.file))
                         }
-                        MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId,
-                                if (messageDetail.isSendByMe) GroupMessage.SEND_SUCCESS else GroupMessage.RECEIVE_SUCCESS)
                     } catch (ex: Exception) {
                         ALog.e(TAG, "downloadAttachment error", ex)
                         BcmFileUtils.delete(destPath)

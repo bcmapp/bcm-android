@@ -106,7 +106,7 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
 
             when (it) {
                 is MessageRecord -> {
-                    recipient = if(it.isOutgoing()){
+                    recipient = if (it.isOutgoing()) {
                         Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)
                     } else {
                         it.getRecipient()
@@ -126,7 +126,7 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
             }
 
             val ssb = SpannableStringBuilder()
-            if(showName && recipient != null) {
+            if (showName && recipient != null) {
                 this.mRecipientList.add(recipient)
                 recipient.addListener(this)
 
@@ -222,7 +222,7 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
     }
 
     override fun onModified(recipient: Recipient) {
-        if(mRecipientList.find { it == recipient } != null) {
+        if (mRecipientList.find { it == recipient } != null) {
             post {
                 setHistoryData(mCurrentMessageList ?: return@post, mShowName)
             }
