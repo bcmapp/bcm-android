@@ -163,10 +163,14 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
         if (null != profileKey) {
             RecipientProfileLogic.updateProfileKey(this, recipient, profileKey)
         }
-
         anchor_img.setPhoto(recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
         anchor_name.text = nickname
         updateActionState(recipient)
+
+        val groupMemberNick = member?.nickname // maybe stranger, so should use group member nick name
+        if (!groupMemberNick.isNullOrEmpty()) {
+            RecipientProfileLogic.updateNickFromOtherWay(recipient, groupMemberNick)
+        }
     }
 
     private fun updateActionState(recipient: Recipient) {

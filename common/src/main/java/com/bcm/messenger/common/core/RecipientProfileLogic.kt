@@ -588,7 +588,7 @@ object RecipientProfileLogic {
     }
 
     /**
-     * （，）
+     * update nick by other situation
      */
     fun updateNickFromOtherWay(recipient: Recipient, nick: String) {
         AmeDispatcher.io.dispatch {

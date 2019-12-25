@@ -54,6 +54,7 @@ open class AdHocPreviewClickListener : ChatComponentListener {
         private fun doForOtherUri(context: Context, uri: Uri, mimeType: String?) {
 
             fun handle(uri: Uri, path: String?) {
+                ALog.i(TAG, "doForOtherUri: $uri, path: $path")
                 AmeAppLifecycle.hideLoading()
 
                 if (path != null && AppUtil.isApkFile(context, path)) {
