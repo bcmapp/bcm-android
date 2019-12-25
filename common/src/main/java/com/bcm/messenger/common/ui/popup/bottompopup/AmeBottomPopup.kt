@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.common_bottom_popup_base_layout.*
 import java.lang.ref.WeakReference
 
 /**
- * 
+ *
  * Created by bcm.social.01 on 2018/5/31.
  */
 class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
@@ -43,20 +43,20 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
         val textColor: Int
         val action: (v: View) -> Unit
 
-        constructor(text:String){
+        constructor(text: String) {
             this.textColor = CLR_BLACK
             this.text = text
             this.action = {}
         }
 
 
-        constructor(text:String, action:(v:View)->Unit){
+        constructor(text: String, action: (v: View) -> Unit) {
             this.textColor = CLR_BLACK
             this.text = text
             this.action = action
         }
 
-        constructor(text:String, @ColorInt textColor:Int, action:(v:View)->Unit){
+        constructor(text: String, @ColorInt textColor: Int, action: (v: View) -> Unit) {
             this.text = text
             this.textColor = textColor
             this.action = action
@@ -66,17 +66,17 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
     class Builder {
         private val config = PopConfig("", "", PopupItem.CLR_BLACK, {}, true, ArrayList(), {}, null)
 
-        fun withTitle(title:String): Builder {
+        fun withTitle(title: String): Builder {
             config.title = title
             return this
         }
 
-        fun withDoneTitle(title:String): Builder {
+        fun withDoneTitle(title: String): Builder {
             config.doneTitle = title
             return this
         }
 
-        fun withDoneTextColor(@ColorInt color:Int): Builder {
+        fun withDoneTextColor(@ColorInt color: Int): Builder {
             config.doneTextColor = color
             return this
         }
@@ -96,7 +96,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
             return this
         }
 
-        fun withDismissListener(listener:()->Unit): Builder{
+        fun withDismissListener(listener: () -> Unit): Builder {
             config.dismissListener = listener
             return this
         }
@@ -107,7 +107,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
         }
 
         fun show(activity: FragmentActivity?) {
-            if (config.doneTitle.isNotEmpty()){
+            if (config.doneTitle.isNotEmpty()) {
                 withPopItem(PopupItem.SEP)
             }
             instance().show(activity, config)
@@ -132,22 +132,17 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
             popup.centerPopup = this
             this.popup = popup
 
-            try {
-                AmeDispatcher.mainThread.dispatch({
-                    activity.hideKeyboard()
+            AmeDispatcher.mainThread.dispatch({
+                activity.hideKeyboard()
+                try {
                     popup.show(activity.supportFragmentManager, activity.javaClass.simpleName)
-
-                }, 200)//bug
-
-            } catch (ex: Throwable) {
-                ALog.e("AmeCenterPopup", "show error", ex)
-            }
+                } catch (e: Throwable) {
+                    ALog.e("AmeBottomPopup", "show", e)
+                }
+            }, 200)//bug
         }
     }
 
-    /**
-     * 
-     */
     fun dismiss() {
         dismissInner(popup)
     }
@@ -165,7 +160,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
                 window?.config?.dismissListener?.invoke()
                 popup = null
             }
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
             ALog.e("AmeCenterPopup", "dismissInner error", ex)
         }
     }
@@ -223,7 +218,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
         }
 
         private fun updateUI() {
-            val config = this.config?:return
+            val config = this.config ?: return
             isCancelable = config.cancelable
 
             val customView = config.viewCreator?.onCreateView(common_popup_custom_view)
@@ -233,7 +228,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
                 common_popup_custom_view.visibility = View.GONE
             }
 
-            if (config.title.isNotEmpty()){
+            if (config.title.isNotEmpty()) {
                 popup_title.text = config.title
                 popup_title.visibility = View.VISIBLE
                 popup_title_line.visibility = View.VISIBLE
@@ -243,8 +238,8 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
             }
 
             val inflater = LayoutInflater.from(activity)
-            if (config.popList.isNotEmpty()){
-                for (item in config.popList){
+            if (config.popList.isNotEmpty()) {
+                for (item in config.popList) {
                     fillCellItem(inflater, popup_items_layout, item)
                 }
                 popup_items_layout.visibility = View.VISIBLE
@@ -253,7 +248,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
             }
 
 
-            if (config.doneTitle.isNotEmpty()){
+            if (config.doneTitle.isNotEmpty()) {
                 done_action.text = config.doneTitle
                 done_action.setTextColor(config.doneTextColor)
                 done_action.setOnClickListener {
@@ -261,18 +256,17 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
                     config.doneAction(it)
                 }
                 done_action.visibility = View.VISIBLE
-            }
-            else {
+            } else {
                 done_action.visibility = View.GONE
             }
         }
 
-        private fun fillCellItem(inflater: LayoutInflater, parent: LinearLayout, popupItem: PopupItem):View {
-            if (popupItem != PopupItem.SEP){
-                val view =  inflater.inflate(R.layout.common_bottom_popup_item_layout, parent, false)
-                val cellView  = view as BottomPopupCellView
+        private fun fillCellItem(inflater: LayoutInflater, parent: LinearLayout, popupItem: PopupItem): View {
+            if (popupItem != PopupItem.SEP) {
+                val view = inflater.inflate(R.layout.common_bottom_popup_item_layout, parent, false)
+                val cellView = view as BottomPopupCellView
                 cellView.setText(popupItem.text, popupItem.textColor)
-                cellView.setOnClickListener{
+                cellView.setOnClickListener {
                     dismiss()
                     popupItem.action(it)
                 }
@@ -321,12 +315,12 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
     }
 
 
-    data class PopConfig(var title:String,
-                         var doneTitle:String,
-                         var doneTextColor:Int,
-                         var doneAction:(v:View)->Unit,
+    data class PopConfig(var title: String,
+                         var doneTitle: String,
+                         var doneTextColor: Int,
+                         var doneAction: (v: View) -> Unit,
                          var cancelable: Boolean,
                          var popList: MutableList<PopupItem>,
-                         var dismissListener:()->Unit,
+                         var dismissListener: () -> Unit,
                          var viewCreator: CustomViewCreator?)
 }
