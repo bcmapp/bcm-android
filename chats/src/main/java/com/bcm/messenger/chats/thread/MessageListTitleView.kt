@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat.getColor
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.event.ServiceConnectEvent
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAdHocModule
 import com.bcm.messenger.common.provider.ILoginModule
@@ -222,30 +223,28 @@ class MessageListTitleView : TextSwitcher, IConnectionListener, IProxyStateChang
     }
 
     private fun getState(): Int {
+        val serviceConnectState = AmeModuleCenter.login().serviceConnectedState()
         return when {
             !NetworkUtil.isConnected() -> {
                 OFFLINE
             }
-            isServiceDisconnected() -> {
-                if (ProxyManager.isProxyRunning() ) {
-                    if (!customProxyConnecting) {
-                        CONNECTING
-                    } else {
-                        PROXY_CONNECTING
-                    }
+            serviceConnectState == ServiceConnectEvent.STATE.UNKNOWN -> {
+                CONNECTING
+            }
+            serviceConnectState == ServiceConnectEvent.STATE.CONNECTING -> {
+                if (ProxyManager.isProxyRunning() && customProxyConnecting) {
+                    PROXY_CONNECTING
                 } else {
-                    PROXY_TRY
+                    CONNECTING
                 }
+            }
+            serviceConnectState == ServiceConnectEvent.STATE.DISCONNECTED -> {
+                PROXY_TRY
             }
             else -> {
                 CONNECTED
             }
         }
-    }
-
-    private fun isServiceDisconnected(): Boolean {
-        val loginProvider = AmeProvider.get<ILoginModule>(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)
-        return loginProvider?.serviceConnectedState() == ServiceConnectEvent.STATE.DISCONNECTED
     }
 
     override fun onModified(recipient: Recipient) {

@@ -10,6 +10,7 @@ class ServiceConnectEvent(val state: STATE) {
     enum class STATE {
         UNKNOWN,
         CONNECTED,
+        CONNECTING,
         DISCONNECTED
     }
 }

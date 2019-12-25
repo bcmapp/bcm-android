@@ -341,12 +341,11 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
             lastTryProxyTime = 0L
             serviceConnectedState = ServiceConnectEvent.STATE.CONNECTED
             delayCheckRunProxy?.dispose()
+        } else if(e.state == ServerConnStateChangedEvent.CONNECTING) {
+            serviceConnectedState = ServiceConnectEvent.STATE.CONNECTING
         } else {
             serviceConnectedState = ServiceConnectEvent.STATE.DISCONNECTED
-
-            if (e.state == ServerConnStateChangedEvent.OFF) {
-                tryRunProxy()
-            }
+            tryRunProxy()
         }
 
         if (serviceConnectedState != oldState) {
