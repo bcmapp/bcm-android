@@ -195,7 +195,7 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
         val useReplace: Boolean = if (mPrivateMessage?.id == messageRecord.id) {
             if (attachment.thumbnailUri == mAttachmentRecord?.thumbnailUri && attachment.dataUri == mAttachmentRecord?.dataUri) {
                 false
-            } else attachment.dataUri != attachment.dataUri || mIsVideo
+            } else attachment.dataUri != mAttachmentRecord?.dataUri || attachment.thumbnailUri != mAttachmentRecord?.thumbnailUri || mIsVideo
         } else {
             true
         }
