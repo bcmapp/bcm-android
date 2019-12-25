@@ -212,4 +212,11 @@ object GroupInfoDataManager {
     fun clearShareSetting(gid: Long) {
         getDao().clearShareSetting(gid)
     }
+
+    fun increaseMemberCount(gid:Long, increaseCount: Long) {
+        val count  = getDao().queryMemberCount(gid) + increaseCount
+        if (count > 0) {
+            getDao().updateMemberCount(gid, count)
+        }
+    }
 }

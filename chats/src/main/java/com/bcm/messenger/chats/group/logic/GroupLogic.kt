@@ -1183,19 +1183,27 @@ object GroupLogic {
                         it.uid.serialize()
                     }).delaySubscription(1, TimeUnit.SECONDS)
                             .subscribeOn(AmeDispatcher.ioScheduler)
+                            .observeOn(AmeDispatcher.ioScheduler)
+                            .map {
+                                UserDataManager.insertGroupMembers(change.memberList)
+                                it
+                            }
                             .observeOn(AmeDispatcher.mainScheduler)
                             .subscribe({
-                                listenerRef.get()?.onMemberJoin(change.groupId, it)
+                                listenerRef.get()?.onMemberUpdate(change.groupId, it)
                             },{})
-
                     UserDataManager.insertGroupMembers(change.memberList)
+                    GroupInfoDataManager.increaseMemberCount(change.groupId, 1L)
+                    groupCache.setGroupMemberState(change.groupId, GroupMemberSyncState.DIRTY)
                 }
                 AmeGroupMemberChanged.UPDATE -> {
                     queryGroupInfo(change.groupId, null)
                     UserDataManager.updateGroupMembers(change.memberList)
                 }
                 AmeGroupMemberChanged.LEAVE -> {
+                    GroupInfoDataManager.increaseMemberCount(change.groupId, -1L)
                     UserDataManager.deleteMember(change.memberList)
+                    groupCache.setGroupMemberState(change.groupId, GroupMemberSyncState.DIRTY)
                 }
             }
         }
@@ -1215,8 +1223,6 @@ object GroupLogic {
                         listenerRef.get()?.onMemberLeave(change.groupId, change.memberList)
                     }
                 }
-            } else {
-                queryGroupInfo(change.groupId, null)
             }
         }
     }

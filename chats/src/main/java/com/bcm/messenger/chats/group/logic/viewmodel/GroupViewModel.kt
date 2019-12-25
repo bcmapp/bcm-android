@@ -26,13 +26,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
 import java.lang.ref.WeakReference
+import kotlin.math.max
 
 /**
  * group view model
  * Created by bcm.social.01 on 2018/5/30.
  */
 @SuppressLint("CheckResult")
-class GroupViewModel(private val groupId: Long): IGroupListener {
+class GroupViewModel(private val groupId: Long) : IGroupListener {
     private val TAG = "GroupViewModel"
     private var threadId = -1L
     private var modelCache: GroupModelCache
@@ -78,7 +79,7 @@ class GroupViewModel(private val groupId: Long): IGroupListener {
         }
     }
 
-    private fun post(event:Any) {
+    private fun post(event: Any) {
         AmeDispatcher.mainThread.dispatch {
             EventBus.getDefault().post(event)
         }
@@ -296,10 +297,9 @@ class GroupViewModel(private val groupId: Long): IGroupListener {
         }
     }
 
-    fun updateGroupName(name:String, result: (succeed: Boolean, error: String?) -> Unit) {
+    fun updateGroupName(name: String, result: (succeed: Boolean, error: String?) -> Unit) {
         val weakThis = WeakReference(this)
-        return GroupLogic.updateGroupName(groupId, name) {
-            succeed, error ->
+        return GroupLogic.updateGroupName(groupId, name) { succeed, error ->
             weakThis.get()?.modelCache?.info?.name = name
 
             result(succeed, error)
@@ -311,7 +311,7 @@ class GroupViewModel(private val groupId: Long): IGroupListener {
         val ctrlList = ArrayList<AmeGroupMemberInfo>()
 
         if (!TextUtils.isEmpty(modelCache.info.key)) {
-            
+
             ctrlList.add(AmeGroupMemberInfo.MEMBER_SEARCH)
             ctrlList.add(AmeGroupMemberInfo.MEMBER_ADD_MEMBER)
         }
@@ -349,7 +349,7 @@ class GroupViewModel(private val groupId: Long): IGroupListener {
             if (succeed) {
                 val groupInfo = modelCache.info
                 if (!groupInfo.needConfirm || myRole() == AmeGroupMemberInfo.OWNER) {
-                    weakThis.get()?.onMemberJoin(groupId, succeedList?.toList()?: listOf())
+                    weakThis.get()?.onMemberJoin(groupId, succeedList?.toList() ?: listOf())
                 }
                 result(succeed, resultMessage)
             } else {
@@ -401,7 +401,7 @@ class GroupViewModel(private val groupId: Long): IGroupListener {
         return modelCache.info.mute
     }
 
-    fun upLoadNoticeContent(notice:String, timestamp: Long, result: (succeed: Boolean, error: String?) -> Unit) {
+    fun upLoadNoticeContent(notice: String, timestamp: Long, result: (succeed: Boolean, error: String?) -> Unit) {
         val weakThis = WeakReference(this)
         GroupLogic.updateGroupNotice(groupId, notice, timestamp) { succeed, error ->
             AmeDispatcher.mainThread.dispatch {
@@ -418,7 +418,7 @@ class GroupViewModel(private val groupId: Long): IGroupListener {
             val weakThis = WeakReference(this)
             GroupLogic.deleteMember(groupId, list) { succeed, succeedList, error ->
                 if (succeed) {
-                    weakThis.get()?.onMemberLeave(groupId, succeedList?: listOf())
+                    weakThis.get()?.onMemberLeave(groupId, succeedList ?: listOf())
                 }
                 result(succeed, error)
             }
@@ -688,8 +688,9 @@ class GroupViewModel(private val groupId: Long): IGroupListener {
     }
 
     override fun onMemberJoin(gid: Long, memberList: List<AmeGroupMemberInfo>) {
-        if (gid == groupId) {
+        if (gid == groupId && memberList.isNotEmpty()) {
             modelCache.addMember(memberList)
+            modelCache.info.memberCount += memberList.count()
             val selfJoin = memberList.filter { it.uid.serialize() == AMESelfData.uid }
                     .takeIf {
                         it.isNotEmpty()
@@ -707,7 +708,14 @@ class GroupViewModel(private val groupId: Long): IGroupListener {
     override fun onMemberUpdate(gid: Long, memberList: List<AmeGroupMemberInfo>) {
         if (gid == groupId && memberList.isNotEmpty()) {
             memberList.forEach {
-                modelCache.getMember(it.uid.serialize())?.role = it.role
+                val member = modelCache.getMember(it.uid.serialize())
+                member?.role = it.role
+                if (it.nickname?.isNotEmpty() == true) {
+                    member?.nickname = it.nickname
+                }
+                if (it.customNickname?.isNotEmpty() == true) {
+                    member?.customNickname = it.customNickname
+                }
             }
             post(MemberListChangedEvent())
         }
@@ -715,22 +723,18 @@ class GroupViewModel(private val groupId: Long): IGroupListener {
 
     override fun onMemberLeave(gid: Long, memberList: List<AmeGroupMemberInfo>) {
         if (gid == groupId && memberList.isNotEmpty()) {
-            if (memberList.isNotEmpty()) {
-                modelCache.removeMember(memberList.map { it.uid.serialize() })
+            modelCache.removeMember(memberList.map { it.uid.serialize() })
+            modelCache.info.memberCount = max(1, modelCache.info.memberCount + memberList.count())
 
+            post(MemberListChangedEvent())
+
+            if (memberList.any { it.uid.serialize() == AMESelfData.uid }) {
                 AmeDispatcher.mainThread.dispatch {
-                    post(MemberListChangedEvent())
+                    post(MyRoleChangedEvent(AmeGroupMemberInfo.VISITOR))
                 }
-
-
-                if (memberList.any { it.uid.serialize() == AMESelfData.uid }) {
-                    AmeDispatcher.mainThread.dispatch {
-                        post(MyRoleChangedEvent(AmeGroupMemberInfo.VISITOR))
-                    }
-                } else {
-                    queryGroupInfo(true) {
-                        GroupLogic.refreshGroupAvatar(groupId)
-                    }
+            } else {
+                queryGroupInfo(true) {
+                    GroupLogic.refreshGroupAvatar(groupId)
                 }
             }
         }

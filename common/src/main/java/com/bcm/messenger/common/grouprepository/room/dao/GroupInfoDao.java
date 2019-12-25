@@ -18,15 +18,13 @@ public interface GroupInfoDao {
 
 
     /**
-     * 
-     *
      * @return
      */
     @Query("SELECT * FROM " + GroupInfo.TABLE_NAME)
     List<GroupInfo> loadAll();
 
     /**
-     *  gid 
+     * gid
      *
      * @param gid
      * @return
@@ -38,7 +36,7 @@ public interface GroupInfoDao {
     List<GroupInfo> loadGroupInfoListByGid(long[] gidList);
 
     /**
-     *  shareUrl 
+     * shareUrl
      *
      * @param shareUrl
      * @return
@@ -48,8 +46,6 @@ public interface GroupInfoDao {
 
 
     /**
-     * 
-     *
      * @return
      */
     @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET `key` = :key, key_version =:keyVersion WHERE gid = :gid")
@@ -67,8 +63,6 @@ public interface GroupInfoDao {
     void setProfileEncrypted(long gid, boolean isEncrypted);
 
     /**
-     * 
-     *
      * @return The number of group
      */
     @Query("SELECT COUNT(*) FROM " + GroupInfo.TABLE_NAME)
@@ -103,4 +97,10 @@ public interface GroupInfoDao {
 
     @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET share_code = \"\", share_qr_code_setting = \"\", share_sig=\"\", share_epoch = 0, share_enabled = 0, share_link = \"\", share_and_owner_confirm_sig = \"\" WHERE gid = :gid ")
     void clearShareSetting(long gid);
+
+    @Query("SELECT member_count FROM " + GroupInfo.TABLE_NAME + " WHERE gid = :gid ")
+    long queryMemberCount(long gid);
+
+    @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET member_count = :count WHERE gid = :gid ")
+    void updateMemberCount(long gid, long count);
 }
