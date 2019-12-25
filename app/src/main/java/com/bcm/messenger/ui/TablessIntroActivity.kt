@@ -1,6 +1,7 @@
 package com.bcm.messenger.ui
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.text.Html
 import android.text.SpannableString
@@ -52,6 +53,15 @@ class TablessIntroActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(setLocale(newBase))
+    }
+
+    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+        if (overrideConfiguration != null) {
+            val uiMode = overrideConfiguration.uiMode
+            overrideConfiguration.setTo(baseContext.resources.configuration)
+            overrideConfiguration.uiMode = uiMode
+        }
+        super.applyOverrideConfiguration(overrideConfiguration)
     }
 
     private inner class IntroPagerAdapter : PagerAdapter() {
