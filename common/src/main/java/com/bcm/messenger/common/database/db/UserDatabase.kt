@@ -100,7 +100,7 @@ abstract class UserDatabase : RoomDatabase() {
             val db = if (isReleaseBuild()) {
                 dbBuilder.openHelperFactory(factory).allowMainThreadQueries().build()
             } else {
-                dbBuilder.build()
+                dbBuilder.allowMainThreadQueries().build()
             }
 
             if (needCheckDb) {
