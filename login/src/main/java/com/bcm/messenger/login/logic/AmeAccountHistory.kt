@@ -10,6 +10,7 @@ import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.login.bean.AmeAccountData
 import com.bcm.messenger.login.bean.KeyBoxAccountItem
 import com.bcm.messenger.login.bean.LoginProfile
@@ -204,6 +205,7 @@ class AmeAccountHistory {
             }
 
             if (mCurAccount != null && BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) == null) {
+                ALog.i(TAG, "fixCurrentAndLastAccount getMasterSecret fail, set current account null")
                 mCurAccount?.curLogin = false
                 mCurAccount = null
                 needUpdate = true
@@ -229,6 +231,9 @@ class AmeAccountHistory {
 
                 accountMap.clear()
                 val accountListString = SuperPreferences.getStringPreference(AppContextHolder.APP_CONTEXT, SuperPreferences.AME_ACCOUNT_LIST)
+                if (!isReleaseBuild()) {
+                    ALog.i(TAG, "init accountListString: $accountListString")
+                }
                 if (accountListString.isNotEmpty()) {
                     accountMap.putAll(Gson().fromJson(accountListString, object : TypeToken<HashMap<String, AmeAccountData>>() {}.type))
                 }
@@ -259,7 +264,11 @@ class AmeAccountHistory {
                 ALog.i(TAG, "fixDataComplement return: true")
             }
 
-            ALog.logForSecret(TAG, "init end, currentLogin: ${mCurAccount?.uid}, lastLogin: ${mLastAccount?.uid}")
+            if (isReleaseBuild()) {
+                ALog.i(TAG, "init end")
+            }else {
+                ALog.d(TAG, "init end, currentLogin: ${mCurAccount?.uid}, lastLogin: ${mLastAccount?.uid}")
+            }
         } catch (e: Exception) {
             ALog.e(TAG, "init error", e)
         }

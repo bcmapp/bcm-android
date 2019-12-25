@@ -126,7 +126,7 @@ object AmeLoginLogic {
     }
 
     /**
-     * savev account state
+     * save account state
      */
     fun saveAccount(account: AmeAccountData) {
         accountHistory.saveAccount(account)

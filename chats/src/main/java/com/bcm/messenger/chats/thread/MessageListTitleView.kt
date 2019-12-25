@@ -66,6 +66,7 @@ class MessageListTitleView : TextSwitcher, IConnectionListener, IProxyStateChang
         NetworkUtil.addListener(this)
         ProxyManager.setListener(this)
         recipient.addListener(this)
+        currentName = recipient.name
 
         inAnimation = AnimationUtils.loadAnimation(context, R.anim.common_popup_drop_in)
         outAnimation = AnimationUtils.loadAnimation(context, R.anim.common_popup_drop_out)

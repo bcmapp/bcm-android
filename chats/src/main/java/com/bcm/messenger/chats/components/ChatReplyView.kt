@@ -173,7 +173,7 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                             return
                         }
                         if (mGroupMessage == messageRecord) {
-                            if (success && uri != null) {
+                            if (success) {
                                 val masterSecret = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) ?: return
                                 buildThumbnailRequest(masterSecret, uri) {
                                     ALog.d(TAG, "buildThumbnailRequest uri: $uri fail, try again")
@@ -214,17 +214,20 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
     }
 
 
-    private fun buildThumbnailRequest(masterSecret: MasterSecret, loadObj: Uri, failback: (() -> Unit)? = null) {
+    private fun buildThumbnailRequest(masterSecret: MasterSecret, uri: Uri?, failCallback: (() -> Unit)? = null) {
         try {
-            ALog.i(TAG, "buildThumbnailRequest: $loadObj")
+            ALog.i(TAG, "buildThumbnailRequest: $uri")
             reply_image.setCallback(object : IndividualAvatarView.RecipientPhotoCallback {
                 override fun onLoaded(recipient: Recipient?, bitmap: Bitmap?, success: Boolean) {
                     if (!success) {
-                        failback?.invoke()
+                        failCallback?.invoke()
                     }
                 }
             })
-            reply_image.requestPhoto(DecryptableStreamUriLoader.DecryptableUri(masterSecret, loadObj), mImagePlaceHolder, mImageError)
+
+            val loadObj = if (uri == null) null else DecryptableStreamUriLoader.DecryptableUri(masterSecret, uri)
+            reply_image.requestPhoto(loadObj, mImagePlaceHolder, mImageError)
+
         } catch (ex: Exception) {
             ALog.e(TAG, "buildThumbnailRequest error", ex)
         }
