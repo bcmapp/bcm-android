@@ -215,7 +215,7 @@ class MediaViewActivity : AppCompatActivity() {
                 .withDoneTitle(getString(R.string.chats_cancel))
 
         val data = (adapter.getCurrentFragment() as? MediaViewFragment)?.getData()
-        if (data != null && data.msgType == MSG_TYPE_GROUP && (data.sourceMsg as AmeGroupMessageDetail).isAttachmentComplete) {
+        if (data != null && (data.msgType == MSG_TYPE_PRIVATE || (data.sourceMsg as? AmeGroupMessageDetail)?.isAttachmentComplete == true)) {
             popup.withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_forward)) {
                 forwardMedia()
             })

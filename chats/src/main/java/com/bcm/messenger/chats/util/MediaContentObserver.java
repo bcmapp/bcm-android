@@ -34,7 +34,6 @@ public class MediaContentObserver {
                 }
             }
         };
-
     }
 
     public void setChangeListener(MediaContentChangeListener listener) {
@@ -42,12 +41,12 @@ public class MediaContentObserver {
         if (context != null) {
             context.getContentResolver().registerContentObserver(
                     MediaStore.Images.Media.INTERNAL_CONTENT_URI,
-                    false,
+                    true,
                     mInternalObserver);
 
             context.getContentResolver().registerContentObserver(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    false,
+                    true,
                     mExternalObserver);
         }
     }
