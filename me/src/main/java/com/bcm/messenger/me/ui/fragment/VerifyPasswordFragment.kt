@@ -29,6 +29,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.me_fragment_verify_password.*
 import java.lang.ref.WeakReference
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Kin on 2018/9/3
@@ -116,14 +117,14 @@ class VerifyPasswordFragment : Fragment() {
         if (hasText) {
             verify_pin_input_clear.alpha = 1f
             verify_pin_input_clear.isEnabled = true
-            verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_icon)
             verify_pin_input_go.isEnabled = true
+            verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_icon)
             verify_pin_error.visibility = View.GONE
         } else {
             verify_pin_input_clear.alpha = 0.7f
             verify_pin_input_clear.isEnabled = false
-            verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_disabled_icon)
             verify_pin_input_go.isEnabled = false
+            verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_disabled_icon)
         }
     }
 
@@ -182,12 +183,11 @@ class VerifyPasswordFragment : Fragment() {
             }
             it.onComplete()
 
-        }.subscribeOn(AmeDispatcher.ioScheduler)
+        }.delaySubscription(300, TimeUnit.MILLISECONDS, AmeDispatcher.ioScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     ViewUtils.fadeOut(verify_pin_loading, 250)
                     ViewUtils.fadeIn(verify_pin_input_go, 250)
-
                     verify_pin_loading.stopAnim()
 
                     if (it) {

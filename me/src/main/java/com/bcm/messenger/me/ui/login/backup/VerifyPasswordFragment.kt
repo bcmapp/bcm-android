@@ -35,6 +35,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.me_fragment_check_password.*
 import java.lang.ref.WeakReference
+import java.util.concurrent.TimeUnit
 
 
 class VerifyPasswordFragment : AbsRegistrationFragment() {
@@ -131,8 +132,8 @@ class VerifyPasswordFragment : AbsRegistrationFragment() {
                 verify_pin_loading.startAnim()
 
                 checkPasswordIsRight(verify_pin_input_text.text.toString()) {
-                    ViewUtils.fadeIn(verify_pin_input_go, 250)
                     ViewUtils.fadeOut(verify_pin_loading, 250)
+                    ViewUtils.fadeIn(verify_pin_input_go, 250)
                     verify_pin_loading.stopAnim()
 
                     if (it) {
@@ -246,7 +247,7 @@ class VerifyPasswordFragment : AbsRegistrationFragment() {
             }
             it.onNext(right)
             it.onComplete()
-        }.subscribeOn(AmeDispatcher.ioScheduler)
+        }.delaySubscription(300, TimeUnit.MILLISECONDS, AmeDispatcher.ioScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     result(it)
