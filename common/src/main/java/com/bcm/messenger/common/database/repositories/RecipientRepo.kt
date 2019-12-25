@@ -56,7 +56,7 @@ class RecipientRepo {
             val featureSupport = BcmFeatureSupport(supportFeatures)
             recipient.resolve().featureSupport = featureSupport
         } catch (e: DecoderException) {
-
+            e.printStackTrace()
         }
     }
 

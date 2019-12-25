@@ -14,12 +14,15 @@ import com.bcm.messenger.chats.group.viewholder.ChatViewHolder
 import com.bcm.messenger.chats.util.ChatComponentListener
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
+import com.bcm.messenger.common.mms.DecryptableStreamUriLoader
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -47,7 +50,6 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
     private var mReplyRecipient: Recipient? = null
 
     private var mReplyClickListener: ChatComponentListener? = null
-    private var mLastSuccessLoadOjb: Any? = null
 
     init {
         ALog.d(TAG, "init")
@@ -87,12 +89,12 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
         setAppearance(messageRecord.isSendByMe)
         reply_to.text = recipient?.name
         when {
-            messageRecord.message.isText() -> {
+            content.getReplyMessage().isText() -> {
                 reply_source_text.visibility = View.VISIBLE
                 reply_source_content.visibility = View.GONE
                 ChatViewHolder.interceptTextLink(reply_source_text, messageRecord.isSendByMe, (content.getReplyMessage().content as AmeGroupMessage.TextContent).text)
             }
-            messageRecord.message.isLink() -> {
+            content.getReplyMessage().isLink() -> {
                 reply_source_text.visibility = View.VISIBLE
                 reply_source_content.visibility = View.GONE
                 ChatViewHolder.interceptTextLink(reply_source_text, messageRecord.isSendByMe, (content.getReplyMessage().content as AmeGroupMessage.LinkContent).url)
@@ -135,14 +137,14 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
         val replyContent = content?.getReplyMessage()?.content ?: return
         when {
             content.getReplyMessage().type == AmeGroupMessage.LOCATION -> {
-                reply_file.visibility = View.INVISIBLE
-                reply_photo.visibility = View.INVISIBLE
+                reply_file.visibility = View.GONE
+                reply_photo.visibility = View.GONE
                 reply_image.visibility = View.VISIBLE
                 reply_image.setPhoto(R.drawable.chats_reply_location_snapshot)
             }
             replyContent is AmeGroupMessage.FileContent -> {
-                reply_image.visibility = View.INVISIBLE
-                reply_photo.visibility = View.INVISIBLE
+                reply_image.visibility = View.GONE
+                reply_photo.visibility = View.GONE
                 reply_file.visibility = View.VISIBLE
                 if (messageRecord.isSendByMe) {
                     reply_file.setBackgroundResource(R.drawable.chats_message_file_icon)
@@ -156,16 +158,16 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
 
             }
             replyContent is AmeGroupMessage.ContactContent -> {
-                reply_file.visibility = View.INVISIBLE
-                reply_image.visibility = View.INVISIBLE
+                reply_file.visibility = View.GONE
+                reply_image.visibility = View.GONE
                 reply_photo.visibility = View.VISIBLE
                 val r = Recipient.from(context, Address.from(context, replyContent.uid), true)
                 reply_photo.setPhoto(r)
             }
             replyContent is AmeGroupMessage.ThumbnailContent -> {
-                reply_file.visibility = View.INVISIBLE
+                reply_file.visibility = View.GONE
                 reply_image.visibility = View.VISIBLE
-                reply_photo.visibility = View.INVISIBLE
+                reply_photo.visibility = View.GONE
                 val weakActivity = WeakReference(context as Activity)
 
                 MessageFileHandler.downloadThumbnail(messageRecord.gid, messageRecord.indexId, replyContent, messageRecord.keyVersion, object : MessageFileHandler.MessageFileCallback {
@@ -208,26 +210,29 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                 })
             }
             else -> {
-                reply_file.visibility = View.INVISIBLE
-                reply_image.visibility = View.INVISIBLE
-                reply_photo.visibility = View.INVISIBLE
+                reply_file.visibility = View.GONE
+                reply_image.visibility = View.GONE
+                reply_photo.visibility = View.GONE
             }
         }
 
     }
 
 
-    private fun buildThumbnailRequest(loadObj: Any?, failback: (() -> Unit)? = null) {
+    private fun buildThumbnailRequest(uri: Uri?, failCallback: (() -> Unit)? = null) {
         try {
+            ALog.i(TAG, "buildThumbnailRequest: $uri")
             reply_image.setCallback(object : IndividualAvatarView.RecipientPhotoCallback {
 
                 override fun onLoaded(recipient: Recipient?, bitmap: Bitmap?, success: Boolean) {
                     if (!success) {
-                        failback?.invoke()
+                        failCallback?.invoke()
                     }
                 }
 
             })
+
+            val loadObj = if (uri == null) null else DecryptableStreamUriLoader.DecryptableUri(BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) ?: return, uri)
             reply_image.requestPhoto(loadObj, mImagePlaceHolder, mImageError)
 
         } catch (ex: Exception) {

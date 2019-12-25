@@ -198,6 +198,10 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         return this.type == EXCHANGE_PROFILE
     }
 
+    fun isReplyMessage(): Boolean {
+        return this.type == CHAT_REPLY
+    }
+
     override fun toString(): String {
         if (type == SCREEN_SHOT_MESSAGE) {
             return Gson().toJson(ExceptionType(SCREEN_SHOT_MESSAGE, (content as ScreenshotContent).name))

@@ -400,17 +400,17 @@ public class AmeGroupMessageDetail {
 
     }
 
-    // copy
+    // check copable
     public boolean isCopyable() {
-        return message != null && (message.isText() || message.isLink() || message.isGroupShare());
+        return message != null && (message.isText() || message.isLink() || message.isGroupShare() || message.isReplyMessage());
     }
 
-    // 
+    // check recallable
     public boolean isRecallable() {
         return message != null && isSendByMe() && isSendSuccess();
     }
 
-    // 
+    // check reeditable
     public boolean isReeditable() {
         return message != null && message.isText();
     }

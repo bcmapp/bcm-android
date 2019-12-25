@@ -489,6 +489,10 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
                                 val groupShareContent = messageRecord.message.content as AmeGroupMessage.GroupShareContent
                                 AppUtil.saveCodeToBoard(context, groupShareContent.shareLink ?: "")
                             }
+                            messageRecord.message.isReplyMessage() -> {
+                                val replyContent = messageRecord.message.content as AmeGroupMessage.ReplyContent
+                                AppUtil.saveCodeToBoard(context, replyContent.text ?: "")
+                            }
                             else -> return
                         }
                         AmeAppLifecycle.succeed(getString(R.string.common_copied), true)
