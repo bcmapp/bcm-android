@@ -203,6 +203,7 @@ class BcmContactCache() {
         if (withHandling) {
             convertToContactPartMap(mHandlingMap, uploadMap)
         }
+
         ALog.i(TAG, "getUploadContactMap myContactMap: ${mMyContactMap.size}, uploadMap: ${uploadMap.size}")
         return uploadMap
     }

@@ -155,10 +155,10 @@ class BcmContactCore {
      */
     fun syncFriendList(uploadContactMap: Map<String, List<ContactItem>>): Observable<ContactSyncResult> {
         val req = genContactPatchRequest(uploadContactMap)
-        if (!AppUtil.isReleaseBuild()) {
+        //if (!AppUtil.isReleaseBuild()) {
             //ALog.i(TAG, "syncFriendList request body: ${GsonUtils.toJson(uploadContactMap)}")
-        }
-        val reqJson = GsonUtils.toJson(genContactSyncRequest(req, uploadContactMap.isEmpty()))
+        //}
+        val reqJson = GsonUtils.toJson(genContactSyncRequest(req))
         if (!AppUtil.isReleaseBuild()) {
             ALog.i(TAG, "genContactSyncRequest: " + GsonUtils.toJson(reqJson))
         }
@@ -217,19 +217,16 @@ class BcmContactCore {
     }
 
 
-    private fun genContactSyncRequest(req: ContactPatchRequest, checkFull: Boolean): ContactSyncRequest {
+    private fun genContactSyncRequest(req: ContactPatchRequest): ContactSyncRequest {
         val hashList = mutableMapOf<String, Long>()
         for ((k, v) in req.parts) {
             hashList[k] = BcmHash.hash(v.toByteArray())
         }
-        if (checkFull) {
-            for (i in 0 until CONTACT_PART_MAX) {
-                if (hashList[i.toString()] == null) {
-                    hashList[i.toString()] = 0
-                }
+        for (i in 0 until CONTACT_PART_MAX) {
+            if (hashList[i.toString()] == null) {
+                hashList[i.toString()] = 0
             }
         }
-
         return ContactSyncRequest(hashList)
     }
 
@@ -255,7 +252,7 @@ class BcmContactCore {
                 it.relationship != RecipientRepo.Relationship.STRANGER.type
             })
             if (!isReleaseBuild()) {
-                ALog.d(TAG, "genContactPatchRequest contactBody: $contactBody")
+                ALog.d(TAG, "genContactPatchRequest key: $key, contactBody: $contactBody")
             }
             val part = FriendListPart(CONTACT_SYNC_VERSION,
                     AmeTimeUtil.serverTimeMillis(),
