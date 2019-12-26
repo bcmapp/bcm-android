@@ -191,9 +191,10 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
                 try {
                     if (member.uid.serialize() == AMESelfData.uid) {
                         val selfProfile = Recipient.self().privacyProfile
+                        val myName = Recipient.self().name
                         var newName: String? = null
-                        if (member.nickname != selfProfile.name) {
-                            newName = selfProfile.name
+                        if (member.nickname != myName) {
+                            newName = myName
                         }
 
                         var newKeyConfig: AmeGroupMemberInfo.KeyConfig? = null
