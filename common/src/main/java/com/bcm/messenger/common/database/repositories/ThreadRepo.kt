@@ -18,7 +18,6 @@ import com.bcm.messenger.common.grouprepository.room.entity.GroupLiveInfo
 import com.bcm.messenger.common.mms.PartAuthority
 import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 
@@ -256,7 +255,6 @@ class ThreadRepo {
         val message = GroupMessageTransform.transformToModel(MessageDataManager.fetchLastMessage(gid))
         var threadId = getThreadIdIfExist(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid))
         if (threadId <= 0L && (null == message || null == message.message)) {
-            //，，update
             ALog.i(TAG, "updateByNewGroup gid: $gid, no thread, no message, return")
             return
         } else if (threadId <= 0L) {
@@ -269,7 +267,7 @@ class ThreadRepo {
 
         if (null == message || null == message.message) {
             updateByNewGroup(threadId, 0, 0, "", "", draftText, draftUri,
-                    if (drafts.isNotEmpty()) BASE_DRAFT_TYPE else AmeGroupMessageDetail.SendState.SEND_SUCCESS.value, time ?: AmeTimeUtil.serverTimeMillis())
+                    if (drafts.isNotEmpty()) BASE_DRAFT_TYPE else AmeGroupMessageDetail.SendState.SEND_SUCCESS.value, time)
         } else {
             val count = MessageDataManager.countMessageByGid(gid)
             val unreadCount = MessageDataManager.countUnreadCountFromLastSeen(gid, 0)
@@ -279,7 +277,6 @@ class ThreadRepo {
 
             val messageContent = message.message.content
 
-            // @me，@，，@，，，@me，，
             val state = if (messageContent is AmeGroupMessage.SystemContent && messageContent.tipType == AmeGroupMessage.SystemContent.TIP_JOIN_GROUP_REQUEST) {
                 BASE_JOIN_REQUEST
             } else if (!message.isSendByMe && message.extContent?.isAtAll == true || message.extContent?.atList?.contains(AMESelfData.uid) == true) {
@@ -293,14 +290,15 @@ class ThreadRepo {
         }
     }
 
-    private fun updateByNewGroup(threadId: Long, count: Long, unreadCount: Long, body: String, attachmentUri: String?, draftText: String?, draftUri: String?, state: Long, date: Long) {
+    private fun updateByNewGroup(threadId: Long, count: Long, unreadCount: Long, body: String, attachmentUri: String?, draftText: String?, draftUri: String?, state: Long, date: Long?) {
         UserDatabase.getDatabase().runInTransaction {
             val record = threadDao.queryThread(threadId)
             if (record != null) {
 
+                val newDate = date ?: record.timestamp
                 record.snippetContent = body
                 record.snippetUri = if (attachmentUri == null) null else Uri.parse(attachmentUri)
-                // @me，@，，@，，，@me，，
+
                 if (state == BASE_JOIN_REQUEST && unreadCount > 0) {
                     record.snippetType = BASE_JOIN_REQUEST
                 } else if (state == BASE_AT_ME_TYPE && !record.isJoinRequestMessage() && unreadCount > 0) {
@@ -317,7 +315,7 @@ class ThreadRepo {
 
                 record.messageCount = count
                 record.unreadCount = unreadCount.toInt()
-                record.timestamp = date - date % 1000
+                record.timestamp = newDate - newDate % 1000
 
                 threadDao.updateThread(record)
             }
