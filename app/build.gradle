@@ -85,6 +85,10 @@ android {
             dimension "channels"
         }
 
+        releaseHuawei {
+            dimension "channels"
+        }
+
         dev {
             dimension "channels"
         }
@@ -101,7 +105,14 @@ android {
                         af_media_source: "apkpurebcm",
                         channels_name: name
                 ]
-            }else {
+            }
+            else if (name == 'releaseHuawei') {
+                flavor.manifestPlaceholders = [
+                        af_media_source: "huawei",
+                        channels_name: name
+                ]
+            }
+            else {
                 flavor.manifestPlaceholders = [
                         af_media_source: "",
                         channels_name: name

@@ -41,6 +41,9 @@ android {
             dimension "channels"
         }
 
+        releaseHuawei {
+            dimension "channels"
+        }
 
         dev {
             dimension "channels"
