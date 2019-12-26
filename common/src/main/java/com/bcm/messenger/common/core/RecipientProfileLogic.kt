@@ -236,17 +236,29 @@ object RecipientProfileLogic {
 
     }
 
+
+    private fun checkUploadPrepare(handledRecipient: Recipient, forName: Boolean): Observable<Boolean> {
+
+        return Observable.create<Recipient> {
+            it.onNext(handledRecipient.resolve())
+            it.onComplete()
+        }.observeOn(AmeDispatcher.ioScheduler)
+                .flatMap { recipient ->
+                    val privacyProfile = recipient.privacyProfile
+                    if (recipient.needRefreshProfile() || (if (forName) privacyProfile.nameKey.isNullOrEmpty() else privacyProfile.avatarKey.isNullOrEmpty())) {
+                        getProfiles(listOf(TaskData(recipient, TYPE_PROFILE, true)))
+                    }
+                    else {
+                        Observable.just(true)
+                    }
+                }
+    }
+
     @SuppressLint("CheckResult")
     fun uploadNickName(context: Context, handledRecipient: Recipient, name: String, callback: (success: Boolean) -> Unit) {
 
-        Observable.create(ObservableOnSubscribe<Boolean> {
-            val recipient = handledRecipient.resolve()
-            val privacyProfile = recipient.privacyProfile
-            val toUpload = checkProfileKeyCompleteOrUpload(context, recipient, privacyProfile)
-            it.onNext(toUpload)
-            it.onComplete()
-
-        }).subscribeOn(AmeDispatcher.ioScheduler)
+        checkUploadPrepare(handledRecipient, true)
+                .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .flatMap { toUpload ->
             val recipient = handledRecipient.resolve()
@@ -314,9 +326,6 @@ object RecipientProfileLogic {
                     true, avatarBitmap, null)
 
             try {
-                if (!checkProfileKeyCompleteOrUpload(context, recipient, prepareData.privacyProfile)) {
-                    throw Exception("checkProfileKeyCompleteOrUpload fail")
-                }
                 Repository.getRecipientRepo()?.setPrivacyProfile(recipient, prepareData.privacyProfile)
 
                 val keyBytes = Base64.decode(prepareData.privacyProfile.avatarKey)
@@ -432,58 +441,71 @@ object RecipientProfileLogic {
             return Observable.just(false)
         }
 
-        Observable.create(ObservableOnSubscribe<Boolean> { uploadEmitter ->
+        fun run(): Observable<Boolean> {
+            return Observable.create(ObservableOnSubscribe<Boolean> { uploadEmitter ->
 
-            val recipient = handledRecipient.resolve()
-            val prepareData = doPrepare(context, recipient, avatarBitmap)
-            if (prepareData == null) {
-                uploadEmitter.onError(Exception("uploadAvatar error, prepare fail"))
-            } else {
-                val uploadFileList = mutableListOf<String>()
-                uploadFileList.add(prepareData.hdEncryptPath.absolutePath)
-                if (!prepareData.useSame) {
-                    uploadFileList.add(prepareData.ldEncryptPath.absolutePath)
-                }
-
-                AmeFileUploader.uploadMultiFileToAws(context, AmeFileUploader.AttachmentType.PROFILE, uploadFileList, object : AmeFileUploader.MultiFileUploadCallback {
-
-                    override fun onFailed(resultMap: MutableMap<String, AmeFileUploader.FileUploadResult>?) {
-                        doAfterUploadAvatarBitmap(recipient, prepareData, null, null)
-                                .subscribeOn(AmeDispatcher.ioScheduler)
-                                .observeOn(AmeDispatcher.mainScheduler)
-                                .subscribe({
-                                    uploadEmitter.onNext(it)
-                                    uploadEmitter.onComplete()
-                                }, {
-                                    clearDiscardResources(prepareData)
-                                    uploadEmitter.onError(it)
-                                })
+                val recipient = handledRecipient.resolve()
+                val prepareData = doPrepare(context, recipient, avatarBitmap)
+                if (prepareData == null) {
+                    uploadEmitter.onError(Exception("uploadAvatar error, prepare fail"))
+                } else {
+                    val uploadFileList = mutableListOf<String>()
+                    uploadFileList.add(prepareData.hdEncryptPath.absolutePath)
+                    if (!prepareData.useSame) {
+                        uploadFileList.add(prepareData.ldEncryptPath.absolutePath)
                     }
 
-                    override fun onSuccess(resultMap: MutableMap<String, AmeFileUploader.FileUploadResult>?) {
-                        val avatarHd = resultMap?.get(prepareData.hdEncryptPath.absolutePath)?.location
-                        val avatarLd = if (prepareData.useSame) {
-                            avatarHd
-                        } else {
-                            resultMap?.get(prepareData.ldEncryptPath.absolutePath)?.location
+                    AmeFileUploader.uploadMultiFileToAws(context, AmeFileUploader.AttachmentType.PROFILE, uploadFileList, object : AmeFileUploader.MultiFileUploadCallback {
+
+                        override fun onFailed(resultMap: MutableMap<String, AmeFileUploader.FileUploadResult>?) {
+                            doAfterUploadAvatarBitmap(recipient, prepareData, null, null)
+                                    .subscribeOn(AmeDispatcher.ioScheduler)
+                                    .observeOn(AmeDispatcher.mainScheduler)
+                                    .subscribe({
+                                        uploadEmitter.onNext(it)
+                                        uploadEmitter.onComplete()
+                                    }, {
+                                        clearDiscardResources(prepareData)
+                                        uploadEmitter.onError(it)
+                                    })
                         }
 
-                        doAfterUploadAvatarBitmap(recipient, prepareData, avatarHd, avatarLd)
-                                .subscribeOn(AmeDispatcher.ioScheduler)
-                                .observeOn(AmeDispatcher.mainScheduler)
-                                .subscribe ({
-                                    uploadEmitter.onNext(it)
-                                    uploadEmitter.onComplete()
-                                }, {
-                                    clearDiscardResources(prepareData)
-                                    uploadEmitter.onError(it)
-                                })
+                        override fun onSuccess(resultMap: MutableMap<String, AmeFileUploader.FileUploadResult>?) {
+                            val avatarHd = resultMap?.get(prepareData.hdEncryptPath.absolutePath)?.location
+                            val avatarLd = if (prepareData.useSame) {
+                                avatarHd
+                            } else {
+                                resultMap?.get(prepareData.ldEncryptPath.absolutePath)?.location
+                            }
+
+                            doAfterUploadAvatarBitmap(recipient, prepareData, avatarHd, avatarLd)
+                                    .subscribeOn(AmeDispatcher.ioScheduler)
+                                    .observeOn(AmeDispatcher.mainScheduler)
+                                    .subscribe ({
+                                        uploadEmitter.onNext(it)
+                                        uploadEmitter.onComplete()
+                                    }, {
+                                        clearDiscardResources(prepareData)
+                                        uploadEmitter.onError(it)
+                                    })
+                        }
+                    })
+
+                }
+
+            })
+        }
+
+        checkUploadPrepare(handledRecipient, false)
+                .subscribeOn(AmeDispatcher.ioScheduler)
+                .observeOn(AmeDispatcher.ioScheduler)
+                .flatMap {
+                    if (it) {
+                        run()
+                    }else {
+                        Observable.just(false)
                     }
-                })
-
-            }
-
-        }).subscribeOn(Schedulers.io())
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ result ->
                     callback.invoke(result)
@@ -494,9 +516,6 @@ object RecipientProfileLogic {
 
     }
 
-    /**
-     * 
-     */
     private data class UpdateShareLinkReq(val content: String) : NotGuard
 
     private data class UpdateShareLinkRes(val index: String?) : NotGuard
@@ -816,42 +835,46 @@ object RecipientProfileLogic {
     }
 
     @Throws(Exception::class)
-    private fun checkProfileKeyCompleteOrUpload(context: Context, recipient: Recipient, privacyProfile: PrivacyProfile): Boolean {
+    private fun checkProfileKeyCompleteOrUpload(context: Context, recipient: Recipient, privacyProfile: PrivacyProfile, forName: Boolean): Boolean {
         var keyUpload = false
         try {
-            if (privacyProfile.nameKey.isNullOrEmpty()) {
-                val oneTimeKeyPair = BCMPrivateKeyUtils.generateKeyPair()
-                val nameKey = Base64.encodeBytes(BCMEncryptUtils.calculateMySelfAgreementKey(context, oneTimeKeyPair.privateKey.serialize()))
-                privacyProfile.nameKey = nameKey
-                privacyProfile.namePubKey = Base64.encodeBytes((oneTimeKeyPair.publicKey as DjbECPublicKey).publicKey)
-                ALog.d(TAG, "checkProfileKeyCompleteOrUpload nameKey: ${privacyProfile.nameKey}")
-                keyUpload = true
-
+            if (forName) {
+                if (privacyProfile.nameKey.isNullOrEmpty()) {
+                    val oneTimeKeyPair = BCMPrivateKeyUtils.generateKeyPair()
+                    val nameKey = Base64.encodeBytes(BCMEncryptUtils.calculateMySelfAgreementKey(context, oneTimeKeyPair.privateKey.serialize()))
+                    privacyProfile.nameKey = nameKey
+                    privacyProfile.namePubKey = Base64.encodeBytes((oneTimeKeyPair.publicKey as DjbECPublicKey).publicKey)
+                    ALog.d(TAG, "checkProfileKeyCompleteOrUpload nameKey: ${privacyProfile.nameKey}")
+                    keyUpload = true
+                }
             }
-
-            if (privacyProfile.avatarKey.isNullOrEmpty()) {
-
-                val oneTimeKeyPair = BCMPrivateKeyUtils.generateKeyPair()
-                val avatarKey = Base64.encodeBytes(BCMEncryptUtils.calculateMySelfAgreementKey(context, oneTimeKeyPair.privateKey.serialize()))
-                privacyProfile.avatarKey = avatarKey
-                privacyProfile.avatarPubKey = Base64.encodeBytes((oneTimeKeyPair.publicKey as DjbECPublicKey).publicKey)
-                ALog.d(TAG, "checkProfileKeyCompleteOrUpload avatarKey: ${privacyProfile.avatarKey}")
-                keyUpload = true
-
+            else {
+                if (privacyProfile.avatarKey.isNullOrEmpty()) {
+                    val oneTimeKeyPair = BCMPrivateKeyUtils.generateKeyPair()
+                    val avatarKey = Base64.encodeBytes(BCMEncryptUtils.calculateMySelfAgreementKey(context, oneTimeKeyPair.privateKey.serialize()))
+                    privacyProfile.avatarKey = avatarKey
+                    privacyProfile.avatarPubKey = Base64.encodeBytes((oneTimeKeyPair.publicKey as DjbECPublicKey).publicKey)
+                    ALog.d(TAG, "checkProfileKeyCompleteOrUpload avatarKey: ${privacyProfile.avatarKey}")
+                    keyUpload = true
+                }
             }
 
             if (keyUpload) {
                 if (!uploadProfileKeys(privacyProfile.getUploadKeys())) {
-                    privacyProfile.nameKey = ""
-                    privacyProfile.namePubKey = ""
-                    privacyProfile.avatarKey = ""
-                    privacyProfile.avatarPubKey = ""
-
+                    if (forName) {
+                        privacyProfile.nameKey = ""
+                        privacyProfile.namePubKey = ""
+                    }else {
+                        privacyProfile.avatarKey = ""
+                        privacyProfile.avatarPubKey = ""
+                    }
                     Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
                     return false
-
                 } else {
                     Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
+                    if (forName) {
+                        uploadNickName(context, recipient, recipient.name) {}
+                    }
                 }
             }
 
@@ -873,7 +896,7 @@ object RecipientProfileLogic {
             val avatarPubKeyString = json.optString("avatarPubKey", "")
             val version = json.optInt("version", PrivacyProfile.CURRENT_VERSION)
 
-            if (namePubKeyString != privacyProfile.namePubKey) {
+            if (namePubKeyString != privacyProfile.namePubKey && namePubKeyString.isNotEmpty()) {
                 try {
                     privacyProfile.nameKey = if (namePubKeyString.isEmpty()) {
                         ""
@@ -897,13 +920,13 @@ object RecipientProfileLogic {
                     privacyProfile.nameKey = ""
                     privacyProfile.namePubKey = ""
 
-                    if (!checkProfileKeyCompleteOrUpload(context, recipient, privacyProfile)) {
+                    if (!checkProfileKeyCompleteOrUpload(context, recipient, privacyProfile, true)) {
                         throw Exception("checkProfileKeyCompleteOrUpload fail")
                     }
                 }
             }
 
-            if (avatarPubKeyString != privacyProfile.avatarPubKey) {
+            if (avatarPubKeyString != privacyProfile.avatarPubKey && avatarPubKeyString.isNotEmpty()) {
                 try {
                     privacyProfile.avatarKey = if (avatarPubKeyString.isEmpty()) {
                         ""
@@ -932,7 +955,7 @@ object RecipientProfileLogic {
                     privacyProfile.avatarKey = ""
                     privacyProfile.avatarPubKey = ""
 
-                    if (!checkProfileKeyCompleteOrUpload(context, recipient, privacyProfile)) {
+                    if (!checkProfileKeyCompleteOrUpload(context, recipient, privacyProfile, false)) {
                         throw Exception("checkProfileKeyCompleteOrUpload fail")
                     }
                 }
@@ -1392,15 +1415,19 @@ object RecipientProfileLogic {
                         dataList.forEach { data ->
                             val recipient = data.recipient.resolve()
                             val detail = profileJson.optString(recipient.address.serialize())
-
                             ALog.d(TAG, "fetch uid: ${recipient.address}, profile : $detail")
                             if (!detail.isNullOrEmpty()) {
                                 val profile = GsonUtils.fromJson(detail, PlaintextServiceProfile::class.java)
                                 handleIndividualRecipient(AppContextHolder.APP_CONTEXT, recipient, profile, false, data.forceUpdate)
+                                recipient.setNeedRefreshProfile(false)
                             }
                         }
                     }
                     true
+                }.doOnError {
+                    dataList.forEach {
+                        it.recipient.setNeedRefreshProfile(true)
+                    }
                 }
     }
 

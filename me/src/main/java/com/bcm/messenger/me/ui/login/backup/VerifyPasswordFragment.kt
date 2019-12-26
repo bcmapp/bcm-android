@@ -33,7 +33,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.me_fragment_check_password.*
+import kotlinx.android.synthetic.main.me_fragment_verify_password.*
 import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 
@@ -66,7 +66,7 @@ class VerifyPasswordFragment : AbsRegistrationFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.me_fragment_check_password, container, false)
+        return inflater.inflate(R.layout.me_fragment_verify_password, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

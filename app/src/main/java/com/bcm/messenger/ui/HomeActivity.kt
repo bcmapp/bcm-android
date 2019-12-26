@@ -204,6 +204,13 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
             }
             checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(AMESelfData.uid) > 0)
         }
+
+        // check need fetch profile or avatar
+        if (recipient.needRefreshProfile()) {
+            RecipientProfileLogic.forceToFetchProfile(recipient, callback = null)
+        }else {
+            RecipientProfileLogic.checkNeedDownloadAvatarWithAll(recipient)
+        }
     }
 
     override fun onPause() {

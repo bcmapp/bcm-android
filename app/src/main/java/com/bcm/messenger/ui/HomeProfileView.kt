@@ -125,7 +125,6 @@ class HomeProfileView @JvmOverloads constructor(context: Context, attrs: Attribu
 
         home_profile_unread.setTextSize(17f)
         hideAllViews()
-//        hideAvatar()
 
         home_profile_status_fill.layoutParams = home_profile_status_fill.layoutParams.apply {
             height = statusBarHeight
