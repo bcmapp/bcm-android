@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.group.viewholder.ChatViewHolder
 import com.bcm.messenger.chats.util.ChatComponentListener
@@ -23,6 +24,7 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.BcmGroupNameUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -88,7 +90,12 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
         recipient?.addListener(this)
 
         setAppearance(messageRecord.isSendByMe)
-        reply_to.text = recipient?.name
+        val groupModel = GroupLogic.getModel(messageRecord.gid)
+        reply_to.text = if (recipient == null) {
+            null
+        }else {
+            BcmGroupNameUtil.getGroupMemberName(recipient, groupModel?.getGroupMember(recipient.address.serialize()))
+        }
         when {
             content.getReplyMessage().isText() -> {
                 reply_source_text.visibility = View.VISIBLE

@@ -783,7 +783,12 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
                 panel_reply_layout.visibility = View.VISIBLE
                 val recipient = messageDetail.sender
-                panel_reply_to_tv.text = recipient?.name
+                val groupModel = GroupLogic.getModel(messageDetail.gid)
+                panel_reply_to_tv.text = if (recipient == null) {
+                    null
+                }else {
+                    BcmGroupNameUtil.getGroupMemberName(recipient, groupModel?.getGroupMember(recipient.address.serialize()))
+                }
 
                 val replyContent = if (messageDetail.message.type == AmeGroupMessage.CHAT_REPLY) {//If the reply message type is also reply, it is treated as a normal text message, and only the text is returned
                     val rc = messageDetail.message.content as AmeGroupMessage.ReplyContent
