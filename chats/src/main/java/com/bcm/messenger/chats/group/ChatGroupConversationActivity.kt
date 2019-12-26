@@ -908,10 +908,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                     dialog.create(groupModel?.getGroupInfo()?.noticeContent
                             ?: "", object : ChatGroupNoticeDialog.ConfirmListener {
                         override fun onConfirm() {
-                            isShowingNotice = false
-                            AmeDispatcher.io.dispatch {
-                                groupModel?.updateNoticeShowState(false)
-                            }
+                            groupModel?.updateNoticeShowState(false)
                         }
                     })
                     dialog.show(supportFragmentManager, "GroupNotice")

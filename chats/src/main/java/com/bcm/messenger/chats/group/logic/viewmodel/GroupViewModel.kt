@@ -644,6 +644,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     }
 
     fun updateNoticeShowState(noticeShowState: Boolean) {
+        modelCache.info.isShowNotice = noticeShowState
         GroupLogic.updateNoticeShowState(groupId, noticeShowState)
     }
 

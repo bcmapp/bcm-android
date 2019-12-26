@@ -1583,7 +1583,9 @@ object GroupLogic {
     }
 
     fun updateNoticeShowState(groupId: Long, noticeShowState: Boolean) {
-        groupCache.updateNoticeShowState(groupId, noticeShowState)
+        AmeDispatcher.io.dispatch {
+            groupCache.updateNoticeShowState(groupId, noticeShowState)
+        }
     }
 
     fun doOnLogin() {
@@ -2002,6 +2004,10 @@ object GroupLogic {
     fun updateAutoGenGroupNameAndAvatar(gid: Long, combineName: String, chnCombineName: String, path: String?) {
         groupCache.updateAutoGenGroupNameAndAvatar(gid, combineName, chnCombineName, path)
         updateGroupFinderSource()
+        AmeDispatcher.mainThread.dispatch {
+            val groupInfo = groupCache.getGroupInfo(gid)?:return@dispatch
+            listenerRef.get()?.onGroupInfoChanged(groupInfo)
+        }
     }
 
     fun syncGroupKeyList(gid: Long, versions: List<Long>): Observable<Boolean> {
@@ -2019,7 +2025,7 @@ object GroupLogic {
                         if (groupInfo != null) {
                             Observable.just(Pair(groupInfo, it))
                         } else {
-                            GroupLogic.queryGroupInfo(gid)
+                            queryGroupInfo(gid)
                                     .map { gInfo ->
                                         Pair(gInfo, it)
                                     }
