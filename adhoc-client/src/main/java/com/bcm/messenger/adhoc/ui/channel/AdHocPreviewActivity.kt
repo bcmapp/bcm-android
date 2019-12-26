@@ -88,8 +88,8 @@ class AdHocPreviewActivity : AppCompatActivity() {
 
 
     private fun <T : Fragment> initFragment(@IdRes target: Int,
-                                    fragment: T,
-                                    extras: Bundle?): T {
+                                            fragment: T,
+                                            extras: Bundle?): T {
         if (extras != null) {
             fragment.arguments = extras
         }
@@ -110,10 +110,12 @@ class AdHocPreviewActivity : AppCompatActivity() {
                     startPostponedEnterTransition()
                 }
                 if (type == AmeGroupMessage.IMAGE) {
+                    preview_more_view.showDefaultOptionLayout()
                     preview_more_view?.displayDefault()
-                }else {
+                } else {
                     preview_more_view?.displayNull()
                 }
+                preview_more_view?.enableDownload()
             }
 
             override fun onAttachmentComplete(complete: Boolean) {
@@ -127,9 +129,11 @@ class AdHocPreviewActivity : AppCompatActivity() {
 
             override fun onControllerVisible(isVisible: Boolean) {
                 ALog.i(TAG, "onControllerVisible isVisible: $isVisible, ${preview_more_view == null}")
-//                if (isVisible) {
-//                    preview_more_view?.hideMoreOption()
-//                }
+                if (isVisible) {
+                    preview_more_view?.hideDefaultOptionLayout()
+                } else {
+                    preview_more_view?.showDefaultOptionLayout()
+                }
             }
 
         })

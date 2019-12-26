@@ -252,10 +252,5 @@ class AdHocPreviewFragment : Fragment(), MediaMoreView.MoreViewActionListener {
 //    }
 
     override fun moreOptionVisibilityChanged(isShow: Boolean) {
-        if (isShow) {
-            preview_player?.hideControllerWithoutCallback()
-        }else {
-            preview_player?.showControllerWithoutCallback()
-        }
     }
 }
