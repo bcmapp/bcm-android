@@ -183,9 +183,14 @@ class ZoomingImageView @JvmOverloads constructor(context: Context, attrs: Attrib
                     ALog.i(TAG, "setImageUri uri: $uri, w: ${size.width}, h: ${size.height}, max: $mMaxTextureSize")
                     try {
                         if (MediaUtil.isGif(contentType)) {
-                            setImageScaleType(mStandardImageView, size.width, size.height)
-                            setGifUri(masterSecret, glideRequests, uri)
-
+                            postDelayed({
+                                try {
+                                    setImageScaleType(mStandardImageView, size.width, size.height)
+                                    setGifUri(masterSecret, glideRequests, uri)
+                                } catch (tr: Throwable) {
+                                    ALog.e(TAG, "Load gif error: ${tr.message}")
+                                }
+                            }, 500)
                         } else if (size.width <= mMaxTextureSize && size.height <= mMaxTextureSize) {
                             setImageScaleType(mStandardImageView, size.width, size.height)
                             setStandardUri(masterSecret, glideRequests, uri, size.width, size.height)

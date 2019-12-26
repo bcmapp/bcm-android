@@ -512,6 +512,8 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                     setExitSharedElementCallback(null as? SharedElementCallback)
                 }
             })
+
+            fragment?.notifyDataSetChanged()
         }
     }
 

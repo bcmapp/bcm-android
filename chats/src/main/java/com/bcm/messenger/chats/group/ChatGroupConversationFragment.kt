@@ -385,6 +385,10 @@ class ChatGroupConversationFragment : Fragment() {
         }
     }
 
+    fun notifyDataSetChanged() {
+        listAdapter?.notifyDataSetChanged()
+    }
+
     private fun fetchMessageByFirstLoad() {
         ALog.i(TAG, "fetchMessageByFirstLoad")
         groupModel?.fetchMessage(-1, GET_COUNT, true) { result, unread ->

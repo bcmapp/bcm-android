@@ -222,10 +222,15 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
     }
 
     override fun onModified(recipient: Recipient) {
-        if (mRecipientList.find { it == recipient } != null) {
-            post {
-                setHistoryData(mCurrentMessageList ?: return@post, mShowName)
+        var needRefresh = false
+        mRecipientList.forEachIndexed { index, r ->
+            if (r == recipient) {
+                mRecipientList[index] = r
+                needRefresh = true
             }
+        }
+        if (needRefresh) {
+            setHistoryData(mCurrentMessageList ?: return, mShowName)
         }
     }
 

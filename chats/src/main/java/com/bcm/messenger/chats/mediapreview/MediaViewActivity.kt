@@ -170,7 +170,7 @@ class MediaViewActivity : AppCompatActivity() {
         }
 
         override fun clickImage() {
-            chats_media_more_view.switchOptionLayout()
+            dismissActivity()
         }
 
         override fun longClickImage(): Boolean {
@@ -190,6 +190,7 @@ class MediaViewActivity : AppCompatActivity() {
             if (isVideo) {
                 chats_media_more_view.displayNull()
             } else {
+                chats_media_more_view.showDefaultOptionLayout()
                 chats_media_more_view.displayDefault()
             }
         }
