@@ -32,12 +32,12 @@ class MediaViewHistoryViewModel : BaseMediaViewModel() {
                 val message = Repository.getChatRepo().getMessage(indexId)
                 if (message != null) {
                     val groupMessage = AmeGroupMessage.messageFromJson(message.body)
-                    it.onNext(generateGroupPreviewList(threadId, indexId, AmeGroupMessageDetail().apply { this.message = groupMessage }))
+                    it.onNext(generateGroupPreviewList(indexId, AmeGroupMessageDetail().apply { this.message = groupMessage }))
                 }
             } else {
                 val message = MessageDataManager.fetchOneMessageByGidAndIndexId(threadId, indexId)
                 if (message != null) {
-                    it.onNext(generateGroupPreviewList(threadId, indexId, message))
+                    it.onNext(generateGroupPreviewList(indexId, message))
                 }
             }
             it.onComplete()
@@ -47,20 +47,19 @@ class MediaViewHistoryViewModel : BaseMediaViewModel() {
                     result(it)
                 }, {
                     it.printStackTrace()
+                    result(emptyList())
                 })
     }
 
     override fun deleteData(data: MediaViewData?, result: ((success: Boolean) -> Unit)?) {}
 
     override fun saveData(data: MediaViewData?, result: ((success: Boolean) -> Unit)?) {
-        data?.saveAttachment(null) { success, uri ->
-
+        data?.saveAttachment(null) { success, _ ->
             result?.invoke(success)
-
         }
     }
 
-    private fun generateGroupPreviewList(gid: Long, indexId: Long, message: AmeGroupMessageDetail): List<MediaViewData> {
+    private fun generateGroupPreviewList(indexId: Long, message: AmeGroupMessageDetail): List<MediaViewData> {
         if (message.message.type != AmeGroupMessage.CHAT_HISTORY) {
             return emptyList()
         }
@@ -68,7 +67,7 @@ class MediaViewHistoryViewModel : BaseMediaViewModel() {
         val historyContent = message.message.content as AmeGroupMessage.HistoryContent
 
         historyContent.messageList.forEach {
-            val data = historyMessage2GroupMessage(it, gid, indexId)
+            val data = historyMessage2GroupMessage(it, indexId)
             if (data != null) {
                 msgList.add(data)
             }
@@ -76,7 +75,7 @@ class MediaViewHistoryViewModel : BaseMediaViewModel() {
         return msgList
     }
 
-    private fun historyMessage2GroupMessage(it:HistoryMessageDetail, gid:Long, indexId:Long): MediaViewData? {
+    private fun historyMessage2GroupMessage(it:HistoryMessageDetail, indexId:Long): MediaViewData? {
         var isMediaType = false
         val history = AmeHistoryMessageDetail().apply {
             senderId = it.sender
@@ -89,26 +88,30 @@ class MediaViewHistoryViewModel : BaseMediaViewModel() {
         }
         val mediaType: Int
         val mimeType: String
-        when {
-            history.message.type == AmeGroupMessage.IMAGE -> {
+        when (history.message.type) {
+             AmeGroupMessage.IMAGE -> {
                 mediaType = MEDIA_TYPE_IMAGE
                 mimeType = (history.message.content as AmeGroupMessage.ImageContent).mimeType
                 isMediaType = true
             }
-            history.message.type == AmeGroupMessage.VIDEO -> {
+            AmeGroupMessage.VIDEO -> {
                 mediaType = MEDIA_TYPE_VIDEO
                 mimeType = (history.message.content as AmeGroupMessage.VideoContent).mimeType
                 isMediaType = true
             }
-            history.message.type == AmeGroupMessage.FILE -> {
-                mimeType = (history.message.content as AmeGroupMessage.ImageContent).mimeType
-                mediaType = if (MediaUtil.isVideoType(mimeType)) {
-                    isMediaType = true
-                    MEDIA_TYPE_VIDEO
-                } else if (MediaUtil.isImageType(mimeType)) {
-                    isMediaType = true
-                    MEDIA_TYPE_IMAGE
-                } else -1
+            AmeGroupMessage.FILE -> {
+                mimeType = (history.message.content as AmeGroupMessage.FileContent).mimeType
+                mediaType = when {
+                    MediaUtil.isVideoType(mimeType) -> {
+                        isMediaType = true
+                        MEDIA_TYPE_VIDEO
+                    }
+                    MediaUtil.isImageType(mimeType) -> {
+                        isMediaType = true
+                        MEDIA_TYPE_IMAGE
+                    }
+                    else -> -1
+                }
             }
             else -> {
                 mediaType = 0
