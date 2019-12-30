@@ -87,10 +87,10 @@ class ChatHistoryActivity : SwipeBaseActivity() {
                 return when (viewType) {
                     R.layout.chats_tip_message_item -> SystemTipsViewHolder(inflater.inflate(viewType, parent, false))
                     R.layout.chats_group_conversation_sent_item -> OutgoingHistoryViewHolder(inflater.inflate(viewType, parent, false)).apply {
-                        setCanLongClick(false)
+                        setCanLongClick(true)
                     }
                     else -> IncomeHistoryViewHolder(inflater.inflate(viewType, parent, false)).apply {
-                        setCanLongClick(false)
+                        setCanLongClick(true)
                     }
                 }
 
@@ -198,13 +198,12 @@ class ChatHistoryActivity : SwipeBaseActivity() {
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError {
-                    it.printStackTrace()
-                }
-                .subscribe {
-                    ALog.i(TAG, "getPrivateMessage ${it.size}")
+                .subscribe({
+                    ALog.i(TAG, "getPrivateMessage: ${it.size}")
                     adapter.loadData(it)
-                }
+                }, {
+                    ALog.e(TAG, "getPrivateMessage error", it)
+                })
     }
 
     private fun getGroupMessage() {
@@ -248,14 +247,12 @@ class ChatHistoryActivity : SwipeBaseActivity() {
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnComplete {}
-                .doOnError {
-                    it.printStackTrace()
-                }
-                .subscribe {
-                    ALog.i(TAG, "getGroupMessageList ${it.size}")
+                .subscribe({
+                    ALog.i(TAG, "getGroupMessage: ${it.size}")
                     adapter.loadData(it)
-                }
+                }, {
+                    ALog.e(TAG, "getGroupMessage error", it)
+                })
     }
 
     override fun onActivityReenter(resultCode: Int, data: Intent?) {

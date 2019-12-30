@@ -465,20 +465,19 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
     }
 
     private fun showItemPopWindow(context: Context, anchorView: View, messageRecord: AmeGroupMessageDetail) {
-        val groupModel = GroupLogic.getModel(messageRecord.gid) ?: return
-        if (groupModel.myRole() == AmeGroupMemberInfo.VISITOR) {
-            ALog.i(TAG, "visitor can't showItemPopWindow")
-            return
-        }
-        val pinVisible = messageRecord.isSendSuccess && groupModel.myRole() == AmeGroupMemberInfo.OWNER
-        val hasPin = pinVisible && groupModel.getGroupInfo()?.pinMid == messageRecord.serverIndex
+        val groupModel = GroupLogic.getModel(messageRecord.gid)
+        val isHistory = messageRecord is AmeHistoryMessageDetail
+        val pinVisible = messageRecord.isSendSuccess && groupModel?.myRole() == AmeGroupMemberInfo.OWNER && !isHistory
+        val hasPin = pinVisible && groupModel?.getGroupInfo()?.pinMid == messageRecord.serverIndex
         ConversationItemPopWindow.ItemPopWindowBuilder(context)
                 .withAnchorView(anchorView)
-                .withForwardable(messageRecord.isForwardable)
-                .withRecallVisible(messageRecord.isRecallable)
+                .withForwardable(messageRecord.isForwardable && !isHistory)
+                .withRecallVisible(messageRecord.isRecallable && !isHistory)
                 .withCopyVisible(messageRecord.isCopyable)
                 .withPinVisible(pinVisible, hasPin)
-                .withReplyable(!messageRecord.isSendByMe || messageRecord.isSendSuccess)
+                .withReplyable((!messageRecord.isSendByMe || messageRecord.isSendSuccess) && !isHistory)
+                .withDeletable(!isHistory)
+                .withMultiSelect(!isHistory)
                 .withOutgoing(messageRecord.isSendByMe)
                 .withClickListener(object : ConversationItemPopWindow.PopWindowClickListener {
                     override fun onCopy() {

@@ -370,7 +370,7 @@ public class AmeGroupMessageDetail {
     }
 
     /**
-     * attachmentUri stringuri
+     * attachmentUri
      *
      * @return
      */
@@ -390,7 +390,6 @@ public class AmeGroupMessageDetail {
         return null;
     }
 
-    //:，
     public boolean isForwardable() {
         if (message == null)
             return false;
@@ -407,7 +406,7 @@ public class AmeGroupMessageDetail {
         return !message.isAudio() && (!message.isMediaMessage() || exist);
     }
 
-    // check copable
+    // check copyable
     public boolean isCopyable() {
         return message != null && (message.isText() || message.isLink() || message.isGroupShare() || message.isReplyMessage());
     }

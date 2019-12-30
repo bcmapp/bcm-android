@@ -244,6 +244,7 @@ class ConversationItemPopWindow private constructor(context: Context, anchorView
         private var clickListener: PopWindowClickListener? = null
         private var isOutgoing = false
         private var canMultiSelect = true
+        private var mDeletable = true
         private val itemList: MutableList<TextView> = mutableListOf()
 
         fun withAnchorView(anchorView: View): ItemPopWindowBuilder {
@@ -290,9 +291,7 @@ class ConversationItemPopWindow private constructor(context: Context, anchorView
 
         fun withForwardable(forwardable: Boolean): ItemPopWindowBuilder {
             if(forwardable) {
-
                 itemList.add(createItem(context, TYPE_FORWARD))
-
             }
             return this
         }
@@ -314,8 +313,15 @@ class ConversationItemPopWindow private constructor(context: Context, anchorView
             return this
         }
 
+        fun withDeletable(deletable: Boolean): ItemPopWindowBuilder {
+            this.mDeletable = deletable
+            return this
+        }
+
         fun build(): ConversationItemPopWindow {
-            itemList.add(createItem(context, TYPE_DELETE))
+            if (mDeletable) {
+                itemList.add(createItem(context, TYPE_DELETE))
+            }
             if (canMultiSelect) {
                 itemList.add(createItem(context, TYPE_SELECT))
             }
