@@ -51,11 +51,15 @@ class LaunchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (quickOp.isQuick || savedInstanceState != null) {
             finish()
             return
         }
-
+        if (!isTaskRoot) {
+            finish()
+            return
+        }
         if (LaunchAdConfigure.adEnable()) {
             LaunchAdConfigure.disableAd()
             setContentView(R.layout.launch_activity)
