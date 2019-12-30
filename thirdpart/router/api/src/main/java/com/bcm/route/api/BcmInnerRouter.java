@@ -24,8 +24,6 @@ final class BcmInnerRouter {
     private static boolean debuggable = false;
     private static Context context;
 
-    private ConcurrentHashMap<String, IRouteProvider> providerMap = new ConcurrentHashMap<>();
-
     private BcmInnerRouter() {}
 
     static boolean isDebuggable() {
@@ -137,15 +135,8 @@ final class BcmInnerRouter {
                 try {
                     Class providerClass = routerIntent.getTarget();
 
-                    IRouteProvider provider = providerMap.get(routerIntent.getPath());
-                    if (provider != null) {
-                        return (T) provider;
-                    }
-
                     T instance = (T) providerClass.getConstructor().newInstance();
-                    providerMap.put(routerIntent.getPath(), (IRouteProvider) instance);
                     return instance;
-
                 } catch (Throwable tr) {
                     Log.e(TAG, "Init provider error", tr);
                 }
