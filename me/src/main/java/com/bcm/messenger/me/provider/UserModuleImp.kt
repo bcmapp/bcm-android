@@ -14,8 +14,10 @@ import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.ProfileKeyUtil
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
+import com.bcm.messenger.common.event.ClientAccountDisabledEvent
 import com.bcm.messenger.common.provider.*
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
@@ -25,7 +27,9 @@ import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmeNoteLogic
+import com.bcm.messenger.me.logic.AmePinLogic
 import com.bcm.messenger.me.logic.FeedbackReport
+import com.bcm.messenger.me.ui.keybox.SwitchAccountAdapter
 import com.bcm.messenger.me.ui.note.AmeNoteActivity
 import com.bcm.messenger.me.ui.note.AmeNoteUnlockActivity
 import com.bcm.messenger.me.utils.MeConfirmDialog
@@ -33,6 +37,8 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.BitmapUtils
 import com.bcm.messenger.utility.EncryptUtils
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.messenger.utility.foreground.AppForeground
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.logger.AmeLogConfig
 import com.bcm.route.annotation.Route
@@ -40,11 +46,13 @@ import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.whispersystems.curve25519.Curve25519
 import org.whispersystems.libsignal.ecc.DjbECPublicKey
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by wjh on 2018/7/3
@@ -53,8 +61,13 @@ import java.util.*
 class UserModuleImp : IUserModule {
     private val TAG = "UserProviderImp"
 
-    override fun initModule() {
+    private var expireDispose: Disposable? = null
+    private var kickOutDispose: Disposable? = null
 
+
+    override fun initModule() {
+        AmeNoteLogic.getInstance().refreshCurrentUser()
+        AmePinLogic.initLogic()
     }
 
     override fun uninitModule() {
@@ -86,18 +99,18 @@ class UserModuleImp : IUserModule {
                 callback.invoke(success)
             }
 
-        }else {
+        } else {
             Observable.create<Boolean> {
-                    val settings = recipient.resolve().settings
-                    if (settings.localName != name) {
-                        Repository.getRecipientRepo()?.setLocalProfile(recipient, name, settings.localAvatar)
-                        it.onNext(true)
-                    }else {
-                        it.onNext(false)
-                    }
-                    it.onComplete()
+                val settings = recipient.resolve().settings
+                if (settings.localName != name) {
+                    Repository.getRecipientRepo()?.setLocalProfile(recipient, name, settings.localAvatar)
+                    it.onNext(true)
+                } else {
+                    it.onNext(false)
+                }
+                it.onComplete()
 
-                }.subscribeOn(Schedulers.io())
+            }.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ result ->
                         if (result) {
@@ -105,7 +118,7 @@ class UserModuleImp : IUserModule {
                             contactProvider?.handleFriendPropertyChanged(recipient.address.serialize()) {
                                 callback(result)
                             }
-                        }else {
+                        } else {
                             callback(true)
                         }
                     }, {
@@ -129,11 +142,11 @@ class UserModuleImp : IUserModule {
                 }
                 callback.invoke(success)
             }
-        }else {
+        } else {
             Observable.create(ObservableOnSubscribe<Boolean> {
                 val newAvatar = if (avatarBitmap == null) {
                     ""
-                }else {
+                } else {
                     MediaStore.Images.Media.insertImage(AppContextHolder.APP_CONTEXT.contentResolver, avatarBitmap, recipient.address.serialize() + ".avatar", null)
                 }
                 Repository.getRecipientRepo()?.setLocalProfile(recipient, recipient.localName, newAvatar)
@@ -166,14 +179,14 @@ class UserModuleImp : IUserModule {
         AmeLoginLogic.getCurrentAccount()?.apply {
             name = if (!newPrivacyProfile.name.isNullOrEmpty()) {
                 newPrivacyProfile.name ?: ""
-            }else {
+            } else {
                 recipient.profileName ?: ""
             }
             avatar = if (!newPrivacyProfile.avatarHDUri.isNullOrEmpty()) {
                 newPrivacyProfile.avatarHDUri ?: ""
-            }else if (!newPrivacyProfile.avatarLDUri.isNullOrEmpty()) {
+            } else if (!newPrivacyProfile.avatarLDUri.isNullOrEmpty()) {
                 newPrivacyProfile.avatarLDUri ?: ""
-            }else {
+            } else {
                 ""
             }
             AmeLoginLogic.saveAccount(this)
@@ -185,8 +198,8 @@ class UserModuleImp : IUserModule {
         val newPrivateKey = BCMPrivateKeyUtils.encryptPrivateKey(privateKeyArray, newPassword.toByteArray())
 
         val account = AmeLoginLogic.getCurrentAccount()
-        if (account == null){
-            ALog.e(TAG,"change pin without login")
+        if (account == null) {
+            ALog.e(TAG, "change pin without login")
             return false
         }
 
@@ -210,9 +223,9 @@ class UserModuleImp : IUserModule {
             try {
                 defaultPin = getDefaultPinPassword()
                 it.onNext(try {
-                    if(defaultPin != null) {
+                    if (defaultPin != null) {
                         getUserPrivateKey(defaultPin!!) != null
-                    }else {
+                    } else {
                         false
                     }
                 } catch (ex: Exception) {
@@ -239,7 +252,7 @@ class UserModuleImp : IUserModule {
             if (isPhoneEncrypted(phone)) {
                 phone = decryptPhone(phone)
             }
-            if (phone.length > 6){
+            if (phone.length > 6) {
                 return phone.substring(phone.length - 6, phone.length)
             }
         } catch (ex: Exception) {
@@ -252,11 +265,9 @@ class UserModuleImp : IUserModule {
         val observable = Observable.create(ObservableOnSubscribe<Boolean> {
             try {
                 it.onNext(changePinPassword(oldPassword, newPassword))
-            }
-            catch (ex: Exception) {
+            } catch (ex: Exception) {
                 it.onError(ex)
-            }
-            finally {
+            } finally {
                 it.onComplete()
             }
 
@@ -273,9 +284,9 @@ class UserModuleImp : IUserModule {
     @Throws(Exception::class)
     private fun checkOldPasswordRight(oldPassword: String): ByteArray {
         val account = AmeLoginLogic.getCurrentAccount()
-        if (null != account){
+        if (null != account) {
             val result = AmeLoginLogic.accountHistory.getPrivateKeyWithPassword(account, oldPassword)
-            if (null != result){
+            if (null != result) {
                 return result
             }
         }
@@ -289,7 +300,7 @@ class UserModuleImp : IUserModule {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(intent)
-        }else {
+        } else {
             val intent = Intent(context, AmeNoteActivity::class.java)
             if (context !is Activity) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -321,7 +332,7 @@ class UserModuleImp : IUserModule {
         try {
             val account = AmeLoginLogic.getCurrentAccount() ?: return null
             return AmeLoginLogic.accountHistory.getPrivateKeyWithPassword(account, password)
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             return null
         }
     }
@@ -329,7 +340,7 @@ class UserModuleImp : IUserModule {
     override fun doForLogin(uid: String, profileKey: ByteArray?, profileName: String?, profileAvatar: String?) {
         val context = AppContextHolder.APP_CONTEXT
         Recipient.clearCache(context)
-        if (null != profileKey){
+        if (null != profileKey) {
             ProfileKeyUtil.setProfileKey(context, Base64.encodeBytes(profileKey))
         }
         val recipient = Recipient.from(context, Address.fromSerialized(uid), false)
@@ -338,13 +349,13 @@ class UserModuleImp : IUserModule {
         val name = if (!profileName.isNullOrEmpty()) {
             changed = true
             profileName
-        }else {
+        } else {
             recipient.profileName
         }
         val avatar = if (!profileAvatar.isNullOrEmpty() && BcmFileUtils.isExist(profileAvatar)) {
             changed = true
             profileAvatar
-        }else {
+        } else {
             recipient.profileAvatar
         }
         if (changed) {
@@ -362,11 +373,12 @@ class UserModuleImp : IUserModule {
 
     override fun feedback(tag: String, description: String, screenshotList: List<String>, callback: ((result: Boolean, cause: Throwable?) -> Unit)?) {
 
-        fun removeFiles(list:List<String>){
+        fun removeFiles(list: List<String>) {
             for (p in list) {
                 try {
                     File(p).delete()
-                }catch (ex: Exception) {}
+                } catch (ex: Exception) {
+                }
             }
         }
 
@@ -374,14 +386,14 @@ class UserModuleImp : IUserModule {
         Observable.create(ObservableOnSubscribe<Boolean> {
             val list = File(AmeLogConfig.logDir).listFiles()?.map { f -> f.absolutePath }?.toMutableList()
 
-            for (p in screenshotList){
+            for (p in screenshotList) {
                 val thumb = BitmapUtils.getImageThumbnailPath(p, 600)
-                if (thumb.isNotEmpty()){
+                if (thumb.isNotEmpty()) {
                     screenList.add(thumb)
                 }
             }
 
-            if (screenList.isNotEmpty()){
+            if (screenList.isNotEmpty()) {
                 list?.addAll(screenList)
             }
 
@@ -393,7 +405,7 @@ class UserModuleImp : IUserModule {
                 emitter.onComplete()
             }
 
-            if(!succeed) {
+            if (!succeed) {
                 removeFiles(screenList)
                 it.onNext(false)
                 it.onComplete()
@@ -450,7 +462,7 @@ class UserModuleImp : IUserModule {
             if (parts.size == 2 && parts[0].isNotEmpty() && parts[1].isNotEmpty()) {
                 return true
             }
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
 
         }
         return false
@@ -458,5 +470,135 @@ class UserModuleImp : IUserModule {
 
     override fun packEncryptedPhone(encryptedPhone: String, tempPubKey: String): String {
         return "$encryptedPhone-!-$tempPubKey"
+    }
+
+    override fun forceLogout(event: ClientAccountDisabledEvent) {
+        ALog.i(TAG, "handleAccountExceptionLogout ${event.type}")
+        val activity = AmeAppLifecycle.current() ?: return
+        ALog.i(TAG, "handleAccountExceptionLogout 1 ${event.type}")
+        if (AMESelfData.isLogin) {
+            ALog.i(TAG, "handleAccountExceptionLogout 2 ${event.type}")
+            try {
+                when (event.type) {
+                    ClientAccountDisabledEvent.TYPE_EXPIRE -> handleTokenExpire(activity)
+                    ClientAccountDisabledEvent.TYPE_EXCEPTION_LOGIN -> handleForceLogout(activity, event.data)
+                    ClientAccountDisabledEvent.TYPE_ACCOUNT_GONE -> handleAccountGone(activity)
+                }
+            } catch (ex: Exception) {
+                ALog.e(TAG, "handleAccountExceptionLogout error", ex)
+            }
+        }
+    }
+
+    private fun handleForceLogout(activity: Activity, info: String?) {
+        expireDispose?.dispose()
+        expireDispose = null
+
+        if (!AMESelfData.isLogin) {
+            return
+        }
+
+        val uid = AMESelfData.uid
+        ALog.i(TAG, "handleForceLogout 1")
+        if (kickOutDispose == null) {
+            ALog.i(TAG, "handleForceLogout 2")
+            kickOutDispose = Observable.create<Recipient> {
+                ALog.i(TAG, "handleForceLogout 3")
+                AmeProvider.get<ILoginModule>(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)?.quit(clearHistory = false, withLogOut = false)
+                it.onComplete()
+            }.subscribeOn(AmeDispatcher.singleScheduler)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError {
+                        ALog.e(TAG, "handleForceLogout", it)
+                        kickOutDispose = null
+                    }
+                    .doOnComplete { kickOutDispose = null }
+                    .subscribe()
+
+            AmePopup.center.dismiss()
+            BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_DESTROY)
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.fromSerialized(uid))
+                    .putString(ARouterConstants.PARAM.PARAM_CLIENT_INFO, info)
+                    .putString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID, uid)
+                    .navigation(activity)
+        }
+
+    }
+
+    private fun handleTokenExpire(activity: Activity) {
+        if (!AMESelfData.isLogin) {
+            return
+        }
+
+        if (expireDispose == null && kickOutDispose == null) {
+            expireDispose = Observable.create<Recipient> {
+                ALog.i(TAG, "handleTokenExpire 1")
+                if (AMESelfData.isLogin) {
+                    AmeProvider.get<ILoginModule>(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)?.quit(clearHistory = false, withLogOut = false)
+                } else {
+                    throw java.lang.Exception("not login")
+                }
+
+                it.onComplete()
+            }.delaySubscription(3000, TimeUnit.MILLISECONDS, AmeDispatcher.singleScheduler)
+                    .subscribeOn(AmeDispatcher.singleScheduler)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError {
+                        ALog.e(TAG, "handleTokenExpire", it)
+                        expireDispose = null
+                    }
+                    .doOnComplete { expireDispose = null }
+                    .subscribe {
+                        AmeAppLifecycle.show(activity.getString(R.string.me_logout_with_expire)) {
+                            BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
+                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                    .navigation(activity)
+                        }
+                    }
+        }
+    }
+
+    private fun handleAccountGone(activity: Activity) {
+        val self = try {
+            Recipient.fromSelf(activity, true)
+        } catch (ex: Exception) {
+            null
+        } ?: return
+
+        AmeDispatcher.io.dispatch {
+            AmeProvider.get<ILoginModule>(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)?.quit(false)
+            AmeLoginLogic.accountHistory.deleteAccount(self.address.serialize())
+        }
+
+        MeConfirmDialog.showConfirm(activity, activity.getString(R.string.me_destroy_account_confirm_title),
+                activity.getString(R.string.me_destroy_account_warning_notice), activity.getString(R.string.me_destroy_account_confirm_button)) {
+
+            AmeModuleCenter.onLoginStateChanged("")
+
+            BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    .navigation(activity)
+            activity.finish()
+        }
+    }
+
+    override fun isPinLocked(): Boolean {
+        return AmePinLogic.isLocked()
+    }
+
+    override fun showPinLock() {
+        if (AppForeground.foreground()) {
+            AmePinLogic.showPinLock()
+        }
+    }
+
+    override fun logoutMenu() {
+        val activity = AmeAppLifecycle.current() ?: return
+        if (activity.isFinishing || activity.isDestroyed) {
+            return
+        }
+
+        SwitchAccountAdapter().switchAccount(activity, AMESelfData.uid, Recipient.fromSelf(activity, true))
     }
 }

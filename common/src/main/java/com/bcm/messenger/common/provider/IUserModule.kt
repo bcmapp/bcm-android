@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.database.records.PrivacyProfile
+import com.bcm.messenger.common.event.ClientAccountDisabledEvent
 import com.bcm.messenger.common.recipients.Recipient
 
 /**
@@ -120,4 +121,20 @@ interface IUserModule : IAmeModule {
     fun packEncryptedPhone(encryptedPhone: String, tempPubKey: String): String
 
 
+    fun forceLogout(e: ClientAccountDisabledEvent)
+
+    /**
+     * @return true app pin locked, false app unlock
+     */
+    fun isPinLocked(): Boolean
+
+    /**
+     *show Pin Lock
+     */
+    fun showPinLock()
+
+    /**
+     *  show login out menu
+     */
+    fun logoutMenu()
 }

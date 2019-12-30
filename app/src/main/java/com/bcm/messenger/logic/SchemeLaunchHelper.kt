@@ -126,8 +126,7 @@ class SchemeLaunchHelper(val context: Context) {
                     "/native/appaction/logout" -> {
                         val c = context
                         if (c is AppCompatActivity) {
-                            val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_LOGIN_BASE).navigationWithCast<ILoginModule>()
-                            provider.logoutMenu()
+                            AmeModuleCenter.user().logoutMenu()
                         }
                     }
                     "/native/addfriend/new_chat_page" -> {

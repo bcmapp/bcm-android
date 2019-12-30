@@ -225,8 +225,8 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         super.onNewIntent(newIntent)
         intent = newIntent
 
-        if (AmeModuleCenter.login().isPinLocked()) {
-            AmeModuleCenter.login().showPinLock()
+        if (AmeModuleCenter.user().isPinLocked()) {
+            AmeModuleCenter.user().showPinLock()
             SchemeLaunchHelper.storeSchemeIntent(newIntent)
         } else {
             //查看系统banner消息是否存在

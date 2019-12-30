@@ -63,11 +63,6 @@ interface ILoginModule: IAmeModule {
     fun checkLoginAccountState()
 
     /**
-     *  show login out menu
-     */
-    fun logoutMenu()
-
-    /**
      * quit account
      */
     fun quit(clearHistory: Boolean, withLogOut: Boolean = true)
@@ -86,11 +81,6 @@ interface ILoginModule: IAmeModule {
      * server connection state
      */
     fun serviceConnectedState(): ServiceConnectEvent.STATE
-
-    /**
-     * true Pin , false pin
-     */
-    fun isPinEnable(): Boolean
 
     /**
      * current client function support flag
@@ -118,22 +108,9 @@ interface ILoginModule: IAmeModule {
     fun rotateSignedPrekey()
 
     /**
-     * reload note list
-     */
-    fun refreshNotes()
-
-    /**
      * update stranger message receive flag
      */
     fun updateAllowReceiveStrangers(allow: Boolean, callback: ((succeed: Boolean) -> Unit)?)
 
-    /**
-     * @return true app pin locked, false app unlock
-     */
-    fun isPinLocked(): Boolean
 
-    /**
-     *show Pin Lock
-     */
-    fun showPinLock()
 }

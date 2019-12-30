@@ -29,6 +29,7 @@ import com.bcm.messenger.common.event.GroupListChangedEvent
 import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.grouprepository.events.GroupInfoUpdateNotify
 import com.bcm.messenger.common.mms.GlideApp
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.ILoginModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -130,8 +131,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
         } catch (ex: Exception) {
             ALog.e(TAG, "onActivityCreated fail, get self recipient fail", ex)
             try {
-                val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_LOGIN_BASE).navigationWithCast<ILoginModule>()
-                provider.logoutMenu()
+                AmeModuleCenter.user().logoutMenu()
             } catch (ex: Exception) {
                 activity?.finish()
             }

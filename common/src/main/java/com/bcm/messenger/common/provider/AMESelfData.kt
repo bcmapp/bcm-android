@@ -11,7 +11,6 @@ object AMESelfData {
 
     private val loginProvider: ILoginModule = AmeProvider.get<ILoginModule>(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)!!
     val isLogin get() = loginProvider.isLogin()
-    val isPinEnable get() = loginProvider.isPinEnable()
     val uid get() = loginProvider.loginUid()
     val authPassword get() = loginProvider.authPassword()
     val token get() = loginProvider.token()
