@@ -18,11 +18,12 @@ import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.InputLengthFilter
 import com.bcm.messenger.common.utils.getString
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
+import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.getColor
 
 /**
  * Created by Kin on 2018/10/23
@@ -40,11 +41,11 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
     private var textColor = 0
     private var nameColor = 0
     private var bold = false
-    private var parentWidth = AppUtil.dp2Px(resources, 195)
+    private var parentWidth = 195.dp2Px()
 
     private var mCurrentMessageList: List<Any>? = null
     private var mShowName = false
-    private var mRecipientList = mutableListOf<Recipient>()
+    private var mRecipientList = mutableMapOf<String, Recipient>()
 
     init {
         inflate(context, R.layout.chats_history_inner_view, this)
@@ -60,7 +61,7 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        mRecipientList.forEach {
+        mRecipientList.values.forEach {
             it.removeListener(this)
         }
     }
@@ -73,18 +74,18 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
     private fun setStyle() {
         when (inView) {
             1 -> {
-                textColor = AppUtil.getColor(resources, R.color.common_color_black)
-                nameColor = AppUtil.getColor(resources, R.color.common_color_black)
+                textColor = getColor(R.color.common_color_black)
+                nameColor = getColor(R.color.common_color_black)
                 bold = true
             }
             2 -> {
-                textColor = AppUtil.getColor(resources, R.color.chats_mine_tips_text_color)
-                nameColor = AppUtil.getColor(resources, R.color.common_color_EBF5FF)
+                textColor = getColor(R.color.chats_mine_tips_text_color)
+                nameColor = getColor(R.color.common_color_EBF5FF)
                 bold = false
             }
             3 -> {
-                textColor = AppUtil.getColor(resources, R.color.common_content_second_color)
-                nameColor = AppUtil.getColor(resources, R.color.common_color_616161)
+                textColor = getColor(R.color.common_content_second_color)
+                nameColor = getColor(R.color.common_color_616161)
                 bold = false
             }
         }
@@ -92,9 +93,15 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
 
 
     fun setHistoryData(messageList: List<Any>, showName: Boolean = false) {
-        mCurrentMessageList = messageList
-        mShowName = showName
-        mRecipientList.clear()
+        setHistoryData(messageList, showName, true)
+    }
+
+    private fun setHistoryData(messageList: List<Any>, showName: Boolean = false, newData: Boolean = false) {
+        if (newData) {
+            mCurrentMessageList = messageList
+            mShowName = showName
+            mRecipientList.clear()
+        }
 
         refresh()
 
@@ -111,25 +118,40 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
                     } else {
                         it.getRecipient()
                     }
+                    if (newData) {
+                        mRecipientList[recipient.address.serialize()] = recipient
+                        recipient.addListener(this)
+                    } else {
+                        recipient = mRecipientList[recipient.address.serialize()]
+                    }
                     bodyText = getHistoryItemBodyText(it)
-
                 }
                 is AmeGroupMessageDetail -> {
-                    recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(it.senderId), true)
+                    recipient = if (newData) {
+                        val r = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(it.senderId), true)
+                        mRecipientList[r.address.serialize()] = r
+                        r.addListener(this)
+                        r
+                    } else {
+                        mRecipientList[it.senderId]
+                    }
                     bodyText = getHistoryItemBodyText(it.message)
-
                 }
                 is HistoryMessageDetail -> {
-                    recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(it.sender ?: ""), true)
+                    recipient = if (newData) {
+                        val r = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(it.sender ?: ""), true)
+                        mRecipientList[r.address.serialize()] = r
+                        r.addListener(this)
+                        r
+                    } else {
+                        mRecipientList[it.sender ?: ""]
+                    }
                     bodyText = getHistoryItemBodyText(AmeGroupMessage.messageFromJson(it.messagePayload ?: ""))
                 }
             }
 
             val ssb = SpannableStringBuilder()
             if (showName && recipient != null) {
-                this.mRecipientList.add(recipient)
-                recipient.addListener(this)
-
                 ssb.append(InputLengthFilter.filterString(recipient.name, 10), ForegroundColorSpan(nameColor), Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
                 ssb.append(": ", ForegroundColorSpan(nameColor), Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
                 if (bold) {
@@ -173,11 +195,11 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
             message.isMediaMessage() && message.getVideoAttachment() != null -> getString(R.string.chats_history_message_video)
             message.isLocation() -> {
                 val newMessage = AmeGroupMessage.messageFromJson(message.body)
-                when {
-                    newMessage.type == AmeGroupMessage.LOCATION -> AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_history_message_location)
-                    newMessage.type == AmeGroupMessage.CONTACT -> AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_history_message_contact)
-                    newMessage.type == AmeGroupMessage.LINK -> AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_history_message_link)
-                    newMessage.type == AmeGroupMessage.NEWSHARE_CHANNEL -> AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_history_message_channel)
+                when (newMessage.type) {
+                    AmeGroupMessage.LOCATION -> getString(R.string.chats_history_message_location)
+                    AmeGroupMessage.CONTACT -> getString(R.string.chats_history_message_contact)
+                    AmeGroupMessage.LINK -> getString(R.string.chats_history_message_link)
+                    AmeGroupMessage.NEWSHARE_CHANNEL -> getString(R.string.chats_history_message_channel)
                     else -> ""
                 }
             }
@@ -191,13 +213,13 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
                 val content = message.content as AmeGroupMessage.TextContent
                 content.text
             }
-            AmeGroupMessage.IMAGE -> AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_history_message_image)
-            AmeGroupMessage.VIDEO -> AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_history_message_video)
-            AmeGroupMessage.FILE -> AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_history_message_file)
-            AmeGroupMessage.CONTACT -> AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_history_message_contact)
-            AmeGroupMessage.LOCATION -> AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_history_message_location)
-            AmeGroupMessage.LINK -> AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_history_message_link)
-            AmeGroupMessage.NEWSHARE_CHANNEL -> AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_history_message_channel)
+            AmeGroupMessage.IMAGE -> getString(R.string.chats_history_message_image)
+            AmeGroupMessage.VIDEO -> getString(R.string.chats_history_message_video)
+            AmeGroupMessage.FILE -> getString(R.string.chats_history_message_file)
+            AmeGroupMessage.CONTACT -> getString(R.string.chats_history_message_contact)
+            AmeGroupMessage.LOCATION -> getString(R.string.chats_history_message_location)
+            AmeGroupMessage.LINK -> getString(R.string.chats_history_message_link)
+            AmeGroupMessage.NEWSHARE_CHANNEL -> getString(R.string.chats_history_message_channel)
             AmeGroupMessage.CHAT_REPLY -> {
                 val content = message.content as AmeGroupMessage.ReplyContent
                 content.text
@@ -222,15 +244,10 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
     }
 
     override fun onModified(recipient: Recipient) {
-        var needRefresh = false
-        mRecipientList.forEachIndexed { index, r ->
-            if (r == recipient) {
-                mRecipientList[index] = r
-                needRefresh = true
-            }
-        }
-        if (needRefresh) {
-            setHistoryData(mCurrentMessageList ?: return, mShowName)
+        val r = mRecipientList[recipient.address.serialize()]
+        if (r != null) {
+            mRecipientList[recipient.address.serialize()] = recipient
+            setHistoryData(mCurrentMessageList ?: return, mShowName, false)
         }
     }
 

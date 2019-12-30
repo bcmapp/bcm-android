@@ -43,9 +43,11 @@ class MediaViewHistoryViewModel : BaseMediaViewModel() {
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+                .subscribe({
                     result(it)
-                }
+                }, {
+                    it.printStackTrace()
+                })
     }
 
     override fun deleteData(data: MediaViewData?, result: ((success: Boolean) -> Unit)?) {}
