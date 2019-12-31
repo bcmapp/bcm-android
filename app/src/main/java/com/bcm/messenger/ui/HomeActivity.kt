@@ -20,7 +20,10 @@ import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.metrics.ReportUtil
 import com.bcm.messenger.common.preferences.SuperPreferences
-import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.provider.AMESelfData
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
+import com.bcm.messenger.common.provider.accountmodule.IChatModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.BcmRecyclerView

@@ -13,7 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.provider.IGroupModule
+import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getDrawable
 import com.bcm.route.api.BcmRouter

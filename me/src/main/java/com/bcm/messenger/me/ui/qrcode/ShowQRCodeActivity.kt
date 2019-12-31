@@ -3,9 +3,8 @@ package com.bcm.messenger.me.ui.qrcode
 import android.graphics.Bitmap
 import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.provider.IUserModule
+import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.AmeAppLifecycle

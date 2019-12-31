@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bcm.route.annotation.Route
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.provider.IUserModule
+import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.fragment.ITransferAction
 import com.bcm.messenger.wallet.fragment.SendBitcoinFragment

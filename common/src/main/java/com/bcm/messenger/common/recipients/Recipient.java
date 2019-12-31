@@ -26,7 +26,7 @@ import com.bcm.messenger.common.database.records.RecipientSettings;
 import com.bcm.messenger.common.database.repositories.RecipientRepo;
 import com.bcm.messenger.common.provider.AMESelfData;
 import com.bcm.messenger.common.provider.IContactModule;
-import com.bcm.messenger.common.provider.IGroupModule;
+import com.bcm.messenger.common.provider.accountmodule.IGroupModule;
 import com.bcm.messenger.common.recipients.RecipientProvider.RecipientDetails;
 import com.bcm.messenger.common.ui.IndividualAvatarView;
 import com.bcm.messenger.common.utils.AppUtilKotlinKt;

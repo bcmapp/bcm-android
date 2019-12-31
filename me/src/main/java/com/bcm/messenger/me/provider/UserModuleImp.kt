@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.ProfileKeyUtil
@@ -15,6 +16,7 @@ import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.ClientAccountDisabledEvent
 import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
@@ -62,6 +64,14 @@ class UserModuleImp : IUserModule {
 
     private var expireDispose: Disposable? = null
     private var kickOutDispose: Disposable? = null
+
+    private lateinit var accountContext: AccountContext
+    override val context: AccountContext
+        get() = accountContext
+
+    override fun setContext(context: AccountContext) {
+        this.accountContext = context
+    }
 
 
     override fun initModule() {
@@ -572,7 +582,7 @@ class UserModuleImp : IUserModule {
         MeConfirmDialog.showConfirm(activity, activity.getString(R.string.me_destroy_account_confirm_title),
                 activity.getString(R.string.me_destroy_account_warning_notice), activity.getString(R.string.me_destroy_account_confirm_button)) {
 
-            AmeModuleCenter.onLoginStateChanged("")
+            AmeModuleCenter.onLoginSucceed("")
 
             BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

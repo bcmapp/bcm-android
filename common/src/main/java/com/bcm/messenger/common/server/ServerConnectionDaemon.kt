@@ -15,7 +15,7 @@ import com.bcm.messenger.common.metrics.COUNTER_WEBSOCKET_FAIL
 import com.bcm.messenger.common.metrics.COUNTER_WEBSOCKET_SUCCESS
 import com.bcm.messenger.common.metrics.ReportUtil
 import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IMetricsModule
+import com.bcm.messenger.common.provider.accountmodule.IMetricsModule
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.logger.ALog

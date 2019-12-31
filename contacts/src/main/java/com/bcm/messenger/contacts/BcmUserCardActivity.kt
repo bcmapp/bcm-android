@@ -9,6 +9,8 @@ import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
+import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2

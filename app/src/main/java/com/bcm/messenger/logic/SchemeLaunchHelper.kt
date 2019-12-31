@@ -19,6 +19,9 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.base64Decode
+import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
+import com.bcm.messenger.common.provider.accountmodule.IChatModule
+import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.contacts.FriendRequestsListActivity
 import com.bcm.messenger.share.SystemShareActivity
 import com.bcm.messenger.ui.HomeActivity

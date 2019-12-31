@@ -8,13 +8,22 @@ import com.bcm.messenger.adhoc.sdk.AdHocSDK
 import com.bcm.messenger.adhoc.ui.channel.AdHocConversationActivity
 import com.bcm.messenger.adhoc.ui.setting.AdHocSettingActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.provider.IAdHocModule
+import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.route.annotation.Route
 
 @Route(routePath = ARouterConstants.Provider.PROVIDER_AD_HOC)
 class AdHocModuleImpl : IAdHocModule {
+    private lateinit var accountContext: AccountContext
+    override val context: AccountContext
+        get() = accountContext
+
+    override fun setContext(context: AccountContext) {
+        this.accountContext = context
+    }
+
     override fun initModule() {
 
     }

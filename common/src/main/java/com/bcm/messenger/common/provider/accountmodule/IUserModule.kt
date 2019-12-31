@@ -1,17 +1,18 @@
-package com.bcm.messenger.common.provider
+package com.bcm.messenger.common.provider.accountmodule
 
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.event.ClientAccountDisabledEvent
+import com.bcm.messenger.common.provider.accountmodule.IAmeAccountModule
 import com.bcm.messenger.common.recipients.Recipient
 
 /**
  *
  * Created by ling on 2018/3/14.
  */
-interface IUserModule : IAmeModule {
+interface IUserModule : IAmeAccountModule {
 
     /**
      *

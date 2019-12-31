@@ -15,8 +15,8 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IAdHocModule
-import com.bcm.messenger.common.provider.IUserModule
+import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
+import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.dp2Px

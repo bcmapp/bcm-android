@@ -1,16 +1,16 @@
-package com.bcm.messenger.common.provider
+package com.bcm.messenger.common.provider.accountmodule
 
 import android.content.Context
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
-import com.bcm.route.api.IRouteProvider
+import com.bcm.messenger.common.provider.accountmodule.IAmeAccountModule
 
 
 /**
  * 
  * Created by zjl on 2018/3/14.
  */
-interface IGroupModule : IAmeModule {
+interface IGroupModule : IAmeAccountModule {
     /**
      * (，，)
      */

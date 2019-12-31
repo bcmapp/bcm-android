@@ -11,7 +11,7 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.common.provider.IContactModule
-import com.bcm.messenger.common.provider.IGroupModule
+import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog

@@ -12,6 +12,8 @@ import com.bcm.messenger.common.event.ServiceConnectEvent
 import com.bcm.messenger.common.grouprepository.room.database.GroupDatabase
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
+import com.bcm.messenger.common.provider.accountmodule.IWalletModule
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.BcmFileUtils
@@ -177,7 +179,7 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
 
             TextSecurePreferences.clear(AppContextHolder.APP_CONTEXT)
             MasterSecretUtil.clearMasterSecretPassphrase(AppContextHolder.APP_CONTEXT)
-            val walletProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_WALLET_BASE).navigation() as IWalletProvider
+            val walletProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_WALLET_BASE).navigation() as IWalletModule
             walletProvider.destroyWallet()
             AmeModuleCenter.contact().clear()
 
@@ -219,7 +221,7 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
             }
 
             AmePushProcess.reset()
-            AmeModuleCenter.onLoginStateChanged(AMESelfData.uid)
+            AmeModuleCenter.onLoginSucceed(AMESelfData.uid)
             if(!TextSecurePreferences.isSignedPreKeyRegistered(AppContextHolder.APP_CONTEXT)) {
                 AmeModuleCenter.accountJobMgr()?.add(CreateSignedPreKeyJob(AppContextHolder.APP_CONTEXT))
             }

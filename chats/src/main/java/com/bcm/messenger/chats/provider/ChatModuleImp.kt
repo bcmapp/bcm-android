@@ -16,6 +16,7 @@ import com.bcm.messenger.chats.privatechat.logic.ChatMessageReceiver
 import com.bcm.messenger.chats.privatechat.logic.MessageSender
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.records.MessageRecord
@@ -26,7 +27,7 @@ import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.IChatModule
+import com.bcm.messenger.common.provider.accountmodule.IChatModule
 import com.bcm.messenger.common.provider.bean.ConversationStorage
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
@@ -48,13 +49,21 @@ import org.greenrobot.eventbus.EventBus
 @Route(routePath = ARouterConstants.Provider.PROVIDER_CONVERSATION_BASE)
 class ChatModuleImp : IChatModule {
     private val chatMessageReceiver = ChatMessageReceiver()
+    private lateinit var accountContext: AccountContext
+
+    override val context: AccountContext
+        get() = accountContext
+
+    override fun setContext(context: AccountContext) {
+        this.accountContext = context
+    }
 
     override fun initModule() {
-        AmeModuleCenter.serverDispatcher().addListener(chatMessageReceiver)
+        AmeModuleCenter.serverDispatcher(context).addListener(chatMessageReceiver)
     }
 
     override fun uninitModule() {
-        AmeModuleCenter.serverDispatcher().removeListener(chatMessageReceiver)
+        AmeModuleCenter.serverDispatcher(context).removeListener(chatMessageReceiver)
     }
 
     private val TAG = "IConversationProvider"

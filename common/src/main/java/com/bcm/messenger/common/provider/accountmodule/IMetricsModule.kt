@@ -1,9 +1,9 @@
-package com.bcm.messenger.common.provider
+package com.bcm.messenger.common.provider.accountmodule
 
 /**
  * Created by Kin on 2019/8/27
  */
-interface IMetricsModule : IAmeModule {
+interface IMetricsModule : IAmeAccountModule {
     fun addNetworkReportData(serverIp: String?, port: Int, reqMethod: String?, path: String?, returnCode: String, time: Long)
 
     fun addLbsNetworkReportData(serverIp: String?, port: Int, reqMethod: String?, path: String?, returnCode: String, time: Long)

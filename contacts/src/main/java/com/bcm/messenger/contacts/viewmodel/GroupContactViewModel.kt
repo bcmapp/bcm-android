@@ -6,7 +6,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.event.GroupListChangedEvent
 import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IGroupModule
+import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe

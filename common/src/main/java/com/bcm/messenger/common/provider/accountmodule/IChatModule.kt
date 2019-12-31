@@ -1,10 +1,11 @@
-package com.bcm.messenger.common.provider
+package com.bcm.messenger.common.provider.accountmodule
 
 import android.content.Context
 import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.provider.accountmodule.IAmeAccountModule
 import com.bcm.messenger.common.provider.bean.ConversationStorage
 
-interface IChatModule : IAmeModule {
+interface IChatModule : IAmeAccountModule {
     /**
      * check rtc call incoming
      */

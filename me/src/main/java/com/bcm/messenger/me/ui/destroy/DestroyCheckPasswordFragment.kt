@@ -135,7 +135,7 @@ class DestroyCheckPasswordFragment : Fragment() {
                                 ALog.e(TAG, "登录态还没释放完")
                                 return@showConfirm
                             }
-                            AmeModuleCenter.onLoginStateChanged("")
+                            AmeModuleCenter.onLoginSucceed("")
 
                             BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

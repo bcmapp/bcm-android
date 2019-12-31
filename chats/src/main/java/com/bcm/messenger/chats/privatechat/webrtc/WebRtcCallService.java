@@ -36,7 +36,7 @@ import com.bcm.messenger.common.metrics.MetricsConstKt;
 import com.bcm.messenger.common.metrics.ReportUtil;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
 import com.bcm.messenger.common.provider.AMESelfData;
-import com.bcm.messenger.common.provider.IChatModule;
+import com.bcm.messenger.common.provider.accountmodule.IChatModule;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.utils.AppUtil;
 import com.bcm.messenger.common.utils.AppUtilKotlinKt;

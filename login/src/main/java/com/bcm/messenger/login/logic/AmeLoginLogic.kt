@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.config.BcmFeatureSupport
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.MasterSecretUtil
@@ -23,6 +24,9 @@ import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.common.provider.accountmodule.IGroupModule
+import com.bcm.messenger.common.provider.accountmodule.IUserModule
+import com.bcm.messenger.common.provider.accountmodule.IWalletModule
 import com.bcm.messenger.login.R
 import com.bcm.messenger.login.bean.*
 import com.bcm.messenger.utility.AmeTimeUtil
@@ -149,17 +153,17 @@ object AmeLoginLogic {
         }
     }
 
-    private fun handleLocalLogout(context: Context) {
-        AmeModuleCenter.contact().doForLogOut()
-        AmeModuleCenter.user().doForLogout()
+    private fun handleLocalLogout(accountContext: AccountContext, context: Context) {
+        AmeModuleCenter.contact(accountContext)?.doForLogOut()
+        AmeModuleCenter.user(accountContext)?.doForLogout()
 
         ReportUtil.unInit()
         AmePushProcess.clearNotificationCenter()
         AmePushProcess.updateAppBadge(AppContextHolder.APP_CONTEXT, 0)
-        AmeProvider.get<IWalletProvider>(ARouterConstants.Provider.PROVIDER_WALLET_BASE)?.logoutWallet()
+        AmeProvider.get<IWalletModule>(ARouterConstants.Provider.PROVIDER_WALLET_BASE)?.logoutWallet()
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onAccountLogout(AppContextHolder.APP_CONTEXT, "")
 
-        AmeModuleCenter.onLoginStateChanged("")
+        AmeModuleCenter.onLoginSucceed("")
         BCMEncryptUtils.clearMasterSecret()
         Recipient.clearCache(context)
 
@@ -185,13 +189,13 @@ object AmeLoginLogic {
     /**
      * quit account
      */
-    fun quit(clearHistory: Boolean, withLogOut: Boolean = true) {
+    fun quit(accountContext: AccountContext, clearHistory: Boolean, withLogOut: Boolean = true) {
 
         if (isLogin()) {
             ALog.i(TAG, "quit clearHistory: $clearHistory, withLogout: $withLogOut")
 
             try {
-                handleLocalLogout(AppContextHolder.APP_CONTEXT)
+                handleLocalLogout(accountContext, AppContextHolder.APP_CONTEXT)
 
                 if (withLogOut) {
                     PushUtil.unregisterPush()
@@ -210,7 +214,7 @@ object AmeLoginLogic {
 
                         TextSecurePreferences.clear(AppContextHolder.APP_CONTEXT)
                         MasterSecretUtil.clearMasterSecretPassphrase(AppContextHolder.APP_CONTEXT)
-                        val walletProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_WALLET_BASE).navigation() as IWalletProvider
+                        val walletProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_WALLET_BASE).navigation() as IWalletModule
                         walletProvider.destroyWallet()
                         AmeModuleCenter.contact().clear()
 
@@ -253,7 +257,7 @@ object AmeLoginLogic {
         mTmpToken = if (uid.isEmpty() || password.isEmpty()) {
             ""
         } else {
-            quit(false)
+            quit(AccountContext(accountHistory.currentLoginUid()),false)
             genToken(uid, password)
         }
     }
@@ -458,7 +462,7 @@ object AmeLoginLogic {
                         registerSucceed(registrationId, uid, keyPair, signalingKey, signalPassword, password, passwordHint)
                     }
                     .doOnError {
-                        quit(false)
+                        quit(AccountContext(accountHistory.currentLoginUid()),false)
                     }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -487,7 +491,7 @@ object AmeLoginLogic {
 
         initCreatePhrase(AppContextHolder.APP_CONTEXT, ecKeyPair)
 
-        AmeModuleCenter.onLoginStateChanged(uid)
+        AmeModuleCenter.onLoginSucceed(uid)
 
         if (!DatabaseFactory.isDatabaseExist(AppContextHolder.APP_CONTEXT) || isRegister || (TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT) && TextSecurePreferences.getMigrateFailedCount(AppContextHolder.APP_CONTEXT) < 3)) {
             TextSecurePreferences.setHasDatabaseMigrated(AppContextHolder.APP_CONTEXT)
@@ -530,7 +534,7 @@ object AmeLoginLogic {
 
         } catch (e: Exception) {
             ALog.logForSecret(TAG, "loginSucceed generate prekey or prekey upload failed, ${e.message}", e)
-            quit(false)
+            quit(AccountContext(accountHistory.currentLoginUid()),false)
             ReportUtil.loginEnded(false)
             throw e
         }

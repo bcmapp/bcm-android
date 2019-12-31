@@ -142,7 +142,7 @@ class SwitchAccountAdapter {
                             .subscribe {
                                 AmePopup.loading.dismiss()
 
-                                AmeModuleCenter.onLoginStateChanged("")
+                                AmeModuleCenter.onLoginSucceed("")
 
                                 activity.startActivity(Intent(activity, VerifyKeyActivity::class.java).apply {
                                     flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK

@@ -21,8 +21,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.event.ServiceConnectEvent
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IAdHocModule
-import com.bcm.messenger.common.provider.ILoginModule
+import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.popup.ToastUtil

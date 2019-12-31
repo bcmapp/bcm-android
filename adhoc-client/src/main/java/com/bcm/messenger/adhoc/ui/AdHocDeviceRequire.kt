@@ -5,7 +5,7 @@ import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.util.ScreenUtil
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IAdHocModule
+import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.ble.BleUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher

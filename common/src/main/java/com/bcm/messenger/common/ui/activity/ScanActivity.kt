@@ -22,7 +22,7 @@ import androidx.core.content.ContextCompat
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.provider.IUserModule
+import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.scan.CameraManager

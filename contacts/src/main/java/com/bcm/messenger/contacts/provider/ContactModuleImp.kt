@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.contacts.logic.BcmProfileLogic
@@ -18,6 +19,9 @@ import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
 import com.bcm.messenger.common.provider.*
 import com.bcm.messenger.common.provider.IContactModule.Companion.TAG
+import com.bcm.messenger.common.provider.accountmodule.IAmeAccountModule
+import com.bcm.messenger.common.provider.accountmodule.IGroupModule
+import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.activity.SearchActivity
 import com.bcm.messenger.common.utils.AmeAppLifecycle
@@ -45,18 +49,25 @@ import io.reactivex.schedulers.Schedulers
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_CONTACTS_BASE)
 class ContactModuleImp : IContactModule {
-
+    private val contactRequestReceiver = ContactRequestReceiver()
     private val mProfileLogic = BcmProfileLogic()
     private val mContactLogic = BcmContactLogic()
-    private val contactRequestReceiver = ContactRequestReceiver(mContactLogic)
+    private lateinit var accountContext: AccountContext
+
+    override val context: AccountContext
+        get() = accountContext
+
+    override fun setContext(context: AccountContext) {
+        this.accountContext = context
+    }
 
 
     override fun initModule() {
-        AmeModuleCenter.serverDispatcher().addListener(contactRequestReceiver)
+        AmeModuleCenter.serverDispatcher(accountContext).addListener(contactRequestReceiver)
     }
 
     override fun uninitModule() {
-        AmeModuleCenter.serverDispatcher().removeListener(contactRequestReceiver)
+        AmeModuleCenter.serverDispatcher(accountContext).removeListener(contactRequestReceiver)
     }
 
     override fun clear() {

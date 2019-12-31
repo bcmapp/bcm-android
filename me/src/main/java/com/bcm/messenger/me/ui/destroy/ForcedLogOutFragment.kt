@@ -77,7 +77,7 @@ class ForcedLogOutFragment : Fragment() {
             return
         }
 
-        AmeModuleCenter.onLoginStateChanged("")
+        AmeModuleCenter.onLoginSucceed("")
 
         BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

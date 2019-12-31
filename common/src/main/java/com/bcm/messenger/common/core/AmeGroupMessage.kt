@@ -14,7 +14,7 @@ import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.provider.AMESelfData
 import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IGroupModule
+import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView

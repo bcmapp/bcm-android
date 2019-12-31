@@ -42,7 +42,7 @@ import com.bcm.messenger.common.mms.*
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IContactModule
-import com.bcm.messenger.common.provider.IUserModule
+import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.providers.PersistentBlobProvider
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener

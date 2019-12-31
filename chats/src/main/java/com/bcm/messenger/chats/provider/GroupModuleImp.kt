@@ -6,6 +6,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.GroupMessageReceiver
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
@@ -13,7 +14,7 @@ import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
-import com.bcm.messenger.common.provider.IGroupModule
+import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.base64Encode
 import com.bcm.messenger.common.utils.format
@@ -33,14 +34,22 @@ class GroupModuleImp : IGroupModule {
 
     private val TAG = "GroupProviderImp"
 
+    private lateinit var accountContext: AccountContext
+    override val context: AccountContext
+        get() = accountContext
+
+    override fun setContext(context: AccountContext) {
+        this.accountContext = context
+    }
+
     override fun initModule() {
         GroupLogic.init()
-        AmeModuleCenter.serverDispatcher().addListener(groupMessageReceiver)
+        AmeModuleCenter.serverDispatcher(context).addListener(groupMessageReceiver)
     }
 
     override fun uninitModule() {
         GroupLogic.unInit()
-        AmeModuleCenter.serverDispatcher().removeListener(groupMessageReceiver)
+        AmeModuleCenter.serverDispatcher(context).removeListener(groupMessageReceiver)
     }
 
     override fun doGroupJoin(context: Context, gid: Long, name: String?, icon: String?, code: String, signature: String, timestamp: Long, eKey:ByteArray?,callback: ((success: Boolean) -> Unit)?) {

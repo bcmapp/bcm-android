@@ -1,12 +1,10 @@
-package com.bcm.messenger.common.provider
-
-import com.bcm.route.api.IRouteProvider
+package com.bcm.messenger.common.provider.accountmodule
 
 /**
  * 
  * Created by wjh on 2018/6/13
  */
-interface IWalletProvider : IRouteProvider {
+interface IWalletModule : IAmeAccountModule {
 
     /**
      * 

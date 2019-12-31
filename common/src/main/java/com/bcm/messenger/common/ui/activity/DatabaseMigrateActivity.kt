@@ -110,7 +110,7 @@ class DatabaseMigrateActivity : AppCompatActivity() {
             TextSecurePreferences.setMigrateFailedCount(this, 0)
         }
 
-        AmeModuleCenter.onLoginStateChanged(AMESelfData.uid)
+        AmeModuleCenter.onLoginSucceed(AMESelfData.uid)
 
         val migration: IDatabaseMigration = DatabaseMigration
         migration.clearFlag()

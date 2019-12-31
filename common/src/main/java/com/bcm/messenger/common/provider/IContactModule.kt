@@ -3,6 +3,7 @@ package com.bcm.messenger.common.provider
 import android.content.Context
 import android.graphics.Bitmap
 import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.provider.accountmodule.IAmeAccountModule
 import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
@@ -13,7 +14,7 @@ import io.reactivex.disposables.Disposable
  * 
  * Created by ling on 2018/3/14.
  */
-interface IContactModule : IAmeModule {
+interface IContactModule : IAmeAccountModule {
 
     companion object {
         const val TAG = "IContactProvider"

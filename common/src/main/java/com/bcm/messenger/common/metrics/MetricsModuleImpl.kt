@@ -1,14 +1,23 @@
 package com.bcm.messenger.common.metrics
 
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.route.annotation.Route
-import com.bcm.messenger.common.provider.IMetricsModule
+import com.bcm.messenger.common.provider.accountmodule.IMetricsModule
 
 /**
  * Created by Kin on 2019/8/27
  */
 @Route(routePath = ARouterConstants.Provider.REPORT_BASE)
 class MetricsModuleImpl : IMetricsModule {
+    private lateinit var accountContext: AccountContext
+    override val context: AccountContext
+        get() = accountContext
+
+    override fun setContext(context: AccountContext) {
+        this.accountContext = context
+    }
+
     override fun initModule() {
 
     }

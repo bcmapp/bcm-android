@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.provider.IUserModule
+import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.me.R
 import com.bcm.route.api.BcmRouter

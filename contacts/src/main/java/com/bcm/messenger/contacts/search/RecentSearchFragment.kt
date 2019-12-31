@@ -20,7 +20,7 @@ import com.bcm.messenger.common.finder.BcmFinderType
 import com.bcm.messenger.common.finder.SearchRecordDetail
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
-import com.bcm.messenger.common.provider.IGroupModule
+import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.RecipientAvatarView
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
