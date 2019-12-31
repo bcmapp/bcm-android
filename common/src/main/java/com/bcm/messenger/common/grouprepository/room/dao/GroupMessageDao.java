@@ -228,7 +228,7 @@ public interface GroupMessageDao {
     @Query("SELECT * FROM " + GroupMessage.TABLE_NAME + " WHERE gid =" + " :gid" + " AND mid = " + " :mid")
     GroupMessage queryOneMessageByMid(long gid, long mid);
 
-    @Query("SELECT mid FROM " + GroupMessage.TABLE_NAME + " WHERE gid =" + " :gid" + " AND mid >= :minMid AND mid <= :maxMid")
+    @Query("SELECT mid FROM " + GroupMessage.TABLE_NAME + " WHERE gid =" + " :gid" + " AND mid >= :minMid AND mid <= :maxMid AND is_confirm != 1")
     long[] queryExistMessageByMids(long gid, long minMid, long maxMid);
 
     /**

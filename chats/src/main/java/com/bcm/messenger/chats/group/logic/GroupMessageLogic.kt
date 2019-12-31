@@ -535,7 +535,8 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
 
         // If the last ack is smaller than the id of the local record, it means that some records are not read
         if (from < localMax) {
-            val list = MessageDataManager.getExistMessageByMids(gid, from, localMax - 1).sorted()
+            val list = MessageDataManager.getExistMessageByMids(gid, from, localMax).sorted()
+
             if (list.isNotEmpty() && list.first() == from) {
                 //found next discontinuous mid
                 var pre = from - 1
