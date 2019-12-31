@@ -629,6 +629,10 @@ object MessageDataManager {
         return GroupMessageTransform.transformToModel(message)
     }
 
+    fun getExistMessageByMids(gid: Long, minMid:Long, maxMid:Long): List<Long> {
+        return getDao().queryExistMessageByMids(gid, minMid, maxMid).toList()
+    }
+
     //
     fun queryMinReadMessage(gid: Long): GroupMessage? {
         val groupList = getDao().queryMinReadMessage(gid, 1)

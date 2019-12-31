@@ -122,7 +122,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
                 .doOnError {
                     ALog.e(TAG, "GroupMessageMissedEvent sync failed")
                 }
-                .subscribe ()
+                .subscribe()
     }
 
     @Subscribe
@@ -196,7 +196,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
                                 val syncIgnoreList = it.data.groups?.filter { state ->
                                     !syncOfflineMessage(
                                             state.gid, state.lastMid, state.lastAckMid)
-                                }?.map {state -> state.gid }
+                                }?.map { state -> state.gid }
 
                                 if (null != syncIgnoreList) {
                                     checkGroupKeyValidState(syncIgnoreList)
@@ -255,7 +255,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
         failCounter.finishCounter(gid)
 
         if (GroupLogic.isGroupMemberDirty(gid)) {
-            queryGroupInfo(gid){_,_,_->}
+            queryGroupInfo(gid) { _, _, _ -> }
         }
     }
 
@@ -389,7 +389,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
             }
 
             if (null != fetchGroupMessage) {
-                if(fetchGroupMessage.content_type == AmeGroupMessage.DECRYPT_FAIL.toInt()) {
+                if (fetchGroupMessage.content_type == AmeGroupMessage.DECRYPT_FAIL.toInt()) {
                     ++decryptFailCount
                 }
                 fetchList.add(fetchGroupMessage)
@@ -406,7 +406,6 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
 
         return fetchList.sortedByDescending { it.mid }
     }
-
 
 
     private fun handleRecallMessage(msg: GroupMessageEntity, groupInfo: GroupInfo): GroupMessage {
@@ -536,12 +535,23 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
 
         // If the last ack is smaller than the id of the local record, it means that some records are not read
         if (from < localMax) {
-            if (MessageDataManager.getMessageByMid(gid, from) != null) {
-                from = max(from, localMax+1)
+            val list = MessageDataManager.getExistMessageByMids(gid, from, localMax - 1).sorted()
+            if (list.isNotEmpty() && list.first() == from) {
+                //found next discontinuous mid
+                var pre = from - 1
+                for (i in list) {
+                    if (i - pre != 1L) {
+                        pre += 1
+                        ALog.i(TAG, "adjust gid:$gid $pre")
+                        break
+                    }
+                    pre = i
+                }
+                from = pre
             }
         }
 
-        if (from <= lastMid && lastMid > lastMidCache[gid]?:0) {
+        if (from <= lastMid && lastMid > lastMidCache[gid] ?: 0) {
             failCounter.updateFailCount(gid, 0)
             lastMidCache[gid] = lastMid
             MessageDataManager.insertFetchingMessages(gid, from, lastMid)
@@ -578,7 +588,7 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
         ackReporter.reportAck(gid, maxMid)
     }
 
-    fun systemNotice(groupId: Long, content: AmeGroupMessage.SystemContent, read: Boolean = true, visible:Boolean = true): Long {
+    fun systemNotice(groupId: Long, content: AmeGroupMessage.SystemContent, read: Boolean = true, visible: Boolean = true): Long {
         ALog.d(TAG, "systemNotice groupId: $groupId read: $read")
         return MessageDataManager.systemNotice(groupId, content, read, visible)
     }
