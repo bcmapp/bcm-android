@@ -10,12 +10,12 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.contacts.logic.BcmContactLogic
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.contacts_activity_handle_friend_request.*
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 
@@ -69,32 +69,22 @@ class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListen
     private fun sendReply(approve: Boolean) {
         ALog.i(TAG, "Start to send reply approve $approve")
         AmePopup.loading.show(this)
-        Observable.create<Boolean> {
-            BcmContactLogic.replyAddFriend(recipient.address.serialize(), approve, request.proposer, request.requestSignature) { res ->
-                ALog.i(TAG, "Handle return a callback")
-                it.onNext(res)
-                it.onComplete()
-            }
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    AmePopup.loading.dismiss()
-                    if (it) {
-                        RxBus.post(HANDLED_REQ, Pair(request.id!!, true))
-                        if (approve) {
-                            AmePopup.result.succeed(this, getString(R.string.contacts_add_friend_success)) {
-                                finish()
-                            }
-                        } else {
-                            finish()
-                        }
-                    } else {
-                        AmePopup.result.failure(this, getString(if (approve) R.string.contacts_add_friend_failed else R.string.contacts_add_friend_reject_failed))
+        AmeModuleCenter.contact().replyFriend(recipient.address.serialize(), approve, request) {
+            AmePopup.loading.dismiss()
+            if (it) {
+                RxBus.post(HANDLED_REQ, Pair(request.id ?: 0L, true))
+                if (approve) {
+                    AmePopup.result.succeed(this, getString(R.string.contacts_add_friend_success)) {
+                        finish()
                     }
-                }, {
-                    AmePopup.loading.dismiss()
-                    ALog.e(TAG, "sendReply approve: $approve error", it)
-                })
+                } else {
+                    finish()
+                }
+            } else {
+                AmePopup.result.failure(this, getString(if (approve) R.string.contacts_add_friend_failed else R.string.contacts_add_friend_reject_failed))
+            }
+        }
+
     }
 
     private fun initData() {

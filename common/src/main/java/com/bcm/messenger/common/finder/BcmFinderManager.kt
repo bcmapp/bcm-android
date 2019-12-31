@@ -46,9 +46,8 @@ class BcmFinderManager {
 
          private const val SEARCH_TABLE = "table_search_whole_"
          private const val RECORD_KEY = "key_record"
-         private const val mSearchLimit: Int = 3//，0
-         private const val mRecentLimit: Int = 10//top
-
+         private const val mSearchLimit: Int = 3
+         private const val mRecentLimit: Int = 10
 
          private val manager:BcmFinderManager = BcmFinderManager()
 
@@ -225,7 +224,7 @@ class BcmFinderManager {
         Observable.create(ObservableOnSubscribe<List<SearchItemData>> {
             val resultList = mutableListOf<SearchItemData>()
             val hasTop = types.isNotEmpty()
-            val bcmFindResultMap = BcmFinderManager.get().find(keyword, types)
+            val bcmFindResultMap = find(keyword, types)
             for (type in types) {
                 val l = findSearchResult(false, type, bcmFindResultMap[type]
                         ?: continue)

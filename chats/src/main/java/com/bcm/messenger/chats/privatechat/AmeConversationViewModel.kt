@@ -9,7 +9,6 @@ import com.bcm.messenger.chats.privatechat.logic.MarkReadReceiver
 import com.bcm.messenger.chats.privatechat.logic.MessageSender
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.core.RecipientProfileLogic
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.identity.IdentityRecordList
 import com.bcm.messenger.common.database.model.DecryptFailData
@@ -519,7 +518,7 @@ class AmeConversationViewModel : ViewModel() {
                 } else {
                     false
                 }
-                val needProfileKey = RecipientProfileLogic.checkNeedProfileKey(recipient)
+                val needProfileKey = recipient.resolve().checkNeedProfileKey()
                 it.onNext(Pair(hasRequest, needProfileKey))
                 it.onComplete()
 

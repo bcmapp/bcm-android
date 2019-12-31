@@ -32,7 +32,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.api.IConversationContentAction
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.core.RecipientProfileLogic
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.event.MultiSelectEvent
@@ -40,6 +39,8 @@ import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -418,7 +419,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
 
         val profileKey = ProfileKeyModel.fromKeyConfig(member?.keyConfig)
         if (null != profileKey) {
-            RecipientProfileLogic.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient, profileKey)
+            AmeModuleCenter.contact().updateProfileKey(AppContextHolder.APP_CONTEXT, recipient, profileKey)
         }
         mPhotoView?.setPhoto(recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
     }

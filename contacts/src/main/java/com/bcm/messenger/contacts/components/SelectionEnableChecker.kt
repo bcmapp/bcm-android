@@ -2,7 +2,9 @@ package com.bcm.messenger.contacts.components
 
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.core.RecipientProfileLogic
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.AmeProvider
+import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
 import io.reactivex.Observable
@@ -76,18 +78,16 @@ object SelectionEnableChecker {
                 val weakThis = WeakReference<GroupInviteChecker>(this)
                 return Observable.create<STATE> {
                     it.onNext(STATE.CHECKING)
-                    RecipientProfileLogic.fetchProfileFeatureWithNoQueue(recipient,object :RecipientProfileLogic.ProfileDownloadCallback {
-                        override fun onDone(recipient: Recipient, isThrough: Boolean) {
-                            weakThis.get()?.checkedList?.put(address, true)
-                            val state = if(true == recipient.featureSupport?.isSupportGroupSecureV3()) {
-                                STATE.ENABLE
-                            } else {
-                                STATE.DISABLE
-                            }
-                            it.onNext(state)
-                            it.onComplete()
+                    AmeModuleCenter.contact().fetchProfile(recipient) { _ ->
+                        weakThis.get()?.checkedList?.put(address, true)
+                        val state = if(true == recipient.featureSupport?.isSupportGroupSecureV3()) {
+                            STATE.ENABLE
+                        } else {
+                            STATE.DISABLE
                         }
-                    })
+                        it.onNext(state)
+                        it.onComplete()
+                    }
                 }
             }
         }

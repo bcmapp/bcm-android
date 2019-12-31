@@ -3,9 +3,7 @@ package com.bcm.messenger.chats.privatechat.jobs;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-
 import com.bcm.messenger.chats.privatechat.core.ChatHttp;
 import com.bcm.messenger.chats.privatechat.logic.MessageSender;
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService;
@@ -14,7 +12,6 @@ import com.bcm.messenger.common.attachments.PointerAttachment;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.AddressUtil;
 import com.bcm.messenger.common.core.AmeGroupMessage;
-import com.bcm.messenger.common.core.RecipientProfileLogic;
 import com.bcm.messenger.common.crypto.IdentityKeyUtil;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.MasterSecretUnion;
@@ -45,6 +42,8 @@ import com.bcm.messenger.common.mms.SlideDeck;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
 import com.bcm.messenger.common.provider.AMESelfData;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
+import com.bcm.messenger.common.provider.AmeProvider;
+import com.bcm.messenger.common.provider.IContactModule;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.sms.IncomingEncryptedMessage;
 import com.bcm.messenger.common.sms.IncomingEndSessionMessage;
@@ -71,7 +70,6 @@ import com.bcm.messenger.utility.EncryptUtils;
 import com.bcm.messenger.utility.GsonUtils;
 import com.bcm.messenger.utility.logger.ALog;
 import com.bcm.netswitchy.configure.AmeConfigure;
-
 import org.greenrobot.eventbus.EventBus;
 import org.whispersystems.jobqueue.JobManager;
 import org.whispersystems.jobqueue.JobParameters;
@@ -110,11 +108,9 @@ import org.whispersystems.signalservice.api.messages.multidevice.SignalServiceSy
 import org.whispersystems.signalservice.api.messages.multidevice.VerifiedMessage;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.internal.push.SignalServiceProtos;
-
 import java.security.MessageDigest;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import kotlin.Pair;
 
 public class PushDecryptJob extends ContextJob {
@@ -748,16 +744,18 @@ public class PushDecryptJob extends ContextJob {
             AmeGroupMessage.ExchangeProfileContent content = (AmeGroupMessage.ExchangeProfileContent) newMessage.getContent();
             long threadId = threadRepo.getThreadIdFor(recipient);
             if (threadId > 0) {
+                IContactModule contactModule = AmeModuleCenter.INSTANCE.contact();
                 switch (content.getType()) {
                     case AmeGroupMessage.ExchangeProfileContent.RESPONSE:
                         ALog.i(TAG, "Get response type, update profile keys");
-                        RecipientProfileLogic.INSTANCE.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient,
-                                new ProfileKeyModel(content.getNickName(), content.getAvatar(), content.getVersion()));
+                        contactModule.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient,
+                                    new ProfileKeyModel(content.getNickName(), content.getAvatar(), content.getVersion()));
+
                         break;
                     case AmeGroupMessage.ExchangeProfileContent.REQUEST:
                         ALog.i(TAG, "Get request type, update profile keys and save request to thread");
-                        RecipientProfileLogic.INSTANCE.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient,
-                                new ProfileKeyModel(content.getNickName(), content.getAvatar(), content.getVersion()));
+                        contactModule.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient,
+                                    new ProfileKeyModel(content.getNickName(), content.getAvatar(), content.getVersion()));
                     case AmeGroupMessage.ExchangeProfileContent.CHANGE:
                         ALog.i(TAG, "Get change type, save request to thread");
                         threadRepo.setProfileRequest(threadId, true);

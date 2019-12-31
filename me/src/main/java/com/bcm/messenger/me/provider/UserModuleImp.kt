@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.core.RecipientProfileLogic
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.ProfileKeyUtil
 import com.bcm.messenger.common.database.records.PrivacyProfile
@@ -91,7 +90,7 @@ class UserModuleImp : IUserModule {
 
     override fun updateNameProfile(recipient: Recipient, name: String, callback: (success: Boolean) -> Unit) {
         if (recipient.isSelf) {
-            RecipientProfileLogic.uploadNickName(AppContextHolder.APP_CONTEXT, recipient, name) { success ->
+            AmeModuleCenter.contact().uploadBcmNick(AppContextHolder.APP_CONTEXT, recipient, name) { success ->
                 if (success) {
                     saveAccount(recipient, name, null)
                     AmeModuleCenter.accountJobMgr()?.add(MultiDeviceProfileKeyUpdateJob(AppContextHolder.APP_CONTEXT))
@@ -114,8 +113,7 @@ class UserModuleImp : IUserModule {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ result ->
                         if (result) {
-                            val contactProvider = AmeProvider.get<IContactModule>(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE)
-                            contactProvider?.handleFriendPropertyChanged(recipient.address.serialize()) {
+                            AmeModuleCenter.contact().handleFriendPropertyChanged(recipient.address.serialize()) {
                                 callback(result)
                             }
                         } else {
@@ -135,7 +133,7 @@ class UserModuleImp : IUserModule {
                 callback(false)
                 return
             }
-            RecipientProfileLogic.uploadAvatar(AppContextHolder.APP_CONTEXT, recipient, avatarBitmap) { success ->
+            AmeModuleCenter.contact().uploadBcmAvatar(AppContextHolder.APP_CONTEXT, recipient, avatarBitmap) { success ->
                 if (success) {
                     saveAccount(recipient, null, recipient.privacyAvatar)
                     AmeModuleCenter.accountJobMgr()?.add(MultiDeviceProfileKeyUpdateJob(AppContextHolder.APP_CONTEXT))
@@ -362,7 +360,7 @@ class UserModuleImp : IUserModule {
             Repository.getRecipientRepo()?.setProfile(recipient, profileKey, name, avatar)
         }
 
-        RecipientProfileLogic.fetchProfileFeatureWithNoQueue(recipient, null)
+        AmeModuleCenter.contact().fetchProfile(recipient) {}
         AmeNoteLogic.getInstance().updateUser(uid)
 
     }

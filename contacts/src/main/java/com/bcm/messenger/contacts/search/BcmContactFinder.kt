@@ -17,9 +17,12 @@ class BcmContactFinder : IBcmFinder {
 
     private val TAG = "BcmContactFinder"
     private val mSearchLock = AtomicReference(CountDownLatch(1))
+    @Volatile
     private var mSearchList: List<Recipient>? = null
+    @Volatile
     private var mFindResult: ContactFindResult? = null
     private val mContactLock = AtomicReference(CountDownLatch(1))
+    @Volatile
     private var mContactList: List<Recipient>? = null
 
     fun updateSourceWithThread(threadList: List<Recipient>, comparator: Comparator<Recipient>?) {

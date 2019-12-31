@@ -1,8 +1,10 @@
-package com.bcm.messenger.common.core
+package com.bcm.messenger.contacts.logic
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.bcm.messenger.common.core.AmeFileUploader
+import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
@@ -12,10 +14,9 @@ import okhttp3.Call
 import java.io.File
 
 /**
- * profile
  * Created by wjh on 2019/5/8
  */
-class PrivacyProfileUpgrader {
+class PrivacyProfileUpgrader(val logic: BcmProfileLogic) {
 
     private val TAG = "PrivacyProfileUpgrader"
     private val PREF_NICK_UPGRADE = "pref_nick_upgrade_done"
@@ -45,7 +46,7 @@ class PrivacyProfileUpgrader {
         }
         if (nickUpgrade && !isNickUpgradeDone()) {
             setNickUpgradeState(true)
-            RecipientProfileLogic.uploadNickName(AppContextHolder.APP_CONTEXT, recipient, nameUpload) {
+            logic.uploadNickName(AppContextHolder.APP_CONTEXT, recipient, nameUpload) {
                 ALog.i(TAG, "checkNeedUpgrade uploadNickName result: $it")
                 setNickUpgradeState(it)
             }
@@ -53,11 +54,11 @@ class PrivacyProfileUpgrader {
         if (avatarUpgrade && !isAvatarUpgradeDone()) {
             ALog.i(TAG, "begin avatarUpgrade")
             setAvatarUpgradeState(true)
-            val url = BcmHttpApiHelper.getDownloadApi( "/avatar/$avatarUpload")
+            val url = BcmHttpApiHelper.getDownloadApi("/avatar/$avatarUpload")
             val path = getTempUpgradePath(recipient)
             downloadAvatarOld(AppContextHolder.APP_CONTEXT, url, path) { bitmap ->
                 if (bitmap != null) {
-                    RecipientProfileLogic.uploadAvatar(AppContextHolder.APP_CONTEXT, recipient, bitmap) {
+                    logic.uploadAvatar(AppContextHolder.APP_CONTEXT, recipient, bitmap) {
                         ALog.i(TAG, "checkNeedUpgrade uploadAvatar result: $it")
                         setAvatarUpgradeState(it)
                     }
@@ -109,7 +110,7 @@ class PrivacyProfileUpgrader {
             override fun onResponse(response: File?, id: Long) {
                 if (response == null) {
                     callback(null)
-                }else {
+                } else {
                     val result = BitmapFactory.decodeFile(response.absolutePath)
                     callback(result)
                 }

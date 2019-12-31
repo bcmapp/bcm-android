@@ -16,7 +16,7 @@ import org.whispersystems.libsignal.ecc.ECKeyPair
 /**
  * Created by wjh on 2019/5/29
  */
-class BcmContactFilter() {
+class BcmContactFilter(private val coreApi: BcmContactCore) {
 
     companion object {
         private const val TAG = "BcmContactFilter"
@@ -72,15 +72,14 @@ class BcmContactFilter() {
                 mBloomFilter.insert(s.uid.toByteArray())
             }
 
-            val contactCore: BcmContactCore = BcmContactLogic.coreApi
             if (uploadAll) {
-                uploadAllFilter(context, contactCore, Base64.encodeBytes(mBloomFilter.getDataArray()), it)
+                uploadAllFilter(context, coreApi, Base64.encodeBytes(mBloomFilter.getDataArray()), it)
             } else {
                 val lastBloomFilter = BcmBloomFilter(mAlgoEntity.seed, mAlgoEntity.func, mAlgoEntity.tweek)
                 lastBloomFilter.updateDataArray(lastBloomData)
                 val requestList = getDifferencePatch(lastBloomFilter, mBloomFilter)
                 if (requestList.isNotEmpty()) {
-                    uploadPatchFilter(context, contactCore, Base64.encodeBytes(mBloomFilter.getDataArray()), requestList, it)
+                    uploadPatchFilter(context, coreApi, Base64.encodeBytes(mBloomFilter.getDataArray()), requestList, it)
                 }else {
                     ALog.d(TAG, "no need updaterContact, isChanged: false")
                     it.onNext(true)

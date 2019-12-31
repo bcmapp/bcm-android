@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.core.RecipientProfileLogic
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.records.RecipientSettings
@@ -15,6 +14,7 @@ import com.bcm.messenger.common.event.FriendRequestEvent
 import com.bcm.messenger.common.event.ServiceConnectEvent
 import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -53,26 +53,27 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * Created by bcm.social.01 on 2019/3/12.
  */
-object BcmContactLogic: AppForeground.IForegroundEvent {
+class BcmContactLogic: AppForeground.IForegroundEvent {
 
-    private const val TAG = "BcmContactLogic"
-    private const val DELAY_CONTACT_UPDATE = 500L
-
-    private const val VERSION_REQUEST = 1
+    companion object {
+        private const val TAG = "BcmContactLogic"
+        private const val DELAY_CONTACT_UPDATE = 500L
+        private const val VERSION_REQUEST = 1
+    }
 
     private val mBackgroundRequestQueue: LinkedBlockingQueue<Recipient> = LinkedBlockingQueue(500)
+    @Volatile
     private var mBackgroundRequestJob: Job? = null
-        @Synchronized get
-        @Synchronized set
 
     private val mContactSyncFlag: AtomicReference<CountDownLatch> = AtomicReference(CountDownLatch(1))
     private val mInitFlag: AtomicReference<CountDownLatch> = AtomicReference(CountDownLatch(1))
     private val mQuitSyncFlag: AtomicReference<CountDownLatch> = AtomicReference(CountDownLatch(1))
 
-    private val contactFilter = BcmContactFilter()
-    internal val coreApi = BcmContactCore()
+    private val coreApi = BcmContactCore()
 
-    val contactFinder = BcmContactFinder()
+    private val contactFilter = BcmContactFilter(coreApi)
+
+    private val contactFinder = BcmContactFinder()
 
     private val cache = BcmContactCache()
 
@@ -83,7 +84,9 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
     private var mLocalLiveData: LiveData<List<RecipientSettings>>? = null
 
     private val mCurrentContactListRef = AtomicReference<List<RecipientSettings>>()
+    @Volatile
     private var mContactListDisposable: Disposable? = null
+    @Volatile
     private var mContactSyncDisposable: Disposable? = null
 
     init {
@@ -284,7 +287,13 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
 
     }
 
+    fun getContactListWithWait(): List<Recipient> {
+        return contactFinder.getContactList()
+    }
 
+    fun updateThreadRecipientSource(threadRecipientList: List<Recipient>) {
+        contactFinder.updateSourceWithThread(threadRecipientList, Recipient.getRecipientComparator())
+    }
 
     fun doForLogin() {
         ALog.i(TAG, "doForLogin")
@@ -470,18 +479,12 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
 
         val targetRecipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(targetUid), false)
         if (targetRecipient.identityKey.isNullOrEmpty()) {
-            RecipientProfileLogic.fetchProfileFeatureWithNoQueue(targetRecipient, callback = object : RecipientProfileLogic.ProfileDownloadCallback {
+            AmeModuleCenter.contact().fetchProfile(targetRecipient) {
 
-                override fun onDone(recipient: Recipient, isThrough: Boolean) {
-                    if (recipient == targetRecipient) {
-                        AmeDispatcher.io.dispatch {
-                            doSendAddFriendRequest(recipient, callback)
-                        }
-
-                    }
+                AmeDispatcher.io.dispatch {
+                    doSendAddFriendRequest(targetRecipient, callback)
                 }
-
-            })
+            }
         } else {
             doSendAddFriendRequest(targetRecipient, callback)
         }
@@ -533,18 +536,12 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
         val targetRecipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(targetUid), false)
         if (targetRecipient.identityKey.isNullOrEmpty()) {
             ALog.i(TAG, "replyAddFriend approved: $approved identityKey is null, need update profile")
-            RecipientProfileLogic.fetchProfileFeatureWithNoQueue(targetRecipient, callback = object : RecipientProfileLogic.ProfileDownloadCallback {
-                override fun onDone(recipient: Recipient, isThrough: Boolean) {
-                    if (targetRecipient == recipient) {
-                        AmeDispatcher.io.dispatch {
-                            ALog.i(TAG, "replyAddFriend approved: $approved after update profile, doSendAddFriendReply")
-                            doSendAddFriendReply(recipient, approved, proposer, addFriendSignature, callback)
-                        }
-
-                    }
+            AmeModuleCenter.contact().fetchProfile(targetRecipient) {
+                AmeDispatcher.io.dispatch {
+                    ALog.i(TAG, "replyAddFriend approved: $approved after update profile, doSendAddFriendReply")
+                    doSendAddFriendReply(targetRecipient, approved, proposer, addFriendSignature, callback)
                 }
-
-            })
+            }
         } else {
             doSendAddFriendReply(targetRecipient, approved, proposer, addFriendSignature, callback)
         }
@@ -598,7 +595,7 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
                         }
                         else -> {
                             if (pair.third) {
-                                AmeProvider.get<IContactModule>(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE)?.handleFriendPropertyChanged(recipient.address.serialize())
+                                AmeModuleCenter.contact().handleFriendPropertyChanged(recipient.address.serialize())
                             }
 
                             UserDatabase.getDatabase().runInTransaction {
@@ -629,18 +626,11 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
             val decryptProposer = BCMEncryptUtils.decryptSource(request.proposerBytes.toByteArray())
             val targetRecipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(decryptProposer), false)
             if (targetRecipient.identityKey.isNullOrEmpty()) {
-                RecipientProfileLogic.fetchProfileFeatureWithNoQueue(targetRecipient, callback = object : RecipientProfileLogic.ProfileDownloadCallback {
-                    override fun onDone(recipient: Recipient, isThrough: Boolean) {
-                        if (targetRecipient == recipient) {
-                            AmeDispatcher.io.dispatch {
-                                handleAfterRecipientUpdated(recipient, decryptProposer)
-
-                            }
-                        } else {
-                            ALog.i(TAG, "handleAddFriendRequest fail, identityKey is null, no response")
-                        }
+                AmeModuleCenter.contact().fetchProfile(targetRecipient) {
+                    AmeDispatcher.io.dispatch {
+                        handleAfterRecipientUpdated(targetRecipient, decryptProposer)
                     }
-                })
+                }
             } else {
                 handleAfterRecipientUpdated(targetRecipient, decryptProposer)
             }
@@ -666,20 +656,16 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
             val decryptTarget = BCMEncryptUtils.decryptSource(reply.targetBytes.toByteArray())
             val targetRecipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(decryptTarget), false)
             if (targetRecipient.identityKey.isNullOrEmpty()) {
-                RecipientProfileLogic.fetchProfileFeatureWithNoQueue(targetRecipient, callback = object : RecipientProfileLogic.ProfileDownloadCallback {
-                    override fun onDone(recipient: Recipient, isThrough: Boolean) {
-                        if (targetRecipient == recipient) {
-                            AmeDispatcher.io.dispatch {
-                                try {
-                                    parseRequestBody(AppContextHolder.APP_CONTEXT, targetRecipient, reply.payload)
-                                }catch (ex: Exception) {
-                                    ALog.e(TAG, "handleFriendReply parseRequestBody error", ex)
-                                }
-                                doForApproved(targetRecipient, reply.approved)
-                            }
+                AmeModuleCenter.contact().fetchProfile(targetRecipient) {
+                    AmeDispatcher.io.dispatch {
+                        try {
+                            parseRequestBody(AppContextHolder.APP_CONTEXT, targetRecipient, reply.payload)
+                        }catch (ex: Exception) {
+                            ALog.e(TAG, "handleFriendReply parseRequestBody error", ex)
                         }
+                        doForApproved(targetRecipient, reply.approved)
                     }
-                })
+                }
 
             }else {
                 try {
@@ -894,9 +880,8 @@ object BcmContactLogic: AppForeground.IForegroundEvent {
             toSync = true
         }
 
-        RecipientProfileLogic.handlePrivacyProfileChanged(context, recipient, privacyProfile, privacyProfile.encryptedName,
+        AmeModuleCenter.contact().updatePrivacyProfile(context, recipient, privacyProfile.encryptedName,
                 privacyProfile.encryptedAvatarLD, privacyProfile.encryptedAvatarHD, privacyProfile.allowStranger)
-        Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
 
         return Triple(requestBody.handleBackground, memo, toSync)
     }

@@ -117,7 +117,7 @@ object AmeModuleCenter {
 
             this.init()
 
-            AmeProvider.get<IContactModule>(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE)?.doForLogin()
+            contact().doForLogin()
 
             if (!adhoc().isAdHocMode()) {
                 serverDaemon().startDaemon()

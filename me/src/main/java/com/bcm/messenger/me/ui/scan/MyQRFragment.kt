@@ -12,7 +12,7 @@ import androidx.core.content.FileProvider
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.AmeFileUploader
-import com.bcm.messenger.common.core.RecipientProfileLogic
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -109,7 +109,7 @@ class MyQRFragment : BaseFragment(), RecipientModifiedListener {
                             qr_code_image?.setImageDrawable(null)
                         })
             }else {
-                RecipientProfileLogic.updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
+                AmeModuleCenter.contact().updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
 
                 }
             }

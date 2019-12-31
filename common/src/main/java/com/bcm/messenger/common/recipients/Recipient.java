@@ -684,6 +684,14 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
         this.backgroundRequestAddFriendFlag = backgroundRequestAddFriendFlag;
     }
 
+    public synchronized boolean checkNeedProfileKey() {
+        boolean need = (TextUtils.isEmpty(privacyProfile.getName()) && TextUtils.isEmpty(privacyProfile.getNameKey())) ||
+                (TextUtils.isEmpty(privacyProfile.getAvatarHD()) && TextUtils.isEmpty(privacyProfile.getAvatarKey())) ||
+                (TextUtils.isEmpty(privacyProfile.getAvatarLD()) && TextUtils.isEmpty(privacyProfile.getAvatarKey()));
+        ALog.i(TAG, "checkNeedProfileKey: $need");
+        return need;
+    }
+
     @NonNull
     public synchronized PrivacyProfile getPrivacyProfile() {
         return privacyProfile;

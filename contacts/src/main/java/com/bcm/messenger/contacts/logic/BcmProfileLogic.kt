@@ -1,4 +1,4 @@
-package com.bcm.messenger.common.core
+package com.bcm.messenger.contacts.logic
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
@@ -11,6 +11,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.bcmhttp.IMHttp
 import com.bcm.messenger.common.bcmhttp.RxIMHttp
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.common.core.*
 import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
@@ -39,9 +40,7 @@ import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import okhttp3.Call
 import org.json.JSONObject
-import org.whispersystems.jobqueue.JobParameters
 import org.whispersystems.libsignal.IdentityKey
 import org.whispersystems.libsignal.ecc.DjbECPublicKey
 import org.whispersystems.signalservice.api.profiles.ISignalProfile
@@ -51,35 +50,58 @@ import java.io.FileOutputStream
 import java.lang.ref.WeakReference
 import java.net.URLEncoder
 import java.util.*
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
 
-/**
- * 
- */
-object RecipientProfileLogic {
+class BcmProfileLogic {
 
-    private const val TYPE_PROFILE = 1
-    private const val TYPE_AVATAR_HD = 2
-    private const val TYPE_AVATAR_LD = 3
-    private const val TYPE_AVATAR_BOTH = 4
-    private const val INDIVIDUAL_SHORT_SHARE_PATH = "/v1/opaque_data"
-    private const val UPLOAD_ENCRYPT_NAME_PATH = "/v1/profile/nickname/%s"
-    private const val UPLOAD_ENCRYPT_AVATAR_PATH = "/v1/profile/avatar"
-    private const val PROFILES_PLAINTEXT_PATH = "/v1/profile"
-    private const val PROFILE_KEY_PATH = "/v1/profile/keys"
+    companion object {
+        const val TYPE_PROFILE = 1
+        const val TYPE_AVATAR_HD = 2
+        const val TYPE_AVATAR_LD = 3
+        const val TYPE_AVATAR_BOTH = 4
+        private const val INDIVIDUAL_SHORT_SHARE_PATH = "/v1/opaque_data"
+        private const val UPLOAD_ENCRYPT_NAME_PATH = "/v1/profile/nickname/%s"
+        private const val UPLOAD_ENCRYPT_AVATAR_PATH = "/v1/profile/avatar"
+        private const val PROFILES_PLAINTEXT_PATH = "/v1/profile"
+        private const val PROFILE_KEY_PATH = "/v1/profile/keys"
 
+        private const val TAG = "BcmProfileLogic"
 
-    interface ProfileDownloadCallback {
-        fun onDone(recipient: Recipient, isThrough: Boolean)
+        const val PROFILE_FETCH_MAX = 500
+        const val AVATAR_FETCH_MAX = 4
 
+        const val TASK_HANDLE_DELAY = 1500L
+
+        fun getAvatarFileName(recipient: Recipient, isHd: Boolean, isTemp: Boolean): String {
+            return "${recipient.address.serialize()}_${System.currentTimeMillis()}_avatar${if (isHd) "HD" else "LD"}${if (isTemp) "_tmp" else ""}.jpg"
+        }
+
+        fun clearAvatarResource(avatarUri: String?) {
+            try {
+                if (avatarUri == null) return
+                val uri = Uri.parse(avatarUri)
+                val path = uri.path
+                File(path).apply {
+                    if (exists()) {
+                        delete()
+                    }
+                }
+
+            } catch (ex: Exception) {
+                ALog.e(TAG, "clearAvatarResource fail", ex)
+            }
+        }
+    }
+
+    interface ProfileFetchCallback {
+        fun onDone(recipient: Recipient, viaJob: Boolean)
     }
 
     data class TaskData(val recipient: Recipient,
                         val type: Int,
                         var forceUpdate: Boolean = false,
-                        var callbackSet: MutableSet<ProfileDownloadCallback>? = null) {
+                        var callbackSet: MutableSet<ProfileFetchCallback>? = null) {
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -100,40 +122,18 @@ object RecipientProfileLogic {
         }
     }
 
-    private const val TAG = "RecipientProfileLogic"
-
-    private const val PROFILE_FETCH_MAX = 500
-    private const val AVATAR_FETCH_MAX = 4
-
-    private const val TASK_HANDLE_DELAY = 1500L
-
     private val mHandingMap: MutableMap<String, TaskData> = mutableMapOf()
     private var mHighProfileQueue: Deque<TaskData> = LinkedList()
     private var mProfileQueue: Deque<TaskData> = LinkedList()
     private var mHighAvatarQueue: Deque<TaskData> = LinkedList()
     private var mAvatarQueue: Deque<TaskData> = LinkedList()
 
-    private var mProfileJob: WeakReference<RecipientProfileFetchJob>? = null
-    private var mAvatarJob: WeakReference<RecipientAvatarDownloadJob>? = null
+    private var mProfileJob: WeakReference<ProfileFetchJob>? = null
+    private var mAvatarJob: WeakReference<AvatarDownloadJob>? = null
 
     private var mShortLinkCreating: Boolean = false
 
-    /**
-     * profileKey（）
-     */
-    fun checkNeedProfileKey(recipient: Recipient): Boolean {
-        val privacyProfile = recipient.resolve().privacyProfile
-        val need = (privacyProfile.name.isNullOrEmpty() && privacyProfile.nameKey.isNullOrEmpty()) ||
-                (privacyProfile.avatarHD.isNullOrEmpty() && privacyProfile.avatarKey.isNullOrEmpty()) ||
-                (privacyProfile.avatarLD.isNullOrEmpty() && privacyProfile.avatarKey.isNullOrEmpty())
-        ALog.i(TAG, "checkNeedProfileKey: $need")
-        return need
-    }
 
-    /**
-     * profileKey(, profile)
-     */
-    @SuppressLint("CheckResult")
     fun updateProfileKey(context: Context, recipient: Recipient, profileKeyModel: ProfileKeyModel) {
 
         val nameKey = profileKeyModel.nickNameKey
@@ -219,7 +219,7 @@ object RecipientProfileLogic {
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        AmeProvider.get<IContactModule>(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE)?.handleFriendPropertyChanged(recipient.address.serialize())
+                        AmeModuleCenter.contact().handleFriendPropertyChanged(recipient.address.serialize())
                         if (it) {
                             ALog.i(TAG, "updateProfileKey after forceFetchProfile")
                             forceToFetchProfile(recipient)
@@ -479,7 +479,7 @@ object RecipientProfileLogic {
                             doAfterUploadAvatarBitmap(recipient, prepareData, avatarHd, avatarLd)
                                     .subscribeOn(AmeDispatcher.ioScheduler)
                                     .observeOn(AmeDispatcher.mainScheduler)
-                                    .subscribe ({
+                                    .subscribe({
                                         uploadEmitter.onNext(it)
                                         uploadEmitter.onComplete()
                                     }, {
@@ -563,10 +563,6 @@ object RecipientProfileLogic {
 
     private data class UserShareLinkRes(val content: String?) : NotGuard
 
-    /**
-     * 
-     */
-    @SuppressLint("CheckResult")
     fun checkShareLink(context: Context, shareLink: String, callback: (qrData: Recipient.RecipientQR?) -> Unit) {
         if (shareLink.isEmpty() || !PrivacyProfile.isShortLink(shareLink)) {
             callback.invoke(null)
@@ -620,9 +616,14 @@ object RecipientProfileLogic {
         return "${recipient.address}_$type"
     }
 
-    /**
-     * 
-     */
+    fun getAvailableTaskDataListOfProfile(): List<TaskData> {
+        return getAvailableTaskDataList(mHighProfileQueue, mProfileQueue, PROFILE_FETCH_MAX)
+    }
+
+    fun getAvailableTaskDataListOfAvatar(): List<TaskData> {
+        return getAvailableTaskDataList(mHighAvatarQueue, mAvatarQueue, AVATAR_FETCH_MAX)
+    }
+
     @Synchronized
     private fun getAvailableTaskDataList(highQueue: Deque<TaskData>, queue: Deque<TaskData>, max: Int): List<TaskData> {
         val result = mutableListOf<TaskData>()
@@ -659,7 +660,7 @@ object RecipientProfileLogic {
     }
 
     @Synchronized
-    private fun checkTaskQueueAdded(recipient: Recipient, type: Int, force: Boolean, callback: ProfileDownloadCallback?): Boolean {
+    private fun checkTaskQueueAdded(recipient: Recipient, type: Int, force: Boolean, callback: ProfileFetchCallback?): Boolean {
 
         val k = getHandlingMapKey(recipient, type)
         var t = mHandingMap[k]
@@ -788,7 +789,7 @@ object RecipientProfileLogic {
         return false
     }
 
-    fun checkNeedFetchProfile(vararg recipients: Recipient, callback: ProfileDownloadCallback? = null) {
+    fun checkNeedFetchProfile(vararg recipients: Recipient, callback: ProfileFetchCallback? = null) {
         ALog.i(TAG, "checkNeedFetchProfile recipients size: ${recipients.size}")
         AmeDispatcher.io.dispatch {
             var need = false
@@ -813,7 +814,7 @@ object RecipientProfileLogic {
     }
 
     @SuppressLint("CheckResult")
-    fun forceToFetchProfile(vararg recipients: Recipient, callback: ProfileDownloadCallback? = null) {
+    fun forceToFetchProfile(vararg recipients: Recipient, callback: ProfileFetchCallback? = null) {
         ALog.i(TAG, "forceToFetchProfile recipients size: ${recipients.size}")
         AmeDispatcher.io.dispatch {
             var need = false
@@ -1025,27 +1026,13 @@ object RecipientProfileLogic {
         }
     }
 
-    private fun clearAvatarResource(avatarUri: String?) {
-        try {
-            if (avatarUri == null) return
-            val uri = Uri.parse(avatarUri)
-            val path = uri.path
-            File(path).apply {
-                if (exists()) {
-                    delete()
-                }
-            }
 
-        } catch (ex: Exception) {
-            ALog.e(TAG, "clearAvatarResource fail", ex)
-        }
-    }
 
 
     @Synchronized
-    private fun finishJob(job: ContextJob) {
+    fun finishJob(job: ContextJob) {
 
-        if (job is RecipientProfileFetchJob) {
+        if (job is ProfileFetchJob) {
             ALog.i(TAG, "finish profile job")
             mProfileJob = null
         } else {
@@ -1061,7 +1048,7 @@ object RecipientProfileLogic {
             val accountJobManager = AmeModuleCenter.accountJobMgr()
             if (accountJobManager != null) {
                 ALog.i(TAG, "handleDownloadAvatar")
-                val job = RecipientAvatarDownloadJob(AppContextHolder.APP_CONTEXT)
+                val job = AvatarDownloadJob(AppContextHolder.APP_CONTEXT, this)
                 mAvatarJob = WeakReference(job)
                 accountJobManager.add(job)
             }
@@ -1077,7 +1064,7 @@ object RecipientProfileLogic {
             val accountJobManager = AmeModuleCenter.accountJobMgr()
             if (accountJobManager != null) {
                 ALog.i(TAG, "handleFetchProfile")
-                val job = RecipientProfileFetchJob(AppContextHolder.APP_CONTEXT)
+                val job = ProfileFetchJob(AppContextHolder.APP_CONTEXT, this)
                 mProfileJob = WeakReference(job)
                 accountJobManager.add(job)
             }
@@ -1086,7 +1073,7 @@ object RecipientProfileLogic {
         }
     }
 
-    private fun doneHandling(taskDataList: List<TaskData>, isSuccess: Boolean) {
+    fun doneHandling(taskDataList: List<TaskData>, isSuccess: Boolean) {
         ALog.d(TAG, "releaseHanding list: ${taskDataList.size},  isSuccess: $isSuccess")
 
         for (data in taskDataList) {
@@ -1110,11 +1097,7 @@ object RecipientProfileLogic {
         }
     }
 
-    private fun getAvatarFileName(recipient: Recipient, isHd: Boolean, isTemp: Boolean): String {
-        return "${recipient.address.serialize()}_${System.currentTimeMillis()}_avatar${if (isHd) "HD" else "LD"}${if (isTemp) "_tmp" else ""}.jpg"
-    }
-
-    fun handlePrivacyProfileChanged(context: Context, recipient: Recipient, privacyProfile: PrivacyProfile,
+    internal fun handlePrivacyProfileChanged(context: Context, recipient: Recipient, privacyProfile: PrivacyProfile,
                                     newEncryptName: String?, newEncryptAvatarLD: String?, newEncryptAvatarHD: String?, allowStranger: Boolean): Boolean {
 
         var needUpdateProfileKey = false
@@ -1209,7 +1192,7 @@ object RecipientProfileLogic {
     }
 
     @Throws(Exception::class)
-    private fun handleIndividualRecipient(context: Context, recipient: Recipient, profile: ISignalProfile?, signalSecret: Boolean, force: Boolean = false): Boolean {
+    private fun handleIndividualRecipient(context: Context, recipient: Recipient, profile: ISignalProfile?, force: Boolean = false): Boolean {
 
         var privacyChanged = false
         var plaintextChanged = false
@@ -1308,94 +1291,29 @@ object RecipientProfileLogic {
             ALog.e(TAG, "handleIndividualRecipient error", e)
         } finally {
             if (recipient.isSelf) {
-                PrivacyProfileUpgrader().checkNeedUpgrade(recipient)
+                PrivacyProfileUpgrader(this).checkNeedUpgrade(recipient)
             }
         }
 
         return privacyChanged || plaintextChanged
     }
 
-    fun fetchProfileFeatureWithNoQueue(recipient: Recipient, callback: ProfileDownloadCallback?): Disposable {
-        val taskData = TaskData(recipient,TYPE_PROFILE, true)
+    fun fetchProfileWithNoQueue(recipient: Recipient, callback: (success: Boolean) -> Unit): Disposable {
+        val taskData = TaskData(recipient, TYPE_PROFILE, true)
         return getProfiles(listOf(taskData))
                 .observeOn(AmeDispatcher.mainScheduler)
                 .subscribe({
-                    ALog.i(TAG, "fetchProfileFeatureWithNoQueue checkNeedDownloadAvatar")
+                    ALog.i(TAG, "fetchProfileWithNoQueue checkNeedDownloadAvatar")
                     recipient.setNeedRefreshProfile(if (it) false else recipient.needRefreshProfile())
                     checkNeedDownloadAvatarWithAll(recipient)
-                    callback?.onDone(recipient, true)
+                    callback.invoke(true)
                 }, {
-                    ALog.e(TAG, "fetchProfileFeatureWithNoQueue error", it)
-                    callback?.onDone(recipient, true)
+                    ALog.e(TAG, "fetchProfileWithNoQueue error", it)
+                    callback.invoke(false)
                 })
     }
 
-    internal class RecipientProfileFetchJob(context: Context) : ContextJob(context,
-            JobParameters.newBuilder().withGroupId("RecipientProfileLogic_profileFetchJob")
-                    .withRetryCount(3).create()) {
-
-        private val TAG = "RecipientProfileFetchJob"
-        private var mCurrentList: List<TaskData>? = null
-
-        override fun onAdded() {}
-
-        @SuppressLint("CheckResult")
-        private fun handleTaskData(dataList: List<TaskData>) {
-            ALog.i(TAG, "onRun RecipientProfileFetchJob dataList: ${dataList.size}")
-            if (dataList.isEmpty()) return
-
-            val addressList = dataList.filter { !it.recipient.isGroupRecipient }
-            getProfiles(addressList)
-                    .observeOn(AmeDispatcher.ioScheduler)
-                    .doOnError {
-                        ALog.e(TAG, "handleTaskData", it)
-                        doneHandling(dataList, false)
-                    }
-                    .subscribe {
-                        doneHandling(dataList, true)
-                    }
-        }
-
-        @Throws(Exception::class)
-        override fun onRun() {
-            var hasWait = false
-            do {
-                if (mCurrentList != null) {
-                    ALog.i(TAG, "continue handle last list")
-                    handleTaskData(mCurrentList ?: listOf())
-                    mCurrentList = null
-                } else {
-                    val list = getAvailableTaskDataList(mHighProfileQueue, mProfileQueue, PROFILE_FETCH_MAX)
-                    mCurrentList = list
-                    if (list.isEmpty()) {
-                        mCurrentList = null
-                        ALog.i(TAG, "no more list to handle, hasWait: $hasWait")
-                        if (hasWait) {
-                            break
-                        } else {
-                            hasWait = true
-                            Thread.sleep(TASK_HANDLE_DELAY)
-                        }
-                    } else {
-                        handleTaskData(list)
-                        mCurrentList = null
-                    }
-                }
-            } while (true)
-
-            finishJob(this)
-        }
-
-        override fun onShouldRetry(e: Exception): Boolean {
-            ALog.e(TAG, "retrieve profiles error", e)
-            return e is PushNetworkException
-        }
-
-        override fun onCanceled() {}
-
-    }
-
-    private fun getProfiles(dataList: List<TaskData>): Observable<Boolean> {
+    internal fun getProfiles(dataList: List<TaskData>): Observable<Boolean> {
         val builder = StringBuilder()
         for (e164Number in dataList) {
             builder.append("\"").append(e164Number.recipient.address.serialize()).append("\",")
@@ -1439,188 +1357,6 @@ object RecipientProfileLogic {
                 }
     }
 
-    internal class RecipientAvatarDownloadJob(context: Context) : ContextJob(context,
-            JobParameters.newBuilder().withGroupId("RecipientProfileLogic_avatarDownloadJob")
-                    .withRetryCount(3).create()) {
 
-        private val TAG = "RecipientAvatarDownloadJob"
-        private var mCurrentList: List<TaskData>? = null
-        private var mToFinish: Boolean = false
-        private var mCompleteCount = AtomicInteger(0)
-        private var mFinishCount = 0
-
-        private fun handleTaskData(dataList: List<TaskData>) {
-            if (dataList.isEmpty()) return
-
-            var count = 0
-            dataList.forEach {
-                if (it.type == TYPE_AVATAR_BOTH) {
-                    count += 2
-                }else {
-                    count += 1
-                }
-            }
-            mFinishCount += count
-            val completeCount = AtomicInteger(0)
-            val successList = mutableListOf<TaskData>()
-            val failList = mutableListOf<TaskData>()
-
-            fun checkDownloadFinish(complete: Int) {
-
-                ALog.i(TAG, "onRun RecipientAvatarDownloadJob end, completeCount: ${completeCount.get()}")
-                if (complete >= count) {
-                    ALog.d(TAG, "downloadAvatar onRun finish, success: ${successList.size}, fail: ${failList.size}")
-                    if (successList.isNotEmpty()) {
-                        doneHandling(successList, true)
-                    }
-                    if (failList.isNotEmpty()) {
-                        doneHandling(failList, false)
-                    }
-                }
-
-                ALog.i(TAG, "checkDownloadFinish: $mToFinish, completeCount: ${mCompleteCount.get()}, finishCount: $mFinishCount")
-                if (mCompleteCount.addAndGet(1) >= mFinishCount && mToFinish) {
-                    finishJob(this)
-                }
-            }
-
-            ALog.d(TAG, "onRun RecipientAvatarDownloadJob begin recipient: $count")
-            for (data in dataList) {
-                val q = if (data.type == TYPE_AVATAR_BOTH) {
-                    arrayOf(true, false)
-                }else if (data.type == TYPE_AVATAR_HD) {
-                    arrayOf(true)
-                }else {
-                    arrayOf(false)
-                }
-                q.forEach {isHd ->
-                    downloadAvatar(isHd, data.recipient) {
-                        ALog.i(TAG, "downloadAvatar callback finish")
-                        if (it) {
-                            successList.add(data)
-                        } else {
-                            failList.add(data)
-                        }
-                        checkDownloadFinish(completeCount.addAndGet(1))
-                    }
-                }
-
-            }
-        }
-
-        @Throws(Exception::class)
-        override fun onRun() {
-            var hasWait = false
-            do {
-                if (mCurrentList != null) {
-                    ALog.i(TAG, "continue handle last list")
-                    handleTaskData(mCurrentList ?: listOf())
-                    mCurrentList = null
-                } else {
-                    val list = getAvailableTaskDataList(mHighAvatarQueue, mAvatarQueue, AVATAR_FETCH_MAX)
-                    mCurrentList = list
-                    if (list.isEmpty()) {
-                        mCurrentList = null
-                        ALog.i(TAG, "no more list to handle, hasWait: $hasWait")
-                        if (hasWait) {
-                            break
-                        } else {
-                            hasWait = true
-                            Thread.sleep(TASK_HANDLE_DELAY)
-                        }
-                    } else {
-                        handleTaskData(list)
-                        mCurrentList = null
-                    }
-                }
-
-            } while (true)
-
-            mToFinish = true
-
-            ALog.i(TAG, "onRun finish, completeCount: ${mCompleteCount.get()}, finishCount: $mFinishCount")
-            if (mCompleteCount.get() >= mFinishCount) {
-                finishJob(this)
-            }
-        }
-
-        private fun downloadAvatar(isHd: Boolean, recipient: Recipient, callback: (success: Boolean) -> Unit) {
-
-            try {
-                val privacyProfile = recipient.privacyProfile
-                val avatarId = if (isHd) privacyProfile.avatarHD else privacyProfile.avatarLD
-                if (avatarId.isNullOrEmpty()) {
-                    callback(false)
-                    return
-                }
-                val avatarUrl = if (avatarId.startsWith("http", true)) {
-                    avatarId
-                } else {
-                    AmeFileUploader.ATTACHMENT_URL + avatarId
-                }
-                ALog.d(TAG, "begin download avatar uid: ${recipient.address}, isHd: $isHd, url: $avatarUrl")
-
-                val encryptFileName = getAvatarFileName(recipient, isHd, false)
-                AmeFileUploader.downloadFile(context, avatarUrl, object : FileDownCallback(AmeFileUploader.ENCRYPT_DIRECTORY, encryptFileName) {
-
-                    override fun onError(call: Call?, e: java.lang.Exception?, id: Long) {
-                        callback(false)
-                    }
-
-                    override fun onResponse(response: File?, id: Long) {
-                        if (response == null) {
-                            callback(false)
-                        } else {
-                            val targetFullFile = File(AmeFileUploader.DECRYPT_DIRECTORY, getAvatarFileName(recipient, isHd, true))
-                            try {
-                                BCMEncryptUtils.decryptFileByAES256(response.absolutePath, targetFullFile.absolutePath, Base64.decode(privacyProfile.avatarKey))
-                                val finalAvatarPath = File(AmeFileUploader.DECRYPT_DIRECTORY, getAvatarFileName(recipient, isHd, false))
-                                targetFullFile.renameTo(finalAvatarPath)
-                                val finalUri = BcmFileUtils.getFileUri(finalAvatarPath.absolutePath)
-                                if (isHd) {
-                                    clearAvatarResource(privacyProfile.avatarHDUri)
-                                    privacyProfile.avatarHDUri = finalUri.toString()
-                                    privacyProfile.isAvatarHdOld = false
-                                } else {
-                                    clearAvatarResource(recipient.privacyProfile.avatarLDUri)
-                                    privacyProfile.avatarLDUri = finalUri.toString()
-                                    privacyProfile.isAvatarLdOld = false
-                                }
-                                ALog.d(TAG, "downloadAvatar done avatarHd: ${privacyProfile.avatarHDUri}, avatarLd: ${privacyProfile.avatarLDUri}")
-                                Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
-
-                                if (recipient.isSelf) {
-                                    AmeProvider.get<IUserModule>(ARouterConstants.Provider.PROVIDER_USER_BASE)?.saveAccount(recipient, null, recipient.privacyAvatar)
-                                }
-                                callback(true)
-
-                            } catch (ex: Exception) {
-                                ALog.e(TAG, "downloadAvatar isHd: $isHd error", ex)
-                                targetFullFile.delete()
-                                callback(false)
-                            }
-                        }
-                    }
-
-                })
-
-            } catch (ex: Exception) {
-                ALog.e(TAG, "downloadAvatar isHd: $isHd error", ex)
-                callback(false)
-            }
-
-        }
-
-        override fun onShouldRetry(e: Exception): Boolean {
-            return e is PushNetworkException
-        }
-
-        override fun onAdded() {
-        }
-
-        override fun onCanceled() {
-        }
-
-    }
 }
 

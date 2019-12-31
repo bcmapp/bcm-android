@@ -2,12 +2,9 @@ package com.bcm.messenger.contacts.adapter
 
 import android.content.Context
 import androidx.loader.content.AsyncTaskLoader
-import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.orhanobut.logger.Logger
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.provider.IGroupModule
-import com.bcm.messenger.contacts.logic.BcmContactLogic
-import com.bcm.route.api.BcmRouter
 import com.bcm.messenger.common.recipients.Recipient
 import java.util.*
 
@@ -24,16 +21,15 @@ class ContactsListLoader(context: Context, private val isGroup: Boolean = false,
 
             ALog.d("ContactsListLoader", "load contacts begin")
             if (isGroup) {
-                val groupProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_GROUP_BASE).navigationWithCast<IGroupModule>()
-                results.addAll(groupProvider.getJoinedListBySort().map {
+                results.addAll(AmeModuleCenter.group().getJoinedListBySort().map {
                     Recipient.recipientFromNewGroup(context, it)
                 })
 
             } else {
                 if (includeMe) {
-                    results.addAll(BcmContactLogic.contactFinder.getContactList())
+                    results.addAll(AmeModuleCenter.contact().getContactListWithWait())
                 } else {
-                    results.addAll(BcmContactLogic.contactFinder.getContactList().filter { !it.isSelf })
+                    results.addAll(AmeModuleCenter.contact().getContactListWithWait().filter { !it.isSelf })
                 }
             }
             ALog.d("ContactsListLoader", "load contacts end")

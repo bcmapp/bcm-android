@@ -5,7 +5,6 @@ import android.view.View
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.core.RecipientProfileLogic
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.event.HomeTopEvent
@@ -59,7 +58,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
 
         mOtherNick = nick
         if (!nick.isNullOrEmpty()) {
-            RecipientProfileLogic.updateNickFromOtherWay(recipient, nick)
+            AmeModuleCenter.contact().updateNickFromOtherWay(recipient, nick)
         }
 
         mAdHocModule = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
@@ -140,19 +139,17 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
         }
 
         if (mAdHocModule?.isAdHocMode() != true) {
-            mProfileDispose = RecipientProfileLogic.fetchProfileFeatureWithNoQueue(recipient, callback = object : RecipientProfileLogic.ProfileDownloadCallback {
-                override fun onDone(recipient: Recipient, isThrough: Boolean) {
-                    isProfileUpdated = true
-                    if (isWaitToChat) {
-                        isWaitToChat = false
-                        AmePopup.loading.dismiss()
+            mProfileDispose = AmeModuleCenter.contact().fetchProfile(recipient) {
+                isProfileUpdated = true
+                if (isWaitToChat) {
+                    isWaitToChat = false
+                    AmePopup.loading.dismiss()
 
-                        if (recipient.isAllowStranger || recipient.isFriend) {
-                            goChat()
-                        }
+                    if (recipient.isAllowStranger || recipient.isFriend) {
+                        goChat()
                     }
                 }
-            })
+            }
         }
     }
 
@@ -161,7 +158,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
         mOtherNick = nickname
         val profileKey = ProfileKeyModel.fromKeyConfig(member?.keyConfig)
         if (null != profileKey) {
-            RecipientProfileLogic.updateProfileKey(this, recipient, profileKey)
+            AmeModuleCenter.contact().updateProfileKey(this, recipient, profileKey)
         }
         anchor_img.setPhoto(recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
         anchor_name.text = nickname
@@ -169,7 +166,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
 
         val groupMemberNick = member?.nickname // maybe stranger, so should use group member nick name
         if (!groupMemberNick.isNullOrEmpty()) {
-            RecipientProfileLogic.updateNickFromOtherWay(recipient, groupMemberNick)
+            AmeModuleCenter.contact().updateNickFromOtherWay(recipient, groupMemberNick)
         }
     }
 

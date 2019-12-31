@@ -6,7 +6,7 @@ import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.AbstractMessage
 import org.whispersystems.signalservice.internal.websocket.FriendProtos
 
-class ContactRequestReceiver : IServerDataListener {
+class ContactRequestReceiver(private val contactLogic: BcmContactLogic) : IServerDataListener {
     private val TAG = "ContactRequestReceiver"
 
     override fun onReceiveData(proto: AbstractMessage): Boolean {
@@ -16,7 +16,7 @@ class ContactRequestReceiver : IServerDataListener {
                 if (deletesList.isNotEmpty()) {
                     ALog.i(TAG, "Handle delete list ${deletesList?.size}")
                     deletesList.forEach { deleteFriend ->
-                        BcmContactLogic.handleDeleteFriend(deleteFriend)
+                        contactLogic.handleDeleteFriend(deleteFriend)
                     }
                 }
 
@@ -24,7 +24,7 @@ class ContactRequestReceiver : IServerDataListener {
                 if (requestsList.isNotEmpty()) {
                     ALog.i(TAG, "Handle request list ${requestsList?.size}")
                     requestsList.forEach { request ->
-                        BcmContactLogic.handleAddFriendRequest(request)
+                        contactLogic.handleAddFriendRequest(request)
                     }
                 }
 
@@ -32,7 +32,7 @@ class ContactRequestReceiver : IServerDataListener {
                 if (repliesList.isNotEmpty()) {
                     ALog.i(TAG, "Handle reply list ${repliesList?.size}")
                     repliesList.forEach { reply ->
-                        BcmContactLogic.handleFriendReply(reply)
+                        contactLogic.handleFriendReply(reply)
                     }
                 }
             }

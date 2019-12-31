@@ -179,7 +179,7 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
             MasterSecretUtil.clearMasterSecretPassphrase(AppContextHolder.APP_CONTEXT)
             val walletProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_WALLET_BASE).navigation() as IWalletProvider
             walletProvider.destroyWallet()
-            AmeProvider.get<IContactModule>(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE)?.clear()
+            AmeModuleCenter.contact().clear()
 
         }catch (ex: Exception) {
             ALog.e(TAG, "clearAll error", ex)

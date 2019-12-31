@@ -19,7 +19,9 @@ class BcmAdHocFinder : IBcmFinder {
 
     private val TAG = "BcmAdHocFinder"
     private val mSearchLock = AtomicReference(CountDownLatch(1))
+    @Volatile
     private var mSearchList: List<AdHocSession>? = null
+    @Volatile
     private var mFindResult: SessionFindResult? = null
 
     fun updateSource(sessionList: List<AdHocSession>) {

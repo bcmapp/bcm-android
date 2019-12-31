@@ -21,8 +21,8 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.privatechat.webrtc.CameraState
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcViewModel
-import com.bcm.messenger.common.core.RecipientProfileLogic
 import com.bcm.messenger.common.mms.GlideApp
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -589,7 +589,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             doUpdateCallCard(recipient, status)
 
             if (recipient.getPrivacyAvatar(true).isNullOrEmpty()) {
-                RecipientProfileLogic.checkNeedDownloadAvatar(recipient, isHd = true)
+                AmeModuleCenter.contact().checkNeedDownloadAvatar(true, recipient)
             }
         }
     }

@@ -4,16 +4,18 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.graphics.Bitmap
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.core.RecipientProfileLogic
+import com.bcm.messenger.contacts.logic.BcmProfileLogic
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
+import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.finder.BcmFinderManager
+import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
 import com.bcm.messenger.common.provider.*
 import com.bcm.messenger.common.provider.IContactModule.Companion.TAG
 import com.bcm.messenger.common.recipients.Recipient
@@ -35,6 +37,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -42,7 +45,11 @@ import io.reactivex.schedulers.Schedulers
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_CONTACTS_BASE)
 class ContactModuleImp : IContactModule {
-    private val contactRequestReceiver = ContactRequestReceiver()
+
+    private val mProfileLogic = BcmProfileLogic()
+    private val mContactLogic = BcmContactLogic()
+    private val contactRequestReceiver = ContactRequestReceiver(mContactLogic)
+
 
     override fun initModule() {
         AmeModuleCenter.serverDispatcher().addListener(contactRequestReceiver)
@@ -148,7 +155,7 @@ class ContactModuleImp : IContactModule {
         }
         else if (PrivacyProfile.isShortLink(link)) {
             AmeAppLifecycle.showLoading()
-            RecipientProfileLogic.checkShareLink(context, link) {result ->
+            mProfileLogic.checkShareLink(context, link) { result ->
                 AmeAppLifecycle.hideLoading()
                 if (result == null) {
                     BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, link).navigation(context)
@@ -263,16 +270,33 @@ class ContactModuleImp : IContactModule {
     }
 
     override fun doForLogin() {
-        BcmContactLogic.doForLogin()
+        mContactLogic.doForLogin()
     }
 
     override fun doForLogOut() {
-        BcmContactLogic.doForLogout()
+        mContactLogic.doForLogout()
+    }
+
+    override fun replyFriend(targetUid: String, approve: Boolean, request: BcmFriendRequest, callback: ((result: Boolean) -> Unit)?) {
+        Observable.create<Boolean> {
+            mContactLogic.replyAddFriend(targetUid, approve, request.proposer, request.requestSignature) { res ->
+                ALog.i(TAG, "Handle return a callback")
+                it.onNext(res)
+                it.onComplete()
+            }
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    callback?.invoke(it)
+                }, {
+                    ALog.e(TAG, "replyFriend approve: $approve error", it)
+                    callback?.invoke(false)
+                })
     }
 
     override fun addFriend(targetUid: String, memo: String, handleBackground: Boolean, callback: ((result: Boolean) -> Unit)?) {
         Observable.create<Boolean> {
-            BcmContactLogic.addFriend(targetUid, memo, handleBackground) { res ->
+            mContactLogic.addFriend(targetUid, memo, handleBackground) { res ->
                 it.onNext(res)
                 it.onComplete()
             }
@@ -288,7 +312,7 @@ class ContactModuleImp : IContactModule {
 
     override fun deleteFriend(targetUid: String, callback: ((result: Boolean) -> Unit)?) {
         Observable.create<Boolean> {
-            BcmContactLogic.deleteFriend(targetUid) { res ->
+            mContactLogic.deleteFriend(targetUid) { res ->
                 it.onNext(res)
                 it.onComplete()
             }
@@ -304,8 +328,7 @@ class ContactModuleImp : IContactModule {
 
     override fun handleFriendPropertyChanged(targetUid: String, callback: ((result: Boolean) -> Unit)?) {
         Observable.create<Boolean> {
-
-            BcmContactLogic.handleFriendPropertyChanged(Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(targetUid), false)) { res ->
+            mContactLogic.handleFriendPropertyChanged(Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(targetUid), false)) { res ->
                 it.onNext(res)
                 it.onComplete()
             }
@@ -321,13 +344,13 @@ class ContactModuleImp : IContactModule {
 
 
     override fun checkNeedRequestAddFriend(context: Context, recipient: Recipient) {
-        BcmContactLogic.checkRequestFriendForOldVersion(recipient)
+        mContactLogic.checkRequestFriendForOldVersion(recipient)
     }
 
     override fun updateThreadRecipientSource(threadRecipientList: List<Recipient>) {
 
         Observable.create<Unit> {
-            BcmContactLogic.contactFinder.updateSourceWithThread(threadRecipientList, Recipient.getRecipientComparator())
+            mContactLogic.updateThreadRecipientSource(threadRecipientList)
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -337,4 +360,66 @@ class ContactModuleImp : IContactModule {
                 })
 
     }
+
+    override fun getContactListWithWait(): List<Recipient> {
+        return mContactLogic.getContactListWithWait()
+    }
+
+    override fun updatePrivacyProfile(context: Context, recipient: Recipient, newEncryptName: String?, newEncryptAvatarLD: String?, newEncryptAvatarHD: String?, allowStranger: Boolean) {
+        mProfileLogic.handlePrivacyProfileChanged(context, recipient, recipient.privacyProfile, newEncryptName, newEncryptAvatarLD, newEncryptAvatarHD, allowStranger)
+        Repository.getRecipientRepo()?.setPrivacyProfile(recipient, recipient.privacyProfile)
+
+    }
+
+    override fun updateProfileKey(context: Context, recipient: Recipient, profileKeyModel: ProfileKeyModel) {
+        mProfileLogic.updateProfileKey(context, recipient, profileKeyModel)
+    }
+
+    override fun fetchProfile(recipient: Recipient, callback: (success: Boolean) -> Unit): Disposable {
+        return mProfileLogic.fetchProfileWithNoQueue(recipient, callback)
+    }
+
+    override fun checkNeedFetchProfile(vararg recipients: Recipient, callback: IContactModule.IProfileCallback?) {
+        mProfileLogic.checkNeedFetchProfile(*recipients, callback = object : BcmProfileLogic.ProfileFetchCallback {
+            override fun onDone(recipient: Recipient, viaJob: Boolean) {
+                callback?.onDone(recipient, viaJob)
+            }
+
+        })
+    }
+
+    override fun checkNeedFetchProfileAndIdentity(vararg recipients: Recipient, callback: IContactModule.IProfileCallback?) {
+        mProfileLogic.forceToFetchProfile(*recipients, callback = object : BcmProfileLogic.ProfileFetchCallback {
+            override fun onDone(recipient: Recipient, viaJob: Boolean) {
+                callback?.onDone(recipient, viaJob)
+            }
+
+        })
+    }
+
+    override fun checkNeedDownloadAvatar(isHd: Boolean, vararg recipients: Recipient) {
+        mProfileLogic.checkNeedDownloadAvatar(*recipients, isHd = isHd)
+    }
+
+    override fun checkNeedDownloadAvatarWithAll(vararg recipients: Recipient) {
+        mProfileLogic.checkNeedDownloadAvatarWithAll(*recipients)
+    }
+
+    override fun updateNickFromOtherWay(recipient: Recipient, nick: String) {
+        mProfileLogic.updateNickFromOtherWay(recipient, nick)
+    }
+
+    override fun uploadBcmNick(context: Context, recipient: Recipient, nick: String, callback: (success: Boolean) -> Unit) {
+        mProfileLogic.uploadNickName(context, recipient, nick, callback)
+    }
+
+    override fun uploadBcmAvatar(context: Context, recipient: Recipient, avatarBitmap: Bitmap, callback: (success: Boolean) -> Unit) {
+        mProfileLogic.uploadAvatar(context, recipient, avatarBitmap, callback)
+    }
+
+    override fun updateShareLink(context: Context, handledRecipient: Recipient, callback: (success: Boolean) -> Unit) {
+        mProfileLogic.updateShareLink(context, handledRecipient, callback)
+    }
+
+
 }

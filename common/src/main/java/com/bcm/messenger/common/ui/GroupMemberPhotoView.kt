@@ -4,14 +4,16 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.bcm.messenger.common.core.RecipientProfileLogic
+import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.database.model.ProfileKeyModel
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.AmeProvider
+import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
-import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.utility.AppContextHolder
 
 /**
@@ -92,7 +94,7 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
         val recipient = this.recipient
         val profileKeyModel = ProfileKeyModel.fromKeyConfig(keyConfig)
         if (null != recipient && null != profileKeyModel) {
-            RecipientProfileLogic.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient, profileKeyModel)
+            AmeModuleCenter.contact().updateProfileKey(AppContextHolder.APP_CONTEXT, recipient, profileKeyModel)
         }
 
         setRecipient(recipient, nickname)

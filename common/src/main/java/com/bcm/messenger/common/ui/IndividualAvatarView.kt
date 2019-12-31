@@ -17,13 +17,16 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.cardview.widget.CardView
+import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.BcmHttpApiHelper
-import com.bcm.messenger.common.core.RecipientProfileLogic
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.AmeProvider
+import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.emoji.EmojiTextView
 import com.bcm.messenger.common.utils.BcmFileUtils
@@ -634,13 +637,14 @@ class IndividualAvatarView : CardView {
                     .into(it)
         }
 
+        val contactModule = AmeModuleCenter.contact()
         if (recipient?.needRefreshProfile() == true) {
-            RecipientProfileLogic.checkNeedFetchProfile(recipient, callback = object : RecipientProfileLogic.ProfileDownloadCallback {
-                override fun onDone(recipient: Recipient, isThrough: Boolean) {
+            contactModule?.checkNeedFetchProfile(recipient, callback = object : IContactModule.IProfileCallback {
+                override fun onDone(recipient: Recipient, viaJob: Boolean) {
                     val avatar = recipient.getPrivacyAvatar(desireHD)
                     if (avatar.isNullOrEmpty()) {
                         ALog.i(TAG, "requestPhoto check need download Avatar desireHD: $desireHD, size: $size")
-                        RecipientProfileLogic.checkNeedDownloadAvatar(recipient, isHd = desireHD)
+                        contactModule.checkNeedDownloadAvatar(desireHD, recipient)
                     }
                 }
             })
@@ -648,7 +652,7 @@ class IndividualAvatarView : CardView {
             val avatar = recipient.getPrivacyAvatar(desireHD)
             if (avatar.isNullOrEmpty()) {
                 ALog.i(TAG, "requestPhoto check need download Avatar desireHD: $desireHD, size: $size")
-                RecipientProfileLogic.checkNeedDownloadAvatar(recipient, isHd = desireHD)
+                contactModule?.checkNeedDownloadAvatar(desireHD, recipient)
             }
         }
     }

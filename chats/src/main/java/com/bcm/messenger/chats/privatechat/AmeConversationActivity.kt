@@ -29,7 +29,6 @@ import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.audio.AudioSlidePlayer
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.core.RecipientProfileLogic
 import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.database.repositories.DraftRepo
@@ -40,6 +39,8 @@ import com.bcm.messenger.common.imagepicker.BcmPickPhotoConstants
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
 import com.bcm.messenger.common.imagepicker.bean.SelectedModel
 import com.bcm.messenger.common.mms.*
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.provider.IUserModule
 import com.bcm.messenger.common.providers.PersistentBlobProvider
@@ -690,7 +691,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     private fun initializeProfiles() {
         mProfileDisposable?.dispose()
-        mProfileDisposable = RecipientProfileLogic.fetchProfileFeatureWithNoQueue(mRecipient, null)
+        mProfileDisposable = AmeModuleCenter.contact().fetchProfile(mRecipient) {}
     }
 
     private fun checkRecipientBlock(callback: (continueAction: Boolean) -> Unit): Boolean {

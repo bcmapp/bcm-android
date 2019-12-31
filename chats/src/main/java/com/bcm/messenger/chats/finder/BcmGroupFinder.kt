@@ -19,7 +19,9 @@ class BcmGroupFinder :IBcmFinder {
     private val TAG = "BcmGroupFinder"
 
     private val mLock = AtomicReference(CountDownLatch(1))
+    @Volatile
     private var mGroupList: List<AmeGroupInfo>? = null
+    @Volatile
     private var mFindResult: GroupFindResult? = null
 
 

@@ -16,15 +16,11 @@ import com.bcm.messenger.chats.thread.MessageListTitleView
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.core.RecipientProfileLogic
 import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.metrics.ReportUtil
 import com.bcm.messenger.common.preferences.SuperPreferences
-import com.bcm.messenger.common.provider.AMESelfData
-import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.IAdHocModule
-import com.bcm.messenger.common.provider.IChatModule
+import com.bcm.messenger.common.provider.*
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.BcmRecyclerView
@@ -207,9 +203,9 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
         // check need fetch profile or avatar
         if (recipient.needRefreshProfile()) {
-            RecipientProfileLogic.forceToFetchProfile(recipient, callback = null)
+            AmeModuleCenter.contact().checkNeedFetchProfileAndIdentity(recipient, callback = null)
         }else {
-            RecipientProfileLogic.checkNeedDownloadAvatarWithAll(recipient)
+            AmeModuleCenter.contact().checkNeedDownloadAvatarWithAll(recipient)
         }
     }
 
@@ -598,7 +594,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         if (shareLink.isNullOrEmpty()) {
             mWaitForShortLink = true
             AmeAppLifecycle.showLoading()
-            RecipientProfileLogic.updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
+            AmeModuleCenter.contact().updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
                 AmeAppLifecycle.hideLoading()
             }
 
