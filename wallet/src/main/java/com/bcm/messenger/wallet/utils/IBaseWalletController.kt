@@ -10,7 +10,7 @@ import java.io.File
 /**
  * Created by wjh on 2018/11/7
  */
-interface BaseWalletUtils {
+interface IBaseWalletController {
 
     fun getQRScheme(): String
 

@@ -259,7 +259,7 @@ class WalletFragment : BaseFragment() {
             home_total_title.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
             val total = mAdapter.getTotalMoney().setScale(2, BigDecimal.ROUND_HALF_UP)
             home_total_balance.text = getString(R.string.wallet_home_total_balance,
-                    WalletSettings.getCurrencyShortyUnit(WalletSettings.getCurrentCurrency()),
+                    WalletSettings.getCurrencyShortyUnit(mWalletModel?.getManager()?.getCurrentCurrency() ?: ""),
                     EthExchangeCalculator.FormatterMoney.format(total))
         }
     }
@@ -282,7 +282,7 @@ class WalletFragment : BaseFragment() {
         if (btcList.isNullOrEmpty() && ethList.isNullOrEmpty()) {
 
             mAdapter.showWalletEntrance(getString(R.string.wallet_not_init_notice)) {
-                BCMWalletManager.goForInitWallet(activity as? AppCompatActivity) {
+                mWalletModel?.getManager()?.goForInitWallet(activity as? AppCompatActivity) {
                     mAdapter.hideWalletEntrance()
                 }
             }
@@ -290,7 +290,7 @@ class WalletFragment : BaseFragment() {
         } else if (ethList.isNullOrEmpty()) {
 
             mAdapter.showWalletEntrance(getString(R.string.wallet_eth_support_notice)) {
-                BCMWalletManager.goForCreateWallet(activity as? AppCompatActivity, WalletSettings.ETH) {
+                mWalletModel?.getManager()?.goForCreateWallet(activity as? AppCompatActivity, WalletSettings.ETH) {
                     mAdapter.hideWalletEntrance()
                 }
             }
@@ -298,7 +298,7 @@ class WalletFragment : BaseFragment() {
         } else if (btcList.isNullOrEmpty()) {
 
             mAdapter.showWalletEntrance(getString(R.string.wallet_btc_support_notice)) {
-                BCMWalletManager.goForCreateWallet(activity as? AppCompatActivity, WalletSettings.BTC) {
+                mWalletModel?.getManager()?.goForCreateWallet(activity as? AppCompatActivity, WalletSettings.BTC) {
                     mAdapter.hideWalletEntrance()
                 }
             }

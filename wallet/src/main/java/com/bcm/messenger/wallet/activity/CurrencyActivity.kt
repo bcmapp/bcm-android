@@ -19,11 +19,15 @@ import com.bcm.messenger.common.SwipeBaseActivity
 class CurrencyActivity : SwipeBaseActivity() {
     private val TAG = "CurrencyActivity"
 
-    private var mCurrencyCode = WalletSettings.getCurrentCurrency()
+    private var mWalletModel: WalletViewModel? = null
+    private var mCurrencyCode = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.wallet_currency_activity)
+
+        mWalletModel = WalletViewModel.of(this)
+        mCurrencyCode = mWalletModel?.getManager()?.getCurrentCurrency() ?: ""
 
         currency_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
@@ -35,7 +39,7 @@ class CurrencyActivity : SwipeBaseActivity() {
                 changeCurrencyCode(mCurrencyCode) { result ->
                     AmePopup.loading.dismiss()
                     if (result) {
-                        WalletSettings.saveCurrencyCode(mCurrencyCode)
+                        mWalletModel?.getManager()?.saveCurrencyCode(mCurrencyCode)
                         AmePopup.result.succeed(this@CurrencyActivity, getString(R.string.wallet_currency_change_success_text), true)
                     } else {
                         AmePopup.result.failure(this@CurrencyActivity, getString(R.string.wallet_currency_change_fail_text), true)
@@ -44,7 +48,7 @@ class CurrencyActivity : SwipeBaseActivity() {
             }
         })
 
-        val adapter = CurrencyAdapter(this, object : CurrencyAdapter.CurrencySelectionListener {
+        val adapter = CurrencyAdapter(this, mWalletModel?.getManager() ?: return, object : CurrencyAdapter.CurrencySelectionListener {
             override fun onSelect(currencyCode: String) {
                 mCurrencyCode = currencyCode
             }
@@ -53,10 +57,9 @@ class CurrencyActivity : SwipeBaseActivity() {
         currency_list.layoutManager = LinearLayoutManager(this)
         currency_list.adapter = adapter
 
-        WalletViewModel.of(this).eventData.observe(this, Observer {
+        mWalletModel?.eventData?.observe(this, Observer {
             ALog.d(TAG, "CurrencyActivity observe event: ${it?.id}")
         })
-
 
     }
 

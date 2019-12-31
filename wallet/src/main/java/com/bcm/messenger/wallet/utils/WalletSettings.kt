@@ -12,6 +12,7 @@ import com.bcm.messenger.utility.AppContextHolder
  * created by wjh on 2018/05/17
  */
 object WalletSettings {
+
     const val PREFIX_AME = "AME_"
     const val PREFIX_ADDRESS = "0x"
 
@@ -52,38 +53,24 @@ object WalletSettings {
 
     fun getCurrencyShortyUnit(currency: String): String {
         return when (currency) {
-            WalletSettings.CNY -> "¥"
-            WalletSettings.USD -> "$"
-            WalletSettings.EUR -> "€"
-            WalletSettings.GBP -> "£"
-            WalletSettings.AUD -> "$"
-            WalletSettings.RUB -> "р"
-            WalletSettings.CHF -> "Fr"
-            WalletSettings.CAD -> "C$"
-            WalletSettings.JPY -> "¥"
+            CNY -> "¥"
+            USD -> "$"
+            EUR -> "€"
+            GBP -> "£"
+            AUD -> "$"
+            RUB -> "р"
+            CHF -> "Fr"
+            CAD -> "C$"
+            JPY -> "¥"
             else -> currency
-        }
-    }
-
-    fun formatDefaultName(coinType: String, accountIndex: Int = -1): String {
-        val index = if(accountIndex == -1) {
-            BCMWalletManager.getCurrentAccountIndex(coinType)
-        }else {
-            accountIndex
-        }
-        val isMain = isBCMDefault(index)
-        return if (isMain) {
-            AppContextHolder.APP_CONTEXT.getString(R.string.wallet_name_main)
-        } else {
-            AppContextHolder.APP_CONTEXT.getString(R.string.wallet_name_child, index.toString())
         }
     }
 
     fun formatWalletLogo(context: Context, coinType: String): Drawable {
 
         return when (coinType) {
-            WalletSettings.BTC -> AppUtil.getDrawable(context.resources, R.drawable.wallet_btc_icon)
-            WalletSettings.ETH -> AppUtil.getDrawable(context.resources, R.drawable.wallet_eth_icon)
+            BTC -> AppUtil.getDrawable(context.resources, R.drawable.wallet_btc_icon)
+            ETH -> AppUtil.getDrawable(context.resources, R.drawable.wallet_eth_icon)
             else -> AppUtil.getDrawable(context.resources, R.drawable.wallet_eth_icon)
         }
     }
@@ -91,38 +78,16 @@ object WalletSettings {
     fun formatWalletLogoForDetail(context: Context, coinType: String): Drawable {
 
         return when (coinType) {
-            WalletSettings.BTC -> AppUtil.getDrawable(context.resources, R.drawable.wallet_btc_icon)
-            WalletSettings.ETH -> AppUtil.getDrawable(context.resources, R.drawable.wallet_eth_icon)
+            BTC -> AppUtil.getDrawable(context.resources, R.drawable.wallet_btc_icon)
+            ETH -> AppUtil.getDrawable(context.resources, R.drawable.wallet_eth_icon)
             else -> AppUtil.getDrawable(context.resources, R.drawable.wallet_btc_icon)
         }
     }
 
-    fun saveWalletBackNotice(notice: Boolean) {
-        val prefs = BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
-        val editor = prefs.edit()
-        editor.putBoolean(PREF_BACKUP_NOTICE, notice)
-        editor.apply()
-    }
-
-    fun getWalletBackNotice(): Boolean {
-        val prefs = BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
-        return prefs.getBoolean(PREF_BACKUP_NOTICE, true)
-    }
 
     fun getCurrencyList(): List<String> {
 
         return listOf("CNY", "USD", "EUR", "JPY", "GBP", "AUD", "RUB", "CHF", "CAD")
-    }
-
-    fun getCurrentCurrency(): String {
-        val prefs = BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
-        return prefs.getString(PREF_COIN_CURRENCY, USD) ?: ""
-    }
-
-    fun saveCurrencyCode(currencyCode: String) {
-        val edit = BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).edit()
-        edit.putString(PREF_COIN_CURRENCY, currencyCode)
-        edit.apply()
     }
 
     fun isBCMDefault(accountIndex: Int): Boolean {
@@ -157,14 +122,4 @@ object WalletSettings {
         }
     }
 
-    fun getLastFeePlanTime(coinBase: String): Long {
-        val prefs = BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
-        return prefs.getLong(PREF_FEE_PLAN + coinBase, 0)
-    }
-
-    fun saveFeePlanString(coinBase: String, time: Long) {
-        val edit = BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).edit()
-        edit.putLong(PREF_FEE_PLAN + coinBase, time)
-        edit.apply()
-    }
 }

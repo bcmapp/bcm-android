@@ -78,7 +78,7 @@ object EthExchangeCalculator : BaseExchangeCalculator() {
             ALog.e(TAG, "convertMoneyDisplay error", ex)
             FormatterMoney.format(BigDecimal.ZERO)
         }
-        return result + " " + EthExchangeCalculator.mainCurrency.name
+        return result + " " + mainCurrency.name
     }
 
     /**
@@ -155,7 +155,7 @@ object EthExchangeCalculator : BaseExchangeCalculator() {
             ALog.e(TAG, "convertGasMoneyDisplay error", ex)
             FormatterMoney.format(BigDecimal.ZERO)
         }
-        return result + " " + EthExchangeCalculator.mainCurrency.name
+        return result + " " + mainCurrency.name
     }
 
 }

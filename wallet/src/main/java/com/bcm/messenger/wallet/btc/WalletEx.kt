@@ -31,7 +31,7 @@ import kotlin.collections.LinkedHashSet
 /**
  * Created by wjh on 2019/3/22
  */
-class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi: Wapi?) : Wallet(params, keyChainGroup) {
+class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, private val mManager: BCMWalletManager, private val mApi: Wapi?) : Wallet(params, keyChainGroup) {
 
     companion object {
         private const val TAG = "WalletEx"
@@ -123,7 +123,7 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
     fun removeDiscoveryFlag() {
         val account = activeKeyChain.accountPath.get(2).num()
         ALog.i(TAG, "removeDiscoveryFlag account: $account")
-        BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).edit().remove("${BCMWalletManager.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account").apply()
+        mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).edit().remove("${BCMWalletManager.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account").apply()
     }
 
     private fun needDiscoverHistory(): Boolean {
@@ -135,13 +135,13 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, val mApi
     private fun getLastDiscoveryTime(): Long {
         val account = activeKeyChain.accountPath.get(2).num()
         ALog.i(TAG, "getLastDiscoveryTime account: $account")
-        return BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).getLong("${BCMWalletManager.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account", 0)
+        return mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).getLong("${BCMWalletManager.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account", 0)
     }
 
     private fun setLastDiscoveryTime() {
         val account = activeKeyChain.accountPath.get(2).num()
         ALog.i(TAG, "setLastDiscoveryTime account: $account")
-        BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).edit()
+        mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).edit()
                 .putLong("${BCMWalletManager.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account", System.currentTimeMillis()).apply()
     }
 

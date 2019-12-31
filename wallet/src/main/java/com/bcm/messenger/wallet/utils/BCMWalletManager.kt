@@ -45,7 +45,44 @@ import kotlin.random.Random
 /**
  * Created by wjh on 2018/05/24
  */
-object BCMWalletManager {
+class BCMWalletManager(private val accountUid: String) {
+
+    companion object {
+        private const val TAG = "BCMWalletManager"
+
+        // 表示当前的钱包版本，以后基于这个判断
+        private const val BCM_WALLET_VERSION = 4//当前钱包版本
+
+        const val PREF_LAST_DISCOVERY = "pref_last_discovery_"
+
+        const val TABLE_WALLET_ACCOUNT = "wallet_account_pref_"
+        const val TABLE_WALLET_SETTING = "wallet_setting_table"
+
+        private const val KEY_WALLET_PIN = "wallet_pin_key"
+        private const val KEY_WALLET_VERSION = "wallet_version_key"
+
+        private var mCurrentHttpClient: OkHttpClient? = null
+
+        @Synchronized
+        fun provideHttpClient(): OkHttpClient {
+            var client = mCurrentHttpClient
+            if (client == null) {
+                client = OkHttpClient.Builder()
+                        .followRedirects(true)
+                        .followSslRedirects(true)
+                        .connectTimeout(8, TimeUnit.SECONDS)
+                        .writeTimeout(8, TimeUnit.SECONDS)
+                        .readTimeout(8, TimeUnit.SECONDS).build()
+                mCurrentHttpClient = client
+                return client
+            }
+            return client
+        }
+
+        fun getSuperPreferences(context: Context): SharedPreferences {
+            return SuperPreferences.getSuperPreferences(context, TABLE_WALLET_SETTING)
+        }
+    }
 
     enum class WalletStage {
         STAGE_UNKNOWN, //未知
@@ -55,24 +92,12 @@ object BCMWalletManager {
         STAGE_ERROR //同步失败
     }
 
-    private const val TAG = "BCMWalletManager"
-
-    // 表示当前的钱包版本，以后基于这个判断
-    private const val BCM_WALLET_VERSION = 4//当前钱包版本
-
-    const val PREF_LAST_DISCOVERY = "pref_last_discovery_"
-
-    const val TABLE_WALLET_ACCOUNT = "wallet_account_pref_"
-    const val TABLE_WALLET_SETTING = "wallet_setting_table"
-
-    private const val KEY_WALLET_PIN = "wallet_pin_key"
-    private const val KEY_WALLET_VERSION = "wallet_version_key"
+    val btcController = BtcWalletController(this)
+    val ethController = EthWalletController(this)
 
     private var mCurStage = WalletStage.STAGE_UNKNOWN
 
     private var bcmConnectedTask: Disposable? = null
-
-    private var mCurrentHttpClient: OkHttpClient? = null
 
     var isBCMConnected: Boolean = true
         set(value) {
@@ -82,7 +107,7 @@ object BCMWalletManager {
                     bcmConnectedTask?.dispose()
                     bcmConnectedTask = AmeDispatcher.io.dispatch({
                         if (value) {
-                            BtcWalletUtils.checkMyceliumConfig()
+                            btcController.checkMyceliumConfig()
                         }
                     }, 1500)
                 }
@@ -106,13 +131,10 @@ object BCMWalletManager {
     }
 
     fun getAccountPreferences(context: Context): SharedPreferences {
-        ALog.d(TAG, "getAccountPreferences table: wallet_preferences_${AMESelfData.uid}")
-        return context.getSharedPreferences("wallet_preferences_${AMESelfData.uid}", Context.MODE_PRIVATE)
+        ALog.d(TAG, "getAccountPreferences table: wallet_preferences_$accountUid")
+        return context.getSharedPreferences("wallet_preferences_$accountUid", Context.MODE_PRIVATE)
     }
 
-    fun getSuperPreferences(context: Context): SharedPreferences {
-        return SuperPreferences.getSuperPreferences(context, TABLE_WALLET_SETTING)
-    }
 
     @Synchronized
     internal fun getWalletPin(): String {
@@ -135,7 +157,7 @@ object BCMWalletManager {
         } catch (ex: Exception) {
         }
         mWalletAccounts.get().clear()
-        BtcWalletUtils.clearPeerSyncHelper()
+        btcController.clearPeerSyncHelper()
         mPin = null
         mLastInitResult = null
         mCurStage = WalletStage.STAGE_UNKNOWN
@@ -178,20 +200,6 @@ object BCMWalletManager {
 
     }
 
-    fun provideHttpClient(): OkHttpClient {
-        var client = mCurrentHttpClient
-        if (client == null) {
-            client = OkHttpClient.Builder()
-                    .followRedirects(true)
-                    .followSslRedirects(true)
-                    .connectTimeout(8, TimeUnit.SECONDS)
-                    .writeTimeout(8, TimeUnit.SECONDS)
-                    .readTimeout(8, TimeUnit.SECONDS).build()
-            mCurrentHttpClient = client
-            return client
-        }
-        return client
-    }
 
     fun startInitService(context: Context, privateKeyArray: ByteArray, callback: ((success: Boolean) -> Unit)? = null) {
         ALog.i(TAG, "startInitService")
@@ -266,12 +274,34 @@ object BCMWalletManager {
                 })
     }
 
-    fun getWalletUtils(coinType: String): BaseWalletUtils {
+    fun getWalletUtils(coinType: String): IBaseWalletController {
         return if (coinType == WalletSettings.BTC) {
-            BtcWalletUtils
+            btcController
         } else {
-            EthWalletUtils
+            ethController
         }
+    }
+
+    fun getLastFeePlanTime(coinBase: String): Long {
+        val prefs = getAccountPreferences(AppContextHolder.APP_CONTEXT)
+        return prefs.getLong(WalletSettings.PREF_FEE_PLAN + coinBase, 0)
+    }
+
+    fun saveFeePlanString(coinBase: String, time: Long) {
+        val edit = getAccountPreferences(AppContextHolder.APP_CONTEXT).edit()
+        edit.putLong(WalletSettings.PREF_FEE_PLAN + coinBase, time)
+        edit.apply()
+    }
+
+    fun getCurrentCurrency(): String {
+        val prefs = getAccountPreferences(AppContextHolder.APP_CONTEXT)
+        return prefs.getString(WalletSettings.PREF_COIN_CURRENCY, WalletSettings.USD) ?: ""
+    }
+
+    fun saveCurrencyCode(currencyCode: String) {
+        val edit = getAccountPreferences(AppContextHolder.APP_CONTEXT).edit()
+        edit.putString(WalletSettings.PREF_COIN_CURRENCY, currencyCode)
+        edit.apply()
     }
 
     fun getWallet(address: String): BCMWallet? {
@@ -333,6 +363,13 @@ object BCMWalletManager {
                     walletAccounts.ETH.coinList.addAll(exist.ETH.coinList)
                 }
             }
+            walletAccounts.BTC.coinList.forEach {
+                it.setManager(this)
+            }
+            walletAccounts.ETH.coinList.forEach {
+                it.setManager(this)
+            }
+
         } catch (ex: Exception) {
             ALog.e(TAG, "loadWalletAccounts error", ex)
 
@@ -453,9 +490,11 @@ object BCMWalletManager {
                     if (coinType == WalletSettings.BTC) {
                         for (i in 0 until addressMax) {
 
-                            address = LegacyAddress.fromKey(BtcWalletUtils.NETWORK_PARAMETERS, KeyChainUtils.computeChildKey(coinType, currentIndex, hierarchy, false, i)).toBase58()
+                            address = LegacyAddress.fromKey(BtcWalletController.NETWORK_PARAMETERS, KeyChainUtils.computeChildKey(coinType, currentIndex, hierarchy, false, i)).toBase58()
                             if (bcmWallet == null) {
-                                bcmWallet = BCMWallet(address, destination.absolutePath, coinType, currentIndex, System.currentTimeMillis())
+                                bcmWallet = BCMWallet(address, destination.absolutePath, coinType, currentIndex, System.currentTimeMillis()).apply {
+                                    setManager(this@BCMWalletManager)
+                                }
                             }
                             ALog.i(TAG, "initWallet coin: $coinType, account: $currentIndex, address: $address")
                             walletMap[address] = Triple(bcmWallet, false, i)
@@ -463,14 +502,16 @@ object BCMWalletManager {
                                 defaultWallet = walletMap[address]
                             }
 
-                            address = LegacyAddress.fromKey(BtcWalletUtils.NETWORK_PARAMETERS, KeyChainUtils.computeChildKey(coinType, currentIndex, hierarchy, true, i)).toBase58()
+                            address = LegacyAddress.fromKey(BtcWalletController.NETWORK_PARAMETERS, KeyChainUtils.computeChildKey(coinType, currentIndex, hierarchy, true, i)).toBase58()
                             walletMap[address] = Triple(bcmWallet, true, i)
                             ALog.i(TAG, "initWallet coin: $coinType, account: $currentIndex, address: $address")
 
                         }
                     } else {
                         address = KeyChainUtils.computeMainChildAddress(coinType, currentIndex, hierarchy)
-                        bcmWallet = BCMWallet(address, destination.absolutePath, coinType, currentIndex, System.currentTimeMillis())
+                        bcmWallet = BCMWallet(address, destination.absolutePath, coinType, currentIndex, System.currentTimeMillis()).apply {
+                            setManager(this@BCMWalletManager)
+                        }
                         walletMap[address] = Triple(bcmWallet, false, 0)
 
                         ALog.i(TAG, "initWallet coin: $coinType, account: $currentIndex, address: $address")
@@ -507,7 +548,7 @@ object BCMWalletManager {
                         }
                     }
 
-                    if (utils is BtcWalletUtils) {
+                    if (utils is BtcWalletController) {
                         utils.getCurrentSyncHelper().addWallet(bcmWalletTriple.first).apply {
                             if (bcmWalletTriple.second) {
                                 addIssuedInternalKeyMap(bcmWalletTriple.third, address)
@@ -539,12 +580,14 @@ object BCMWalletManager {
             val seed = DeterministicSeed(privateKeyArray, "", AMESelfData.genTime)
             val hierarchy = KeyChainUtils.buildHierarchy(seed)
             val address = KeyChainUtils.computeMainChildAddress(coinType, accountIndex, hierarchy)
-            val w = BCMWallet(address, utils.getDestinationDirectory().absolutePath, coinType, accountIndex, System.currentTimeMillis())
+            val w = BCMWallet(address, utils.getDestinationDirectory().absolutePath, coinType, accountIndex, System.currentTimeMillis()).apply {
+                setManager(this@BCMWalletManager)
+            }
             if (!synchronizeWallList(mWalletAccounts.get(), w, name)) {
                 utils.buildWallet(w, seed, password)
             }
             setCurrentAccountIndex(coinType, accountIndex + 1)
-            if (utils is BtcWalletUtils) {
+            if (utils is BtcWalletController) {
                 utils.getCurrentSyncHelper().addWallet(w)
             }
             saveWalletAccounts(mWalletAccounts.get())
@@ -581,7 +624,7 @@ object BCMWalletManager {
             }
             // 实现多账号，跟账号挂钩，所以不删除钱包文件
             if (wallet.coinType == WalletSettings.BTC) {
-                BtcWalletUtils.getCurrentSyncHelper().removeWallet(wallet)
+                btcController.getCurrentSyncHelper().removeWallet(wallet)
             }
 
             mWalletAccounts.get().removeBCMWallet(wallet.coinType, wallet)
@@ -596,6 +639,20 @@ object BCMWalletManager {
 
     }
 
+    fun formatDefaultName(coinType: String, accountIndex: Int = -1): String {
+        val index = if(accountIndex == -1) {
+            getCurrentAccountIndex(coinType)
+        }else {
+            accountIndex
+        }
+        val isMain = WalletSettings.isBCMDefault(index)
+        return if (isMain) {
+            AppContextHolder.APP_CONTEXT.getString(R.string.wallet_name_main)
+        } else {
+            AppContextHolder.APP_CONTEXT.getString(R.string.wallet_name_child, index.toString())
+        }
+    }
+
     fun goForCreateWallet(activity: AppCompatActivity?, coinType: String, notice: String = "", confirmCallback: (() -> Unit)? = null) {
         val activityRef = WeakReference(activity)
         var privateKeyArray: ByteArray? = null
@@ -603,7 +660,7 @@ object BCMWalletManager {
                 confirmListener = { password ->
                     val a = activityRef.get() ?: return@showForPassword
                     WalletConfirmDialog.showForEdit(a, a.getString(R.string.wallet_name_edit_confirm_title),
-                            previous = WalletSettings.formatDefaultName(coinType),
+                            previous = formatDefaultName(coinType),
                             hint = a.getString(R.string.wallet_name_hint), confirmListener = { name ->
 
                         startCreateService(a, coinType, privateKeyArray, name)

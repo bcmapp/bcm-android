@@ -1,7 +1,6 @@
 package com.bcm.messenger.wallet.fragment
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -23,7 +22,7 @@ import com.bcm.messenger.wallet.presenter.WalletViewModel
 import com.bcm.messenger.wallet.ui.WalletConfirmDialog
 import com.bcm.messenger.wallet.utils.EthExchangeCalculator
 import com.bcm.messenger.wallet.utils.BCMWalletManager
-import com.bcm.messenger.wallet.utils.EthWalletUtils
+import com.bcm.messenger.wallet.utils.EthWalletController
 import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -58,8 +57,9 @@ class SendEtherFragment : Fragment(), ITransferAction {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        mWalletDisplay = arguments?.getParcelable(ARouterConstants.PARAM.WALLET.WALLET_COIN) ?: return
         mWalletModel = WalletViewModel.of(activity!!)
+        mWalletDisplay = arguments?.getParcelable(ARouterConstants.PARAM.WALLET.WALLET_COIN) ?: return
+        mWalletDisplay.setManager(mWalletModel?.getManager())
 
         initViews()
         initData()
@@ -159,7 +159,6 @@ class SendEtherFragment : Fragment(), ITransferAction {
 
 
         amount_all_btn.setOnClickListener {
-            //            val coinAmount = mWalletDisplay.displayCoinAmount().split(" ")
             amount_content.setText(mWalletDisplay.getCoinAmount().toString())
         }
 
@@ -240,7 +239,7 @@ class SendEtherFragment : Fragment(), ITransferAction {
                 confirmListener = { password ->
                     sendEther(password, confirmDialogFragment)
                 }, passwordChecker = { password ->
-            BCMWalletManager.verifyPassword(password)
+            mWalletModel?.getManager()?.verifyPassword(password) ?: false
         })
     }
 
@@ -251,11 +250,12 @@ class SendEtherFragment : Fragment(), ITransferAction {
 
         AmeAppLifecycle.showLoading()
         val extra = Bundle()
-        extra.putString(EthWalletUtils.EXTRA_FEE, confirmDialogFragment.mFeeCost.toString())
-        extra.putString(EthWalletUtils.EXTRA_GAS_PRICE, confirmDialogFragment.mGasPrice.toString())
-        extra.putString(EthWalletUtils.EXTRA_GAS_LIMIT, confirmDialogFragment.mGasLimit.toString())
-        extra.putString(EthWalletUtils.EXTRA_MEMO, data_content.text.toString())
-        BCMWalletManager.startTransferService(AppContextHolder.APP_CONTEXT, mWalletDisplay, confirmDialogFragment.mToAddress.toString(),
+        extra.putString(EthWalletController.EXTRA_FEE, confirmDialogFragment.mFeeCost.toString())
+        extra.putString(EthWalletController.EXTRA_GAS_PRICE, confirmDialogFragment.mGasPrice.toString())
+        extra.putString(EthWalletController.EXTRA_GAS_LIMIT, confirmDialogFragment.mGasLimit.toString())
+        extra.putString(EthWalletController.EXTRA_MEMO, data_content.text.toString())
+        val manager = mWalletModel?.getManager()
+        manager?.startTransferService(AppContextHolder.APP_CONTEXT, mWalletDisplay, confirmDialogFragment.mToAddress.toString(),
                 confirmDialogFragment.mAmount.toString(), extra)
     }
 

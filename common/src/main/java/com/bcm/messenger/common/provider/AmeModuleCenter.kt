@@ -85,6 +85,10 @@ object AmeModuleCenter {
         return AmeProvider.getAccountModule(ARouterConstants.Provider.REPORT_BASE, accountContext)
     }
 
+    fun wallet(): IWalletModule {
+        return AmeProvider.get<IWalletModule>(ARouterConstants.Provider.PROVIDER_WALLET_BASE)!!
+    }
+
     fun app(): IAmeAppModule {
         return AmeProvider.get(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)!!
     }

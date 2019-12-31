@@ -7,8 +7,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.model.TransactionDisplay
-import com.bcm.messenger.wallet.utils.BtcWalletUtils
-import com.bcm.messenger.wallet.utils.EthWalletUtils
 import com.bcm.messenger.wallet.utils.WalletSettings
 import com.orhanobut.logger.Logger
 import io.reactivex.Observable
@@ -21,6 +19,7 @@ import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.utility.QREncoder
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.wallet.presenter.WalletViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,6 +29,8 @@ import java.util.*
 class TransactionDetailActivity : SwipeBaseActivity() {
 
     private lateinit var mTransactionDetail: TransactionDisplay
+
+    private var mWalletModel: WalletViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +42,8 @@ class TransactionDetailActivity : SwipeBaseActivity() {
             }
         })
 
+        mWalletModel = WalletViewModel.of(this)
         initView()
-
 
     }
 
@@ -103,8 +104,8 @@ class TransactionDetailActivity : SwipeBaseActivity() {
 
     private fun createBrowserUrl(transaction: TransactionDisplay): String {
         return when (transaction.wallet.coinType) {
-            WalletSettings.BTC -> BtcWalletUtils.getBrowserInfoUrl(transaction.txhash)
-            WalletSettings.ETH -> EthWalletUtils.getBrowserInfoUrl(transaction.txhash)
+            WalletSettings.BTC -> mWalletModel?.getManager()?.btcController?.getBrowserInfoUrl(transaction.txhash) ?: ""
+            WalletSettings.ETH -> mWalletModel?.getManager()?.ethController?.getBrowserInfoUrl(transaction.txhash) ?: ""
             else -> ""
         }
     }

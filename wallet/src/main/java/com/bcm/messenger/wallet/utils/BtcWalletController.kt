@@ -27,15 +27,17 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * created by wangjianhong on 2018/07/17
  */
-object BtcWalletUtils : BaseWalletUtils {
+class BtcWalletController(private val mManager: BCMWalletManager) : IBaseWalletController {
 
-    private const val TAG = "BtcWalletUtils"
+    companion object {
+        private const val TAG = "BtcWalletController"
 
-    const val EXTRA_FEE = "extra_fee"
-    const val EXTRA_MEMO = "extra_memo"
+        const val EXTRA_FEE = "extra_fee"
+        const val EXTRA_MEMO = "extra_memo"
 
-    /** Network this wallet is on (e.g. testnet or mainnet).  */
-    val NETWORK_PARAMETERS = if (AppUtil.useDevBlockChain()) TestNet3Params.get() else MainNetParams.get()
+        /** Network this wallet is on (e.g. testnet or mainnet).  */
+        val NETWORK_PARAMETERS = if (AppUtil.useDevBlockChain()) TestNet3Params.get() else MainNetParams.get()
+    }
 
     private var mConfiguration: BitcoinConfiguration? = null
 
@@ -131,7 +133,7 @@ object BtcWalletUtils : BaseWalletUtils {
     override fun getCurrentAccountIndex(): Int {
         var index = mAccountIndex.get()
         if (index < 0) {
-            val prefs = BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
+            val prefs = mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
             index = prefs.getInt(BCMWalletManager.TABLE_WALLET_ACCOUNT + WalletSettings.BTC, 0)
             mAccountIndex.compareAndSet(-1, index)
         }
@@ -140,7 +142,7 @@ object BtcWalletUtils : BaseWalletUtils {
 
     override fun setCurrentAccountIndex(index: Int) {
         mAccountIndex.set(index)
-        val prefs = BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
+        val prefs = mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
         val edit = prefs.edit()
         edit.putInt(BCMWalletManager.TABLE_WALLET_ACCOUNT + WalletSettings.BTC, index)
         edit.apply()
@@ -170,7 +172,7 @@ object BtcWalletUtils : BaseWalletUtils {
     fun getCurrentSyncHelper(): BtcWalletSyncHelper {
         var kit = mSyncer
         return if (kit == null) {
-            kit = BtcWalletSyncHelper(NETWORK_PARAMETERS)
+            kit = BtcWalletSyncHelper(mManager)
             mSyncer = kit
             kit
         } else {
@@ -197,7 +199,7 @@ object BtcWalletUtils : BaseWalletUtils {
             val keyChainGroup = KeyChainGroup.builder(NETWORK_PARAMETERS).build()
             keyChainGroup.addAndActivateHDChain(keyChain)
 
-            val wallet = WalletEx(NETWORK_PARAMETERS, keyChainGroup, mApi)
+            val wallet = WalletEx(NETWORK_PARAMETERS, keyChainGroup, mManager, mApi)
 
             wallet.encrypt(password)
             if (!BCMWallet.getSourceFile().exists()) {
@@ -283,12 +285,14 @@ object BtcWalletUtils : BaseWalletUtils {
         val walletEx = getCurrentSyncHelper().addWallet(wallet)
         walletEx.callSynchronization()
         val balance = walletEx.getBalance(Wallet.BalanceType.AVAILABLE) ?: Coin.ZERO
-        return WalletDisplay(wallet, balance.value.toString())
+        return WalletDisplay(wallet, balance.value.toString()).apply {
+            setManager(mManager)
+        }
     }
 
     override fun queryBalance(walletList: List<BCMWallet>): List<WalletDisplay> {
 
-        return walletList.map { BtcWalletUtils.queryBalance(it) }
+        return walletList.map { queryBalance(it) }
 
     }
 
@@ -319,14 +323,14 @@ object BtcWalletUtils : BaseWalletUtils {
 
         //首先计算这次转账的数量，如果大于等于自身拥有的数量，则算上小费付出账户全部
         val request = if (amountCoin.isGreaterThan(originCoin) || amountCoin.equals(originCoin)) {
-            SendRequest.emptyWallet(LegacyAddress.fromBase58(BtcWalletUtils.NETWORK_PARAMETERS, toAddress))
+            SendRequest.emptyWallet(LegacyAddress.fromBase58(BtcWalletController.NETWORK_PARAMETERS, toAddress))
         } else {
-            SendRequest.to(LegacyAddress.fromBase58(BtcWalletUtils.NETWORK_PARAMETERS, toAddress), amountCoin)
+            SendRequest.to(LegacyAddress.fromBase58(BtcWalletController.NETWORK_PARAMETERS, toAddress), amountCoin)
         }
         request.feePerKb = feeCoin
         request.memo = memo
 
-        val walletEx = BtcWalletUtils.getCurrentSyncHelper().getSourceWallet(from)
+        val walletEx = getCurrentSyncHelper().getSourceWallet(from)
                 ?: throw Exception("broadcastTransaction fail, not found wallet")
         val keyParameter = if (password.isEmpty()) null else walletEx.keyCrypter?.deriveKey(password)
         if (keyParameter != null) {

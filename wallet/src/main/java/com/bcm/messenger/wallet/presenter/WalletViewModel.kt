@@ -11,6 +11,7 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.model.*
+import com.bcm.messenger.wallet.provider.WalletModuleImp
 import com.bcm.messenger.wallet.utils.*
 import com.bcm.route.api.BcmRouter
 import com.orhanobut.logger.Logger
@@ -64,18 +65,28 @@ class WalletViewModel : ViewModel() {
 
     }
 
-    val eventData: ImportantLiveData by lazy { ImportantLiveData() }
+    private var mManager: BCMWalletManager
 
     init {
         ALog.i(TAG, "init")
         EventBus.getDefault().register(this)
+
+        val walletModule = AmeModuleCenter.wallet() as WalletModuleImp
+        mManager = walletModule.getManager()
+
     }
+
+    val eventData: ImportantLiveData by lazy { ImportantLiveData(mManager) }
 
     override fun onCleared() {
         super.onCleared()
         ALog.i(TAG, "onCleared")
         EventBus.getDefault().unregister(this)
         recycle()
+    }
+
+    fun getManager(): BCMWalletManager {
+        return mManager
     }
 
     /**
@@ -99,8 +110,8 @@ class WalletViewModel : ViewModel() {
                 ethDisplay.coinList.addAll(list)
             }
             if (completeNum.addAndGet(1) >= 2) {
-                if (BCMWalletManager.getCurrentStage() == BCMWalletManager.WalletStage.STAGE_SYNC) {
-                    BCMWalletManager.broadcastWalletInitProgress(BCMWalletManager.WalletStage.STAGE_DONE, 100, 100)
+                if (mManager?.getCurrentStage() == BCMWalletManager.WalletStage.STAGE_SYNC) {
+                    mManager?.broadcastWalletInitProgress(BCMWalletManager.WalletStage.STAGE_DONE, 100, 100)
                 }
                 callback.invoke(listOf(btcDisplay, ethDisplay))
             }
@@ -109,10 +120,10 @@ class WalletViewModel : ViewModel() {
         ALog.i(TAG, "queryAccountDisplay begin, initIfNeed: $initIfNeed")
         Observable.create(ObservableOnSubscribe<BCMWalletAccount> {
 
-            BCMWalletManager.checkAccountsComplete(initIfNeed) { success ->
+            mManager?.checkAccountsComplete(initIfNeed) { success ->
                 if (success) {
                     arrayOf(WalletSettings.BTC, WalletSettings.ETH).forEach { coinType ->
-                        it.onNext(BCMWalletManager.getAccount(coinType)
+                        it.onNext(mManager?.getAccount(coinType)
                                 ?: BCMWalletAccount(coinType))
                     }
                 } else {
@@ -127,7 +138,9 @@ class WalletViewModel : ViewModel() {
                     ALog.i(TAG, "queryAccountsDisplay begin query balance coinType: ${result.coinType}, coinList: ${result.coinList.size}")
                     queryBalance(result.coinType, result.coinList) {
                         notifyResult(it != null, result.coinType, it ?: result.coinList.map { bw ->
-                            WalletDisplay(bw, BigDecimal.ZERO.toString())
+                            WalletDisplay(bw, BigDecimal.ZERO.toString()).apply {
+                                setManager(mManager)
+                            }
                         })
                     }
 
@@ -142,15 +155,15 @@ class WalletViewModel : ViewModel() {
      * 查询余额
      */
     private fun queryBalance(coinType: String, walletList: List<BCMWallet>, callback: (result: List<WalletDisplay>?) -> Unit) {
-        var walletUtil: BaseWalletUtils? = null
+        var walletUtil: IBaseWalletController? = null
         var calculator: BaseExchangeCalculator? = null
         when(coinType) {
             WalletSettings.BTC -> {
-                walletUtil = BtcWalletUtils
+                walletUtil = mManager?.btcController
                 calculator = BtcExchangeCalculator
             }
             WalletSettings.ETH -> {
-                walletUtil = EthWalletUtils
+                walletUtil = mManager?.ethController
                 calculator = EthExchangeCalculator
             }
             else -> {
@@ -181,7 +194,7 @@ class WalletViewModel : ViewModel() {
             }
 
             //一般查询数字货币余额的同时，还要查询汇率以及对应各种合法币种的价值
-            calculator.updateExchangeRates(WalletSettings.getCurrentCurrency()) {
+            calculator.updateExchangeRates(mManager.getCurrentCurrency()) {
                 notifyResult(it)
             }
 
@@ -210,15 +223,15 @@ class WalletViewModel : ViewModel() {
      * 查询余额
      */
     fun queryBalance(wallet: BCMWallet, callback: (result: WalletDisplay?) -> Unit) {
-        var walletUtil: BaseWalletUtils? = null
+        var walletUtil: IBaseWalletController? = null
         var calculator: BaseExchangeCalculator? = null
         when(wallet.coinType) {
             WalletSettings.BTC -> {
-                walletUtil = BtcWalletUtils
+                walletUtil = mManager?.btcController
                 calculator = BtcExchangeCalculator
             }
             WalletSettings.ETH -> {
-                walletUtil = EthWalletUtils
+                walletUtil = mManager?.ethController
                 calculator = EthExchangeCalculator
             }
             else -> {
@@ -248,7 +261,9 @@ class WalletViewModel : ViewModel() {
 
                     if (successNum.get() > 0) {
 
-                        val r = result ?: WalletDisplay(wallet, BigDecimal.ZERO.toString())
+                        val r = result ?: WalletDisplay(wallet, BigDecimal.ZERO.toString()).apply {
+                            setManager(mManager)
+                        }
                         callback.invoke(r)
                         eventData.notice(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_BALANCE, r))
 
@@ -260,7 +275,7 @@ class WalletViewModel : ViewModel() {
             }
 
             //查询余额的同时还需要查询当前汇率
-            calculator.updateExchangeRates(WalletSettings.getCurrentCurrency()) {
+            calculator.updateExchangeRates(mManager.getCurrentCurrency()) {
                 notifyResult(it)
             }
 
@@ -287,17 +302,17 @@ class WalletViewModel : ViewModel() {
      * 查询交易记录
      */
     fun queryTransactions(wallet: BCMWallet, callback: (result: List<TransactionDisplay>?) -> Unit) {
-        val walletUtil = when(wallet.coinType) {
-            WalletSettings.BTC -> BtcWalletUtils
-            WalletSettings.ETH -> EthWalletUtils
+        val controller = when(wallet.coinType) {
+            WalletSettings.BTC -> mManager?.btcController
+            WalletSettings.ETH -> mManager?.ethController
             else -> null
         }
-        if (walletUtil == null) {
+        if (controller == null) {
             callback.invoke(null)
         }else {
             Observable.create(ObservableOnSubscribe<List<TransactionDisplay>> {
 
-                it.onNext(walletUtil.queryTransaction(wallet))
+                it.onNext(controller.queryTransaction(wallet))
                 it.onComplete()
 
             }).subscribeOn(Schedulers.io())
@@ -315,7 +330,7 @@ class WalletViewModel : ViewModel() {
      * 查询推荐小费列表
      */
     fun querySuggestFee(wallet: BCMWallet, callback: (result: List<FeePlan>?) -> Unit) {
-        val lastTime = WalletSettings.getLastFeePlanTime(wallet.coinType)
+        val lastTime = mManager.getLastFeePlanTime(wallet.coinType)
         //每隔1分钟才执行一次推荐小费的查询
         if ((System.currentTimeMillis() - lastTime) <= 60 * 1000) {
             return
@@ -354,7 +369,7 @@ class WalletViewModel : ViewModel() {
                     it.onError(Exception("response fail: ${response.code()}"))
                 }
             }else if (wallet.coinType == WalletSettings.ETH) {
-                it.onNext(EthWalletUtils.findSuggestGasPrice())
+                it.onNext(mManager?.ethController?.findSuggestGasPrice() ?: listOf())
             }
             else {
                 it.onError(Exception("walletType is not support"))
@@ -364,7 +379,7 @@ class WalletViewModel : ViewModel() {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ result ->
-                    WalletSettings.saveFeePlanString(wallet.coinType, System.currentTimeMillis())
+                    mManager.saveFeePlanString(wallet.coinType, System.currentTimeMillis())
                     callback.invoke(result)
                 }, { ex ->
                     ALog.e(TAG, "querySuggestFee error", ex)
@@ -454,6 +469,6 @@ class WalletViewModel : ViewModel() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(e: ServiceConnectEvent) {
         ALog.i(TAG, "receive service connect event: ${e.state}")
-        BCMWalletManager.isBCMConnected = e.state == ServiceConnectEvent.STATE.CONNECTED
+        mManager?.isBCMConnected = e.state == ServiceConnectEvent.STATE.CONNECTED
     }
 }

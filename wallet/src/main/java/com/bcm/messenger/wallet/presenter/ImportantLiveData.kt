@@ -11,7 +11,7 @@ import com.bcm.messenger.utility.AppContextHolder
  * 用于重要事情的通知
  * Created by wjh on 2018/6/1
  */
-class ImportantLiveData : LiveData<ImportantLiveData.ImportantEvent>(), SharedPreferences.OnSharedPreferenceChangeListener {
+class ImportantLiveData(private val mManager: BCMWalletManager) : LiveData<ImportantLiveData.ImportantEvent>(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     class ImportantEvent(val id: Int, val data: Any?) {
         constructor(id: Int) : this(id, null)
@@ -62,13 +62,13 @@ class ImportantLiveData : LiveData<ImportantLiveData.ImportantEvent>(), SharedPr
 
     override fun onActive() {
         ALog.d("WalletViewModel", "onActive")
-        BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).registerOnSharedPreferenceChangeListener(this)
+        mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).registerOnSharedPreferenceChangeListener(this)
 
     }
 
     override fun onInactive() {
         ALog.d("WalletViewModel", "onInactive")
-        BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).unregisterOnSharedPreferenceChangeListener(this)
+        mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).unregisterOnSharedPreferenceChangeListener(this)
     }
 
 
@@ -77,13 +77,13 @@ class ImportantLiveData : LiveData<ImportantLiveData.ImportantEvent>(), SharedPr
         when (key) {
             WalletSettings.PREF_COIN_CURRENCY -> {
                 //法币单位变更了，通知页面更新
-                postValue(ImportantEvent(ImportantLiveData.EVENT_CURRENCY_CHANGED))
+                postValue(ImportantEvent(EVENT_CURRENCY_CHANGED))
 
             }
             WalletSettings.PREF_BACKUP_NOTICE -> {
                 //接收到是否展示备份红点的通知
                 val showDot = sharedPreferences.getBoolean(key, true)
-                postValue(ImportantEvent(ImportantLiveData.EVENT_BACKUP, showDot))
+                postValue(ImportantEvent(EVENT_BACKUP, showDot))
             }
         }
     }

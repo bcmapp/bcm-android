@@ -1,7 +1,6 @@
 package com.bcm.messenger.wallet.fragment
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -23,7 +22,7 @@ import com.bcm.messenger.wallet.presenter.WalletViewModel
 import com.bcm.messenger.wallet.ui.WalletConfirmDialog
 import com.bcm.messenger.wallet.utils.BtcExchangeCalculator
 import com.bcm.messenger.wallet.utils.BCMWalletManager
-import com.bcm.messenger.wallet.utils.BtcWalletUtils
+import com.bcm.messenger.wallet.utils.BtcWalletController
 import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -59,8 +58,9 @@ class SendBitcoinFragment : Fragment(), ITransferAction {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        mWalletDisplay = arguments?.getParcelable(ARouterConstants.PARAM.WALLET.WALLET_COIN) ?: return
         mWalletModel = WalletViewModel.of(activity!!)
+        mWalletDisplay = arguments?.getParcelable(ARouterConstants.PARAM.WALLET.WALLET_COIN) ?: return
+        mWalletDisplay.setManager(mWalletModel?.getManager())
 
         initViews()
         initData()
@@ -236,7 +236,7 @@ class SendBitcoinFragment : Fragment(), ITransferAction {
                     sendBitcoin(password, confirmDialogFragment)
                 }, passwordChecker = {
             //密码验证通过才能进行交易
-            BCMWalletManager.verifyPassword(it)
+            mWalletModel?.getManager()?.verifyPassword(it) ?: false
         })
     }
 
@@ -247,9 +247,9 @@ class SendBitcoinFragment : Fragment(), ITransferAction {
 
         AmeAppLifecycle.showLoading()
         val extra = Bundle()
-        extra.putString(BtcWalletUtils.EXTRA_FEE, confirmDialogFragment.mFeeCost.toString())
-        extra.putString(BtcWalletUtils.EXTRA_MEMO, data_content.text.toString())
-        BCMWalletManager.startTransferService(AppContextHolder.APP_CONTEXT, mWalletDisplay, confirmDialogFragment.mToAddress.toString(),
+        extra.putString(BtcWalletController.EXTRA_FEE, confirmDialogFragment.mFeeCost.toString())
+        extra.putString(BtcWalletController.EXTRA_MEMO, data_content.text.toString())
+        mWalletModel?.getManager()?.startTransferService(AppContextHolder.APP_CONTEXT, mWalletDisplay, confirmDialogFragment.mToAddress.toString(),
                 confirmDialogFragment.mAmount.toString(), extra)
     }
 

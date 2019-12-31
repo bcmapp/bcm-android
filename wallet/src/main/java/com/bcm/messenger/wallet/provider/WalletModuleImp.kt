@@ -15,7 +15,12 @@ import com.bcm.route.annotation.Route
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_WALLET_BASE)
 class WalletModuleImp : IWalletModule {
+
+    private val TAG = "WalletModuleImp"
+
     private lateinit var accountContext: AccountContext
+
+
     override val context: AccountContext
         get() = accountContext
 
@@ -31,21 +36,25 @@ class WalletModuleImp : IWalletModule {
 
     }
 
-    private val TAG = "WalletProviderImp"
+    private val mWalletManager = BCMWalletManager("")
+
+    fun getManager(): BCMWalletManager {
+        return mWalletManager
+    }
 
     override fun initWallet(privateKeyArray: ByteArray, password: String) {
-        BCMWalletManager.startInitService(AppContextHolder.APP_CONTEXT, privateKeyArray)
+        mWalletManager.startInitService(AppContextHolder.APP_CONTEXT, privateKeyArray)
     }
 
     override fun logoutWallet() {
         //登出所有钱包相关的文件和记录
         try {
             ALog.d(TAG, "logoutWallet")
-            BCMWalletManager.reset()
+            mWalletManager.reset()
             WalletViewModel.recycle()
 
         } catch (ex: Exception) {
-            ALog.e(TAG, "WalletProviderImp logoutWallet error", ex)
+            ALog.e(TAG, "WalletModuleImp logoutWallet error", ex)
         }
     }
 
@@ -55,10 +64,10 @@ class WalletModuleImp : IWalletModule {
             logoutWallet()
 
             ALog.d(TAG, "destroyWallet")
-            BCMWalletManager.clear()
+            mWalletManager.clear()
 
         } catch (ex: Exception) {
-            ALog.e(TAG, "WalletProviderImp destroyWallet error", ex)
+            ALog.e(TAG, "WalletModuleImp destroyWallet error", ex)
         }
     }
 

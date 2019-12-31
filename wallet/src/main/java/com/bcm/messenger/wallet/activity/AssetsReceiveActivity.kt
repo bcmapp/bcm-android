@@ -60,14 +60,11 @@ class AssetsReceiveActivity : SwipeBaseActivity() {
             if (content == null) {
                 AmePopup.result.failure(this, getString(R.string.wallet_receive_qr_save_fail), true)
             } else {
-//                AppUtil.saveCodeToBoard(this, content)
-//                AmePopup.result.succeed(this, getString(R.string.wallet_receive_qr_save_success), true)
                 exportQRFile(mWalletDisplay.displayName().toString() + "_receive_qr.jpg")
             }
         }
 
         receive_address.setOnClickListener {
-//            val content = mWalletDisplay.freshAddress()
             saveTextToBoard(receive_address.text.toString())
             AmePopup.result.succeed(this, getString(R.string.wallet_receive_address_save_success), true)
         }
@@ -76,10 +73,10 @@ class AssetsReceiveActivity : SwipeBaseActivity() {
     }
 
     private fun initData() {
+        val model = WalletViewModel.of(this)
         mWalletDisplay = intent.getParcelableExtra(ARouterConstants.PARAM.WALLET.WALLET_COIN)
+        mWalletDisplay.setManager(model.getManager())
         createWalletAddressQRCode()
-
-        val model = WalletViewModel.of(this) ?: return
         model.eventData.notice(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_TRANSACTION_NEW, null))
         model.eventData.observe(this, Observer {
             if (it?.id == ImportantLiveData.EVENT_TRANSACTION_NEW) {//当收到交易记录并且当前没有备份过账号的时候，需要弹窗提示

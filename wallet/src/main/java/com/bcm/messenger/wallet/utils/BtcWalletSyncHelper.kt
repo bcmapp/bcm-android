@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by wjh on 2018/7/23
  */
-class BtcWalletSyncHelper(val mParams: NetworkParameters) {
+class BtcWalletSyncHelper(private val mManager: BCMWalletManager) {
 
     companion object {
 
@@ -61,12 +61,16 @@ class BtcWalletSyncHelper(val mParams: NetworkParameters) {
     init {
         addCoinsReceivedEventListener { wallet, tx, prevBalance, newBalance ->
             ALog.d("BtcWalletSyncHelper", "receive coin, previous: ${MonetaryFormat.BTC.format(prevBalance)}, new: ${MonetaryFormat.BTC.format(newBalance)}")
-            WalletViewModel.walletModelSingle?.eventData?.noticeDelay(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_BALANCE, WalletDisplay(wallet, newBalance.value.toString())))
+            WalletViewModel.walletModelSingle?.eventData?.noticeDelay(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_BALANCE, WalletDisplay(wallet, newBalance.value.toString()).apply {
+                setManager(mManager)
+            }))
         }
         addCoinsSentEventListener { wallet, tx, prevBalance, newBalance ->
             ALog.d("BtcWalletSyncHelper", "sent coin, previous: ${MonetaryFormat.BTC.format(prevBalance)}, new: ${MonetaryFormat.BTC.format(newBalance)}")
 
-            WalletViewModel.walletModelSingle?.eventData?.noticeDelay(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_BALANCE, WalletDisplay(wallet, newBalance.value.toString())))
+            WalletViewModel.walletModelSingle?.eventData?.noticeDelay(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_BALANCE, WalletDisplay(wallet, newBalance.value.toString()).apply {
+                setManager(mManager)
+            }))
         }
         addTransactionConfidenceEventListener { wallet, tx ->
 
@@ -78,7 +82,7 @@ class BtcWalletSyncHelper(val mParams: NetworkParameters) {
                 return@addTransactionConfidenceEventListener
             }
 
-            WalletViewModel.walletModelSingle?.eventData?.noticeDelay(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_TRANSACTION_NEW, BtcWalletUtils.toTransactionDisplay(wallet, sourceWallet, tx)))
+            WalletViewModel.walletModelSingle?.eventData?.noticeDelay(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_TRANSACTION_NEW, mManager.btcController.toTransactionDisplay(wallet, sourceWallet, tx)))
 
         }
     }
@@ -111,7 +115,7 @@ class BtcWalletSyncHelper(val mParams: NetworkParameters) {
     }
 
     private fun getWalletChainFile(): File {
-        return File(BtcWalletUtils.getDestinationDirectory(), getBlockChainPrefix(mParams) + ".spvchain")
+        return File(mManager.btcController.getDestinationDirectory(), getBlockChainPrefix(BtcWalletController.NETWORK_PARAMETERS) + ".spvchain")
     }
 
     private fun setEarliestKeyCreationTime(time: Long) {
@@ -126,19 +130,19 @@ class BtcWalletSyncHelper(val mParams: NetworkParameters) {
                 mSyncDone = true
                 //同步完成后，通知更新页面
                 WalletViewModel.walletModelSingle?.eventData?.noticeDelay(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_BALANCE, null))
-                BCMWalletManager.broadcastWalletInitProgress(BCMWalletManager.WalletStage.STAGE_DONE, 100, 100)
+                mManager.broadcastWalletInitProgress(BCMWalletManager.WalletStage.STAGE_DONE, 100, 100)
             }
 
             override fun startDownload(blocks: Int) {
                 ALog.d("BtcWalletSyncHelper", "walletKit startDownload blocks: $blocks")
                 mSyncDone = false
-                BCMWalletManager.broadcastWalletInitProgress(BCMWalletManager.WalletStage.STAGE_SYNC, 0, 100)
+                mManager.broadcastWalletInitProgress(BCMWalletManager.WalletStage.STAGE_SYNC, 0, 100)
             }
 
             override fun progress(pct: Double, blocksSoFar: Int, date: Date?) {
                 ALog.d("BtcWalletSyncHelper", "walletKit progress: $pct, soFar: $blocksSoFar")
                 if (!mSyncDone) {
-                    BCMWalletManager.broadcastWalletInitProgress(BCMWalletManager.WalletStage.STAGE_SYNC, pct.toInt(), 100)
+                    mManager.broadcastWalletInitProgress(BCMWalletManager.WalletStage.STAGE_SYNC, pct.toInt(), 100)
                 }
             }
         }
@@ -276,7 +280,7 @@ class BtcWalletSyncHelper(val mParams: NetworkParameters) {
     }
 
     private fun createWalletAppKit(): WalletAppKit {
-        val service = object : WalletAppKit(mParams, BtcWalletUtils.getDestinationDirectory(), getBlockChainPrefix(mParams)) {
+        val service = object : WalletAppKit(BtcWalletController.NETWORK_PARAMETERS, mManager.btcController.getDestinationDirectory(), getBlockChainPrefix(BtcWalletController.NETWORK_PARAMETERS)) {
 
             override fun provideBlockStore(file: File?): BlockStore {
                 return SPVBlockStore(this.params, file, 10000, true)
@@ -488,7 +492,7 @@ class BtcWalletSyncHelper(val mParams: NetworkParameters) {
         service.setAutoSave(true).setBlockingStartup(false).setUserAgent("BCM", WalletSettings.AME_BTC_VERSION)
 
         try {
-            val checkpointFile = getCheckpointFile(mParams)
+            val checkpointFile = getCheckpointFile(BtcWalletController.NETWORK_PARAMETERS)
             ALog.d(TAG, "set checkpointFile name: $checkpointFile")
             service.setCheckpoints(AppContextHolder.APP_CONTEXT.assets.open(checkpointFile))
         } catch (ex: Exception) {
@@ -508,11 +512,11 @@ class BtcWalletSyncHelper(val mParams: NetworkParameters) {
             val proto = WalletProtobufSerializer.parseToProto(walletStream)
             val serializer = WalletProtobufSerializer(object : WalletProtobufSerializer.WalletFactory {
                 override fun create(p0: NetworkParameters, p1: KeyChainGroup): Wallet {
-                    return WalletEx(p0, p1, BtcWalletUtils.getClient())
+                    return WalletEx(p0, p1, mManager, mManager.btcController.getClient())
                 }
 
             })
-            wallet = serializer.readWallet(mParams, extensions.toTypedArray(), proto) as WalletEx
+            wallet = serializer.readWallet(BtcWalletController.NETWORK_PARAMETERS, extensions.toTypedArray(), proto) as WalletEx
             if (shouldReplayWallet) {
                 ALog.d(TAG, "recycle wallet data")
                 wallet.reset()

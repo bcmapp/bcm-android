@@ -48,7 +48,7 @@ object KeyChainUtils {
         val childKey = computeChildKey(coinType, accountIndex, hierarchy, false, 0)
 
         if (coinType == WalletSettings.BTC) {
-            val address = LegacyAddress.fromKey(BtcWalletUtils.NETWORK_PARAMETERS, childKey).toBase58()
+            val address = LegacyAddress.fromKey(BtcWalletController.NETWORK_PARAMETERS, childKey).toBase58()
             ALog.d(TAG, "computeMainChildAddress: $address, accountIndex: $accountIndex")
             return address
         }else {
@@ -80,7 +80,7 @@ object KeyChainUtils {
 //     */
 //    fun findKeyFromPubHash(coinType: String, accountIndex: Int, addressString: String): Boolean {
 //        val addressActual = Numeric.cleanHexPrefix(addressString)
-//        val address = LegacyAddress.fromBase58(BtcWalletUtils.NETWORK_PARAMETERS, addressActual)
+//        val address = LegacyAddress.fromBase58(BtcWalletController.NETWORK_PARAMETERS, addressActual)
 //        val keyPair = IdentityKeyUtil.getIdentityKeyPair(AppContextHolder.APP_CONTEXT)
 //        val seed = DeterministicSeed(keyPair.privateKey.serialize(), "", AMESelfData.genTime)
 //        val keyChain = DeterministicKeyChain.builder().seed(seed).accountPath(KeyChainUtils.buildAccountPath(coinType, accountIndex))

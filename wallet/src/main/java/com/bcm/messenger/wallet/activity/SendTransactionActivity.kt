@@ -62,7 +62,9 @@ class SendTransactionActivity : SwipeBaseActivity() {
     }
 
     private fun initData() {
-        WalletViewModel.of(this)?.eventData?.observe(this, Observer {event ->
+        val walletModel = WalletViewModel.of(this)
+        mWalletDisplay?.setManager(walletModel.getManager())
+        walletModel.eventData.observe(this, Observer {event ->
             when(event?.id) {
                 ImportantLiveData.EVENT_TRANSACTION_RESULT -> {
                     val result = event.data as? WalletTransferEvent ?: return@Observer

@@ -73,11 +73,11 @@ class WalletDetailActivity : SwipeBaseActivity() {
             override fun onClickRight() {
                 val popBuilder = AmePopup.bottom.newBuilder()
                 popBuilder.withPopItem(AmeBottomPopup.PopupItem(getString(R.string.wallet_popup_create_description)){
-                    BCMWalletManager.goForCreateWallet(this@WalletDetailActivity, mWalletDisplay.baseWallet.coinType)
+                    mWalletModel?.getManager()?.goForCreateWallet(this@WalletDetailActivity, mWalletDisplay.baseWallet.coinType)
                 })
                 if (!WalletSettings.isBCMDefault(mWalletDisplay.baseWallet.accountIndex)){
                     popBuilder.withPopItem(AmeBottomPopup.PopupItem(getString(R.string.wallet_popup_delete_description), AmeBottomPopup.PopupItem.CLR_RED){
-                        BCMWalletManager.goForDeleteWallet(this@WalletDetailActivity, mWalletDisplay.baseWallet)
+                        mWalletModel?.getManager()?.goForDeleteWallet(this@WalletDetailActivity, mWalletDisplay.baseWallet)
                     })
                 }
 
@@ -130,7 +130,7 @@ class WalletDetailActivity : SwipeBaseActivity() {
 
         mWalletModel = WalletViewModel.of(this)
         mWalletDisplay = intent.getParcelableExtra(ARouterConstants.PARAM.WALLET.WALLET_COIN)
-
+        mWalletDisplay.setManager(mWalletModel?.getManager())
         mWalletModel?.eventData?.observe(this, Observer { event ->
             ALog.d(TAG, "observe event: ${event?.id}")
             when (event?.id) {
@@ -225,8 +225,8 @@ class WalletDetailActivity : SwipeBaseActivity() {
                     Observable.create(ObservableOnSubscribe<Boolean> {
                         if (mWalletDisplay.baseWallet.name != name) {
                             mWalletDisplay.baseWallet.name = name
-                            BCMWalletManager.changeWalletName(mWalletDisplay.baseWallet.address, name)
-                            WalletViewModel.of(this@WalletDetailActivity)?.eventData?.noticeDelay(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_NAME_CHANGED, mWalletDisplay))
+                            mWalletModel?.getManager()?.changeWalletName(mWalletDisplay.baseWallet.address, name)
+                            mWalletModel?.eventData?.noticeDelay(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_NAME_CHANGED, mWalletDisplay))
 
                         }
                         it.onNext(true)

@@ -25,14 +25,16 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Created by wjh on 2018/05/24
  */
-object EthWalletUtils : BaseWalletUtils {
+class EthWalletController(private val mManager: BCMWalletManager) : IBaseWalletController {
 
-    private const val TAG = "EthWalletUtils"
+    companion object {
+        private const val TAG = "EthWalletController"
 
-    const val EXTRA_GAS_PRICE = "extra_gas_private"
-    const val EXTRA_GAS_LIMIT = "extra_gas_limit"
-    const val EXTRA_FEE = "extra_fee"
-    const val EXTRA_MEMO = "extra_memo"
+        const val EXTRA_GAS_PRICE = "extra_gas_private"
+        const val EXTRA_GAS_LIMIT = "extra_gas_limit"
+        const val EXTRA_FEE = "extra_fee"
+        const val EXTRA_MEMO = "extra_memo"
+    }
 
     private val mAccountIndex = AtomicInteger(-1)
 
@@ -51,7 +53,7 @@ object EthWalletUtils : BaseWalletUtils {
     override fun getCurrentAccountIndex(): Int {
         var index = mAccountIndex.get()
         if (index < 0) {
-            val prefs = BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
+            val prefs = mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
             index = prefs.getInt(BCMWalletManager.TABLE_WALLET_ACCOUNT + WalletSettings.ETH, 0)
             mAccountIndex.compareAndSet(-1, index)
         }
@@ -60,7 +62,7 @@ object EthWalletUtils : BaseWalletUtils {
 
     override fun setCurrentAccountIndex(index: Int) {
         mAccountIndex.set(index)
-        val prefs = BCMWalletManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
+        val prefs = mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
         val edit = prefs.edit()
         edit.putInt(BCMWalletManager.TABLE_WALLET_ACCOUNT + WalletSettings.ETH, index)
         edit.apply()
@@ -158,7 +160,9 @@ object EthWalletUtils : BaseWalletUtils {
 
     override fun queryBalance(wallet: BCMWallet): WalletDisplay {
         val result = EtherscanAPI.INSTANCE.getBalance(wallet.getStandardAddress(), false)
-        return WalletDisplay(wallet, parseBalance(result))
+        return WalletDisplay(wallet, parseBalance(result)).apply {
+            setManager(mManager)
+        }
     }
 
     override fun queryBalance(walletList: List<BCMWallet>): List<WalletDisplay> {
@@ -217,7 +221,7 @@ object EthWalletUtils : BaseWalletUtils {
                         "Data: " + tx.data
         )
 
-        val signed = TransactionEncoder.signMessage(tx, EtherscanAPI.chainId, EthWalletUtils.loadCredentials(password, from))
+        val signed = TransactionEncoder.signMessage(tx, EtherscanAPI.chainId, loadCredentials(password, from))
 
         responseString = EtherscanAPI.INSTANCE.forwardTransaction(WalletSettings.PREFIX_ADDRESS + Hex.toHexString(signed)).body()?.string()
                 ?: ""
@@ -295,12 +299,16 @@ object EthWalletUtils : BaseWalletUtils {
                         break
                     }
                 }
-                displayList.add(WalletDisplay(walletList[i], balance))
+                displayList.add(WalletDisplay(walletList[i], balance).apply {
+                    setManager(mManager)
+                })
             }
         }catch (ex: Exception) {
             ALog.e(TAG, "parseWallets error", ex)
             for(i in index until walletList.size) {
-                displayList.add(WalletDisplay(walletList[i], BigDecimal.ZERO.toString()))
+                displayList.add(WalletDisplay(walletList[i], BigDecimal.ZERO.toString()).apply {
+                    setManager(mManager)
+                })
             }
         }
         return displayList

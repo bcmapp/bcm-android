@@ -2,6 +2,8 @@ package com.bcm.messenger.wallet.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.wallet.provider.WalletModuleImp
 import com.bcm.messenger.wallet.utils.*
 import com.orhanobut.logger.Logger
 import java.math.BigDecimal
@@ -10,6 +12,14 @@ import java.math.BigDecimal
  * Created by wjh on 2018/05/25
  */
 class WalletDisplay(baseWallet: BCMWallet, amount: String, type: Byte = NORMAL) : Comparable<WalletDisplay>, Parcelable {
+
+    @Transient
+    private var mManager: BCMWalletManager? = null
+
+    fun setManager(manager: BCMWalletManager?) {
+        mManager = manager
+    }
+
     fun freshAddress(): String {
         return baseWallet.freshAddress()
     }
@@ -83,7 +93,7 @@ class WalletDisplay(baseWallet: BCMWallet, amount: String, type: Byte = NORMAL) 
     fun displayName(): CharSequence {
         val name = baseWallet.name
         return if(name.isEmpty()) {
-            WalletSettings.formatDefaultName(baseWallet.coinType, baseWallet.accountIndex)
+            mManager?.formatDefaultName(baseWallet.coinType, baseWallet.accountIndex) ?: ""
         }else {
             name
         }

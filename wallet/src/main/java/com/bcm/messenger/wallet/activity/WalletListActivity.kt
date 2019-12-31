@@ -31,6 +31,8 @@ class WalletListActivity : SwipeBaseActivity() {
     private lateinit var mCoinType: String
     private lateinit var mWalletList: ArrayList<WalletDisplay>
 
+    private var mWalletModel: WalletViewModel? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.wallet_list_activity)
@@ -43,18 +45,17 @@ class WalletListActivity : SwipeBaseActivity() {
             override fun onClickRight() {
                 AmePopup.bottom.newBuilder()
                         .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.wallet_popup_create_description)){
-                            BCMWalletManager.goForCreateWallet(this@WalletListActivity, mCoinType)
+                            mWalletModel?.getManager()?.goForCreateWallet(this@WalletListActivity, mCoinType)
                         }).withDoneTitle(getString(R.string.common_cancel))
                         .show(this@WalletListActivity)
             }
         })
 
         initData()
-
-
     }
 
     private fun initData() {
+        mWalletModel = WalletViewModel.of(this)
         mCoinType = intent.getStringExtra(ARouterConstants.PARAM.WALLET.COIN_TYPE)
         when (mCoinType) {
             WalletSettings.BTC -> list_title_bar.setCenterText(getString(R.string.wallet_list_btc_title))
@@ -77,8 +78,7 @@ class WalletListActivity : SwipeBaseActivity() {
         mAdapter.walletList = mWalletList
 
         //监听重要事件（如名字变更，汇率变更）
-        val model = WalletViewModel.of(this)
-        model?.eventData?.observe(this, Observer { event ->
+        mWalletModel?.eventData?.observe(this, Observer { event ->
             ALog.d("WalletListActivity", "observe event: ${event?.id}")
             when (event?.id) {
                 ImportantLiveData.EVENT_NAME_CHANGED -> {
