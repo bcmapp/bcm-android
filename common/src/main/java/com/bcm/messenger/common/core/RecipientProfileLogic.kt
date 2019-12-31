@@ -10,6 +10,7 @@ import android.text.TextUtils
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.bcmhttp.IMHttp
 import com.bcm.messenger.common.bcmhttp.RxIMHttp
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
@@ -20,12 +21,12 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.IdentityUtil
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.bcmhttp.callback.FileDownCallback
+import com.bcm.messenger.utility.bcmhttp.exception.NoContentException
 import com.bcm.messenger.utility.bcmhttp.facade.AmeEmpty
 import com.bcm.messenger.utility.bcmhttp.facade.SyncHttpWrapper
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -42,14 +43,11 @@ import okhttp3.Call
 import org.json.JSONObject
 import org.whispersystems.jobqueue.JobParameters
 import org.whispersystems.libsignal.IdentityKey
-import org.whispersystems.libsignal.InvalidKeyException
 import org.whispersystems.libsignal.ecc.DjbECPublicKey
 import org.whispersystems.signalservice.api.profiles.ISignalProfile
 import org.whispersystems.signalservice.api.push.exceptions.PushNetworkException
-import org.whispersystems.signalservice.api.util.InvalidNumberException
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.lang.ref.WeakReference
 import java.net.URLEncoder
 import java.util.*
@@ -239,6 +237,7 @@ object RecipientProfileLogic {
 
     private fun checkUploadPrepare(handledRecipient: Recipient, forName: Boolean): Observable<Boolean> {
 
+        ALog.d(TAG, "checkUploadPrepare uid: ${handledRecipient.address}, forName: $forName")
         return Observable.create<Recipient> {
             it.onNext(handledRecipient.resolve())
             it.onComplete()
@@ -263,7 +262,6 @@ object RecipientProfileLogic {
                 .flatMap { toUpload ->
             val recipient = handledRecipient.resolve()
             val privacyProfile = recipient.privacyProfile
-            Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
             if (toUpload) {
                 val encryptName = getPrivacyContent(name, privacyProfile.nameKey, privacyProfile.version)
                 ALog.d(TAG, "setEncryptName: $encryptName")
@@ -884,22 +882,34 @@ object RecipientProfileLogic {
         return true
     }
 
-    private fun downloadProfileKeys(context:Context, recipient: Recipient, privacyProfile:PrivacyProfile): Boolean {
+    private fun downloadProfileKeys(context:Context, recipient: Recipient, privacyProfile: PrivacyProfile): Boolean {
+        var profileKeyString = ""
         try {
             val wrapper = SyncHttpWrapper(IMHttp)
-            val profileKeyString = wrapper.get<String>(BcmHttpApiHelper.getApi(PROFILE_KEY_PATH), null, String::class.java)
+            profileKeyString = wrapper.get<String>(BcmHttpApiHelper.getApi(PROFILE_KEY_PATH), null, String::class.java)
 
+        }catch (ex: NoContentException) {
+            ALog.e(TAG, "downloadProfileKeys getProfileKeys error", ex)
+        }catch (ex: Exception) {
+            return false
+        }
+
+        try {
             ALog.d(TAG, "downloadProfileKeys getProfileKey: $profileKeyString")
-            val json = JSONObject(JSONObject(profileKeyString).optString("encrypt")
-                    ?: throw Exception("profileKey is null"))
+            val json = if (profileKeyString.isEmpty()) {
+                JSONObject()
+            }else {
+                JSONObject(JSONObject(profileKeyString).optString("encrypt")
+                        ?: throw Exception("profileKey is null"))
+            }
             val namePubKeyString = json.optString("namePubKey", "")
             val avatarPubKeyString = json.optString("avatarPubKey", "")
             val version = json.optInt("version", PrivacyProfile.CURRENT_VERSION)
 
-            if (namePubKeyString != privacyProfile.namePubKey && namePubKeyString.isNotEmpty()) {
+            if ((namePubKeyString != privacyProfile.namePubKey && namePubKeyString.isNotEmpty()) || privacyProfile.nameKey.isNullOrEmpty()) {
                 try {
                     privacyProfile.nameKey = if (namePubKeyString.isEmpty()) {
-                        ""
+                        throw Exception("namePubKeyString is null")
                     } else {
                         var otherPubKeyBytes = Base64.decode(namePubKeyString)
                         if (otherPubKeyBytes.size >= 33) {
@@ -926,10 +936,10 @@ object RecipientProfileLogic {
                 }
             }
 
-            if (avatarPubKeyString != privacyProfile.avatarPubKey && avatarPubKeyString.isNotEmpty()) {
+            if ((avatarPubKeyString != privacyProfile.avatarPubKey && avatarPubKeyString.isNotEmpty()) || privacyProfile.avatarKey.isNullOrEmpty()) {
                 try {
                     privacyProfile.avatarKey = if (avatarPubKeyString.isEmpty()) {
-                        ""
+                        throw Exception("avatarPubKeyString is null")
                     } else {
                         var otherPubKeyBytes = Base64.decode(avatarPubKeyString)
                         if (otherPubKeyBytes.size >= 33) {
@@ -1113,77 +1123,70 @@ object RecipientProfileLogic {
         var avatarLdChanged = false
         var allowStrangerChanged = false
 
-        if (!newEncryptName.isNullOrEmpty()) {
-            if (newEncryptName != privacyProfile.encryptedName) {
-                privacyProfile.encryptedName = newEncryptName
+        if (!newEncryptName.isNullOrEmpty() && newEncryptName != privacyProfile.encryptedName) {
+            privacyProfile.encryptedName = newEncryptName
+            nameChanged = true
+        }
+        if (privacyProfile.nameKey.isNullOrEmpty()) {
+            ALog.i(TAG, "handlePrivacyProfileChanged nameKey is null")
+            needUpdateProfileKey = true
+
+        } else if (nameChanged || privacyProfile.name.isNullOrEmpty()) {
+            try {
+                privacyProfile.name = getContentFromPrivacy(newEncryptName, privacyProfile.nameKey, privacyProfile.version)
+                ALog.d(TAG, "handlePrivacyProfileChanged uid: ${recipient.address}, name: ${privacyProfile.name}")
                 nameChanged = true
-            }
-            if (privacyProfile.nameKey.isNullOrEmpty()) {
-                ALog.i(TAG, "handlePrivacyProfileChanged nameKey is null")
+            } catch (ex: Exception) {
+                ALog.e(TAG, "fetchProfile getNickName error, uid: ${recipient.address}", ex)
                 needUpdateProfileKey = true
-
-            } else if (nameChanged || privacyProfile.name.isNullOrEmpty()) {
-                try {
-                    privacyProfile.name = getContentFromPrivacy(newEncryptName, privacyProfile.nameKey, privacyProfile.version)
-                    ALog.d(TAG, "handlePrivacyProfileChanged uid: ${recipient.address}, name: ${privacyProfile.name}")
-                    nameChanged = true
-                } catch (ex: Exception) {
-                    ALog.e(TAG, "fetchProfile getNickName error, uid: ${recipient.address}", ex)
-                    needUpdateProfileKey = true
-                    privacyProfile.name = ""
-                    privacyProfile.nameKey = ""
-                }
+                privacyProfile.name = ""
+                privacyProfile.nameKey = ""
             }
         }
 
-        if (!newEncryptAvatarLD.isNullOrEmpty()) {
-            if (newEncryptAvatarLD != privacyProfile.encryptedAvatarLD) {
-                privacyProfile.encryptedAvatarLD = newEncryptAvatarLD
+        if (!newEncryptAvatarLD.isNullOrEmpty() && newEncryptAvatarLD != privacyProfile.encryptedAvatarLD) {
+            privacyProfile.encryptedAvatarLD = newEncryptAvatarLD
+            avatarLdChanged = true
+        }
+        if (privacyProfile.avatarKey.isNullOrEmpty()) {
+            ALog.i(TAG, "handlePrivacyProfileChanged avatarKey is null")
+            needUpdateProfileKey = true
+        } else if (avatarLdChanged || privacyProfile.avatarLD.isNullOrEmpty()) {
+            try {
+                privacyProfile.avatarLD = getContentFromPrivacy(newEncryptAvatarLD, privacyProfile.avatarKey, privacyProfile.version)
+                ALog.d(TAG, "handlePrivacyProfileChanged uid: ${recipient.address}, avatarLD: ${privacyProfile.avatarLD}")
+                privacyProfile.isAvatarLdOld = true
                 avatarLdChanged = true
-            }
-            if (privacyProfile.avatarKey.isNullOrEmpty()) {
-                ALog.i(TAG, "handlePrivacyProfileChanged avatarKey is null")
-                needUpdateProfileKey = true
-            } else if (avatarLdChanged || privacyProfile.avatarLD.isNullOrEmpty()) {
-                try {
-                    privacyProfile.avatarLD = getContentFromPrivacy(newEncryptAvatarLD, privacyProfile.avatarKey, privacyProfile.version)
-                    ALog.d(TAG, "handlePrivacyProfileChanged uid: ${recipient.address}, avatarLD: ${privacyProfile.avatarLD}")
-                    privacyProfile.isAvatarLdOld = true
-                    avatarLdChanged = true
 
-                } catch (ex: Exception) {
-                    ALog.e(TAG, "fetchProfile getAvatarLD error, uid: ${recipient.address}", ex)
-                    privacyProfile.avatarLD = ""
-                    privacyProfile.avatarKey = ""
-                    needUpdateProfileKey = true
-                }
+            } catch (ex: Exception) {
+                ALog.e(TAG, "fetchProfile getAvatarLD error, uid: ${recipient.address}", ex)
+                privacyProfile.avatarLD = ""
+                privacyProfile.avatarKey = ""
+                needUpdateProfileKey = true
             }
         }
 
-        if (!newEncryptAvatarHD.isNullOrEmpty()) {
+        if (!newEncryptAvatarHD.isNullOrEmpty() && newEncryptAvatarHD != privacyProfile.encryptedAvatarHD) {
+            privacyProfile.encryptedAvatarHD = newEncryptAvatarHD
+            avatarHdChanged = true
+        }
+        if (privacyProfile.avatarKey.isNullOrEmpty()) {
+            ALog.i(TAG, "handlePrivacyProfileChanged avatarKey is null")
+            needUpdateProfileKey = true
 
-            if (newEncryptAvatarHD != privacyProfile.encryptedAvatarHD) {
-                privacyProfile.encryptedAvatarHD = newEncryptAvatarHD
+        } else if (avatarHdChanged || privacyProfile.avatarHD.isNullOrEmpty()) {
+            try {
+                privacyProfile.avatarHD = getContentFromPrivacy(newEncryptAvatarHD, privacyProfile.avatarKey, privacyProfile.version)
+                ALog.d(TAG, "handlePrivacyProfileChanged uid: ${recipient.address}, avatarHD: ${privacyProfile.avatarHD}")
+                privacyProfile.isAvatarHdOld = true
+                privacyProfile.avatarHDUri = ""
                 avatarHdChanged = true
-            }
-            if (privacyProfile.avatarKey.isNullOrEmpty()) {
-                ALog.i(TAG, "handlePrivacyProfileChanged avatarKey is null")
+
+            } catch (ex: Exception) {
+                ALog.e(TAG, "fetchProfile getAvatarHD error, uid: ${recipient.address}", ex)
+                privacyProfile.avatarHD = ""
+                privacyProfile.avatarKey = ""
                 needUpdateProfileKey = true
-
-            } else if (avatarHdChanged || privacyProfile.avatarHD.isNullOrEmpty()) {
-                try {
-                    privacyProfile.avatarHD = getContentFromPrivacy(newEncryptAvatarHD, privacyProfile.avatarKey, privacyProfile.version)
-                    ALog.d(TAG, "handlePrivacyProfileChanged uid: ${recipient.address}, avatarHD: ${privacyProfile.avatarHD}")
-                    privacyProfile.isAvatarHdOld = true
-                    privacyProfile.avatarHDUri = ""
-                    avatarHdChanged = true
-
-                } catch (ex: Exception) {
-                    ALog.e(TAG, "fetchProfile getAvatarHD error, uid: ${recipient.address}", ex)
-                    privacyProfile.avatarHD = ""
-                    privacyProfile.avatarKey = ""
-                    needUpdateProfileKey = true
-                }
             }
         }
 
@@ -1407,20 +1410,25 @@ object RecipientProfileLogic {
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .map {
+
                     val profileJson = if (it.isEmpty()) null else JSONObject(it).optJSONObject("profiles")
                     if (profileJson == null) {
                         ALog.d(TAG, "job run result: $it")
                         throw Exception("handleTaskData getProfileJson null")
                     } else {
+                        ALog.d(TAG, "getProfiles json: $profileJson")
                         dataList.forEach { data ->
                             val recipient = data.recipient.resolve()
                             val detail = profileJson.optString(recipient.address.serialize())
                             ALog.d(TAG, "fetch uid: ${recipient.address}, profile : $detail")
-                            if (!detail.isNullOrEmpty()) {
-                                val profile = GsonUtils.fromJson(detail, PlaintextServiceProfile::class.java)
-                                handleIndividualRecipient(AppContextHolder.APP_CONTEXT, recipient, profile, false, data.forceUpdate)
-                                recipient.setNeedRefreshProfile(false)
+                            var profileData = if (!detail.isNullOrEmpty()) {
+                                GsonUtils.fromJson(detail, PlaintextServiceProfile::class.java)
+
+                            }else {
+                                PlaintextServiceProfile()
                             }
+                            handleIndividualRecipient(AppContextHolder.APP_CONTEXT, recipient, profileData, false, data.forceUpdate)
+                            recipient.setNeedRefreshProfile(false)
                         }
                     }
                     true
