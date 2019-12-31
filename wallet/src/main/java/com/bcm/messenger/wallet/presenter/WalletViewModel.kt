@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.event.ServiceConnectEvent
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.utility.AppContextHolder

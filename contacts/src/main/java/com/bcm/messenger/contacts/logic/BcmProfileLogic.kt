@@ -8,8 +8,14 @@ import android.media.ThumbnailUtils
 import android.net.Uri
 import android.text.TextUtils
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.IMHttp
 import com.bcm.messenger.common.bcmhttp.RxIMHttp
+import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.core.AddressUtil
+import com.bcm.messenger.common.core.AmeFileUploader
+import com.bcm.messenger.common.core.BcmHttpApiHelper
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.core.*
 import com.bcm.messenger.common.database.model.ProfileKeyModel
@@ -18,6 +24,7 @@ import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.jobs.ContextJob
 import com.bcm.messenger.common.profiles.PlaintextServiceProfile
 import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.BcmFileUtils
@@ -53,7 +60,7 @@ import java.util.*
 import kotlin.math.max
 
 
-class BcmProfileLogic {
+class BcmProfileLogic(val mAccountContext: AccountContext) {
 
     companion object {
         const val TYPE_PROFILE = 1
@@ -219,7 +226,7 @@ class BcmProfileLogic {
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        AmeModuleCenter.contact().handleFriendPropertyChanged(recipient.address.serialize())
+                        AmeModuleCenter.contact(mAccountContext)?.handleFriendPropertyChanged(recipient.address.serialize())
                         if (it) {
                             ALog.i(TAG, "updateProfileKey after forceFetchProfile")
                             forceToFetchProfile(recipient)

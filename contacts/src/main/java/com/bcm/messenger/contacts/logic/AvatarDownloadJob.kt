@@ -1,13 +1,11 @@
 package com.bcm.messenger.contacts.logic
 
 import android.content.Context
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.jobs.ContextJob
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IUserModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.utility.Base64
@@ -174,7 +172,7 @@ class AvatarDownloadJob(context: Context, private val logic: BcmProfileLogic) : 
                             Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
 
                             if (recipient.isSelf) {
-                                AmeProvider.get<IUserModule>(ARouterConstants.Provider.PROVIDER_USER_BASE)?.saveAccount(recipient, null, recipient.privacyAvatar)
+                                AmeModuleCenter.user(logic.mAccountContext)?.saveAccount(recipient, null, recipient.privacyAvatar)
                             }
                             callback(true)
 

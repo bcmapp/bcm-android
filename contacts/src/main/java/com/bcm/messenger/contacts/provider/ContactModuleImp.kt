@@ -9,7 +9,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.contacts.logic.BcmProfileLogic
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.database.records.PrivacyProfile
@@ -17,9 +16,11 @@ import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
-import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.AmeProvider
+import com.bcm.messenger.common.provider.IAmeAppModule
+import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.provider.IContactModule.Companion.TAG
-import com.bcm.messenger.common.provider.accountmodule.IAmeAccountModule
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -28,6 +29,7 @@ import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.contacts.BcmUserCardActivity
 import com.bcm.messenger.contacts.R
 import com.bcm.messenger.contacts.logic.BcmContactLogic
+import com.bcm.messenger.contacts.logic.BcmProfileLogic
 import com.bcm.messenger.contacts.logic.ContactRequestReceiver
 import com.bcm.messenger.contacts.search.CurrentSearchFragment
 import com.bcm.messenger.contacts.search.RecentSearchFragment
@@ -49,10 +51,12 @@ import io.reactivex.schedulers.Schedulers
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_CONTACTS_BASE)
 class ContactModuleImp : IContactModule {
-    private val contactRequestReceiver = ContactRequestReceiver()
-    private val mProfileLogic = BcmProfileLogic()
-    private val mContactLogic = BcmContactLogic()
+
     private lateinit var accountContext: AccountContext
+
+    private val mProfileLogic = BcmProfileLogic(accountContext)
+    private val mContactLogic = BcmContactLogic(accountContext)
+    private val contactRequestReceiver = ContactRequestReceiver(mContactLogic)
 
     override val context: AccountContext
         get() = accountContext
@@ -60,7 +64,6 @@ class ContactModuleImp : IContactModule {
     override fun setContext(context: AccountContext) {
         this.accountContext = context
     }
-
 
     override fun initModule() {
         AmeModuleCenter.serverDispatcher(accountContext).addListener(contactRequestReceiver)

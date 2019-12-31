@@ -36,7 +36,7 @@ class WalletModuleImp : IWalletModule {
 
     }
 
-    private val mWalletManager = BCMWalletManager("")
+    private val mWalletManager = BCMWalletManager(context.uid)
 
     fun getManager(): BCMWalletManager {
         return mWalletManager

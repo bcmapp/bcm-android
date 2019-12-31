@@ -3,7 +3,7 @@ package com.bcm.messenger.contacts.logic
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.db.UserDatabase
@@ -15,8 +15,6 @@ import com.bcm.messenger.common.event.ServiceConnectEvent
 import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.RxBus
@@ -53,7 +51,7 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * Created by bcm.social.01 on 2019/3/12.
  */
-class BcmContactLogic: AppForeground.IForegroundEvent {
+class BcmContactLogic(private val mAccountContext: AccountContext): AppForeground.IForegroundEvent {
 
     companion object {
         private const val TAG = "BcmContactLogic"
@@ -479,7 +477,7 @@ class BcmContactLogic: AppForeground.IForegroundEvent {
 
         val targetRecipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(targetUid), false)
         if (targetRecipient.identityKey.isNullOrEmpty()) {
-            AmeModuleCenter.contact().fetchProfile(targetRecipient) {
+            AmeModuleCenter.contact(mAccountContext)?.fetchProfile(targetRecipient) {
 
                 AmeDispatcher.io.dispatch {
                     doSendAddFriendRequest(targetRecipient, callback)
@@ -536,7 +534,7 @@ class BcmContactLogic: AppForeground.IForegroundEvent {
         val targetRecipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(targetUid), false)
         if (targetRecipient.identityKey.isNullOrEmpty()) {
             ALog.i(TAG, "replyAddFriend approved: $approved identityKey is null, need update profile")
-            AmeModuleCenter.contact().fetchProfile(targetRecipient) {
+            AmeModuleCenter.contact(mAccountContext)?.fetchProfile(targetRecipient) {
                 AmeDispatcher.io.dispatch {
                     ALog.i(TAG, "replyAddFriend approved: $approved after update profile, doSendAddFriendReply")
                     doSendAddFriendReply(targetRecipient, approved, proposer, addFriendSignature, callback)
@@ -595,7 +593,7 @@ class BcmContactLogic: AppForeground.IForegroundEvent {
                         }
                         else -> {
                             if (pair.third) {
-                                AmeModuleCenter.contact().handleFriendPropertyChanged(recipient.address.serialize())
+                                AmeModuleCenter.contact(mAccountContext)?.handleFriendPropertyChanged(recipient.address.serialize())
                             }
 
                             UserDatabase.getDatabase().runInTransaction {
@@ -626,7 +624,7 @@ class BcmContactLogic: AppForeground.IForegroundEvent {
             val decryptProposer = BCMEncryptUtils.decryptSource(request.proposerBytes.toByteArray())
             val targetRecipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(decryptProposer), false)
             if (targetRecipient.identityKey.isNullOrEmpty()) {
-                AmeModuleCenter.contact().fetchProfile(targetRecipient) {
+                AmeModuleCenter.contact(mAccountContext)?.fetchProfile(targetRecipient) {
                     AmeDispatcher.io.dispatch {
                         handleAfterRecipientUpdated(targetRecipient, decryptProposer)
                     }
@@ -656,7 +654,7 @@ class BcmContactLogic: AppForeground.IForegroundEvent {
             val decryptTarget = BCMEncryptUtils.decryptSource(reply.targetBytes.toByteArray())
             val targetRecipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(decryptTarget), false)
             if (targetRecipient.identityKey.isNullOrEmpty()) {
-                AmeModuleCenter.contact().fetchProfile(targetRecipient) {
+                AmeModuleCenter.contact(mAccountContext)?.fetchProfile(targetRecipient) {
                     AmeDispatcher.io.dispatch {
                         try {
                             parseRequestBody(AppContextHolder.APP_CONTEXT, targetRecipient, reply.payload)
@@ -880,7 +878,7 @@ class BcmContactLogic: AppForeground.IForegroundEvent {
             toSync = true
         }
 
-        AmeModuleCenter.contact().updatePrivacyProfile(context, recipient, privacyProfile.encryptedName,
+        AmeModuleCenter.contact(mAccountContext)?.updatePrivacyProfile(context, recipient, privacyProfile.encryptedName,
                 privacyProfile.encryptedAvatarLD, privacyProfile.encryptedAvatarHD, privacyProfile.allowStranger)
 
         return Triple(requestBody.handleBackground, memo, toSync)

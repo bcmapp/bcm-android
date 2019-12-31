@@ -3,23 +3,19 @@ package com.bcm.messenger.common.jobs;
 
 import android.content.Context;
 
-import com.bcm.messenger.common.ARouterConstants;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
-import com.bcm.messenger.common.provider.AmeProvider;
-import com.bcm.messenger.common.provider.IContactModule;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.utility.logger.ALog;
+
 import org.whispersystems.jobqueue.JobParameters;
 import org.whispersystems.jobqueue.requirements.NetworkRequirement;
 import org.whispersystems.signalservice.api.push.exceptions.PushNetworkException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 
-/**
- *
- */
 public class RetrieveProfileJob extends ContextJob {
 
     private static final String TAG = RetrieveProfileJob.class.getSimpleName();
