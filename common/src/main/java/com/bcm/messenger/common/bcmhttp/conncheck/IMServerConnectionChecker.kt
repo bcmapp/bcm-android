@@ -3,6 +3,7 @@ package com.bcm.messenger.common.bcmhttp.conncheck
 import android.annotation.SuppressLint
 import com.bcm.messenger.common.bcmhttp.IMHttp
 import com.bcm.messenger.common.core.BcmHttpApiHelper
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.bcmhttp.callback.StringCallback
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.netswitchy.proxy.support.IConnectionChecker
@@ -23,7 +24,7 @@ class IMServerConnectionChecker:IConnectionChecker {
 
         ALog.d("IMServerConnectionChecker", url)
         return Observable.create<Boolean> { emit ->
-            IMHttp.get()
+            IMHttp.getHttp(AMELogin.majorContext).get()
                     .url(url)
                     .build()
                     .writeTimeOut(1000)

@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.grouprepository.manager
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.database.db.UserDatabase
@@ -8,47 +9,29 @@ import com.bcm.messenger.common.grouprepository.room.dao.GroupMemberDao
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMember
 
 object UserDataManager {
-    private const val IS_DIRTY = "IS_DIRTY"
 
-    /**
-     * 
-     * @param gid
-     * @param uid
-     * @param role: 1 ，2 ，3 ，4 , 0，default：0
-     * @return -1:,0:
-     */
-    fun updateGroupMemberRole(gid: Long, uid: String, role: Long): Int {
-        val groupUser = getDao().queryGroupMember(gid, uid)
-        if (groupUser != null) {
-            groupUser.role = role
-            getDao().updateGroupMember(groupUser)
-            return 0
-        }
-        return -1
-    }
-
-    fun deleteMember(gid: Long, uid: String) {
+    fun deleteMember(accountContext: AccountContext, gid: Long, uid: String) {
         if (uid.isNotEmpty()) {
             val member = AmeGroupMemberInfo()
             member.gid = gid
             member.uid = Address.fromSerialized(uid)
-            deleteMember(member)
+            deleteMember(accountContext, member)
         }
     }
 
-    fun deleteMember(member:AmeGroupMemberInfo) {
-        getDao().deleteGroupMember(GroupMemberTransform.transToDb(member))
+    fun deleteMember(accountContext: AccountContext, member:AmeGroupMemberInfo) {
+        getDao(accountContext).deleteGroupMember(GroupMemberTransform.transToDb(member))
     }
 
-    fun deleteMember(list:List<AmeGroupMemberInfo>) {
+    fun deleteMember(accountContext: AccountContext, list:List<AmeGroupMemberInfo>) {
         if (list.isNotEmpty()) {
-            getDao().deleteGroupMember(GroupMemberTransform.transToDbList(list))
+            getDao(accountContext).deleteGroupMember(GroupMemberTransform.transToDbList(list))
         }
     }
 
-    fun deleteMember(gid: Long, mlist:List<String>) {
+    fun deleteMember(accountContext: AccountContext, gid: Long, mlist:List<String>) {
         if (mlist.isNotEmpty()) {
-            getDao().deleteGroupMember(gid, mlist)
+            getDao(accountContext).deleteGroupMember(gid, mlist)
         }
     }
 
@@ -58,78 +41,78 @@ object UserDataManager {
      * @param role: 0 ，1 ，2 ，3 ，-1 ，default：-1
      * @return
      */
-    fun queryGroupMemberByRole(gid: Long, role: Int): ArrayList<AmeGroupMemberInfo> {
-        return GroupMemberTransform.transToModelList(getDao().loadGroupMembersByGidAndRole(gid, role))
+    fun queryGroupMemberByRole(accountContext: AccountContext, gid: Long, role: Int): ArrayList<AmeGroupMemberInfo> {
+        return GroupMemberTransform.transToModelList(getDao(accountContext).loadGroupMembersByGidAndRole(gid, role))
     }
 
-    fun insertGroupMember(member: AmeGroupMemberInfo) {
+    fun insertGroupMember(accountContext: AccountContext, member: AmeGroupMemberInfo) {
         if (member.uid != null) {
-            getDao().insertGroupMember(GroupMemberTransform.transToDb(member))
+            getDao(accountContext).insertGroupMember(GroupMemberTransform.transToDb(member))
         }
     }
 
-    fun insertGroupMembers(userList: List<AmeGroupMemberInfo>) {
+    fun insertGroupMembers(accountContext: AccountContext, userList: List<AmeGroupMemberInfo>) {
         if (userList.isNotEmpty()){
-            getDao().insertGroupMember(GroupMemberTransform.transToDbList(userList))
+            getDao(accountContext).insertGroupMember(GroupMemberTransform.transToDbList(userList))
         }
     }
 
-    fun insertGroupDbMembers(userList: List<GroupMember>) {
+    fun insertGroupDbMembers(accountContext: AccountContext, userList: List<GroupMember>) {
         if (userList.isNotEmpty()){
-            getDao().insertGroupMember(userList)
+            getDao(accountContext).insertGroupMember(userList)
         }
     }
 
-    fun updateGroupMember(member: AmeGroupMemberInfo) {
+    fun updateGroupMember(accountContext: AccountContext, member: AmeGroupMemberInfo) {
         if (member.uid != null) {
-            getDao().insertGroupMember(GroupMemberTransform.transToDb(member))
+            getDao(accountContext).insertGroupMember(GroupMemberTransform.transToDb(member))
         }
     }
 
-    fun updateGroupMembers(userList: List<AmeGroupMemberInfo>) {
+    fun updateGroupMembers(accountContext: AccountContext, userList: List<AmeGroupMemberInfo>) {
         if (userList.isNotEmpty()){
-            getDao().updateGroupMember(GroupMemberTransform.transToDbList(userList))
+            getDao(accountContext).updateGroupMember(GroupMemberTransform.transToDbList(userList))
         }
     }
 
-    fun queryGroupMember(gid: Long, uid: String): AmeGroupMemberInfo? {
-        val member = getDao().queryGroupMember(gid, uid)
+    fun queryGroupMember(accountContext: AccountContext, gid: Long, uid: String): AmeGroupMemberInfo? {
+        val member = getDao(accountContext).queryGroupMember(gid, uid)
         if (null != member) {
             return GroupMemberTransform.transToModel(member)
         }
         return null
     }
 
-    fun queryGroupMemberList(gid: Long, uidList: List<String>): List<AmeGroupMemberInfo> {
-        val memberList = getDao().queryGroupMemberList(gid, uidList.toTypedArray())
+    fun queryGroupMemberList(accountContext: AccountContext, gid: Long, uidList: List<String>): List<AmeGroupMemberInfo> {
+        val memberList = getDao(accountContext).queryGroupMemberList(gid, uidList.toTypedArray())
         return GroupMemberTransform.transToModelList(memberList)
     }
 
-    fun queryTopNGroupMember(gid: Long, n: Long): List<AmeGroupMemberInfo> {
-        val memberList = getDao().queryGroupMemberList(gid, n)
+    fun queryTopNGroupMember(accountContext: AccountContext, gid: Long, n: Long): List<AmeGroupMemberInfo> {
+        val memberList = getDao(accountContext).queryGroupMemberList(gid, n)
         return GroupMemberTransform.transToModelList(memberList)
     }
 
-    fun queryGroupMemberRole(gid:Long, uid:String): Long {
-        return getDao().queryGroupMember(gid, uid)?.role
+    fun queryGroupMemberRole(accountContext: AccountContext, gid:Long, uid:String): Long {
+        return getDao(accountContext).queryGroupMember(gid, uid)?.role
                 ?: AmeGroupMemberInfo.VISITOR
     }
 
 
-    fun clear(gid: Long) {
-        getDao().clear(gid)
+    fun clear(accountContext: AccountContext, gid: Long) {
+        getDao(accountContext).clear(gid)
     }
 
 
-    fun getLastMember(gid: Long): GroupMember? {
-        val list = getDao().loadGroupMembers(gid)
+    fun getLastMember(accountContext: AccountContext, gid: Long): GroupMember? {
+        val list = getDao(accountContext).loadGroupMembers(gid)
         if (!list.isEmpty()) {
             return list.last()
         }
         return null
     }
 
-    private fun getDao(): GroupMemberDao {
-        return UserDatabase.getDatabase().groupMemberDao()
+    private fun getDao(accountContext: AccountContext): GroupMemberDao {
+        return UserDatabase.getDatabase(accountContext).groupMemberDao()
     }
 }

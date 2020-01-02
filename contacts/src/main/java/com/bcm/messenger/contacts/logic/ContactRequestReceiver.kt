@@ -1,5 +1,6 @@
 package com.bcm.messenger.contacts.logic
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.server.IServerDataListener
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -9,7 +10,7 @@ import org.whispersystems.signalservice.internal.websocket.FriendProtos
 class ContactRequestReceiver(private val contactLogic: BcmContactLogic) : IServerDataListener {
     private val TAG = "ContactRequestReceiver"
 
-    override fun onReceiveData(proto: AbstractMessage): Boolean {
+    override fun onReceiveData(accountContext: AccountContext, proto: AbstractMessage): Boolean {
         if (proto is FriendProtos.FriendMessage) {
             AmeDispatcher.io.dispatch {
                 val deletesList = proto.deletesList

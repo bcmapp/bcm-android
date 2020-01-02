@@ -40,7 +40,6 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -483,8 +482,8 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
                 .withClickListener(object : ConversationItemPopWindow.PopWindowClickListener {
                     override fun onCopy() {
                         when {
-                            messageRecord.message.isText() -> AppUtil.saveCodeToBoard(context, messageRecord.message.content.getDescribe(messageRecord.gid).toString())
-                            messageRecord.message.isLink() -> AppUtil.saveCodeToBoard(context, messageRecord.message.content.getDescribe(messageRecord.gid).toString())
+                            messageRecord.message.isText() -> AppUtil.saveCodeToBoard(context, messageRecord.message.content.getDescribe(messageRecord.gid, ).toString())
+                            messageRecord.message.isLink() -> AppUtil.saveCodeToBoard(context, messageRecord.message.content.getDescribe(messageRecord.gid, ).toString())
                             messageRecord.message.isGroupShare() -> {
                                 val groupShareContent = messageRecord.message.content as AmeGroupMessage.GroupShareContent
                                 AppUtil.saveCodeToBoard(context, groupShareContent.shareLink ?: "")

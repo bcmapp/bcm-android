@@ -9,6 +9,7 @@ import com.bcm.messenger.common.AccountContext
 object AMELogin {
     val majorUid get() = AmeModuleCenter.login().majorUid()
     val isLogin get() = AmeModuleCenter.login().isLogin()
+    val majorContext = AmeModuleCenter.login().getAccountContext(majorUid)
 
     fun accountContext(uid:String): AccountContext {
         return AmeModuleCenter.login().getAccountContext(uid)

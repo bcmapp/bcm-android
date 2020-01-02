@@ -227,7 +227,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                         }
                     } else {
                         message.content.setRecipientCallback(this)
-                        val text = message.content.getDescribe(groupId)
+                        val text = message.content.getDescribe(groupId, )
                         text
                     }
                 } else {
@@ -257,14 +257,14 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                                 } else if (record.isPending()) {
                                     context.getString(R.string.common_chats_you_clearing_history_tip)
                                 } else {
-                                    content.getDescribe(groupId)
+                                    content.getDescribe(groupId, )
                                 }
                             }else {
-                                content.getDescribe(groupId)
+                                content.getDescribe(groupId, )
                             }
                         }
                         else {
-                            message.content.getDescribe(groupId)
+                            message.content.getDescribe(groupId, )
                         }
                         text
                     } else {

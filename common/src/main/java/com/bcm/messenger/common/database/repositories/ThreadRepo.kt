@@ -2,6 +2,7 @@ package com.bcm.messenger.common.database.repositories
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.MessagingDatabase
@@ -24,7 +25,7 @@ import com.bcm.messenger.utility.logger.ALog
 /**
  * Created by Kin on 2019/9/17
  */
-class ThreadRepo {
+class ThreadRepo(private val accountContext:AccountContext) {
     private val TAG = "ThreadRepo"
 
     object DistributionTypes {
@@ -36,8 +37,8 @@ class ThreadRepo {
         const val NEW_GROUP = 5
     }
 
-    private val threadDao = UserDatabase.getDatabase().getThreadDao()
-    private val chatDao = UserDatabase.getDatabase().getPrivateChatDao()
+    private val threadDao = UserDatabase.getDatabase(accountContext).getThreadDao()
+    private val chatDao = UserDatabase.getDatabase(accountContext).getPrivateChatDao()
 
     private fun getAttachment(record: MessageRecord): AttachmentRecord? {
         if (!record.isMediaMessage()) {
@@ -65,7 +66,7 @@ class ThreadRepo {
 
     fun deleteThread(threadId: Long) {
         threadDao.deleteThread(threadId)
-        Repository.getDraftRepo().clearDrafts(threadId)
+        Repository.getDraftRepo(accountContext).clearDrafts(threadId)
     }
 
     fun setRead(threadId: Long, lastSeen: Boolean): List<MessagingDatabase.MarkedMessageInfo> {
@@ -76,7 +77,7 @@ class ThreadRepo {
             } else {
                 threadDao.updateRead(threadId)
             }
-            return Repository.getChatRepo().setMessagesRead(threadId)
+            return Repository.getChatRepo(accountContext).setMessagesRead(threadId)
         }
         return emptyList()
     }
@@ -89,12 +90,12 @@ class ThreadRepo {
             } else {
                 threadDao.updateRead(it.id)
             }
-            Repository.getChatRepo().setMessagesRead(it.id)
+            Repository.getChatRepo(accountContext).setMessagesRead(it.id)
         }
     }
 
     fun setGroupRead(threadId: Long, gid: Long, lastSeenTime: Long) {
-        MessageDataManager.setGroupMessageRead(gid)
+        MessageDataManager.setGroupMessageRead(accountContext, gid)
         threadDao.updateReadAndLastSeen(threadId, lastSeenTime)
     }
 
@@ -181,36 +182,36 @@ class ThreadRepo {
     }
 
     fun deleteConversationContent(threadId: Long) {
-        Repository.getChatRepo().cleanChatMessages(threadId)
-        Repository.getDraftRepo().clearDrafts(threadId)
+        Repository.getChatRepo(accountContext).cleanChatMessages(threadId)
+        Repository.getDraftRepo(accountContext).clearDrafts(threadId)
         deleteThread(threadId)
     }
 
     fun clearConversationExcept(threadId: Long, messageIdList: List<Long>) {
-        Repository.getChatRepo().cleanThreadExcept(threadId, messageIdList)
+        Repository.getChatRepo(accountContext).cleanThreadExcept(threadId, messageIdList)
         val unreadCount = chatDao.queryMessageCount(threadId).toInt()
         threadDao.updateReadState(threadId, if (unreadCount <= 0) 1 else 0, unreadCount)
     }
 
     fun cleanConversationContentForGroup(threadId: Long, gid: Long) {
-        Repository.getDraftRepo().clearDrafts(threadId)
-        GroupLiveInfoManager.getInstance().deleteLiveInfoWhenLeaveGroup(gid)
-        MessageDataManager.deleteMessagesByGid(gid)
+        Repository.getDraftRepo(accountContext).clearDrafts(threadId)
+        GroupLiveInfoManager.getInstance(accountContext).deleteLiveInfoWhenLeaveGroup(gid)
+        MessageDataManager.deleteMessagesByGid(accountContext, gid)
         deleteThread(threadId)
     }
 
     fun deleteConversationForGroup(gid: Long, threadId: Long) {
-        Repository.getDraftRepo().clearDrafts(threadId)
-        GroupLiveInfoManager.getInstance().deleteLiveInfoWhenLeaveGroup(gid)
-        MessageDataManager.deleteMessagesByGid(gid)
+        Repository.getDraftRepo(accountContext).clearDrafts(threadId)
+        GroupLiveInfoManager.getInstance(accountContext).deleteLiveInfoWhenLeaveGroup(gid)
+        MessageDataManager.deleteMessagesByGid(accountContext, gid)
         updateByNewGroup(gid)
     }
 
     fun updateThread(threadId: Long, record: MessageRecord?, time: Long? = null) {
-        UserDatabase.getDatabase().runInTransaction {
+        UserDatabase.getDatabase(accountContext).runInTransaction {
             val threadModel = threadDao.queryThread(threadId)
             if (threadModel != null) {
-                val drafts = Repository.getDraftRepo().getDrafts(threadId)
+                val drafts = Repository.getDraftRepo(accountContext).getDrafts(threadId)
                 val count = chatDao.queryMessageCount(threadId)
                 val date = time ?: record?.dateReceive ?: threadModel.timestamp
 
@@ -252,7 +253,7 @@ class ThreadRepo {
     }
 
     fun updateByNewGroup(gid: Long, time: Long? = null) {
-        val message = GroupMessageTransform.transformToModel(MessageDataManager.fetchLastMessage(gid))
+        val message = GroupMessageTransform.transformToModel(MessageDataManager.fetchLastMessage(accountContext, gid))
         var threadId = getThreadIdIfExist(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid))
         if (threadId <= 0L && (null == message || null == message.message)) {
             ALog.i(TAG, "updateByNewGroup gid: $gid, no thread, no message, return")
@@ -261,7 +262,7 @@ class ThreadRepo {
             threadId = getThreadIdFor(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid))
         }
 
-        val drafts = Repository.getDraftRepo().getDrafts(threadId)
+        val drafts = Repository.getDraftRepo(accountContext).getDrafts(threadId)
         val draftText = drafts.getSnippet(AppContextHolder.APP_CONTEXT)
         val draftUri = drafts.getUriSnippet(AppContextHolder.APP_CONTEXT)?.toString()
 
@@ -269,8 +270,8 @@ class ThreadRepo {
             updateByNewGroup(threadId, 0, 0, "", "", draftText, draftUri,
                     if (drafts.isNotEmpty()) BASE_DRAFT_TYPE else AmeGroupMessageDetail.SendState.SEND_SUCCESS.value, time)
         } else {
-            val count = MessageDataManager.countMessageByGid(gid)
-            val unreadCount = MessageDataManager.countUnreadCountFromLastSeen(gid, 0)
+            val count = MessageDataManager.countMessageByGid(accountContext, gid)
+            val unreadCount = MessageDataManager.countUnreadCountFromLastSeen(accountContext, gid, 0)
 
             val body = message.message.toString()
             val uriString = if (message.attachmentUri == null) "" else message.attachmentUri
@@ -279,7 +280,7 @@ class ThreadRepo {
 
             val state = if (messageContent is AmeGroupMessage.SystemContent && messageContent.tipType == AmeGroupMessage.SystemContent.TIP_JOIN_GROUP_REQUEST) {
                 BASE_JOIN_REQUEST
-            } else if (!message.isSendByMe && message.extContent?.isAtAll == true || message.extContent?.atList?.contains(AMELogin.uid) == true) {
+            } else if (!message.isSendByMe && message.extContent?.isAtAll == true || message.extContent?.atList?.contains(accountContext.uid) == true) {
                 BASE_AT_ME_TYPE
             } else if (drafts.isNotEmpty()) {
                 BASE_DRAFT_TYPE
@@ -291,7 +292,7 @@ class ThreadRepo {
     }
 
     private fun updateByNewGroup(threadId: Long, count: Long, unreadCount: Long, body: String, attachmentUri: String?, draftText: String?, draftUri: String?, state: Long, date: Long?) {
-        UserDatabase.getDatabase().runInTransaction {
+        UserDatabase.getDatabase(accountContext).runInTransaction {
             val record = threadDao.queryThread(threadId)
             if (record != null) {
 
@@ -334,7 +335,7 @@ class ThreadRepo {
             uidList.add(r.uid)
             map[r.uid] = r
         }
-        Repository.getRecipientRepo()?.getRecipients(uidList)?.forEach { settings ->
+        Repository.getRecipientRepo(accountContext)?.getRecipients(uidList)?.forEach { settings ->
             map[settings.uid]?.setRecipient(Recipient.fromSnapshot(AppContextHolder.APP_CONTEXT, Address.fromSerialized(settings.uid), settings))
         }
         return threadList

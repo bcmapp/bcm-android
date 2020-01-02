@@ -5,6 +5,7 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.database.migrate.DatabaseMigration
 import com.bcm.messenger.common.database.migrate.IDatabaseMigration
@@ -32,6 +33,7 @@ class DatabaseMigrateActivity : AppCompatActivity() {
     }
 
     private var isLoginProgress = false
+    private lateinit var accountContext: AccountContext
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,25 +41,28 @@ class DatabaseMigrateActivity : AppCompatActivity() {
 
         isLoginProgress = intent.getBooleanExtra(IS_LOGIN_PROGRESS, false)
 
-        startMigrate()
+        //todo wangshuhe
+        accountContext = intent.getParcelableExtra(ARouterConstants.Account.ACCOUNT_CONTEXT)
+
+        startMigrate(accountContext)
     }
 
-    private fun startMigrate() {
+    private fun startMigrate(accountContext: AccountContext) {
         window.setStatusBarLightMode()
 
         ALog.i(TAG, "delay for waiting db init")
 
         migrate_progress_text.text = String.format("%d%%", 0)
         AmeDispatcher.mainThread.dispatch({
-            migrate()
+            migrate(accountContext)
         }, 5000)
     }
 
-    private fun migrate() {
+    private fun migrate(accountContext: AccountContext) {
         ALog.i(TAG, "Start migrate")
 
         val migration: IDatabaseMigration = DatabaseMigration
-        migration.doMigrate {
+        migration.doMigrate(accountContext) {
             if (it < 0) {
                 ALog.i(TAG, "Migrate failed")
                 migrate_progress_text.text = getString(R.string.common_database_migrate_failed)
@@ -95,7 +100,7 @@ class DatabaseMigrateActivity : AppCompatActivity() {
                     .subscribe({
                         doOtherInit(isFailed)
                     }, {
-                        login.quit(false)
+                        login.quit(accountContext,false)
                         finish()
                     })
         } else {
@@ -110,7 +115,7 @@ class DatabaseMigrateActivity : AppCompatActivity() {
             TextSecurePreferences.setMigrateFailedCount(this, 0)
         }
 
-        AmeModuleCenter.onLoginSucceed(AMELogin.uid)
+        AmeModuleCenter.onLoginSucceed(accountContext)
 
         val migration: IDatabaseMigration = DatabaseMigration
         migration.clearFlag()

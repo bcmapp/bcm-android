@@ -2,6 +2,7 @@ package com.bcm.messenger.chats.privatechat.logic
 
 import com.bcm.messenger.chats.privatechat.core.ChatHttp
 import com.bcm.messenger.chats.privatechat.jobs.PushDecryptJob
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AddressUtil
 import com.bcm.messenger.common.crypto.storage.SignalProtocolStoreImpl
@@ -32,7 +33,7 @@ import java.util.*
 class ChatMessageReceiver : IServerDataListener {
     private val TAG = "ChatMessageReceiver"
 
-    override fun onReceiveData(proto: AbstractMessage): Boolean {
+    override fun onReceiveData(accountContext: AccountContext, proto: AbstractMessage): Boolean {
         when (proto) {
             is SignalServiceProtos.Mailbox -> {
                 val mismatchDevices = mutableSetOf<SignalServiceAddress>()

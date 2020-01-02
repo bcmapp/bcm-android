@@ -11,6 +11,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule
@@ -63,11 +64,11 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     
-    fun showRecipientAvatar(recipient: Recipient) {
+    fun showRecipientAvatar(accountContext: AccountContext, recipient: Recipient) {
         if (recipient.isGroupRecipient) {
             showGroupAvatar(recipient.groupId)
         } else {
-            showPrivateAvatar(recipient)
+            showPrivateAvatar(accountContext, recipient)
         }
     }
 
@@ -102,12 +103,12 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
-    fun showPrivateAvatar(recipient: Recipient) {
+    fun showPrivateAvatar(accountContext: AccountContext, recipient: Recipient) {
         this.privateRecipient?.removeListener(this)
         this.privateRecipient = recipient
         this.privateRecipient?.addListener(this)
 
-        setRecipientAvatar()
+        setRecipientAvatar(accountContext)
     }
 
     private fun showGroupAvatar(recipient: Recipient) {
@@ -178,12 +179,12 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         loadCallback?.invoke((drawable as? BitmapDrawable)?.bitmap)
     }
 
-    private fun setRecipientAvatar() {
+    private fun setRecipientAvatar(accountContext: AccountContext) {
         group_splice_avatar.visibility = View.GONE
         member_single_avatar.visibility = View.VISIBLE
         background = null
 
-        member_single_avatar.setPhoto(privateRecipient)
+        member_single_avatar.setPhoto(accountContext, privateRecipient)
         member_single_avatar.setOval(true)
     }
 

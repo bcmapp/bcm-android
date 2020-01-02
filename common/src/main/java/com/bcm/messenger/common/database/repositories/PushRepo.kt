@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.database.repositories
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.database.NoSuchMessageException
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.model.PushDbModel
@@ -10,8 +11,8 @@ import org.whispersystems.signalservice.internal.push.SignalServiceProtos
 /**
  * Created by Kin on 2019/9/26
  */
-class PushRepo {
-    private val pushDao = UserDatabase.getDatabase().getPushDao()
+class PushRepo(accountContext: AccountContext) {
+    private val pushDao = UserDatabase.getDatabase(accountContext).getPushDao()
 
     fun insert(envelope: SignalServiceProtos.Envelope): Long {
         val messageId = find(envelope)

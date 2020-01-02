@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.grouprepository.manager
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.grouprepository.room.dao.BcmFriendDao
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriend
@@ -17,57 +18,18 @@ class BcmFriendManager {
         private const val FRIEND_HASH_MAP = "uid_hash_map"
     }
 
-    fun clearHandlingList() {
-        dao().clearHandlingList()
-    }
-    /**
-     * 
-     */
-    fun saveHandlingList(list: List<BcmFriend>) {
-        val dao = dao()
-        dao.clearHandlingList()
-        dao.saveFriends(list)
-    }
-
-    fun deleteHandlingList(list: List<BcmFriend>) {
-        dao().deleteFriends(list)
+    fun clearHandlingList(accountContext: AccountContext) {
+        dao(accountContext).clearHandlingList()
     }
 
     /**
      * 
      */
-    fun getHandingList(): List<BcmFriend> {
-        return dao().queryHandingList()
+    fun getHandingList(accountContext: AccountContext): List<BcmFriend> {
+        return dao(accountContext).queryHandingList()
     }
 
-    /**
-     * hash
-     */
-    fun saveSyncHashMap(map: Map<String, Long>) {
-        val bcm = BcmFriend()
-        bcm.uid = FRIEND_HASH_MAP
-        bcm.state = BcmFriend.DATA
-        bcm.tag = GsonUtils.toJson(map)
-        dao().saveFriends(listOf(bcm))
-    }
-
-    /**
-     * hash
-     */
-    fun loadLastSyncHashMap(): Map<String, Long>? {
-        val tmp = dao().queryFriend(FRIEND_HASH_MAP)
-        if (null != tmp) {
-            try {
-                return GsonUtils.fromJson<Map<String, Long>>(tmp.tag, object : TypeToken<Map<String, Long>>() {}.type)
-
-            } catch (e: Exception) {
-                ALog.e("BcmFriendManager", e)
-            }
-        }
-        return null
-    }
-
-    private fun dao(): BcmFriendDao {
-        return UserDatabase.getDatabase().bcmFriendDao()
+    private fun dao(accountContext: AccountContext): BcmFriendDao {
+        return UserDatabase.getDatabase(accountContext).bcmFriendDao()
     }
 }

@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.attachments.Attachment
 import com.bcm.messenger.common.crypto.CtrStreamUtil
 import com.bcm.messenger.common.crypto.DecryptingPartInputStream
@@ -33,10 +34,10 @@ import java.util.concurrent.Callable
 /**
  * Created by Kin on 2019/9/19
  */
-class AttachmentRepo {
+class AttachmentRepo(private val accountContext: AccountContext) {
     private val TAG = "AttachmentRepo"
 
-    private val attachmentDao = UserDatabase.getDatabase().getAttachmentDao()
+    private val attachmentDao = UserDatabase.getDatabase(accountContext).getAttachmentDao()
 
     private val thumbnailExecutor = Util.newSingleThreadedLifoExecutor()
 
@@ -350,6 +351,6 @@ class AttachmentRepo {
     }
 
     private fun notifyAttachmentUpdate(mid: Long) {
-        Repository.getChatRepo().attachmentUpdate(mid)
+        Repository.getChatRepo(accountContext).attachmentUpdate(mid)
     }
 }

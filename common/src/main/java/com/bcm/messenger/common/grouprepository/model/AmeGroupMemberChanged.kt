@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.grouprepository.model
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.grouprepository.manager.UserDataManager
@@ -10,7 +11,7 @@ import com.bcm.messenger.utility.proguard.NotGuard
 /**
  * bcm.social.01 2018/6/7.
  */
-data class AmeGroupMemberChanged(val groupId:Long, val messageId:Long) {
+data class AmeGroupMemberChanged(val accountContext: AccountContext, val groupId:Long, val messageId:Long) {
     companion object {
         val JOIN = 1L
         val LEAVE = 3L
@@ -28,7 +29,7 @@ data class AmeGroupMemberChanged(val groupId:Long, val messageId:Long) {
     fun isMyJoin(): Boolean {
         if (action == JOIN){
             for (i in memberList){
-                if (i.uid.serialize() == AMELogin.uid){
+                if (i.uid.serialize() == accountContext.uid){
                     return true
                 }
             }
@@ -42,7 +43,7 @@ data class AmeGroupMemberChanged(val groupId:Long, val messageId:Long) {
     fun isMyLeave(): Boolean {
         if (action == LEAVE){
             for (i in memberList){
-                if (i.uid.serialize() == AMELogin.uid){
+                if (i.uid.serialize() == accountContext.uid){
                     return true
                 }
             }
@@ -67,7 +68,7 @@ data class AmeGroupMemberChanged(val groupId:Long, val messageId:Long) {
 
                 if (memberList.isNotEmpty()) {
                     for (u in memberList) {
-                        UserDataManager.insertGroupMembers(memberList)
+                        UserDataManager.insertGroupMembers(accountContext, memberList)
                     }
                 }
             }
@@ -77,7 +78,7 @@ data class AmeGroupMemberChanged(val groupId:Long, val messageId:Long) {
                 detail.message = AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO, systemContent)
 
                 if (memberList.isNotEmpty()) {
-                    UserDataManager.deleteMember(memberList)
+                    UserDataManager.deleteMember(accountContext, memberList)
                 }
             }
             UPDATE -> {
@@ -85,7 +86,7 @@ data class AmeGroupMemberChanged(val groupId:Long, val messageId:Long) {
                 detail.message = AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO, systemContent)
 
                 if (memberList.isNotEmpty()) {
-                    UserDataManager.updateGroupMembers(memberList)
+                    UserDataManager.updateGroupMembers(accountContext, memberList)
                 }
             }
             else -> {

@@ -58,7 +58,7 @@ class SystemTipsViewHolder(containerView: View) : RecyclerView.ViewHolder(contai
 
     private fun refreshTip(context: Context) {
         val messageRecord = this.messageRecord ?: return
-        val text = data.getDescribe(messageRecord.gid)
+        val text = data.getDescribe(messageRecord.gid, )
         ALog.d(TAG, "bindData describe: $text, extra: ${data.extra}")
         if (data.tipType == AmeGroupMessage.SystemContent.TIP_JOIN_GROUP_REQUEST) {
             var isHandled = if (data.extra == null) {

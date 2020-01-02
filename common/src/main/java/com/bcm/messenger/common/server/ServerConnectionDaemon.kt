@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptorHelper
 import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSFetcher
@@ -36,7 +37,7 @@ import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.util.concurrent.*
 
-class ServerConnectionDaemon : IServerConnectionDaemon, IServerConnectionEvent, LBSFetcher.ILBSFetchResult {
+class ServerConnectionDaemon(private val accountContext: AccountContext) : IServerConnectionDaemon, IServerConnectionEvent, LBSFetcher.ILBSFetchResult {
 
     companion object {
         private const val KEEPALIVE_TIMEOUT_MILLI = 60_000L
@@ -151,10 +152,10 @@ class ServerConnectionDaemon : IServerConnectionDaemon, IServerConnectionEvent, 
 
                         val conn = serverConn
                         if (null == conn || conn.isDisconnect()) {
-                            onServiceConnected(ConnectState.DISCONNECTED, connectToken)
+                            onServiceConnected(accountContext, connectToken, ConnectState.DISCONNECTED)
                             ALog.i(TAG, "checkConnection disconnected")
                         } else if (conn.isConnected()) {
-                            onServiceConnected(ConnectState.CONNECTED, connectToken)
+                            onServiceConnected(accountContext, connectToken, ConnectState.CONNECTED)
                             ALog.i(TAG, "checkConnection connected")
                         } else {
                             Logger.i("$TAG checkConnection ${conn.state()}")
@@ -188,7 +189,7 @@ class ServerConnectionDaemon : IServerConnectionDaemon, IServerConnectionEvent, 
                 return true
             }
 
-            val serverConn = ServerConnection(BuildConfig.USER_AGENT)
+            val serverConn = ServerConnection(accountContext, BuildConfig.USER_AGENT)
             serverConn.setConnectionListener(this)
             this.serverConn = serverConn
 
@@ -282,7 +283,7 @@ class ServerConnectionDaemon : IServerConnectionDaemon, IServerConnectionEvent, 
         val conn = serverConn
 
         if (!NetworkUtil.isConnected()) {
-            onServiceConnected(conn?.state() ?: ConnectState.DISCONNECTED, CONN_DEFAULT_TOKEN)
+            onServiceConnected(accountContext, CONN_DEFAULT_TOKEN, conn?.state() ?: ConnectState.DISCONNECTED)
             return
         }
 
@@ -293,7 +294,7 @@ class ServerConnectionDaemon : IServerConnectionDaemon, IServerConnectionEvent, 
             } else {
                 ALog.i(TAG, "daemonRun try reconnecting")
             }
-            onServiceConnected(conn?.state() ?: ConnectState.DISCONNECTED, CONN_DEFAULT_TOKEN)
+            onServiceConnected(accountContext, CONN_DEFAULT_TOKEN, conn?.state() ?: ConnectState.DISCONNECTED)
         } else if (conn.isConnected()) {
             if (tickTime() - lastKeepTime >= KEEPALIVE_TIMEOUT_MILLI) {
                 if (conn.sendKeepAlive()) {
@@ -329,7 +330,7 @@ class ServerConnectionDaemon : IServerConnectionDaemon, IServerConnectionEvent, 
         return System.currentTimeMillis()
     }
 
-    override fun onServiceConnected(state: ConnectState, connectToken: Int) {
+    override fun onServiceConnected(accountContext: AccountContext, connectToken: Int, state: ConnectState) {
         ALog.i(TAG, "onServiceConnected $state token:$connectToken")
         if (this.status != state) {
             this.status = state
@@ -339,14 +340,14 @@ class ServerConnectionDaemon : IServerConnectionDaemon, IServerConnectionEvent, 
                     checkMetrics(state == ConnectState.CONNECTED)
                 }
             }
-            this.eventListener?.onServiceConnected(state, connectToken)
+            this.eventListener?.onServiceConnected(accountContext, connectToken, state)
         }
     }
 
-    override fun onMessageArrive(message: WebSocketProtos.WebSocketRequestMessage): Boolean {
+    override fun onMessageArrive(accountContext: AccountContext, message: WebSocketProtos.WebSocketRequestMessage): Boolean {
         messageScheduler.scheduleDirect {
             try {
-                val result = eventListener?.onMessageArrive(message)
+                val result = eventListener?.onMessageArrive(accountContext, message)
 
                 val response = if (result == true) {
                     WebSocketProtos.WebSocketResponseMessage.newBuilder()
@@ -369,10 +370,10 @@ class ServerConnectionDaemon : IServerConnectionDaemon, IServerConnectionEvent, 
         return true
     }
 
-    override fun onClientForceLogout(type: KickEvent, info: String?) {
+    override fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent) {
         ALog.i(TAG, "onClientForceLogout $type $info")
         stopDaemon()
-        this.eventListener?.onClientForceLogout(type, info)
+        this.eventListener?.onClientForceLogout(accountContext, info, type)
     }
 
     override fun onLBSFetchResult(succeed: Boolean, fetchIndex: Int) {

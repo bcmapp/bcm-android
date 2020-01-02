@@ -3,6 +3,7 @@ package com.bcm.messenger.common.database.db
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.attachments.DatabaseAttachment
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.database.DraftDatabase
@@ -25,10 +26,10 @@ import java.io.File
  * 
  * Created by Kin on 2019/10/22
  */
-class MigrateDatabase {
+class MigrateDatabase(private val accountContext: AccountContext) {
     private val TAG = "MigrateDatabase"
 
-    private val helper = MigrateDatabaseHelper()
+    private val helper = MigrateDatabaseHelper(accountContext)
     
     fun closeDatabase() {
         helper.close()
@@ -76,9 +77,9 @@ class MigrateDatabase {
 
     fun deleteDatabase() {
         helper.close()
-        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db").delete()
-        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db-shm").delete()
-        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db-wal").delete()
+        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db").delete()
+        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-shm").delete()
+        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-wal").delete()
     }
 
     fun insertThread(record: ThreadRecord): Long {
@@ -192,7 +193,7 @@ class MigrateDatabase {
                     attachmentValues.put("fast_preflight_id", attachment.fastPreflightId)
                     attachmentValues.put("duration", attachment.duration)
                     attachmentValues.put("url", attachment.url)
-                    attachmentValues.put("type", Repository.getAttachmentRepo().getMediaType(attachment.contentType).type)
+                    attachmentValues.put("type", Repository.getAttachmentRepo(accountContext).getMediaType(attachment.contentType).type)
                     attachmentList.add(attachmentValues)
                 }
             }
@@ -505,7 +506,7 @@ class MigrateDatabase {
         helper.writableDatabase.insert(GroupKey.TABLE_NAME, null, contentValues)
     }
 
-    class MigrateDatabaseHelper : SQLiteOpenHelper(AppContextHolder.APP_CONTEXT, "user_${AMELogin.uid}.db", null, 1) {
+    class MigrateDatabaseHelper(accountContext: AccountContext) : SQLiteOpenHelper(AppContextHolder.APP_CONTEXT, "user_${accountContext.uid}.db", null, 1) {
         private val TAG = "MigrateDatabaseHelper"
 
         override fun onCreate(db: SQLiteDatabase?) {

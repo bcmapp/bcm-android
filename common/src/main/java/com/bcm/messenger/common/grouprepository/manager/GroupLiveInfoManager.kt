@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Message
 import android.text.TextUtils
+import com.bcm.messenger.common.AccountContext
 
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.db.UserDatabase
@@ -13,7 +14,7 @@ import com.bcm.messenger.common.grouprepository.room.entity.GroupLiveInfo
 import com.bcm.messenger.utility.AppContextHolder
 import org.greenrobot.eventbus.EventBus
 
-class GroupLiveInfoManager internal constructor() {
+class GroupLiveInfoManager internal constructor(private val accountContext: AccountContext) {
 
     private val mHandlerThread: HandlerThread = HandlerThread("GroupLive_Manager")
     private val mHandler: Handler
@@ -27,11 +28,12 @@ class GroupLiveInfoManager internal constructor() {
         @Volatile
         private var liveManagerInstance: GroupLiveInfoManager? = null
 
-        fun getInstance(): GroupLiveInfoManager {
+        //todo wangshuhe
+        fun getInstance(accountContext: AccountContext): GroupLiveInfoManager {
             if (liveManagerInstance == null) {
                 synchronized(GroupLiveInfoManager::class.java) {
                     if (liveManagerInstance == null)
-                        liveManagerInstance = GroupLiveInfoManager()
+                        liveManagerInstance = GroupLiveInfoManager(accountContext)
                 }
             }
             return liveManagerInstance!!
@@ -49,7 +51,7 @@ class GroupLiveInfoManager internal constructor() {
 
 
     private val dao: GroupLiveInfoDao
-        get() = UserDatabase.getDatabase().groupLiveInfoDao()
+        get() = UserDatabase.getDatabase(accountContext).groupLiveInfoDao()
 
     init {
         mHandlerThread.start()
@@ -262,7 +264,7 @@ class GroupLiveInfoManager internal constructor() {
     }
 
     private fun updateThreadLiveState(gid: Long, status: Int = getCurrentLiveInfo(gid)?.liveStatus ?: 0) {
-        Repository.getThreadRepo().updateLiveState(gid, status)
+        Repository.getThreadRepo(accountContext).updateLiveState(gid, status)
     }
 
     private fun updateLiveModel(groupLiveInfo: GroupLiveInfo) {
@@ -294,7 +296,7 @@ class GroupLiveInfoManager internal constructor() {
             }
             dao.update(groupLiveInfo)
             if (groupLiveInfo.gid != currentPlayingGid && !isOfflineMessage) {
-                MessageDataManager.systemNotice(it.gid, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_LIVE_END))
+                MessageDataManager.systemNotice(accountContext, it.gid, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_LIVE_END))
             }
         }
     }

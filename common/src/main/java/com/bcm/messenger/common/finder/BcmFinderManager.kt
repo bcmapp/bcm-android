@@ -3,10 +3,10 @@ package com.bcm.messenger.common.finder
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.Base64
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -35,7 +35,7 @@ import java.io.ObjectOutputStream
  *      }
  *  }
  */
-class BcmFinderManager {
+class BcmFinderManager(private val accountContext: AccountContext) {
 
     interface SearchRecordChecker {
         fun isValid(record: SearchRecordDetail): Boolean
@@ -49,13 +49,25 @@ class BcmFinderManager {
          private const val mSearchLimit: Int = 3
          private const val mRecentLimit: Int = 10
 
-         private val manager:BcmFinderManager = BcmFinderManager()
+         private var manager:BcmFinderManager? = null
 
          /**
           * Finder
           */
-         fun get(): BcmFinderManager {
-             return manager
+         fun get(accountContext: AccountContext): BcmFinderManager {
+             val manager = this.manager
+             if (manager == null) {
+                 synchronized(TAG) {
+                     var manager1 = this.manager
+                     if (null == manager1) {
+                         manager1 = BcmFinderManager(accountContext)
+                     }
+                     this.manager = manager1
+                     return manager1
+                 }
+             } else {
+                 return manager
+             }
          }
      }
 
@@ -136,7 +148,7 @@ class BcmFinderManager {
      * 
      */
     fun clearRecord() {
-        getAccountPreferences(AppContextHolder.APP_CONTEXT).edit().clear().commit()
+        getAccountPreferences(accountContext).edit().clear().apply()
     }
 
     /**
@@ -191,7 +203,7 @@ class BcmFinderManager {
         Observable.create(ObservableOnSubscribe<List<SearchItemData>> {
             val resultList = mutableListOf<SearchItemData>()
             val hasTop = types.isNotEmpty()
-            val bcmFindResultMap = BcmFinderManager.get().find(keyword, types)
+            val bcmFindResultMap = find(keyword, types)
             for (type in types) {
                 val l = findSearchResult(true, type, bcmFindResultMap[type]
                         ?: continue)
@@ -335,7 +347,7 @@ class BcmFinderManager {
                     it.writeObject(map)
                 }
                 val body = Base64.encodeBytes(bios.toByteArray())
-                getAccountPreferences(AppContextHolder.APP_CONTEXT).edit().putString(RECORD_KEY, body).apply()
+                getAccountPreferences(accountContext).edit().putString(RECORD_KEY, body).apply()
 
             }catch (ex: Exception) {
                 ALog.e(TAG, "saveRecord error", ex)
@@ -367,7 +379,7 @@ class BcmFinderManager {
     private fun getRecordMap(): MutableMap<String, SearchRecord> {
         var map: MutableMap<String, SearchRecord>? = mRecordMap
         if (map == null) {
-            val pref = getAccountPreferences(AppContextHolder.APP_CONTEXT)
+            val pref = getAccountPreferences(accountContext)
             val body = pref.getString(RECORD_KEY, "")
             if (body.isEmpty()) {
 
@@ -393,9 +405,9 @@ class BcmFinderManager {
     /**
      * pref
      */
-    private fun getAccountPreferences(context: Context): SharedPreferences {
-        ALog.d(TAG, "getAccountPreferences table: $SEARCH_TABLE${AMELogin.uid}")
-        return context.getSharedPreferences("$SEARCH_TABLE${AMELogin.uid}", Context.MODE_PRIVATE)
+    private fun getAccountPreferences(accountContext: AccountContext): SharedPreferences {
+        ALog.d(TAG, "getAccountPreferences table: $SEARCH_TABLE${accountContext.uid}")
+        return AppContextHolder.APP_CONTEXT.getSharedPreferences("$SEARCH_TABLE${accountContext.uid}", Context.MODE_PRIVATE)
     }
 
 }

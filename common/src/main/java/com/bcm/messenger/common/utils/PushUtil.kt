@@ -77,7 +77,7 @@ object PushUtil {
     @Throws(IOException::class)
     private fun registerPush2Server(gcmRegistrationId: String, umengRegistrationId: String) {
         val registration = GcmRegistrationId(gcmRegistrationId, umengRegistrationId, true)
-        RxIMHttp.put<AmeEmpty>(BcmHttpApiHelper.getApi(REGISTER_GCM_PATH), GsonUtils.toJson(registration), AmeEmpty::class.java)
+        RxIMHttp.getHttp(AMELogin.majorContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(REGISTER_GCM_PATH), GsonUtils.toJson(registration), AmeEmpty::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .doOnError {
@@ -87,7 +87,7 @@ object PushUtil {
     }
 
     private fun unregisterPush2Server() {
-        RxIMHttp.delete<AmeEmpty>(BcmHttpApiHelper.getApi(REGISTER_GCM_PATH),null,"",AmeEmpty::class.java)
+        RxIMHttp.getHttp(AMELogin.majorContext).delete<AmeEmpty>(BcmHttpApiHelper.getApi(REGISTER_GCM_PATH),null,"",AmeEmpty::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .doOnError {
@@ -131,7 +131,7 @@ object PushUtil {
      * App
      */
     private fun getSystemMessages(): Observable<ServerResult<SystemMessageList>> {
-        return RxIMHttp.get<ServerResult<SystemMessageList>>(BcmHttpApiHelper.getApi(SYSTEM_MESSAGE_GET),
+        return RxIMHttp.getHttp(AMELogin.majorContext).get<ServerResult<SystemMessageList>>(BcmHttpApiHelper.getApi(SYSTEM_MESSAGE_GET),
                 null, object : TypeToken<ServerResult<SystemMessageList>>() {}.type)
     }
 
@@ -139,7 +139,7 @@ object PushUtil {
      * ，
      */
     fun confirmSystemMessages(maxMid: Long): Observable<AmeEmpty> {
-        return RxIMHttp.delete<AmeEmpty>(BcmHttpApiHelper.getApi(String.format(SYSTEM_MESSAGE_DELETE_MAXID, maxMid)),
+        return RxIMHttp.getHttp(AMELogin.majorContext).delete<AmeEmpty>(BcmHttpApiHelper.getApi(String.format(SYSTEM_MESSAGE_DELETE_MAXID, maxMid)),
                 null, null, object : TypeToken<ServerResult<Void>>() {}.type)
     }
 

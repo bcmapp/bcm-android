@@ -3,6 +3,7 @@ package com.bcm.messenger.common.crypto.encrypt
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.annotation.WorkerThread
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.GroupKeyParam
@@ -60,7 +61,7 @@ object ChatFileEncryptDecryptUtil {
     @Throws(InvalidObjectException::class, RuntimeException::class)
     @WorkerThread
     @JvmStatic
-    fun decryptAndSaveFile(masterSecret: MasterSecret?, sourceFile: File, data: Any, fileType: FileType): FileInfo {
+    fun decryptAndSaveFile(accountContext: AccountContext, masterSecret: MasterSecret?, sourceFile: File, data: Any, fileType: FileType): FileInfo {
         if (masterSecret == null) throw InvalidObjectException("MasterSecret is null!")
 
         return when (fileType) {
@@ -77,7 +78,7 @@ object ChatFileEncryptDecryptUtil {
                 if (data is AmeHistoryMessageDetail) {
                     decryptHistoryFile(masterSecret, sourceFile, data, fileType == FileType.GROUP_THUMB)
                 } else {
-                    decryptAndSaveGroupFile(masterSecret, sourceFile, data, fileType == FileType.GROUP_THUMB)
+                    decryptAndSaveGroupFile(accountContext, masterSecret, sourceFile, data, fileType == FileType.GROUP_THUMB)
                 }
             }
         }
@@ -146,7 +147,7 @@ object ChatFileEncryptDecryptUtil {
         }
     }
 
-    private fun decryptAndSaveGroupFile(masterSecret: MasterSecret, sourceFile: File, detail: AmeGroupMessageDetail, isThumbnail: Boolean): FileInfo {
+    private fun decryptAndSaveGroupFile(accountContext: AccountContext, masterSecret: MasterSecret, sourceFile: File, detail: AmeGroupMessageDetail, isThumbnail: Boolean): FileInfo {
         try {
             val sign = when {
                 detail.message.isWithThumbnail() -> {
@@ -157,7 +158,7 @@ object ChatFileEncryptDecryptUtil {
                 detail.message.isFile() -> (detail.message.content as AmeGroupMessage.FileContent).sign
                 else -> throw AssertionError("MessageDetail is not a media message.")
             }
-            val decryptedInputStream = decryptGroupFile(detail.gid, detail.keyVersion, sourceFile, sign)
+            val decryptedInputStream = decryptGroupFile(accountContext, detail.gid, detail.keyVersion, sourceFile, sign)
             val fileInfo = encryptLocalFile(masterSecret, decryptedInputStream)
 //            val existFileInfo = checkFileExist(fileInfo.hash!!, isThumbnail)
 //            if (existFileInfo != null) {
@@ -255,8 +256,8 @@ object ChatFileEncryptDecryptUtil {
         return FileInfo(dataTempFile, length, out.first, hash)
     }
 
-    private fun decryptGroupFile(gid: Long, keyVersion: Long, sourceFile: File, sign: String): InputStream {
-        val encryptSpec = GroupInfoDataManager.queryGroupKeyParam(gid, keyVersion)
+    private fun decryptGroupFile(accountContext: AccountContext, gid: Long, keyVersion: Long, sourceFile: File, sign: String): InputStream {
+        val encryptSpec = GroupInfoDataManager.queryGroupKeyParam(accountContext, gid, keyVersion)
                 ?: throw AssertionError("EncryptSpec is null.")
 
         if (sign.isEmpty()) {
@@ -318,24 +319,24 @@ object ChatFileEncryptDecryptUtil {
         }
     }
 
-    private fun checkFileExist(hash: String, isThumbnail: Boolean): FileInfo? {
+    private fun checkFileExist(accountContext: AccountContext, hash: String, isThumbnail: Boolean): FileInfo? {
         if (isThumbnail) {
-            val privateAttachment = Repository.getAttachmentRepo().getExistThumbnailData(hash)
+            val privateAttachment = Repository.getAttachmentRepo(accountContext).getExistThumbnailData(hash)
             if (privateAttachment?.thumbHash == hash) {
                 return FileInfo(File(privateAttachment.thumbnailUri!!.path), 0L, privateAttachment.thumbRandom!!, privateAttachment.thumbHash!!)
             }
 
-            val groupMessage = MessageDataManager.getExistThumbnailData(hash)
+            val groupMessage = MessageDataManager.getExistThumbnailData(accountContext, hash)
             if (groupMessage?.thumbHash == hash) {
                 return FileInfo(File(Uri.parse(groupMessage.thumbnailUri).path), 0L, groupMessage.thumbRandom!!, groupMessage.thumbHash!!)
             }
         } else {
-            val privateAttachment = Repository.getAttachmentRepo().getExistAttachmentData(hash)
+            val privateAttachment = Repository.getAttachmentRepo(accountContext).getExistAttachmentData(hash)
             if (privateAttachment?.dataHash == hash) {
                 return FileInfo(File(privateAttachment.dataUri!!.path), privateAttachment.dataSize, privateAttachment.dataRandom!!, privateAttachment.dataHash!!)
             }
 
-            val groupMessage = MessageDataManager.getExistAttachmentData(hash)
+            val groupMessage = MessageDataManager.getExistAttachmentData(accountContext, hash)
             if (groupMessage?.dataHash == hash) {
                 return FileInfo(File(Uri.parse(groupMessage.attachment_uri).path), groupMessage.attachmentSize, groupMessage.dataRandom!!, groupMessage.dataHash!!)
             }

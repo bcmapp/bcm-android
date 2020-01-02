@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.R
@@ -26,6 +27,7 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
     private var innerBorder: View? = null
 
     private var recipient: Recipient? = null
+    private var accountContext: AccountContext? = null
     private var mUpdateCallback: ((recipient: Recipient) -> Unit)? = null
 
     constructor(context: Context) : this(context, null) {}
@@ -49,27 +51,28 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
     }
 
     /**
-     * 
+     *
      */
     fun clearAddressListener() {
         this.recipient?.removeListener(this)
     }
 
     /**
-     * 
+     *
      */
-    fun setRecipient(recipient: Recipient?, nickname: String? = null) {
+    fun setRecipient(accountContext: AccountContext, recipient: Recipient?, nickname: String? = null) {
         this.recipient = recipient
-        this.avatarView?.setPhoto(recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+        this.accountContext = accountContext
+        this.avatarView?.setPhoto(accountContext, recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
         setBorderVisible(View.GONE)
     }
 
 
     /**
-     * 
+     *
      */
-    fun setAvatar(role: Long?, address: Address?, keyConfig: AmeGroupMemberInfo.KeyConfig? = null, nickname:String? = null) {
-        setAvatar(address, keyConfig, nickname)
+    fun setAvatar(accountContext: AccountContext, role: Long?, address: Address?, keyConfig: AmeGroupMemberInfo.KeyConfig? = null, nickname: String? = null) {
+        setAvatar(accountContext, address, keyConfig, nickname)
         if (role == AmeGroupMemberInfo.OWNER) {
             setBorderVisible(View.VISIBLE)
         } else {
@@ -78,9 +81,9 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
     }
 
     /**
-     * 
+     *
      */
-    fun setAvatar(address: Address?, keyConfig: AmeGroupMemberInfo.KeyConfig? = null, nickname: String? = null) {
+    fun setAvatar(accountContext: AccountContext, address: Address?, keyConfig: AmeGroupMemberInfo.KeyConfig? = null, nickname: String? = null) {
         if (address == null) {
             return
         }
@@ -91,24 +94,26 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
             recipient?.addListener(this)
         }
 
+        this.accountContext = accountContext
+
         val recipient = this.recipient
         val profileKeyModel = ProfileKeyModel.fromKeyConfig(keyConfig)
         if (null != recipient && null != profileKeyModel) {
-            AmeModuleCenter.contact().updateProfileKey(AppContextHolder.APP_CONTEXT, recipient, profileKeyModel)
+            AmeModuleCenter.contact(accountContext)?.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient, profileKeyModel)
         }
 
-        setRecipient(recipient, nickname)
+        setRecipient(accountContext, recipient, nickname)
     }
 
     /**
-     * 
+     *
      */
-    fun setAvatar(address: Address?) {
-       setAvatar(address, null, null)
+    fun setAvatar(accountContext: AccountContext, address: Address?) {
+        setAvatar(accountContext, address, null, null)
     }
 
     /**
-     * 
+     *
      */
     fun setAvatar(resId: Int) {
 
@@ -123,8 +128,9 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
 
     override fun onModified(recipient: Recipient) {
         post {
-            if (recipient == this.recipient) {
-                avatarView?.setPhoto(recipient)
+            val context = accountContext
+            if (recipient == this.recipient && context != null) {
+                avatarView?.setPhoto(context, recipient)
                 mUpdateCallback?.invoke(recipient)
             }
         }

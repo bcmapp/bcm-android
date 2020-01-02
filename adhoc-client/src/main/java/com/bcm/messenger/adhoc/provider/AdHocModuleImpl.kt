@@ -16,14 +16,6 @@ import com.bcm.route.annotation.Route
 
 @Route(routePath = ARouterConstants.Provider.PROVIDER_AD_HOC)
 class AdHocModuleImpl : IAdHocModule {
-    private lateinit var accountContext: AccountContext
-    override val context: AccountContext
-        get() = accountContext
-
-    override fun setContext(context: AccountContext) {
-        this.accountContext = context
-    }
-
     override fun initModule() {
 
     }

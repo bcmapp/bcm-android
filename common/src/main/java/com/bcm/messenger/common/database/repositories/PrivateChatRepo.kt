@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.database.repositories
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.attachments.Attachment
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -24,14 +25,14 @@ import java.util.*
 /**
  * Created by Kin on 2019/9/16
  */
-class PrivateChatRepo {
+class PrivateChatRepo(private val accountContext: AccountContext) {
     companion object {
         const val CHANGED_TAG = "MessageChanged"
     }
 
     private val TAG = "PrivateChatRepo"
 
-    private val chatDao = UserDatabase.getDatabase().getPrivateChatDao()
+    private val chatDao = UserDatabase.getDatabase(accountContext).getPrivateChatDao()
 
     private fun notifyMessageChanged(event: PrivateChatEvent) {
         RxBus.post(event)
@@ -96,7 +97,7 @@ class PrivateChatRepo {
     fun insertOutgoingTextMessage(threadId: Long, message: OutgoingTextMessage,
                                   sendTime: Long, insertCallback: ((messageId: Long) -> Unit)?): Long {
         val model = MessageRecord()
-        val threadRepo = Repository.getThreadRepo()
+        val threadRepo = Repository.getThreadRepo(accountContext)
 
         val realThreadId = if (threadId <= 0) {
             threadRepo.getThreadIdFor(message.recipient)
@@ -148,7 +149,7 @@ class PrivateChatRepo {
     fun insertOutgoingMediaMessage(threadId: Long, masterSecret: MasterSecret,
                                    message: OutgoingMediaMessage, insertCallback: ((messageId: Long) -> Unit)?): Long {
         val model = MessageRecord()
-        val threadRepo = Repository.getThreadRepo()
+        val threadRepo = Repository.getThreadRepo(accountContext)
 
         var status = BASE_SENDING_TYPE or ENCRYPTION_SYMMETRIC_BIT
         if (message.isSecure) status = status or (SECURE_MESSAGE_BIT or PUSH_MESSAGE_BIT)
@@ -171,7 +172,7 @@ class PrivateChatRepo {
 
         insertCallback?.invoke(messageId)
 
-        model.attachments = Repository.getAttachmentRepo().insertAttachments(message.attachments, masterSecret, messageId)
+        model.attachments = Repository.getAttachmentRepo(accountContext).insertAttachments(message.attachments, masterSecret, messageId)
 
         notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.INSERT, listOf(model)))
 
@@ -184,7 +185,7 @@ class PrivateChatRepo {
 
     fun insertIncomingTextMessage(message: IncomingTextMessage): Pair<Long, Long> {
         val model = MessageRecord()
-        val threadRepo = Repository.getThreadRepo()
+        val threadRepo = Repository.getThreadRepo(accountContext)
 
         var status = BASE_INBOX_TYPE or ENCRYPTION_SYMMETRIC_BIT
         when {
@@ -246,7 +247,7 @@ class PrivateChatRepo {
 
     fun insertIncomingMediaMessage(masterSecret: MasterSecret, message: IncomingMediaMessage): Pair<Long, Long> {
         val model = MessageRecord()
-        val threadRepo = Repository.getThreadRepo()
+        val threadRepo = Repository.getThreadRepo(accountContext)
 
         var status = BASE_INBOX_TYPE or SECURE_MESSAGE_BIT or ENCRYPTION_SYMMETRIC_BIT
         if (message.isPushMessage) status = status or PUSH_MESSAGE_BIT
@@ -271,7 +272,7 @@ class PrivateChatRepo {
 
         val messageId = chatDao.insertChatMessage(model)
 
-        model.attachments = Repository.getAttachmentRepo().insertAttachments(message.attachments, masterSecret, messageId)
+        model.attachments = Repository.getAttachmentRepo(accountContext).insertAttachments(message.attachments, masterSecret, messageId)
         model.id = messageId
 
         notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.INSERT, listOf(model)))
@@ -289,7 +290,7 @@ class PrivateChatRepo {
     }
 
     private fun insertCallLog(uid: String, type: Long, isUnread: Boolean, duration: Long, callType: PrivateChatDbModel.CallType): Pair<Long, Long> {
-        val threadRepo = Repository.getThreadRepo()
+        val threadRepo = Repository.getThreadRepo(accountContext)
         val threadId = threadRepo.getThreadIdFor(uid)
 
         val model = MessageRecord()
@@ -538,7 +539,7 @@ class PrivateChatRepo {
         val record = chatDao.queryChatMessage(id)
         if (record != null) {
             notifyMessageChanged(PrivateChatEvent(record.threadId, PrivateChatEvent.EventType.UPDATE, listOf(record)))
-            Repository.getThreadRepo().updateThread(record.threadId, record)
+            Repository.getThreadRepo(accountContext).updateThread(record.threadId, record)
         }
     }
 
@@ -546,7 +547,7 @@ class PrivateChatRepo {
         chatDao.updateChatMessages(records)
         records.forEach {
             notifyMessageChanged(PrivateChatEvent(it.threadId, PrivateChatEvent.EventType.UPDATE, listOf(it)))
-            Repository.getThreadRepo().updateThread(it.threadId, it)
+            Repository.getThreadRepo(accountContext).updateThread(it.threadId, it)
         }
     }
 
@@ -560,38 +561,38 @@ class PrivateChatRepo {
     fun deleteMessage(record: MessageRecord) {
         chatDao.deleteChatMessage(record)
         notifyMessageChanged(PrivateChatEvent(record.threadId, PrivateChatEvent.EventType.DELETE, emptyList(), listOf(record.id)))
-        Repository.getThreadRepo().updateThread(record.threadId)
+        Repository.getThreadRepo(accountContext).updateThread(record.threadId)
     }
 
     fun deleteMessage(threadId: Long, messageId: Long) {
         chatDao.deleteChatMessage(messageId)
         notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.DELETE, emptyList(), listOf(messageId)))
-        Repository.getThreadRepo().updateThread(threadId)
+        Repository.getThreadRepo(accountContext).updateThread(threadId)
     }
 
     fun deleteMessages(threadId: Long, ids: List<Long>) {
         chatDao.deleteChatMessages(ids)
         notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.DELETE, emptyList(), ids))
-        Repository.getThreadRepo().updateThread(threadId)
+        Repository.getThreadRepo(accountContext).updateThread(threadId)
     }
 
     fun cleanChatMessages(threadId: Long) {
         chatDao.deleteChatMessages(threadId)
         notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.DELETE_ALL, emptyList(), emptyList()))
-        Repository.getThreadRepo().updateThread(threadId)
+        Repository.getThreadRepo(accountContext).updateThread(threadId)
     }
 
     fun cleanThreadExcept(threadId: Long, ids: List<Long>) {
         chatDao.deleteChatMessages(threadId, ids)
         notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.DELETE_EXCEPT, emptyList(), ids))
-        Repository.getThreadRepo().updateThread(threadId)
+        Repository.getThreadRepo(accountContext).updateThread(threadId)
     }
 
     fun attachmentUpdate(messageId: Long) {
         val record = chatDao.queryChatMessage(messageId)
         if (record != null) {
             notifyMessageChanged(PrivateChatEvent(record.threadId, PrivateChatEvent.EventType.UPDATE, listOf(record)))
-            Repository.getThreadRepo().updateThread(record.threadId, record)
+            Repository.getThreadRepo(accountContext).updateThread(record.threadId, record)
         }
     }
 }

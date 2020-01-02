@@ -1,5 +1,6 @@
 package com.bcm.messenger.chats.group.logic
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
@@ -39,7 +40,7 @@ import java.util.*
 class GroupMessageReceiver : IServerDataListener {
     private val TAG = "GroupMessageReceiver"
 
-    override fun onReceiveData(proto: AbstractMessage): Boolean {
+    override fun onReceiveData(accountContext: AccountContext, proto: AbstractMessage): Boolean {
         try {
             if (proto !is GroupMessageProtos.GroupMsg) {
                 return false

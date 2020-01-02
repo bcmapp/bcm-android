@@ -3,6 +3,7 @@ package com.bcm.messenger.common.expiration;
 import android.content.Context;
 import android.util.Log;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.database.records.MessageRecord;
 import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
@@ -19,7 +20,7 @@ import java.util.concurrent.Executors;
 public class ExpiringScheduler implements IExpiringScheduler {
   private static final String TAG = "ExpiringScheduler";
 
-  private String uid;
+  private AccountContext accountContext;
 
   private final TreeSet<ExpiringMessageReference> expiringMessageReferences = new TreeSet<>(new ExpiringMessageComparator());
   private final Executor                          executor                  = Executors.newSingleThreadExecutor();
@@ -27,10 +28,10 @@ public class ExpiringScheduler implements IExpiringScheduler {
   private final Context     context;
   private final PrivateChatRepo chatRepo;
 
-  public ExpiringScheduler(Context context, String uid) {
-    this.uid = uid;
+  public ExpiringScheduler(Context context, AccountContext accountContext) {
+    this.accountContext = accountContext;
     this.context     = context.getApplicationContext();
-    this.chatRepo = Repository.getChatRepo();
+    this.chatRepo = Repository.getChatRepo(accountContext);
 
     executor.execute(new LoadTask());
     executor.execute(new ProcessTask());
@@ -38,7 +39,7 @@ public class ExpiringScheduler implements IExpiringScheduler {
 
   @Override
   public String getUid() {
-    return this.uid;
+    return this.accountContext.getUid();
   }
 
   @Override
@@ -78,7 +79,7 @@ public class ExpiringScheduler implements IExpiringScheduler {
     public void run() {
       while (true) {
         ExpiringMessageReference expiredMessage = null;
-        if (!AMELogin.INSTANCE.getUid().equals(uid)) {
+        if (!accountContext.isLogin()) {
           ALog.w(TAG, "login state changed");
           break;
         }

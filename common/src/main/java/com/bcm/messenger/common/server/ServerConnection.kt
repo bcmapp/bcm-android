@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.server
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.WebSocketHttp
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.provider.AMELogin
@@ -15,7 +16,7 @@ import org.whispersystems.signalservice.internal.util.concurrent.SettableFuture
 import org.whispersystems.signalservice.internal.websocket.WebSocketProtos
 import java.io.IOException
 
-class ServerConnection(private val userAgent: String) {
+class ServerConnection(private val accountContext: AccountContext, private val userAgent: String) {
 
     private val RESPONSE_REFUSE = 403//
     private val RESPONSE_GONE = 410//
@@ -24,7 +25,7 @@ class ServerConnection(private val userAgent: String) {
 
     private val outgoingRequests = mutableMapOf<Long, SettableFuture<Pair<Int, String>>>()
 
-    private var webSocketHttp: WebSocketHttp = WebSocketHttp()
+    private var webSocketHttp: WebSocketHttp = WebSocketHttp(accountContext)
     private var client: WebSocket? = null
     private var connectionEvent: IServerConnectionEvent? = null
     private var websocketEvent = WebsocketConnectionListener()
@@ -69,7 +70,7 @@ class ServerConnection(private val userAgent: String) {
             connectToken = token
             updateConnectState(ConnectState.CONNECTING)
 
-            val url = String.format(wsUri, AMELogin.uid, AMELogin.authPassword)
+            val url = String.format(wsUri, accountContext.uid, accountContext.password)
             Logger.d("WebSocketConnection filledUri: $url")
 
             connectingTime = System.currentTimeMillis()
@@ -93,7 +94,7 @@ class ServerConnection(private val userAgent: String) {
 
     private fun updateConnectState(state: ConnectState) {
         this.connectState = state
-        connectionEvent?.onServiceConnected(connectState, connectToken)
+        connectionEvent?.onServiceConnected(accountContext, connectToken, connectState)
     }
 
     fun sendRequest(request: WebSocketProtos.WebSocketRequestMessage, callback: SettableFuture<Pair<Int, String>>) {
@@ -209,7 +210,7 @@ class ServerConnection(private val userAgent: String) {
                 ALog.i(TAG, " Message Type: " + message.getType().getNumber())
 
                 if (message.type.number == WebSocketProtos.WebSocketMessage.Type.REQUEST_VALUE) {
-                    connectionEvent?.onMessageArrive(message.request)
+                    connectionEvent?.onMessageArrive(accountContext, message.request)
                 } else if (message.type.number == WebSocketProtos.WebSocketMessage.Type.RESPONSE_VALUE) {
                     val listener = outgoingRequests[message.response.id]
                     listener?.set(Pair(message.response.status,
@@ -244,10 +245,10 @@ class ServerConnection(private val userAgent: String) {
                 if (code == RESPONSE_REFUSE) {
                     val info = response.header("X-Online-Device")
                     //，
-                    connectionEvent?.onClientForceLogout(KickEvent.OTHER_LOGIN, info)
+                    connectionEvent?.onClientForceLogout(accountContext, info, KickEvent.OTHER_LOGIN)
 
                 } else if (code == RESPONSE_GONE) {
-                    connectionEvent?.onClientForceLogout(KickEvent.ACCOUNT_GONE, null)
+                    connectionEvent?.onClientForceLogout(accountContext, null, KickEvent.ACCOUNT_GONE)
                 }
             }
 

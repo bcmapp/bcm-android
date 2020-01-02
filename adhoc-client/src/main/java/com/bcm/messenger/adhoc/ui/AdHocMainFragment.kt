@@ -135,7 +135,7 @@ class AdHocMainFragment: BaseFragment(),
         }
 
         val titleSwitcher = adhoc_main_toolbar.getCenterView().second?.findViewById<TextSwitcher>(R.id.adhoc_main_text_title)
-        titleSwitcher?.setText(Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMELogin.uid), true).name)
+        titleSwitcher?.setText(Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMELogin.majorUid), true).name)
 
         if (!AppUtil.isReleaseBuild()) {
             val settingGuide = adhoc_main_toolbar.getCenterView().second?.findViewById<View>(R.id.adhoc_setting_guide)

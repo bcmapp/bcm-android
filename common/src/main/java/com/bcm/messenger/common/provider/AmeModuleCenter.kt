@@ -21,8 +21,8 @@ import org.whispersystems.jobqueue.JobManager
 import org.whispersystems.jobqueue.dependencies.DependencyInjector
 
 object AmeModuleCenter {
-    private val serverConnectionDaemon: ServerConnectionDaemon = ServerConnectionDaemon()
-    private val serverDataDispatcher: ServerDataDispatcher = ServerDataDispatcher()
+    private val serverConnectionDaemon: ServerConnectionDaemon = ServerConnectionDaemon(AMELogin.majorContext)
+    private val serverDataDispatcher: ServerDataDispatcher = ServerDataDispatcher(AMELogin.majorContext)
 
     init {
         serverConnectionDaemon.setEventListener(serverDataDispatcher)
@@ -31,6 +31,7 @@ object AmeModuleCenter {
     fun instance() {
         login().checkLoginAccountState()
         login().initModule()
+        adhoc().initModule()
     }
 
     fun init(accountContext: AccountContext) {
@@ -39,7 +40,6 @@ object AmeModuleCenter {
         contact(accountContext)?.initModule()
         user(accountContext)?.initModule()
         metric(accountContext)?.initModule()
-        adhoc(accountContext)?.initModule()
         wallet(accountContext)?.initModule()
     }
 
@@ -49,7 +49,6 @@ object AmeModuleCenter {
         contact(accountContext)?.uninitModule()
         user(accountContext)?.uninitModule()
         metric(accountContext)?.uninitModule()
-        adhoc(accountContext)?.uninitModule()
         wallet(accountContext)?.uninitModule()
     }
 
@@ -77,16 +76,16 @@ object AmeModuleCenter {
         return AmeProvider.getAccountModule(ARouterConstants.Provider.PROVIDER_WALLET_BASE, accountContext)
     }
 
-    fun adhoc(accountContext: AccountContext): IAdHocModule? {
-        return AmeProvider.getAccountModule(ARouterConstants.Provider.PROVIDER_AD_HOC, accountContext)!!
-    }
-
     fun metric(accountContext: AccountContext): IMetricsModule? {
         return AmeProvider.getAccountModule(ARouterConstants.Provider.REPORT_BASE, accountContext)
     }
 
     fun wallet(): IWalletModule {
         return AmeProvider.get<IWalletModule>(ARouterConstants.Provider.PROVIDER_WALLET_BASE)!!
+    }
+
+    fun adhoc(): IAdHocModule {
+        return AmeProvider.get(ARouterConstants.Provider.PROVIDER_AD_HOC)!!
     }
 
     fun app(): IAmeAppModule {
@@ -101,28 +100,27 @@ object AmeModuleCenter {
         return serverConnectionDaemon
     }
 
-    fun accountJobMgr(): JobManager? {
+    fun accountJobMgr(context: AccountContext): JobManager? {
         return if (AMELogin.isLogin) {
             AccountJobManager.getManager(AppContextHolder.APP_CONTEXT,
                     DependencyInjector { },
-                    AMELogin.uid)
+                    context.uid)
         } else null
     }
 
-    fun onLoginSucceed(newUid: String) {
-        val accountContext = AccountContext(newUid)
+    fun onLoginSucceed(accountContext: AccountContext) {
 
-        accountJobMgr()
-        ALog.logForSecret("AmeModuleCenter", "updateAccount $newUid")
+        accountJobMgr(accountContext)
+        ALog.logForSecret("AmeModuleCenter", "updateAccount ${accountContext.uid}")
         AmeFileUploader.initDownloadPath(AppContextHolder.APP_CONTEXT)
-        ReportUtils.setGUid(newUid)
+        ReportUtils.setGUid(accountContext.uid)
 
         if (DatabaseFactory.isDatabaseExist(AppContextHolder.APP_CONTEXT) && !TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT)) {
             val factory = DatabaseFactory.getInstance(AppContextHolder.APP_CONTEXT)
-            factory?.reset(AppContextHolder.APP_CONTEXT, newUid)
+            factory?.reset(AppContextHolder.APP_CONTEXT, accountContext.uid)
             return
         } else {
-            UserDatabase.resetDatabase()
+            UserDatabase.resetDatabase(accountContext)
         }
 
         ReportUtil.init()
@@ -131,7 +129,7 @@ object AmeModuleCenter {
 
         contact(accountContext)?.doForLogin()
 
-        if (adhoc(accountContext)?.isAdHocMode() != true) {
+        if (!adhoc().isAdHocMode()) {
             serverDaemon(accountContext).startDaemon()
             serverDaemon(accountContext).startConnection()
         }
@@ -142,9 +140,7 @@ object AmeModuleCenter {
 
     }
 
-    fun onLogOutSucceed(uid: String) {
-        val accountContext = AccountContext(uid)
-
+    fun onLogOutSucceed(accountContext: AccountContext) {
         serverDaemon(accountContext).stopConnection()
         serverDaemon(accountContext).stopDaemon()
 

@@ -200,7 +200,7 @@ class AudioRecorder(private val context: Context, private val maxPlayTime: Long,
         var output:FileOutputStream? = null
         try {
             input = PartAuthority.getAttachmentStream(context, masterSecret, captureUri)
-            val tmpFile = File(AMELogin.accountDir, "aac_${System.currentTimeMillis()}")
+            val tmpFile = File(AMELogin.majorContext.accountDir, "aac_${System.currentTimeMillis()}")
             tmpFile.createNewFile()
             output = FileOutputStream(tmpFile)
             output.write(input.readBytes())

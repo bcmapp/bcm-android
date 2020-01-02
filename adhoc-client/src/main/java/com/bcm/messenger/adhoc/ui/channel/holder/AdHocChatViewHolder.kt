@@ -338,8 +338,8 @@ class AdHocChatViewHolder(layout: View) : ConversationContentViewHolder<AdHocMes
                 .withClickListener(object : ConversationItemPopWindow.PopWindowClickListener {
                     override fun onCopy() {
                         when {
-                            messageDetail.getMessageBody()?.isText() == true -> AppUtil.saveCodeToBoard(view.context, messageDetail.getMessageBody()?.content?.getDescribe(0).toString())
-                            messageDetail.getMessageBody()?.isLink() == true-> AppUtil.saveCodeToBoard(view.context, messageDetail.getMessageBody()?.content?.getDescribe(0).toString())
+                            messageDetail.getMessageBody()?.isText() == true -> AppUtil.saveCodeToBoard(view.context, messageDetail.getMessageBody()?.content?.getDescribe(0, ).toString())
+                            messageDetail.getMessageBody()?.isLink() == true-> AppUtil.saveCodeToBoard(view.context, messageDetail.getMessageBody()?.content?.getDescribe(0, ).toString())
                             else -> return
                         }
                         AmeAppLifecycle.succeed(getString(R.string.common_copied), true)

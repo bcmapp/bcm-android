@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.api.ISearchAction
@@ -33,7 +34,7 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
         /**
          * 
          */
-        fun callSearchActivity(context: Context, keyword: String, displayAll: Boolean, hasPrevious: Boolean, searchClass: String, recentClass: String?, requestCode: Int) {
+        fun callSearchActivity(context: Context, accountContext: AccountContext, keyword: String, displayAll: Boolean, hasPrevious: Boolean, searchClass: String, recentClass: String?, requestCode: Int) {
             val intent = Intent(context, SearchActivity::class.java)
             intent.putExtra(ARouterConstants.PARAM.SEARCH.CURRENT_KEYWORD, keyword)
             intent.putExtra(ARouterConstants.PARAM.SEARCH.HAS_PREVIOUS, hasPrevious)
@@ -44,6 +45,7 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
             intent.putExtra(ARouterConstants.PARAM.PARAM_EXIT_ANIM, R.anim.common_popup_alpha_out)
             intent.putExtra(ARouterConstants.PARAM.PARAM_PREVIOUS_EXIT_ANIM, R.anim.common_popup_alpha_out)
             intent.putExtra(ARouterConstants.PARAM.PARAM_PREVIOUS_ENTER_ANIM, R.anim.common_popup_alpha_in)
+            intent.putExtra(ARouterConstants.Account.ACCOUNT_CONTEXT, accountContext)
 
             if (context is Activity) {
                 if (requestCode != 0) {
@@ -67,6 +69,7 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
     private var mRecentSearchFragment: Fragment? = null
     private var mCurrentSearchFragment: Fragment? = null
     private var mDisplayFragment: Fragment? = null
+    private lateinit var accountContext: AccountContext
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -98,6 +101,8 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
 
     private fun init() {
         ALog.d(TAG, "init")
+
+        accountContext = intent.getParcelableExtra(ARouterConstants.Account.ACCOUNT_CONTEXT)
 
         search_top_v.post {
             search_top_v.layoutParams = search_top_v.layoutParams.apply {
@@ -225,7 +230,7 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
     }
 
     override fun onSelect(type: BcmFinderType, key: String) {
-        BcmFinderManager.get().saveRecord(type, key)
+        BcmFinderManager.get(accountContext).saveRecord(type, key)
     }
 
     override fun onMore(type: BcmFinderType, key: String) {

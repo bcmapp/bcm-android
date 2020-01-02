@@ -1,5 +1,6 @@
 package com.bcm.messenger.chats.privatechat.core
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.bcmhttp.BcmBaseHttp
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptorHelper
@@ -32,14 +33,42 @@ import org.whispersystems.signalservice.internal.push.SendMessageResponse
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.HashMap
 
-object ChatHttp: SyncHttpWrapper(BcmBaseHttp()) {
-    private const val TURN_SERVER_INFO = "/v1/accounts/turn"
-    private const val PREKEY_DEVICE_PATH = "/v2/keys/%s/%s"
+class ChatHttp(accountContext: AccountContext): SyncHttpWrapper(BcmBaseHttp()) {
+    companion object {
+        private const val TURN_SERVER_INFO = "/v1/accounts/turn"
+        private const val PREKEY_DEVICE_PATH = "/v2/keys/%s/%s"
 
-    private const val DIRECTORY_VERIFY_PATH = "/v1/directory/%s"
-    private const val MESSAGE_PATH = "/v1/messages/%s"
-    private const val AWS_UPLOAD_INFO_PATH = "/v1/attachments/s3/upload_certification"
+        private const val DIRECTORY_VERIFY_PATH = "/v1/directory/%s"
+        private const val MESSAGE_PATH = "/v1/messages/%s"
+        private const val AWS_UPLOAD_INFO_PATH = "/v1/attachments/s3/upload_certification"
+
+        private val httpClients = HashMap<AccountContext, ChatHttp>()
+
+        fun getHttp(accountContext: AccountContext): ChatHttp {
+            synchronized(httpClients) {
+                var http = httpClients[accountContext]
+                if (null == http) {
+                    http = ChatHttp(accountContext)
+                    httpClients[accountContext] = http
+                }
+                return http
+            }
+        }
+
+        fun removeHttp(accountContext: AccountContext) {
+            synchronized(httpClients) {
+                httpClients.remove(accountContext)
+
+                val gcList = httpClients.keys.filter { !it.isLogin }
+                gcList.forEach {
+                    httpClients.remove(it)
+                }
+            }
+        }
+    }
+
 
 
     init {
@@ -47,7 +76,7 @@ object ChatHttp: SyncHttpWrapper(BcmBaseHttp()) {
         val client = OkHttpClient.Builder()
                 .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
                 .hostnameVerifier(BaseHttp.trustAllHostVerify())
-                .addInterceptor(BcmAuthHeaderInterceptor())
+                .addInterceptor(BcmAuthHeaderInterceptor(accountContext))
                 .addInterceptor(RedirectInterceptor(lbsType(), IMServerUrl.IM_DEFAULT))
                 .addInterceptor(IMServerErrorCodeInterceptor())
                 .addInterceptor(NormalMetricsInterceptor())

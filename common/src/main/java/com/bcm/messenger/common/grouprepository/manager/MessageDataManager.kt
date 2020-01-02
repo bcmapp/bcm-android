@@ -2,6 +2,7 @@ package com.bcm.messenger.common.grouprepository.manager
 
 import android.net.Uri
 import android.text.TextUtils
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.CtrStreamUtil
 import com.bcm.messenger.common.crypto.MasterSecret
@@ -36,62 +37,53 @@ import java.io.InputStream
  */
 object MessageDataManager {
     private const val TAG = "MessageDataManager"
-
-    fun isMe(uid: String, mid: Long, gid: Long): Boolean {
-        return uid == AMELogin.uid
-    }
-
-    fun isLogined(): Boolean {
-        return AMELogin.isLogin
-    }
-
     // 
-    fun setGroupMessageRead(gid: Long) {
-        getDao().setMessageRead(gid)
+    fun setGroupMessageRead(accountContext: AccountContext, gid: Long) {
+        getDao(accountContext).setMessageRead(gid)
     }
 
     // uri，
-    fun updateMessageAttachmentUri(gid: Long, indexId: Long, fileInfo: FileInfo) {
+    fun updateMessageAttachmentUri(accountContext: AccountContext, gid: Long, indexId: Long, fileInfo: FileInfo) {
         if (gid <= 0) {
             //notice ，gid，
             return
         }
-        val message = getDao().queryOneMessageByIndex(gid, indexId) ?: return
+        val message = getDao(accountContext).queryOneMessageByIndex(gid, indexId) ?: return
         message.attachment_uri = Uri.fromFile(fileInfo.file).toString()
         message.dataHash = fileInfo.hash
         message.dataRandom = fileInfo.random
         message.attachmentSize = fileInfo.size
         message.isFileEncrypted = fileInfo.random != null
-        getDao().updateMessage(message)
+        getDao(accountContext).updateMessage(message)
 
         EventBus.getDefault().post(MessageEvent(message.gid, MessageEvent.EventType.ATTACHMENT_DOWNLOAD_SUCCESS,
                 listOf(GroupMessageTransform.transformToModel(message)
                         ?: return)))
     }
 
-    fun updateMessageThumbnailUri(gid: Long, indexId: Long, fileInfo: FileInfo) {
+    fun updateMessageThumbnailUri(accountContext: AccountContext, gid: Long, indexId: Long, fileInfo: FileInfo) {
         if (gid <= 0) return
 
-        val message = getDao().queryOneMessageByIndex(gid, indexId) ?: return
+        val message = getDao(accountContext).queryOneMessageByIndex(gid, indexId) ?: return
         message.thumbnailUri = Uri.fromFile(fileInfo.file).toString()
         message.thumbHash = fileInfo.hash
         message.thumbRandom = fileInfo.random
         message.isFileEncrypted = fileInfo.random != null
-        getDao().updateMessage(message)
+        getDao(accountContext).updateMessage(message)
 
         EventBus.getDefault().post(MessageEvent(message.gid, MessageEvent.EventType.THUMBNAIL_DOWNLOAD_SUCCESS,
                 listOf(GroupMessageTransform.transformToModel(message))))
     }
 
-    fun updateMessageContent(gid: Long, indexId: Long, content: String) {
-        val message = getDao().queryOneMessageByIndex(gid, indexId) ?: return
+    fun updateMessageContent(accountContext: AccountContext, gid: Long, indexId: Long, content: String) {
+        val message = getDao(accountContext).queryOneMessageByIndex(gid, indexId) ?: return
         message.text = content
-        getDao().updateMessage(message)
+        getDao(accountContext).updateMessage(message)
     }
 
 
-    fun deleteOneMessageByIndexId(gid: Long, indexId: Long) {
-        val message = getDao().queryOneMessageByIndex(gid, indexId) ?: return
+    fun deleteOneMessageByIndexId(accountContext: AccountContext, gid: Long, indexId: Long) {
+        val message = getDao(accountContext).queryOneMessageByIndex(gid, indexId) ?: return
         message.is_confirm = GroupMessage.DELETED_MESSAGE
         message.text = ""
 
@@ -99,8 +91,8 @@ object MessageDataManager {
             BcmFileUtils.delete(message.attachment_uri)
         }
 
-        getDao().updateMessage(message)
-        notifyThreadUpdate(message.gid)
+        getDao(accountContext).updateMessage(message)
+        notifyThreadUpdate(accountContext, message.gid)
         EventBus.getDefault().post(MessageEvent(message.gid, indexId, MessageEvent.EventType.DELETE_ONE_MESSAGE))
     }
 
@@ -108,8 +100,8 @@ object MessageDataManager {
     /*
     * 
     * */
-    fun deleteMessagesByGid(gid: Long) {
-        val list = getDao().loadGroupMessageByGid(gid)
+    fun deleteMessagesByGid(accountContext: AccountContext, gid: Long) {
+        val list = getDao(accountContext).loadGroupMessageByGid(gid)
         if (list != null && list.isNotEmpty()) {
             for (m in list) {
                 m.is_confirm = GroupMessage.DELETED_MESSAGE
@@ -117,11 +109,10 @@ object MessageDataManager {
                     BcmFileUtils.delete(m.attachment_uri)
                 }
             }
-            getDao().updateMessages(list)
+            getDao(accountContext).updateMessages(list)
 
-            //，
-            if (Repository.getThreadRepo().getThreadIdIfExist(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid)) > 0) {
-                notifyThreadUpdate(gid)
+            if (Repository.getThreadRepo(accountContext).getThreadIdIfExist(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid)) > 0) {
+                notifyThreadUpdate(accountContext, gid)
             }
         }
     }
@@ -131,15 +122,15 @@ object MessageDataManager {
      *
      * @param messageList 
      */
-    fun deleteMessages(gid: Long, messageList: List<GroupMessage>) {
+    fun deleteMessages(accountContext: AccountContext, gid: Long, messageList: List<GroupMessage>) {
         for (msg in messageList) {
             msg.is_confirm = GroupMessage.DELETED_MESSAGE
             if (!TextUtils.isEmpty(msg.attachment_uri)) {
                 BcmFileUtils.delete(msg.attachment_uri)
             }
         }
-        getDao().updateMessages(messageList)
-        notifyThreadUpdate(gid)
+        getDao(accountContext).updateMessages(messageList)
+        notifyThreadUpdate(accountContext, gid)
     }
 
     /**
@@ -149,11 +140,11 @@ object MessageDataManager {
      * @param send_state   SEND_SUCCESS = 1; SENDING = 2; SEND_FAILURE = 10000;
      * @return -1  , 0:
      */
-    fun updateMessageSendStateByIndex(gid: Long, indexId: Long, send_state: Int): Int {
-        val message = queryOneMessage(gid, indexId, false)
+    fun updateMessageSendStateByIndex(accountContext: AccountContext, gid: Long, indexId: Long, send_state: Int): Int {
+        val message = queryOneMessage(accountContext, gid, indexId, false)
         return if (message != null) {
             message.send_state = send_state
-            getDao().updateMessage(message)
+            getDao(accountContext).updateMessage(message)
 
             val groupMessageDetail = GroupMessageTransform.transformToModel(message)
             groupMessageDetail?.let {
@@ -172,12 +163,12 @@ object MessageDataManager {
      * @param mode Mode.CHAT_MODE , Mode.SUB_MODE channel
      * @return -1  , 0:
      */
-    fun updateMessageEncryptMode(gid: Long, indexId: Long, keyVersion:Long): Int {
-        val message = queryOneMessage(gid, indexId, false)
+    fun updateMessageEncryptMode(accountContext: AccountContext, gid: Long, indexId: Long, keyVersion:Long): Int {
+        val message = queryOneMessage(accountContext, gid, indexId, false)
         if (message != null) {
             message.key_version = keyVersion
 
-            getDao().updateMessage(message)
+            getDao(accountContext).updateMessage(message)
             return 0
         } else {
             return -1
@@ -188,8 +179,8 @@ object MessageDataManager {
     /**
      * 
      */
-    fun updateMessageSendResult(gid: Long, indexId: Long, mid: Long, createTime: Long, iv: String, text: String, sendState: Int) {
-        val message = queryOneMessage(gid, indexId, false)
+    fun updateMessageSendResult(accountContext: AccountContext, gid: Long, indexId: Long, mid: Long, createTime: Long, iv: String, text: String, sendState: Int) {
+        val message = queryOneMessage(accountContext, gid, indexId, false)
         if (message != null) {
             message.mid = mid
             message.create_time = createTime
@@ -197,7 +188,7 @@ object MessageDataManager {
             message.identityIvString = iv
             message.text = text
             message.send_state = sendState
-            getDao().updateMessage(message)
+            getDao(accountContext).updateMessage(message)
 
             val groupMessageDetail = GroupMessageTransform.transformToModel(message)
             groupMessageDetail?.let {
@@ -214,34 +205,16 @@ object MessageDataManager {
      * @param gid
      * @param indexId
      */
-    fun fetchOneMessageByGidAndIndexId(gid: Long, indexId: Long): AmeGroupMessageDetail? {
-        return GroupMessageTransform.transformToModel(getDao().queryOneMessageByIndex(gid, indexId))
-    }
-
-    /**
-     *  indexId 
-     * 
-     * @param gid
-     * @param indexId
-     */
-    fun fetchOneVisiableMessageByGidAndIndexId(gid: Long, indexId: Long): AmeGroupMessageDetail? {
-        return GroupMessageTransform.transformToModel(getDao().queryOneVisiableMessageByIndex(gid, indexId))
+    fun fetchOneMessageByGidAndIndexId(accountContext: AccountContext, gid: Long, indexId: Long): AmeGroupMessageDetail? {
+        return GroupMessageTransform.transformToModel(getDao(accountContext).queryOneMessageByIndex(gid, indexId))
     }
 
     /**
      * mid 
      * 
      */
-    fun fetchOneMessageByGidAndMid(gid: Long, mid: Long): AmeGroupMessageDetail? {
-        return GroupMessageTransform.transformToModel(getDao().queryOneMessageByMid(gid, mid))
-    }
-
-    /**
-     * mid 
-     * 
-     */
-    fun fetchOneMessageByMidConfirm(gid: Long, mid: Long): AmeGroupMessageDetail? {
-        return GroupMessageTransform.transformToModel(getDao().queryOneMessageByMidConfirm(gid, mid))
+    fun fetchOneMessageByGidAndMid(accountContext: AccountContext, gid: Long, mid: Long): AmeGroupMessageDetail? {
+        return GroupMessageTransform.transformToModel(getDao(accountContext).queryOneMessageByMid(gid, mid))
     }
 
     /**
@@ -251,12 +224,12 @@ object MessageDataManager {
      * @param count 
      * @return 
      */
-    fun fetchMessageByGidAndIndexId(gid: Long, indexId: Long, count: Int): List<AmeGroupMessageDetail> {
+    fun fetchMessageByGidAndIndexId(accountContext: AccountContext, gid: Long, indexId: Long, count: Int): List<AmeGroupMessageDetail> {
         if (indexId == -1L) {//
-            val lastId = getDao().queryMaxIndexId(gid)
-            return GroupMessageTransform.transformToModelList(getDao().loadMessagesByGidAndIndexId(gid, lastId + 1, count))
+            val lastId = getDao(accountContext).queryMaxIndexId(gid)
+            return GroupMessageTransform.transformToModelList(getDao(accountContext).loadMessagesByGidAndIndexId(gid, lastId + 1, count))
         }
-        return GroupMessageTransform.transformToModelList(getDao().loadMessagesByGidAndIndexId(gid, indexId, count))
+        return GroupMessageTransform.transformToModelList(getDao(accountContext).loadMessagesByGidAndIndexId(gid, indexId, count))
     }
 
 
@@ -268,27 +241,11 @@ object MessageDataManager {
      * @param isBackWord 
      * @return 
      */
-    fun fetchImageOrVideoMessage(gid: Long, formIndexId: Long, count: Int, isBackWord: Boolean): List<AmeGroupMessageDetail> {
-        if (isBackWord) {
-            return GroupMessageTransform.transformToModelList(getDao().loadImageOrVideoMessagesAfterIndexId(gid, formIndexId, count))
-        } else {
-            return GroupMessageTransform.transformToModelList(getDao().loadImageOrVideoMessagesBeforeIndexId(gid, formIndexId, count))
-        }
-    }
-
-    /**
-     * 
-     * @param gid
-     * @param formIndexId ，-1
-     * @param count 
-     * @param isBackWord 
-     * @return 
-     */
-    fun fetchTextMessage(gid: Long, formIndexId: Long, count: Int, isBackWord: Boolean): List<AmeGroupMessageDetail> {
+    fun fetchTextMessage(accountContext: AccountContext, gid: Long, formIndexId: Long, count: Int, isBackWord: Boolean): List<AmeGroupMessageDetail> {
         return if (isBackWord) {
-            GroupMessageTransform.transformToModelList(getDao().loadTextMessagesAfterIndexId(gid, formIndexId, count))
+            GroupMessageTransform.transformToModelList(getDao(accountContext).loadTextMessagesAfterIndexId(gid, formIndexId, count))
         } else {
-            GroupMessageTransform.transformToModelList(getDao().loadTextMessagesBeforeIndexId(gid, formIndexId, count))
+            GroupMessageTransform.transformToModelList(getDao(accountContext).loadTextMessagesBeforeIndexId(gid, formIndexId, count))
         }
     }
 
@@ -299,8 +256,8 @@ object MessageDataManager {
      * @param gid ID
      * @return 
      */
-    fun fetchFileMessages(gid: Long): List<AmeGroupMessageDetail> {
-        return GroupMessageTransform.transformToModelList(getDao().loadAllFileMessages(gid))
+    fun fetchFileMessages(accountContext: AccountContext, gid: Long): List<AmeGroupMessageDetail> {
+        return GroupMessageTransform.transformToModelList(getDao(accountContext).loadAllFileMessages(gid))
     }
 
 
@@ -310,8 +267,8 @@ object MessageDataManager {
      * @param gid ID
      * @return 
      */
-    fun fetchLinkMessages(gid: Long): List<AmeGroupMessageDetail> {
-        return GroupMessageTransform.transformToModelList(getDao().loadAllLinkMessages(gid))
+    fun fetchLinkMessages(accountContext: AccountContext, gid: Long): List<AmeGroupMessageDetail> {
+        return GroupMessageTransform.transformToModelList(getDao(accountContext).loadAllLinkMessages(gid))
     }
 
     /**
@@ -320,16 +277,16 @@ object MessageDataManager {
      * @param gid ID
      * @return 
      */
-    fun fetchMediaMessages(gid: Long): List<AmeGroupMessageDetail> {
-        return GroupMessageTransform.transformToModelList(getDao().loadAllImageOrVideoMessages(gid))
+    fun fetchMediaMessages(accountContext: AccountContext, gid: Long): List<AmeGroupMessageDetail> {
+        return GroupMessageTransform.transformToModelList(getDao(accountContext).loadAllImageOrVideoMessages(gid))
     }
 
 
     /**
      * 
      */
-    fun fetchMediaMessageStorageSize(gid: Long): ConversationStorage {
-        val list = GroupMessageTransform.transformToModelList(getDao().loadAllMediaMessages(gid))
+    fun fetchMediaMessageStorageSize(accountContext: AccountContext, gid: Long): ConversationStorage {
+        val list = GroupMessageTransform.transformToModelList(getDao(accountContext).loadAllMediaMessages(gid))
 
         var videoSize = 0L
         var imageSize = 0L
@@ -351,8 +308,8 @@ object MessageDataManager {
     /**
      * 
      */
-    fun deleteAllMediaMessage(gid: Long, type: Int) {
-        val list = getDao().loadAllMediaMessages(gid)
+    fun deleteAllMediaMessage(accountContext: AccountContext, gid: Long, type: Int) {
+        val list = getDao(accountContext).loadAllMediaMessages(gid)
 
         val deleted = ArrayList<GroupMessage>()
         if (list.isNotEmpty()) {
@@ -367,16 +324,16 @@ object MessageDataManager {
                     deleted.add(m)
                 }
             }
-            getDao().updateMessages(deleted)
-            notifyThreadUpdate(gid)
+            getDao(accountContext).updateMessages(deleted)
+            notifyThreadUpdate(accountContext, gid)
         }
     }
 
     /**
      * fromMid（）toMid，
      */
-    fun fetchMessageFromToMid(gid: Long, fromMid: Long, toMid: Long): List<AmeGroupMessageDetail> {
-        return GroupMessageTransform.transformToModelList(getDao().loadMessageFromTo(gid, fromMid, toMid))
+    fun fetchMessageFromToMid(accountContext: AccountContext, gid: Long, fromMid: Long, toMid: Long): List<AmeGroupMessageDetail> {
+        return GroupMessageTransform.transformToModelList(getDao(accountContext).loadMessageFromTo(gid, fromMid, toMid))
     }
 
     /**
@@ -384,25 +341,21 @@ object MessageDataManager {
      * @param gid
      * @return 
      */
-    fun fetchLastMessage(gid: Long): GroupMessage? {
-        return getDao().queryLastMessageByGid(gid)
+    fun fetchLastMessage(accountContext: AccountContext, gid: Long): GroupMessage? {
+        return getDao(accountContext).queryLastMessageByGid(gid)
     }
 
 
-    fun countUnreadCount(gid: Long): Long {
-        return getDao().countUnread(gid)
+    fun countUnreadCount(accountContext: AccountContext, gid: Long): Long {
+        return getDao(accountContext).countUnread(gid)
     }
 
-    fun countUnreadCountFromLastSeen(gid: Long, lastSeen:Long): Long {
-        return getDao().countUnreadFromLastSeen(gid, lastSeen)
+    fun countUnreadCountFromLastSeen(accountContext: AccountContext, gid: Long, lastSeen:Long): Long {
+        return getDao(accountContext).countUnreadFromLastSeen(gid, lastSeen)
     }
 
-    fun getAllUnreadThreadCount(): Int {
-        return getDao().allUnreadThreadCount
-    }
-
-    fun countMessageByGid(gid: Long): Long {
-        return getDao().countMessagesByGid(gid)
+    fun countMessageByGid(accountContext: AccountContext, gid: Long): Long {
+        return getDao(accountContext).countMessagesByGid(gid)
     }
 
     class InsertMessageResult(resultCode: Int, gid: Long, firstMid: Long, lastMid: Long, indexId: Long) {
@@ -419,14 +372,14 @@ object MessageDataManager {
     }
 
     //
-    fun insertSendMessage(sendMessage: GroupMessage, visible: Boolean = true): Long {
+    fun insertSendMessage(accountContext: AccountContext, sendMessage: GroupMessage, visible: Boolean = true): Long {
         if (!visible) {
             sendMessage.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
         }
 
-        val indexId = getDao().insertMessage(sendMessage)
+        val indexId = getDao(accountContext).insertMessage(sendMessage)
         sendMessage.id = indexId
-        notifyThreadUpdate(sendMessage.gid)
+        notifyThreadUpdate(accountContext, sendMessage.gid)
 
         //UI
         if (sendMessage.is_confirm == GroupMessage.CONFIRM_MESSAGE) {
@@ -443,12 +396,12 @@ object MessageDataManager {
      * @param message
      * @return 0：，-2:, -3: 
      */
-    fun insertReceiveMessage(message: GroupMessage): InsertMessageResult {
-        checkMessageVisibleState(message)
-        return insertReceiveMessage(message, true)
+    fun insertReceiveMessage(accountContext: AccountContext, message: GroupMessage): InsertMessageResult {
+        checkMessageVisibleState(accountContext, message)
+        return insertReceiveMessage(accountContext, message, true)
     }
 
-    private fun checkMessageVisibleState(message: GroupMessage) {
+    private fun checkMessageVisibleState(accountContext: AccountContext, message: GroupMessage) {
         if (message.content_type.toLong() == AmeGroupMessage.LIVE_MESSAGE) {
             message.read_state = GroupMessage.READ_STATE_READ
             val msg = AmeGroupMessage.messageFromJson(message.text)
@@ -462,9 +415,9 @@ object MessageDataManager {
             val msg = AmeGroupMessage.messageFromJson(message.text)
             val content = msg.content as AmeGroupMessage.SystemContent
             if (content.tipType == AmeGroupMessage.SystemContent.TIP_KICK) {
-                val groupInfo = GroupInfoDataManager.queryOneGroupInfo(message.gid)
+                val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, message.gid)
                 //
-                if (AMELogin.uid != groupInfo?.owner && !content.theOperator.any { AMELogin.uid == it }) {
+                if (accountContext.uid != groupInfo?.owner && !content.theOperator.any { accountContext.uid == it }) {
                     message.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
                 }
             } else if(content.tipType == AmeGroupMessage.SystemContent.TIP_SUBSCRIBE
@@ -487,20 +440,20 @@ object MessageDataManager {
                     GroupUtil.addressFromGid(message.gid),
                     false)
 
-            Repository.getThreadRepo()
+            Repository.getThreadRepo(accountContext)
                     .getThreadIdFor(groupRecipient)
 
         }
     }
 
-    private fun insertReceiveMessage(message: GroupMessage, isNotify: Boolean): InsertMessageResult {
-        val savedMaxMid = getDao().queryMaxMid(message.gid)
+    private fun insertReceiveMessage(accountContext: AccountContext, message: GroupMessage, isNotify: Boolean): InsertMessageResult {
+        val savedMaxMid = getDao(accountContext).queryMaxMid(message.gid)
         if (message.mid > savedMaxMid) {
-            if (message.mid - savedMaxMid == 1L || getDao().countMessagesByGid(message.gid) == 0L) {
-                val indexId = getDao().insertMessage(message)
+            if (message.mid - savedMaxMid == 1L || getDao(accountContext).countMessagesByGid(message.gid) == 0L) {
+                val indexId = getDao(accountContext).insertMessage(message)
                 message.id = indexId
                 if (message.is_confirm != GroupMessage.CONFIRM_BUT_NOT_SHOW && isNotify)
-                    notifyThreadUpdate(message.gid)
+                    notifyThreadUpdate(accountContext, message.gid)
                 return InsertMessageResult(INSERT_SUCCESS, message.gid, -1, -1, indexId)
             } else {
                 //，
@@ -510,30 +463,30 @@ object MessageDataManager {
                     unconfirmedMessage.is_confirm = GroupMessage.UNCONFIRM_MESSAGE
                     unconfirmedMessage.mid = savedMaxMid + i
                     unconfirmedMessage.gid = message.gid
-                    getDao().insertMessage(unconfirmedMessage)
+                    getDao(accountContext).insertMessage(unconfirmedMessage)
                     i++
                 } while (i < message.mid - savedMaxMid)
                 if (message.is_confirm != GroupMessage.CONFIRM_BUT_NOT_SHOW)
                     message.is_confirm = GroupMessage.CONFIRM_MESSAGE
-                val indexId = getDao().insertMessage(message)
+                val indexId = getDao(accountContext).insertMessage(message)
                 message.id = indexId
                 if (isNotify) {
-                    notifyThreadUpdate(message.gid)
+                    notifyThreadUpdate(accountContext, message.gid)
                 }
                 EventBus.getDefault().post(GroupMessageMissedEvent(message.gid, savedMaxMid, message.mid-1))
                 //,
                 return InsertMessageResult(INSERT_SUCCESS, message.gid, savedMaxMid, message.mid, indexId)
             }
         } else {
-            val databaseMessage: GroupMessage = getDao().queryOneMessageByMid(message.gid, message.mid)
+            val databaseMessage: GroupMessage = getDao(accountContext).queryOneMessageByMid(message.gid, message.mid)
             if (databaseMessage.is_confirm == GroupMessage.UNCONFIRM_MESSAGE || databaseMessage.is_confirm == GroupMessage.FETCHING_MESSAGE) {
                 message.id = databaseMessage.id
                 message.read_state = databaseMessage.read_state
                 if (message.is_confirm != GroupMessage.CONFIRM_BUT_NOT_SHOW) {
                     message.is_confirm = GroupMessage.CONFIRM_MESSAGE
-                    getDao().updateMessage(message)
+                    getDao(accountContext).updateMessage(message)
                     if (isNotify) {
-                        notifyThreadUpdate(message.gid)
+                        notifyThreadUpdate(accountContext, message.gid)
                     }
                     //UI
                     GroupMessageTransform.transformToModel(message)?.let {
@@ -541,7 +494,7 @@ object MessageDataManager {
                     }
 
                 } else {
-                    getDao().updateMessage(message)
+                    getDao(accountContext).updateMessage(message)
                 }
                 return InsertMessageResult(UPDATE_SUCCESS, message.gid, -1, -1, message.id)
             }
@@ -557,13 +510,13 @@ object MessageDataManager {
      * 
      * @param message GroupMessage
      */
-    fun insertFetchedMessages(message: GroupMessage) {
-        val dbMessage = getDao().queryOneMessageByMid(message.gid, message.mid) ?: return
+    fun insertFetchedMessages(accountContext: AccountContext, message: GroupMessage) {
+        val dbMessage = getDao(accountContext).queryOneMessageByMid(message.gid, message.mid) ?: return
         if (dbMessage.is_confirm == GroupMessage.UNCONFIRM_MESSAGE || dbMessage.is_confirm == GroupMessage.FETCHING_MESSAGE) {
             message.read_state = dbMessage.read_state
-            checkMessageVisibleState(message)
+            checkMessageVisibleState(accountContext, message)
             message.id = dbMessage.id
-            getDao().updateMessage(message)
+            getDao(accountContext).updateMessage(message)
         }
     }
 
@@ -573,7 +526,7 @@ object MessageDataManager {
      * @param fromMid Long
      * @param toMid Long
      */
-    fun insertFetchingMessages(gid: Long, fromMid: Long, toMid: Long) {
+    fun insertFetchingMessages(accountContext: AccountContext, gid: Long, fromMid: Long, toMid: Long) {
         val idList = ArrayList<Long>()
         for (i in fromMid..toMid) {
             idList.add(i)
@@ -581,7 +534,7 @@ object MessageDataManager {
 
         idList.split(500)
                 .forEach { list ->
-                    val listExist = getDao().queryMessageByMidList(gid, list.toLongArray()).map { it.mid }
+                    val listExist = getDao(accountContext).queryMessageByMidList(gid, list.toLongArray()).map { it.mid }
                     for (j in list) {
                         //，
                         if (listExist.contains(j)) {
@@ -592,7 +545,7 @@ object MessageDataManager {
                         unconfirmedMessage.is_confirm = GroupMessage.FETCHING_MESSAGE
                         unconfirmedMessage.mid = j
                         unconfirmedMessage.gid = gid
-                        getDao().insertMessage(unconfirmedMessage)
+                        getDao(accountContext).insertMessage(unconfirmedMessage)
                     }
                 }
 
@@ -601,14 +554,14 @@ object MessageDataManager {
     /**
      * mid
      */
-    fun queryMixMid(gid: Long): Long {
-        return getDao().queryMaxMid(gid)
+    fun queryMixMid(accountContext: AccountContext, gid: Long): Long {
+        return getDao(accountContext).queryMaxMid(gid)
     }
 
     //，
-    fun queryOneMessage(gid: Long, id: Long, hasMid: Boolean): GroupMessage? {
+    fun queryOneMessage(accountContext: AccountContext, gid: Long, id: Long, hasMid: Boolean): GroupMessage? {
         if (hasMid) {
-            val message = getDao().queryOneMessageByMid(gid, id)
+            val message = getDao(accountContext).queryOneMessageByMid(gid, id)
             if (null != message) {
                 if (message.gid == gid && message.mid == id && message.is_confirm != GroupMessage.DELETED_MESSAGE) {
                     return message
@@ -616,7 +569,7 @@ object MessageDataManager {
             }
             return null
         } else {
-            val message = getDao().queryOneMessageByIndex(gid, id)
+            val message = getDao(accountContext).queryOneMessageByIndex(gid, id)
             if (message.gid == gid && message.id == id && message.is_confirm != GroupMessage.DELETED_MESSAGE) {
                 return message
             }
@@ -624,56 +577,40 @@ object MessageDataManager {
         }
     }
 
-    fun getMessageByMid(gid: Long, mid: Long): AmeGroupMessageDetail? {
-        val message = queryOneMessage(gid, mid, true) ?: return null
+    fun getMessageByMid(accountContext: AccountContext, gid: Long, mid: Long): AmeGroupMessageDetail? {
+        val message = queryOneMessage(accountContext, gid, mid, true) ?: return null
         return GroupMessageTransform.transformToModel(message)
     }
 
+    private fun getDao(accountContext: AccountContext): GroupMessageDao {
+        return UserDatabase.getDatabase(accountContext).groupMessageDao()
+
     fun getExistMessageByMids(gid: Long, minMid:Long, maxMid:Long): List<Long> {
-        return getDao().queryExistMessageByMids(gid, minMid, maxMid).toList()
+        return getDao(accountContext).queryExistMessageByMids(gid, minMid, maxMid).toList()
     }
 
     //
     fun queryMinReadMessage(gid: Long): GroupMessage? {
-        val groupList = getDao().queryMinReadMessage(gid, 1)
+        val groupList = getDao(accountContext).queryMinReadMessage(gid, 1)
         if (groupList != null && groupList.size > 0) {
             return groupList[0]
         }
         return null
     }
 
-
-    //
-    fun loadMessagesByGidAfter(gid: Long, indexId: Long, count: Int): List<AmeGroupMessageDetail> {
-        return if (count == -1) {
-            GroupMessageTransform.transformToModelList(getDao().loadMessagesByGidAndIndexIdAfter(gid, indexId))
-        } else {
-            GroupMessageTransform.transformToModelList(getDao().loadMessagesByGidAndIndexIdAfter(gid, indexId, count))
-        }
+    private fun notifyThreadUpdate(accountContext: AccountContext, gid: Long) {
+        Repository.getThreadRepo(accountContext).updateByNewGroup(gid)
     }
 
-    //， text 
-    fun loadMessagesBySenderAndPeriod(gid: Long, uid: String, startTime: Long, endTime: Long):List<GroupMessage>{
-        return getDao().fetchMessagesBySenderAndPeriod(gid,uid,startTime,endTime)
-    }
-
-    private fun getDao(): GroupMessageDao {
-        return UserDatabase.getDatabase().groupMessageDao()
-    }
-
-    private fun notifyThreadUpdate(gid: Long) {
-        Repository.getThreadRepo().updateByNewGroup(gid)
-    }
-
-    fun recallMessage(fromUid: String, gid: Long, recallMid: Long) {
-        val databaseMessage: GroupMessage = getDao().queryOneMessageByMid(gid, recallMid) ?: return
+    fun recallMessage(accountContext: AccountContext, fromUid: String, gid: Long, recallMid: Long) {
+        val databaseMessage: GroupMessage = getDao(accountContext).queryOneMessageByMid(gid, recallMid) ?: return
 
         val content = AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_RECALL, fromUid, ArrayList(), "")
         databaseMessage.text = AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO, content).toString()
         databaseMessage.content_type = AmeGroupMessage.SYSTEM_INFO.toInt()
 
-        getDao().insertMessage(databaseMessage)
-        notifyThreadUpdate(databaseMessage.gid)
+        getDao(accountContext).insertMessage(databaseMessage)
+        notifyThreadUpdate(accountContext, databaseMessage.gid)
 
         GroupMessageTransform.transformToModel(databaseMessage)?.let {
             EventBus.getDefault().post(MessageEvent(databaseMessage.gid, MessageEvent.EventType.SEND_MESSAGE_UPDATE, listOf(it)))
@@ -684,13 +621,13 @@ object MessageDataManager {
     /**
      * 
      */
-    fun systemNotice(groupId: Long, content: AmeGroupMessage.SystemContent, read: Boolean = true, visible:Boolean = true): Long {
+    fun systemNotice(accountContext: AccountContext, groupId: Long, content: AmeGroupMessage.SystemContent, read: Boolean = true, visible:Boolean = true): Long {
         ALog.d(TAG, "systemNotice groupId: $groupId, read: $read, type: ${content.tipType}")
         val messageDetail = AmeGroupMessageDetail().apply {
             gid = groupId
             sendTime = AmeTimeUtil.getMessageSendTime()
             sendState = AmeGroupMessageDetail.SendState.SEND_FAILED //，，
-            senderId = AMELogin.uid
+            senderId = accountContext.uid
             isSendByMe = true
             attachmentUri = ""
             extContent = null
@@ -698,11 +635,11 @@ object MessageDataManager {
             message = AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO, content)
         }
 
-        return insertSendMessage(GroupMessageTransform.transformToEntity(messageDetail), visible)
+        return insertSendMessage(accountContext, GroupMessageTransform.transformToEntity(messageDetail), visible)
     }
 
-    fun getFileStream(masterSecret: MasterSecret, gid: Long, id: Long, offset: Long): InputStream? {
-        val message = fetchOneMessageByGidAndIndexId(gid, id)
+    fun getFileStream(accountContext: AccountContext, masterSecret: MasterSecret, gid: Long, id: Long, offset: Long): InputStream? {
+        val message = fetchOneMessageByGidAndIndexId(accountContext, gid, id)
         if (message != null) {
             val uri = message.toAttachmentUri()
             if (uri != null) {
@@ -717,8 +654,8 @@ object MessageDataManager {
         return null
     }
 
-    fun getThumbnailStream(masterSecret: MasterSecret, gid: Long, id: Long): InputStream? {
-        val message = fetchOneMessageByGidAndIndexId(gid, id)
+    fun getThumbnailStream(accountContext: AccountContext, masterSecret: MasterSecret, gid: Long, id: Long): InputStream? {
+        val message = fetchOneMessageByGidAndIndexId(accountContext, gid, id)
         if (message != null) {
             val uri = message.thumbnailUri
             if (uri != null) {
@@ -733,11 +670,11 @@ object MessageDataManager {
         return null
     }
 
-    fun getExistThumbnailData(hash: String) = getDao().getExistMessageThumbnail(hash)
+    fun getExistThumbnailData(accountContext: AccountContext, hash: String) = getDao(accountContext).getExistMessageThumbnail(hash)
 
-    fun getExistThumbnailData(indexId: Long, hash: String) = getDao().getExistMessageThumbnail(indexId, hash)
+    fun getExistThumbnailData(accountContext: AccountContext, indexId: Long, hash: String) = getDao(accountContext).getExistMessageThumbnail(indexId, hash)
 
-    fun getExistAttachmentData(hash: String) = getDao().getExistMessageAttachment(hash)
+    fun getExistAttachmentData(accountContext: AccountContext, hash: String) = getDao(accountContext).getExistMessageAttachment(hash)
 
-    fun getExistAttachmentData(indexId: Long, hash: String) = getDao().getExistMessageAttachment(indexId, hash)
+    fun getExistAttachmentData(accountContext: AccountContext, indexId: Long, hash: String) = getDao(accountContext).getExistMessageAttachment(indexId, hash)
 }

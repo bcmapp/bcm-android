@@ -1,8 +1,8 @@
 package com.bcm.messenger.common.server
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.event.ClientAccountDisabledEvent
 import com.bcm.messenger.common.event.ServerConnStateChangedEvent
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.listener.WeakListeners
 import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.AbstractMessage
@@ -23,7 +23,7 @@ import javax.crypto.*
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-class ServerDataDispatcher() : IServerConnectionEvent, IServerDataDispatcher {
+class ServerDataDispatcher(private val accountContext: AccountContext) : IServerConnectionEvent, IServerDataDispatcher {
 
     companion object {
         private const val TAG = "ServerDataDispatcher"
@@ -50,7 +50,7 @@ class ServerDataDispatcher() : IServerConnectionEvent, IServerDataDispatcher {
         this.listener.removeListener(listener)
     }
 
-    override fun onServiceConnected(state: ConnectState, connectToken: Int) {
+    override fun onServiceConnected(accountContext: AccountContext, connectToken: Int, state: ConnectState) {
         ALog.i(TAG, "onServiceConnected $state")
 
         val newState = when (state) {
@@ -62,7 +62,7 @@ class ServerDataDispatcher() : IServerConnectionEvent, IServerDataDispatcher {
 
     }
 
-    override fun onClientForceLogout(type: KickEvent, info: String?) {
+    override fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent) {
         ALog.i("ForceLogout", "onClientForceLogout: $type")
         when (type) {
             KickEvent.OTHER_LOGIN -> {
@@ -85,16 +85,16 @@ class ServerDataDispatcher() : IServerConnectionEvent, IServerDataDispatcher {
         }
     }
 
-    override fun onMessageArrive(message: WebSocketProtos.WebSocketRequestMessage): Boolean {
+    override fun onMessageArrive(accountContext: AccountContext, message: WebSocketProtos.WebSocketRequestMessage): Boolean {
         if ("PUT" == message.verb) {
             try {
                 val proto: AbstractMessage = when (message.path) {
                     "/api/v1/messages" -> {
-                        val plainProtoData = decryptPrivateProtoData(message.body.toByteArray(), AMELogin.signalingKey)
+                        val plainProtoData = decryptPrivateProtoData(message.body.toByteArray(), accountContext.signalingKey)
                         SignalServiceProtos.Mailbox.parseFrom(plainProtoData)
                     }
                     "/api/v1/message" -> {
-                        val plainProtoData = decryptPrivateProtoData(message.body.toByteArray(), AMELogin.signalingKey)
+                        val plainProtoData = decryptPrivateProtoData(message.body.toByteArray(), accountContext.signalingKey)
                         SignalServiceProtos.Envelope.parseFrom(plainProtoData)
                     }
                     "/api/v1/group_message" -> {
@@ -106,7 +106,7 @@ class ServerDataDispatcher() : IServerConnectionEvent, IServerDataDispatcher {
                     else -> return false
                 }
 
-                if (!listener.any { it.onReceiveData(proto) }) {
+                if (!listener.any { it.onReceiveData(accountContext, proto) }) {
                     ALog.w(TAG, "unknown message api ${message.path}")
                 }
             } catch (e: Throwable) {

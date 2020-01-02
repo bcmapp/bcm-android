@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.database.converters.PrivacyProfileConverter
 import com.bcm.messenger.common.database.converters.UriConverter
 import com.bcm.messenger.common.database.dao.*
@@ -60,11 +61,12 @@ abstract class UserDatabase : RoomDatabase() {
         @Volatile
         private var sInstance: UserDatabase? = null
 
-        fun getDatabase(): UserDatabase {
+        fun getDatabase(accountContext: AccountContext): UserDatabase {
+            //todo wangshuhe
             if (sInstance == null) {
                 synchronized(UserDatabase::class.java) {
                     if (sInstance == null) {
-                        sInstance = openDatabase()
+                        sInstance = openDatabase(accountContext)
                     }
                 }
             }
@@ -81,17 +83,17 @@ abstract class UserDatabase : RoomDatabase() {
             }
         }
 
-        fun resetDatabase() {
+        fun resetDatabase(accountContext: AccountContext) {
             closeDatabase()
-            getDatabase()
-            Repository.getInstance().reset()
+            getDatabase(accountContext)
+            Repository.getInstance(accountContext).reset()
         }
 
-        private fun openDatabase(needCheckDb: Boolean = true): UserDatabase {
+        private fun openDatabase(accountContext: AccountContext, needCheckDb: Boolean = true): UserDatabase {
             val masterSecret = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
             val options = SafeHelperFactory.Options.builder().setClearPassphrase(false).build()
             val factory = SafeHelperFactory(masterSecret?.encryptionKey?.encoded, options)
-            val dbBuilder = Room.databaseBuilder(AppContextHolder.APP_CONTEXT, UserDatabase::class.java, "user_${AMELogin.uid}.db")
+            val dbBuilder = Room.databaseBuilder(AppContextHolder.APP_CONTEXT, UserDatabase::class.java, "user_${accountContext.uid}.db")
                     .addMigrations(
                             MIGRATION_1_2,
                             MIGRATION_2_3
@@ -114,11 +116,11 @@ abstract class UserDatabase : RoomDatabase() {
                             db.close()
                         } catch (tr2: Throwable) {
                         }
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db").delete()
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db-shm").delete()
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db-wal").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-shm").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-wal").delete()
 
-                        return openDatabase(false)
+                        return openDatabase(accountContext,false)
                     }
                 }
             }

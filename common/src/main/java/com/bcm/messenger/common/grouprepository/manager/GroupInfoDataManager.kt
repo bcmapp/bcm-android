@@ -1,6 +1,7 @@
 package com.bcm.messenger.common.grouprepository.manager
 
 import android.text.TextUtils
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.core.corebean.GroupKeyParam
 import com.bcm.messenger.common.core.corebean.GroupMemberSyncState
@@ -16,39 +17,39 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 
 object GroupInfoDataManager {
-    fun updateGroupRole(gid: Long, role: Long) {
-        getDao().updateRole(gid, role)
+    fun updateGroupRole(accountContext: AccountContext, gid: Long, role: Long) {
+        getDao(accountContext).updateRole(gid, role)
     }
 
-    fun updateGroupNotice(gid: Long, noticeContent: String, updateTime: Long) {
-        val info = queryOneGroupInfo(gid)
+    fun updateGroupNotice(accountContext: AccountContext, gid: Long, noticeContent: String, updateTime: Long) {
+        val info = queryOneGroupInfo(accountContext, gid)
         if (info != null) {
             info.notice_update_time = updateTime
             info.notice_content = noticeContent
-            getDao().update(info)
+            getDao(accountContext).update(info)
         }
     }
 
-    fun updateNoticeShowState(gid: Long, isShow: Boolean) {
-        val info = queryOneGroupInfo(gid)
+    fun updateNoticeShowState(accountContext: AccountContext, gid: Long, isShow: Boolean) {
+        val info = queryOneGroupInfo(accountContext, gid)
         if (info != null) {
             if (isShow) {
                 info.is_show_notice = GroupInfo.SHOW_NOTICE
             } else {
                 info.is_show_notice = GroupInfo.NOT_SHOW_NOTICE
             }
-            getDao().update(info)
+            getDao(accountContext).update(info)
         }
 
     }
 
-    fun queryGroupKeyParam(gid: Long, version: Long): GroupKeyParam? {
-        val groupKey = UserDatabase.getDatabase().groupKeyDao().queryKeys(gid, listOf(version))
+    fun queryGroupKeyParam(accountContext: AccountContext, gid: Long, version: Long): GroupKeyParam? {
+        val groupKey = UserDatabase.getDatabase(accountContext).groupKeyDao().queryKeys(gid, listOf(version))
         return if (groupKey.isNotEmpty()) {
             GroupKeyParam(groupKey.first().key.base64Decode(), groupKey.first().version)
 
         } else {
-            val groupInfo = queryOneGroupInfo(gid) ?: return null
+            val groupInfo = queryOneGroupInfo(accountContext, gid) ?: return null
             if (!groupInfo.isNewGroup && !TextUtils.isEmpty(groupInfo.currentKey)) {
                 GroupKeyParam(groupInfo.currentKey.base64Decode(), groupInfo.currentKeyVersion)
             } else {
@@ -57,129 +58,129 @@ object GroupInfoDataManager {
         }
     }
 
-    fun queryGroupKeyList(gid: Long, versions: List<Long>): List<GroupKey> {
-        return UserDatabase.getDatabase().groupKeyDao().queryKeys(gid, versions)
+    fun queryGroupKeyList(accountContext: AccountContext, gid: Long, versions: List<Long>): List<GroupKey> {
+        return UserDatabase.getDatabase(accountContext).groupKeyDao().queryKeys(gid, versions)
     }
 
-    fun saveGroupKeyParam(gid: Long, version: Long, key: String) {
-        UserDatabase.getDatabase().groupKeyDao().saveKeys(listOf(GroupKey().apply {
+    fun saveGroupKeyParam(accountContext: AccountContext, gid: Long, version: Long, key: String) {
+        UserDatabase.getDatabase(accountContext).groupKeyDao().saveKeys(listOf(GroupKey().apply {
             this.gid = gid
             this.version = version
             this.key = key
         }))
     }
 
-    fun queryLastGroupKeyVersion(gid: Long): GroupKey? {
-        return UserDatabase.getDatabase().groupKeyDao().queryLastVersionKey(gid)
+    fun queryLastGroupKeyVersion(accountContext: AccountContext, gid: Long): GroupKey? {
+        return UserDatabase.getDatabase(accountContext).groupKeyDao().queryLastVersionKey(gid)
     }
 
-    fun updateGroupNotificationEnable(gid: Long, enable: Boolean) {
-        val info = queryOneGroupInfo(gid)
+    fun updateGroupNotificationEnable(accountContext: AccountContext, gid: Long, enable: Boolean) {
+        val info = queryOneGroupInfo(accountContext, gid)
         if (info != null) {
             if (enable) {
                 info.notification_enable = GroupInfo.NOTIFICATION_ENABLE
             } else {
                 info.notification_enable = GroupInfo.NOTIFICATION_DISABLE
             }
-            getDao().update(info)
+            getDao(accountContext).update(info)
         }
     }
 
-    fun updateGroupKey(gid: Long, keyVersion: Long, key: String) {
-        getDao().updateGroupKey(gid, keyVersion, key)
+    fun updateGroupKey(accountContext: AccountContext, gid: Long, keyVersion: Long, key: String) {
+        getDao(accountContext).updateGroupKey(gid, keyVersion, key)
     }
 
-    fun updateGroupPinMid(gid: Long, mid: Long) {
-        val info = queryOneGroupInfo(gid)
+    fun updateGroupPinMid(accountContext: AccountContext, gid: Long, mid: Long) {
+        val info = queryOneGroupInfo(accountContext, gid)
         if (info != null) {
             info.pinMid = mid
-            getDao().update(info)
+            getDao(accountContext).update(info)
         }
     }
 
-    fun updateGroupPinVisible(gid: Long, hasPin: Boolean) {
-        val info = queryOneGroupInfo(gid)
+    fun updateGroupPinVisible(accountContext: AccountContext, gid: Long, hasPin: Boolean) {
+        val info = queryOneGroupInfo(accountContext, gid)
         if (info != null) {
             info.hasPin = if (hasPin) {
                 1
             } else {
                 0
             }
-            getDao().update(info)
+            getDao(accountContext).update(info)
         }
     }
 
-    fun updateGroupShareShortLink(gid: Long, shareLink: String) {
-        getDao().updateShareShortLink(gid, shareLink)
+    fun updateGroupShareShortLink(accountContext: AccountContext, gid: Long, shareLink: String) {
+        getDao(accountContext).updateShareShortLink(gid, shareLink)
     }
 
-    fun insertGroupInfo(groupInfo: GroupInfo) {
+    fun insertGroupInfo(accountContext: AccountContext, groupInfo: GroupInfo) {
         //recipient
         val recipient = Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, groupInfo.gid)
-        Repository.getRecipientRepo()?.setProfile(recipient, null, groupInfo.name, groupInfo.iconUrl)
+        Repository.getRecipientRepo(accountContext)?.setProfile(recipient, null, groupInfo.name, groupInfo.iconUrl)
 
-        if (getDao().loadGroupInfoByGid(groupInfo.gid) == null) {
-            getDao().insert(groupInfo)
+        if (getDao(accountContext).loadGroupInfoByGid(groupInfo.gid) == null) {
+            getDao(accountContext).insert(groupInfo)
         } else {
-            getDao().update(groupInfo)
+            getDao(accountContext).update(groupInfo)
         }
     }
 
-    fun updateMemberSyncState(gid: Long, syncState: GroupMemberSyncState) {
+    fun updateMemberSyncState(accountContext: AccountContext, gid: Long, syncState: GroupMemberSyncState) {
         AmeDispatcher.io.dispatch {
-            getDao().updateMemberSyncState(gid, syncState.toString())
+            getDao(accountContext).updateMemberSyncState(gid, syncState.toString())
         }
     }
 
-    fun removeGroupInfo(gid: Long) {
-        val info = getDao().loadGroupInfoByGid(gid) ?: return
-        getDao().delete(info)
+    fun removeGroupInfo(accountContext: AccountContext, gid: Long) {
+        val info = getDao(accountContext).loadGroupInfoByGid(gid) ?: return
+        getDao(accountContext).delete(info)
     }
 
-    fun queryOneAmeGroupInfo(gid: Long): AmeGroupInfo? {
-        val info = getDao().loadGroupInfoByGid(gid) ?: return null
+    fun queryOneAmeGroupInfo(accountContext: AccountContext, gid: Long): AmeGroupInfo? {
+        val info = getDao(accountContext).loadGroupInfoByGid(gid) ?: return null
         return GroupInfoTransform.transformToModel(info)
     }
 
     //
-    fun queryOneGroupInfo(gid: Long): GroupInfo? {
-        return getDao().loadGroupInfoByGid(gid)
+    fun queryOneGroupInfo(accountContext: AccountContext, gid: Long): GroupInfo? {
+        return getDao(accountContext).loadGroupInfoByGid(gid)
     }
 
     //
-    fun queryGroupInfoList(gidList: List<Long>): List<GroupInfo> {
-        return getDao().loadGroupInfoListByGid(gidList.toLongArray())
+    fun queryGroupInfoList(accountContext: AccountContext, gidList: List<Long>): List<GroupInfo> {
+        return getDao(accountContext).loadGroupInfoListByGid(gidList.toLongArray())
     }
 
-    private fun getDao(): GroupInfoDao {
-        return UserDatabase.getDatabase().groupInfoDao()
+    private fun getDao(accountContext: AccountContext): GroupInfoDao {
+        return UserDatabase.getDatabase(accountContext).groupInfoDao()
     }
 
 
     /**
      * （）
      */
-    fun getGroupInfo(groupId: Long): AmeGroupInfo? {
-        return queryOneAmeGroupInfo(groupId)
+    fun getGroupInfo(accountContext: AccountContext, groupId: Long): AmeGroupInfo? {
+        return queryOneAmeGroupInfo(accountContext, groupId)
     }
 
-    fun loadAll(): List<GroupInfo> {
-        return getDao().loadAll()
+    fun loadAll(accountContext: AccountContext): List<GroupInfo> {
+        return getDao(accountContext).loadAll()
     }
 
-    fun saveGroupInfos(list: List<GroupInfo>) {
+    fun saveGroupInfos(accountContext: AccountContext, list: List<GroupInfo>) {
         if (list.isEmpty()) {
             return
         }
-        getDao().insertOrUpdateAll(list)
+        getDao(accountContext).insertOrUpdateAll(list)
     }
 
-    fun updateGroupInfoSecret(gid: Long, groupInfoSecret: String) {
-        getDao().updateGroupInfoKey(gid, groupInfoSecret)
+    fun updateGroupInfoSecret(accountContext: AccountContext, gid: Long, groupInfoSecret: String) {
+        getDao(accountContext).updateGroupInfoKey(gid, groupInfoSecret)
     }
 
-    fun updateGroupAutoGenNameAndAvatar(gid: Long, combineName: String, chnCombineName: String, path: String?) {
-        val info = queryOneGroupInfo(gid)
+    fun updateGroupAutoGenNameAndAvatar(accountContext: AccountContext, gid: Long, combineName: String, chnCombineName: String, path: String?) {
+        val info = queryOneGroupInfo(accountContext, gid)
         if (null != info) {
             if (combineName.isNotEmpty()) {
                 info.spliceName = combineName
@@ -193,30 +194,30 @@ object GroupInfoDataManager {
                 info.chnSpliceName = chnCombineName
             }
 
-            getDao().update(info)
+            getDao(accountContext).update(info)
         }
     }
 
-    fun setProfileEncrypted(gid: Long, isEncrypted: Boolean) {
-        getDao().setProfileEncrypted(gid, isEncrypted)
+    fun setProfileEncrypted(accountContext: AccountContext, gid: Long, isEncrypted: Boolean) {
+        getDao(accountContext).setProfileEncrypted(gid, isEncrypted)
     }
 
-    fun updateGroupName(gid: Long, newName: String) {
-        getDao().updateName(gid, newName)
+    fun updateGroupName(accountContext: AccountContext, gid: Long, newName: String) {
+        getDao(accountContext).updateName(gid, newName)
     }
 
-    fun updateGroupAvatar(gid: Long, newIcon: String) {
-        getDao().updateAvatar(gid, newIcon)
+    fun updateGroupAvatar(accountContext: AccountContext, gid: Long, newIcon: String) {
+        getDao(accountContext).updateAvatar(gid, newIcon)
     }
 
-    fun clearShareSetting(gid: Long) {
-        getDao().clearShareSetting(gid)
+    fun clearShareSetting(accountContext: AccountContext, gid: Long) {
+        getDao(accountContext).clearShareSetting(gid)
     }
 
-    fun increaseMemberCount(gid:Long, increaseCount: Long) {
-        val count  = getDao().queryMemberCount(gid) + increaseCount
+    fun increaseMemberCount(accountContext: AccountContext, gid: Long, increaseCount: Long) {
+        val count = getDao(accountContext).queryMemberCount(gid) + increaseCount
         if (count > 0) {
-            getDao().updateMemberCount(gid, count)
+            getDao(accountContext).updateMemberCount(gid, count)
         }
     }
 }

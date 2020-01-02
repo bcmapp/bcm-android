@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.database.repositories
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.records.IdentityRecord
 import com.bcm.messenger.common.utils.IdentityUtil
@@ -11,14 +12,14 @@ import org.whispersystems.libsignal.IdentityKey
 /**
  * Created by Kin on 2019/9/26
  */
-class IdentityRepo {
+class IdentityRepo(accountContext: AccountContext) {
     enum class VerifiedStatus(val type: Int) {
         DEFAULT(0),
         VERIFIED(1),
         UNVERIFIED(2)
     }
 
-    private val identityDao = UserDatabase.getDatabase().getIdentityDao()
+    private val identityDao = UserDatabase.getDatabase(accountContext).getIdentityDao()
 
     fun insertIdentities(identities: List<IdentityRecord>) {
         identityDao.insertIdentities(identities)

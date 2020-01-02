@@ -627,10 +627,10 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
             } else if (record.isPending()) {
                 specialNotifyText?.text = context.getString(R.string.common_chats_you_clearing_history_tip)
             } else {
-                specialNotifyText?.text = content.getDescribe(0)
+                specialNotifyText?.text = content.getDescribe(0, )
             }
         } else {
-            specialNotifyText?.text = content.getDescribe(0)
+            specialNotifyText?.text = content.getDescribe(0, )
         }
         alertView?.setNone()
     }
@@ -673,7 +673,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         alertView?.setNone()
         val content = message.content as AmeGroupMessage.FriendContent
         content.setRecipientCallback(this)
-        specialNotifyText?.text = content.getDescribe(0)
+        specialNotifyText?.text = content.getDescribe(0, )
     }
 
 
@@ -682,9 +682,9 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         alertView?.setNone()
         val content = message.content as AmeGroupMessage.SystemContent
         content.setRecipientCallback(this)
-        specialNotifyText?.text = content.getDescribe(0)
+        specialNotifyText?.text = content.getDescribe(0, )
         if (content.tipType == AmeGroupMessage.SystemContent.TIP_CHAT_STRANGER_RESTRICTION && !messageRecipient.isFriend) {
-            val span = SpannableStringBuilder(content.getDescribe(0))
+            val span = SpannableStringBuilder(content.getDescribe(0, ))
             var addSpan = StringAppearanceUtil.applyAppearance(context.getString(R.string.chats_relation_add_friend_action), color = getColor(R.color.common_color_black))
             addSpan = StringAppearanceUtil.applyAppearance(context, addSpan, true)
             span.append(addSpan)

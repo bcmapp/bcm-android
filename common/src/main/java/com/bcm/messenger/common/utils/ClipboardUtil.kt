@@ -84,7 +84,7 @@ object ClipboardUtil {
      * 
      */
     fun shareInviteText() {
-        val text = AppContextHolder.APP_CONTEXT.getString(R.string.common_invite_user_message, AMELogin.uid)
+        val text = AppContextHolder.APP_CONTEXT.getString(R.string.common_invite_user_message, AMELogin.majorUid)
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, text)
@@ -105,7 +105,7 @@ object ClipboardUtil {
                 ALog.i(TAG, "Find BCM invite message!!")
                 val id = result.value
                 if (id.isNotBlank()) {
-                    if (id != AMELogin.uid) {
+                    if (id != AMELogin.majorUid) {
                         val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
                         contactProvider.openContactDataActivity(activity, Address.fromSerialized(id))
                     }
@@ -119,7 +119,7 @@ object ClipboardUtil {
             if (json.isNotBlank()) {
                 val qrData = Recipient.RecipientQR.fromJson(json)
                 if (qrData != null) {
-                    if (qrData.uid != AMELogin.uid) {
+                    if (qrData.uid != AMELogin.majorUid) {
                         val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
                         contactProvider.openContactDataActivity(activity, Address.fromSerialized(qrData.uid), qrData.name)
                     }

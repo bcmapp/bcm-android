@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.metrics
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptorHelper
 import com.bcm.messenger.common.bcmhttp.configure.sslfactory.IMServerSSL
 import com.bcm.messenger.common.bcmhttp.interceptor.BcmAuthHeaderInterceptor
@@ -20,29 +21,13 @@ class MetricsUploader {
     private val reportPath = "${METRICS_URL}/v1/metrics/reports"
     private val configPath = "${METRICS_URL}/v1/metrics/config"
 
-    private val uploaderHttp = ReportHttp()
-
-    init {
-        val sslFactory = IMServerSSL()
-        val clientBuilder = OkHttpClient.Builder()
-                .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
-                .hostnameVerifier(BaseHttp.trustAllHostVerify())
-                .addInterceptor(RedirectInterceptorHelper.metricsServerInterceptor)
-                .addInterceptor(ReportMetricInterceptor())
-                .addInterceptor(BcmAuthHeaderInterceptor())
-                .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
-                .writeTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
-                .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
-
-        uploaderHttp.setClient(clientBuilder.build())
-    }
 
     @Throws(NoContentException::class)
-    fun reportToServer(reportData: ReportData): MetricsConfigs? {
+    fun reportToServer(accountContext: AccountContext, reportData: ReportData): MetricsConfigs? {
         var configs: MetricsConfigs? = null
 
         try {
-            configs = uploaderHttp.put<MetricsConfigs>(reportPath, reportData.toJson(), MetricsConfigs::class.java)
+            configs = ReportHttp.getHttp(accountContext).put<MetricsConfigs>(reportPath, reportData.toJson(), MetricsConfigs::class.java)
         } catch (e: NoContentException) {
             throw e
         } catch (e: Throwable) {
@@ -51,11 +36,11 @@ class MetricsUploader {
         return configs
     }
 
-    fun getTimeSplicesConfig(configReq: HistogramConfigReq): MetricsConfigs? {
+    fun getTimeSplicesConfig(accountContext: AccountContext, configReq: HistogramConfigReq): MetricsConfigs? {
         var configs: MetricsConfigs? = null
 
         try {
-            configs = uploaderHttp.post<MetricsConfigs>(configPath, configReq.toJson(), MetricsConfigs::class.java)
+            configs = ReportHttp.getHttp(accountContext).post<MetricsConfigs>(configPath, configReq.toJson(), MetricsConfigs::class.java)
         } catch (e: Throwable) {
             ALog.e(tag, e)
         }

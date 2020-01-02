@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.server
 
+import com.bcm.messenger.common.AccountContext
 import com.google.protobuf.AbstractMessage
 import org.whispersystems.signalservice.internal.push.OutgoingPushMessageList
 import org.whispersystems.signalservice.internal.push.SendMessageResponse
@@ -12,9 +13,9 @@ import java.io.IOException
  */
 
 interface IServerConnectionEvent {
-    fun onServiceConnected(state: ConnectState, connectToken:Int)
-    fun onMessageArrive(message: WebSocketProtos.WebSocketRequestMessage): Boolean
-    fun onClientForceLogout(type: KickEvent, info: String?)
+    fun onServiceConnected(accountContext: AccountContext, connectToken: Int, state: ConnectState)
+    fun onMessageArrive(accountContext: AccountContext, message: WebSocketProtos.WebSocketRequestMessage): Boolean
+    fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent)
 }
 
 interface IServerDataDispatcher {
@@ -33,7 +34,7 @@ interface IServerConnectionDaemon {
 }
 
 interface IServerDataListener {
-    fun onReceiveData(proto: AbstractMessage): Boolean
+    fun onReceiveData(accountContext: AccountContext, proto: AbstractMessage): Boolean
 }
 
 enum class KickEvent {

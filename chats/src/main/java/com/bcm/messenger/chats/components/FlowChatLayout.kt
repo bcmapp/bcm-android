@@ -63,7 +63,7 @@ class FlowChatLayout @JvmOverloads constructor(context: Context, attrs: Attribut
                     ?: return), true)
             recipient1?.addListener(this)
             recipientImg1.setPhoto(recipient1)
-            flowText1.text = message.message.content.getDescribe(message.gid)
+            flowText1.text = message.message.content.getDescribe(message.gid, )
             enter(flowChatLayout1)
             if (text2ShowFlag) {
                 exit(flowChatLayout2)
@@ -73,7 +73,7 @@ class FlowChatLayout @JvmOverloads constructor(context: Context, attrs: Attribut
                     ?: return), true)
             recipient2?.addListener(this)
             recipientImg2.setPhoto(recipient2)
-            flowText2.text = message.message.content.getDescribe(message.gid)
+            flowText2.text = message.message.content.getDescribe(message.gid, )
             enter(flowChatLayout2)
             if (text1ShowFlag) {
                 exit(flowChatLayout1)

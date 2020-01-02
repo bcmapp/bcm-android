@@ -162,7 +162,7 @@ object AmeLoginLogic {
         AmeProvider.get<IWalletModule>(ARouterConstants.Provider.PROVIDER_WALLET_BASE)?.logoutWallet()
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onAccountLogout(AppContextHolder.APP_CONTEXT, "")
 
-        AmeModuleCenter.onLoginSucceed("")
+        AmeModuleCenter.onLogOutSucceed(accountContext)
         BCMEncryptUtils.clearMasterSecret()
         Recipient.clearCache(context)
 

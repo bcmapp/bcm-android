@@ -8,6 +8,7 @@ import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import androidx.room.Ignore
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
@@ -339,7 +340,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             return Gson().toJson(this)
         }
 
-        open fun getDescribe(gid: Long = 0L): CharSequence {
+        open fun getDescribe(gid: Long = 0L, accountContext: AccountContext): CharSequence {
             return ""
         }
 
@@ -358,7 +359,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
 
     class TextContent(val text: String = "") : Content() {
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return text
         }
     }
@@ -366,7 +367,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     class ImageContent(url: String = "", var width: Int = 0, var height: Int = 0, mimeType: String = "", sign: String = "", thumbnail_url: String = "", sign_thumbnail: String = "", size: Long = 0L) :
             ThumbnailContent(url, sign, size, thumbnail_url, sign_thumbnail, mimeType) {
 
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_image_message_description)
         }
 
@@ -374,7 +375,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
     class VideoContent(url: String = "", mimeType: String = "", size: Long = 0L, val duration: Long = 0L, sign: String = "", thumbnail_url: String = "", var thumbnail_width: Int = 0, var thumbnail_height: Int = 0, sign_thumbnail: String = "") :
             ThumbnailContent(url, sign, size, thumbnail_url, sign_thumbnail, mimeType) {
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_video_message_description)
         }
 
@@ -386,7 +387,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
     class AudioContent(url: String = "", size: Long = 0L, var duration: Long = 0L, mimeType: String = "", sign: String = "") : AttachmentContent(url, sign, size, mimeType) {
 
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_audio_message_description)
         }
 
@@ -398,7 +399,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
     class FileContent(url: String, var fileName: String?, size: Long = 0L, mimeType: String = "", sign: String = "") : AttachmentContent(url, sign, size, mimeType) {
 
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_file_message_description)
         }
 
@@ -459,7 +460,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
 
     class LocationContent(val latitude: Double = 0.0, val longtitude: Double = 0.0, val mapType: Int = 0, val title: String = "", val address: String = "") : Content() {
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_location_message_description)
         }
 
@@ -504,7 +505,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             }
         }
 
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             val context = AppContextHolder.APP_CONTEXT
             if (r == null && !actionDetail.isNullOrEmpty()) {
                 r = Recipient.from(context, Address.fromSerialized(actionDetail), true)
@@ -543,7 +544,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             return name
         }
 
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_screenshot_message_description)
         }
     }
@@ -552,7 +553,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
      * ，iOSLINK，TEXT，，
      */
     class LinkContent(val url: String = "", val text: String = "") : Content() {
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return url
         }
     }
@@ -584,13 +585,13 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         private var ready: Boolean = false//
         private var resultTip: CharSequence? = null//description
 
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             val resultTip = this.resultTip
             if (null != resultTip) {
                 return resultTip
             }
 
-            val tip = getSystemTip(gid)
+            val tip = getSystemTip(gid, accountContext)
             if (isReady()) {
                 this.resultTip = tip
             }
@@ -629,7 +630,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             }
         }
 
-        private fun getSystemTip(gid:Long): CharSequence {
+        private fun getSystemTip(gid:Long, accountContext: AccountContext): CharSequence {
 
             if (senderRecipient == null) {
                 if (!TextUtils.isEmpty(sender)) {
@@ -654,7 +655,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             val context = AppContextHolder.APP_CONTEXT
             return when (this.tipType) {
                 TIP_JOIN_GROUP_REQUEST -> {
-                    val operators = getViewNameFromOperators(context, gid, senderRecipient, ol)
+                    val operators = getViewNameFromOperators(context, gid, accountContext, senderRecipient, ol)
                     if (sender.isNullOrEmpty()) {
                         context.getString(R.string.common_chats_group_join_request_description, operators.second)
                     }else {
@@ -666,7 +667,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     }
                 }
                 TIP_JOIN -> {
-                    val operators = getViewNameFromOperators(context, gid, senderRecipient, ol)
+                    val operators = getViewNameFromOperators(context, gid, accountContext, senderRecipient, ol)
                     if (operators.first.isEmpty()) {
                         context.getString(R.string.common_chats_group_join, operators.second)
                     }
@@ -677,15 +678,15 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     }
                 }
                 TIP_SUBSCRIBE -> {
-                    val operators = getViewNameFromOperators(context, gid, senderRecipient, ol)
+                    val operators = getViewNameFromOperators(context, gid, accountContext, senderRecipient, ol)
                     context.getString(R.string.common_chats_subscribe_group, operators.first)
                 }
                 TIP_UPDATE -> {
-                    val operators = getViewNameFromOperators(context, gid, senderRecipient, ol)
+                    val operators = getViewNameFromOperators(context, gid, accountContext, senderRecipient, ol)
                     context.getString(R.string.common_chats_group_owner_change, operators.second)
                 }
                 TIP_KICK -> {
-                    val operators = getViewNameFromOperators(context, gid, senderRecipient, ol)
+                    val operators = getViewNameFromOperators(context, gid, accountContext, senderRecipient, ol)
                     var tip = ""
                     if (operators.second.isNotEmpty()) {
                         for (recipient in ol) {
@@ -703,7 +704,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     }
                 }
                 TIP_UNSUBSCRIBE -> {
-                    val operators = getViewNameFromOperators(context, gid, senderRecipient, ol)
+                    val operators = getViewNameFromOperators(context, gid, accountContext, senderRecipient, ol)
                     if (operators.second.isNotEmpty()) {
                         context.getString(R.string.common_chats_group_remove_subscriber, operators.first, operators.second)
                     } else {
@@ -711,7 +712,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     }
                 }
                 TIP_RECALL -> {
-                    if (senderRecipient?.address?.serialize() == AMELogin.uid) {
+                    if (senderRecipient?.address?.serialize() == accountContext.uid) {
                         context.getString(R.string.common_chats_group_you_recall_message)
                     } else {
                         context.getString(R.string.common_chats_peer_recall_message, senderRecipient?.name ?: "")
@@ -748,7 +749,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     }
                 }
                 TIP_GROUP_INVITE_STRANGER -> {
-                    val operators = getViewNameFromOperators(context, gid, null, ol)
+                    val operators = getViewNameFromOperators(context, gid, accountContext, null, ol)
                     context.getString(R.string.common_group_invite_stranger_notice, operators.second)
                 }
                 TIP_GROUP_NAME_UPDATE -> {
@@ -771,7 +772,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         /**
          * 
          */
-        private fun getViewNameFromOperators(context: Context, gid:Long, from: Recipient?, operators: MutableList<Recipient>): Pair<String, String> {
+        private fun getViewNameFromOperators(context: Context, gid:Long, accountContext: AccountContext, from: Recipient?, operators: MutableList<Recipient>): Pair<String, String> {
             if (groupMembers == null) {
                 val uidList = operators.map { it.address.serialize() }.toMutableList()
                 if (from != null && from.address.serialize() != "welcome") {
@@ -794,7 +795,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                 }
 
                 fromViewName = groupMemberName(from, groupMembers?.get(from.address.serialize()))
-                if (from.address.serialize() == AMELogin.uid) {
+                if (from.address.serialize() == accountContext.uid) {
                     fromViewName = context.getString(R.string.common_chats_system_tip_you)
                 } else if (from.address.serialize() == "welcome") {
                     fromViewName = ""
@@ -803,7 +804,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
             var doneViewName = ""
             for ((index, u1) in operators.withIndex()) {
-                doneViewName += if (u1.address.serialize() != AMELogin.uid) {
+                doneViewName += if (u1.address.serialize() != accountContext.uid) {
                     groupMemberName(u1, groupMembers?.get(u1.address.serialize()))
                 } else {
                     context.getString(R.string.common_chats_system_tip_you_lower_case)
@@ -868,20 +869,20 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     class ShareChannelContent(val channelKey: String = "", val channel: String = "", val name: String = "", val gid: Long = 0L, val icon: String = "", val intro: String = "") : Content() {
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_share_channel_message_description)
 
         }
     }
 
     class NewShareChannelContent(val channelKey: String = "", val channel: String = "", val name: String = "", val gid: Long = 0L, val icon: String = "", val intro: String = "") : Content() {
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_share_channel_message_description)
         }
     }
 
     class GroupKeyContent(val key: String, gid: Long = 0L) : Content() {
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return ""
         }
     }
@@ -890,7 +891,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
      * 
      */
     class ContactContent(val nickName: String = "", @SerializedName("phoneNumber") val uid: String = "", val url: String = "") : Content() {
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_contact_message_description)
         }
     }
@@ -986,7 +987,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             }
         }
 
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppUtil.getString(R.string.common_group_share_message_description)
         }
 
@@ -1039,7 +1040,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
      * 
      */
     class HistoryContent(val messageList: List<HistoryMessageDetail> = ArrayList()) : Content() {
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_history_message_description)
         }
     }
@@ -1071,7 +1072,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             return replyMessage
         }
 
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return text
         }
 
@@ -1085,7 +1086,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         /**
          * 
          */
-        fun getReplyDescribe(gid:Long, isOutgoing: Boolean): CharSequence {
+        fun getReplyDescribe(gid:Long, accountContext: AccountContext, isOutgoing: Boolean): CharSequence {
             val contentBuilder = SpannableStringBuilder()
             val resource = AppContextHolder.APP_CONTEXT.resources
             val icon = when (replyMessage.type) {
@@ -1148,8 +1149,8 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                 contentBuilder.append(" ")
             }
 
-            if (replyMessage != null && replyMessage.content != null && replyMessage.content.getDescribe(gid) != null) {
-                contentBuilder.append(replyMessage.content.getDescribe(gid).replace(Regex("(\\[|\\])"), ""))
+            if (replyMessage != null && replyMessage.content != null && replyMessage.content.getDescribe(gid, accountContext) != null) {
+                contentBuilder.append(replyMessage.content.getDescribe(gid, accountContext).replace(Regex("(\\[|\\])"), ""))
             }
             return contentBuilder
         }
@@ -1179,7 +1180,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
         }
 
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             val context = AppContextHolder.APP_CONTEXT
 
             if (r == null) {
@@ -1198,7 +1199,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     class PinContent(val mid: Long = 0L) : Content() {
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_pin_message_description)
         }
     }
@@ -1234,10 +1235,10 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             r?.addListener(mRecipientCallback)
         }
 
-        fun getDescription(recipient: Recipient?): CharSequence {
+        fun getDescription(accountContext: AccountContext, recipient: Recipient?): CharSequence {
             this.r = recipient
             this.r?.addListener(mRecipientCallback)
-            return if (recipient?.address?.serialize() == AMELogin.uid) {
+            return if (recipient?.address?.serialize() == accountContext.uid) {
                 AppContextHolder.APP_CONTEXT.getString(if (isStartLive()) R.string.common_live_start_live_tip_by_you else R.string.common_live_stop_live_tip_by_you)
             } else {
                 AppContextHolder.APP_CONTEXT.getString(if (isStartLive()) R.string.common_live_start_live_tip else R.string.common_live_stop_live_tip, recipient?.name
@@ -1266,7 +1267,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
 
     class AirChatContent(val name: String, val password: String) : Content() {
-        override fun getDescribe(gid: Long): CharSequence {
+        override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
             return AppContextHolder.APP_CONTEXT.getString(R.string.common_adhoc_channel_invite_description)
         }
     }

@@ -244,7 +244,7 @@ class ChatModuleImp : IChatModule {
                         if (success) {
                             if (isGroup && groupMessage?.message?.isText() == true) {
                                 EventBus.getDefault().post(ReEditEvent(GroupUtil.addressFromGid(groupMessage.gid),
-                                        groupMessage.indexId, groupMessage.message.content.getDescribe(groupMessage.gid).toString()))
+                                        groupMessage.indexId, groupMessage.message.content.getDescribe(groupMessage.gid, ).toString()))
                             }
                         } else {
                             if (isRecall) {

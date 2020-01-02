@@ -44,44 +44,6 @@ object ConversationUtils {
         mCache.clear()
     }
 
-    /**
-     * 
-     */
-    fun checkConversationStatus(threadId: Long, callback: (isPin: Boolean, isAtMe: Boolean, hasNewJoinRequest: Boolean) -> Unit) {
-        Observable.create(ObservableOnSubscribe<ConversationStatus> {
-            try {
-                val status = getConversationStatus(threadId)
-                it.onNext(status)
-            }
-            catch (ex: Exception) {
-                it.onError(ex)
-            }
-            finally {
-                it.onComplete()
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    callback.invoke(it.isPinned, it.isAtMe, it.hasJoinRequest)
-                }, {
-                    ALog.e(TAG, "isAtMe error", it)
-                    callback.invoke(false, false, false)
-                })
-    }
-
-
-    /**
-     * @me
-     */
-    fun checkHasAtMe(groupMessage: AmeGroupMessageDetail?): Boolean {
-        try {
-            return groupMessage?.extContent?.isAtAll == true || groupMessage?.extContent?.atList?.contains(AMELogin.uid) == true
-        } catch (ex: Exception) {
-            ALog.e(TAG, "checkHasAtMe error", ex)
-        }
-        return false
-    }
-
 
     /**
      * id（）
@@ -116,37 +78,6 @@ object ConversationUtils {
                     }, {
                         ALog.e(TAG, "getThreadId error", it)
                         callback.invoke(0)
-                    })
-        }
-    }
-
-    @SuppressLint("CheckResult")
-    fun getExistThreadId(recipient: Recipient, callback: (threadId: Long) -> Unit) {
-        val value = getCache(recipient.address)
-        if (value != null) {
-            callback.invoke(value as Long)
-        } else {
-            Observable.create(ObservableOnSubscribe<Long> {
-                try {
-                    it.onNext(Repository.getThreadRepo().getThreadIdIfExist(recipient))
-                }
-                catch (ex: Exception) {
-                    it.onError(ex)
-                }
-                finally {
-                    it.onComplete()
-                }
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        ALog.d(TAG, "getExistThreadId: $it")
-                        if (it > 0){
-                            addCache(recipient.address, it)
-                        }
-                        callback.invoke(it)
-                    }, {
-                        ALog.e(TAG, "getThreadId error", it)
-                        callback.invoke(0L)
                     })
         }
     }
