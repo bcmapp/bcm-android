@@ -59,6 +59,29 @@ class SchemeLaunchHelper(val context: Context) {
         fun hasIntent(): Boolean {
             return mLastOutLaunchIntent != null
         }
+
+        /**
+         * scheme data test
+         */
+        fun hasSchemeData(intent: Intent): Boolean {
+            val path = intent.getStringExtra(ARouterConstants.PARAM.PARAM_ROUTE_PATH)
+            if (path?.isNotEmpty() == true) {
+                return true
+            }
+
+            val offline = intent.getStringExtra("bcmdata")
+            if (offline?.isNotEmpty() == true) {
+                return true
+            }
+
+            val action = intent.action
+            if (action == Intent.ACTION_SEND || action == Intent.ACTION_SEND_MULTIPLE) {
+                return true
+            } else {
+                val schemeData = intent.data
+                return schemeData?.path?.isNotEmpty() == true
+            }
+        }
     }
 
 
@@ -161,7 +184,8 @@ class SchemeLaunchHelper(val context: Context) {
                                     .get(con.path)
                                     .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, con.address)
                                     .putLong(ARouterConstants.PARAM.PARAM_THREAD, threadId)
-                                    .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, con.gid ?: -1L)
+                                    .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, con.gid
+                                            ?: -1L)
                                     .navigation(current)
                         }
                     }

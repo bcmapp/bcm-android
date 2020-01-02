@@ -56,10 +56,17 @@ class LaunchActivity : AppCompatActivity() {
             finish()
             return
         }
-        if (!isTaskRoot) {
-            finish()
-            return
+
+        val hasSchemeData = SchemeLaunchHelper.hasSchemeData(intent)
+        ALog.i(TAG, "root: $isTaskRoot scheme data:$hasSchemeData")
+
+        if (AMESelfData.isLogin) {
+            if (!isTaskRoot && !hasSchemeData) {
+                finish()
+                return
+            }
         }
+
         if (LaunchAdConfigure.adEnable()) {
             LaunchAdConfigure.disableAd()
             setContentView(R.layout.launch_activity)
@@ -72,9 +79,6 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun checkLaunch() {
-        val title = getString(R.string.common_request_basic_permission_title)
-        val tip = getString(R.string.common_request_basic_permission_message)
-        val buttonTitle = getString(R.string.common_request_basic_permission_grant)
         PermissionUtil.checkStorage(this) {
             router()
         }
