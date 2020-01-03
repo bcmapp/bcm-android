@@ -2,6 +2,7 @@ package com.bcm.messenger.common.utils
 
 import android.annotation.SuppressLint
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.RxIMHttp
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.core.ServerResult
@@ -37,7 +38,7 @@ object PushUtil {
     private const val SYSTEM_MESSAGE_GET = "/v1/system/msgs"
     private const val SYSTEM_MESSAGE_DELETE_MAXID = "/v1/system/msgs/%s"
 
-    fun registerPush(): Boolean {
+    fun registerPush(accountContext: AccountContext): Boolean {
         if (!AMELogin.isLogin){
             return false
         }
@@ -46,10 +47,10 @@ object PushUtil {
         if (status == PlayServicesUtil.PlayServicesStatus.SUCCESS){
             gcmToken = FcmUtil.getToken().orNull() ?: ""
         }
-        return registerPush(gcmToken)
+        return registerPush(accountContext, gcmToken)
     }
 
-    fun registerPush(gcmToken: String): Boolean {
+    fun registerPush(accountContext: AccountContext, gcmToken: String): Boolean {
         ALog.i(TAG, "registerPush")
         if (!AMELogin.isLogin){
             return false
@@ -59,15 +60,15 @@ object PushUtil {
         ALog.i(TAG, "register push umeng token size:${umengToken.length}, gcmToken size:${gcmToken.length}")
 
         try {
-            registerPush2Server(gcmToken, umengToken)
+            registerPush2Server(accountContext, gcmToken, umengToken)
         } catch (e: Exception) {
             ALog.e(TAG, e)
             return false
         }
 
-        if (umengToken.isNotEmpty()) { //
+        if (umengToken.isNotEmpty()) {
             initUmengSystemTag()
-        } else if (gcmToken.isNotEmpty()) {  //gcm
+        } else if (gcmToken.isNotEmpty()) {
             initFCMSystemTag()
         }
 
@@ -75,9 +76,9 @@ object PushUtil {
     }
 
     @Throws(IOException::class)
-    private fun registerPush2Server(gcmRegistrationId: String, umengRegistrationId: String) {
+    private fun registerPush2Server(accountContext: AccountContext, gcmRegistrationId: String, umengRegistrationId: String) {
         val registration = GcmRegistrationId(gcmRegistrationId, umengRegistrationId, true)
-        RxIMHttp.getHttp(AMELogin.majorContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(REGISTER_GCM_PATH), GsonUtils.toJson(registration), AmeEmpty::class.java)
+        RxIMHttp.getHttp(accountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(REGISTER_GCM_PATH), GsonUtils.toJson(registration), AmeEmpty::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .doOnError {
@@ -86,8 +87,8 @@ object PushUtil {
                 .subscribe()
     }
 
-    private fun unregisterPush2Server() {
-        RxIMHttp.getHttp(AMELogin.majorContext).delete<AmeEmpty>(BcmHttpApiHelper.getApi(REGISTER_GCM_PATH),null,"",AmeEmpty::class.java)
+    private fun unregisterPush2Server(accountContext: AccountContext) {
+        RxIMHttp.getHttp(accountContext).delete<AmeEmpty>(BcmHttpApiHelper.getApi(REGISTER_GCM_PATH),null,"",AmeEmpty::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .doOnError {
@@ -96,10 +97,10 @@ object PushUtil {
                 .subscribe()
     }
 
-    fun unregisterPush(): Boolean {
+    fun unregisterPush(accountContext: AccountContext): Boolean {
         ALog.i(TAG, "unregister push")
         try {
-            unregisterPush2Server()
+            unregisterPush2Server(accountContext)
         } catch (e:Exception) {
             ALog.e(TAG,e)
             return false
@@ -130,23 +131,23 @@ object PushUtil {
     /**
      * App
      */
-    private fun getSystemMessages(): Observable<ServerResult<SystemMessageList>> {
-        return RxIMHttp.getHttp(AMELogin.majorContext).get<ServerResult<SystemMessageList>>(BcmHttpApiHelper.getApi(SYSTEM_MESSAGE_GET),
+    private fun getSystemMessages(accountContext: AccountContext): Observable<ServerResult<SystemMessageList>> {
+        return RxIMHttp.getHttp(accountContext).get<ServerResult<SystemMessageList>>(BcmHttpApiHelper.getApi(SYSTEM_MESSAGE_GET),
                 null, object : TypeToken<ServerResult<SystemMessageList>>() {}.type)
     }
 
     /**
      * ，
      */
-    fun confirmSystemMessages(maxMid: Long): Observable<AmeEmpty> {
-        return RxIMHttp.getHttp(AMELogin.majorContext).delete<AmeEmpty>(BcmHttpApiHelper.getApi(String.format(SYSTEM_MESSAGE_DELETE_MAXID, maxMid)),
+    fun confirmSystemMessages(accountContext: AccountContext, maxMid: Long): Observable<AmeEmpty> {
+        return RxIMHttp.getHttp(accountContext).delete<AmeEmpty>(BcmHttpApiHelper.getApi(String.format(SYSTEM_MESSAGE_DELETE_MAXID, maxMid)),
                 null, null, object : TypeToken<ServerResult<Void>>() {}.type)
     }
 
     var maxSystemMsgId = -1L
     @SuppressLint("CheckResult")
-    fun loadSystemMessages() {
-        getSystemMessages()
+    fun loadSystemMessages(accountContext: AccountContext) {
+        getSystemMessages(accountContext)
                 .subscribeOn(Schedulers.io())
                 .map { result->
                     if (result.isSuccess && result.data != null &&  result.data.msgs.size > 0) {
@@ -179,7 +180,7 @@ object PushUtil {
                 .observeOn(Schedulers.io())
                 .subscribe({
                     it.forEach { data ->
-                        AmePushProcess.processPush(data, false)
+                        AmePushProcess.processPush(accountContext, data)
                     }
                 }, {
                     ALog.e(TAG, it.localizedMessage)

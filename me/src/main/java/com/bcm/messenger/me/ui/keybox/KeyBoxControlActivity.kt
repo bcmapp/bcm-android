@@ -288,7 +288,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
 
             containerView.setOnLongClickListener {
 
-                if (AmeLoginLogic.getCurrentAccount()?.uid != accountData?.getAccountID()) {
+                if (AmeLoginLogic.getMajorAccount()?.uid != accountData?.getAccountID()) {
                     BcmPopupMenu.Builder(this@KeyBoxControlActivity)
                             .setMenuItem(listOf(BcmPopupMenu.MenuItem(getString(R.string.me_keybox_long_click_delete))))
                             .setAnchorView(containerView)
@@ -337,7 +337,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
                 containerView.account_backup_date.setTextColor(getColorCompat(R.color.common_color_ff3737))
             }
 
-            if (AmeLoginLogic.getCurrentAccount()?.uid == account.uid) {
+            if (AmeLoginLogic.getMajorAccount()?.uid == account.uid) {
                 containerView.setBackgroundResource(R.drawable.me_account_item_current_bg)
             } else {
                 containerView.setBackgroundResource(R.drawable.me_account_item_other_bg)

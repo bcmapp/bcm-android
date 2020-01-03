@@ -51,7 +51,6 @@ import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import org.greenrobot.eventbus.EventBus
 import org.whispersystems.curve25519.Curve25519
 import org.whispersystems.libsignal.ecc.DjbECPublicKey
 import java.io.File
@@ -228,7 +227,7 @@ class UserModuleImp : IUserModule
     }
 
     override fun saveAccount(recipient: Recipient, newName: String?, newAvatar: String?) {
-        AmeLoginLogic.getCurrentAccount()?.apply {
+        AmeLoginLogic.getMajorAccount()?.apply {
             if (newName != null) {
                 name = newName
             }
@@ -240,7 +239,7 @@ class UserModuleImp : IUserModule
     }
 
     override fun saveAccount(recipient: Recipient, newPrivacyProfile: PrivacyProfile) {
-        AmeLoginLogic.getCurrentAccount()?.apply {
+        AmeLoginLogic.getMajorAccount()?.apply {
             name = if (!newPrivacyProfile.name.isNullOrEmpty()) {
                 newPrivacyProfile.name ?: ""
             } else {
@@ -261,7 +260,7 @@ class UserModuleImp : IUserModule
         val privateKeyArray = checkOldPasswordRight(oldPassword)
         val newPrivateKey = BCMPrivateKeyUtils.encryptPrivateKey(privateKeyArray, newPassword.toByteArray())
 
-        val account = AmeLoginLogic.getCurrentAccount()
+        val account = AmeLoginLogic.getMajorAccount()
         if (account == null) {
             ALog.e(TAG, "change pin without login")
             return false
@@ -311,7 +310,7 @@ class UserModuleImp : IUserModule
     }
 
     override fun getDefaultPinPassword(): String? {
-        var phone = AmeLoginLogic.getCurrentAccount()?.phone ?: return null
+        var phone = AmeLoginLogic.getMajorAccount()?.phone ?: return null
         try {
             if (isPhoneEncrypted(phone)) {
                 phone = decryptPhone(phone)
@@ -347,7 +346,7 @@ class UserModuleImp : IUserModule
 
     @Throws(Exception::class)
     private fun checkOldPasswordRight(oldPassword: String): ByteArray {
-        val account = AmeLoginLogic.getCurrentAccount()
+        val account = AmeLoginLogic.getMajorAccount()
         if (null != account) {
             val result = AmeLoginLogic.accountHistory.getPrivateKeyWithPassword(account, oldPassword)
             if (null != result) {
@@ -394,7 +393,7 @@ class UserModuleImp : IUserModule
 
     override fun getUserPrivateKey(password: String): ByteArray? {
         try {
-            val account = AmeLoginLogic.getCurrentAccount() ?: return null
+            val account = AmeLoginLogic.getMajorAccount() ?: return null
             return AmeLoginLogic.accountHistory.getPrivateKeyWithPassword(account, password)
         } catch (ex: Exception) {
             return null

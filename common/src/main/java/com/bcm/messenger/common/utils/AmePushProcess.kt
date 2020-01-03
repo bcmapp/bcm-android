@@ -40,7 +40,7 @@ import org.greenrobot.eventbus.EventBus
 
 
 /**
- * 
+ *
  * Created by bcm.social.01 on 2018/6/28.
  */
 object AmePushProcess {
@@ -68,7 +68,7 @@ object AmePushProcess {
     private var mFriendReqNotification: Notification? = null
 
     /**
-     * 
+     *
      */
     class SystemNotifyData(val type: String, val id: Long, val activity_id: Long, val content: String) : Parcelable, NotGuard {
 
@@ -119,7 +119,7 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
     class ChatNotifyData(var uid: String?) : Parcelable, NotGuard {
         constructor(parcel: Parcel) : this(parcel.readString())
@@ -145,7 +145,7 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
     class GroupNotifyData(val mid: Long?, val gid: Long?, var isAt: Boolean? = false) : Parcelable, NotGuard {
 
@@ -205,7 +205,7 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
     class AdHocNotifyData(val session: String, var isAt: Boolean = false) : Parcelable, NotGuard {
         constructor(parcel: Parcel) : this(parcel.readString(), parcel.readInt() == 1)
@@ -249,15 +249,15 @@ object AmePushProcess {
                 Observable.create<Unit> {
                     if (needShowOffline()) {
                         incrementOfflineUnreadCount(accountContext, notify)
-                        handleNotify(notify.bcmdata?.contactChat)
-                        handleNotify(notify.bcmdata?.groupChat)
+                        handleNotify(accountContext, notify.bcmdata?.contactChat)
+                        handleNotify(accountContext, notify.bcmdata?.groupChat)
                         handleNotify(notify.bcmdata?.friendMsg)
-                        handleNotify(notify.bcmdata?.adhocChat)
+                        handleNotify(accountContext, notify.bcmdata?.adhocChat)
 
                     } else {
                         ALog.e(TAG, "receive push data -- not showOffline")
                     }
-                    handleNotify(notify.bcmdata?.systemChat)
+                    handleNotify(accountContext, notify.bcmdata?.systemChat)
                     it.onComplete()
                 }.subscribeOn(AmeDispatcher.singleScheduler)
                         .observeOn(AmeDispatcher.singleScheduler)
@@ -321,9 +321,13 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
     private fun incrementOfflineUnreadCount(accountContext: AccountContext?, data: BcmData) {
+        if (null == accountContext) {
+            return
+        }
+
         if (!AppForeground.foreground()) {
             val privateChat = data.bcmdata?.contactChat
             val groupChat = data.bcmdata?.groupChat
@@ -333,7 +337,7 @@ object AmePushProcess {
             if (privateChat != null || groupChat != null || friendRequest != null) {
 
                 offlineUnreadSet.clear()
-                offlineUnreadSet.addAll(Repository.getThreadRepo().getAllThreadsWithRecipientReady().mapNotNull {
+                offlineUnreadSet.addAll(Repository.getThreadRepo(accountContext).getAllThreadsWithRecipientReady().mapNotNull {
                     val r = it.getRecipient()
                     if (r.isMuted || it.unreadCount <= 0) {
                         null
@@ -348,7 +352,7 @@ object AmePushProcess {
 
                 val groupId = groupChat?.gid
                 if (groupId != null) {
-                    val mute = GroupInfoDataManager.queryOneAmeGroupInfo(groupId)?.mute
+                    val mute = GroupInfoDataManager.queryOneAmeGroupInfo(accountContext, groupId)?.mute
                             ?: true
                     if (!mute) {
                         offlineUnreadSet.add(groupId.toString())
@@ -363,12 +367,12 @@ object AmePushProcess {
                     }
                 }
 
-                friendReqUnreadCount = UserDatabase.getDatabase().friendRequestDao().queryUnreadCount()
+                friendReqUnreadCount = UserDatabase.getDatabase(accountContext).friendRequestDao().queryUnreadCount()
 
             }
 
             if (adhocChat != null) {
-                val dao = UserDatabase.getDatabase().adHocSessionDao()
+                val dao = UserDatabase.getDatabase(accountContext).adHocSessionDao()
 
                 adhocOfflineUnreadSet.clear()
                 adhocOfflineUnreadSet.addAll(dao.loadAllUnreadSession().map {
@@ -387,18 +391,22 @@ object AmePushProcess {
         return start == -1L || start == 0L || current in start..end
     }
 
-    private fun handleNotify(notifyData: SystemNotifyData?) {
+    private fun handleNotify(accountContext: AccountContext?, notifyData: SystemNotifyData?) {
         if(notifyData == null) {
             return
         }
-        val oldJsonData = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.uid + "_" + notifyData.type, "")
-        if (!oldJsonData.isNullOrEmpty()) {
-            val oldData = GsonUtils.fromJson(oldJsonData, SystemNotifyData::class.java)
-            if (oldData.id >= notifyData.id) { //
-                ALog.i(TAG, "oldData.id = ${oldData.id} ,newNotifyData.id = ${notifyData.id}")
-                return
+
+        if (null != accountContext) {
+            val oldJsonData = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + accountContext.uid + "_" + notifyData.type, "")
+            if (!oldJsonData.isNullOrEmpty()) {
+                val oldData = GsonUtils.fromJson(oldJsonData, SystemNotifyData::class.java)
+                if (oldData.id >= notifyData.id) { //
+                    ALog.i(TAG, "oldData.id = ${oldData.id} ,newNotifyData.id = ${notifyData.id}")
+                    return
+                }
             }
         }
+
         try {
             ALog.i(TAG, "handleNotify type: ${notifyData.type}, content: ${notifyData.content}")
             val current = AmeTimeUtil.serverTimeMillis() / 1000
@@ -429,18 +437,23 @@ object AmePushProcess {
                         AmeNotificationService.ACTION_HOME)
             }
             //
-            PushUtil.confirmSystemMessages(notifyData.id).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        ALog.i(TAG, "confirm system message maxMid ${notifyData.id}")
-                    }, {
-                        ALog.e(TAG, it.localizedMessage)
-                    })
+            if (null != accountContext) {
+                PushUtil.confirmSystemMessages(accountContext, notifyData.id).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            ALog.i(TAG, "confirm system message maxMid ${notifyData.id}")
+                        }, {
+                            ALog.e(TAG, it.localizedMessage)
+                        })
+            }
+
 
         }catch (ex: Exception) {
             ALog.e(TAG, "handleNotify for system chat fail", ex)
         }finally {
-            TextSecurePreferences.setStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.uid + "_" + notifyData.type, GsonUtils.toJson(notifyData))
+            if (null != accountContext) {
+                TextSecurePreferences.setStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + accountContext.uid + "_" + notifyData.type, GsonUtils.toJson(notifyData))
+            }
         }
     }
 
@@ -462,7 +475,7 @@ object AmePushProcess {
         }
     }
 
-    private fun handleNotify(notifyData: ChatNotifyData?) {
+    private fun handleNotify(accountContext: AccountContext?, notifyData: ChatNotifyData?) {
         if (null != notifyData) {
             ALog.i(TAG, "receive push group data -- background!!!")
 
@@ -487,14 +500,19 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
-    private fun handleNotify(notifyData: GroupNotifyData?) {
+    private fun handleNotify(accountContext: AccountContext?, notifyData: GroupNotifyData?) {
         if (null != notifyData && notifyData.gid ?: 0 > 0) {
             val builder = AmeNotification.getDefaultNotificationBuilder(AppContextHolder.APP_CONTEXT)
-            val mute = GroupInfoDataManager.queryOneAmeGroupInfo(notifyData.gid
-                    ?: throw Exception("group message id is null"))?.mute
-                    ?: true
+
+            var mute = false
+            if (accountContext != null) {
+                mute = GroupInfoDataManager.queryOneAmeGroupInfo(accountContext,notifyData.gid
+                        ?: throw Exception("group message id is null"))?.mute
+                        ?: true
+            }
+
             if (notifyData.isAt == true || !mute) {
                 setAlarm(builder, null, RecipientDatabase.VibrateState.ENABLED)
                 notifyBar(builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
@@ -540,12 +558,12 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
-    private fun handleNotify(notifyData: AdHocNotifyData?) {
-        if (notifyData != null) {
+    private fun handleNotify(accountContext: AccountContext?, notifyData: AdHocNotifyData?) {
+        if (notifyData != null && accountContext != null) {
             val builder = AmeNotification.getAdHocNotificationBuilder(AppContextHolder.APP_CONTEXT)
-            val enable = UserDatabase.getDatabase().adHocSessionDao().querySession(notifyData.session)?.mute != true
+            val enable = UserDatabase.getDatabase(accountContext).adHocSessionDao().querySession(notifyData.session)?.mute != true
             if (notifyData.isAt || enable) {
                 setAlarm(builder, null, RecipientDatabase.VibrateState.ENABLED)
                 notifyBar(builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
@@ -557,7 +575,7 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
     private fun notifyBar(builder: NotificationCompat.Builder, msg: Parcelable, context: Context?, notificationId: Int, action: Int) {
         try {
@@ -654,7 +672,7 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
     private fun needShowOffline(): Boolean {
         if (System.currentTimeMillis() - pushInitTime > 5000 && pushInitTime != 0L) {
@@ -666,7 +684,7 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
     fun clearNotificationCenter() {
         ALog.i(TAG, "clearNotificationCenter")
@@ -681,7 +699,7 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
     fun clearFriendRequestNotification() {
         ALog.i(TAG, "clearFriendRequestNotification")
@@ -693,7 +711,7 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
     fun notifyDownloadApkNotification(contentText: String, isCompleted: Boolean, installPath: String) {
         ALog.i(TAG, "notifyDownloadApkNotification isComplete: $isCompleted")
@@ -715,7 +733,7 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
     fun updateAppBadge(context: Context, count: Int) {
         try {
@@ -739,7 +757,7 @@ object AmePushProcess {
     }
 
     /**
-     * 
+     *
      */
     private fun updateAppBadge(context: Context, chatCount: Int, friendReqCount: Int) {
         try {

@@ -16,13 +16,6 @@ object AMELogin {
     }
 
     val mySupport get() = AmeModuleCenter.login().mySupport()
-    var gcmTokenLastSetTime: Long
-        set(value) {
-            AmeModuleCenter.login().setGcmTokenLastSetTime(value)
-        }
-        get() {
-            return AmeModuleCenter.login().gcmTokenLastSetTime()
-        }
     var gcmToken: String?
         set(value) {
             AmeModuleCenter.login().setGcmToken(value)

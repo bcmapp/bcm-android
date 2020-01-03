@@ -2,7 +2,6 @@ package com.bcm.messenger.common.provider
 
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.config.BcmFeatureSupport
-import com.bcm.messenger.common.event.ServiceConnectEvent
 
 /**
  * bcm.social.01 2018/9/20.
@@ -27,13 +26,7 @@ interface ILoginModule : IAmeModule {
 
     fun setGcmToken(token: String?)
 
-    fun gcmTokenLastSetTime(): Long
-
-    fun setGcmTokenLastSetTime(time: Long)
-
     fun isGcmDisabled(): Boolean
-
-    fun isPushRegistered(uid:String): Boolean
 
     fun signalingKey(uid: String): String?
 
@@ -98,4 +91,5 @@ interface ILoginModule : IAmeModule {
     fun updateAllowReceiveStrangers(allow: Boolean, callback: ((succeed: Boolean) -> Unit)?)
 
     fun getAccountContext(uid: String): AccountContext
+    fun refreshOfflineToken()
 }

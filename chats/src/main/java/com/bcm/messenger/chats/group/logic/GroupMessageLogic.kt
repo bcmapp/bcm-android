@@ -110,10 +110,10 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback
             ALog.w(TAG, "receiveGroupMessage, but not have groupInfo, ignore gid: ${e.message.gid}")
             return
         }
-        val isAtMe = e.message?.extContent?.isAtAll == true || e.message?.extContent?.atList?.contains(AMELogin.uid) == true
+        val isAtMe = e.message?.extContent?.isAtAll == true || e.message?.extContent?.atList?.contains(e.accountContext.uid) == true
         if (e.message.type.toLong() != AmeGroupMessage.DECRYPT_FAIL) {
             val bcmData = AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, null, AmePushProcess.GroupNotifyData(e.message.serverIndex, e.message.gid, isAtMe), null, null))
-            AmePushProcess.processPush(bcmData, false)
+            AmePushProcess.processPush(e.accountContext, bcmData)
         } else {
             ALog.e(TAG, "receive group message and DECRYPT_FAIL---gid " + e.message.gid)
         }

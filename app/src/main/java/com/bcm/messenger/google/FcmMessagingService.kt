@@ -38,7 +38,7 @@ class FcmMessagingService : FirebaseMessagingService() {
             ALog.w(TAG, "onNewToken null")
             return
         }
-        if (!AMELogin.isPushRegistered) {
+        if (!AMELogin.isLogin) {
             ALog.i(TAG, "Got a new FCM token, but the user isn't registered.")
             return
         }
@@ -68,6 +68,6 @@ class FcmMessagingService : FirebaseMessagingService() {
     }
 
     private fun handleReceivedBCMNotify(bcmdata: String) {
-        AmePushProcess.processPush(bcmdata)
+        AmePushProcess.processPush(null, bcmdata)
     }
 }

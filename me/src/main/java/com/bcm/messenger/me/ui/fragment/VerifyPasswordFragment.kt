@@ -175,7 +175,7 @@ class VerifyPasswordFragment : Fragment() {
         verify_pin_loading.startAnim()
 
         Observable.create<Boolean> {
-            val accountData = AmeLoginLogic.getCurrentAccount()
+            val accountData = AmeLoginLogic.getMajorAccount()
             if (accountData != null) {
                 it.onNext(AmeLoginLogic.accountHistory.getPrivateKeyWithPassword(accountData, inputPassword) != null)
             } else {

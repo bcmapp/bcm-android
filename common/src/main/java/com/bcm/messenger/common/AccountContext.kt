@@ -62,7 +62,4 @@ class AccountContext(val uid: String, val token: String, val password: String) :
         get() {
             return AmeModuleCenter.login().getSignedPreKeyRotationTime(uid)
         }
-
-
-    val isPushRegistered: Boolean get() = AmeModuleCenter.login().isPushRegistered(uid)
 }

@@ -117,7 +117,7 @@ object AmeLoginLogic {
     /**
      * @return current login account state
      */
-    fun getCurrentAccount(): AmeAccountData? {
+    fun getMajorAccount(): AmeAccountData? {
         return accountHistory.majorAccountData()
     }
 
@@ -183,7 +183,7 @@ object AmeLoginLogic {
 
     private fun handleLocalLogin(uid: String, context: Context) {
 
-        val currentAccount = getCurrentAccount() ?: return
+        val currentAccount = getMajorAccount() ?: return
         RotateSignedPreKeyListener.schedule(context)
 
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onAccountLogin(AppContextHolder.APP_CONTEXT, currentAccount.uid)
@@ -210,7 +210,7 @@ object AmeLoginLogic {
                 handleLocalLogout(accountContext, AppContextHolder.APP_CONTEXT)
 
                 if (withLogOut) {
-                    PushUtil.unregisterPush()
+                    PushUtil.unregisterPush(accountContext)
                 }
 
                 if (clearHistory) {
@@ -520,7 +520,7 @@ object AmeLoginLogic {
 
         initIdentityKey(uid, ecKeyPair)
 
-        PushUtil.registerPush()
+        PushUtil.registerPush(getAccountContext(uid))
 
         handleLocalLogin(uid, AppContextHolder.APP_CONTEXT)
 
@@ -530,7 +530,6 @@ object AmeLoginLogic {
     @Throws(Exception::class)
     private fun initIdentityKey(uid: String, ecKeyPair: ECKeyPair) {
         try {
-
             val identityKeyPair = IdentityKeyPair(IdentityKey(ecKeyPair.publicKey), ecKeyPair.privateKey)
             val records = PreKeyUtil.generatePreKeys(AppContextHolder.APP_CONTEXT)
             val signedPreKey = PreKeyUtil.generateSignedPreKey(AppContextHolder.APP_CONTEXT, identityKeyPair, true)
@@ -540,7 +539,6 @@ object AmeLoginLogic {
 
             Repository.getIdentityRepo(getAccountContext(uid)).saveIdentity(uid, identityKeyPair.publicKey, IdentityRepo.VerifiedStatus.VERIFIED,
                     true, System.currentTimeMillis(), true)
-
         } catch (e: Exception) {
             ALog.logForSecret(TAG, "loginSucceed generate prekey or prekey upload failed, ${e.message}", e)
             quit(getAccountContext(uid), false)
@@ -858,7 +856,7 @@ object AmeLoginLogic {
         AmeDispatcher.io.dispatch {
             var right = false
             try {
-                val account = getCurrentAccount()
+                val account = getMajorAccount()
                 if (null != account) {
                     right = accountHistory.getPrivateKeyWithPassword(account, password) != null
                 }
@@ -897,5 +895,13 @@ object AmeLoginLogic {
 
     fun getGcmToken(): String {
         return gcmToken
+    }
+
+    fun refreshOfflineToken() {
+        AmeDispatcher.io.dispatch {
+            accountHistory.getAllLoginContext().forEach {
+                PushUtil.registerPush(it)
+            }
+        }
     }
 }

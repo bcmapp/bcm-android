@@ -140,7 +140,7 @@ class AccountSecurityActivity : SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun initSelf() {
-        account = AmeLoginLogic.getCurrentAccount()
+        account = AmeLoginLogic.getMajorAccount()
         account?.let {
             isShowRedDot = SuperPreferences.getAccountRedDot(this)
             isShowTip = SuperPreferences.getAccountTipVisible(this)

@@ -18,6 +18,7 @@ package com.bcm.messenger.common.jobs;
 
 import com.bcm.messenger.common.gcm.FcmUtil
 import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.PushUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -43,18 +44,14 @@ object GcmRefresh {
                 if (gcmToken.isPresent) {
                     val oldToken = AMELogin.gcmToken
                     if (gcmToken.get() != oldToken) {
-                        val oldLength = oldToken?.length ?: 0
-                        ALog.i(TAG, "Token changed. oldLength: " + oldLength + "  newLength: " + gcmToken.get().length)
+                        if (AMELogin.isLogin) {
+                            AmeModuleCenter.login().refreshOfflineToken()
+                        }
                     } else {
                         ALog.i(TAG, "Token didn't change.");
                     }
 
-                    if (AMELogin.isLogin) {
-                        PushUtil.registerPush(gcmToken.get())
-                    }
-
                     AMELogin.gcmToken = gcmToken.get()
-                    AMELogin.gcmTokenLastSetTime = System.currentTimeMillis()
                 }
             }
         }, 2000)

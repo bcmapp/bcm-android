@@ -49,26 +49,26 @@ class GroupMessageReceiver : IServerDataListener {
             when (proto.type) {
                 GroupMessageProtos.GroupMsg.Type.TYPE_CHAT -> {
                     val groupChatMessage = GroupMessageProtos.GroupChatMsg.parseFrom(proto.body)
-                    val fromUid = getRealUid(groupChatMessage.gid, groupChatMessage.fromUid, groupChatMessage.sourceExtra)
+                    val fromUid = getRealUid(accountContext, groupChatMessage.gid, groupChatMessage.fromUid, groupChatMessage.sourceExtra)
                     if (null != fromUid) {
-                        handleGroupChatMessage(groupChatMessage, fromUid)
+                        handleGroupChatMessage(accountContext, groupChatMessage, fromUid)
                     } else {
                         ALog.e(TAG, "who are u?")
                     }
                 }
                 GroupMessageProtos.GroupMsg.Type.TYPE_INFO_UPDATE -> {
                     val groupInfoUpdate = GroupMessageProtos.GroupInfoUpdate.parseFrom(proto.body)
-                    handleGroupInfoUpdateMessage(groupInfoUpdate)
+                    handleGroupInfoUpdateMessage(accountContext, groupInfoUpdate)
                 }
                 GroupMessageProtos.GroupMsg.Type.TYPE_MEMBER_UPDATE -> {
                     val groupMemberUpdate = GroupMessageProtos.GroupMemberUpdate.parseFrom(proto.body)
-                    handleGroupMemberUpdate(groupMemberUpdate)
+                    handleGroupMemberUpdate(accountContext, groupMemberUpdate)
                 }
                 GroupMessageProtos.GroupMsg.Type.TYPE_RECALL -> {
                     val groupRecallMessage = GroupMessageProtos.GroupRecallMsg.parseFrom(proto.body)
-                    val fromUid = getRealUid(groupRecallMessage.gid, groupRecallMessage.fromUid, groupRecallMessage.sourceExtra)
+                    val fromUid = getRealUid(accountContext, groupRecallMessage.gid, groupRecallMessage.fromUid, groupRecallMessage.sourceExtra)
                     if (null != fromUid) {
-                        handleGroupRecallMessage(groupRecallMessage, fromUid)
+                        handleGroupRecallMessage(accountContext, groupRecallMessage, fromUid)
                     } else {
                         ALog.e(TAG, "who are u?")
                     }
@@ -102,8 +102,8 @@ class GroupMessageReceiver : IServerDataListener {
         return true
     }
 
-    private fun handleGroupChatMessage(serverMessage: GroupMessageProtos.GroupChatMsg, fromUid:String) {
-        if (MessageDataManager.isMe(fromUid, serverMessage.mid, serverMessage.gid)) {
+    private fun handleGroupChatMessage(accountContext: AccountContext, serverMessage: GroupMessageProtos.GroupChatMsg, fromUid:String) {
+        if (accountContext.uid == fromUid) {
             return
         }
 
@@ -111,7 +111,7 @@ class GroupMessageReceiver : IServerDataListener {
         val decryptText = if (decryptBean == null) {
             serverMessage.text
         } else {
-            val keyParam = GroupInfoDataManager.queryGroupKeyParam(serverMessage.gid, decryptBean.keyVersion)
+            val keyParam = GroupInfoDataManager.queryGroupKeyParam(accountContext, serverMessage.gid, decryptBean.keyVersion)
             val result = GroupMessageEncryptUtils.decryptMessageProcess(keyParam, decryptBean)
             if (result == null) {
                 GroupMessageLogic.syncOfflineMessage(serverMessage.gid, serverMessage.mid, Math.max(serverMessage.mid-1, 0))
@@ -128,7 +128,7 @@ class GroupMessageReceiver : IServerDataListener {
             message = AmeGroupMessage(AmeGroupMessage.LINK, content)
         }
 
-        if (!MessageDataManager.isLogined()) {
+        if (!accountContext.isLogin) {
             return
         }
 
@@ -143,7 +143,7 @@ class GroupMessageReceiver : IServerDataListener {
         detail.type = 1
         detail.keyVersion = decryptBean.keyVersion
 
-        detail.isSendByMe = MessageDataManager.isMe(fromUid, serverMessage.mid, serverMessage.gid)
+        detail.isSendByMe = false
         if (!detail.isSendByMe) {
             detail.sendState = AmeGroupMessageDetail.SendState.RECEIVE_SUCCESS
         } else {
@@ -152,11 +152,11 @@ class GroupMessageReceiver : IServerDataListener {
 
         detail.extContent = AmeGroupMessageDetail.ExtensionContent(serverMessage.content)
 
-        EventBus.getDefault().post(GroupMessageEvent(detail))
+        EventBus.getDefault().post(GroupMessageEvent(accountContext, detail))
     }
 
-    private fun handleGroupInfoUpdateMessage(message: GroupMessageProtos.GroupInfoUpdate) {
-        val gInfo = GroupInfoDataManager.queryOneGroupInfo(message.gid) ?: return
+    private fun handleGroupInfoUpdateMessage(accountContext: AccountContext, message: GroupMessageProtos.GroupInfoUpdate) {
+        val gInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, message.gid) ?: return
 
         var newName:String? = null
         var newIcon:String? = null
@@ -199,7 +199,7 @@ class GroupMessageReceiver : IServerDataListener {
             groupMessage.content_type = AmeGroupMessage.SYSTEM_INFO.toInt()
             val content = AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_GROUP_NAME_UPDATE, "", listOf(newName?:""))
             groupMessage.text = AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO, content).toString()
-            MessageDataManager.insertReceiveMessage(groupMessage)
+            MessageDataManager.insertReceiveMessage(accountContext, groupMessage)
 
             GroupLogic.updateGroupNameAndIcon(message.gid, newName?:gInfo.name, newIcon?:gInfo.iconUrl)
 
@@ -209,11 +209,11 @@ class GroupMessageReceiver : IServerDataListener {
         }
     }
 
-    private fun handleGroupMemberUpdate(message: GroupMessageProtos.GroupMemberUpdate) {
-        if (isMyQuitGroupEvent(message)) {
+    private fun handleGroupMemberUpdate(accountContext: AccountContext, message: GroupMessageProtos.GroupMemberUpdate) {
+        if (isMyQuitGroupEvent(accountContext, message)) {
             ALog.i(TAG, "leave group" + message.gid)
 
-            val db = Repository.getThreadRepo()
+            val db = Repository.getThreadRepo(accountContext)
             val groupRecipient = Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, message.gid)
             val threadId = db.getThreadIdIfExist(groupRecipient)
             if (threadId > 0) {
@@ -222,7 +222,7 @@ class GroupMessageReceiver : IServerDataListener {
             return
         }
 
-        val memberChangedMessage = AmeGroupMemberChanged(message.gid, message.mid)
+        val memberChangedMessage = AmeGroupMemberChanged(accountContext, message.gid, message.mid)
         memberChangedMessage.action = message.action
         memberChangedMessage.fromUid = message.fromUid
 
@@ -234,26 +234,26 @@ class GroupMessageReceiver : IServerDataListener {
             info.role = member.role
             info.gid = message.gid
             if (message.action == AmeGroupMemberChanged.LEAVE) {
-                info.role = UserDataManager.queryGroupMemberRole(info.gid, member.uid)
+                info.role = UserDataManager.queryGroupMemberRole(accountContext, info.gid, member.uid)
             }
             list.add(info)
         }
         memberChangedMessage.memberList = list
 
         val bcmData = AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, null, AmePushProcess.GroupNotifyData(message.mid, message.gid, false), null, null, null))
-        AmePushProcess.processPush(bcmData, false)
+        AmePushProcess.processPush(accountContext, bcmData)
 
         Logger.i("GroupMemberChangedNotify ${memberChangedMessage.groupId} event:${memberChangedMessage.action} count:${memberChangedMessage.memberList.size}")
         val detail = memberChangedMessage.toDetail()
         if (null != detail.message) {
-            EventBus.getDefault().post(GroupMessageEvent(detail))
+            EventBus.getDefault().post(GroupMessageEvent(accountContext, detail))
         }
 
         EventBus.getDefault().post(GroupMemberChangedNotify(memberChangedMessage))
     }
 
-    private fun isMyQuitGroupEvent(message: GroupMessageProtos.GroupMemberUpdate): Boolean {
-        val loginUid = AMELogin.uid
+    private fun isMyQuitGroupEvent(accountContext: AccountContext, message: GroupMessageProtos.GroupMemberUpdate): Boolean {
+        val loginUid = accountContext.uid
         if (message.fromUid == loginUid && message.action == AmeGroupMemberChanged.LEAVE) {
             if (message.membersCount == 1) {
                 return message.getMembers(0).uid == loginUid
@@ -263,19 +263,19 @@ class GroupMessageReceiver : IServerDataListener {
     }
 
 
-    private fun handleGroupRecallMessage(message: GroupMessageProtos.GroupRecallMsg, fromUid: String) {
+    private fun handleGroupRecallMessage(accountContext: AccountContext, message: GroupMessageProtos.GroupRecallMsg, fromUid: String) {
         val groupMessage = GroupMessage()
         groupMessage.gid = message.gid
         groupMessage.mid = message.mid
         groupMessage.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
         groupMessage.create_time = AmeTimeUtil.serverTimeMillis() / 1000
         groupMessage.from_uid = fromUid
-        MessageDataManager.insertReceiveMessage(groupMessage)
+        MessageDataManager.insertReceiveMessage(accountContext, groupMessage)
 
-        MessageDataManager.recallMessage(fromUid, message.gid, message.recalledMid)
+        MessageDataManager.recallMessage(accountContext, fromUid, message.gid, message.recalledMid)
     }
 
-    private fun getRealUid(gid:Long, defaultUid:String?, encryptedUid:String?): String? {
+    private fun getRealUid(accountContext: AccountContext, gid:Long, defaultUid:String?, encryptedUid:String?): String? {
         if (null == encryptedUid || encryptedUid.isEmpty()) {
             return defaultUid
         }
@@ -289,7 +289,7 @@ class GroupMessageReceiver : IServerDataListener {
             val iv = json.optString("iv")
             val version = json.optInt("version")
 
-            val groupInfo = GroupInfoDataManager.queryOneGroupInfo(gid)
+            val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
                     ?: throw Exception("$gid groupInfo is null")
             if (!ByteUtils.equals(groupInfo.channelPublicKey, groupMsgPubKey.base64Decode())) {
                 throw Exception("$gid groupMsgPubKey is wrong")

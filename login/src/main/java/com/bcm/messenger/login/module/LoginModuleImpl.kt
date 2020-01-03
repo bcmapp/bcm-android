@@ -83,7 +83,7 @@ class LoginModuleImpl : ILoginModule
     }
 
     override fun registrationId(uid: String): Int {
-        return AmeLoginLogic.getCurrentAccount()?.registrationId ?: 0
+        return AmeLoginLogic.getMajorAccount()?.registrationId ?: 0
     }
 
     override fun gcmToken(): String {
@@ -94,36 +94,20 @@ class LoginModuleImpl : ILoginModule
         AmeLoginLogic.setGcmToken(token ?: "")
     }
 
-    override fun gcmTokenLastSetTime(): Long {
-        return AmeLoginLogic.getCurrentAccount()?.gcmTokenLastSetTime ?: 0L
-    }
-
-    override fun setGcmTokenLastSetTime(time: Long) {
-        val accountData = AmeLoginLogic.getCurrentAccount()
-        if (accountData != null) {
-            accountData.gcmTokenLastSetTime = time
-            AmeLoginLogic.saveAccount(accountData)
-        }
-    }
-
     override fun isGcmDisabled(): Boolean {
-        return AmeLoginLogic.getCurrentAccount()?.gcmDisabled ?: false
-    }
-
-    override fun isPushRegistered(uid: String): Boolean {
-        return AmeLoginLogic.getCurrentAccount()?.pushRegistered ?: false
+        return AmeLoginLogic.accountHistory.majorAccountData()?.gcmDisabled ?: false
     }
 
     override fun signalingKey(uid: String): String? {
-        return AmeLoginLogic.getCurrentAccount()?.signalingKey
+        return AmeLoginLogic.getMajorAccount()?.signalingKey
     }
 
     override fun isSignedPreKeyRegistered(uid: String): Boolean {
-        return AmeLoginLogic.getCurrentAccount()?.signedPreKeyRegistered ?: false
+        return AmeLoginLogic.getMajorAccount()?.signedPreKeyRegistered ?: false
     }
 
     override fun setSignedPreKeyRegistered(uid: String, registered: Boolean) {
-        val accountData = AmeLoginLogic.getCurrentAccount()
+        val accountData = AmeLoginLogic.getMajorAccount()
         if (accountData != null) {
             accountData.signedPreKeyRegistered = registered
             AmeLoginLogic.saveAccount(accountData)
@@ -131,11 +115,11 @@ class LoginModuleImpl : ILoginModule
     }
 
     override fun getSignedPreKeyFailureCount(uid: String): Int {
-        return AmeLoginLogic.getCurrentAccount()?.signedPreKeyFailureCount ?: 0
+        return AmeLoginLogic.getMajorAccount()?.signedPreKeyFailureCount ?: 0
     }
 
     override fun setSignedPreKeyFailureCount(uid: String, count: Int) {
-        val accountData = AmeLoginLogic.getCurrentAccount()
+        val accountData = AmeLoginLogic.getMajorAccount()
         if (accountData != null) {
             accountData.signedPreKeyFailureCount = count
             AmeLoginLogic.saveAccount(accountData)
@@ -143,11 +127,11 @@ class LoginModuleImpl : ILoginModule
     }
 
     override fun getSignedPreKeyRotationTime(uid: String): Long {
-        return AmeLoginLogic.getCurrentAccount()?.signedPreKeyRotationTime ?: 0L
+        return AmeLoginLogic.getMajorAccount()?.signedPreKeyRotationTime ?: 0L
     }
 
     override fun setSignedPreKeyRotationTime(uid: String, time: Long) {
-        val accountData = AmeLoginLogic.getCurrentAccount()
+        val accountData = AmeLoginLogic.getMajorAccount()
         if (accountData != null) {
             accountData.signedPreKeyRotationTime = time
             AmeLoginLogic.saveAccount(accountData)
@@ -204,6 +188,10 @@ class LoginModuleImpl : ILoginModule
 
     override fun getAccountContext(uid: String): AccountContext {
         return AmeLoginLogic.getAccountContext(uid)
+    }
+
+    override fun refreshOfflineToken() {
+        return AmeLoginLogic.refreshOfflineToken()
     }
 
     override fun onForegroundChanged(isForeground: Boolean) {

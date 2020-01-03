@@ -40,7 +40,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
     }
 
     fun setPin(pin: String): Boolean {
-        val accountData = AmeLoginLogic.getCurrentAccount()
+        val accountData = AmeLoginLogic.getMajorAccount()
         if (null != accountData && pin.isNotEmpty()) {
             val proPin = getProPin(accountData, pin)
             if (!proPin.isNullOrEmpty()) {
@@ -54,7 +54,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
     }
 
     fun disablePin() {
-        val accountData = AmeLoginLogic.getCurrentAccount()
+        val accountData = AmeLoginLogic.getMajorAccount()
         if (null != accountData) {
             accountData.pin = ""
             accountData.lengthOfPin = -1
@@ -63,7 +63,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
     }
 
     fun lengthOfPin(): Int {
-        val accountData = AmeLoginLogic.getCurrentAccount()
+        val accountData = AmeLoginLogic.getMajorAccount()
         return accountData?.lengthOfPin ?: 0
     }
 
@@ -74,7 +74,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
         if (!AMELogin.isLogin) {
             return false
         }
-        val accountData = AmeLoginLogic.getCurrentAccount()
+        val accountData = AmeLoginLogic.getMajorAccount()
         return !accountData?.pin.isNullOrEmpty()
     }
 
@@ -82,7 +82,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
      * true pin verify succeed, false pin verify failed
      */
     fun checkPin(pin: String): Boolean {
-        val accountData = AmeLoginLogic.getCurrentAccount()
+        val accountData = AmeLoginLogic.getMajorAccount()
         if (null != accountData && pin.isNotEmpty()) {
             return accountData.pin == getProPin(accountData, pin)
         }
@@ -90,7 +90,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
     }
 
     fun enableUnlockWithFingerprint(enable: Boolean) {
-        val accountData = AmeLoginLogic.getCurrentAccount()
+        val accountData = AmeLoginLogic.getMajorAccount()
         if (null != accountData) {
             accountData.enableFingerprint = enable
             AmeLoginLogic.saveAccount(accountData)
@@ -98,11 +98,11 @@ object AmePinLogic : AppForeground.IForegroundEvent {
     }
 
     fun isUnlockWithFingerprintEnable(): Boolean {
-        return AmeLoginLogic.getCurrentAccount()?.enableFingerprint == true
+        return AmeLoginLogic.getMajorAccount()?.enableFingerprint == true
     }
 
     fun setAppLockTime(time: Int) {
-        val accountData = AmeLoginLogic.getCurrentAccount()
+        val accountData = AmeLoginLogic.getMajorAccount()
         if (null != accountData) {
             accountData.pinLockTime = time
             AmeLoginLogic.saveAccount(accountData)
@@ -110,7 +110,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
     }
 
     fun appLockTime(): Int {
-        val accountData = AmeLoginLogic.getCurrentAccount()
+        val accountData = AmeLoginLogic.getMajorAccount()
         if (null != accountData) {
             return accountData.pinLockTime
         }

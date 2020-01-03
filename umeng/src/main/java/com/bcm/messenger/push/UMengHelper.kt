@@ -2,7 +2,7 @@ package com.bcm.messenger.push
 
 import android.content.Context
 import android.os.Build
-import com.bcm.messenger.common.utils.PushUtil
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.taobao.agoo.TaobaoRegister
@@ -46,7 +46,7 @@ object UMengHelper {
             override fun onSuccess(deviceToken: String) {
                 ALog.d(TAG, "device token: $deviceToken")
                 AmeDispatcher.io.dispatch {
-                    PushUtil.registerPush()
+                    AmeModuleCenter.login().refreshOfflineToken()
                 }
             }
 
