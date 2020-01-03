@@ -6,8 +6,10 @@ import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.event.ServiceConnectEvent
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.ILoginModule
+import com.bcm.messenger.common.server.ConnectState
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.foreground.AppForeground
 import java.io.*
@@ -422,9 +424,7 @@ class GroupOfflineSyncManager(private val syncCallback: OfflineSyncCallback) {
 
 
     private fun canSync(): Boolean {
-        val loginProvider = AmeProvider.get<ILoginModule>(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)
-        //ALog.i(TAG, "canSync connect:${loginProvider?.serviceConnectedState()} foreground:${AmeAppLifecycle.isAppForeground()}")
-        return loginProvider?.serviceConnectedState() == ServiceConnectEvent.STATE.CONNECTED && AppForeground.foreground()
+        return AmeModuleCenter.serverDaemon().state() == ConnectState.CONNECTED && AppForeground.foreground()
     }
 
     interface OfflineSyncCallback {

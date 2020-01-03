@@ -6,7 +6,7 @@ import android.util.Base64
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.listener.SafeWeakListeners
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.utility.network.IConnectionListener
+import com.bcm.messenger.utility.network.INetworkConnectionListener
 import com.bcm.messenger.utility.network.NetworkUtil
 import com.bcm.messenger.utility.storage.SPEditor
 import com.bcm.netswitchy.configure.AmeConfigure
@@ -21,7 +21,7 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.concurrent.ConcurrentHashMap
 
-object ProxyManager : IConnectionListener, ProxyRunner.IProxyRunResult, ProxyTester.IProxyTesterResult {
+object ProxyManager : INetworkConnectionListener, ProxyRunner.IProxyRunResult, ProxyTester.IProxyTesterResult {
     private const val TAG = "ProxyManager"
     private const val PROXY_OFFICIAL = "official_proxy_list"
     private const val PROXY_CUSTOM = "custom_proxy_list"

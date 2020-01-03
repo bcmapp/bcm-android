@@ -3,7 +3,6 @@ package com.bcm.messenger.common.server
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.WebSocketHttp
 import com.bcm.messenger.common.core.BcmHttpApiHelper
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.InvalidProtocolBufferException
 import com.orhanobut.logger.Logger
@@ -27,7 +26,7 @@ class ServerConnection(private val accountContext: AccountContext, private val u
 
     private var webSocketHttp: WebSocketHttp = WebSocketHttp(accountContext)
     private var client: WebSocket? = null
-    private var connectionEvent: IServerConnectionEvent? = null
+    private var protoDataEvent: IServerProtoDataEvent? = null
     private var websocketEvent = WebsocketConnectionListener()
 
     private var connectState = ConnectState.INIT
@@ -42,8 +41,8 @@ class ServerConnection(private val accountContext: AccountContext, private val u
      *
      * @param listener
      */
-    fun setConnectionListener(listener: IServerConnectionEvent?) {
-        connectionEvent = listener
+    fun setConnectionListener(listener: IServerProtoDataEvent?) {
+        protoDataEvent = listener
     }
 
 
@@ -94,7 +93,7 @@ class ServerConnection(private val accountContext: AccountContext, private val u
 
     private fun updateConnectState(state: ConnectState) {
         this.connectState = state
-        connectionEvent?.onServiceConnected(accountContext, connectToken, connectState)
+        protoDataEvent?.onServiceConnected(accountContext, connectToken, connectState)
     }
 
     fun sendRequest(request: WebSocketProtos.WebSocketRequestMessage, callback: SettableFuture<Pair<Int, String>>) {
@@ -210,7 +209,7 @@ class ServerConnection(private val accountContext: AccountContext, private val u
                 ALog.i(TAG, " Message Type: " + message.getType().getNumber())
 
                 if (message.type.number == WebSocketProtos.WebSocketMessage.Type.REQUEST_VALUE) {
-                    connectionEvent?.onMessageArrive(accountContext, message.request)
+                    protoDataEvent?.onMessageArrive(accountContext, message.request)
                 } else if (message.type.number == WebSocketProtos.WebSocketMessage.Type.RESPONSE_VALUE) {
                     val listener = outgoingRequests[message.response.id]
                     listener?.set(Pair(message.response.status,
@@ -245,10 +244,10 @@ class ServerConnection(private val accountContext: AccountContext, private val u
                 if (code == RESPONSE_REFUSE) {
                     val info = response.header("X-Online-Device")
                     //，
-                    connectionEvent?.onClientForceLogout(accountContext, info, KickEvent.OTHER_LOGIN)
+                    protoDataEvent?.onClientForceLogout(accountContext, info, KickEvent.OTHER_LOGIN)
 
                 } else if (code == RESPONSE_GONE) {
-                    connectionEvent?.onClientForceLogout(accountContext, null, KickEvent.ACCOUNT_GONE)
+                    protoDataEvent?.onClientForceLogout(accountContext, null, KickEvent.ACCOUNT_GONE)
                 }
             }
 

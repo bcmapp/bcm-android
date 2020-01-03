@@ -8,14 +8,12 @@ import org.whispersystems.signalservice.internal.websocket.WebSocketProtos
 import java.io.IOException
 
 /**
- * 
+ *
  * Created by wjh on 2019-11-06
  */
 
-interface IServerConnectionEvent {
-    fun onServiceConnected(accountContext: AccountContext, connectToken: Int, state: ConnectState)
+interface IServerProtoDataEvent {
     fun onMessageArrive(accountContext: AccountContext, message: WebSocketProtos.WebSocketRequestMessage): Boolean
-    fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent)
 }
 
 interface IServerDataDispatcher {
@@ -29,12 +27,21 @@ interface IServerConnectionDaemon {
     fun startConnection()
     fun stopConnection()
     fun checkConnection(manual: Boolean = true)
+    fun state(): ConnectState
     @Throws(IOException::class)
     fun sendMessage(list: OutgoingPushMessageList): SendMessageResponse
+
+    fun addConnectionListener(listener: IServerConnectStateListener) {}
+    fun removeConnectionListener(listener: IServerConnectStateListener) {}
 }
 
 interface IServerDataListener {
     fun onReceiveData(accountContext: AccountContext, proto: AbstractMessage): Boolean
+}
+
+interface IServerConnectStateListener {
+    fun onServerConnectionChanged(accountContext: AccountContext, newState:ConnectState)
+    fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent){}
 }
 
 enum class KickEvent {

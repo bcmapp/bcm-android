@@ -41,6 +41,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
 
     private var privateRecipient: Recipient? = null
     private var groupRecipient: Recipient? = null
+    private var accountContext: AccountContext? = null
 
     private var glide = GlideApp.with(AppContextHolder.APP_CONTEXT)
 
@@ -66,14 +67,14 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
     
     fun showRecipientAvatar(accountContext: AccountContext, recipient: Recipient) {
         if (recipient.isGroupRecipient) {
-            showGroupAvatar(recipient.groupId)
+            showGroupAvatar(accountContext, recipient.groupId)
         } else {
             showPrivateAvatar(accountContext, recipient)
         }
     }
 
    
-    fun showGroupAvatar(gid: Long, showSplice: Boolean = true, path: String = "") {
+    fun showGroupAvatar(accountContext: AccountContext, gid: Long, showSplice: Boolean = true, path: String = "") {
         ALog.i(TAG, "Show group avatar")
 
         val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_GROUP_BASE).navigationWithCast<IGroupModule>()
@@ -81,7 +82,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         when {
             !groupInfo?.iconUrl.isNullOrBlank() -> {
                 ALog.i(TAG, "Group icon url is not empty")
-                showGroupAvatar(Recipient.recipientFromNewGroupIdAsync(AppContextHolder.APP_CONTEXT, gid))
+                showGroupAvatar(accountContext, Recipient.recipientFromNewGroupIdAsync(AppContextHolder.APP_CONTEXT, gid))
             }
             showSplice -> {
                 ALog.i(TAG, "Have temp splice avatar")
@@ -107,16 +108,18 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         this.privateRecipient?.removeListener(this)
         this.privateRecipient = recipient
         this.privateRecipient?.addListener(this)
+        this.accountContext = accountContext
 
         setRecipientAvatar(accountContext)
     }
 
-    private fun showGroupAvatar(recipient: Recipient) {
+    private fun showGroupAvatar(accountContext: AccountContext, recipient: Recipient) {
         this.groupRecipient?.removeListener(this)
         this.groupRecipient = recipient
         this.groupRecipient?.addListener(this)
+        this.accountContext = accountContext
 
-        setGroupRecipientAvatar()
+        setGroupRecipientAvatar(accountContext)
     }
 
     fun setBitmap(bitmap: Bitmap) {
@@ -192,12 +195,12 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         member_single_avatar.radius = width / 2f
     }
 
-    private fun setGroupRecipientAvatar() {
+    private fun setGroupRecipientAvatar(accountContext: AccountContext) {
         group_splice_avatar.visibility = View.GONE
         member_single_avatar.visibility = View.VISIBLE
         background = null
 
-        member_single_avatar.setPhoto(groupRecipient)
+        member_single_avatar.setPhoto(accountContext, groupRecipient)
         member_single_avatar.post {
             member_single_avatar.radius = width / 4f
         }
@@ -215,10 +218,13 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     override fun onModified(recipient: Recipient) {
-        if (this.privateRecipient == recipient) {
-            setRecipientAvatar()
-        } else if (this.groupRecipient == recipient) {
-            setGroupRecipientAvatar()
+        val accountContext = this.accountContext
+        if (null != accountContext) {
+            if (this.privateRecipient == recipient) {
+                setRecipientAvatar(accountContext)
+            } else if (this.groupRecipient == recipient) {
+                setGroupRecipientAvatar(accountContext)
+            }
         }
     }
 

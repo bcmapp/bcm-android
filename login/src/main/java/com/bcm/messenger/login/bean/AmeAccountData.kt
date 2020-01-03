@@ -29,7 +29,6 @@ class AmeAccountData : NotGuard {
     var mode: Int = ACCOUNT_MODE_NORMAL
 
     var registrationId: Int = 0
-    var gcmToken: String? = null
     var gcmTokenLastSetTime: Long = 0
     var gcmDisabled: Boolean = false
     var pushRegistered: Boolean = false

@@ -71,15 +71,15 @@ object AmeLoginLogic {
     private var mPrefixUid: String? = null
     private var mMask: Long = 0L
 
-    private var mTmpToken: String = ""
-
+    private var mTmpAccountContext = AccountContext("", "", "")
     private var loginTempData: Triple<String, ECKeyPair, String>? = null
 
     val accountHistory: AmeAccountHistory = AmeAccountHistory()
 
     private val support = BcmFeatureSupport(64)
-
     private var mRegisterNick: String? = null
+
+    private var gcmToken = ""
 
     init {
         accountHistory.init()
@@ -126,6 +126,19 @@ object AmeLoginLogic {
      */
     fun getAccount(uid: String): AmeAccountData? {
         return accountHistory.getAccount(uid)
+    }
+
+    fun getAccountContext(uid: String): AccountContext {
+        val context = accountHistory.getAccountContext(uid)
+        if (null != context) {
+            return context
+        }
+
+        if (uid == mTmpAccountContext.uid) {
+            return mTmpAccountContext
+        }
+
+        return AccountContext(uid, "", "")
     }
 
     /**
@@ -190,7 +203,7 @@ object AmeLoginLogic {
      */
     fun quit(accountContext: AccountContext, clearHistory: Boolean, withLogOut: Boolean = true) {
 
-        if (isLogin()) {
+        if (accountContext.isLogin) {
             ALog.i(TAG, "quit clearHistory: $clearHistory, withLogout: $withLogOut")
 
             try {
@@ -207,9 +220,9 @@ object AmeLoginLogic {
                             DatabaseFactory.getInstance(AppContextHolder.APP_CONTEXT).deleteAllDatabase()
                             GroupDatabase.getInstance().clearAllTables()
                         }
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db").delete()
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db-shm").delete()
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${AMELogin.uid}.db-wal").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-shm").delete()
+                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-wal").delete()
 
                         TextSecurePreferences.clear(AppContextHolder.APP_CONTEXT)
                         MasterSecretUtil.clearMasterSecretPassphrase(AppContextHolder.APP_CONTEXT)
@@ -239,24 +252,22 @@ object AmeLoginLogic {
      */
     fun getAccountList(): List<Any> {
         return accountHistory.getAccountList().sortedWith(kotlin.Comparator { o1, o2 ->
-            when {
-                isLogin() && o1.uid == accountHistory.majorAccountUid() -> -1
-                isLogin() && o2.uid == accountHistory.majorAccountUid() -> 1
-                else -> {
-                    val o1t = max(o1.lastLoginTime, o1.backupTime)
-                    val o2t = max(o2.lastLoginTime, o2.backupTime)
-                    o2t.compareTo(o1t)
-                }
+            if (accountHistory.isLogin(o1.uid) || accountHistory.isLogin(o2.uid)) {
+                o2.lastLoginTime.compareTo(o1.lastLoginTime)
+            } else {
+                val o1t = max(o1.lastLoginTime, o1.backupTime)
+                val o2t = max(o2.lastLoginTime, o2.backupTime)
+                o2t.compareTo(o1t)
             }
         })
     }
 
     private fun setTmpToken(uid: String, password: String) {
-        mTmpToken = if (uid.isEmpty() || password.isEmpty()) {
-            ""
+        mTmpAccountContext = if (uid.isNotEmpty() && password.isNotEmpty()) {
+            val token = accountHistory.genToken(uid, password)
+            AccountContext(uid, token, password)
         } else {
-            quit(AccountContext(accountHistory.majorAccountUid()), false)
-            genToken(uid, password)
+            AccountContext(uid, "", "")
         }
     }
 
@@ -460,7 +471,7 @@ object AmeLoginLogic {
                         registerSucceed(registrationId, uid, keyPair, signalingKey, signalPassword, password, passwordHint)
                     }
                     .doOnError {
-                        quit(AccountContext(accountHistory.majorAccountUid()), false)
+                        quit(getAccountContext(uid), false)
                     }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -489,7 +500,7 @@ object AmeLoginLogic {
 
         initCreatePhrase(AppContextHolder.APP_CONTEXT, ecKeyPair)
 
-        AmeModuleCenter.onLoginSucceed(uid)
+        AmeModuleCenter.onLoginSucceed(getAccountContext(uid))
 
         if (!DatabaseFactory.isDatabaseExist(AppContextHolder.APP_CONTEXT) || isRegister || (TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT) && TextSecurePreferences.getMigrateFailedCount(AppContextHolder.APP_CONTEXT) < 3)) {
             TextSecurePreferences.setHasDatabaseMigrated(AppContextHolder.APP_CONTEXT)
@@ -497,8 +508,6 @@ object AmeLoginLogic {
         } else {
             loginTempData = Triple(uid, ecKeyPair, password)
         }
-
-        accountHistory.saveLastLoginUid(uid)
     }
 
     fun initAfterLoginSuccess() {
@@ -513,7 +522,7 @@ object AmeLoginLogic {
 
         PushUtil.registerPush()
 
-        handleLocalLogin(AppContextHolder.APP_CONTEXT)
+        handleLocalLogin(uid, AppContextHolder.APP_CONTEXT)
 
         loginTempData = null
     }
@@ -529,12 +538,12 @@ object AmeLoginLogic {
                 throw Exception("pre key upload failed, uid: $uid")
             }
 
-            Repository.getIdentityRepo().saveIdentity(uid, identityKeyPair.publicKey, IdentityRepo.VerifiedStatus.VERIFIED,
+            Repository.getIdentityRepo(getAccountContext(uid)).saveIdentity(uid, identityKeyPair.publicKey, IdentityRepo.VerifiedStatus.VERIFIED,
                     true, System.currentTimeMillis(), true)
 
         } catch (e: Exception) {
             ALog.logForSecret(TAG, "loginSucceed generate prekey or prekey upload failed, ${e.message}", e)
-            quit(AccountContext(accountHistory.majorAccountUid()), false)
+            quit(getAccountContext(uid), false)
             ReportUtil.loginEnded(false)
             throw e
         }
@@ -569,6 +578,12 @@ object AmeLoginLogic {
             Optional.absent()
         }
 
+        this.gcmToken = if(gcmToken.isPresent) {
+            gcmToken.get()
+        } else {
+            ""
+        }
+
         val encryptedPrivateKeyString = BCMPrivateKeyUtils.encryptPrivateKey(ecKeyPair.privateKey.serialize(), password.toByteArray())
         val pubKey = Base64.encodeBytes(ecKeyPair.publicKey.serialize())
 
@@ -590,7 +605,6 @@ object AmeLoginLogic {
         accountData.priKey = encryptedPrivateKeyString
         accountData.pubKey = pubKey
         accountData.registrationId = registrationId
-        accountData.gcmToken = gcmToken.orNull() ?: ""
         accountData.gcmDisabled = !gcmToken.isPresent
         accountData.pushRegistered = true
         accountData.signalPassword = signalPassword
@@ -728,29 +742,6 @@ object AmeLoginLogic {
         return path
     }
 
-    fun token(): String {
-        if (isLogin()) {
-            val password = authPassword()
-            val uid = accountHistory.majorAccountUid()
-            if (password.isNotEmpty()) {
-                return genToken(uid, password)
-            }
-        }
-        return mTmpToken
-    }
-
-
-    private fun genToken(uid: String, password: String): String {
-        try {
-            if (password.isNotEmpty()) {
-                return "Basic " + Base64.encodeBytes(("$uid:$password").toByteArray(charset("UTF-8")))
-            }
-        } catch (e: Exception) {
-            ALog.logForSecret(TAG, "getAuthorizationHeader fail", e)
-        }
-        return ""
-    }
-
     fun authPassword(uid: String): String {
         return accountHistory.getAccount(uid)?.signalPassword ?: ""
     }
@@ -881,12 +872,12 @@ object AmeLoginLogic {
         }
     }
 
-    fun refreshPrekeys() {
-        AmeModuleCenter.accountJobMgr()?.add(RefreshPreKeysJob(AppContextHolder.APP_CONTEXT))
+    fun refreshPrekeys(accountContext: AccountContext) {
+        AmeModuleCenter.accountJobMgr(accountContext)?.add(RefreshPreKeysJob(AppContextHolder.APP_CONTEXT))
     }
 
-    fun rotateSignedPreKey() {
-        AmeModuleCenter.accountJobMgr()?.add(RotateSignedPreKeyJob(AppContextHolder.APP_CONTEXT))
+    fun rotateSignedPreKey(accountContext: AccountContext) {
+        AmeModuleCenter.accountJobMgr(accountContext)?.add(RotateSignedPreKeyJob(AppContextHolder.APP_CONTEXT))
     }
 
     fun updateAllowReceiveStrangers(allow: Boolean, callback: ((succeed: Boolean) -> Unit)?) {
@@ -898,5 +889,13 @@ object AmeLoginLogic {
                 .subscribe {
                     callback?.invoke(true)
                 }
+    }
+
+    fun setGcmToken(token: String) {
+        this.gcmToken = token
+    }
+
+    fun getGcmToken(): String {
+        return gcmToken
     }
 }

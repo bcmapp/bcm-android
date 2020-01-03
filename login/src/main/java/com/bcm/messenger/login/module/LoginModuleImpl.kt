@@ -5,26 +5,24 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSManager
 import com.bcm.messenger.common.config.BcmFeatureSupport
-import com.bcm.messenger.common.crypto.MasterSecretUtil
-import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.event.ClientAccountDisabledEvent
-import com.bcm.messenger.common.event.ServerConnStateChangedEvent
-import com.bcm.messenger.common.event.ServiceConnectEvent
-import com.bcm.messenger.common.grouprepository.room.database.GroupDatabase
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.AmeProvider
+import com.bcm.messenger.common.provider.ILoginModule
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
-import com.bcm.messenger.common.provider.accountmodule.IWalletModule
+import com.bcm.messenger.common.server.ConnectState
+import com.bcm.messenger.common.server.IServerConnectStateListener
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AmePushProcess
-import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.login.logic.CreateSignedPreKeyJob
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.foreground.AppForeground
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.utility.network.IConnectionListener
+import com.bcm.messenger.utility.network.INetworkConnectionListener
 import com.bcm.messenger.utility.network.NetworkUtil
 import com.bcm.netswitchy.proxy.IProxyStateChanged
 import com.bcm.netswitchy.proxy.ProxyManager
@@ -34,19 +32,16 @@ import io.reactivex.disposables.Disposable
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.io.File
 
 /**
  * bcm.social.01 2018/9/20.
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_LOGIN_BASE)
-class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStateChanged, IConnectionListener {
+class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStateChanged, INetworkConnectionListener, IServerConnectStateListener {
 
     private val TAG = "LoginProviderImplProxy"
 
     private var kickEvent: ClientAccountDisabledEvent? = null
-    private var serviceConnectedState = ServiceConnectEvent.STATE.UNKNOWN
-
     private var delayCheckRunProxy: Disposable? = null
     private var lastTryProxyTime = 0L
 
@@ -92,12 +87,12 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         return AmeLoginLogic.getCurrentAccount()?.registrationId ?: 0
     }
 
+    override fun gcmToken(): String {
+        return AmeLoginLogic.getGcmToken()
+    }
+
     override fun setGcmToken(token: String?) {
-        val accountData = AmeLoginLogic.getCurrentAccount()
-        if (accountData != null) {
-            accountData.gcmToken = token
-            AmeLoginLogic.saveAccount(accountData)
-        }
+        AmeLoginLogic.setGcmToken(token ?: "")
     }
 
     override fun gcmTokenLastSetTime(): Long {
@@ -116,7 +111,7 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         return AmeLoginLogic.getCurrentAccount()?.gcmDisabled ?: false
     }
 
-    override fun isPushRegistered(): Boolean {
+    override fun isPushRegistered(uid: String): Boolean {
         return AmeLoginLogic.getCurrentAccount()?.pushRegistered ?: false
     }
 
@@ -168,35 +163,6 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         AmeLoginLogic.quit(accountContext, clearHistory, withLogOut)
     }
 
-    override fun clearAll() {
-        AmeLoginLogic.quit(true, true)
-        try {
-            if (DatabaseFactory.isDatabaseExist(AppContextHolder.APP_CONTEXT)) {
-                DatabaseFactory.getInstance(AppContextHolder.APP_CONTEXT).deleteAllDatabase()
-                GroupDatabase.getInstance().clearAllTables()
-            }
-
-            BcmFileUtils.deleteDir(File("${AppContextHolder.APP_CONTEXT.filesDir.parent}"))
-
-            TextSecurePreferences.clear(AppContextHolder.APP_CONTEXT)
-            MasterSecretUtil.clearMasterSecretPassphrase(AppContextHolder.APP_CONTEXT)
-            val walletProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_WALLET_BASE).navigation() as IWalletModule
-            walletProvider.destroyWallet()
-            AmeModuleCenter.contact().clear()
-
-        } catch (ex: Exception) {
-            ALog.e(TAG, "clearAll error", ex)
-        }
-    }
-
-    override fun authPassword(uid: String): String {
-        return AmeLoginLogic.authPassword(uid)
-    }
-
-    override fun serviceConnectedState(): ServiceConnectEvent.STATE {
-        return serviceConnectedState
-    }
-
     override fun mySupport(): BcmFeatureSupport {
         return AmeLoginLogic.mySupport()
     }
@@ -205,30 +171,19 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         AmeLoginLogic.refreshMySupportFeature()
     }
 
-    override fun checkLoginAccountState() {
-        if (AMELogin.isLogin) {
-            if (AMELogin.uid != AmeLoginLogic.accountHistory.lastLoginUid()) {
-                AmeDispatcher.io.dispatch {
-                    AmeLoginLogic.quit(false)
-
-                    AmeDispatcher.mainThread.dispatch {
-                        //登出了，跳到注册界面
-                        BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                .navigation()
-                    }
-                }
-                return
-            }
-
+    override fun restoreLastLoginState() {
+        val loginContextList = AmeLoginLogic.accountHistory.getAllLoginContext()
+        if (loginContextList.isNotEmpty()) {
             AmePushProcess.reset()
-            AmeModuleCenter.onLoginSucceed(AMELogin.uid)
-            if (!TextSecurePreferences.isSignedPreKeyRegistered(AppContextHolder.APP_CONTEXT)) {
-                AmeModuleCenter.accountJobMgr()?.add(CreateSignedPreKeyJob(AppContextHolder.APP_CONTEXT))
-            }
 
+            for (i in loginContextList) {
+                AmeModuleCenter.onLoginSucceed(i)
+                if (!TextSecurePreferences.isSignedPreKeyRegistered(AppContextHolder.APP_CONTEXT)) {
+                    AmeModuleCenter.accountJobMgr(i)?.add(CreateSignedPreKeyJob(AppContextHolder.APP_CONTEXT))
+                }
+            }
         } else {
-            ALog.i(TAG, "checkLoginAccountState not login, pass")
+            ALog.i(TAG, "restoreLastLoginState not login, pass")
         }
     }
 
@@ -236,12 +191,12 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         AmeLoginLogic.initAfterLoginSuccess()
     }
 
-    override fun refreshPrekeys() {
-        AmeLoginLogic.refreshPrekeys()
+    override fun refreshPrekeys(accountContext: AccountContext) {
+        AmeLoginLogic.refreshPrekeys(accountContext)
     }
 
-    override fun rotateSignedPrekey() {
-        AmeLoginLogic.rotateSignedPreKey()
+    override fun rotateSignedPrekey(accountContext: AccountContext) {
+        AmeLoginLogic.rotateSignedPreKey(accountContext)
     }
 
     override fun updateAllowReceiveStrangers(allow: Boolean, callback: ((succeed: Boolean) -> Unit)?) {
@@ -249,7 +204,7 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
     }
 
     override fun getAccountContext(uid: String): AccountContext {
-        return AccountContext(uid, "", "")
+        return AmeLoginLogic.getAccountContext(uid)
     }
 
 
@@ -257,7 +212,7 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
     fun onEvent(e: ClientAccountDisabledEvent) {
         ALog.i(TAG, "onClientAccountDisableEvent: ${e.type}, lastEvent: ${kickEvent?.type}")
         if (AppForeground.foreground()) {
-            AmeModuleCenter.user().forceLogout(e)
+            AmeModuleCenter.user(e.accountContext)?.forceLogout(e)
         } else {
             if (kickEvent?.type ?: 0 < e.type) {
                 kickEvent = e
@@ -276,8 +231,11 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
                 if (isForeground) {
                     AmePushProcess.reset()
 
-                    if (serviceConnectedState != ServiceConnectEvent.STATE.CONNECTED) {
-                        AmeModuleCenter.serverDaemon().checkConnection(false)
+                    val loginList = AmeLoginLogic.accountHistory.getAllLoginContext()
+                    for (accountContext in loginList) {
+                        if (AmeModuleCenter.serverDaemon(accountContext).state() != ConnectState.CONNECTED) {
+                            AmeModuleCenter.serverDaemon(accountContext).checkConnection(false)
+                        }
                     }
                 } else {
                     lastTryProxyTime = 0
@@ -288,34 +246,31 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         if (!isForeground) {
             delayCheckRunProxy?.dispose()
         } else {
-            if (serviceConnectedState == ServiceConnectEvent.STATE.DISCONNECTED) {
+            val loginList = AmeLoginLogic.accountHistory.getAllLoginContext()
+            val anyConnecting = loginList.any {
+                AmeModuleCenter.serverDaemon(it).state() != ConnectState.DISCONNECTED
+            }
+
+            if (!anyConnecting) {
                 tryRunProxy()
             }
 
-            AmeModuleCenter.chat().checkHasRtcCall()
+            for (accountContext in loginList) {
+                AmeModuleCenter.chat(accountContext)?.checkHasRtcCall()
+            }
         }
     }
 
-    @Subscribe
-    fun onEvent(e: ServerConnStateChangedEvent) {
-        val oldState = serviceConnectedState
-        serviceConnectedState = ServiceConnectEvent.STATE.UNKNOWN
-        if (e.state == ServerConnStateChangedEvent.ON) {
-            lastTryProxyTime = 0L
-            serviceConnectedState = ServiceConnectEvent.STATE.CONNECTED
-            delayCheckRunProxy?.dispose()
-        } else if (e.state == ServerConnStateChangedEvent.CONNECTING) {
-            serviceConnectedState = ServiceConnectEvent.STATE.CONNECTING
-        } else {
-            serviceConnectedState = ServiceConnectEvent.STATE.DISCONNECTED
-            tryRunProxy()
-        }
-
-        if (serviceConnectedState != oldState) {
-            ALog.i(TAG, "service connected state changed:$serviceConnectedState")
-            AmeDispatcher.mainThread.dispatch {
-                EventBus.getDefault().post(ServiceConnectEvent(serviceConnectedState))
+    override fun onServerConnectionChanged(accountContext: AccountContext, newState: ConnectState) {
+        when(newState) {
+            ConnectState.CONNECTED -> {
+                lastTryProxyTime = 0L
+                delayCheckRunProxy?.dispose()
             }
+            ConnectState.DISCONNECTED -> {
+                tryRunProxy()
+            }
+            else -> {}
         }
     }
 
@@ -326,7 +281,11 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
                 //网络切换了，重新
                 if (ProxyManager.isProxyRunning()) {
                     ProxyManager.stopProxy()
-                    AmeModuleCenter.serverDaemon().checkConnection(false)
+                }
+
+                val loginList = AmeLoginLogic.accountHistory.getAllLoginContext()
+                loginList.forEach {
+                    AmeModuleCenter.serverDaemon(it).checkConnection(false)
                 }
             }
         }
@@ -374,8 +333,9 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
                 }
             } else {
                 LBSManager.refresh()
-                if (AMELogin.isLogin) {
-                    AmeModuleCenter.serverDaemon().checkConnection()
+                val loginList = AmeLoginLogic.accountHistory.getAllLoginContext()
+                loginList.forEach {
+                    AmeModuleCenter.serverDaemon(it).checkConnection()
                 }
             }
         }

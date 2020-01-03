@@ -4,11 +4,11 @@ import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.isLbsEnable
 import com.bcm.messenger.common.utils.isTestEnvEnable
-import com.bcm.messenger.utility.network.IConnectionListener
+import com.bcm.messenger.utility.network.INetworkConnectionListener
 import com.bcm.messenger.utility.network.NetworkUtil
 import java.util.concurrent.ConcurrentHashMap
 
-object LBSManager : IConnectionListener {
+object LBSManager : INetworkConnectionListener {
     private val lbsFetcherMap = ConcurrentHashMap<String, LBSFetcher>()
     private val serverCache = ConcurrentHashMap<String, ServerStorage>()
     private var networkType = NetworkUtil.netType()

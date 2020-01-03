@@ -2,7 +2,6 @@ package com.bcm.messenger.common.server
 
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.event.ClientAccountDisabledEvent
-import com.bcm.messenger.common.event.ServerConnStateChangedEvent
 import com.bcm.messenger.utility.listener.WeakListeners
 import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.AbstractMessage
@@ -23,7 +22,7 @@ import javax.crypto.*
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-class ServerDataDispatcher(private val accountContext: AccountContext) : IServerConnectionEvent, IServerDataDispatcher {
+class ServerDataDispatcher : IServerProtoDataEvent, IServerDataDispatcher, IServerConnectStateListener {
 
     companion object {
         private const val TAG = "ServerDataDispatcher"
@@ -39,7 +38,6 @@ class ServerDataDispatcher(private val accountContext: AccountContext) : IServer
         private const val CIPHER_TEXT_OFFSET = IV_OFFSET + IV_LENGTH
     }
 
-    //，
     private val listener = WeakListeners<IServerDataListener>()
 
     override fun addListener(listener: IServerDataListener) {
@@ -50,16 +48,8 @@ class ServerDataDispatcher(private val accountContext: AccountContext) : IServer
         this.listener.removeListener(listener)
     }
 
-    override fun onServiceConnected(accountContext: AccountContext, connectToken: Int, state: ConnectState) {
-        ALog.i(TAG, "onServiceConnected $state")
-
-        val newState = when (state) {
-            ConnectState.CONNECTED -> ServerConnStateChangedEvent.ON
-            ConnectState.CONNECTING -> ServerConnStateChangedEvent.CONNECTING
-            else -> ServerConnStateChangedEvent.OFF
-        }
-        EventBus.getDefault().post(ServerConnStateChangedEvent(newState))
-
+    override fun onServerConnectionChanged(accountContext: AccountContext, newState: ConnectState) {
+        ALog.i(TAG, "onServiceConnected $newState")
     }
 
     override fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent) {
@@ -67,7 +57,6 @@ class ServerDataDispatcher(private val accountContext: AccountContext) : IServer
         when (type) {
             KickEvent.OTHER_LOGIN -> {
                 val deviceInfo = try {
-                    //infobase64，
                     if (info == null) {
                         null
                     } else {
@@ -77,10 +66,10 @@ class ServerDataDispatcher(private val accountContext: AccountContext) : IServer
                     ALog.e("ForceLogout", "onClientForceLogout fail", ex)
                     null
                 }
-                EventBus.getDefault().post(ClientAccountDisabledEvent(ClientAccountDisabledEvent.TYPE_EXCEPTION_LOGIN, deviceInfo))
+                EventBus.getDefault().post(ClientAccountDisabledEvent(accountContext, ClientAccountDisabledEvent.TYPE_EXCEPTION_LOGIN, deviceInfo))
             }
             KickEvent.ACCOUNT_GONE -> {
-                EventBus.getDefault().post(ClientAccountDisabledEvent(ClientAccountDisabledEvent.TYPE_ACCOUNT_GONE))
+                EventBus.getDefault().post(ClientAccountDisabledEvent(accountContext, ClientAccountDisabledEvent.TYPE_ACCOUNT_GONE))
             }
         }
     }

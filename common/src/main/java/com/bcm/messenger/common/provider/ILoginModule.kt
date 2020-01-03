@@ -60,27 +60,12 @@ interface ILoginModule : IAmeModule {
     /**
      * load login state
      */
-    fun checkLoginAccountState()
+    fun restoreLastLoginState()
 
     /**
      * quit account
      */
     fun quit(accountContext: AccountContext, clearHistory: Boolean, withLogOut: Boolean = true)
-
-    /**
-     * clear login data
-     */
-    fun clearAll()
-
-    /**
-     * auth password
-     */
-    fun authPassword(uid: String): String
-
-    /**
-     * server connection state
-     */
-    fun serviceConnectedState(): ServiceConnectEvent.STATE
 
     /**
      * current client function support flag
@@ -100,12 +85,12 @@ interface ILoginModule : IAmeModule {
     /**
      * refresh one time key
      */
-    fun refreshPrekeys()
+    fun refreshPrekeys(accountContext: AccountContext)
 
     /**
      * refresh signed prekey
      */
-    fun rotateSignedPrekey()
+    fun rotateSignedPrekey(accountContext: AccountContext)
 
     /**
      * update stranger message receive flag

@@ -10,6 +10,7 @@ import com.bcm.messenger.chats.group.logic.secure.GroupKeyRotate
 import com.bcm.messenger.chats.group.logic.sync.GroupOfflineDecryptFailCounter
 import com.bcm.messenger.chats.group.logic.sync.GroupOfflineSyncManager
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
@@ -28,6 +29,9 @@ import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.server.ConnectState
+import com.bcm.messenger.common.server.IServerConnectStateListener
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AmeURLUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -48,7 +52,9 @@ import kotlin.math.max
  * Created by bcm.social.01 on 2018/9/4.
  */
 @SuppressLint("CheckResult")
-object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeground.IForegroundEvent {
+object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback
+        , AppForeground.IForegroundEvent
+        , IServerConnectStateListener {
     private const val TAG = "GroupMessageLogic"
 
     private var inited = false
@@ -60,32 +66,33 @@ object GroupMessageLogic : GroupOfflineSyncManager.OfflineSyncCallback, AppForeg
 
     val messageSender = MessageSender()
 
-    init {
-        EventBus.getDefault().register(this)
-        AppForeground.listener.addListener(this)
-    }
-
     fun init() {
         inited = true
         offlineMessageSyncing = false
         offlineSyncManager.init()
         syncOfflineMessage()
         messageSender.resetPendingMessageState()
+
+        EventBus.getDefault().register(this)
+        AppForeground.listener.addListener(this)
+        AmeModuleCenter.serverDaemon().addConnectionListener(this)
     }
 
     fun unInit() {
         inited = false
         offlineSyncManager.unInit()
+        EventBus.getDefault().unregister(this)
+        AppForeground.listener.removeListener(this)
+        AmeModuleCenter.serverDaemon().removeConnectionListener(this)
     }
 
-    @Subscribe
-    fun onEvent(e: ServiceConnectEvent) {
-        if (AMELogin.isLogin && e.state == ServiceConnectEvent.STATE.CONNECTED && inited) {
+    override fun onServerConnectionChanged(accountContext: AccountContext, newState: ConnectState) {
+        if (AMELogin.isLogin && newState == ConnectState.CONNECTED && inited) {
             syncOfflineMessage()
             offlineSyncManager.resetDelay()
         }
 
-        if (e.state != ServiceConnectEvent.STATE.CONNECTED) {
+        if (newState != ConnectState.CONNECTED) {
             ackReporter.resetSyncState()
         }
     }

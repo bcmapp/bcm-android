@@ -2,7 +2,9 @@ package com.bcm.messenger.login.logic
 
 import android.os.Environment
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
+import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
@@ -17,11 +19,13 @@ import com.bcm.messenger.utility.storage.SPEditor
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
+import org.greenrobot.eventbus.EventBus
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashMap
 import kotlin.math.min
 
@@ -42,8 +46,9 @@ class AmeAccountHistory {
     }
 
     private var accountMap = Collections.synchronizedMap(HashMap<String, AmeAccountData>())
-    private var majorAccountUid: String = ""  //前端登录的主帐号
-    private var minorAccountUids: MutableList<String> = Collections.synchronizedList(mutableListOf()) //前端登录的其它帐号
+    private var majorAccountUid: String = ""
+    private var minorAccountUids: MutableList<String> = Collections.synchronizedList(mutableListOf())
+    private val accountContextMap = ConcurrentHashMap<String, AccountContext>() //all account context, include log out account
 
     private val storage = SPEditor(SuperPreferences.LOGIN_PROFILE_PREFERENCES)
 
@@ -73,6 +78,10 @@ class AmeAccountHistory {
                 saveAccountHistory()
             }
 
+            for ((uid, account) in accountMap) {
+                accountContextMap[uid] = AccountContext(uid, genToken(uid, account.signalPassword), account.signalPassword)
+            }
+
             storage.remove(AME_LAST_LOGIN)
         } catch (e: Throwable) {
             ALog.e(TAG, "init error", e)
@@ -84,7 +93,6 @@ class AmeAccountHistory {
         if (account.uid == majorAccountUid() && account.signalPassword.isEmpty()) {
             ALog.i(TAG, "fix login state")
             account.registrationId = TextSecurePreferences.getLocalRegistrationId(context)
-            account.gcmToken = TextSecurePreferences.getGcmRegistrationId(context)
             account.gcmTokenLastSetTime = TextSecurePreferences.getGcmRegistrationIdLastSetTime(context)
             account.gcmDisabled = TextSecurePreferences.isGcmDisabled(context)
             account.pushRegistered = TextSecurePreferences.isPushRegistered(context)
@@ -102,7 +110,7 @@ class AmeAccountHistory {
         val json = SuperPreferences.getAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, account.uid)
         val state: OldBackupState?
         if (!json.isNullOrEmpty()) {
-            SuperPreferences.setAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, AMELogin.uid, "")
+            SuperPreferences.setAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, account.uid, "")
             state = OldBackupState.fromJson(json)
             if (null != state && state.time != 0L) {
                 account.backupTime = state.time
@@ -152,16 +160,32 @@ class AmeAccountHistory {
     }
 
     fun setMajorLoginAccountUid(uid: String) {
-        ALog.logForSecret(TAG, "current uid :$uid")
-        val minorUid = storage.get(AME_MAJOR_LOGIN_ACCOUNT, "")
-        if (minorUid.isNotEmpty()) {
-            minorAccountUids.add(minorUid)
+        ALog.logForSecret(TAG, "setMajorLoginAccountUid current uid :$uid")
+        val accountData = getAccount(uid)
+
+        if (accountData == null) {
+            ALog.logForSecret(TAG, "setMajorLoginAccountUid account data not found")
+            return
+        }
+
+        val lastMajorUid = majorAccountUid
+        if (uid == lastMajorUid) {
+            return
+        }
+
+        //set current major account to minor account
+        if (lastMajorUid.isNotEmpty()) {
+            minorAccountUids.add(lastMajorUid)
+            minorAccountUids.remove(uid)
             storage.set(AME_MINOR_LOGIN_ACCOUNT, GsonUtils.toJson(minorAccountUids))
         }
 
         majorAccountUid = uid
         storage.set(AME_MAJOR_LOGIN_ACCOUNT, uid)
-        upgradeOldAccountFlags()
+
+        val token = genToken(majorAccountUid, accountData.signalPassword)
+        accountContextMap[majorAccountUid] = AccountContext(majorAccountUid, token, accountData.signalPassword)
+        EventBus.getDefault().post(AccountLoginStateChangedEvent())
     }
 
     fun removeLoginAccountUid(uid: String) {
@@ -174,6 +198,7 @@ class AmeAccountHistory {
         if (majorAccountUid == logoutUid) {
             majorAccountUid = ""
 
+            //set the first minor account to major account
             if (minorAccountUids.isNotEmpty()) {
                 majorAccountUid = minorAccountUids.removeAt(0)
                 storage.set(AME_MINOR_LOGIN_ACCOUNT, GsonUtils.toJson(minorAccountUids))
@@ -183,6 +208,10 @@ class AmeAccountHistory {
             minorAccountUids.remove(uid)
             storage.set(AME_MINOR_LOGIN_ACCOUNT, GsonUtils.toJson(minorAccountUids))
         }
+
+        accountContextMap[uid] = AccountContext(uid, "", "")
+
+        EventBus.getDefault().post(AccountLoginStateChangedEvent())
     }
 
     fun resetBackupState(uid: String) {
@@ -208,7 +237,6 @@ class AmeAccountHistory {
         }
         if (exist == null) {
             accountMap[key] = data
-
         } else {
             val newBackupTime = min(data.backupTime, AmeTimeUtil.localTimeSecond())
             if (newBackupTime > 0) {
@@ -269,31 +297,6 @@ class AmeAccountHistory {
         }
     }
 
-    private fun upgradeOldAccountFlags() {
-        if (IdentityKeyUtil.hasIdentityKey(AppContextHolder.APP_CONTEXT)) {
-            val idKey = IdentityKeyUtil.getIdentityKey(AppContextHolder.APP_CONTEXT)
-            val publicKey = HexUtil.toString(idKey.publicKey.serialize())
-            val idKeyUid = BCMPrivateKeyUtils.provideUid(idKey.publicKey.serialize())
-            if (idKeyUid == majorAccountUid()) {
-                val json = SuperPreferences.getAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, publicKey)
-                if (!json.isNullOrEmpty()) {
-                    SuperPreferences.setAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, publicKey, "")
-                    SuperPreferences.setAccountBackupWithPublicKey2(AppContextHolder.APP_CONTEXT, AMELogin.uid, json)
-                }
-
-                if (SuperPreferences.isAccountBackupWithPublicKey(AppContextHolder.APP_CONTEXT, publicKey)) {
-                    SuperPreferences.setAccountBackupWithPublicKey(AppContextHolder.APP_CONTEXT, publicKey, false)
-                    SuperPreferences.setAccountBackupWithPublicKey(AppContextHolder.APP_CONTEXT, AMELogin.uid, true)
-                }
-
-                if (SuperPreferences.isAccountBackupWithRedPoint(AppContextHolder.APP_CONTEXT, publicKey)) {
-                    SuperPreferences.setAccountBackupRedPoint(AppContextHolder.APP_CONTEXT, publicKey, false)
-                    SuperPreferences.setAccountBackupRedPoint(AppContextHolder.APP_CONTEXT, AMELogin.uid, true)
-                }
-            }
-        }
-    }
-
     fun export() {
         if (accountMap.isEmpty()) {
             return
@@ -341,6 +344,36 @@ class AmeAccountHistory {
                 ALog.e("AccountImport", e)
             }
         }
+    }
+
+    fun genToken(uid: String, password: String): String {
+        try {
+            if (password.isNotEmpty()) {
+                return "Basic " + Base64.encodeBytes(("$uid:$password").toByteArray(charset("UTF-8")))
+            }
+        } catch (e: Exception) {
+            ALog.logForSecret(TAG, "getAuthorizationHeader fail", e)
+        }
+        return ""
+    }
+
+    fun getAccountContext(uid: String): AccountContext? {
+        return accountContextMap[uid]
+    }
+
+    fun getAllLoginContext(): List<AccountContext> {
+        val loginContextList = mutableListOf<AccountContext>()
+        val majorContext = getAccountContext(majorAccountUid)
+        if (null != majorContext) {
+            loginContextList.add(majorContext)
+        }
+
+        val minorList = minorAccountUids
+        for (i in minorList) {
+            loginContextList.add(getAccountContext(i)?:continue)
+        }
+
+        return loginContextList
     }
 
     data class OldBackupState(val time: Long, val version: Int) : NotGuard {

@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.bcmhttp.interceptor.error
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException
 import com.bcm.messenger.common.event.ClientAccountDisabledEvent
@@ -19,7 +20,7 @@ import org.whispersystems.signalservice.internal.push.exceptions.MismatchedDevic
 import org.whispersystems.signalservice.internal.push.exceptions.StaleDevicesException
 import java.io.IOException
 
-class IMServerErrorCodeInterceptor : BcmErrorInterceptor() {
+class IMServerErrorCodeInterceptor(private val accountContext: AccountContext) : BcmErrorInterceptor() {
     private val TAG = "IMServerError"
 
     override fun onError(response: Response) {
@@ -78,7 +79,7 @@ class IMServerErrorCodeInterceptor : BcmErrorInterceptor() {
             417 -> throw ExpectationFailedException()
             ServerCodeUtil.CODE_LOW_VERSION -> throw VersionTooLowException(code, AppUtil.getString(R.string.common_too_low_version_notice))
             ServerCodeUtil.CODE_TOKEN_EXPIRE -> {
-                EventBus.getDefault().post(ClientAccountDisabledEvent(ClientAccountDisabledEvent.TYPE_EXPIRE))
+                EventBus.getDefault().post(ClientAccountDisabledEvent(accountContext, ClientAccountDisabledEvent.TYPE_EXPIRE))
             }
             else -> {
 

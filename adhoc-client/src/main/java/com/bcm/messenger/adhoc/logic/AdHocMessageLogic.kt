@@ -10,6 +10,7 @@ import com.bcm.messenger.adhoc.sdk.AdHocSessionStatus
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.repositories.Repository
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.BcmFileUtils
@@ -585,7 +586,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
                         updateSessionUnread(result.sessionId, 1)
 
                         val isAtMe = result.isAtMe
-                        AmePushProcess.processPush(AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.ADHOC_NOTIFY, null, null, null, AmePushProcess.AdHocNotifyData(result.sessionId, isAtMe))))
+                        AmePushProcess.processPush(AMELogin.majorContext, AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.ADHOC_NOTIFY, null, null, null, AmePushProcess.AdHocNotifyData(result.sessionId, isAtMe))))
 
                     }, {
                         ALog.e(TAG, "addStoreQueue fail", it)

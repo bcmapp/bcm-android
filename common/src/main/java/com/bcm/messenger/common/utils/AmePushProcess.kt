@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.utils
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
@@ -8,6 +9,7 @@ import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.core.app.NotificationCompat
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.AmeNotification
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.Address
@@ -56,14 +58,14 @@ object AmePushProcess {
     private const val downloadNotificationId = 3
 
     private var pushInitTime = 0L
-    private var offlineUnreadSet = mutableSetOf<String>() //（）
-    private var adhocOfflineUnreadSet = mutableSetOf<String>() //
-    private var friendReqUnreadCount = 0 //
+    private var offlineUnreadSet = mutableSetOf<String>()
+    private var adhocOfflineUnreadSet = mutableSetOf<String>()
+    private var friendReqUnreadCount = 0
 
     private var lastNotifyTime = 0L
 
-    private var mChatNotification: Notification? = null //
-    private var mFriendReqNotification: Notification? = null //
+    private var mChatNotification: Notification? = null
+    private var mFriendReqNotification: Notification? = null
 
     /**
      * 
@@ -238,14 +240,15 @@ object AmePushProcess {
 
     class BcmData(val bcmdata: BcmNotify?): NotGuard
 
-    fun processPush(notify: BcmData?, fromPush: Boolean = false) {
+    @SuppressLint("CheckResult")
+    fun processPush(accountContext: AccountContext?, notify: BcmData?) {
 
         if (AMELogin.isLogin && null != notify) {
             if (TextSecurePreferences.isNotificationsEnabled(AppContextHolder.APP_CONTEXT) &&
                     TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT)) { //
                 Observable.create<Unit> {
                     if (needShowOffline()) {
-                        incrementOfflineUnreadCount(notify)
+                        incrementOfflineUnreadCount(accountContext, notify)
                         handleNotify(notify.bcmdata?.contactChat)
                         handleNotify(notify.bcmdata?.groupChat)
                         handleNotify(notify.bcmdata?.friendMsg)
@@ -273,14 +276,14 @@ object AmePushProcess {
 
     }
 
-    fun processPush(pushContent: String) {
+    fun processPush(accountContext: AccountContext?, pushContent: String) {
         try {
             if (!AMELogin.isLogin) {
                 ALog.i(TAG, "processPush Current is not login")
                 return
             }
             ALog.d(TAG, "processPush: $pushContent")
-            val notify = Gson().fromJson(pushContent, AmePushProcess.BcmData::class.java)
+            val notify = Gson().fromJson(pushContent, BcmData::class.java)
             if (notify.bcmdata != null) {
                 notify.bcmdata.contactChat?.uid?.let {
                     try {
@@ -292,9 +295,8 @@ object AmePushProcess {
                     }
                 }
 
-                //FIXME ，@
                 notify.bcmdata.groupChat?.isAt = true
-                processPush(notify, true)
+                processPush(accountContext, notify)
 
             } else {
                 ALog.e(TAG, "PushContent is not support")
@@ -309,11 +311,11 @@ object AmePushProcess {
      */
     fun checkSystemBannerNotice() {
         AmeDispatcher.io.dispatch {
-            val lastMsg = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.uid + "_" + SystemNotifyData.TYPE_BANNER, "")
+            val lastMsg = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.majorUid + "_" + SystemNotifyData.TYPE_BANNER, "")
             val msg = GsonUtils.fromJson(lastMsg, SystemNotifyData::class.java)
             if (lastMsg.isNotEmpty() && msg.type == SystemNotifyData.TYPE_BANNER) {
                 val data = BcmData(BcmNotify(SYSTEM_NOTIFY, null, null, null, null, msg))
-                processPush(data, false)
+                processPush(AMELogin.majorContext, data)
             }
         }
     }
@@ -321,7 +323,7 @@ object AmePushProcess {
     /**
      * 
      */
-    private fun incrementOfflineUnreadCount(data: BcmData) {
+    private fun incrementOfflineUnreadCount(accountContext: AccountContext?, data: BcmData) {
         if (!AppForeground.foreground()) {
             val privateChat = data.bcmdata?.contactChat
             val groupChat = data.bcmdata?.groupChat
@@ -381,16 +383,10 @@ object AmePushProcess {
         }
     }
 
-    /**
-     * 
-     */
     private fun canNotifySystemMsg(current: Long, start: Long, end: Long): Boolean {
         return start == -1L || start == 0L || current in start..end
     }
 
-    /**
-     * 
-     */
     private fun handleNotify(notifyData: SystemNotifyData?) {
         if(notifyData == null) {
             return
@@ -448,10 +444,6 @@ object AmePushProcess {
         }
     }
 
-
-    /**
-     * 
-     */
     private fun setAlarm(builder: NotificationCompat.Builder, ringtone: Uri?, vibrate: RecipientDatabase.VibrateState) {
         if (System.currentTimeMillis() - lastNotifyTime > 6000) {
             lastNotifyTime = System.currentTimeMillis()
@@ -470,9 +462,6 @@ object AmePushProcess {
         }
     }
 
-    /**
-     * 
-     */
     private fun handleNotify(notifyData: ChatNotifyData?) {
         if (null != notifyData) {
             ALog.i(TAG, "receive push group data -- background!!!")
@@ -668,7 +657,6 @@ object AmePushProcess {
      * 
      */
     private fun needShowOffline(): Boolean {
-        //5，
         if (System.currentTimeMillis() - pushInitTime > 5000 && pushInitTime != 0L) {
             if (!AppForeground.foreground()) {
                 return true

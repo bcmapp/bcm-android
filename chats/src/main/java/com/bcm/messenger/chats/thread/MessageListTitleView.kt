@@ -24,6 +24,7 @@ import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
+import com.bcm.messenger.common.server.ConnectState
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.AppUtil.getString
 import com.bcm.messenger.common.utils.dp2Px
@@ -31,7 +32,7 @@ import com.bcm.messenger.common.utils.sp2Px
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
-import com.bcm.messenger.utility.network.IConnectionListener
+import com.bcm.messenger.utility.network.INetworkConnectionListener
 import com.bcm.messenger.utility.network.NetworkUtil
 import com.bcm.netswitchy.proxy.IProxyStateChanged
 import com.bcm.netswitchy.proxy.ProxyManager
@@ -40,7 +41,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class MessageListTitleView : TextSwitcher, IConnectionListener, IProxyStateChanged, RecipientModifiedListener {
+class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxyStateChanged, RecipientModifiedListener {
 
     private val INIT = 0
     private val OFFLINE = 1
@@ -223,22 +224,22 @@ class MessageListTitleView : TextSwitcher, IConnectionListener, IProxyStateChang
     }
 
     private fun getState(): Int {
-        val serviceConnectState = AmeModuleCenter.login().serviceConnectedState()
+        val serviceConnectState = AmeModuleCenter.serverDaemon().state()
         return when {
             !NetworkUtil.isConnected() -> {
                 OFFLINE
             }
-            serviceConnectState == ServiceConnectEvent.STATE.UNKNOWN -> {
+            serviceConnectState == ConnectState.INIT -> {
                 CONNECTING
             }
-            serviceConnectState == ServiceConnectEvent.STATE.CONNECTING -> {
+            serviceConnectState == ConnectState.CONNECTING -> {
                 if (ProxyManager.isProxyRunning() && customProxyConnecting) {
                     PROXY_CONNECTING
                 } else {
                     CONNECTING
                 }
             }
-            serviceConnectState == ServiceConnectEvent.STATE.DISCONNECTED -> {
+            serviceConnectState == ConnectState.DISCONNECTED -> {
                 PROXY_TRY
             }
             else -> {

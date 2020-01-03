@@ -1,5 +1,5 @@
 package com.bcm.messenger.utility.network;
 
-public interface IConnectionListener {
+public interface INetworkConnectionListener {
     void onNetWorkStateChanged();
 }

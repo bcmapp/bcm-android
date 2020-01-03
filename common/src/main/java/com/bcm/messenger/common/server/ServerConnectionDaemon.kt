@@ -19,6 +19,7 @@ import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IMetricsModule
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.GsonUtils
+import com.bcm.messenger.utility.listener.SafeWeakListeners
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.network.NetworkUtil
 import com.google.protobuf.ByteString
@@ -37,11 +38,11 @@ import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.util.concurrent.*
 
-class ServerConnectionDaemon(private val accountContext: AccountContext) : IServerConnectionDaemon, IServerConnectionEvent, LBSFetcher.ILBSFetchResult {
+class ServerConnectionDaemon(private val accountContext: AccountContext) : IServerConnectionDaemon, IServerProtoDataEvent, LBSFetcher.ILBSFetchResult {
 
     companion object {
         private const val KEEPALIVE_TIMEOUT_MILLI = 60_000L
-        private const val DAEMON_TIMER_MILLI = 10_000L
+        private const val DAEMON_TIMER_MILLI = 20_000L
         private const val TAG = "ServerConnectionDaemon"
         private const val CONN_METRICS_TOKEN = 1 //
         private const val CONN_DEFAULT_TOKEN = 0 //
@@ -60,11 +61,13 @@ class ServerConnectionDaemon(private val accountContext: AccountContext) : IServ
 
     private var retryTimer: Disposable? = null
 
-    private var eventListener: IServerConnectionEvent? = null
+    private var eventListener: IServerProtoDataEvent? = null
 
     private val reportProvider = AmeProvider.get<IMetricsModule>(ARouterConstants.Provider.REPORT_BASE)
 
     private var lbsFetchIndex = 0
+
+    private val connectionListener = SafeWeakListeners<IServerConnectStateListener>()
 
     private val networkReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -78,8 +81,15 @@ class ServerConnectionDaemon(private val accountContext: AccountContext) : IServ
         LBSManager.addListener(this)
     }
 
+    override fun addConnectionListener(listener: IServerConnectStateListener) {
+        this.connectionListener.addListener(listener)
+    }
 
-    fun setEventListener(eventListener: IServerConnectionEvent) {
+    override fun removeConnectionListener(listener: IServerConnectStateListener) {
+        this.connectionListener.removeListener(listener)
+    }
+
+    fun setEventListener(eventListener: IServerProtoDataEvent) {
         this.eventListener = eventListener
     }
 
@@ -116,6 +126,10 @@ class ServerConnectionDaemon(private val accountContext: AccountContext) : IServ
             serverConn?.disconnect()
             serverConn = null
         }
+    }
+
+    override fun state(): ConnectState {
+        return status
     }
 
     override fun checkConnection(manual: Boolean) {
@@ -287,7 +301,6 @@ class ServerConnectionDaemon(private val accountContext: AccountContext) : IServ
             return
         }
 
-        //,
         if (null == conn || conn.isDisconnect() || conn.isTimeout()) {
             if (!doConnection(CONN_DEFAULT_TOKEN)) {
                 ALog.w(TAG, "daemonRun params error ${hostUri.length}")
@@ -374,15 +387,14 @@ class ServerConnectionDaemon(private val accountContext: AccountContext) : IServ
         ALog.i(TAG, "onClientForceLogout $type $info")
         stopDaemon()
         this.eventListener?.onClientForceLogout(accountContext, info, type)
+        onServiceConnected(accountContext, CONN_DEFAULT_TOKEN, ConnectState.DISCONNECTED)
     }
 
     override fun onLBSFetchResult(succeed: Boolean, fetchIndex: Int) {
         if (fetchIndex != this.lbsFetchIndex) {
             lbsFetchIndex = fetchIndex
 
-            //lbs ，
             if (succeed && serverConn?.isConnected() == true) {
-                //
                 stopConnection()
                 startConnection()
             }

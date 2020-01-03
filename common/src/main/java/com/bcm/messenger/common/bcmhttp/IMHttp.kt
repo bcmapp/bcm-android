@@ -43,7 +43,7 @@ class IMHttp(accountContext: AccountContext) : BcmBaseHttp() {
                 .hostnameVerifier(trustAllHostVerify())
                 .addInterceptor(BcmAuthHeaderInterceptor(accountContext))
                 .addInterceptor(RedirectInterceptorHelper.imServerInterceptor)
-                .addInterceptor(IMServerErrorCodeInterceptor())
+                .addInterceptor(IMServerErrorCodeInterceptor(accountContext))
                 .addInterceptor(NormalMetricsInterceptor())
                 .readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)

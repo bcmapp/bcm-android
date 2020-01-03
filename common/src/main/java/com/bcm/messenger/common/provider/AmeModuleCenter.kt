@@ -22,14 +22,15 @@ import org.whispersystems.jobqueue.dependencies.DependencyInjector
 
 object AmeModuleCenter {
     private val serverConnectionDaemon: ServerConnectionDaemon = ServerConnectionDaemon(AMELogin.majorContext)
-    private val serverDataDispatcher: ServerDataDispatcher = ServerDataDispatcher(AMELogin.majorContext)
+    private val serverDataDispatcher: ServerDataDispatcher = ServerDataDispatcher()
 
     init {
         serverConnectionDaemon.setEventListener(serverDataDispatcher)
+        serverConnectionDaemon.addConnectionListener(serverDataDispatcher)
     }
 
     fun instance() {
-        login().checkLoginAccountState()
+        login().restoreLastLoginState()
         login().initModule()
         adhoc().initModule()
     }
@@ -92,7 +93,7 @@ object AmeModuleCenter {
         return AmeProvider.get(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)!!
     }
 
-    fun serverDispatcher(accountContext: AccountContext): IServerDataDispatcher {
+    fun serverDispatcher(): IServerDataDispatcher {
         return serverDataDispatcher
     }
 

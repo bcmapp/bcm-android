@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap
 object NetworkUtil: NetworkCallbackImpl.StatusCallback {
     private lateinit var wiFiCallback: NetworkCallbackImpl
     private lateinit var mobileCallback: NetworkCallbackImpl
-    private val listenerSet = Collections.newSetFromMap(ConcurrentHashMap<IConnectionListener, Boolean>())
+    private val listenerSet = Collections.newSetFromMap(ConcurrentHashMap<INetworkConnectionListener, Boolean>())
 
     enum class NetType(val typeName: String) {
         WiFi("WiFi"),
@@ -77,17 +77,17 @@ object NetworkUtil: NetworkCallbackImpl.StatusCallback {
     }
 
     /**
-     * @param listener
+     * @param listenerNetwork
      */
-    fun addListener(listener:IConnectionListener) {
-        listenerSet.add(listener)
+    fun addListener(listenerNetwork: INetworkConnectionListener) {
+        listenerSet.add(listenerNetwork)
     }
 
     /**
-     * @param listener
+     * @param listenerNetwork
      */
-    fun removeListener(listener: IConnectionListener) {
-        listenerSet.remove(listener)
+    fun removeListener(listenerNetwork: INetworkConnectionListener) {
+        listenerSet.remove(listenerNetwork)
     }
 
     fun isConnected(): Boolean {
