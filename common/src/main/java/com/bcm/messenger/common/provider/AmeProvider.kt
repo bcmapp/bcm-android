@@ -12,12 +12,13 @@ import com.bcm.route.api.IRouteProvider
 @Suppress("UNCHECKED_CAST")
 object AmeProvider {
     private const val TAG = "AmeProvider"
-    private val moduleMap = HashMap<String, IRouteProvider>()
+    private val moduleMap = HashMap<Index, IRouteProvider>()
+    private data class Index(val context: AccountContext?, val providerName: String)
 
     fun <T : IRouteProvider> get(providerName: String): T? {
         try {
             synchronized(moduleMap) {
-                val key = providerName
+                val key = Index(null, providerName)
                 val module = moduleMap[key]
                 if (null != module) {
                     return module as T
@@ -47,7 +48,7 @@ object AmeProvider {
 
         try {
             synchronized(moduleMap) {
-                val key = "${context.uid}$providerName"
+                val key = Index(context, providerName)
                 val module = moduleMap[key]
                 if (null != module) {
                     return module as T
@@ -68,9 +69,18 @@ object AmeProvider {
         return null
     }
 
-    fun removeModule(providerName: String, uid: String) {
+    fun removeModule(providerName: String) {
         synchronized(moduleMap) {
-            moduleMap.remove("$uid$providerName")
+            moduleMap.remove(Index(null, providerName))
+        }
+    }
+
+    fun removeModule(context: AccountContext) {
+        synchronized(moduleMap) {
+            val keylist = moduleMap.keys.filter { it.context == context }
+            keylist.forEach {
+                moduleMap.remove(it)
+            }
         }
     }
 }

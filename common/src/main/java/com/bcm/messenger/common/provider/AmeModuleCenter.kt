@@ -47,6 +47,8 @@ object AmeModuleCenter {
         user(accountContext)?.uninitModule()
         metric(accountContext)?.uninitModule()
         wallet(accountContext)?.uninitModule()
+
+        AmeProvider.removeModule(accountContext)
     }
 
     fun login(): ILoginModule {
