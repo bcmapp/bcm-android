@@ -3,7 +3,7 @@ package com.bcm.messenger.common.bcmhttp.interceptor.error
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException
-import com.bcm.messenger.common.event.ClientAccountDisabledEvent
+import com.bcm.messenger.me.provider.ClientAccountDisabledEvent
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
@@ -79,7 +79,7 @@ class IMServerErrorCodeInterceptor(private val accountContext: AccountContext) :
             417 -> throw ExpectationFailedException()
             ServerCodeUtil.CODE_LOW_VERSION -> throw VersionTooLowException(code, AppUtil.getString(R.string.common_too_low_version_notice))
             ServerCodeUtil.CODE_TOKEN_EXPIRE -> {
-                EventBus.getDefault().post(ClientAccountDisabledEvent(accountContext, ClientAccountDisabledEvent.TYPE_EXPIRE))
+                EventBus.getDefault().post(com.bcm.messenger.me.provider.ClientAccountDisabledEvent(accountContext, com.bcm.messenger.me.provider.ClientAccountDisabledEvent.TYPE_EXPIRE))
             }
             else -> {
 

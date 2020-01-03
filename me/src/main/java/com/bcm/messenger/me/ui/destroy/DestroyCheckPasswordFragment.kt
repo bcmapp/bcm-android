@@ -100,7 +100,7 @@ class DestroyCheckPasswordFragment : Fragment() {
                         .subscribe({ recipient ->
 
                             weakThis.get()?.destroy_name?.text = recipient.name
-                            weakThis.get()?.destroy_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                            weakThis.get()?.destroy_avatar?.setPhoto(AMELogin.majorContext, recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
 
                         }, { _ ->
 
@@ -135,7 +135,7 @@ class DestroyCheckPasswordFragment : Fragment() {
                                 ALog.e(TAG, "登录态还没释放完")
                                 return@showConfirm
                             }
-                            AmeModuleCenter.onLoginSucceed("")
+                            AmeModuleCenter.onLogOutSucceed(AMELogin.majorContext)
 
                             BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

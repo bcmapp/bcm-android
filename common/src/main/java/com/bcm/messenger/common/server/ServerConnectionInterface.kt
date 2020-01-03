@@ -11,11 +11,6 @@ import java.io.IOException
  *
  * Created by wjh on 2019-11-06
  */
-
-interface IServerProtoDataEvent {
-    fun onMessageArrive(accountContext: AccountContext, message: WebSocketProtos.WebSocketRequestMessage): Boolean
-}
-
 interface IServerDataDispatcher {
     fun addListener(listener: IServerDataListener) {}
     fun removeListener(listener: IServerDataListener) {}
@@ -33,6 +28,7 @@ interface IServerConnectionDaemon {
 
     fun addConnectionListener(listener: IServerConnectStateListener) {}
     fun removeConnectionListener(listener: IServerConnectStateListener) {}
+    fun setForceLogoutListener(listener: IServerConnectForceLogoutListener?){}
 }
 
 interface IServerDataListener {
@@ -41,7 +37,10 @@ interface IServerDataListener {
 
 interface IServerConnectStateListener {
     fun onServerConnectionChanged(accountContext: AccountContext, newState:ConnectState)
-    fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent){}
+}
+
+interface IServerConnectForceLogoutListener {
+    fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent)
 }
 
 enum class KickEvent {

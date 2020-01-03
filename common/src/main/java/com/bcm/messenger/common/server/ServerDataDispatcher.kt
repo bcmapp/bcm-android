@@ -1,11 +1,9 @@
 package com.bcm.messenger.common.server
 
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.event.ClientAccountDisabledEvent
 import com.bcm.messenger.utility.listener.WeakListeners
 import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.AbstractMessage
-import org.greenrobot.eventbus.EventBus
 import org.whispersystems.libsignal.InvalidVersionException
 import org.whispersystems.libsignal.logging.Log
 import org.whispersystems.signalservice.internal.push.SignalServiceProtos
@@ -22,7 +20,7 @@ import javax.crypto.*
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-class ServerDataDispatcher : IServerProtoDataEvent, IServerDataDispatcher, IServerConnectStateListener {
+class ServerDataDispatcher :IServerDataDispatcher {
 
     companion object {
         private const val TAG = "ServerDataDispatcher"
@@ -48,33 +46,7 @@ class ServerDataDispatcher : IServerProtoDataEvent, IServerDataDispatcher, IServ
         this.listener.removeListener(listener)
     }
 
-    override fun onServerConnectionChanged(accountContext: AccountContext, newState: ConnectState) {
-        ALog.i(TAG, "onServiceConnected $newState")
-    }
-
-    override fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent) {
-        ALog.i("ForceLogout", "onClientForceLogout: $type")
-        when (type) {
-            KickEvent.OTHER_LOGIN -> {
-                val deviceInfo = try {
-                    if (info == null) {
-                        null
-                    } else {
-                        String(Base64.decode(info))
-                    }
-                } catch (ex: Exception) {
-                    ALog.e("ForceLogout", "onClientForceLogout fail", ex)
-                    null
-                }
-                EventBus.getDefault().post(ClientAccountDisabledEvent(accountContext, ClientAccountDisabledEvent.TYPE_EXCEPTION_LOGIN, deviceInfo))
-            }
-            KickEvent.ACCOUNT_GONE -> {
-                EventBus.getDefault().post(ClientAccountDisabledEvent(accountContext, ClientAccountDisabledEvent.TYPE_ACCOUNT_GONE))
-            }
-        }
-    }
-
-    override fun onMessageArrive(accountContext: AccountContext, message: WebSocketProtos.WebSocketRequestMessage): Boolean {
+    fun onMessageArrive(accountContext: AccountContext, message: WebSocketProtos.WebSocketRequestMessage): Boolean {
         if ("PUT" == message.verb) {
             try {
                 val proto: AbstractMessage = when (message.path) {

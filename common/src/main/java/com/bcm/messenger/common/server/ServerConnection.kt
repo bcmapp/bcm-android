@@ -17,8 +17,8 @@ import java.io.IOException
 
 class ServerConnection(private val accountContext: AccountContext, private val userAgent: String) {
 
-    private val RESPONSE_REFUSE = 403//
-    private val RESPONSE_GONE = 410//
+    private val RESPONSE_REFUSE = 403
+    private val RESPONSE_GONE = 410
 
     private val TAG = "ServerConnection"
 
@@ -36,11 +36,7 @@ class ServerConnection(private val accountContext: AccountContext, private val u
     private var connectToken = 0
 
     private var connectingTime = 0L
-    /**
-     * 
-     *
-     * @param listener
-     */
+
     fun setConnectionListener(listener: IServerProtoDataEvent?) {
         protoDataEvent = listener
     }
@@ -274,6 +270,12 @@ class ServerConnection(private val accountContext: AccountContext, private val u
                 webSocket?.close(1000, "OK")
             }
         }
+    }
+
+    interface IServerProtoDataEvent {
+        fun onServiceConnected(accountContext: AccountContext, connectToken: Int, state: ConnectState)
+        fun onMessageArrive(accountContext: AccountContext, message: WebSocketProtos.WebSocketRequestMessage): Boolean
+        fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent)
     }
 
 }

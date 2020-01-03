@@ -38,7 +38,11 @@ import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.util.concurrent.*
 
-class ServerConnectionDaemon(private val accountContext: AccountContext) : IServerConnectionDaemon, IServerProtoDataEvent, LBSFetcher.ILBSFetchResult {
+class ServerConnectionDaemon(private val accountContext: AccountContext
+                             , private val serverDataDispatcher: ServerDataDispatcher)
+    : IServerConnectionDaemon
+        , ServerConnection.IServerProtoDataEvent
+        , LBSFetcher.ILBSFetchResult {
 
     companion object {
         private const val KEEPALIVE_TIMEOUT_MILLI = 60_000L
@@ -61,13 +65,13 @@ class ServerConnectionDaemon(private val accountContext: AccountContext) : IServ
 
     private var retryTimer: Disposable? = null
 
-    private var eventListener: IServerProtoDataEvent? = null
-
     private val reportProvider = AmeProvider.get<IMetricsModule>(ARouterConstants.Provider.REPORT_BASE)
 
     private var lbsFetchIndex = 0
 
     private val connectionListener = SafeWeakListeners<IServerConnectStateListener>()
+
+    private var forceLogoutListener: IServerConnectForceLogoutListener? = null
 
     private val networkReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -89,8 +93,8 @@ class ServerConnectionDaemon(private val accountContext: AccountContext) : IServ
         this.connectionListener.removeListener(listener)
     }
 
-    fun setEventListener(eventListener: IServerProtoDataEvent) {
-        this.eventListener = eventListener
+    override fun setForceLogoutListener(listener: IServerConnectForceLogoutListener?) {
+        this.forceLogoutListener = listener
     }
 
     override fun startDaemon() {
@@ -297,7 +301,8 @@ class ServerConnectionDaemon(private val accountContext: AccountContext) : IServ
         val conn = serverConn
 
         if (!NetworkUtil.isConnected()) {
-            onServiceConnected(accountContext, CONN_DEFAULT_TOKEN, conn?.state() ?: ConnectState.DISCONNECTED)
+            onServiceConnected(accountContext, CONN_DEFAULT_TOKEN, conn?.state()
+                    ?: ConnectState.DISCONNECTED)
             return
         }
 
@@ -307,7 +312,8 @@ class ServerConnectionDaemon(private val accountContext: AccountContext) : IServ
             } else {
                 ALog.i(TAG, "daemonRun try reconnecting")
             }
-            onServiceConnected(accountContext, CONN_DEFAULT_TOKEN, conn?.state() ?: ConnectState.DISCONNECTED)
+            onServiceConnected(accountContext, CONN_DEFAULT_TOKEN, conn?.state()
+                    ?: ConnectState.DISCONNECTED)
         } else if (conn.isConnected()) {
             if (tickTime() - lastKeepTime >= KEEPALIVE_TIMEOUT_MILLI) {
                 if (conn.sendKeepAlive()) {
@@ -353,16 +359,18 @@ class ServerConnectionDaemon(private val accountContext: AccountContext) : IServ
                     checkMetrics(state == ConnectState.CONNECTED)
                 }
             }
-            this.eventListener?.onServiceConnected(accountContext, connectToken, state)
+            this.connectionListener?.forEach {
+                it.onServerConnectionChanged(accountContext, state)
+            }
         }
     }
 
     override fun onMessageArrive(accountContext: AccountContext, message: WebSocketProtos.WebSocketRequestMessage): Boolean {
         messageScheduler.scheduleDirect {
             try {
-                val result = eventListener?.onMessageArrive(accountContext, message)
+                val result = serverDataDispatcher.onMessageArrive(accountContext, message)
 
-                val response = if (result == true) {
+                val response = if (result) {
                     WebSocketProtos.WebSocketResponseMessage.newBuilder()
                             .setId(message.id)
                             .setStatus(200)
@@ -386,7 +394,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext) : IServ
     override fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent) {
         ALog.i(TAG, "onClientForceLogout $type $info")
         stopDaemon()
-        this.eventListener?.onClientForceLogout(accountContext, info, type)
+        this.forceLogoutListener?.onClientForceLogout (accountContext, info, type)
         onServiceConnected(accountContext, CONN_DEFAULT_TOKEN, ConnectState.DISCONNECTED)
     }
 

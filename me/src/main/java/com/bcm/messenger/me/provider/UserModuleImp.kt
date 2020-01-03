@@ -1,5 +1,6 @@
 package com.bcm.messenger.me.provider
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -14,10 +15,11 @@ import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.ProfileKeyUtil
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
-import com.bcm.messenger.common.event.ClientAccountDisabledEvent
 import com.bcm.messenger.common.provider.*
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.server.IServerConnectForceLogoutListener
+import com.bcm.messenger.common.server.KickEvent
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
@@ -49,6 +51,7 @@ import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import org.greenrobot.eventbus.EventBus
 import org.whispersystems.curve25519.Curve25519
 import org.whispersystems.libsignal.ecc.DjbECPublicKey
 import java.io.File
@@ -59,11 +62,15 @@ import java.util.concurrent.TimeUnit
  * Created by wjh on 2018/7/3
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_USER_BASE)
-class UserModuleImp : IUserModule {
+class UserModuleImp : IUserModule
+        , IServerConnectForceLogoutListener
+        , AppForeground.IForegroundEvent {
     private val TAG = "UserProviderImp"
 
     private var expireDispose: Disposable? = null
     private var kickOutDispose: Disposable? = null
+
+    private var kickEvent: AccountKickedEvent? = null
 
     private lateinit var accountContext: AccountContext
     override val context: AccountContext
@@ -76,11 +83,58 @@ class UserModuleImp : IUserModule {
 
     override fun initModule() {
         AmeNoteLogic.getInstance().refreshCurrentUser()
+        AmeModuleCenter.serverDaemon(accountContext).setForceLogoutListener(this)
+        AppForeground.listener.addListener(this)
         AmePinLogic.initLogic()
     }
 
     override fun uninitModule() {
+        AmeModuleCenter.serverDaemon(accountContext).setForceLogoutListener(null)
+        AppForeground.listener.removeListener(this)
+    }
 
+    override fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent) {
+        if (accountContext.uid != this.accountContext.uid) {
+            return
+        }
+        val event = when (type) {
+            KickEvent.OTHER_LOGIN -> {
+                val deviceInfo = try {
+                    if (info == null) {
+                        null
+                    } else {
+                        String(org.whispersystems.signalservice.internal.util.Base64.decode(info))
+                    }
+                } catch (ex: Exception) {
+                    ALog.e("ForceLogout", "onClientForceLogout fail", ex)
+                    null
+                }
+                AccountKickedEvent(AccountKickedEvent.TYPE_EXCEPTION_LOGIN, deviceInfo)
+            }
+            KickEvent.ACCOUNT_GONE -> {
+                AccountKickedEvent(AccountKickedEvent.TYPE_ACCOUNT_GONE)
+            }
+        }
+
+        ALog.i(TAG, "onClientAccountDisableEvent: ${event.type}, lastEvent: ${event.type}")
+
+        AmeDispatcher.mainThread.dispatch {
+            if (AppForeground.foreground()) {
+                forceLogout(event)
+            } else {
+                if (kickEvent?.type ?: 0 < event.type) {
+                    kickEvent = event
+                }
+            }
+        }
+    }
+
+    override fun onForegroundChanged(isForeground: Boolean) {
+        val kick = kickEvent
+        if (isForeground && kick != null) {
+            kickEvent = null
+            forceLogout(kick)
+        }
     }
 
     override fun checkBackupAccountValid(qrString: String): Pair<String?, String?> {
@@ -98,12 +152,13 @@ class UserModuleImp : IUserModule {
                 .show(AmeAppLifecycle.current() as? FragmentActivity)
     }
 
+    @SuppressLint("CheckResult")
     override fun updateNameProfile(recipient: Recipient, name: String, callback: (success: Boolean) -> Unit) {
         if (recipient.isSelf) {
-            AmeModuleCenter.contact().uploadBcmNick(AppContextHolder.APP_CONTEXT, recipient, name) { success ->
+            AmeModuleCenter.contact(accountContext)?.uploadBcmNick(AppContextHolder.APP_CONTEXT, recipient, name) { success ->
                 if (success) {
                     saveAccount(recipient, name, null)
-                    AmeModuleCenter.accountJobMgr()?.add(MultiDeviceProfileKeyUpdateJob(AppContextHolder.APP_CONTEXT))
+                    AmeModuleCenter.accountJobMgr(accountContext)?.add(MultiDeviceProfileKeyUpdateJob(AppContextHolder.APP_CONTEXT))
                 }
                 callback.invoke(success)
             }
@@ -112,7 +167,7 @@ class UserModuleImp : IUserModule {
             Observable.create<Boolean> {
                 val settings = recipient.resolve().settings
                 if (settings.localName != name) {
-                    Repository.getRecipientRepo()?.setLocalProfile(recipient, name, settings.localAvatar)
+                    Repository.getRecipientRepo(accountContext)?.setLocalProfile(recipient, name, settings.localAvatar)
                     it.onNext(true)
                 } else {
                     it.onNext(false)
@@ -123,7 +178,7 @@ class UserModuleImp : IUserModule {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ result ->
                         if (result) {
-                            AmeModuleCenter.contact().handleFriendPropertyChanged(recipient.address.serialize()) {
+                            AmeModuleCenter.contact(accountContext)?.handleFriendPropertyChanged(recipient.address.serialize()) {
                                 callback(result)
                             }
                         } else {
@@ -137,16 +192,17 @@ class UserModuleImp : IUserModule {
         }
     }
 
+    @SuppressLint("CheckResult")
     override fun updateAvatarProfile(recipient: Recipient, avatarBitmap: Bitmap?, callback: (success: Boolean) -> Unit) {
         if (recipient.isSelf) {
             if (avatarBitmap == null) {
                 callback(false)
                 return
             }
-            AmeModuleCenter.contact().uploadBcmAvatar(AppContextHolder.APP_CONTEXT, recipient, avatarBitmap) { success ->
+            AmeModuleCenter.contact(accountContext)?.uploadBcmAvatar(AppContextHolder.APP_CONTEXT, recipient, avatarBitmap) { success ->
                 if (success) {
                     saveAccount(recipient, null, recipient.privacyAvatar)
-                    AmeModuleCenter.accountJobMgr()?.add(MultiDeviceProfileKeyUpdateJob(AppContextHolder.APP_CONTEXT))
+                    AmeModuleCenter.accountJobMgr(accountContext)?.add(MultiDeviceProfileKeyUpdateJob(AppContextHolder.APP_CONTEXT))
                 }
                 callback.invoke(success)
             }
@@ -157,7 +213,7 @@ class UserModuleImp : IUserModule {
                 } else {
                     MediaStore.Images.Media.insertImage(AppContextHolder.APP_CONTEXT.contentResolver, avatarBitmap, recipient.address.serialize() + ".avatar", null)
                 }
-                Repository.getRecipientRepo()?.setLocalProfile(recipient, recipient.localName, newAvatar)
+                Repository.getRecipientRepo(accountContext)?.setLocalProfile(recipient, recipient.localName, newAvatar)
                 it.onNext(true)
                 it.onComplete()
 
@@ -333,7 +389,7 @@ class UserModuleImp : IUserModule {
     }
 
     override fun hasBackupAccount(): Boolean {
-        return AmeLoginLogic.accountHistory.getBackupTime(AMELogin.uid) > 0
+        return AmeLoginLogic.accountHistory.getBackupTime(accountContext.uid) > 0
     }
 
     override fun getUserPrivateKey(password: String): ByteArray? {
@@ -367,10 +423,10 @@ class UserModuleImp : IUserModule {
             recipient.profileAvatar
         }
         if (changed) {
-            Repository.getRecipientRepo()?.setProfile(recipient, profileKey, name, avatar)
+            Repository.getRecipientRepo(accountContext)?.setProfile(recipient, profileKey, name, avatar)
         }
 
-        AmeModuleCenter.contact().fetchProfile(recipient) {}
+        AmeModuleCenter.contact(accountContext)?.fetchProfile(recipient) {}
         AmeNoteLogic.getInstance().updateUser(uid)
 
     }
@@ -480,7 +536,7 @@ class UserModuleImp : IUserModule {
         return "$encryptedPhone-!-$tempPubKey"
     }
 
-    override fun forceLogout(event: ClientAccountDisabledEvent) {
+    private fun forceLogout(event: AccountKickedEvent) {
         ALog.i(TAG, "handleAccountExceptionLogout ${event.type}")
         val activity = AmeAppLifecycle.current() ?: return
         ALog.i(TAG, "handleAccountExceptionLogout 1 ${event.type}")
@@ -488,9 +544,9 @@ class UserModuleImp : IUserModule {
             ALog.i(TAG, "handleAccountExceptionLogout 2 ${event.type}")
             try {
                 when (event.type) {
-                    ClientAccountDisabledEvent.TYPE_EXPIRE -> handleTokenExpire(activity)
-                    ClientAccountDisabledEvent.TYPE_EXCEPTION_LOGIN -> handleForceLogout(activity, event.data)
-                    ClientAccountDisabledEvent.TYPE_ACCOUNT_GONE -> handleAccountGone(activity)
+                    AccountKickedEvent.TYPE_EXPIRE -> handleTokenExpire(activity)
+                    AccountKickedEvent.TYPE_EXCEPTION_LOGIN -> handleForceLogout(activity, event.data)
+                    AccountKickedEvent.TYPE_ACCOUNT_GONE -> handleAccountGone(activity)
                 }
             } catch (ex: Exception) {
                 ALog.e(TAG, "handleAccountExceptionLogout error", ex)
@@ -506,13 +562,13 @@ class UserModuleImp : IUserModule {
             return
         }
 
-        val uid = AMELogin.uid
+        val uid = accountContext.uid
         ALog.i(TAG, "handleForceLogout 1")
         if (kickOutDispose == null) {
             ALog.i(TAG, "handleForceLogout 2")
             kickOutDispose = Observable.create<Recipient> {
                 ALog.i(TAG, "handleForceLogout 3")
-                AmeProvider.get<ILoginModule>(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)?.quit(clearHistory = false, withLogOut = false)
+                AmeModuleCenter.login().quit(accountContext, clearHistory = false, withLogOut = false)
                 it.onComplete()
             }.subscribeOn(AmeDispatcher.singleScheduler)
                     .observeOn(AndroidSchedulers.mainThread())
@@ -543,7 +599,7 @@ class UserModuleImp : IUserModule {
             expireDispose = Observable.create<Recipient> {
                 ALog.i(TAG, "handleTokenExpire 1")
                 if (AMELogin.isLogin) {
-                    AmeProvider.get<ILoginModule>(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)?.quit(clearHistory = false, withLogOut = false)
+                    AmeModuleCenter.login().quit(accountContext, clearHistory = false, withLogOut = false)
                 } else {
                     throw java.lang.Exception("not login")
                 }
@@ -575,14 +631,14 @@ class UserModuleImp : IUserModule {
         } ?: return
 
         AmeDispatcher.io.dispatch {
-            AmeProvider.get<ILoginModule>(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)?.quit(false)
+            AmeModuleCenter.login().quit(accountContext, false)
             AmeLoginLogic.accountHistory.deleteAccount(self.address.serialize())
         }
 
         MeConfirmDialog.showConfirm(activity, activity.getString(R.string.me_destroy_account_confirm_title),
                 activity.getString(R.string.me_destroy_account_warning_notice), activity.getString(R.string.me_destroy_account_confirm_button)) {
 
-            AmeModuleCenter.onLoginSucceed("")
+            AmeModuleCenter.onLogOutSucceed(accountContext)
 
             BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -607,6 +663,6 @@ class UserModuleImp : IUserModule {
             return
         }
 
-        SwitchAccountAdapter().switchAccount(activity, AMELogin.uid, Recipient.fromSelf(activity, true))
+        SwitchAccountAdapter().switchAccount(activity, accountContext.uid, Recipient.fromSelf(activity, true))
     }
 }

@@ -19,15 +19,11 @@ import com.bcm.messenger.utility.logger.ALog
 import com.sdk.crashreport.ReportUtils
 import org.whispersystems.jobqueue.JobManager
 import org.whispersystems.jobqueue.dependencies.DependencyInjector
+import java.util.concurrent.ConcurrentHashMap
 
 object AmeModuleCenter {
-    private val serverConnectionDaemon: ServerConnectionDaemon = ServerConnectionDaemon(AMELogin.majorContext)
     private val serverDataDispatcher: ServerDataDispatcher = ServerDataDispatcher()
-
-    init {
-        serverConnectionDaemon.setEventListener(serverDataDispatcher)
-        serverConnectionDaemon.addConnectionListener(serverDataDispatcher)
-    }
+    private val serverConnDaemons = ConcurrentHashMap<AccountContext, ServerConnectionDaemon>()
 
     fun instance() {
         login().restoreLastLoginState()
@@ -81,10 +77,6 @@ object AmeModuleCenter {
         return AmeProvider.getAccountModule(ARouterConstants.Provider.REPORT_BASE, accountContext)
     }
 
-    fun wallet(): IWalletModule {
-        return AmeProvider.get<IWalletModule>(ARouterConstants.Provider.PROVIDER_WALLET_BASE)!!
-    }
-
     fun adhoc(): IAdHocModule {
         return AmeProvider.get(ARouterConstants.Provider.PROVIDER_AD_HOC)!!
     }
@@ -98,12 +90,25 @@ object AmeModuleCenter {
     }
 
     fun serverDaemon(accountContext: AccountContext): IServerConnectionDaemon {
-        return serverConnectionDaemon
+        val daemon = serverConnDaemons[accountContext]
+        if (null != daemon) {
+            return daemon
+        }
+
+        synchronized(serverConnDaemons) {
+            var daemon1 = serverConnDaemons[accountContext]
+            if (daemon1 != null) {
+                return daemon1
+            }
+            daemon1 = ServerConnectionDaemon(accountContext, serverDataDispatcher)
+            serverConnDaemons[accountContext] = daemon1
+            return daemon1
+        }
     }
 
     fun accountJobMgr(context: AccountContext): JobManager? {
-        return if (AMELogin.isLogin) {
-            AccountJobManager.getManager(AppContextHolder.APP_CONTEXT,
+        return if (context.isLogin) {
+            AccountJobManager.getManager(AppContextHolder.APP_CONTEXT,context,
                     DependencyInjector { },
                     context.uid)
         } else null
@@ -142,10 +147,13 @@ object AmeModuleCenter {
     }
 
     fun onLogOutSucceed(accountContext: AccountContext) {
-        serverDaemon(accountContext).stopConnection()
-        serverDaemon(accountContext).stopDaemon()
+        val serverdaemon = serverConnDaemons[accountContext]
+        serverdaemon?.stopConnection()
+        serverdaemon?.stopDaemon()
 
         unInit(accountContext)
+        serverConnDaemons.remove(accountContext)
+        AccountJobManager.removeManager(accountContext)
     }
 
 }

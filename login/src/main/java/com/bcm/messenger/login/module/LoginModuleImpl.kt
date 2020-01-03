@@ -5,7 +5,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSManager
 import com.bcm.messenger.common.config.BcmFeatureSupport
-import com.bcm.messenger.common.event.ClientAccountDisabledEvent
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -30,18 +29,18 @@ import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import io.reactivex.disposables.Disposable
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 /**
  * bcm.social.01 2018/9/20.
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_LOGIN_BASE)
-class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStateChanged, INetworkConnectionListener, IServerConnectStateListener {
+class LoginModuleImpl : ILoginModule
+        , AppForeground.IForegroundEvent
+        , IProxyStateChanged
+        , INetworkConnectionListener
+        , IServerConnectStateListener {
 
     private val TAG = "LoginProviderImplProxy"
-
-    private var kickEvent: ClientAccountDisabledEvent? = null
     private var delayCheckRunProxy: Disposable? = null
     private var lastTryProxyTime = 0L
 
@@ -207,39 +206,20 @@ class LoginModuleImpl : ILoginModule, AppForeground.IForegroundEvent, IProxyStat
         return AmeLoginLogic.getAccountContext(uid)
     }
 
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(e: ClientAccountDisabledEvent) {
-        ALog.i(TAG, "onClientAccountDisableEvent: ${e.type}, lastEvent: ${kickEvent?.type}")
-        if (AppForeground.foreground()) {
-            AmeModuleCenter.user(e.accountContext)?.forceLogout(e)
-        } else {
-            if (kickEvent?.type ?: 0 < e.type) {
-                kickEvent = e
-            }
-        }
-    }
-
     override fun onForegroundChanged(isForeground: Boolean) {
         ALog.i(TAG, "onForegroundChanged $isForeground")
-        val kick = kickEvent
-        if (isForeground && kick != null) {
-            kickEvent = null
-            onEvent(kick)
-        } else {
-            if (isLogin()) {
-                if (isForeground) {
-                    AmePushProcess.reset()
+        if (isLogin()) {
+            if (isForeground) {
+                AmePushProcess.reset()
 
-                    val loginList = AmeLoginLogic.accountHistory.getAllLoginContext()
-                    for (accountContext in loginList) {
-                        if (AmeModuleCenter.serverDaemon(accountContext).state() != ConnectState.CONNECTED) {
-                            AmeModuleCenter.serverDaemon(accountContext).checkConnection(false)
-                        }
+                val loginList = AmeLoginLogic.accountHistory.getAllLoginContext()
+                for (accountContext in loginList) {
+                    if (AmeModuleCenter.serverDaemon(accountContext).state() != ConnectState.CONNECTED) {
+                        AmeModuleCenter.serverDaemon(accountContext).checkConnection(false)
                     }
-                } else {
-                    lastTryProxyTime = 0
                 }
+            } else {
+                lastTryProxyTime = 0
             }
         }
 

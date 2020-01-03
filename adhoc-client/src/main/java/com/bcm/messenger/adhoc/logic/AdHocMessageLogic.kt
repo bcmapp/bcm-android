@@ -552,7 +552,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
                         if (session != null && session.isChat()) {
                             val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(m.fromId), false)
                             if (recipient.profileName != m.nickname) {
-                                Repository.getRecipientRepo()?.setProfileName(recipient, m.nickname)
+                                Repository.getRecipientRepo(AMELogin.majorContext)?.setProfileName(recipient, m.nickname)
                             }
                         }
                         it.onNext(m)
