@@ -78,7 +78,7 @@ class ChatHttp(accountContext: AccountContext): SyncHttpWrapper(BcmBaseHttp()) {
                 .hostnameVerifier(BaseHttp.trustAllHostVerify())
                 .addInterceptor(BcmAuthHeaderInterceptor(accountContext))
                 .addInterceptor(RedirectInterceptor(lbsType(), IMServerUrl.IM_DEFAULT))
-                .addInterceptor(IMServerErrorCodeInterceptor(accountContext))
+                .addInterceptor(IMServerErrorCodeInterceptor())
                 .addInterceptor(NormalMetricsInterceptor())
                 .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)

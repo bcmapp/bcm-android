@@ -1,16 +1,13 @@
 package com.bcm.messenger.common.bcmhttp.interceptor.error
 
-import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException
-import com.bcm.messenger.me.provider.ClientAccountDisabledEvent
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
 import com.bcm.messenger.utility.logger.ALog
 import com.google.gson.JsonParseException
 import okhttp3.Response
-import org.greenrobot.eventbus.EventBus
 import org.whispersystems.signalservice.api.push.exceptions.*
 import org.whispersystems.signalservice.internal.push.DeviceLimit
 import org.whispersystems.signalservice.internal.push.DeviceLimitExceededException
@@ -20,7 +17,7 @@ import org.whispersystems.signalservice.internal.push.exceptions.MismatchedDevic
 import org.whispersystems.signalservice.internal.push.exceptions.StaleDevicesException
 import java.io.IOException
 
-class IMServerErrorCodeInterceptor(private val accountContext: AccountContext) : BcmErrorInterceptor() {
+class IMServerErrorCodeInterceptor : BcmErrorInterceptor() {
     private val TAG = "IMServerError"
 
     override fun onError(response: Response) {
@@ -79,14 +76,12 @@ class IMServerErrorCodeInterceptor(private val accountContext: AccountContext) :
             417 -> throw ExpectationFailedException()
             ServerCodeUtil.CODE_LOW_VERSION -> throw VersionTooLowException(code, AppUtil.getString(R.string.common_too_low_version_notice))
             ServerCodeUtil.CODE_TOKEN_EXPIRE -> {
-                EventBus.getDefault().post(com.bcm.messenger.me.provider.ClientAccountDisabledEvent(accountContext, com.bcm.messenger.me.provider.ClientAccountDisabledEvent.TYPE_EXPIRE))
+                ALog.e(TAG, "CODE_TOKEN_EXPIRE")
             }
             else -> {
 
             }
         }
-
-        //，，，mainThread，
         ServerCodeUtil.storeErrorCode(response.code())
     }
 }

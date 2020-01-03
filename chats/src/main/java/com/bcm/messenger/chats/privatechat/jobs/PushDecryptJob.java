@@ -963,7 +963,7 @@ public class PushDecryptJob extends ContextJob {
                 if (envelope.hasRelay()) {
                     relay = Optional.of(envelope.getRelay());
                 }
-                List<PreKeyBundle> preKeyBundles = ChatHttp.INSTANCE.getPreKeys(new SignalServiceAddress(envelope.getSource(), relay), SignalServiceAddress.DEFAULT_DEVICE_ID);
+                List<PreKeyBundle> preKeyBundles = ChatHttp.getPreKeys(new SignalServiceAddress(envelope.getSource(), relay), SignalServiceAddress.DEFAULT_DEVICE_ID);
                 for (PreKeyBundle preKey : preKeyBundles) {
 
                     String identityKeyString = new String(EncryptUtils.base64Encode(preKey.getIdentityKey().serialize()));
