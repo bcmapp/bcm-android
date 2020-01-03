@@ -3,6 +3,7 @@ package com.bcm.messenger.chats.group.logic.secure
 import android.annotation.SuppressLint
 import com.bcm.messenger.chats.group.core.GroupManagerCore
 import com.bcm.messenger.chats.group.core.group.RefreshKeyResEntity
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.split
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -10,7 +11,7 @@ import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 
-object GroupKeyRotate {
+class GroupKeyRotate(private val accountContext: AccountContext) {
     private const val TAG = "GroupKeyRotate"
     @SuppressLint("UseSparseArrays")
     private val rotatingMap = HashMap<Long, Long>()

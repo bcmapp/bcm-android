@@ -93,7 +93,6 @@ class AmeAccountHistory {
         if (account.uid == majorAccountUid() && account.signalPassword.isEmpty()) {
             ALog.i(TAG, "fix login state")
             account.registrationId = TextSecurePreferences.getLocalRegistrationId(context)
-            account.gcmTokenLastSetTime = TextSecurePreferences.getGcmRegistrationIdLastSetTime(context)
             account.gcmDisabled = TextSecurePreferences.isGcmDisabled(context)
             account.pushRegistered = TextSecurePreferences.isPushRegistered(context)
             account.signalPassword = TextSecurePreferences.getPushServerPassword(context)

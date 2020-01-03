@@ -1,17 +1,13 @@
 package com.bcm.messenger.chats.group.logic.sync
 
 import com.bcm.messenger.chats.group.core.group.GroupMessageEntity
-import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
-import com.bcm.messenger.common.event.ServiceConnectEvent
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.ILoginModule
 import com.bcm.messenger.common.server.ConnectState
-import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.foreground.AppForeground
+import com.bcm.messenger.utility.logger.ALog
 import java.io.*
 import java.util.*
 import java.util.concurrent.Executors
@@ -21,7 +17,7 @@ import kotlin.math.max
 /**
  * bcm.social.01 2019/3/19.
  */
-class GroupOfflineSyncManager(private val syncCallback: OfflineSyncCallback) {
+class GroupOfflineSyncManager(private val accountContext: AccountContext, private val syncCallback: OfflineSyncCallback) {
     companion object {
         private const val QUERY_ONE_TIME = 4
         private const val PAGE_SIZE = 500L
@@ -268,7 +264,7 @@ class GroupOfflineSyncManager(private val syncCallback: OfflineSyncCallback) {
         var objStream: ObjectOutputStream? = null
 
         try {
-            output = FileOutputStream(File(AMELogin.accountDir, SERIALIZABLE_FILE_NAME))
+            output = FileOutputStream(File(accountContext.accountDir, SERIALIZABLE_FILE_NAME))
             objStream = ObjectOutputStream(output)
             objStream.writeObject(messageSyncTaskList)
         } catch (e: Exception) {
@@ -288,7 +284,7 @@ class GroupOfflineSyncManager(private val syncCallback: OfflineSyncCallback) {
         var objStream: ObjectInputStream? = null
 
         try {
-            input = FileInputStream(File(AMELogin.accountDir, SERIALIZABLE_FILE_NAME))
+            input = FileInputStream(File(accountContext.accountDir, SERIALIZABLE_FILE_NAME))
             objStream = ObjectInputStream(input)
             val taskList = objStream.readObject() as? ArrayList<*>
             if (null != taskList) {
@@ -321,8 +317,8 @@ class GroupOfflineSyncManager(private val syncCallback: OfflineSyncCallback) {
                 val memberListEmpty = joinReqMemberTaskList.isEmpty()
 
                 for (gid in gidList) {
-                    val groupInfo = GroupInfoDataManager.getGroupInfo(gid) ?: continue
-                    if (!groupInfo.newGroup || groupInfo.owner == AMELogin.uid) {
+                    val groupInfo = GroupInfoDataManager.getGroupInfo(accountContext, gid) ?: continue
+                    if (!groupInfo.newGroup || groupInfo.owner == accountContext.uid) {
                         if (groupInfo.role == AmeGroupMemberInfo.OWNER && groupInfo.needConfirm == true) {
                             if (ownerListEmpty) {
                                 joinReqOwnerTaskList.add(GroupOfflineJoinReqMessageSyncTask(gid, 1000, true))
@@ -354,8 +350,8 @@ class GroupOfflineSyncManager(private val syncCallback: OfflineSyncCallback) {
         taskExecutor.execute {
             ALog.w(TAG, "syncJoinReq begin sync $gid")
 
-            val groupInfo = GroupInfoDataManager.getGroupInfo(gid) ?: return@execute
-            if (!groupInfo.newGroup || groupInfo.owner == AMELogin.uid) {
+            val groupInfo = GroupInfoDataManager.getGroupInfo(accountContext, gid) ?: return@execute
+            if (!groupInfo.newGroup || groupInfo.owner == accountContext.uid) {
                 val needConfirm = groupInfo.role == AmeGroupMemberInfo.OWNER && groupInfo.needConfirm == true
                 if (needConfirm) {
                     GroupOfflineJoinReqMessageSyncTask(gid, 300, needConfirm).execute {
@@ -424,7 +420,7 @@ class GroupOfflineSyncManager(private val syncCallback: OfflineSyncCallback) {
 
 
     private fun canSync(): Boolean {
-        return AmeModuleCenter.serverDaemon().state() == ConnectState.CONNECTED && AppForeground.foreground()
+        return AmeModuleCenter.serverDaemon(accountContext).state() == ConnectState.CONNECTED && AppForeground.foreground()
     }
 
     interface OfflineSyncCallback {

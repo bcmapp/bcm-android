@@ -4,6 +4,7 @@ import com.bcm.messenger.chats.group.core.GroupMessageCore
 import com.bcm.messenger.chats.group.core.group.GroupMessageEntity
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.secure.GroupKeyRotate
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
@@ -28,18 +29,17 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
         private const val MAX_DELAY = 10000L
     }
 
-    fun execute(onComplete: (task: GroupOfflineMessageSyncTask, messageList: List<GroupMessageEntity>?) -> Unit) {
+    fun execute(accountContext: AccountContext, onComplete: (task: GroupOfflineMessageSyncTask, messageList: List<GroupMessageEntity>?) -> Unit) {
         ALog.i("GroupOfflineMessageSyncTask", "execute $gid delay$delay")
         executing = true
-
-        val queryUid = AMELogin.uid
+        
         var stash:List<GroupMessageEntity> = listOf()
         GroupMessageCore.getMessagesWithRange(gid, fromMid, toMid)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .delaySubscription(getCompatibleDelay(), TimeUnit.MILLISECONDS, AmeDispatcher.ioScheduler)
                 .flatMap { serverResult ->
-                    if (!AMELogin.isLogin || AMELogin.uid != queryUid) {
+                    if (!accountContext.isLogin) {
                         ALog.i("GroupOfflineMessageSyncTask", "sync failed $gid  from:$fromMid to:$toMid login state changed")
                         throw Exception("Sync failed")
                     }
@@ -48,7 +48,7 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
                     if (serverResult.isSuccess) {
                         stash = serverResult.data.messages?: listOf()
 
-                        val newGroup = GroupInfoDataManager.queryOneGroupInfo(gid)?.isNewGroup
+                        val newGroup = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)?.isNewGroup
                                 ?: false
 
                         if (newGroup) {
@@ -62,11 +62,11 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
 
                             refreshGroupKeyIfNeed(serverResult.data.messages, keyVersions.toList())
 
-                            val localVersions = GroupInfoDataManager.queryGroupKeyList(gid, keyVersions.toList()).map { it.version }
+                            val localVersions = GroupInfoDataManager.queryGroupKeyList(accountContext, gid, keyVersions.toList()).map { it.version }
                             keyVersions.removeAll(localVersions)
 
                             if (keyVersions.isNotEmpty()) {
-                                return@flatMap syncGroupKeyVersions(keyVersions.toSet().toList())
+                                return@flatMap syncGroupKeyVersions(accountContext, keyVersions.toSet().toList())
                             }
                         }
                         Observable.just(true)
@@ -77,7 +77,7 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
                 }
                 .observeOn(AmeDispatcher.ioScheduler)
                 .doOnComplete {
-                    if ( AMELogin.isLogin && AMELogin.uid == queryUid) {
+                    if ( accountContext.isLogin) {
                         ALog.i("GroupOfflineMessageSyncTask", "sync succeed $gid  from:$fromMid to:$toMid succeed")
                         onComplete(this@GroupOfflineMessageSyncTask, stash)
                     } else {
@@ -109,13 +109,13 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
         }
     }
 
-    private fun syncGroupKeyVersions(versionList: List<Long>): Observable<Boolean> {
+    private fun syncGroupKeyVersions(accountContext: AccountContext, versionList: List<Long>): Observable<Boolean> {
         val keyVersions = versionList.toMutableList()
         return GroupLogic.syncGroupKeyList(gid, keyVersions)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .flatMap {
-                    val newVersionList = GroupInfoDataManager.queryGroupKeyList(gid, keyVersions.toList()).map { it.version }
+                    val newVersionList = GroupInfoDataManager.queryGroupKeyList(accountContext, gid, keyVersions.toList()).map { it.version }
                     keyVersions.removeAll(newVersionList)
                     if (keyVersions.isNotEmpty()) {
                         //

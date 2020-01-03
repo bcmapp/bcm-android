@@ -1,6 +1,7 @@
 package com.bcm.messenger.chats.group.logic.sync
 
 import com.bcm.messenger.chats.group.core.GroupMemberCore
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMember
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -10,7 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 /**
  * bcm.social.01 2019/3/26.
  */
-class GroupMemberSyncManager {
+class GroupMemberSyncManager(private val accountContext: AccountContext) {
     companion object {
         const val PAGE_SIZE = 500L
     }
@@ -41,7 +42,7 @@ class GroupMemberSyncManager {
                 .subscribe({
                     ALog.i("GroupMemberSyncManager", "syncGroupMember result $gid ${it.isSuccess} ${it.msg}")
                     if (it.isSuccess) {
-                        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(gid)?:throw Exception("")
+                        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)?:throw Exception("")
                         val channelKey = groupInfo.channel_key
                         val list = ArrayList<GroupMember>()
                         for (u in it.data.members) {
