@@ -243,19 +243,23 @@ class LoginModuleImpl : ILoginModule
     }
 
     override fun onNetWorkStateChanged() {
-        if (networkType != NetworkUtil.netType()) {
+        ALog.i(TAG, "net work state changed ${NetworkUtil.netType()}")
+        if (NetworkUtil.isConnected() && networkType != NetworkUtil.netType()) {
             networkType = NetworkUtil.netType()
             if (NetworkUtil.isConnected() && AMELogin.isLogin) {
-                //网络切换了，重新
                 if (ProxyManager.isProxyRunning()) {
+                    ALog.i(TAG, "net work state changed and stop proxy")
                     ProxyManager.stopProxy()
                 }
 
+                ALog.i(TAG, "net work state changed and check all daemon connection")
                 val loginList = AmeLoginLogic.accountHistory.getAllLoginContext()
                 loginList.forEach {
                     AmeModuleCenter.serverDaemon(it).checkConnection(false)
                 }
             }
+        } else if(!NetworkUtil.isConnected()) {
+            networkType = NetworkUtil.NetType.NONE
         }
     }
 

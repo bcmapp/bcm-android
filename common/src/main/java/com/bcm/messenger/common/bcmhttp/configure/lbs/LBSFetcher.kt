@@ -14,7 +14,7 @@ class LBSFetcher(val type: String) {
     private var fetchingIndex = 0
 
     /**
-     * @param fetchIndex ,
+     * @param fetchIndex
      */
     fun request(fetchIndex: Int) {
         AmeDispatcher.singleScheduler.scheduleDirect {

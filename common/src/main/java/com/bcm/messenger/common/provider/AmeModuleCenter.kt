@@ -14,6 +14,7 @@ import com.bcm.messenger.common.server.IServerDataDispatcher
 import com.bcm.messenger.common.server.ServerConnectionDaemon
 import com.bcm.messenger.common.server.ServerDataDispatcher
 import com.bcm.messenger.common.service.RotateSignedPreKeyListener
+import com.bcm.messenger.common.utils.AccountContextMap
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.sdk.crashreport.ReportUtils
@@ -23,7 +24,9 @@ import java.util.concurrent.ConcurrentHashMap
 
 object AmeModuleCenter {
     private val serverDataDispatcher: ServerDataDispatcher = ServerDataDispatcher()
-    private val serverConnDaemons = ConcurrentHashMap<AccountContext, ServerConnectionDaemon>()
+    private val serverConnDaemons = AccountContextMap {
+        ServerConnectionDaemon(it, serverDataDispatcher)
+    }
 
     fun instance() {
         login().restoreLastLoginState()
@@ -92,28 +95,11 @@ object AmeModuleCenter {
     }
 
     fun serverDaemon(accountContext: AccountContext): IServerConnectionDaemon {
-        val daemon = serverConnDaemons[accountContext]
-        if (null != daemon) {
-            return daemon
-        }
-
-        synchronized(serverConnDaemons) {
-            var daemon1 = serverConnDaemons[accountContext]
-            if (daemon1 != null) {
-                return daemon1
-            }
-            daemon1 = ServerConnectionDaemon(accountContext, serverDataDispatcher)
-            serverConnDaemons[accountContext] = daemon1
-            return daemon1
-        }
+        return serverConnDaemons.get(accountContext)
     }
 
     fun accountJobMgr(context: AccountContext): JobManager? {
-        return if (context.isLogin) {
-            AccountJobManager.getManager(AppContextHolder.APP_CONTEXT,context,
-                    DependencyInjector { },
-                    context.uid)
-        } else null
+        return AccountJobManager.get(context)
     }
 
     fun onLoginSucceed(accountContext: AccountContext) {
@@ -149,13 +135,15 @@ object AmeModuleCenter {
     }
 
     fun onLogOutSucceed(accountContext: AccountContext) {
-        val serverdaemon = serverConnDaemons[accountContext]
-        serverdaemon?.stopConnection()
-        serverdaemon?.stopDaemon()
+        if (serverConnDaemons.containsKey(accountContext)) {
+            val serverdaemon = serverConnDaemons.get(accountContext)
+            serverdaemon.stopConnection()
+            serverdaemon.stopDaemon()
+        }
 
         unInit(accountContext)
         serverConnDaemons.remove(accountContext)
-        AccountJobManager.removeManager(accountContext)
+        AccountJobManager.remove(accountContext)
     }
 
 }

@@ -2,6 +2,7 @@ package com.bcm.messenger.chats.group.core
 
 
 import com.bcm.messenger.chats.group.core.group.*
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.core.ServerResult
 import com.bcm.messenger.utility.GsonUtils
@@ -20,7 +21,12 @@ import org.json.JSONObject
  */
 object GroupMemberCore {
 
-    fun inviteMemberJoinGroup(gid: Long, members: List<String>, memberKeys: List<String>?, proofList: List<String>?, memberSecrets: List<String>?, signatures: List<String>?): Observable<ControlMemberResult> {
+    fun inviteMemberJoinGroup(accountContext: AccountContext, gid: Long
+                              , members: List<String>
+                              , memberKeys: List<String>?
+                              , proofList: List<String>?
+                              , memberSecrets: List<String>?
+                              , signatures: List<String>?): Observable<ControlMemberResult> {
         val obj = JSONObject()
         try {
             obj.put("gid", gid)
@@ -52,16 +58,16 @@ object GroupMemberCore {
         } else {
             GroupCoreConstants.INVITE_MEMBER_TO_GROUP_URL
         }
-        return RxIMHttp.put(BcmHttpApiHelper.getApi(uri), null, obj.toString(), object : TypeToken<ControlMemberResult>() {
+        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(uri), null, obj.toString(), object : TypeToken<ControlMemberResult>() {
 
         }.type)
     }
 
     private data class GroupMembersReq(val gid:Long, val uids:List<String>): NotGuard
     private data class GroupMembersRes(val members:List<GroupMemberListItemEntity>):NotGuard
-    fun getGroupMembers(gid: Long, uidList:List<String>): Observable<List<GroupMemberListItemEntity>> {
+    fun getGroupMembers(accountContext: AccountContext, gid: Long, uidList:List<String>): Observable<List<GroupMemberListItemEntity>> {
         val req = GroupMembersReq(gid, uidList)
-        return RxIMHttp.post<GroupMembersRes>(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_MEMBERS_URL), GsonUtils.toJson(req), GroupMembersRes::class.java)
+        return RxIMHttp.getHttp(accountContext).post<GroupMembersRes>(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_MEMBERS_URL), GsonUtils.toJson(req), GroupMembersRes::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .map {
@@ -69,7 +75,7 @@ object GroupMemberCore {
                 }
     }
 
-    fun getGroupMemberByPage(gid: Long, roles: List<Long>, fromUid: String?, createTime: Long, count: Long): Observable<ServerResult<GetGroupMemberListEntity>> {
+    fun getGroupMemberByPage(accountContext: AccountContext, gid: Long, roles: List<Long>, fromUid: String?, createTime: Long, count: Long): Observable<ServerResult<GetGroupMemberListEntity>> {
         val obj = JSONObject()
         try {
             obj.put("gid", gid)
@@ -81,13 +87,13 @@ object GroupMemberCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.post(BcmHttpApiHelper.getApi(GroupCoreConstants.QUERY_GROUP_MEMBER_PAGE),
+        return RxIMHttp.getHttp(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.QUERY_GROUP_MEMBER_PAGE),
                 obj.toString(), object : TypeToken<ServerResult<GetGroupMemberListEntity>>() {
 
         }.type)
     }
 
-    fun getGroupMemberInfo(gid: Long, uid: String): Observable<GroupMemberEntity> {
+    fun getGroupMemberInfo(accountContext: AccountContext, gid: Long, uid: String): Observable<GroupMemberEntity> {
         val obj = JSONObject()
         try {
             obj.put("gid", gid)
@@ -96,7 +102,7 @@ object GroupMemberCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.put<ServerResult<GroupMemberEntity>>(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_MEMBER_URL), null, obj.toString(), object : TypeToken<ServerResult<GroupMemberEntity>>() {
+        return RxIMHttp.getHttp(accountContext).put<ServerResult<GroupMemberEntity>>(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_MEMBER_URL), null, obj.toString(), object : TypeToken<ServerResult<GroupMemberEntity>>() {
 
         }.type).subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
@@ -109,7 +115,7 @@ object GroupMemberCore {
                 }
     }
 
-    fun kickGroupMember(gid: Long, isNewGroup: Boolean?, members: List<String>): Observable<AmeEmpty> {
+    fun kickGroupMember(accountContext: AccountContext, gid: Long, isNewGroup: Boolean?, members: List<String>): Observable<AmeEmpty> {
         val obj = JSONObject()
         try {
             obj.put("gid", gid)
@@ -124,13 +130,13 @@ object GroupMemberCore {
         } else {
             uri = GroupCoreConstants.KICK_GROUP_MEMBER_URL
         }
-        return RxIMHttp.put(BcmHttpApiHelper.getApi(uri), null, obj.toString(), object : TypeToken<AmeEmpty>() {
+        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(uri), null, obj.toString(), object : TypeToken<AmeEmpty>() {
 
         }.type)
     }
 
 
-    fun getPreKeyBundles(uidList: List<String>): Observable<PreKeyBundleListEntity> {
+    fun getPreKeyBundles(accountContext: AccountContext, uidList: List<String>): Observable<PreKeyBundleListEntity> {
         val obj = JSONObject()
         try {
             obj.put("uids", JSONArray(uidList))
@@ -138,7 +144,7 @@ object GroupMemberCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.post(BcmHttpApiHelper.getApi(GroupCoreConstants.GROUP_GET_PREKEY),
+        return RxIMHttp.getHttp(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.GROUP_GET_PREKEY),
                 obj.toString(), PreKeyBundleListEntity::class.java)
     }
 }

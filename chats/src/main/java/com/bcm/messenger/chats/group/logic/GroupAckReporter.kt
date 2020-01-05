@@ -1,7 +1,9 @@
 package com.bcm.messenger.chats.group.logic
 
+import android.annotation.SuppressLint
 import android.util.LongSparseArray
 import com.bcm.messenger.chats.group.core.GroupMessageCore
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.schedulers.Schedulers
@@ -9,7 +11,7 @@ import io.reactivex.schedulers.Schedulers
 /**
  * Created by bcm.social.01 on 2018/5/23.
  */
-class GroupAckReporter {
+class GroupAckReporter(private val accountContext: AccountContext) {
     private val TAG = "GroupAckReporter"
 
     private val reportStash = LongSparseArray<Long>()
@@ -47,8 +49,9 @@ class GroupAckReporter {
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun reportAckImpl(gid: Long, ack: Long) {
-        GroupMessageCore.ackMessage(gid, ack)
+        GroupMessageCore.ackMessage(accountContext, gid, ack)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe({

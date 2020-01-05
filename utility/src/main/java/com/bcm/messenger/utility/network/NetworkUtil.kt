@@ -24,7 +24,7 @@ object NetworkUtil: NetworkCallbackImpl.StatusCallback {
         MOBILE_3G("3G"),
         MOBILE_GPRS("GPRS"),
         MOBILE_OTHER("other"),
-        MOBILE_UNKNOWN("unknown");
+        NONE("none");
 
         fun isMobile(): Boolean {
             return this != WiFi
@@ -143,6 +143,6 @@ object NetworkUtil: NetworkCallbackImpl.StatusCallback {
                 }
             }
         } catch (ex: Exception) { }
-        return NetType.MOBILE_UNKNOWN
+        return NetType.NONE
     }
 }

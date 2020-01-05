@@ -12,14 +12,10 @@ public class GroupCoreConstants {
     public static final String UPDATE_GROUP_URL_V3 = "/v3/group/deliver/update";
     public static final String UPDATE_GROUP_URL_V2 = "/v2/group/deliver/update";
     public static final String GET_GROUP_INFO_URL = "/v1/group/deliver/query_info";
-    public static final String SUBSCRIBE_TO_GROUP_URL = "/v1/group/deliver/subscribe";
     public static final String LEAVE_GROUP_URL_V3 = "/v3/group/deliver/leave";
     public static final String LEAVE_GROUP_URL = "/v1/group/deliver/leave";
-    public static final String UNSUBSCRIBE_GROUP_URL = "/v1/group/deliver/unsubscribe";
-    public static final String UPDATE_GROUP_NOTICE = "/v1/group/deliver/update_notice";
     public static final String QUERY_GROUP_INFO_BATCH = "/v1/group/deliver/query_info_batch";
     public static final String QUERY_OFFLINE_MSG_STATE = "/v1/group/deliver/query_last_mid";
-    public static final String CHECK_SHARE_CODE_VALID = "/v1/group/deliver/is_qr_code_valid";
     public static final String QUERY_GROUP_PENDING_LIST = "/v1/group/deliver/query_group_pending_list";
     public static final String JOIN_GROUP_REVIEW = "/v1/group/deliver/review_join_request";
     public static final String JOIN_GROUP_REVIEW_V3 = "/v3/group/deliver/review_join_request";
@@ -44,7 +40,6 @@ public class GroupCoreConstants {
      */
     public static final String INVITE_MEMBER_TO_GROUP_URL = "/v2/group/deliver/invite";
     public static final String INVITE_MEMBER_TO_GROUP_URL_V3 = "/v3/group/deliver/invite";
-    public static final String GET_GROUP_MEMBER_LIST_URL = "/v1/group/deliver/query_member_list";
     public static final String GET_GROUP_MEMBER_URL = "/v1/group/deliver/query_member";
     public static final String GET_GROUP_MEMBERS_URL = "/v3/group/deliver/members";
 
