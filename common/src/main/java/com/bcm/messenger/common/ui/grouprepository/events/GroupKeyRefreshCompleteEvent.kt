@@ -1,4 +1,6 @@
-package com.bcm.messenger.common.grouprepository.events
+package com.bcm.messenger.common.ui.grouprepository.events
 
-class GroupKeyRefreshCompleteEvent(val gid:Long, val mid:Long, val from:String, val version:Long) {
+import com.bcm.messenger.common.AccountContext
+
+class GroupKeyRefreshCompleteEvent(val accountContext: AccountContext, val gid:Long, val mid:Long, val from:String, val version:Long) {
 }

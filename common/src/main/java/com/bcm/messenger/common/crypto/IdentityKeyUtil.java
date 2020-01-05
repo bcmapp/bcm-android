@@ -21,8 +21,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import androidx.annotation.NonNull;
+
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils;
+import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.Base64;
 import org.whispersystems.libsignal.IdentityKey;
 import org.whispersystems.libsignal.IdentityKeyPair;
@@ -50,11 +53,12 @@ public class IdentityKeyUtil {
     public static final String IDENTITY_PUBLIC_KEY_PREF = "pref_identity_public_v3";
     public static final String IDENTITY_PRIVATE_KEY_PREF = "pref_identity_private_v3";
 
-    public static boolean hasIdentityKey(Context context) {
+    public static boolean hasIdentityKey(AccountContext accountContext) {
         if (!AMELogin.INSTANCE.isLogin()){
             return false;
         }
-        SharedPreferences preferences = context.getSharedPreferences(MasterSecretUtil.getPreferencesName(), 0);
+        Context context = AppContextHolder.APP_CONTEXT;
+        SharedPreferences preferences = context.getSharedPreferences(MasterSecretUtil.getPreferencesName(accountContext), 0);
 
         return
                 preferences.contains(IDENTITY_PUBLIC_KEY_PREF) &&
@@ -62,13 +66,13 @@ public class IdentityKeyUtil {
     }
 
     public static @NonNull
-    IdentityKey getIdentityKey(@NonNull Context context) {
-        if (!hasIdentityKey(context)) {
+    IdentityKey getIdentityKey(@NonNull AccountContext accountContext) {
+        if (!hasIdentityKey(accountContext)) {
             throw new IllegalStateException("There isn't one!");
         }
 
         try {
-            byte[] publicKeyBytes = Base64.decode(retrieve(context, IDENTITY_PUBLIC_KEY_PREF));
+            byte[] publicKeyBytes = Base64.decode(retrieve(accountContext, IDENTITY_PUBLIC_KEY_PREF));
             return new IdentityKey(publicKeyBytes, 0);
         } catch (IOException | InvalidKeyException e) {
             throw new AssertionError(e);
@@ -76,14 +80,14 @@ public class IdentityKeyUtil {
     }
 
     public static @NonNull
-    IdentityKeyPair getIdentityKeyPair(@NonNull Context context) {
-        if (!hasIdentityKey(context)) {
+    IdentityKeyPair getIdentityKeyPair(@NonNull AccountContext accountContext) {
+        if (!hasIdentityKey(accountContext)) {
             throw new IllegalStateException("There isn't one!");
         }
 
         try {
-            IdentityKey publicKey = getIdentityKey(context);
-            ECPrivateKey privateKey = Curve.decodePrivatePoint(Base64.decode(retrieve(context, IDENTITY_PRIVATE_KEY_PREF)));
+            IdentityKey publicKey = getIdentityKey(accountContext);
+            ECPrivateKey privateKey = Curve.decodePrivatePoint(Base64.decode(retrieve(accountContext, IDENTITY_PRIVATE_KEY_PREF)));
 
             return new IdentityKeyPair(publicKey, privateKey);
         } catch (IOException e) {
@@ -91,57 +95,57 @@ public class IdentityKeyUtil {
         }
     }
 
-    public static ECKeyPair rebuildIdentityKeys(Context context, byte[] privateKeyBytes) throws Exception {
+    public static ECKeyPair rebuildIdentityKeys(@NonNull AccountContext accountContext, byte[] privateKeyBytes) throws Exception {
 
         ECPrivateKey ecPrivateKey = Curve.decodePrivatePoint(privateKeyBytes);
         byte[] publicKeyBytes = ByteUtil.combine(new byte[]{Curve.DJB_TYPE}, BCMPrivateKeyUtils.INSTANCE.generatePublicKey(ecPrivateKey.serialize()));
-        save(context, IDENTITY_PUBLIC_KEY_PREF, Base64.encodeBytes(publicKeyBytes));
-        save(context, IDENTITY_PRIVATE_KEY_PREF, Base64.encodeBytes(ecPrivateKey.serialize()));
+        save(accountContext, IDENTITY_PUBLIC_KEY_PREF, Base64.encodeBytes(publicKeyBytes));
+        save(accountContext, IDENTITY_PRIVATE_KEY_PREF, Base64.encodeBytes(ecPrivateKey.serialize()));
 
         return new ECKeyPair(Curve.decodePoint(publicKeyBytes, 0), ecPrivateKey);
     }
 
-    public static ECKeyPair generateIdentityKeys(Context context) {
+    public static ECKeyPair generateIdentityKeys(AccountContext accountContext) {
         ECKeyPair djbKeyPair = BCMPrivateKeyUtils.INSTANCE.generateKeyPair();
         IdentityKey djbIdentityKey = new IdentityKey(djbKeyPair.getPublicKey());
         ECPrivateKey djbPrivateKey = djbKeyPair.getPrivateKey();
 
-        save(context, IDENTITY_PUBLIC_KEY_PREF, Base64.encodeBytes(djbIdentityKey.serialize()));
-        save(context, IDENTITY_PRIVATE_KEY_PREF, Base64.encodeBytes(djbPrivateKey.serialize()));
+        save(accountContext, IDENTITY_PUBLIC_KEY_PREF, Base64.encodeBytes(djbIdentityKey.serialize()));
+        save(accountContext, IDENTITY_PRIVATE_KEY_PREF, Base64.encodeBytes(djbPrivateKey.serialize()));
 
         return djbKeyPair;
     }
 
-    public static void migrateIdentityKeys(@NonNull Context context,
+    public static void migrateIdentityKeys(@NonNull AccountContext accountContext,
                                            @NonNull MasterSecret masterSecret) {
-        if (!hasIdentityKey(context)) {
-            if (hasLegacyIdentityKeys(context)) {
-                IdentityKeyPair legacyPair = getLegacyIdentityKeyPair(context, masterSecret);
+        if (!hasIdentityKey(accountContext)) {
+            if (hasLegacyIdentityKeys(accountContext)) {
+                IdentityKeyPair legacyPair = getLegacyIdentityKeyPair(accountContext, masterSecret);
 
-                save(context, IDENTITY_PUBLIC_KEY_PREF, Base64.encodeBytes(legacyPair.getPublicKey().serialize()));
-                save(context, IDENTITY_PRIVATE_KEY_PREF, Base64.encodeBytes(legacyPair.getPrivateKey().serialize()));
+                save(accountContext, IDENTITY_PUBLIC_KEY_PREF, Base64.encodeBytes(legacyPair.getPublicKey().serialize()));
+                save(accountContext, IDENTITY_PRIVATE_KEY_PREF, Base64.encodeBytes(legacyPair.getPrivateKey().serialize()));
 
-                delete(context, IDENTITY_PUBLIC_KEY_CIPHERTEXT_LEGACY_PREF);
-                delete(context, IDENTITY_PRIVATE_KEY_CIPHERTEXT_LEGACY_PREF);
+                delete(accountContext, IDENTITY_PUBLIC_KEY_CIPHERTEXT_LEGACY_PREF);
+                delete(accountContext, IDENTITY_PRIVATE_KEY_CIPHERTEXT_LEGACY_PREF);
             } else {
-                generateIdentityKeys(context);
+                generateIdentityKeys(accountContext);
             }
         }
     }
 
-    private static boolean hasLegacyIdentityKeys(Context context) {
+    private static boolean hasLegacyIdentityKeys(@NonNull AccountContext accountContextt) {
         return
-                retrieve(context, IDENTITY_PUBLIC_KEY_CIPHERTEXT_LEGACY_PREF) != null &&
-                        retrieve(context, IDENTITY_PRIVATE_KEY_CIPHERTEXT_LEGACY_PREF) != null;
+                retrieve(accountContextt, IDENTITY_PUBLIC_KEY_CIPHERTEXT_LEGACY_PREF) != null &&
+                        retrieve(accountContextt, IDENTITY_PRIVATE_KEY_CIPHERTEXT_LEGACY_PREF) != null;
     }
 
-    private static IdentityKeyPair getLegacyIdentityKeyPair(@NonNull Context context,
+    private static IdentityKeyPair getLegacyIdentityKeyPair(@NonNull AccountContext accountContext,
                                                             @NonNull MasterSecret masterSecret) {
         try {
             MasterCipher masterCipher = new MasterCipher(masterSecret);
-            byte[] publicKeyBytes = Base64.decode(retrieve(context, IDENTITY_PUBLIC_KEY_CIPHERTEXT_LEGACY_PREF));
+            byte[] publicKeyBytes = Base64.decode(retrieve(accountContext, IDENTITY_PUBLIC_KEY_CIPHERTEXT_LEGACY_PREF));
             IdentityKey identityKey = new IdentityKey(publicKeyBytes, 0);
-            ECPrivateKey privateKey = masterCipher.decryptKey(Base64.decode(retrieve(context, IDENTITY_PRIVATE_KEY_CIPHERTEXT_LEGACY_PREF)));
+            ECPrivateKey privateKey = masterCipher.decryptKey(Base64.decode(retrieve(accountContext, IDENTITY_PRIVATE_KEY_CIPHERTEXT_LEGACY_PREF)));
 
             return new IdentityKeyPair(identityKey, privateKey);
         } catch (IOException | InvalidKeyException e) {
@@ -149,13 +153,15 @@ public class IdentityKeyUtil {
         }
     }
 
-    private static String retrieve(Context context, String key) {
-        SharedPreferences preferences = context.getSharedPreferences(MasterSecretUtil.getPreferencesName(), 0);
+    private static String retrieve(@NonNull AccountContext accountContext, String key) {
+        Context context = AppContextHolder.APP_CONTEXT;
+        SharedPreferences preferences = context.getSharedPreferences(MasterSecretUtil.getPreferencesName(accountContext), 0);
         return preferences.getString(key, null);
     }
 
-    private static void save(Context context, String key, String value) {
-        SharedPreferences preferences = context.getSharedPreferences(MasterSecretUtil.getPreferencesName(), 0);
+    private static void save(@NonNull AccountContext accountContext, String key, String value) {
+        Context context = AppContextHolder.APP_CONTEXT;
+        SharedPreferences preferences = context.getSharedPreferences(MasterSecretUtil.getPreferencesName(accountContext), 0);
         Editor preferencesEditor = preferences.edit();
 
         preferencesEditor.putString(key, value);
@@ -164,8 +170,9 @@ public class IdentityKeyUtil {
         }
     }
 
-    private static void delete(Context context, String key) {
-        context.getSharedPreferences(MasterSecretUtil.getPreferencesName(), 0).edit().remove(key).apply();
+    private static void delete(@NonNull AccountContext accountContext, String key) {
+        Context context = AppContextHolder.APP_CONTEXT;
+        context.getSharedPreferences(MasterSecretUtil.getPreferencesName(accountContext), 0).edit().remove(key).apply();
     }
 
 }

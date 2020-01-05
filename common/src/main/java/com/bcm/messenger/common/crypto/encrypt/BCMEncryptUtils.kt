@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.corebean.GroupKeyParam
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
@@ -45,10 +46,10 @@ object BCMEncryptUtils {
     private var masterSecret: MasterSecret? = null
 
     @Synchronized
-    fun getMasterSecret(context: Context): MasterSecret? {
+    fun getMasterSecret(accountContext: AccountContext): MasterSecret? {
         if (masterSecret == null && AMELogin.isLogin) {
             try {
-                masterSecret = MasterSecretUtil.getMasterSecret(context, MasterSecretUtil.UNENCRYPTED_PASSPHRASE)
+                masterSecret = MasterSecretUtil.getMasterSecret(accountContext, MasterSecretUtil.UNENCRYPTED_PASSPHRASE)
             } catch (e: Exception) {
                 ALog.e(TAG, e)
             }
@@ -63,20 +64,20 @@ object BCMEncryptUtils {
     }
 
     //
-    fun getMyPrivateKey(context: Context): ByteArray {
-        val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(context)
+    fun getMyPrivateKey(accountContext: AccountContext): ByteArray {
+        val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(accountContext)
         return (myKeyPair.privateKey as DjbECPrivateKey).privateKey
     }
 
     //
-    fun getMyPublicKey(context: Context): ByteArray {
-        val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(context)
+    fun getMyPublicKey(accountContext: AccountContext): ByteArray {
+        val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(accountContext)
         return (myKeyPair.publicKey.publicKey as DjbECPublicKey).publicKey
     }
 
     //
-    fun getMyIdentityKey(context: Context): ByteArray {
-        return IdentityKeyUtil.getIdentityKeyPair(context).publicKey.serialize()
+    fun getMyIdentityKey(accountContext: AccountContext): ByteArray {
+        return IdentityKeyUtil.getIdentityKeyPair(accountContext).publicKey.serialize()
     }
 
     /**
@@ -85,9 +86,9 @@ object BCMEncryptUtils {
      * @param otherKey
      * @return
      */
-    fun signWithMe(context: Context, otherKey: ByteArray): ByteArray? {
+    fun signWithMe(accountContext: AccountContext, otherKey: ByteArray): ByteArray? {
         try {
-            return Curve.calculateSignature(IdentityKeyUtil.getIdentityKeyPair(context).privateKey, otherKey)
+            return Curve.calculateSignature(IdentityKeyUtil.getIdentityKeyPair(accountContext).privateKey, otherKey)
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -96,9 +97,9 @@ object BCMEncryptUtils {
     }
 
     // DH 
-    fun calculateAgreementKeyWithMe(context: Context, otherPublicKey: ByteArray): ByteArray? {
+    fun calculateAgreementKeyWithMe(accountContext: AccountContext, otherPublicKey: ByteArray): ByteArray? {
         try {
-            return Curve25519.getInstance(Curve25519.BEST).calculateAgreement(otherPublicKey, getMyPrivateKey(context))
+            return Curve25519.getInstance(Curve25519.BEST).calculateAgreement(otherPublicKey, getMyPrivateKey(accountContext))
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -107,9 +108,9 @@ object BCMEncryptUtils {
 
 
     //
-    fun calculateMySelfAgreementKey(context: Context, myTempPrivateKey: ByteArray): ByteArray? {
+    fun calculateMySelfAgreementKey(accountContext: AccountContext, myTempPrivateKey: ByteArray): ByteArray? {
         try {
-            return Curve25519.getInstance(Curve25519.BEST).calculateAgreement(getMyPublicKey(context), myTempPrivateKey)
+            return Curve25519.getInstance(Curve25519.BEST).calculateAgreement(getMyPublicKey(accountContext), myTempPrivateKey)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -248,7 +249,7 @@ object BCMEncryptUtils {
      * @param encryptedKey
      * @return
      */
-    fun decryptGroupPassword(encryptedKey: String?): Pair<String, Int> {
+    fun decryptGroupPassword(accountContext: AccountContext, encryptedKey: String?): Pair<String, Int> {
         if (encryptedKey.isNullOrEmpty()) {
             return Pair("", -1)
         }
@@ -257,8 +258,8 @@ object BCMEncryptUtils {
             val gson = Gson()
 
             val encryptKeySpec = gson.fromJson(decodeEncryptkey, EncryptKeySpec::class.java)
-            return if (TextUtils.equals(encryptKeySpec.invitee_public_key, Base64.encodeBytes(getMyPublicKey(AppContextHolder.APP_CONTEXT)))) {
-                val ecdhPassword = calculateAgreementKeyWithMe(AppContextHolder.APP_CONTEXT, Base64.decode(encryptKeySpec.inviter_public_key))
+            return if (TextUtils.equals(encryptKeySpec.invitee_public_key, Base64.encodeBytes(getMyPublicKey(accountContext)))) {
+                val ecdhPassword = calculateAgreementKeyWithMe(accountContext, Base64.decode(encryptKeySpec.inviter_public_key))
                 val sha512Data = EncryptUtils.encryptSHA512(ecdhPassword)
                 val aesKey256 = ByteArray(32)
                 val iv = ByteArray(16)
@@ -710,11 +711,11 @@ object BCMEncryptUtils {
      * @param plainPassword
      * @return
      */
-    fun generateMyEncryptKeyString(plainPassword: ByteArray): String {
-        val myPublicKeyString = encodeByteArray(getMyPublicKey(AppContextHolder.APP_CONTEXT))
+    fun generateMyEncryptKeyString(accountContext: AccountContext, plainPassword: ByteArray): String {
+        val myPublicKeyString = encodeByteArray(getMyPublicKey(accountContext))
         //
         val tempKeyPair = Curve25519.getInstance(Curve25519.BEST).generateKeyPair()
-        val dhKey = calculateMySelfAgreementKey(AppContextHolder.APP_CONTEXT, tempKeyPair.privateKey)
+        val dhKey = calculateMySelfAgreementKey(accountContext, tempKeyPair.privateKey)
         val encryptKey = encryptGroupPk(plainPassword, dhKey)
         val ownerKeySpec = EncryptKeySpec()
         ownerKeySpec.version = EncryptKeySpec.ENCRYPT_VERSION
@@ -788,7 +789,7 @@ object BCMEncryptUtils {
      * @throws DecryptSourceException 
      */
     @Throws(DecryptSourceException::class)
-    fun decryptSource(encryptSource: ByteArray): String {
+    fun decryptSource(accountContext: AccountContext, encryptSource: ByteArray): String {
         // Version
         try {
             val decodeString = String(Base64.decode(encryptSource), StandardCharsets.UTF_8)
@@ -797,7 +798,7 @@ object BCMEncryptUtils {
             val ephemeralPubKey = ByteArray(32)
             System.arraycopy(Base64.decode(`object`.getString("ephemeralPubkey")), 1, ephemeralPubKey, 0, 32)
             val source = Base64.decode(`object`.getString("source"))
-            val psw = calculateAgreementKeyWithMe(AppContextHolder.APP_CONTEXT, ephemeralPubKey)
+            val psw = calculateAgreementKeyWithMe(accountContext, ephemeralPubKey)
             val shaPsw = EncryptUtils.computeSHA256(psw)
             //            int version = object.optInt("version");
             return String(EncryptUtils.decryptAES(source, shaPsw, CBC_MODE, iv))

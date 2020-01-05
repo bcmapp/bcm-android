@@ -24,7 +24,9 @@ import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.provider.AMELogin;
+import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.Base64;
 import com.bcm.messenger.utility.Util;
 import org.whispersystems.libsignal.InvalidKeyException;
@@ -65,7 +67,7 @@ public class MasterSecretUtil {
     public static final String ASYMMETRIC_LOCAL_PUBLIC_DJB = "asymmetric_master_secret_curve25519_public";
     public static final String ASYMMETRIC_LOCAL_PRIVATE_DJB = "asymmetric_master_secret_curve25519_private";
 
-    public static MasterSecret changeMasterSecretPassphrase(Context context,
+    public static MasterSecret changeMasterSecretPassphrase(@NonNull AccountContext accountContext,
                                                             MasterSecret masterSecret,
                                                             String newPassphrase) {
         try {
@@ -78,11 +80,11 @@ public class MasterSecretUtil {
             byte[] macSalt = generateSalt();
             byte[] encryptedAndMacdMasterSecret = macWithPassphrase(macSalt, iterations, encryptedMasterSecret, newPassphrase);
 
-            save(context, "encryption_salt", encryptionSalt);
-            save(context, "mac_salt", macSalt);
-            save(context, "passphrase_iterations", iterations);
-            save(context, "master_secret", encryptedAndMacdMasterSecret);
-            save(context, "passphrase_initialized", true);
+            save(accountContext, "encryption_salt", encryptionSalt);
+            save(accountContext, "mac_salt", macSalt);
+            save(accountContext, "passphrase_iterations", iterations);
+            save(accountContext, "master_secret", encryptedAndMacdMasterSecret);
+            save(accountContext, "passphrase_initialized", true);
 
             return masterSecret;
         } catch (GeneralSecurityException gse) {
@@ -90,29 +92,29 @@ public class MasterSecretUtil {
         }
     }
 
-    public static void clearMasterSecretPassphrase(Context context) {
-        context.getSharedPreferences(getPreferencesName(),0).edit().clear().commit();
+    public static void clearMasterSecretPassphrase(@NonNull AccountContext accountContext) {
+        AppContextHolder.APP_CONTEXT.getSharedPreferences(getPreferencesName(accountContext),0).edit().clear().apply();
     }
 
-    public static MasterSecret changeMasterSecretPassphrase(Context context,
+    public static MasterSecret changeMasterSecretPassphrase(@NonNull AccountContext accountContext,
                                                             String originalPassphrase,
                                                             String newPassphrase)
             throws InvalidPassphraseException {
-        MasterSecret masterSecret = getMasterSecret(context, originalPassphrase);
-        changeMasterSecretPassphrase(context, masterSecret, newPassphrase);
+        MasterSecret masterSecret = getMasterSecret(accountContext, originalPassphrase);
+        changeMasterSecretPassphrase(accountContext, masterSecret, newPassphrase);
 
         return masterSecret;
     }
 
 
-    public static MasterSecret getMasterSecret(Context context, String passphrase)
+    public static MasterSecret getMasterSecret(@NonNull AccountContext accountContext, String passphrase)
             throws InvalidPassphraseException {
         try {
-            byte[] encryptedAndMacdMasterSecret = retrieve(context, "master_secret");
-            byte[] macSalt = retrieve(context, "mac_salt");
-            int iterations = retrieve(context, "passphrase_iterations", 100);
+            byte[] encryptedAndMacdMasterSecret = retrieve(accountContext, "master_secret");
+            byte[] macSalt = retrieve(accountContext, "mac_salt");
+            int iterations = retrieve(accountContext, "passphrase_iterations", 100);
             byte[] encryptedMasterSecret = verifyMac(macSalt, iterations, encryptedAndMacdMasterSecret, passphrase);
-            byte[] encryptionSalt = retrieve(context, "encryption_salt");
+            byte[] encryptionSalt = retrieve(accountContext, "encryption_salt");
             byte[] combinedSecrets = decryptWithPassphrase(encryptionSalt, iterations, encryptedMasterSecret, passphrase);
             byte[] encryptionSecret = Util.split(combinedSecrets, 16, 20)[0];
             byte[] macSecret = Util.split(combinedSecrets, 16, 20)[1];
@@ -126,11 +128,11 @@ public class MasterSecretUtil {
         }
     }
 
-    public static AsymmetricMasterSecret getAsymmetricMasterSecret(@NonNull Context context,
+    public static AsymmetricMasterSecret getAsymmetricMasterSecret(@NonNull AccountContext accountContext,
                                                                    @Nullable MasterSecret masterSecret) {
         try {
-            byte[] djbPublicBytes = retrieve(context, ASYMMETRIC_LOCAL_PUBLIC_DJB);
-            byte[] djbPrivateBytes = retrieve(context, ASYMMETRIC_LOCAL_PRIVATE_DJB);
+            byte[] djbPublicBytes = retrieve(accountContext, ASYMMETRIC_LOCAL_PUBLIC_DJB);
+            byte[] djbPrivateBytes = retrieve(accountContext, ASYMMETRIC_LOCAL_PRIVATE_DJB);
 
             ECPublicKey djbPublicKey = null;
             ECPrivateKey djbPrivateKey = null;
@@ -153,18 +155,18 @@ public class MasterSecretUtil {
         }
     }
 
-    public static AsymmetricMasterSecret generateAsymmetricMasterSecret(Context context,
+    public static AsymmetricMasterSecret generateAsymmetricMasterSecret(@NonNull AccountContext accountContext,
                                                                         MasterSecret masterSecret) {
         MasterCipher masterCipher = new MasterCipher(masterSecret);
         ECKeyPair keyPair = Curve.generateKeyPair();
 
-        save(context, ASYMMETRIC_LOCAL_PUBLIC_DJB, keyPair.getPublicKey().serialize());
-        save(context, ASYMMETRIC_LOCAL_PRIVATE_DJB, masterCipher.encryptKey(keyPair.getPrivateKey()));
+        save(accountContext, ASYMMETRIC_LOCAL_PUBLIC_DJB, keyPair.getPublicKey().serialize());
+        save(accountContext, ASYMMETRIC_LOCAL_PRIVATE_DJB, masterCipher.encryptKey(keyPair.getPrivateKey()));
 
         return new AsymmetricMasterSecret(keyPair.getPublicKey(), keyPair.getPrivateKey());
     }
 
-    public static MasterSecret generateMasterSecret(Context context, String passphrase) {
+    public static MasterSecret generateMasterSecret(@NonNull AccountContext accountContext, String passphrase) {
         try {
             byte[] encryptionSecret = generateEncryptionSecret();
             byte[] macSecret = generateMacSecret();
@@ -175,11 +177,11 @@ public class MasterSecretUtil {
             byte[] macSalt = generateSalt();
             byte[] encryptedAndMacdMasterSecret = macWithPassphrase(macSalt, iterations, encryptedMasterSecret, passphrase);
 
-            save(context, "encryption_salt", encryptionSalt);
-            save(context, "mac_salt", macSalt);
-            save(context, "passphrase_iterations", iterations);
-            save(context, "master_secret", encryptedAndMacdMasterSecret);
-            save(context, "passphrase_initialized", true);
+            save(accountContext, "encryption_salt", encryptionSalt);
+            save(accountContext, "mac_salt", macSalt);
+            save(accountContext, "passphrase_iterations", iterations);
+            save(accountContext, "master_secret", encryptedAndMacdMasterSecret);
+            save(accountContext, "passphrase_initialized", true);
 
             return new MasterSecret(new SecretKeySpec(encryptionSecret, "AES"),
                     new SecretKeySpec(macSecret, "HmacSHA1"));
@@ -189,18 +191,21 @@ public class MasterSecretUtil {
         }
     }
 
-    public static boolean hasAsymmericMasterSecret(Context context) {
-        SharedPreferences settings = context.getSharedPreferences(getPreferencesName(), 0);
+    public static boolean hasAsymmericMasterSecret(@NonNull AccountContext accountContext) {
+        Context context = AppContextHolder.APP_CONTEXT;
+        SharedPreferences settings = context.getSharedPreferences(getPreferencesName(accountContext), 0);
         return settings.contains(ASYMMETRIC_LOCAL_PUBLIC_DJB);
     }
 
-    public static boolean isPassphraseInitialized(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences(getPreferencesName(), 0);
+    public static boolean isPassphraseInitialized(@NonNull AccountContext accountContext) {
+        Context context = AppContextHolder.APP_CONTEXT;
+        SharedPreferences preferences = context.getSharedPreferences(getPreferencesName(accountContext), 0);
         return preferences.getBoolean("passphrase_initialized", false);
     }
 
-    public static void save(Context context, String key, int value) {
-        if (!context.getSharedPreferences(getPreferencesName(), 0)
+    public static void save(@NonNull AccountContext accountContext, String key, int value) {
+        Context context = AppContextHolder.APP_CONTEXT;
+        if (!context.getSharedPreferences(getPreferencesName(accountContext), 0)
                 .edit()
                 .putInt(key, value)
                 .commit()) {
@@ -208,8 +213,9 @@ public class MasterSecretUtil {
         }
     }
 
-    public static void save(Context context, String key, String value) {
-        if (!context.getSharedPreferences(getPreferencesName(), 0)
+    public static void save(@NonNull AccountContext accountContext, String key, String value) {
+        Context context = AppContextHolder.APP_CONTEXT;
+        if (!context.getSharedPreferences(getPreferencesName(accountContext), 0)
                 .edit()
                 .putString(key, value)
                 .commit()) {
@@ -217,8 +223,9 @@ public class MasterSecretUtil {
         }
     }
 
-    private static void save(Context context, String key, byte[] value) {
-        if (!context.getSharedPreferences(getPreferencesName(), 0)
+    private static void save(@NonNull AccountContext accountContext, String key, byte[] value) {
+        Context context = AppContextHolder.APP_CONTEXT;
+        if (!context.getSharedPreferences(getPreferencesName(accountContext), 0)
                 .edit()
                 .putString(key, Base64.encodeBytes(value))
                 .commit()) {
@@ -226,8 +233,9 @@ public class MasterSecretUtil {
         }
     }
 
-    public static void save(Context context, String key, boolean value) {
-        if (!context.getSharedPreferences(getPreferencesName(), 0)
+    public static void save(@NonNull AccountContext accountContext, String key, boolean value) {
+        Context context = AppContextHolder.APP_CONTEXT;
+        if (!context.getSharedPreferences(getPreferencesName(accountContext), 0)
                 .edit()
                 .putBoolean(key, value)
                 .commit()) {
@@ -235,16 +243,18 @@ public class MasterSecretUtil {
         }
     }
 
-    private static byte[] retrieve(Context context, String key) throws IOException {
-        SharedPreferences settings = context.getSharedPreferences(getPreferencesName(), 0);
+    private static byte[] retrieve(@NonNull AccountContext accountContext, String key) throws IOException {
+        Context context = AppContextHolder.APP_CONTEXT;
+        SharedPreferences settings = context.getSharedPreferences(getPreferencesName(accountContext), 0);
         String encodedValue = settings.getString(key, "");
 
         if (TextUtils.isEmpty(encodedValue)) return null;
         else return Base64.decode(encodedValue);
     }
 
-    private static int retrieve(Context context, String key, int defaultValue) throws IOException {
-        SharedPreferences settings = context.getSharedPreferences(getPreferencesName(), 0);
+    private static int retrieve(@NonNull AccountContext accountContext, String key, int defaultValue) throws IOException {
+        Context context = AppContextHolder.APP_CONTEXT;
+        SharedPreferences settings = context.getSharedPreferences(getPreferencesName(accountContext), 0);
         return settings.getInt(key, defaultValue);
     }
 
@@ -370,7 +380,7 @@ public class MasterSecretUtil {
         return result;
     }
 
-    public static String getPreferencesName(){
-        return PREFERENCES_NAME+ AMELogin.INSTANCE.getUid();
+    public static String getPreferencesName(@NonNull AccountContext accountContext){
+        return PREFERENCES_NAME+ accountContext.getUid();
     }
 }

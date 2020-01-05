@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.grouprepository.events;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class MessageEvent {
     public final List<Long> indexIdList;
     public final List<AmeGroupMessageDetail> targetList;
 
-    public MessageEvent(long gid, long indexId, EventType type) {
+    public MessageEvent(AccountContext accountContext, long gid, long indexId, EventType type) {
         this.gid = gid;
         this.indexId = indexId;
         this.type = type;
@@ -23,7 +24,7 @@ public class MessageEvent {
         this.targetList = null;
     }
 
-    public MessageEvent(long gid, EventType type, List<AmeGroupMessageDetail> list) {
+    public MessageEvent(AccountContext accountContext, long gid, EventType type, List<AmeGroupMessageDetail> list) {
         this.gid = gid;
         this.indexId = 0L;
         this.type = type;
@@ -31,7 +32,7 @@ public class MessageEvent {
         this.targetList = list;
     }
 
-    public MessageEvent(long gid, List<Long> indexIdList) {
+    public MessageEvent(AccountContext accountContext, long gid, List<Long> indexIdList) {
         this.gid = gid;
         this.indexId = 0L;
         this.indexIdList = indexIdList;
@@ -39,7 +40,7 @@ public class MessageEvent {
         this.targetList = null;
     }
 
-    public MessageEvent(long gid, long indexId, EventType type, List<AmeGroupMessageDetail> list) {
+    public MessageEvent(AccountContext accountContext, long gid, long indexId, EventType type, List<AmeGroupMessageDetail> list) {
         this.gid = gid;
         this.indexId = indexId;
         this.type = type;
