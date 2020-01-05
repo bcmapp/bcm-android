@@ -6,10 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -36,7 +35,7 @@ import kotlinx.android.synthetic.main.me_fragment_my_profile.*
  *
  * Created by wjh on 2019-12-11
  */
-class MyProfileFragment : Fragment(), RecipientModifiedListener {
+class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
 
     companion object {
         private const val TAG = "MyProfileFragment"
@@ -50,7 +49,7 @@ class MyProfileFragment : Fragment(), RecipientModifiedListener {
         if (requestCode == VERIFY_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 val intent = Intent(activity, MyAccountKeyActivity::class.java)
-                intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, AMELogin.uid)
+                intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, getAccountRecipient().address.serialize())
                 startActivity(intent)
             }
         }
@@ -66,7 +65,7 @@ class MyProfileFragment : Fragment(), RecipientModifiedListener {
             activity?.finish()
             return
         }
-        recipient = Recipient.from(view.context, address, true)
+        recipient = Recipient.from(getAccountContext(), address, true)
         recipient.addListener(this)
         initView()
     }
@@ -132,7 +131,7 @@ class MyProfileFragment : Fragment(), RecipientModifiedListener {
                 return@setOnClickListener
             }
             try {
-                SwitchAccountAdapter().switchAccount(it.context, recipient.address.toString(), Recipient.fromSelf(it.context, true))
+                SwitchAccountAdapter().switchAccount(it.context, recipient.address.toString(), getAccountRecipient())
             } catch (ex: Exception) {
                 ALog.e(TAG, "handleLogout error", ex)
             }
@@ -156,11 +155,11 @@ class MyProfileFragment : Fragment(), RecipientModifiedListener {
 
 
         profile_title_bar?.setCenterText(getString(R.string.me_profile_title))
-        profile_id_item?.setTip(InputLengthFilter.filterString(AMELogin.uid, 15), 0)
+        profile_id_item?.setTip(InputLengthFilter.filterString(getAccountRecipient().address.serialize(), 15), 0)
         if (!isReleaseBuild()) {
             // 非正式包允许长按复制ID，方便查问题
             profile_id_item?.setOnLongClickListener {
-                it.context.saveTextToBoard(AMELogin.uid)
+                it.context.saveTextToBoard(getAccountRecipient().address.serialize())
                 ToastUtil.show(it.context, "User ID has been copied to clipboard")
                 return@setOnLongClickListener true
             }
@@ -212,7 +211,7 @@ class MyProfileFragment : Fragment(), RecipientModifiedListener {
      */
     private fun initProfile(recipient: Recipient) {
 
-        profile_icon?.setPhoto(recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
+        profile_icon?.setPhoto(getAccountContext(), recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
         profile_name_item?.setTip(recipient.bcmName ?: recipient.address.format())
     }
 

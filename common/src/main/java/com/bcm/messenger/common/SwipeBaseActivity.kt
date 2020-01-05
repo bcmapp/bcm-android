@@ -15,6 +15,8 @@ import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IUmengModule
+import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -28,15 +30,28 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper
 import java.util.concurrent.TimeUnit
 
 open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
+
     private val TAG = "SwipeBaseActivity"
 
     private lateinit var mHelper: SwipeBackActivityHelper
+
+    private lateinit var mAccountContext: AccountContext
+    private lateinit var mLoginRecipient: Recipient
     private var disableDefaultTransition = false
     private var disabledClipboardCheck = false
     private var disabledLightStatusBar = false
 
     private var checkDisposable: Disposable? = null
     private var checkStartTime = System.currentTimeMillis()
+
+    private var mLoginModifiedListener = object : RecipientModifiedListener {
+        override fun onModified(recipient: Recipient) {
+            if (mLoginRecipient == recipient) {
+                mLoginRecipient = recipient
+                onLoginRecipientRefresh()
+            }
+        }
+    }
 
     private val idleHandler = MessageQueue.IdleHandler {
         if (!disabledLightStatusBar) {
@@ -60,6 +75,15 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         super.onCreate(savedInstanceState)
         ALog.d(TAG, "onCreate: $localClassName")
         window.setTranslucentStatus()
+        val accountContext: AccountContext? = intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        if (accountContext == null) {
+            ALog.w(TAG, "accountContext is null, finish")
+            finish()
+            return
+        }
+        mAccountContext = accountContext
+        mLoginRecipient = Recipient.login(mAccountContext)
+        mLoginRecipient.addListener(mLoginModifiedListener)
         mHelper = SwipeBackActivityHelper(this)
         mHelper.onActivityCreate()
         swipeBackLayout.setScrimColor(getColorCompat(R.color.common_color_transparent))
@@ -108,6 +132,9 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     override fun onDestroy() {
         super.onDestroy()
         Looper.myQueue().removeIdleHandler(idleHandler)
+        if (::mLoginRecipient.isInitialized) {
+            mLoginRecipient.removeListener(mLoginModifiedListener)
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -149,6 +176,16 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         super.applyOverrideConfiguration(overrideConfiguration)
     }
 
+    protected open fun onLoginRecipientRefresh() {
+
+    }
+
+    fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(this) ?: throw Exception("getMasterSecret is null")
+
+    fun getAccountContext(): AccountContext = mAccountContext
+
+    fun getAccountRecipient(): Recipient = mLoginRecipient
+
     /**
      * Disable default activity transition animation if you want to specify a custom one.
      * MUST invoke before invoking super.onCreate(Bundle), and then invoke overridePendingTransition(Int, Int)
@@ -156,8 +193,6 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     protected open fun disableDefaultTransitionAnimation() {
         disableDefaultTransition = true
     }
-
-    fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(this) ?: throw Exception("getMasterSecret is null")
 
     protected open fun disableClipboardCheck() {
         disabledClipboardCheck = true

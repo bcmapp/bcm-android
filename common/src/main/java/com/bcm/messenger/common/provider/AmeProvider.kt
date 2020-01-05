@@ -63,7 +63,7 @@ object AmeProvider {
                 }
                 return provider
             }
-        } catch (ex: Exception) {//ARouter，ARouter，，null
+        } catch (ex: Exception) {
             ALog.e(TAG, "getProvider $providerName fail", ex)
         }
         return null

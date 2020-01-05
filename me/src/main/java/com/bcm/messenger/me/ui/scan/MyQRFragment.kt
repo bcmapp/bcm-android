@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -39,13 +40,15 @@ class MyQRFragment : BaseFragment(), RecipientModifiedListener {
 
     private val TAG = "MyQRFragment"
     private lateinit var recipient: Recipient
+    private lateinit var mAccountContext: AccountContext
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.me_fragment_my_qr_code, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recipient = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)
+        mAccountContext = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) ?: return
+        recipient = Recipient.login(mAccountContext)
         recipient.addListener(this)
 
         initView()
@@ -82,7 +85,7 @@ class MyQRFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     private fun setSelfData() {
-        qr_code_avatar.showPrivateAvatar(recipient)
+        qr_code_avatar.showPrivateAvatar(mAccountContext, recipient)
         qr_code_name.text = recipient.name
         initQrCode(recipient)
     }
@@ -109,7 +112,7 @@ class MyQRFragment : BaseFragment(), RecipientModifiedListener {
                             qr_code_image?.setImageDrawable(null)
                         })
             }else {
-                AmeModuleCenter.contact().updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
+                AmeModuleCenter.contact(mAccountContext)?.updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
 
                 }
             }

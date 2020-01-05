@@ -15,8 +15,6 @@ import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.provider.accountmodule.IChatModule
-import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeLoadingPopup
@@ -50,12 +48,11 @@ import java.util.*
  * Created by zjl on 2018/4/27.
  */
 @Route(routePath = ARouterConstants.Activity.SETTINGS)
-class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
+class SettingActivity : SwipeBaseActivity() {
 
     private val TAG = "SettingActivity"
     private val REQUEST_SETTING = 100
     private val TAG_SSR = "ssrStageChanged"
-    private lateinit var mSelf: Recipient
     private var mChatModule: IChatModule? = null
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -74,13 +71,6 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
         setContentView(R.layout.me_activity_settings)
 
         mChatModule = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONVERSATION_BASE).navigationWithCast()
-        try {
-            mSelf = Recipient.fromSelf(this, true)
-            mSelf.addListener(this)
-        }catch (ex: Exception) {
-            finish()
-            return
-        }
 
         initView()
         initData()
@@ -91,10 +81,8 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
         notification_noticer.checkNotice()
     }
 
-    override fun onModified(recipient: Recipient) {
-        if (recipient == mSelf) {
-            setting_block_stranger.setSwitchStatus(!mSelf.isAllowStranger)
-        }
+    override fun onLoginRecipientRefresh() {
+        setting_block_stranger.setSwitchStatus(!getAccountRecipient().isAllowStranger)
     }
 
     private fun initView() {
@@ -192,14 +180,14 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
                 return@setOnClickListener
             }
 
-            val allowStranger = !mSelf.isAllowStranger
+            val allowStranger = !getAccountRecipient().isAllowStranger
             AmePopup.loading.show(this)
-            AmeModuleCenter.login().updateAllowReceiveStrangers(allowStranger) { success ->
+            AmeModuleCenter.login().updateAllowReceiveStrangers(getAccountContext(), allowStranger) { success ->
                 if (!success) {
                     AmePopup.loading.dismiss()
                     AmePopup.result.failure(this, getString(R.string.me_setting_block_stranger_error), true)
                 }else {
-                    mSelf.privacyProfile.allowStranger = allowStranger
+                    getAccountRecipient().privacyProfile.allowStranger = allowStranger
                     updateStrangerState()
                     AmePopup.loading.dismiss(AmeLoadingPopup.DELAY_DEFAULT)
 
@@ -304,7 +292,7 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
 
     private fun updateStrangerState() {
-        setting_block_stranger.setSwitchStatus(!mSelf.isAllowStranger)
+        setting_block_stranger.setSwitchStatus(!getAccountRecipient().isAllowStranger)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

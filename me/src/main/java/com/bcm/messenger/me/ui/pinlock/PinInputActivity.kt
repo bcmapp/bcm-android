@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.dp2Px
@@ -214,11 +213,11 @@ class PinInputActivity : SwipeBaseActivity() {
                 pin_lock_nikename.visibility = View.VISIBLE
                 pin_word_size.visibility = View.GONE
                 pin_word_size.text = getString(R.string.me_forget_pin)
-                val recipient = Recipient.fromSelf(this, true)
-                pin_lock_avatar.setPhoto(recipient)
+                val recipient = getAccountRecipient()
+                pin_lock_avatar.setPhoto(getAccountContext(), recipient)
                 pin_lock_nikename.text = recipient.name
                 recipient.addListener {
-                    pin_lock_avatar.setPhoto(recipient)
+                    pin_lock_avatar.setPhoto(getAccountContext(), recipient)
                     pin_lock_nikename.text = recipient.name
                 }
                 input_verify.setOnClickListener {

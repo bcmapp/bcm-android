@@ -16,14 +16,15 @@ import com.bcm.messenger.common.core.AddressUtil
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.core.*
 import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.jobs.ContextJob
 import com.bcm.messenger.common.profiles.PlaintextServiceProfile
-import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
@@ -275,7 +276,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                 ALog.d(TAG, "setEncryptName: $encryptName")
 
                 val path = String.format(UPLOAD_ENCRYPT_NAME_PATH, URLEncoder.encode(encryptName))
-                RxIMHttp.getHttp(mAccountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(path), "", AmeEmpty::class.java)
+                RxIMHttp.get(mAccountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(path), "", AmeEmpty::class.java)
                         .subscribeOn(AmeDispatcher.ioScheduler)
                         .observeOn(AmeDispatcher.ioScheduler)
                         .map {
@@ -388,7 +389,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                             ?: throw Exception("avatarHD is null"), avatarKey, privacyProfile.version)
 
                     ALog.d(TAG, "setEncryptAvatar hd: $encryptHdAvatar ld: $encryptLdAvatar")
-                    return RxIMHttp.getHttp(mAccountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(UPLOAD_ENCRYPT_AVATAR_PATH)
+                    return RxIMHttp.get(mAccountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(UPLOAD_ENCRYPT_AVATAR_PATH)
                             , String.format("{\"hdAvatar\":\"%s\", \"ldAvatar\":\"%s\"}", encryptHdAvatar, encryptLdAvatar)
                             , AmeEmpty::class.java)
                             .subscribeOn(AmeDispatcher.ioScheduler)
@@ -541,7 +542,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         val hash = BCMEncryptUtils.murmurHash3(0xFBA4C795, sourceByteArray)
         val content = Base64.encodeBytes(BCMEncryptUtils.encryptByAES256(sourceByteArray, hash.toString().toByteArray()))
         val req = UpdateShareLinkReq(content)
-        RxIMHttp.getHttp(mAccountContext).put<UpdateShareLinkRes>(BcmHttpApiHelper.getApi(INDIVIDUAL_SHORT_SHARE_PATH)
+        RxIMHttp.get(mAccountContext).put<UpdateShareLinkRes>(BcmHttpApiHelper.getApi(INDIVIDUAL_SHORT_SHARE_PATH)
                 , GsonUtils.toJson(req)
                 , UpdateShareLinkRes::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
@@ -586,7 +587,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         val hashString = shareLink.substring(i2 + 1)
         ALog.d(TAG, "checkShareLink shareLink: $shareLink, index: $index")
         val url = BcmHttpApiHelper.getApi("$INDIVIDUAL_SHORT_SHARE_PATH/$index")
-        RxIMHttp.getHttp(mAccountContext).get<UserShareLinkRes>(url, null, UserShareLinkRes::class.java)
+        RxIMHttp.get(mAccountContext).get<UserShareLinkRes>(url, null, UserShareLinkRes::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .map {
@@ -894,8 +895,8 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
     private fun downloadProfileKeys(context:Context, recipient: Recipient, privacyProfile: PrivacyProfile): Boolean {
         var profileKeyString = ""
         try {
-            val wrapper = SyncHttpWrapper(IMHttp)
-            profileKeyString = wrapper.get<String>(BcmHttpApiHelper.getApi(PROFILE_KEY_PATH), null, String::class.java)
+            val wrapper = SyncHttpWrapper(IMHttp.get(mAccountContext))
+            val profileKeyString = wrapper.get<String>(BcmHttpApiHelper.getApi(PROFILE_KEY_PATH), null, String::class.java)
 
         }catch (ex: NoContentException) {
             ALog.e(TAG, "downloadProfileKeys getProfileKeys error", ex)
@@ -995,7 +996,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         try {
             ALog.d(TAG, "uploadProfileKeys: $profileKeyJson")
 
-            val wrapper = SyncHttpWrapper(IMHttp.getHttp(mAccountContext))
+            val wrapper = SyncHttpWrapper(IMHttp.get(mAccountContext))
             wrapper.put<AmeEmpty>(BcmHttpApiHelper.getApi(PROFILE_KEY_PATH), profileKeyJson, AmeEmpty::class.java)
 
             ALog.d(TAG, "uploadProfileKeys succeed")
@@ -1248,7 +1249,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
 
             if (recipient.isSelf) {
                 if (supportFeatures != AMELogin.mySupport.toString()) {
-                    AmeProvider.get<ILoginModule>(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)?.refreshMySupport2Server()
+                    AmeModuleCenter.login().refreshMySupport2Server(mAccountContext)
                     ALog.i(TAG, "refreshMySupport2Server")
                 }
             }
@@ -1330,7 +1331,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             builder.deleteCharAt(builder.length - 1)
         }
 
-        return RxIMHttp.getHttp(mAccountContext).put<String>(BcmHttpApiHelper.getApi(PROFILES_PLAINTEXT_PATH)
+        return RxIMHttp.get(mAccountContext).put<String>(BcmHttpApiHelper.getApi(PROFILES_PLAINTEXT_PATH)
                 , String.format("{\"contacts\":[%s]}", builder.toString())
                 , String::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)

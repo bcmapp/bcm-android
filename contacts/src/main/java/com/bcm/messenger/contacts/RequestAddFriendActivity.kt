@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.contacts_activity_request_friend.*
 class RequestAddFriendActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     private var mRecipient: Recipient? = null
-    private var mSelf: Recipient? = null
     private var mUseDefaultHint: Boolean = true
     private var mIsHandling = false
     private var mOtherNick: String? = null
@@ -64,8 +63,6 @@ class RequestAddFriendActivity : SwipeBaseActivity(), RecipientModifiedListener 
         try {
             mRecipient = Recipient.from(AMELogin.majorContext, intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ADDRESS), true)
             mRecipient?.addListener(this)
-            mSelf = Recipient.fromSelf(this, true)
-            mSelf?.addListener(this)
 
         } catch (ex: Exception) {
             finish()
@@ -79,13 +76,16 @@ class RequestAddFriendActivity : SwipeBaseActivity(), RecipientModifiedListener 
         super.onDestroy()
         request_memo_input.removeTextChangedListener(mMemoWatcher)
         mRecipient?.removeListener(this)
-        mSelf?.removeListener(this)
     }
 
     override fun onModified(recipient: Recipient) {
-        if (mRecipient == recipient || mSelf == recipient) {
+        if (mRecipient == recipient) {
             init()
         }
+    }
+
+    override fun onLoginRecipientRefresh() {
+        init()
     }
 
     private fun init() {
@@ -98,7 +98,7 @@ class RequestAddFriendActivity : SwipeBaseActivity(), RecipientModifiedListener 
         }
         request_notice_tv.text = getString(R.string.contacts_request_friend_notice, name)
         if (mUseDefaultHint) {
-            request_memo_input.setText(getString(R.string.contacts_request_friend_memo_hint, mSelf?.name ?: ""))
+            request_memo_input.setText(getString(R.string.contacts_request_friend_memo_hint, getAccountRecipient().name))
         }
         request_memo_input.requestFocus()
     }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.logger.ALog
@@ -26,9 +27,9 @@ class ProfileActivity : SwipeBaseActivity() {
         try {
             val address = intent.getParcelableExtra<Address?>(ARouterConstants.PARAM.PARAM_ADDRESS)
             recipient = if (address == null) {
-                Recipient.fromSelf(this, true)
+                Recipient.major()
             } else {
-                Recipient.from(this, address, true)
+                Recipient.from(AMELogin.majorContext, address, true)
             }
 
         } catch (ex: Exception) {

@@ -6,10 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.Loader
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.api.IContactsAction
 import com.bcm.messenger.common.api.IContactsCallback
 import com.bcm.messenger.common.core.Address
@@ -37,7 +37,7 @@ import io.reactivex.schedulers.Schedulers
  * Created by zjl on 2018/4/8.
  */
 @Route(routePath = ARouterConstants.Fragment.SELECT_SINGLE)
-class SingleContactSelectionFragment : Fragment(), IContactsAction {
+class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
 
     companion object {
         private val TAG = "SingleContactSelection"
@@ -230,13 +230,13 @@ class SingleContactSelectionFragment : Fragment(), IContactsAction {
         if (gid <= 0) {
             return
         }
-        val memberList = AmeModuleCenter.group().getMembersFromCache(gid)
-        if (memberList.isNotEmpty()) {
+        val memberList = AmeModuleCenter.group(getAccountContext())?.getMembersFromCache(gid)
+        if (!memberList.isNullOrEmpty()) {
 
             dispose = Observable.create(ObservableOnSubscribe<List<Recipient>> {
 
                 it.onNext(memberList.map { address ->
-                    Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(address), true)
+                    Recipient.from(getAccountContext(), Address.fromSerialized(address), true)
                 })
                 it.onComplete()
 
