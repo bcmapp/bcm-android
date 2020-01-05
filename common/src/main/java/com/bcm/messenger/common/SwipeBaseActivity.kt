@@ -193,7 +193,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     }
 
-    fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(this) ?: throw Exception("getMasterSecret is null")
+    fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(mAccountContext) ?: throw Exception("getMasterSecret is null")
 
     fun getAccountContext(): AccountContext = mAccountContext
 
