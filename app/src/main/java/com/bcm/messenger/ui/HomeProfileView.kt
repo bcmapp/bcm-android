@@ -11,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.R
+import com.bcm.messenger.adapter.HomeAccountItem
+import com.bcm.messenger.adapter.TYPE_ADD
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AMELogin
@@ -18,30 +20,64 @@ import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getColor
-import com.bcm.messenger.common.utils.getStatusBarHeight
+import com.bcm.messenger.common.utils.getScreenWidth
+import com.bcm.messenger.login.bean.AmeAccountData
 import com.bcm.messenger.me.ui.scan.NewScanActivity
+import com.bcm.messenger.ui.widget.IProfileView
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
-import kotlinx.android.synthetic.main.home_profile_layout.view.*
+import kotlinx.android.synthetic.main.home_profile_view.view.*
+import kotlin.math.min
 
 /**
  * Created by Kin on 2019/12/9
  */
-class HomeProfileView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
+class HomeProfileView @JvmOverloads constructor(context: Context,
+                                                attrs: AttributeSet? = null,
+                                                defStyleAttr: Int = 0)
+    : ConstraintLayout(context, attrs, defStyleAttr), RecipientModifiedListener, IProfileView {
     private val TAG = "MessageProfileView"
 
-    interface ClickListener {
+    interface ProfileViewCallback {
         fun onClickExit()
+        fun onClickDelete(uid: String)
+        fun onClickLogin(uid: String)
+        fun checkPosition(): Float
     }
 
-    private val statusBarHeight = context.getStatusBarHeight()
-    private var listener: ClickListener? = null
-    var recipient = Recipient.self()
+    private var listener: ProfileViewCallback? = null
+
+    override var isActive = false
+    override var isLogin = false
+    override var position = 0f
+
+    private val dp10 = 10.dp2Px()
+    private val avatarMargin = (AppContextHolder.APP_CONTEXT.getScreenWidth() - 120.dp2Px()) / 2
+    private val badgeMarginEnd = (160.dp2Px() * 0.3f / 2).toInt()
+    private val badgeMarginStart = 150.dp2Px() - badgeMarginEnd - 27.dp2Px()
+
+    var accountItem = HomeAccountItem(TYPE_ADD, AmeAccountData())
+        set(value) {
+            field = value
+            recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(field.account.uid), true)
+        }
+
+    private var recipient = Recipient.self()
+        set(value) {
+            field.removeListener(this)
+            field = value
+
+            if (value.address.serialize().isNotEmpty()) {
+                field.addListener(this)
+                setProfile()
+            }
+        }
+
     var isAccountBackup = true
         set(value) {
             field = value
@@ -96,54 +132,39 @@ class HomeProfileView @JvmOverloads constructor(context: Context, attrs: Attribu
         })
     }
 
-    private fun hideAnimation() = AnimatorSet().apply {
-        val updateListener = ValueAnimator.AnimatorUpdateListener {
-            setViewsAlpha(it.animatedValue as Float)
-        }
-        val valueAnimator = ValueAnimator.ofFloat(1f, 0f)
-        valueAnimator.addUpdateListener(updateListener)
-
-        play(valueAnimator)
-
-        addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                hideAllViews()
-                valueAnimator.removeAllUpdateListeners()
-                this@apply.removeAllListeners()
-            }
-        })
-    }
-
     init {
-        LayoutInflater.from(context).inflate(R.layout.home_profile_layout, this, true)
-
-        initView()
+        LayoutInflater.from(context).inflate(R.layout.home_profile_view, this, true)
     }
 
-    private fun initView() {
-        setBackgroundColor(getColor(R.color.common_color_white))
-
+    override fun initView() {
         home_profile_unread.setTextSize(17f)
-        hideAllViews()
 
-        home_profile_status_fill.layoutParams = home_profile_status_fill.layoutParams.apply {
-            height = statusBarHeight
+        val iconSize = min(64.dp2Px(), (AppContextHolder.APP_CONTEXT.getScreenWidth() - 184.dp2Px()) / 3)
+        home_profile_wallet_icon.layoutParams = home_profile_wallet_icon.layoutParams.apply {
+            height = iconSize
+            width = iconSize
         }
-        home_profile_exit.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-            listener?.onClickExit()
+        home_profile_vault_icon.layoutParams = home_profile_vault_icon.layoutParams.apply {
+            height = iconSize
+            width = iconSize
+        }
+        home_profile_air_chat_icon.layoutParams = home_profile_air_chat_icon.layoutParams.apply {
+            height = iconSize
+            width = iconSize
         }
 
         home_profile_avatar.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            listener?.onClickExit()
+            if (isLogin) {
+                listener?.onClickExit()
+            } else {
+                listener?.onClickLogin(recipient.address.serialize())
+            }
         }
-        home_profile_name.setOnClickListener {
-            // Do nothing.
+        home_profile_delete.setOnClickListener {
+            listener?.onClickDelete(recipient.address.serialize())
         }
         home_profile_qr.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
@@ -163,7 +184,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context, attrs: Attribu
                     .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.from(context, AMELogin.uid))
                     .navigation(context)
         }
-        home_profile_wallet.setOnClickListener {
+        home_profile_wallet_icon.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
@@ -171,114 +192,245 @@ class HomeProfileView @JvmOverloads constructor(context: Context, attrs: Attribu
                     .get(ARouterConstants.Activity.WALLET_MAIN)
                     .navigation(context)
         }
-        home_profile_data_vault.setOnClickListener {
+        home_profile_vault_icon.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
             val meProvider = AmeProvider.get<IUserModule>(ARouterConstants.Provider.PROVIDER_USER_BASE)
             meProvider?.gotoDataNote(context)
         }
-        home_profile_settings.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-            BcmRouter.getInstance()
-                    .get(ARouterConstants.Activity.SETTINGS)
-                    .navigation(context)
-        }
-        home_profile_air_chat.setOnClickListener {
+        home_profile_air_chat_icon.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
             val adhocProvider = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
             adhocProvider?.configHocMode()
         }
-        home_profile_keybox.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-            BcmRouter.getInstance().get(ARouterConstants.Activity.ME_KEYBOX).navigation(context)
+
+        showAllViews()
+        showAvatar()
+        setViewsAlpha(1f)
+    }
+
+    override fun setViewsAlpha(alpha: Float) {
+        when {
+            !isLogin -> logoutSetAlpha(alpha)
+            !isActive -> inactiveSetAlpha(alpha)
+            else -> activeSetAlpha(alpha)
         }
     }
 
-    fun setViewsAlpha(alpha: Float) {
-        home_profile_exit.alpha = alpha
+    private fun logoutSetAlpha(alpha: Float) {
+        ALog.i(TAG, "logout set alpha = $alpha")
+        ALog.i(TAG, "logout avatar visibility = ${home_profile_avatar.visibility}")
+        home_profile_delete.alpha = alpha
+        home_profile_login.alpha = alpha
+        if (alpha > 0.3f) {
+            home_profile_avatar.alpha = 0.3f
+            home_profile_name.alpha = 0.3f
+        } else {
+            home_profile_avatar.alpha = alpha
+            home_profile_name.alpha = alpha
+        }
+    }
+
+    private fun inactiveSetAlpha(alpha: Float) {
+        ALog.i(TAG, "inactive set alpha = $alpha")
+        ALog.i(TAG, "inactive avatar visibility = ${home_profile_avatar.visibility}")
+        home_profile_avatar.alpha = alpha
+    }
+
+    private fun activeSetAlpha(alpha: Float) {
+        ALog.i(TAG, "active set alpha = $alpha")
+        ALog.i(TAG, "active avatar visibility = ${home_profile_avatar.visibility}")
+        home_profile_avatar.alpha = 1f
         home_profile_name.alpha = alpha
         home_profile_qr.alpha = alpha
         home_profile_more.alpha = alpha
-        home_profile_wallet.alpha = alpha
-        home_profile_data_vault.alpha = alpha
-        home_profile_settings.alpha = alpha
-        home_profile_air_chat.alpha = alpha
-        home_profile_keybox.alpha = alpha
         home_profile_backup_icon.alpha = alpha
         home_profile_unread.alpha = alpha
+        home_profile_func_layout.alpha = alpha
     }
 
-    fun showAllViewsWithAnimation() {
+    override fun showAllViewsWithAnimation() {
         showAnimation().start()
     }
 
-    fun showAllViews() {
-        home_profile_exit.visibility = View.VISIBLE
+    override fun showAllViews() {
+        when {
+            !isLogin -> logoutShowViews()
+            !isActive -> inactiveShowViews()
+            else -> activeShowViews()
+        }
+    }
+
+    private fun logoutShowViews() {
+        home_profile_avatar.showPrivateAvatar(recipient)
+
+        home_profile_avatar.visibility = View.VISIBLE
+        home_profile_delete.visibility = View.VISIBLE
+        home_profile_login.visibility = View.VISIBLE
+        home_profile_name.visibility = View.VISIBLE
+
+        home_profile_qr.visibility = View.INVISIBLE
+        home_profile_more.visibility = View.INVISIBLE
+        home_profile_func_layout.visibility = View.INVISIBLE
+        home_profile_unread.visibility = View.INVISIBLE
+        home_profile_backup_icon.visibility = View.INVISIBLE
+    }
+
+    private fun inactiveShowViews() {
+        setViewsAlpha(0f)
+        home_profile_avatar.showPrivateAvatar(recipient)
+
+        home_profile_avatar.visibility = View.VISIBLE
+        home_profile_delete.visibility = View.GONE
+        home_profile_login.visibility = View.GONE
+
         home_profile_name.visibility = View.VISIBLE
         home_profile_qr.visibility = View.VISIBLE
         home_profile_more.visibility = View.VISIBLE
-        home_profile_wallet.visibility = View.VISIBLE
-        home_profile_data_vault.visibility = View.VISIBLE
-        home_profile_settings.visibility = View.VISIBLE
-        home_profile_air_chat.visibility = View.VISIBLE
-        home_profile_keybox.visibility = View.VISIBLE
+        home_profile_func_layout.visibility = View.VISIBLE
+        home_profile_unread.visibility = View.VISIBLE
+        home_profile_backup_icon.visibility = View.INVISIBLE
+    }
+
+    private fun activeShowViews() {
+        home_profile_avatar.showPrivateAvatar(recipient)
+
         home_profile_avatar.visibility = View.INVISIBLE
+        home_profile_delete.visibility = View.GONE
+        home_profile_login.visibility = View.GONE
+
+        home_profile_name.visibility = View.VISIBLE
+        home_profile_qr.visibility = View.VISIBLE
+        home_profile_more.visibility = View.VISIBLE
+        home_profile_func_layout.visibility = View.VISIBLE
         home_profile_unread.visibility = View.VISIBLE
         if (isAccountBackup) {
             home_profile_backup_icon.visibility = View.GONE
         } else {
             home_profile_backup_icon.visibility = View.VISIBLE
         }
-        home_profile_avatar.showPrivateAvatar(recipient)
     }
 
-    fun showAvatar() {
+    override fun showAvatar() {
         home_profile_avatar.visibility = View.VISIBLE
     }
 
-    fun hideAllViewsWithAnimation() {
-        hideAnimation().start()
-    }
-
-    fun hideAllViews() {
-        home_profile_exit.visibility = View.GONE
+    override fun hideAllViews() {
         home_profile_name.visibility = View.GONE
         home_profile_qr.visibility = View.GONE
         home_profile_more.visibility = View.GONE
-        home_profile_wallet.visibility = View.GONE
-        home_profile_data_vault.visibility = View.GONE
-        home_profile_settings.visibility = View.GONE
-        home_profile_air_chat.visibility = View.GONE
-        home_profile_keybox.visibility = View.GONE
+        home_profile_func_layout.visibility = View.GONE
         home_profile_backup_icon.visibility = View.GONE
         home_profile_avatar.visibility = View.GONE
         home_profile_unread.visibility = View.GONE
+        home_profile_login.visibility = View.GONE
+        home_profile_delete.visibility = View.GONE
     }
 
-    fun hideAvatar() {
+    override fun hideAvatar() {
         home_profile_avatar.visibility = View.INVISIBLE
     }
 
-    fun setMargin(topMargin: Int) {
-        home_profile_avatar_layout.layoutParams = (home_profile_avatar_layout.layoutParams as ConstraintLayout.LayoutParams).apply {
+    override fun setMargin(topMargin: Int) {
+        home_profile_avatar_layout.layoutParams = (home_profile_avatar_layout.layoutParams as LayoutParams).apply {
             setMargins(0, 60.dp2Px() + topMargin / 2, 0, 0)
         }
     }
 
-    fun resetMargin() {
-        home_profile_avatar_layout.layoutParams = (home_profile_avatar_layout.layoutParams as ConstraintLayout.LayoutParams).apply {
+    override fun resetMargin() {
+        home_profile_avatar_layout.layoutParams = (home_profile_avatar_layout.layoutParams as LayoutParams).apply {
+            marginStart = 0
+            marginEnd = 0
             setMargins(0, 60.dp2Px(), 0, 0)
+        }
+        home_profile_avatar.layoutParams = (home_profile_avatar.layoutParams as LayoutParams).apply {
+            marginStart = 0
+            marginEnd = 0
+        }
+        if (!isActive) {
+            val pos = listener?.checkPosition() ?: 0f
+            if (pos < 0f) {
+                onViewPositionChanged(-1f, 0f)
+            } else {
+                onViewPositionChanged(1f, 0f)
+            }
         }
     }
 
-    fun setListener(listener: ClickListener) {
+    override fun setPagerChangedAlpha(alpha: Float) {
+        if (isLogin) {
+            loginPagerChangedAlpha(alpha)
+        } else {
+            logoutPagerChangedAlpha(alpha)
+        }
+    }
+
+    override fun onViewPositionChanged(position: Float, percent: Float) {
+        ALog.i(TAG, "Position Changed, position = $position, uid = ${recipient.address.serialize()}")
+        val scale = 0.7f + 0.3f * percent
+        val curAvatarMargin = avatarMargin * (1 - percent)
+
+        home_profile_avatar.layoutParams = (home_profile_avatar.layoutParams as LayoutParams).apply {
+            if (position < 0) {
+                marginStart = curAvatarMargin.toInt()
+            } else {
+                marginEnd = curAvatarMargin.toInt()
+            }
+        }
+        home_profile_avatar.scaleX = scale
+        home_profile_avatar.scaleY = scale
+
+        home_profile_unread.layoutParams = (home_profile_unread.layoutParams as LayoutParams).apply {
+            marginEnd = if (position < 0) {
+                dp10 + (badgeMarginEnd * (1 - percent)).toInt()
+            } else {
+                dp10 + (badgeMarginStart * (1 - percent)).toInt()
+            }
+            setMargins(leftMargin, dp10 + (badgeMarginEnd * (1 - percent)).toInt(), marginEnd, bottomMargin)
+        }
+
+        setPagerChangedAlpha(percent)
+    }
+
+    private fun logoutPagerChangedAlpha(alpha: Float) {
+        if (alpha > 0.3f) {
+            home_profile_name.alpha = 0.3f
+        } else {
+            home_profile_name.alpha = alpha
+        }
+
+        home_profile_delete.alpha = alpha
+        home_profile_login.alpha = alpha
+    }
+
+    private fun loginPagerChangedAlpha(alpha: Float) {
+        home_profile_name.alpha = alpha
+        home_profile_qr.alpha = alpha
+        home_profile_more.alpha = alpha
+        home_profile_func_layout.alpha = alpha
+    }
+
+    fun setListener(listener: ProfileViewCallback) {
         this.listener = listener
+    }
+
+    override fun onDetachedFromWindow() {
+        recipient.removeListener(this)
+        super.onDetachedFromWindow()
+    }
+
+    override fun onModified(recipient: Recipient) {
+        if (this.recipient == recipient) {
+            this.recipient = recipient
+            setProfile()
+        }
+    }
+
+    private fun setProfile() {
+        home_profile_avatar.showPrivateAvatar(recipient)
+        home_profile_name.text = recipient.name
     }
 }

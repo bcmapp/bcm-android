@@ -15,11 +15,11 @@ import com.bcm.route.annotation.Route
  */
 @Route(routePath = ARouterConstants.Activity.USER_REGISTER_PATH)
 class RegistrationActivity : SwipeBaseActivity() {
-
     companion object {
         private const val TAG = "RegistrationActivity"
         const val RE_LOGIN_ID = "RE_LOGIN_ID"
         const val REQUEST_CODE_SCAN_QR_LOGIN = 10013
+        const val CREATE_ACCOUNT_ID = "CREATE_ACCOUNT"
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -49,8 +49,12 @@ class RegistrationActivity : SwipeBaseActivity() {
         setSwipeBackEnable(false)
         setContentView(R.layout.me_activity_registration)
 
-        val lastLoginUid = AmeLoginLogic.accountHistory.lastLoginUid()
-        handleFirstGoToLogin(lastLoginUid)
+        if (intent.getBooleanExtra(CREATE_ACCOUNT_ID, false)) {
+            handleFirstGoToLogin(null)
+        } else {
+            val lastLoginUid = AmeLoginLogic.accountHistory.lastLoginUid()
+            handleFirstGoToLogin(lastLoginUid)
+        }
     }
 
     private fun handleFirstGoToLogin(lastLoginUid: String?) {
@@ -66,12 +70,12 @@ class RegistrationActivity : SwipeBaseActivity() {
         } else {
             val f = StartupFragment()
             val arg = Bundle()
+            arg.putBoolean(CREATE_ACCOUNT_ID, intent.getBooleanExtra(CREATE_ACCOUNT_ID, false))
             f.arguments = arg
             supportFragmentManager.beginTransaction()
                     .add(R.id.register_container, f, "startup")
                     .commitNowAllowingStateLoss()
         }
-
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

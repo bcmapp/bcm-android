@@ -89,6 +89,8 @@
     <string name="tabless_ui_intro_text_1"><Data><![CDATA[<font color=#C5F4F7>Introducing the new</font><br><font color=#FFFFFF><b>Tabless UI</b></font>]]></Data></string>
     <string name="tabless_ui_intro_text_2"><Data><![CDATA[<font color=#FFFFFF><b>Friends list</b></font> <font color=#C5F4F7>is moved to<br>the</font> <font color=#FFFFFF><b>New Chat</b></font>]]></Data></string>
     <string name="tabless_ui_intro_text_3"><Data><![CDATA[<font color=#C5F4F7>Find</font> <font color=#FFFFFF><b>More</b></font> <font color=#C5F4F7>in your</font> <font color=#FFFFFF><b>Avatar</b></font>]]></Data></string>
+    <string name="tabless_ui_delete_account_content">Please make sure you have backed up this account before removing it. Are you sure to remove it now?</string>
+    <string name="tabless_ui_delete_account_str_remote">Remove</string>
 
     <!-- Dev Settings -->
     <string name="dev_settings_title">Dev Settings</string>

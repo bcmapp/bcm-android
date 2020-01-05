@@ -7,7 +7,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.ui.fragment.VerifyFingerprintFragment
 import com.bcm.messenger.me.ui.fragment.VerifyPasswordFragment
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -41,15 +40,7 @@ class VerifyFingerprintActivity : SwipeBaseActivity() {
         switchToPasswordFragment(false)
     }
 
-    fun switchToFingerprintFragment() {
-        val f = VerifyFingerprintFragment()
-                .setCallback(this::handleCallback)
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.container, f)
-                .commitAllowingStateLoss()
-    }
-
-    fun switchToPasswordFragment(hasFingerprint: Boolean, lockout: Boolean = false) {
+    private fun switchToPasswordFragment(hasFingerprint: Boolean, lockout: Boolean = false) {
         val f = VerifyPasswordFragment()
                 .setHasFingerprint(hasFingerprint)
                 .setHasLockout(lockout)

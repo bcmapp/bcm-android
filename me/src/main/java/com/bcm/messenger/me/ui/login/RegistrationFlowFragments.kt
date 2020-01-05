@@ -203,50 +203,19 @@ class StartupFragment : AbsRegistrationFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        showLogoAnimation()
+
+        if (arguments?.getBoolean(RegistrationActivity.CREATE_ACCOUNT_ID, false) == true) {
+            createAccount()
+        } else {
+            showLogoAnimation()
+        }
 
         SuperPreferences.setTablessIntroductionFlag(AppContextHolder.APP_CONTEXT)
     }
 
     private fun initView() {
         startup_create.setOnClickListener {
-            AmePopup.tipLoading.show(this.activity)
-            Observable.create(ObservableOnSubscribe<ECKeyPair> {
-                try {
-                    it.onNext(IdentityKeyUtil.generateIdentityKeys(context))
-                } finally {
-                    it.onComplete()
-                }
-            }).subscribeOn(Schedulers.computation())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        keyPair = it
-                        if (keyPair != null) {
-                            AmeLoginLogic.queryChallengeTarget(it) { target ->
-
-                                AmePopup.tipLoading.dismiss()
-                                if (target != null) {
-                                    activity?.apply {
-                                        val f = GenerateKeyFragment2()
-                                        val arg = Bundle()
-                                        arg.putInt("action", 1)
-                                        arg.putString("target", target)
-                                        f.arguments = arg
-                                        supportFragmentManager.beginTransaction()
-                                                .replace(R.id.register_container, f, "generate_key_2")
-                                                .addToBackStack("generate_key_2")
-                                                .commitAllowingStateLoss()
-                                        f.setKeyPair(it)
-                                    }
-                                }
-                            }
-                        } else {
-                            AmePopup.tipLoading.dismiss()
-                        }
-                    }, {
-                        AmePopup.tipLoading.dismiss()
-                        ALog.e(TAG, it.toString())
-                    })
+            createAccount()
         }
 
         startup_scan.setOnClickListener {
@@ -262,6 +231,46 @@ class StartupFragment : AbsRegistrationFragment() {
                 BcmRouter.getInstance().get(ARouterConstants.Activity.ME_KEYBOX_GUIDE).navigation()
             }
         }
+    }
+
+    private fun createAccount() {
+        AmePopup.tipLoading.show(this.activity)
+        Observable.create(ObservableOnSubscribe<ECKeyPair> {
+            try {
+                it.onNext(IdentityKeyUtil.generateIdentityKeys(context))
+            } finally {
+                it.onComplete()
+            }
+        }).subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    keyPair = it
+                    if (keyPair != null) {
+                        AmeLoginLogic.queryChallengeTarget(it) { target ->
+
+                            AmePopup.tipLoading.dismiss()
+                            if (target != null) {
+                                activity?.apply {
+                                    val f = GenerateKeyFragment2()
+                                    val arg = Bundle()
+                                    arg.putInt("action", 1)
+                                    arg.putString("target", target)
+                                    f.arguments = arg
+                                    supportFragmentManager.beginTransaction()
+                                            .replace(R.id.register_container, f, "generate_key_2")
+                                            .addToBackStack("generate_key_2")
+                                            .commitAllowingStateLoss()
+                                    f.setKeyPair(it)
+                                }
+                            }
+                        }
+                    } else {
+                        AmePopup.tipLoading.dismiss()
+                    }
+                }, {
+                    AmePopup.tipLoading.dismiss()
+                    ALog.e(TAG, it.toString())
+                })
     }
 
     private fun showLogoAnimation() {

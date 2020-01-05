@@ -112,7 +112,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
             env_test_layout.visibility = View.VISIBLE
             env_export_account_list.setOnClickListener {
                 AmeLoginLogic.accountHistory.export()
-                ToastUtil.show(this@KeyBoxControlActivity, "import failed")
+                ToastUtil.show(this@KeyBoxControlActivity, "export success")
             }
 
             env_import_account_list.setOnClickListener {

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -63,6 +64,8 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         private const val TAB_CONTACT = 1
         private const val TAB_ME = 2
         private const val TAB_ADHOC = 3
+
+        const val REQ_SCAN_ACCOUNT = 1001
     }
 
     private val mLaunchHelper = SchemeLaunchHelper(this)
@@ -105,9 +108,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         }
 
         RxBus.subscribe<HomeTabEvent>(TAG) {
-
             ALog.i(TAG, "receive HomeTabEvent position: ${it.position}, figure: ${it.showFigure}")
-
             when (it.position) {
                 TAB_CHAT -> {
                     if ((it.showFigure != null || it.showDot != null) && !mAdHocModule.isAdHocMode()) {
@@ -135,6 +136,13 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         initClipboardUtil()
         checkAdHocMode()
         handleTopEvent()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQ_SCAN_ACCOUNT -> home_profile_layout.analyseQrCode(data)
+        }
     }
 
     private fun checkAdHocMode(): Boolean {
@@ -207,7 +215,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         // check need fetch profile or avatar
         if (recipient.needRefreshProfile()) {
             AmeModuleCenter.contact().checkNeedFetchProfileAndIdentity(recipient, callback = null)
-        }else {
+        } else {
             AmeModuleCenter.contact().checkNeedDownloadAvatarWithAll(recipient)
         }
     }
@@ -377,8 +385,6 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     private fun updateRecipientData(recipient: Recipient) {
         home_toolbar_avatar.showPrivateAvatar(recipient)
-        home_profile_name.text = recipient.name
-        home_profile_layout.recipient = recipient
     }
 
     private fun initPullDownView() {
@@ -488,6 +494,8 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
                         home_toolbar_badge.layoutParams = (home_toolbar_badge.layoutParams as ConstraintLayout.LayoutParams).apply {
                             topMargin = dp6
                         }
+
+                        home_profile_layout.checkCurrentPage(recipient.address.serialize())
                     }
                     height == topViewHeight -> {
                         home_toolbar_avatar.setPrivateElevation(0f)
@@ -512,7 +520,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
                         hideAnimation().start()
                     }
                     ConstraintPullDownLayout.MOVE_DOWN -> {
-                        if (home_profile_layout.visibility == View.GONE) {
+                        if (home_profile_layout.visibility != View.VISIBLE) {
                             home_profile_layout.visibility = View.VISIBLE
                             home_profile_layout.resetMargin()
                             home_profile_layout.showAllViewsWithAnimation()
@@ -530,9 +538,22 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         home_toolbar_avatar.setOnClickListener {
             home_pull_down_layout.expandTopViewAndCallback()
         }
-        home_profile_layout.setListener(object : HomeProfileView.ClickListener {
+
+        home_profile_layout.setListener(object : HomeProfileLayout.HomeProfileListener {
             override fun onClickExit() {
                 home_pull_down_layout.closeTopViewAndCallback()
+            }
+
+            override fun onDragVertically(ev: MotionEvent?): Boolean {
+                return home_pull_down_layout.onTouchEvent(ev)
+            }
+
+            override fun onInterceptEvent(ev: MotionEvent?): Boolean {
+                return home_pull_down_layout.onInterceptTouchEventFromOutside(ev)
+            }
+
+            override fun onViewPagerScrollStateChanged(newState: Int) {
+                home_pull_down_layout.setViewPagerState(newState)
             }
         })
     }
@@ -625,7 +646,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     private fun checkBackupNotice(isHasBackup: Boolean) {
         home_toolbar_badge.isAccountBackup = isHasBackup
-        home_profile_layout.isAccountBackup = isHasBackup
+//        home_profile_layout.isAccountBackup = isHasBackup
     }
 
     private fun checkShowIntroPage() {

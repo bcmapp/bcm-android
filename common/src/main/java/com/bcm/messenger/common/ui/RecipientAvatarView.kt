@@ -168,7 +168,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
-    private fun setImageResource(resId: Int) {
+    fun setImageResource(resId: Int) {
         group_splice_avatar.visibility = View.GONE
         member_single_avatar.visibility = View.VISIBLE
         background = null

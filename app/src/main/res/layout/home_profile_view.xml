@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/home_profile_avatar_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:gravity="center_horizontal"
+        app:layout_constraintBottom_toTopOf="@id/home_profile_func_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.bcm.messenger.common.ui.RecipientAvatarView
+            android:id="@+id/home_profile_avatar"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.bcm.messenger.ui.widget.HomeAvatarBadgeView
+            android:id="@+id/home_profile_unread"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:minWidth="27dp"
+            app:layout_constraintEnd_toEndOf="@id/home_profile_avatar"
+            app:layout_constraintTop_toTopOf="@id/home_profile_avatar" />
+
+        <ImageView
+            android:id="@+id/home_profile_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/common_item_ripple_oval_transparent_bg"
+            android:src="@drawable/home_icon_profile_delete"
+            app:layout_constraintEnd_toEndOf="@id/home_profile_avatar"
+            app:layout_constraintTop_toTopOf="@id/home_profile_avatar" />
+
+        <com.bcm.messenger.common.ui.emoji.EmojiTextView
+            android:id="@+id/home_profile_name"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="50dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="@color/common_color_black"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/home_profile_avatar" />
+
+        <TextView
+            android:id="@+id/home_profile_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/me_str_login"
+            android:textColor="@color/common_color_379BFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/home_profile_name" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/home_profile_name">
+
+            <ImageView
+                android:id="@+id/home_profile_qr"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/common_item_ripple_oval_bg"
+                android:scaleType="centerInside"
+                android:src="@drawable/home_icon_profile_qr_code"
+                app:layout_constraintEnd_toStartOf="@id/home_profile_more"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/home_profile_more"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/common_item_ripple_oval_bg"
+                android:scaleType="centerInside"
+                android:src="@drawable/home_icon_profile_more"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/home_profile_qr"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/home_profile_backup_icon"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/common_not_backup_icon"
+                app:layout_constraintEnd_toEndOf="@id/home_profile_more"
+                app:layout_constraintTop_toTopOf="@id/home_profile_more" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/home_profile_func_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="90dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/home_profile_avatar_layout">
+
+        <ImageView
+            android:id="@+id/home_profile_wallet_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:src="@drawable/home_icon_profile_wallet"
+            app:layout_constraintBottom_toTopOf="@id/home_profile_wallet_text"
+            app:layout_constraintEnd_toStartOf="@id/home_profile_vault_icon"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/home_profile_wallet_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/chats_more_wallet_title"
+            android:textColor="@color/common_60_transparent"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="@id/home_profile_wallet_icon"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@id/home_profile_wallet_icon"
+            app:layout_constraintTop_toBottomOf="@id/home_profile_wallet_icon" />
+
+        <ImageView
+            android:id="@+id/home_profile_vault_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:src="@drawable/home_icon_profile_data_vault"
+            app:layout_constraintBottom_toTopOf="@id/home_profile_data_vault_text"
+            app:layout_constraintEnd_toStartOf="@id/home_profile_air_chat_icon"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@id/home_profile_wallet_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/home_profile_data_vault_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/chats_more_data_vault_title"
+            android:textColor="@color/common_60_transparent"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="@id/home_profile_vault_icon"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@id/home_profile_vault_icon"
+            app:layout_constraintTop_toBottomOf="@id/home_profile_vault_icon" />
+
+        <ImageView
+            android:id="@+id/home_profile_air_chat_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/home_icon_profile_air_chat"
+            app:layout_constraintBottom_toTopOf="@id/home_profile_air_chat_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@id/home_profile_vault_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/home_profile_air_chat_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/chats_more_airchat_title"
+            android:textColor="@color/common_60_transparent"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="@id/home_profile_air_chat_icon"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@id/home_profile_air_chat_icon"
+            app:layout_constraintTop_toBottomOf="@id/home_profile_air_chat_icon" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

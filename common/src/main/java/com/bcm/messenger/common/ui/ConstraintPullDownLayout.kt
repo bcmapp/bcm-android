@@ -17,6 +17,7 @@ import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import kotlin.math.abs
 
 /**
@@ -65,6 +66,7 @@ class ConstraintPullDownLayout @JvmOverloads constructor(context: Context, attrs
     private var interceptTouch = false
     private var needVibrate = true
     private var reboundSize = 100
+    private var viewPagerState = ViewPager.SCROLL_STATE_IDLE
 
 //    private lateinit var topView: View // TopView
     private var topViewCurrentHeight = 0
@@ -131,7 +133,20 @@ class ConstraintPullDownLayout @JvmOverloads constructor(context: Context, attrs
         }
     }
 
+    fun onInterceptTouchEventFromOutside(ev: MotionEvent?): Boolean {
+        if (ev?.action == MotionEvent.ACTION_DOWN) {
+            lastX = ev.rawX
+            lastY = ev.rawY
+            topViewOriginHeight = topViewCurrentHeight
+
+            return false
+        }
+
+        return onInterceptTouchEvent(ev)
+    }
+
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        if (viewPagerState != ViewPager.SCROLL_STATE_IDLE) return false
         if (ev == null) return super.onInterceptTouchEvent(ev)
 
         when (ev.action) {
@@ -172,6 +187,7 @@ class ConstraintPullDownLayout @JvmOverloads constructor(context: Context, attrs
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (viewPagerState != ViewPager.SCROLL_STATE_IDLE) return false
         if (event == null) return super.onTouchEvent(event)
 
         when (event.action) {
@@ -364,6 +380,10 @@ class ConstraintPullDownLayout @JvmOverloads constructor(context: Context, attrs
 
     fun setReboundSize(size: Int) {
         reboundSize = size
+    }
+
+    fun setViewPagerState(state: Int) {
+        viewPagerState = state
     }
 
     private fun vibrate() {
