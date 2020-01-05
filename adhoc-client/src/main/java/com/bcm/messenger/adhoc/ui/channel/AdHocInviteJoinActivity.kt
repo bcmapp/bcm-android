@@ -9,14 +9,13 @@ import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
 import com.bcm.messenger.adhoc.ui.AdHocSessionSelectionActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AppUtil
 import kotlinx.android.synthetic.main.adhoc_activity_invite_join.*
-import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.utility.AppContextHolder
 
 /**
  *
@@ -75,9 +74,8 @@ class AdHocInviteJoinActivity : SwipeBaseActivity() {
             val newSessionId = data?.getStringExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION)
             val newChannel = this.channel
             if (newChannel != null && !newSessionId.isNullOrEmpty()) {
-
                 val myName = try {
-                    Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true).name
+                    Recipient.major().name
                 }catch (ex: Exception) {
                     null
                 }

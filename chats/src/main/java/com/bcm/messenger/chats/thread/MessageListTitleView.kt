@@ -55,7 +55,7 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
     private var mHasNoticeLowVersionWarning = false
     private var state = INIT
 
-    private var recipient = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)
+    private var recipient = Recipient.major()
     private var currentName = recipient.name
 
     constructor(context: Context) : super(context, null)

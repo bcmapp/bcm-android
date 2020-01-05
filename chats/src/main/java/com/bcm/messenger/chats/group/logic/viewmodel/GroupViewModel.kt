@@ -190,8 +190,8 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
             if (member != null) {
                 try {
                     if (member.uid.serialize() == AMELogin.uid) {
-                        val selfProfile = Recipient.self().privacyProfile
-                        val myName = Recipient.self().name
+                        val selfProfile = Recipient.major().privacyProfile
+                        val myName = Recipient.major().name
                         var newName: String? = null
                         if (member.nickname != myName) {
                             newName = myName

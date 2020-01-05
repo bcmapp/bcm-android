@@ -13,7 +13,6 @@ import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
 import com.bcm.messenger.common.database.repositories.RecipientRepo
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -515,7 +514,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                 r?.addListener(mRecipientCallback)
             }
             val self = try {
-                Recipient.fromSelf(context, true)
+                Recipient.major()
             } catch (ex: Exception) {
                 null
             }

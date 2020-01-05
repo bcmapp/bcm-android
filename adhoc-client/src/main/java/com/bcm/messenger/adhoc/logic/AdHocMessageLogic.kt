@@ -41,7 +41,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
     private const val TAG = "AdHocMessageLogic"
 
     private val mMessageStoreQueue: Queue<AdHocMessageDetail> = ConcurrentLinkedQueue()
-    private var mWaitQueueMap: ConcurrentHashMap<String, WaitQueueData> = ConcurrentHashMap() //if key is not nullorempty: private chat waitting queue，wait for opposite connect;if null or empty: group chat，need self connected。
+    private var mWaitQueueMap: ConcurrentHashMap<String, WaitQueueData> = ConcurrentHashMap() //if key is not nullorempty: private chat waitting queue，wait for opposite connect;if null or empty: group chat，need major connected。
 
     private val mCache: AdHocMessageCache = AdHocMessageCache()
     private var mModel: AdHocMessageModel? = null
@@ -79,7 +79,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
 
     fun myAdHocId(): String? {
         return try {
-            Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true).address.serialize()
+            Recipient.major().address.serialize()
         } catch (ex: Exception) {
             null
         }
@@ -398,7 +398,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
                         when (queueData.ready.get()) {
                             AdHocSessionStatus.READY.ordinal -> {
                                 count++
-                                val self = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)
+                                val self = Recipient.major()
                                 send(m.sessionId, self.name, m) { new ->
                                     response(complete.addAndGet(1))
                                 }
@@ -550,7 +550,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
 
                         val session = AdHocSessionLogic.getSession(m.sessionId)
                         if (session != null && session.isChat()) {
-                            val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(m.fromId), false)
+                            val recipient = Recipient.from(AMELogin.majorContext, Address.fromSerialized(m.fromId), false)
                             if (recipient.profileName != m.nickname) {
                                 Repository.getRecipientRepo(AMELogin.majorContext)?.setProfileName(recipient, m.nickname)
                             }

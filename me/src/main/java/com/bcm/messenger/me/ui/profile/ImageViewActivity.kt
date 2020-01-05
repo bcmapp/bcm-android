@@ -73,7 +73,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
         try {
             recipient = Recipient.from(this, intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ADDRESS) as Address, true)
         } catch (ex: Exception) {
-            ALog.e(TAG, "get self recipient fail", ex)
+            ALog.e(TAG, "get major recipient fail", ex)
             finish()
             return
         }

@@ -30,7 +30,6 @@ import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.grouprepository.events.GroupInfoUpdateNotify
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.ILoginModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.BcmRecyclerView
@@ -126,10 +125,10 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         ALog.d(TAG, "onViewCreated")
         try {
-            recipient = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)
+            recipient = Recipient.major()
             recipient.addListener(this)
         } catch (ex: Exception) {
-            ALog.e(TAG, "onActivityCreated fail, get self recipient fail", ex)
+            ALog.e(TAG, "onActivityCreated fail, get major recipient fail", ex)
             try {
                 AmeModuleCenter.user().logoutMenu()
             } catch (ex: Exception) {
@@ -324,7 +323,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
         chats_nickname_btn?.setOnClickListener {
             BcmRouter.getInstance()
                     .get(ARouterConstants.Activity.EDIT_NAME)
-                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Recipient.fromSelf(AppContextHolder.APP_CONTEXT, false).address)
+                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Recipient.major().address)
                     .navigation(context)
         }
     }

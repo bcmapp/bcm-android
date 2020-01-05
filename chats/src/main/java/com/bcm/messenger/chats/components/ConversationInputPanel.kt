@@ -609,7 +609,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
         ALog.d(TAG, "setAllAtList size: ${allAtList.size}")
         Observable.create(ObservableOnSubscribe<List<Recipient>> {
             try {
-                val self = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)
+                val self = Recipient.major()
                 val resultList = mutableListOf<Recipient>()
                 allAtList.forEach {
                     val r = Recipient.from(context, it.uid, true)

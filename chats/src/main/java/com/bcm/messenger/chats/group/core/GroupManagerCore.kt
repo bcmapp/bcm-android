@@ -10,9 +10,9 @@ import com.bcm.messenger.common.core.ServerResult
 import com.bcm.messenger.common.core.corebean.GroupKeyMode
 import com.bcm.messenger.common.core.corebean.IdentityKeyInfo
 import com.bcm.messenger.common.core.corebean.ProfilesResult
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.grouprepository.room.entity.JoinGroupReqComment
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.GsonUtils
@@ -432,7 +432,7 @@ object GroupManagerCore {
             req.qr_token = shareSign
             req.qr_code = shareCode
 
-            val myName = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true).name
+            val myName = Recipient.major().name
             val reqComment = JoinGroupReqComment(myName, comment)
             req.comment = String(EncryptUtils.base64Encode(GsonUtils.toJson(reqComment).toByteArray()))
 

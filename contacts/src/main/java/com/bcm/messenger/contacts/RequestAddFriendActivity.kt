@@ -4,15 +4,16 @@ import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import com.bcm.route.annotation.Route
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.utility.InputLengthFilter
-import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.contacts.provider.ContactModuleImp
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
+import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.contacts.provider.ContactModuleImp
+import com.bcm.messenger.utility.InputLengthFilter
+import com.bcm.route.annotation.Route
 import kotlinx.android.synthetic.main.contacts_activity_request_friend.*
 
 /**
@@ -61,7 +62,7 @@ class RequestAddFriendActivity : SwipeBaseActivity(), RecipientModifiedListener 
         request_memo_input.filters = arrayOf(InputLengthFilter(60))
 
         try {
-            mRecipient = Recipient.from(this, intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ADDRESS), true)
+            mRecipient = Recipient.from(AMELogin.majorContext, intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ADDRESS), true)
             mRecipient?.addListener(this)
             mSelf = Recipient.fromSelf(this, true)
             mSelf?.addListener(this)

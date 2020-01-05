@@ -5,12 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bcm.messenger.common.ARouterConstants;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.color.MaterialColor;
 import com.bcm.messenger.common.config.BcmFeatureSupport;
 import com.bcm.messenger.common.contacts.avatars.ContactColors;
@@ -18,7 +18,6 @@ import com.bcm.messenger.common.contacts.avatars.ContactPhoto;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.BcmHttpApiHelper;
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo;
-import com.bcm.messenger.common.database.GroupDatabase;
 import com.bcm.messenger.common.database.RecipientDatabase.RegisteredState;
 import com.bcm.messenger.common.database.RecipientDatabase.VibrateState;
 import com.bcm.messenger.common.database.records.PrivacyProfile;
@@ -35,8 +34,6 @@ import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.Conversions;
 import com.bcm.messenger.utility.StringAppearanceUtil;
 import com.bcm.messenger.utility.Util;
-import com.bcm.messenger.utility.concurrent.FutureTaskListener;
-import com.bcm.messenger.utility.concurrent.ListenableFutureTask;
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher;
 import com.bcm.messenger.utility.logger.ALog;
 import com.bcm.messenger.utility.proguard.NotGuard;
@@ -59,14 +56,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
 /**
- * AME，
  *
  * @author wjh
  */
@@ -184,13 +179,17 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
      * action
      */
     public static final String RECIPIENT_CLEAR_ACTION = "com.bcm.messenger.common.database.RecipientFactory.CLEAR";
-    /**
-     * profileaction
-     */
-    public static final String RECIPIENT_PROFILE_UPDATE = "com.bcm.messenger.common.database.RecipientFactory.PROFILE";
 
-    private static final RecipientProvider PROVIDER = new RecipientProvider();
+    private static final Map<AccountContext, RecipientProvider> sProviderMap = new HashMap<AccountContext, RecipientProvider>();
 
+    private static synchronized RecipientProvider getProvider(AccountContext accountContext) {
+        RecipientProvider provider = sProviderMap.get(accountContext);
+        if (provider == null) {
+            provider = new RecipientProvider(accountContext);
+            sProviderMap.put(accountContext, provider);
+        }
+        return provider;
+    }
 
     /**
      * json
@@ -234,125 +233,63 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
         return null;
     }
 
-    /**
-     * 
-     *
-     * @param context
-     * @param asynchronous
-     * @return
-     */
     @NonNull
-    public static Recipient fromSelf(@NonNull Context context, boolean asynchronous) throws Exception {
-        String localNumber = AMELogin.INSTANCE.getUid();
-        ALog.d(TAG, "localNumber:" + localNumber);
-        if (TextUtils.isEmpty(localNumber)) {
-            throw new Exception(("self number is null"));
+    public static Recipient login(@NonNull AccountContext context) throws Exception {
+        String loginUid = context.getUid();
+        ALog.d(TAG, "loginUid:" + loginUid);
+        if (TextUtils.isEmpty(loginUid)) {
+            throw new Exception(("login uid is null"));
         }
-        return PROVIDER.getRecipient(context, Address.fromSerialized(localNumber), null, asynchronous);
+        return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, Address.fromSerialized(loginUid), null, true);
     }
 
     @NonNull
-    public static Recipient self() throws Exception {
-        String localNumber = AMELogin.INSTANCE.getUid();
-        ALog.d(TAG, "localNumber:" + localNumber);
-        if (TextUtils.isEmpty(localNumber)) {
-            throw new Exception(("self number is null 1"));
+    public static Recipient major() throws Exception {
+        String majorUid = AMELogin.INSTANCE.getMajorUid();
+        ALog.d(TAG, "majorUid:" + majorUid);
+        if (TextUtils.isEmpty(majorUid)) {
+            throw new Exception(("major uid is null"));
         }
-        return PROVIDER.getRecipient(AppContextHolder.APP_CONTEXT, Address.fromSerialized(localNumber), null, true);
+        return getProvider(AMELogin.INSTANCE.getMajorContext()).getRecipient(AppContextHolder.APP_CONTEXT, Address.fromSerialized(majorUid), null, true);
     }
 
-    /**
-     * address（）
-     *
-     * @param context
-     * @param address
-     * @param asynchronous false，true，
-     * @return
-     */
     @NonNull
-    public static Recipient from(@NonNull Context context, @NonNull Address address, boolean asynchronous) {
-        return PROVIDER.getRecipient(context, address, null, asynchronous);
+    public static Recipient from(@NonNull AccountContext context, @NonNull Address address, boolean asynchronous) {
+        ALog.d(TAG, "from accountContext:" + context.getUid() + ", from(asynchronous:" + asynchronous + ")");
+        return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, address, null, asynchronous);
     }
 
-    /**
-     * address（）
-     * @param context
-     * @param address
-     * @param settings
-     * @param groupRecord
-     * @param asynchronous
-     * @return
-     */
-    @Deprecated
+
     @NonNull
-    public static Recipient from(@NonNull Context context, @NonNull Address address, @NonNull Optional<RecipientSettings> settings, @NonNull Optional<GroupDatabase.GroupRecord> groupRecord, boolean asynchronous) {
-        RecipientDetails details = new RecipientDetails(null, null, null, null);
-        return PROVIDER.getRecipient(context, address, details, asynchronous);
+    public static Recipient fromSnapshot(@NonNull AccountContext context, @NonNull Address address, @NonNull RecipientSettings settings) {
+        ALog.d(TAG, "from accountContext:" + context.getUid() + ", fromSnapshot");
+        RecipientDetails details = new RecipientDetails(address.serialize(), null, null, settings, null);
+        return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, address, details, false);
     }
 
-    /**
-     * （），
-     *
-     * @param context
-     * @param address
-     * @param settings
-     * @return
-     */
-    @NonNull
-    public static Recipient fromSnapshot(@NonNull Context context, @NonNull Address address, @NonNull RecipientSettings settings) {
-        RecipientDetails details = new RecipientDetails(null, null, settings, null);
-        return PROVIDER.getRecipient(context, address, details, false);
-    }
-
-    /**
-     * 
-     * @param context
-     */
     public static void clearCache(Context context) {
-        PROVIDER.clearCache();
+        RecipientProvider.Companion.clearCache();
         context.sendBroadcast(new Intent(RECIPIENT_CLEAR_ACTION));
     }
 
-    /**
-     * 
-     * @param context
-     * @param address
-     */
+
     public static void clearCache(Context context, Address address) {
-        PROVIDER.updateCache(address, null);
+        RecipientProvider.Companion.deleteCache(address);
     }
 
-    /**
-     * groupId  recipient
-     *
-     * @param context
-     * @param groupId
-     * @return
-     */
+
     @NonNull
-    public static Recipient recipientFromNewGroupId(Context context, long groupId) {
+    public static Recipient recipientFromNewGroupId(@NonNull AccountContext context, long groupId) {
         return Recipient.from(context, GroupUtil.addressFromGid(groupId), false);
     }
 
-    /**
-     * idrecipient（profile）
-     * @param context
-     * @param groupId
-     * @return
-     */
     @NonNull
-    public static Recipient recipientFromNewGroupIdAsync(Context context, long groupId) {
+    public static Recipient recipientFromNewGroupIdAsync(@NonNull AccountContext context, long groupId) {
         return Recipient.from(context, GroupUtil.addressFromGid(groupId), true);
     }
 
-    /**
-     * inforecipient(groupInfo，onModify，)
-     * @param context
-     * @param groupInfo
-     * @return
-     */
     @NonNull
-    public static Recipient recipientFromNewGroup(Context context, @NonNull AmeGroupInfo groupInfo) {
+    public static Recipient recipientFromNewGroup(@NonNull AccountContext context, @NonNull AmeGroupInfo groupInfo) {
         Address address = GroupUtil.addressFromGid(groupInfo.getGid());
         RecipientSettings settings = new RecipientSettings();
         settings.setUid(address.serialize());
@@ -384,9 +321,9 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     @NonNull
-    private final Address address;//
+    private final Address address;
     @NonNull
-    private final List<Recipient> participants = new LinkedList<>();//（）
+    private final List<Recipient> participants = new LinkedList<>();
     @Nullable
     private String groupTitle;
     @Nullable
@@ -415,24 +352,24 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     private String profileAvatar;
     private boolean profileSharing;
     @Nullable
-    private String localName;//
+    private String localName;
     @Nullable
-    private String localAvatar;//
+    private String localAvatar;
 
     @NonNull
-    private PrivacyProfile privacyProfile = new PrivacyProfile();//（）
+    private PrivacyProfile privacyProfile = new PrivacyProfile();
     @NonNull
-    private RecipientRepo.Relationship mRelationship = RecipientRepo.Relationship.STRANGER;//
+    private RecipientRepo.Relationship mRelationship = RecipientRepo.Relationship.STRANGER;
     @Nullable
     private BcmFeatureSupport featureSupport;
 
-    private boolean backgroundRequestAddFriendFlag = false;//
+    private boolean backgroundRequestAddFriendFlag = false;
     /**
      *  addressID，adapterStableId
      */
     private long uniquenessId;
 
-    private long groupId = -1L;//ID，，-1L
+    private long groupId = -1L;
 
     private IGroupModule mGroupProvider;
 
@@ -445,20 +382,14 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     /**
-     * 
-     * @param address
-     * @param stale
-     * @param details
-     * @param future
+     * constructor
      */
     Recipient(@NonNull Address address,
-              @Nullable Recipient stale,
-              @Nullable RecipientDetails details,
-              @Nullable ListenableFutureTask<RecipientDetails> future) {
+              @Nullable Recipient stale) {
 
         this.address = address;
         this.color = null;
-        this.resolving = future != null;
+        this.resolving = true;
         if (stale != null) {
 
             this.color = stale.color;
@@ -486,8 +417,6 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
 
         }
 
-        updateRecipientDetails(details, future);
-
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA1");
             this.uniquenessId = Conversions.byteArrayToLong(digest.digest(address.serialize().getBytes()));
@@ -496,53 +425,15 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
             }else {
                 this.groupId = -1L;
             }
+
         }catch (Exception ex) {
             ALog.e(TAG, "recipient constructor error");
         }
     }
 
-    /**
-     * 
-     * @param current 
-     * @param future 
-     */
-    private void updateRecipientDetails(@Nullable RecipientDetails current, @Nullable ListenableFutureTask<RecipientDetails> future) {
 
-        updateRecipientDetails(current, future == null);
-        if (future != null) {
-            future.addListener(new FutureTaskListener<RecipientDetails>() {
-                @Override
-                public void onSuccess(RecipientDetails result) {
-                    ALog.d(TAG, "updateRecipientDetails address: " + Recipient.this.address);
-                    updateRecipientDetails(result, true);
-                    synchronized (Recipient.this) {
-                        Recipient.this.resolving = false;
-                        Recipient.this.notifyAll();
-                    }
-
-                    //FOLLOW，
-                    IContactModule provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast();
-                    provider.checkNeedRequestAddFriend(AppContextHolder.APP_CONTEXT, Recipient.this);
-
-                }
-
-                @Override
-                public void onFailure(ExecutionException error) {
-                    Log.w(TAG, error);
-                    synchronized (Recipient.this) {
-                        Recipient.this.resolving = false;
-                        Recipient.this.notifyAll();
-                    }
-                }
-
-            });
-
-        }else {
-            //FOLLOW，
-            IContactModule provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast();
-            provider.checkNeedRequestAddFriend(AppContextHolder.APP_CONTEXT, Recipient.this);
-
-        }
+    void updateRecipientDetails(@Nullable RecipientDetails details) {
+        updateRecipientDetails(details, true);
     }
 
     /**
@@ -552,35 +443,34 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
      */
     void updateRecipientDetails(@Nullable RecipientDetails details, boolean notify) {
 
-        if (details == null || (details.customName == null && details.customAvatar == null && details.participants == null && details.settings == null)) {
+        if (details == null || (details.getCustomName() == null && details.getCustomAvatar() == null && details.getParticipants() == null && details.getSettings() == null)) {
             return;
         }
-
-        //，
-        PROVIDER.updateCache(address, this);
 
         synchronized (Recipient.this) {
 
             boolean changed = false;
             if (isGroupRecipient()) {
-                if (details.customName != null) {
-                    Recipient.this.groupTitle = details.customName;
+                if (details.getCustomName() != null) {
+                    Recipient.this.groupTitle = details.getCustomName();
                     changed = true;
                 }
-                if (details.customAvatar != null) {
-                    Recipient.this.customLabel = details.customAvatar;
+                if (details.getCustomAvatar() != null) {
+                    Recipient.this.customLabel = details.getCustomAvatar();
                     changed = true;
                 }
             }
-            if (details.participants != null) {
+            if (details.getParticipants() != null) {
                 Recipient.this.participants.clear();
-                Recipient.this.participants.addAll(details.participants);
+                Recipient.this.participants.addAll(details.getParticipants());
                 changed = true;
             }
 
-            if (Recipient.this.fillSettings(details.settings)) {
+            if (Recipient.this.fillSettings(details.getSettings())) {
                 changed = true;
             }
+
+            this.resolving = false;
 
             if (!listeners.isEmpty()) {
                 for (Recipient recipient : Recipient.this.participants) {
@@ -591,6 +481,13 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
                 notifyListeners();
             }
         }
+
+        RecipientProvider.Companion.updateCache(this);
+
+        //check FOLLOW relationship
+        IContactModule provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast();
+        provider.checkNeedRequestAddFriend(AppContextHolder.APP_CONTEXT, Recipient.this);
+
     }
 
     /**
@@ -641,11 +538,6 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
             this.mRelationship = RecipientRepo.Relationship.values()[settings.getRelationship()];
             this.featureSupport = settings.getFeatureSupport();
 
-            //，，friend，relationship，
-            // FIXME: Remove or not
-//            if (this.mRelationship == RecipientRepo.Relationship.STRANGER && settings.isFriendFlag()) {
-//                this.mRelationship = RecipientRepo.Relationship.FOLLOW;
-//            }
             return true;
         }
         return false;

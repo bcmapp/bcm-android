@@ -74,7 +74,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
     private val mAdHocModule: IAdHocModule by lazy { AmeModuleCenter.adhoc() }
     private var mPixelManager: PixelManager? = null
 
-    private var recipient = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)
+    private var recipient = Recipient.major()
     private lateinit var titleView: MessageListTitleView
     private var mWaitForShortLink: Boolean = false //是否等待短链生成
     private var messageListFragment: MessageListFragment? = null

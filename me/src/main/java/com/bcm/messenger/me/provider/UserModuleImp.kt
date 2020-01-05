@@ -15,7 +15,8 @@ import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.ProfileKeyUtil
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
-import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.server.IServerConnectForceLogoutListener
@@ -624,7 +625,7 @@ class UserModuleImp : IUserModule
 
     private fun handleAccountGone(activity: Activity) {
         val self = try {
-            Recipient.fromSelf(activity, true)
+            Recipient.login(accountContext)
         } catch (ex: Exception) {
             null
         } ?: return

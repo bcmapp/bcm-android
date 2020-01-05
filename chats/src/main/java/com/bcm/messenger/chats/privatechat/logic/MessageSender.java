@@ -123,7 +123,7 @@ public class MessageSender {
         ALog.i(TAG, "Send hide message");
 
         if (isSelfSend(context, message.getRecipient())) {
-            // Do nothing if message send to self
+            // Do nothing if message send to major
             return;
         }
 

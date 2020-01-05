@@ -3,32 +3,32 @@ package com.bcm.messenger.chats.map
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.ui.CustomDataSearcher
-import com.bcm.messenger.common.ui.popup.ToastUtil
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.recipients.Recipient
-import androidx.core.view.ViewCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.bcm.route.annotation.Route
-import com.bcm.messenger.common.core.MapApiConstants
-import com.bcm.messenger.common.api.MapBaseInterface
-import com.bcm.messenger.common.api.MapActionCallback
-import com.bcm.messenger.common.core.LocationItem
 import com.bcm.messenger.common.ShareElements
-import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.api.MapActionCallback
+import com.bcm.messenger.common.api.MapBaseInterface
+import com.bcm.messenger.common.core.LocationItem
+import com.bcm.messenger.common.core.MapApiConstants
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAMapModule
-import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.utility.QuickOpCheck
+import com.bcm.messenger.common.ui.CustomDataSearcher
+import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.ui.popup.ToastUtil
+import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.common.utils.setStatusBarLightMode
+import com.bcm.messenger.utility.QuickOpCheck
+import com.bcm.messenger.utility.logger.ALog
+import com.bcm.route.annotation.Route
 import kotlinx.android.synthetic.main.chats_activity_map.*
-import com.bcm.messenger.common.SwipeBaseActivity
 
 /**
  * Select location
@@ -65,7 +65,7 @@ class MapActivity : SwipeBaseActivity(), MapActionCallback {
         initView()
         checkGPS()
         try {
-            me = Recipient.fromSelf(this, true)
+            me = Recipient.major()
         }catch (ex: Exception) {
             finish()
             return

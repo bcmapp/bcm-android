@@ -67,7 +67,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(field.account.uid), true)
         }
 
-    private var recipient = Recipient.self()
+    private var recipient = Recipient.major()
         set(value) {
             field.removeListener(this)
             field = value

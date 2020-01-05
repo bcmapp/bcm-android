@@ -72,7 +72,7 @@ class GroupToJoinRequestActivity : SwipeBaseActivity(), RecipientModifiedListene
             mGroupShareContent = AmeGroupMessage.GroupShareContent.fromJson(shareContentString)
         }
         try {
-            mSelf = Recipient.fromSelf(this, true)
+            mSelf = Recipient.major()
             mSelf?.addListener(this)
         }catch (ex: Exception) {
             finish()

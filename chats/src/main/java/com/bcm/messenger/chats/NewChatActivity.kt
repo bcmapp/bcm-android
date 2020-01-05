@@ -21,7 +21,6 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.common.utils.setStatusBarLightMode
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.netswitchy.configure.AmeConfigure
 import com.bcm.route.api.BcmRouter
@@ -184,7 +183,7 @@ class NewChatActivity : SwipeBaseActivity() {
 
                 try {
                     //自己是不需要再选的
-                    mContactSelection.setFixedSelected(listOf(Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)))
+                    mContactSelection.setFixedSelected(listOf(Recipient.major()))
                 }catch (ex: Exception) {
                     ex.printStackTrace()
                 }

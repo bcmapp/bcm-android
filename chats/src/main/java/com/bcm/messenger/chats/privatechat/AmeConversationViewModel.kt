@@ -411,7 +411,7 @@ class AmeConversationViewModel : ViewModel() {
     fun clearConversationHistory(context: Context) {
         mRecipient?.let {recipient ->
             Observable.create<Any> { emitter ->
-                val clearMessage = AmeGroupMessage(AmeGroupMessage.CONTROL_MESSAGE, AmeGroupMessage.ControlContent(AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE, Recipient.fromSelf(context, true).address.serialize(), "",0L)).toString()
+                val clearMessage = AmeGroupMessage(AmeGroupMessage.CONTROL_MESSAGE, AmeGroupMessage.ControlContent(AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE, Recipient.major().address.serialize(), "",0L)).toString()
                 val message = OutgoingLocationMessage(recipient, clearMessage, (recipient.expireMessages * 1000).toLong())
                 MessageSender.send(context, message, mThreadId) { messageId -> clearMessageId = messageId }
                 isClearHistory = true
@@ -599,7 +599,7 @@ class AmeConversationViewModel : ViewModel() {
         try {
             mRecipient?.let {recipient ->
                 ALog.i(TAG, "checkExchangeProfileKey begin")
-                val profileData = Recipient.fromSelf(context, false).privacyProfile
+                val profileData = Recipient.major().privacyProfile
                 val hasRequest = hasProfileKeyRequest
                 val needProfileKey = needRequestProfileKey
                 hasProfileKeyRequest = false

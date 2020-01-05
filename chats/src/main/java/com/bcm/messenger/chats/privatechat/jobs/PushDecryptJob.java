@@ -3,7 +3,9 @@ package com.bcm.messenger.chats.privatechat.jobs;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
+
 import com.bcm.messenger.chats.privatechat.core.ChatHttp;
 import com.bcm.messenger.chats.privatechat.logic.MessageSender;
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService;
@@ -17,6 +19,7 @@ import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.MasterSecretUnion;
 import com.bcm.messenger.common.crypto.MasterSecretUtil;
 import com.bcm.messenger.common.crypto.SecurityEvent;
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.common.crypto.storage.SignalProtocolStoreImpl;
 import com.bcm.messenger.common.crypto.storage.TextSecureSessionStore;
 import com.bcm.messenger.common.database.NoSuchMessageException;
@@ -58,7 +61,6 @@ import com.bcm.messenger.common.utils.AppUtilKotlinKt;
 import com.bcm.messenger.common.utils.GroupUtil;
 import com.bcm.messenger.common.utils.IdentityUtil;
 import com.bcm.messenger.common.utils.RxBus;
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.login.jobs.MultiDeviceBlockedUpdateJob;
 import com.bcm.messenger.login.jobs.MultiDeviceContactUpdateJob;
 import com.bcm.messenger.login.jobs.MultiDeviceGroupUpdateJob;
@@ -69,6 +71,7 @@ import com.bcm.messenger.utility.EncryptUtils;
 import com.bcm.messenger.utility.GsonUtils;
 import com.bcm.messenger.utility.logger.ALog;
 import com.bcm.netswitchy.configure.AmeConfigure;
+
 import org.greenrobot.eventbus.EventBus;
 import org.whispersystems.jobqueue.JobManager;
 import org.whispersystems.jobqueue.JobParameters;
@@ -107,9 +110,11 @@ import org.whispersystems.signalservice.api.messages.multidevice.SignalServiceSy
 import org.whispersystems.signalservice.api.messages.multidevice.VerifiedMessage;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.internal.push.SignalServiceProtos;
+
 import java.security.MessageDigest;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import kotlin.Pair;
 
 public class PushDecryptJob extends ContextJob {
@@ -186,7 +191,7 @@ public class PushDecryptJob extends ContextJob {
             SignalServiceCipher cipher = new SignalServiceCipher(localAddress, axolotlStore);
 
             if (localAddress.getNumber().equals(envelope.getSource())) {
-                // Do nothing if message is sent to self
+                // Do nothing if message is sent to major
                 return;
             }
 

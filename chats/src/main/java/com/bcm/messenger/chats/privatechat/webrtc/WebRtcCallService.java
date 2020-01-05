@@ -1356,7 +1356,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                                                       @NonNull final SignalServiceCallMessage callMessage) {
 
         if (recipient.getAddress().toString().equals(AMELogin.INSTANCE.getUid())) {
-            // Don't send call message to self
+            // Don't send call message to major
             return null;
         }
 

@@ -165,7 +165,7 @@ class AdHocConversationActivity : SwipeBaseActivity() {
 
     private fun initViewAndResource() {
         try {
-            mSelf = Recipient.fromSelf(this, true)
+            mSelf = Recipient.major()
         }catch (ex: Exception) {
             finish()
             return

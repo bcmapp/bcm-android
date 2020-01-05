@@ -10,24 +10,25 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.adhoc.R
-import com.bcm.messenger.adhoc.logic.*
-import com.bcm.messenger.adhoc.ui.channel.holder.AdHocChatViewHolder
+import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
+import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
+import com.bcm.messenger.adhoc.logic.AdHocMessageModel
 import com.bcm.messenger.adhoc.ui.AdHocSessionSelectionActivity
+import com.bcm.messenger.adhoc.ui.channel.holder.AdHocChatViewHolder
 import com.bcm.messenger.chats.components.ConversationItemPopWindow
 import com.bcm.messenger.chats.components.UnreadMessageBubbleView
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.mms.GlideApp
+import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonConversationAdapter
+import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.utility.Util
+import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.adhoc_activity_conversation.*
 import kotlinx.android.synthetic.main.adhoc_fragment_conversation.*
 import kotlinx.android.synthetic.main.adhoc_sticky_secure_item.view.*
-import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.common.BaseFragment
-import com.bcm.messenger.common.mms.GlideApp
-import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.utility.Util
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 
@@ -75,7 +76,7 @@ class AdHocConversationFragment : BaseFragment() {
                 try {
                     val message = AdHocMessageDetail(0, targetSession, AdHocMessageLogic.myAdHocId() ?: return).apply {
                         sendByMe = true
-                        nickname = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true).name
+                        nickname = Recipient.major().name
                         setMessageBodyJson(mCurrentForwardText ?: "")
                         val content = getMessageBody()?.content
                         if (content is AmeGroupMessage.AttachmentContent) {

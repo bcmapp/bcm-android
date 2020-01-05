@@ -218,7 +218,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                     }
                 }
 
-                Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
+                Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, privacyProfile)
 
                 it.onNext(needFetchProfile)
                 it.onComplete()
@@ -269,18 +269,19 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                 .flatMap { toUpload ->
             val recipient = handledRecipient.resolve()
             val privacyProfile = recipient.privacyProfile
+            Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, privacyProfile)
             if (toUpload) {
                 val encryptName = getPrivacyContent(name, privacyProfile.nameKey, privacyProfile.version)
                 ALog.d(TAG, "setEncryptName: $encryptName")
 
                 val path = String.format(UPLOAD_ENCRYPT_NAME_PATH, URLEncoder.encode(encryptName))
-                RxIMHttp.put<AmeEmpty>(BcmHttpApiHelper.getApi(path), "", AmeEmpty::class.java)
+                RxIMHttp.getHttp(mAccountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(path), "", AmeEmpty::class.java)
                         .subscribeOn(AmeDispatcher.ioScheduler)
                         .observeOn(AmeDispatcher.ioScheduler)
                         .map {
                             privacyProfile.name = name
                             privacyProfile.encryptedName = encryptName
-                            Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
+                            Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, privacyProfile)
                             true
                         }
             } else {
@@ -331,7 +332,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                     true, avatarBitmap, null)
 
             try {
-                Repository.getRecipientRepo()?.setPrivacyProfile(recipient, prepareData.privacyProfile)
+                Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, prepareData.privacyProfile)
 
                 val keyBytes = Base64.decode(prepareData.privacyProfile.avatarKey)
 
@@ -387,7 +388,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                             ?: throw Exception("avatarHD is null"), avatarKey, privacyProfile.version)
 
                     ALog.d(TAG, "setEncryptAvatar hd: $encryptHdAvatar ld: $encryptLdAvatar")
-                    return RxIMHttp.put<AmeEmpty>(BcmHttpApiHelper.getApi(UPLOAD_ENCRYPT_AVATAR_PATH)
+                    return RxIMHttp.getHttp(mAccountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(UPLOAD_ENCRYPT_AVATAR_PATH)
                             , String.format("{\"hdAvatar\":\"%s\", \"ldAvatar\":\"%s\"}", encryptHdAvatar, encryptLdAvatar)
                             , AmeEmpty::class.java)
                             .subscribeOn(AmeDispatcher.ioScheduler)
@@ -429,7 +430,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                                         BcmFileUtils.getFileUri(finalLdPath.absolutePath).toString()
                                     }
 
-                                    Repository.getRecipientRepo()?.setPrivacyProfile(recipient, prepareData.privacyProfile)
+                                    Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, prepareData.privacyProfile)
                                     clearDiscardResources(prepareData, false)
 
                                     ALog.d(TAG, "doUploadAvatar success avatarHDUri: ${prepareData.privacyProfile.avatarHDUri}, avatarLDUri: ${prepareData.privacyProfile.avatarLDUri}")
@@ -540,7 +541,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         val hash = BCMEncryptUtils.murmurHash3(0xFBA4C795, sourceByteArray)
         val content = Base64.encodeBytes(BCMEncryptUtils.encryptByAES256(sourceByteArray, hash.toString().toByteArray()))
         val req = UpdateShareLinkReq(content)
-        RxIMHttp.put<UpdateShareLinkRes>(BcmHttpApiHelper.getApi(INDIVIDUAL_SHORT_SHARE_PATH)
+        RxIMHttp.getHttp(mAccountContext).put<UpdateShareLinkRes>(BcmHttpApiHelper.getApi(INDIVIDUAL_SHORT_SHARE_PATH)
                 , GsonUtils.toJson(req)
                 , UpdateShareLinkRes::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
@@ -554,7 +555,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
 
                     ALog.d(TAG, "updateShareLink newShortLink: ${privacyProfile.shortLink}")
 
-                    Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
+                    Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, privacyProfile)
 
                 }.observeOn(AmeDispatcher.mainScheduler)
                 .subscribe({
@@ -585,7 +586,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         val hashString = shareLink.substring(i2 + 1)
         ALog.d(TAG, "checkShareLink shareLink: $shareLink, index: $index")
         val url = BcmHttpApiHelper.getApi("$INDIVIDUAL_SHORT_SHARE_PATH/$index")
-        RxIMHttp.get<UserShareLinkRes>(url, null, UserShareLinkRes::class.java)
+        RxIMHttp.getHttp(mAccountContext).get<UserShareLinkRes>(url, null, UserShareLinkRes::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .map {
@@ -595,7 +596,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                     val targetContent = String(BCMEncryptUtils.decryptByAES256(Base64.decode(it.content), Base62.decode(hashString).toString().toByteArray()))
                     val recipientQR = Recipient.RecipientQR.fromJson(targetContent)
                             ?: throw Exception("get content from shortLink error")
-                    Recipient.from(context, Address.fromSerialized(recipientQR.uid), false)
+                    Recipient.from(mAccountContext, Address.fromSerialized(recipientQR.uid), false)
                     recipientQR
                 }
                 .observeOn(AmeDispatcher.mainScheduler)
@@ -614,7 +615,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         AmeDispatcher.io.dispatch {
             ALog.logForSecret(TAG, "updateNickFromOtherWay uid: ${recipient.address}, nick: $nick")
             if (recipient.resolve().profileName != nick) {
-                Repository.getRecipientRepo()?.setProfileName(recipient, nick)
+                Repository.getRecipientRepo(mAccountContext)?.setProfileName(recipient, nick)
             }
         }
     }
@@ -874,10 +875,10 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                         privacyProfile.avatarKey = ""
                         privacyProfile.avatarPubKey = ""
                     }
-                    Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
+                    Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, privacyProfile)
                     return false
                 } else {
-                    Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
+                    Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, privacyProfile)
                     if (forName) {
                         uploadNickName(context, recipient, recipient.name) {}
                     }
@@ -994,7 +995,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         try {
             ALog.d(TAG, "uploadProfileKeys: $profileKeyJson")
 
-            val wrapper = SyncHttpWrapper(IMHttp)
+            val wrapper = SyncHttpWrapper(IMHttp.getHttp(mAccountContext))
             wrapper.put<AmeEmpty>(BcmHttpApiHelper.getApi(PROFILE_KEY_PATH), profileKeyJson, AmeEmpty::class.java)
 
             ALog.d(TAG, "uploadProfileKeys succeed")
@@ -1052,7 +1053,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
     private fun handleDownloadAvatar() {
 
         if (mAvatarJob?.get() == null) {
-            val accountJobManager = AmeModuleCenter.accountJobMgr()
+            val accountJobManager = AmeModuleCenter.accountJobMgr(mAccountContext)
             if (accountJobManager != null) {
                 ALog.i(TAG, "handleDownloadAvatar")
                 val job = AvatarDownloadJob(AppContextHolder.APP_CONTEXT, this)
@@ -1068,7 +1069,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
     private fun handleFetchProfile() {
 
         if (mProfileJob?.get() == null) {
-            val accountJobManager = AmeModuleCenter.accountJobMgr()
+            val accountJobManager = AmeModuleCenter.accountJobMgr(mAccountContext)
             if (accountJobManager != null) {
                 ALog.i(TAG, "handleFetchProfile")
                 val job = ProfileFetchJob(AppContextHolder.APP_CONTEXT, this)
@@ -1242,7 +1243,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             }
 
             if (!TextUtils.isEmpty(supportFeatures) && supportFeatures != recipient.featureSupport.toString()) {
-                Repository.getRecipientRepo()?.setSupportFeatures(recipient, supportFeatures.orEmpty())
+                Repository.getRecipientRepo(mAccountContext)?.setSupportFeatures(recipient, supportFeatures.orEmpty())
             }
 
             if (recipient.isSelf) {
@@ -1287,11 +1288,11 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                         ALog.i(TAG, "privacyChanged, updateShareLink")
                     }
                 }
-                Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
+                Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, privacyProfile)
             }
 
             if (plaintextChanged) {
-                Repository.getRecipientRepo()?.setProfile(recipient, newProfileKey, newProfileName, newProfileAvatar)
+                Repository.getRecipientRepo(mAccountContext)?.setProfile(recipient, newProfileKey, newProfileName, newProfileAvatar)
             }
 
         } catch (e: Exception) {
@@ -1329,7 +1330,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             builder.deleteCharAt(builder.length - 1)
         }
 
-        return RxIMHttp.put<String>(BcmHttpApiHelper.getApi(PROFILES_PLAINTEXT_PATH)
+        return RxIMHttp.getHttp(mAccountContext).put<String>(BcmHttpApiHelper.getApi(PROFILES_PLAINTEXT_PATH)
                 , String.format("{\"contacts\":[%s]}", builder.toString())
                 , String::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)

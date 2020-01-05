@@ -4,12 +4,11 @@ package com.bcm.messenger.common.core;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bcm.messenger.common.provider.AMELogin;
+import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.utils.GroupUtil;
 import com.bcm.messenger.utility.DelimiterUtil;
 import com.bcm.messenger.utility.StringAppearanceUtil;
@@ -98,7 +97,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
      * @return
      */
     public boolean isCurrentLogin() {
-        return TextUtils.equals(address, AMELogin.INSTANCE.getUid());
+        return AmeModuleCenter.INSTANCE.login().isAccountLogin(address);
     }
 
     /**

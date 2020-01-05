@@ -960,8 +960,8 @@ public class RecipientDatabase extends Database {
 
         
         if (recipient.isSelf()) {
-            ALog.d(TAG, "address: " + recipient.getAddress().serialize() + " set self friend: " + isFriend);
-            ALog.i(TAG, "set self friend: " + isFriend);
+            ALog.d(TAG, "address: " + recipient.getAddress().serialize() + " set major friend: " + isFriend);
+            ALog.i(TAG, "set major friend: " + isFriend);
         }else {
             ALog.d(TAG, "setFriend uid: " + recipient.getAddress().serialize() + ", isFriend: " + isFriend);
             ALog.i(TAG, "setFriend isFriend: " + isFriend);

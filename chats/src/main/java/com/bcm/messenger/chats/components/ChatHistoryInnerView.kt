@@ -16,14 +16,14 @@ import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
-import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.utility.InputLengthFilter
-import com.bcm.messenger.common.utils.getString
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getColor
+import com.bcm.messenger.common.utils.getString
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.InputLengthFilter
+import com.bcm.messenger.utility.logger.ALog
 
 /**
  * Created by Kin on 2018/10/23
@@ -114,7 +114,7 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
             when (it) {
                 is MessageRecord -> {
                     recipient = if (it.isOutgoing()) {
-                        Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true)
+                        Recipient.major()
                     } else {
                         it.getRecipient()
                     }
