@@ -2,6 +2,7 @@ package com.bcm.messenger.contacts
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.event.FriendRequestEvent
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
@@ -19,9 +20,10 @@ const val HANDLED_REQ = "__handled_req"
 private const val REQ_CHANGE = "__req_change"
 
 class FriendRequestsListViewModel : ViewModel() {
+
     private val TAG = "FriendRequestsListViewModel"
 
-    private val dao = UserDatabase.getDatabase().friendRequestDao()
+    private lateinit var mAccountContext: AccountContext
 
     val listLiveData = MutableLiveData<List<BcmFriendRequest>>()
 
@@ -48,6 +50,10 @@ class FriendRequestsListViewModel : ViewModel() {
         }
     }
 
+    fun setAccountContext(context: AccountContext) {
+        mAccountContext = context
+    }
+
     override fun onCleared() {
         ALog.i(TAG, "On cleared, unsubscribe $HANDLED_REQ")
         RxBus.unSubscribe(HANDLED_REQ)
@@ -58,7 +64,7 @@ class FriendRequestsListViewModel : ViewModel() {
     fun queryData() {
         AmePushProcess.clearFriendRequestNotification()
         Observable.create<List<BcmFriendRequest>> {
-            it.onNext(dao.queryAll())
+            it.onNext(UserDatabase.getDatabase(mAccountContext).friendRequestDao().queryAll())
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -82,9 +88,14 @@ class FriendRequestsListViewModel : ViewModel() {
                 }
             }
             ALog.i(TAG, "Mark read, size = ${modifyList.size}")
-            dao.update(modifyList)
+            UserDatabase.getDatabase(mAccountContext).friendRequestDao().update(modifyList)
+            it.onComplete()
         }.subscribeOn(Schedulers.io())
-                .subscribe({}, { it.printStackTrace() })
+                .subscribe({
+
+                }, {
+                    it.printStackTrace()
+                })
     }
 
     private fun markHandle(request: BcmFriendRequest, approved: Boolean) {
@@ -95,8 +106,13 @@ class FriendRequestsListViewModel : ViewModel() {
                 request.reject()
             }
             request.setRead()
-            dao.update(request)
+            UserDatabase.getDatabase(mAccountContext).friendRequestDao().update(request)
+            it.onComplete()
         }.subscribeOn(Schedulers.io())
-                .subscribe({}, { it.printStackTrace() })
+                .subscribe({
+
+                }, {
+                    it.printStackTrace()
+                })
     }
 }

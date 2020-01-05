@@ -6,7 +6,7 @@ import com.bcm.messenger.common.provider.accountmodule.IWalletModule
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.presenter.WalletViewModel
-import com.bcm.messenger.wallet.utils.BCMWalletManager
+import com.bcm.messenger.wallet.utils.BCMWalletManagerContainer
 import com.bcm.route.annotation.Route
 
 /**
@@ -36,21 +36,15 @@ class WalletModuleImp : IWalletModule {
 
     }
 
-    private val mWalletManager = BCMWalletManager(context.uid)
-
-    fun getManager(): BCMWalletManager {
-        return mWalletManager
-    }
-
     override fun initWallet(privateKeyArray: ByteArray, password: String) {
-        mWalletManager.startInitService(AppContextHolder.APP_CONTEXT, privateKeyArray)
+        BCMWalletManagerContainer.get(accountContext).startInitService(AppContextHolder.APP_CONTEXT, privateKeyArray)
     }
 
     override fun logoutWallet() {
         //登出所有钱包相关的文件和记录
         try {
             ALog.d(TAG, "logoutWallet")
-            mWalletManager.reset()
+            BCMWalletManagerContainer.get(accountContext).reset()
             WalletViewModel.recycle()
 
         } catch (ex: Exception) {
@@ -64,7 +58,7 @@ class WalletModuleImp : IWalletModule {
             logoutWallet()
 
             ALog.d(TAG, "destroyWallet")
-            mWalletManager.clear()
+            BCMWalletManagerContainer.get(accountContext).clear()
 
         } catch (ex: Exception) {
             ALog.e(TAG, "WalletModuleImp destroyWallet error", ex)

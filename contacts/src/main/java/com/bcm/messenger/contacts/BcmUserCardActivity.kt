@@ -8,7 +8,10 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.event.HomeTopEvent
-import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.AmeProvider
+import com.bcm.messenger.common.provider.IAmeAppModule
+import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -54,13 +57,13 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun initView(address: Address, nick: String?) {
-        val recipient = Recipient.from(this, address, true)
+        val recipient = Recipient.from(getAccountContext(), address, true)
         mRecipient = recipient
         mRecipient?.addListener(this)
 
         mOtherNick = nick
         if (!nick.isNullOrEmpty()) {
-            AmeModuleCenter.contact().updateNickFromOtherWay(recipient, nick)
+            AmeModuleCenter.contact(getAccountContext())?.updateNickFromOtherWay(recipient, nick)
         }
 
         mAdHocModule = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
@@ -100,7 +103,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
                             .navigation(this@BcmUserCardActivity)
 
                 })
-                if (!recipient.isSelf) {
+                if (!recipient.isLogin) {
                     builder.withPopItem(AmeBottomPopup.PopupItem(if (recipient.isBlocked) getString(R.string.contacts_user_card_unblock_title) else getString(R.string.contacts_user_card_block_title), AmeBottomPopup.PopupItem.CLR_RED) {
                         val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigation() as IContactModule
                         provider.blockContact(recipient.address, !recipient.isBlocked) { success ->
@@ -141,7 +144,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
         }
 
         if (mAdHocModule?.isAdHocMode() != true) {
-            mProfileDispose = AmeModuleCenter.contact().fetchProfile(recipient) {
+            mProfileDispose = AmeModuleCenter.contact(getAccountContext())?.fetchProfile(recipient) {
                 isProfileUpdated = true
                 if (isWaitToChat) {
                     isWaitToChat = false
@@ -160,15 +163,15 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
         mOtherNick = nickname
         val profileKey = ProfileKeyModel.fromKeyConfig(member?.keyConfig)
         if (null != profileKey) {
-            AmeModuleCenter.contact().updateProfileKey(this, recipient, profileKey)
+            AmeModuleCenter.contact(getAccountContext())?.updateProfileKey(this, recipient, profileKey)
         }
-        anchor_img.setPhoto(recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+        anchor_img.setPhoto(getAccountContext(), recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
         anchor_name.text = nickname
         updateActionState(recipient)
 
         val groupMemberNick = member?.nickname // maybe stranger, so should use group member nick name
         if (!groupMemberNick.isNullOrEmpty()) {
-            AmeModuleCenter.contact().updateNickFromOtherWay(recipient, groupMemberNick)
+            AmeModuleCenter.contact(getAccountContext())?.updateNickFromOtherWay(recipient, groupMemberNick)
         }
     }
 

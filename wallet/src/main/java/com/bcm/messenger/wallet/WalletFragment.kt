@@ -11,10 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BaseFragment
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getColor
-import com.bcm.messenger.common.utils.getStatusBarHeight
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
@@ -27,7 +24,7 @@ import com.bcm.messenger.wallet.model.WalletDisplay
 import com.bcm.messenger.wallet.model.WalletProgressEvent
 import com.bcm.messenger.wallet.presenter.ImportantLiveData
 import com.bcm.messenger.wallet.presenter.WalletViewModel
-import com.bcm.messenger.wallet.utils.BCMWalletManager
+import com.bcm.messenger.wallet.utils.BCMWalletManagerContainer
 import com.bcm.messenger.wallet.utils.EthExchangeCalculator
 import com.bcm.messenger.wallet.utils.WalletSettings
 import com.bcm.messenger.wallet.utils.WalletTypesAdapter
@@ -109,7 +106,7 @@ class WalletFragment : BaseFragment() {
 
             //跳转到钱包设置页面
             val intent = Intent(activity, WalletSettingsActivity::class.java)
-            startActivity(intent)
+            startBcmActivity(intent)
         }
         home_wallet_shade.setOnClickListener {
             //do nothing,只是为了拦截下层UI的事件
@@ -135,7 +132,7 @@ class WalletFragment : BaseFragment() {
                 val intent = Intent(activity, WalletListActivity::class.java)
                 intent.putExtra(ARouterConstants.PARAM.WALLET.COIN_TYPE, coinBase)
                 intent.putParcelableArrayListExtra(ARouterConstants.PARAM.WALLET.WALLET_LIST, walletList as ArrayList<WalletDisplay>)
-                startActivity(intent)
+                startBcmActivity(intent)
             }
         })
         home_wallet_list.layoutManager = LinearLayoutManager(context)
@@ -157,7 +154,9 @@ class WalletFragment : BaseFragment() {
 
         updateWalletTotal()
 
-        mWalletModel = WalletViewModel.of(activity)
+        mWalletModel = WalletViewModel.of(activity).apply {
+            setAccountContext(getAccountContext())
+        }
         //订阅一些重要事件,，以为view可能已经被回收，所以这里都要取问号
         mWalletModel?.eventData?.observeForever { event ->
             ALog.i(TAG, "observe event: ${event?.id}")
@@ -165,13 +164,13 @@ class WalletFragment : BaseFragment() {
                 ImportantLiveData.EVENT_SYNC -> {
                     val pe = event.data as WalletProgressEvent
                     when (pe.stage) {
-                        BCMWalletManager.WalletStage.STAGE_DONE -> {
+                        BCMWalletManagerContainer.WalletStage.STAGE_DONE -> {
                             ALog.i(TAG, "observe stage done")
                             mWalletSyncing = false
                             home_init_progress?.visibility = View.GONE
                             setWalletFinish()
                         }
-                        BCMWalletManager.WalletStage.STAGE_ERROR -> {
+                        BCMWalletManagerContainer.WalletStage.STAGE_ERROR -> {
                             ALog.i(TAG, "observe stage error")
 
                             mWalletSyncing = false

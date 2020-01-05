@@ -17,8 +17,6 @@ import com.bcm.messenger.chats.components.ConversationStickNoticeLayout
 import com.bcm.messenger.chats.components.UnreadMessageBubbleView
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
-import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.recipients.Recipient
@@ -46,7 +44,6 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
         private const val TAG = "AmeConversationFragment"
     }
 
-    private lateinit var mMasterSecret: MasterSecret
     private lateinit var mLocale: Locale
 
     private var mRecipient: Recipient? = null
@@ -65,8 +62,6 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
 
     override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
-        this.mMasterSecret = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_MASTER_SECRET)
-                ?: BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) ?: throw Exception("master secret is null")
         this.mLocale = arguments?.getSerializable(ARouterConstants.PARAM.PARAM_LOCALE) as? Locale ?: Locale.getDefault()
 
         activity?.let {
@@ -172,7 +167,7 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
         val recipient = this.mRecipient
         if (recipient != null) {
 
-            val adapter = AmeConversationAdapter(activity, mMasterSecret, GlideApp.with(AppContextHolder.APP_CONTEXT), mLocale, recipient, object : AmeConversationAdapter.IConversationDelegate {
+            val adapter = AmeConversationAdapter(activity, getMasterSecret(), GlideApp.with(AppContextHolder.APP_CONTEXT), mLocale, recipient, object : AmeConversationAdapter.IConversationDelegate {
                 override fun onViewClicked(adapter: AmeConversationAdapter, viewHolder: RecyclerView.ViewHolder) {
                     //隐藏输入键盘
                     if (activity is AmeConversationActivity) {

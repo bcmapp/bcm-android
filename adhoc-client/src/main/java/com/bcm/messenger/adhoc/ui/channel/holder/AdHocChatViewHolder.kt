@@ -25,24 +25,24 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.api.IConversationContentAction
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.ui.ConversationContentViewHolder
+import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.AppUtil.getString
 import com.bcm.messenger.utility.QuickOpCheck
-import com.bcm.messenger.common.ui.ConversationContentViewHolder
-import com.bcm.messenger.common.ui.IndividualAvatarView
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.common.mms.GlideRequests
-import com.bcm.messenger.common.recipients.Recipient
 
 /**
  *
@@ -259,7 +259,7 @@ class AdHocChatViewHolder(layout: View) : ConversationContentViewHolder<AdHocMes
                 mPhotoView?.visibility = View.VISIBLE
                 mNickView?.visibility = View.VISIBLE
                 mNickView?.text = message.nickname
-                mPhotoView?.setPhoto(Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(message.fromId), true), message.nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+                mPhotoView?.setPhoto(AMELogin.majorContext, Recipient.from(AMELogin.majorContext, Address.fromSerialized(message.fromId), true), message.nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
             }else {
                 mPhotoView?.visibility = View.GONE
                 mNickView?.visibility = View.GONE

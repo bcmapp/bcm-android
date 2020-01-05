@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.api.IContactsAction
 import com.bcm.messenger.common.api.IContactsCallback
 import com.bcm.messenger.common.recipients.Recipient
@@ -22,7 +23,7 @@ import kotlinx.android.synthetic.main.contacts_fragment_contacts_selection.*
  * Created by zjl on 2018/4/8.
  */
 @Route(routePath = ARouterConstants.Fragment.SELECT_CONTACTS)
-class ContactsSelectionFragment : Fragment(), IContactsAction {
+class ContactsSelectionFragment : BaseFragment(), IContactsAction {
 
     private val mContactFragments = mutableListOf<Fragment>()
     private var mPosition: Int = -1

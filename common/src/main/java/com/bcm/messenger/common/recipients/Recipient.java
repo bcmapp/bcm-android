@@ -240,7 +240,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
         if (TextUtils.isEmpty(loginUid)) {
             throw new Exception(("login uid is null"));
         }
-        return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, Address.fromSerialized(loginUid), null, true);
+        return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, Address.from(context, loginUid), null, true);
     }
 
     @NonNull
@@ -250,21 +250,21 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
         if (TextUtils.isEmpty(majorUid)) {
             throw new Exception(("major uid is null"));
         }
-        return getProvider(AMELogin.INSTANCE.getMajorContext()).getRecipient(AppContextHolder.APP_CONTEXT, Address.fromSerialized(majorUid), null, true);
+        return getProvider(AMELogin.INSTANCE.getMajorContext()).getRecipient(AppContextHolder.APP_CONTEXT, Address.from(AMELogin.INSTANCE.getMajorContext(), majorUid), null, true);
     }
 
     @NonNull
-    public static Recipient from(@NonNull AccountContext context, @NonNull Address address, boolean asynchronous) {
+    public static Recipient from(@NonNull AccountContext context, @NonNull String uid, boolean asynchronous) {
         ALog.d(TAG, "from accountContext:" + context.getUid() + ", from(asynchronous:" + asynchronous + ")");
-        return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, address, null, asynchronous);
+        return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, Address.from(context, uid), null, asynchronous);
     }
 
 
     @NonNull
-    public static Recipient fromSnapshot(@NonNull AccountContext context, @NonNull Address address, @NonNull RecipientSettings settings) {
+    public static Recipient fromSnapshot(@NonNull AccountContext context, @NonNull String uid, @NonNull RecipientSettings settings) {
         ALog.d(TAG, "from accountContext:" + context.getUid() + ", fromSnapshot");
-        RecipientDetails details = new RecipientDetails(address.serialize(), null, null, settings, null);
-        return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, address, details, false);
+        RecipientDetails details = new RecipientDetails(uid, null, null, settings, null);
+        return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, Address.from(context, uid), details, false);
     }
 
     public static void clearCache(Context context) {
@@ -280,19 +280,19 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
 
     @NonNull
     public static Recipient recipientFromNewGroupId(@NonNull AccountContext context, long groupId) {
-        return Recipient.from(context, GroupUtil.addressFromGid(groupId), false);
+        return Recipient.from(context, GroupUtil.uidFromGid(groupId), false);
     }
 
     @NonNull
     public static Recipient recipientFromNewGroupIdAsync(@NonNull AccountContext context, long groupId) {
-        return Recipient.from(context, GroupUtil.addressFromGid(groupId), true);
+        return Recipient.from(context, GroupUtil.uidFromGid(groupId), true);
     }
 
     @NonNull
     public static Recipient recipientFromNewGroup(@NonNull AccountContext context, @NonNull AmeGroupInfo groupInfo) {
-        Address address = GroupUtil.addressFromGid(groupInfo.getGid());
+        String uid = GroupUtil.uidFromGid(groupInfo.getGid());
         RecipientSettings settings = new RecipientSettings();
-        settings.setUid(address.serialize());
+        settings.setUid(uid);
         settings.setProfileName(groupInfo.getName());
         settings.setProfileAvatar(groupInfo.getIconUrl());
         if (groupInfo.getMute()) {
@@ -300,7 +300,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
         }else {
             settings.setMuteUntil(0);
         }
-        return Recipient.fromSnapshot(context, address, settings);
+        return Recipient.fromSnapshot(context, uid, settings);
     }
 
     private final Set<RecipientModifiedListener> listeners = Collections.newSetFromMap(new WeakHashMap<RecipientModifiedListener, Boolean>());
@@ -518,10 +518,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
         }
     }
 
-    /**
-     * 
-     * @param settings 
-     */
+
     private boolean fillSettings(@Nullable RecipientSettings settings) {
         if (settings != null) {
             this.mutedUntil = settings.getMuteUntil();
@@ -543,18 +540,10 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
         return false;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public boolean isSelf() {
+    public boolean isLogin() {
         return address.isCurrentLogin();
     }
 
-    /**
-     * 
-     * @return
-     */
     @NonNull
     public synchronized
     RecipientSettings getSettings() {
@@ -891,7 +880,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
      * @return
      */
     public synchronized boolean isFriend() {
-        return mRelationship == RecipientRepo.Relationship.FRIEND || isSelf();
+        return mRelationship == RecipientRepo.Relationship.FRIEND || isLogin();
     }
 
     @Nullable

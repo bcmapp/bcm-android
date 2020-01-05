@@ -14,7 +14,13 @@ import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.repositories.ThreadRepo
 import com.bcm.messenger.common.event.HomeTopEvent
-import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.AmeProvider
+import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
+import com.bcm.messenger.common.provider.accountmodule.IChatModule
+import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AmePushProcess
@@ -129,7 +135,7 @@ class SchemeLaunchHelper(val context: Context) {
                     "/native/appaction/logout" -> {
                         val c = context
                         if (c is AppCompatActivity) {
-                            AmeModuleCenter.user().logoutMenu()
+                            AmeModuleCenter.user(AMELogin.majorContext)?.logoutMenu()
                         }
                     }
                     "/native/addfriend/new_chat_page" -> {
@@ -172,7 +178,7 @@ class SchemeLaunchHelper(val context: Context) {
                         val threadId = con.threadId
                         val address = con.address
                         if (threadId <= 0L && address != null && con.createIfNotExist) {
-                            ThreadListViewModel.getThreadId(Recipient.from(AppContextHolder.APP_CONTEXT, address, true)) { newThreadId ->
+                            ThreadListViewModel.getThreadId(Recipient.from(AMELogin.majorContext, address, true)) {newThreadId ->
                                 BcmRouter.getInstance()
                                         .get(con.path)
                                         .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)

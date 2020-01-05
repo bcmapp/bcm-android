@@ -1,11 +1,9 @@
 package com.bcm.messenger.common.utils;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
-import com.bcm.messenger.utility.ClassHelper;
 import com.bcm.messenger.utility.HexUtil;
 import com.orhanobut.logger.Logger;
 
@@ -20,10 +18,16 @@ public class GroupUtil {
     private static final String TAG = "GroupUtil";
 
 
-    public static Address addressFromGid(long groupId) {
+    public static Address addressFromGid(AccountContext context, long groupId) {
         ByteBuffer buffer = ByteBuffer.allocate(8);
         buffer.putLong(groupId);
-        return Address.fromSerialized(encodeTTGroupId(buffer.array()));
+        return Address.from(context, encodeTTGroupId(buffer.array()));
+    }
+
+    public static String uidFromGid(long groupId) {
+        ByteBuffer buffer = ByteBuffer.allocate(8);
+        buffer.putLong(groupId);
+        return encodeTTGroupId(buffer.array());
     }
 
     public static Long gidFromAddress(Address address) {

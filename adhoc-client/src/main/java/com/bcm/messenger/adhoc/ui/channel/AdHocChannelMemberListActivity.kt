@@ -10,18 +10,19 @@ import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.chats.components.recyclerview.SelectionDataSource
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
+import com.bcm.messenger.common.ui.emoji.EmojiTextView
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.QuickOpCheck
-import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.adhoc_channel_member_list_activity.*
-import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.ui.emoji.EmojiTextView
-import com.bcm.messenger.common.recipients.Recipient
 
 /**
  *
@@ -77,7 +78,7 @@ class AdHocChannelMemberListActivity: SwipeBaseActivity(),AmeRecycleViewAdapter.
         private val name = view.findViewById<EmojiTextView>(R.id.adhoc_member_item_name)
         override fun setData(data: ChannelUserInfo) {
             super.setData(data)
-            avatar.setPhoto(Recipient.from(itemView.context, Address.fromSerialized(data.uid), true), data.name, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+            avatar.setPhoto(AMELogin.majorContext, Recipient.from(AMELogin.majorContext, Address.fromSerialized(data.uid), true), data.name, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
             name.text = data.name
         }
     }

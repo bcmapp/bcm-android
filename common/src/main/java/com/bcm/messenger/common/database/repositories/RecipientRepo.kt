@@ -10,7 +10,6 @@ import com.bcm.messenger.common.database.model.IdentityDbModel
 import com.bcm.messenger.common.database.model.RecipientDbModel
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.records.RecipientSettings
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.sms.OutgoingLocationMessage
 import com.bcm.messenger.common.utils.GroupUtil
@@ -76,7 +75,7 @@ class RecipientRepo(private val accountContext: AccountContext) {
     }
 
     private fun createBlockMessage(recipient: Recipient, isBlocked: Boolean) {
-        if (recipient.isSelf) return
+        if (recipient.isLogin) return
 
         val blockMessage = if (isBlocked) {
             AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_BLOCK,
@@ -343,7 +342,7 @@ class RecipientRepo(private val accountContext: AccountContext) {
     }
 
     fun createFriendMessage(recipient: Recipient, isFriend: Boolean) {
-        if (recipient.isSelf) return
+        if (recipient.isLogin) return
         val messageBody = AmeGroupMessage(AmeGroupMessage.FRIEND, AmeGroupMessage.FriendContent(
                 if (isFriend) AmeGroupMessage.FriendContent.ADD else AmeGroupMessage.FriendContent.DELETE,
                 recipient.address.serialize()

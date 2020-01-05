@@ -271,7 +271,7 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
     class GroupContactAdapter<T : Any>(context: Context, dataModel: IListDataSource<T>) : AmeRecycleViewAdapter<T>(context, dataModel) {}
     class EmptyHolder(view: View) : AmeRecycleViewAdapter.ViewHolder<GroupContactViewModel.GroupContactViewData>(view)
 
-    class GroupHolder(view: View) : AmeRecycleViewAdapter.ViewHolder<GroupContactViewModel.GroupContactViewData>(view) {
+    inner class GroupHolder(view: View) : AmeRecycleViewAdapter.ViewHolder<GroupContactViewModel.GroupContactViewData>(view) {
         val logoView: RecipientAvatarView = view.findViewById(R.id.group_logo_iv)
         val groupName: TextView = view.findViewById(R.id.group_name_tv)
         var gid = 0L
@@ -279,7 +279,7 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
         fun bind(data: GroupContactViewModel.GroupContactViewData) {
             val groupInfo = data.groupInfo
             this.gid = groupInfo.gid
-            this.logoView.showGroupAvatar(groupInfo.gid)
+            this.logoView.showGroupAvatar(getAccountContext(), groupInfo.gid)
             this.groupName.text = groupInfo.displayName
         }
 

@@ -328,7 +328,7 @@ public class MessageSender {
             return false;
         }
 
-        return recipient.isSelf();
+        return recipient.isLogin();
     }
 
     public static void recall(MessageRecord messageRecord, MasterSecret masterSecret, boolean isMMS) throws Exception {

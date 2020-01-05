@@ -2,6 +2,8 @@ package com.bcm.messenger.common
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.bcm.messenger.common.crypto.MasterSecret
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.utility.logger.ALog
@@ -27,6 +29,8 @@ open class BaseFragment : Fragment() {
     fun getAccountContext() = mAccountContext
 
     fun getAccountRecipient() = mAccountRecipient
+
+    fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(mAccountContext) ?: throw Exception("getMasterSecret is null")
 
     open fun setActive(isActive: Boolean) {
         this.isActive = isActive
@@ -60,7 +64,7 @@ open class BaseFragment : Fragment() {
 
     }
 
-    protected open fun onNewIntent() {
+    open fun onNewIntent() {
         val accountContext: AccountContext? = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
         if (accountContext != null) {
             ALog.w(TAG, "onNewIntent, new accountContext: ${accountContext.uid}")

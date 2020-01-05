@@ -3,16 +3,14 @@ package com.bcm.messenger.adhoc.ui
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.adhoc.sdk.AdHocSDK
-import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.common.recipients.Recipient
 import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 
@@ -85,7 +83,7 @@ class AdHocConnectingStep {
         val clientConnected = AdHocSDK.getNetSnapshot().clientSet.isNotEmpty()
         val serverConnected = AdHocSDK.getNetSnapshot().myIp.isNotEmpty()
         if (clientConnected || serverConnected) {
-            return Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMELogin.uid), false).name
+            return Recipient.major().name
         }
 
         return when(currentStep) {
@@ -104,7 +102,7 @@ class AdHocConnectingStep {
             STEP.CONNECTED -> AppUtil.getString(R.string.adhoc_main_title_connected)
             STEP.CONNECTING_FAILED -> AppUtil.getString(R.string.adhoc_main_title_connect_failed)
             else -> {
-                Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMELogin.uid), false).name
+                Recipient.major().name
             }
         }
     }

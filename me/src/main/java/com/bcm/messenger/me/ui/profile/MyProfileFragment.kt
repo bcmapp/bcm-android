@@ -169,7 +169,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     private fun checkBackupNotice(recipient: Recipient) {
-        if (recipient.isSelf) {
+        if (recipient.isLogin) {
             val hadBackup = AmeLoginLogic.accountHistory.getBackupTime(recipient.address.serialize()) > 0
             if (hadBackup) {
                 profile_account_item.hideTip()

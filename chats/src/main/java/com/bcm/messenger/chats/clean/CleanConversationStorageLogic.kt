@@ -21,7 +21,7 @@ object CleanConversationStorageLogic {
 
     private const val TAG = "ConversationStorage"
 
-    val ADDRESS_ALL = Address.fromSerialized("clean_all")
+    val ADDRESS_ALL = Address.from("clean_all")
 
     private val storageMap = ConcurrentHashMap<Address, ConversationStorage>()
     private var threadList: List<Address>? = null

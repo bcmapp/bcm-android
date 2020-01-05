@@ -2,16 +2,16 @@ package com.bcm.messenger.wallet.presenter
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
-import com.bcm.messenger.wallet.utils.WalletSettings
-import com.bcm.messenger.wallet.utils.BCMWalletManager
-import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.wallet.utils.BCMWalletManagerContainer
+import com.bcm.messenger.wallet.utils.WalletSettings
 
 /**
  * 用于重要事情的通知
  * Created by wjh on 2018/6/1
  */
-class ImportantLiveData(private val mManager: BCMWalletManager) : LiveData<ImportantLiveData.ImportantEvent>(), SharedPreferences.OnSharedPreferenceChangeListener {
+class ImportantLiveData(private val mManager: BCMWalletManagerContainer.BCMWalletManager) : LiveData<ImportantLiveData.ImportantEvent>(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     class ImportantEvent(val id: Int, val data: Any?) {
         constructor(id: Int) : this(id, null)

@@ -20,6 +20,8 @@ public class RetrieveProfileJob extends ContextJob {
 
     private static final String TAG = RetrieveProfileJob.class.getSimpleName();
 
+    private static final long serialVersionUID = 9L;
+
     private final List<Recipient> mRecipientList;
 
     public RetrieveProfileJob(Context context, List<Recipient> recipientList) {

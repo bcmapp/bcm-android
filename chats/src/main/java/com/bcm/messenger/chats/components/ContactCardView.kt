@@ -45,7 +45,7 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
         }
         contact_action.setOnClickListener {
             mRecipient?.let {
-                if (!it.isSelf && (it.relationship == RecipientRepo.Relationship.STRANGER || it.relationship == RecipientRepo.Relationship.REQUEST)) {
+                if (!it.isLogin && (it.relationship == RecipientRepo.Relationship.STRANGER || it.relationship == RecipientRepo.Relationship.REQUEST)) {
                     BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND)
                             .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, it.address)
                             .putString(ARouterConstants.PARAM.PARAM_NICK, mContactContent?.nickName)
@@ -99,7 +99,7 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
         }
         contact_portrait.setPhoto(recipient, name, IndividualAvatarView.NAME_CARD_TYPE)
 
-        if (!recipient.isSelf && (recipient.relationship == RecipientRepo.Relationship.STRANGER || recipient.relationship == RecipientRepo.Relationship.REQUEST)) {
+        if (!recipient.isLogin && (recipient.relationship == RecipientRepo.Relationship.STRANGER || recipient.relationship == RecipientRepo.Relationship.REQUEST)) {
             contact_action.text = getString(R.string.chats_contact_card_add_action)
         }else {
             contact_action.text = getString(R.string.chats_contact_card_chat_action)

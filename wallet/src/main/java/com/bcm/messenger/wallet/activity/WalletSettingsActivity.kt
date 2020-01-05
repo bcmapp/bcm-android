@@ -2,10 +2,11 @@ package com.bcm.messenger.wallet.activity
 
 import android.content.Intent
 import android.os.Bundle
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.wallet.R
 import kotlinx.android.synthetic.main.wallet_settings_activity.*
-import com.bcm.messenger.common.SwipeBaseActivity
 
 /**
  * 钱包配置页面
@@ -25,7 +26,7 @@ class WalletSettingsActivity : SwipeBaseActivity() {
 
         currency_entrance_layout.setOnClickListener {
             val intent = Intent(this, CurrencyActivity::class.java)
-            startActivity(intent)
+            startBcmActivity(intent)
         }
 
 

@@ -5,6 +5,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.setStatusBarLightMode
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.contacts_activity_group_contact.*
@@ -25,7 +26,7 @@ class GroupContactActivity : SwipeBaseActivity() {
             }
 
             override fun onClickRight() {
-                BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_GROUP_CREATE).navigation(this@GroupContactActivity)
+                BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_GROUP_CREATE).startBcmActivity(getAccountContext(), this@GroupContactActivity)
             }
         })
 

@@ -15,6 +15,7 @@ import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 import kotlinx.android.synthetic.main.contacts_activity_friend_request.*
@@ -37,7 +38,9 @@ class FriendRequestsListActivity : SwipeBaseActivity() {
 
         setContentView(R.layout.contacts_activity_friend_request)
 
-        viewModel = ViewModelProviders.of(this).get(FriendRequestsListViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(FriendRequestsListViewModel::class.java).apply {
+            setAccountContext(getAccountContext())
+        }
 
         initView()
         initData()
@@ -97,10 +100,10 @@ class FriendRequestsListActivity : SwipeBaseActivity() {
 
         fun bind(data: BcmFriendRequest) {
             recipient?.removeListener(this)
-            recipient = Recipient.from(this@FriendRequestsListActivity, Address.fromSerialized(data.proposer), true)
+            recipient = Recipient.from(getAccountContext(), Address.fromSerialized(data.proposer), true)
             recipient?.addListener(this)
 
-            itemView.friend_req_avatar.setPhoto(recipient)
+            itemView.friend_req_avatar.setPhoto(getAccountContext(), recipient)
             itemView.friend_req_name.text = recipient?.name
 
             if (data.memo.isNotEmpty()) {
@@ -115,7 +118,7 @@ class FriendRequestsListActivity : SwipeBaseActivity() {
             itemView.setOnClickListener {
                 data.setRead()
                 itemView.friend_req_new.visibility = View.GONE
-                startActivity(Intent(this@FriendRequestsListActivity, FriendRequestHandleActivity::class.java).apply {
+                startBcmActivity(Intent(this@FriendRequestsListActivity, FriendRequestHandleActivity::class.java).apply {
                     putExtra("id", data.id)
                 })
             }
@@ -129,7 +132,7 @@ class FriendRequestsListActivity : SwipeBaseActivity() {
             if (this.recipient == recipient) {
                 this.recipient = recipient
 
-                itemView.friend_req_avatar.setPhoto(recipient)
+                itemView.friend_req_avatar.setPhoto(getAccountContext(), recipient)
                 itemView.friend_req_name.text = recipient.name
             }
         }

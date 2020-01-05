@@ -2,14 +2,14 @@ package com.bcm.messenger.wallet.utils
 
 import android.os.Bundle
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.R
-import com.bcm.messenger.wallet.model.FeePlan
 import com.bcm.messenger.wallet.model.BCMWallet
+import com.bcm.messenger.wallet.model.FeePlan
 import com.bcm.messenger.wallet.model.TransactionDisplay
 import com.bcm.messenger.wallet.model.WalletDisplay
 import com.bcm.messenger.wallet.network.EtherscanAPI
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.utility.AppContextHolder
 import org.bitcoinj.wallet.DeterministicSeed
 import org.json.JSONObject
 import org.spongycastle.util.encoders.Hex
@@ -19,13 +19,13 @@ import org.web3j.protocol.core.methods.request.RawTransaction
 import java.io.File
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.util.ArrayList
+import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Created by wjh on 2018/05/24
  */
-class EthWalletController(private val mManager: BCMWalletManager) : IBaseWalletController {
+class EthWalletController(private val mManager: BCMWalletManagerContainer.BCMWalletManager) : IBaseWalletController {
 
     companion object {
         private const val TAG = "EthWalletController"
@@ -54,7 +54,7 @@ class EthWalletController(private val mManager: BCMWalletManager) : IBaseWalletC
         var index = mAccountIndex.get()
         if (index < 0) {
             val prefs = mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
-            index = prefs.getInt(BCMWalletManager.TABLE_WALLET_ACCOUNT + WalletSettings.ETH, 0)
+            index = prefs.getInt(BCMWalletManagerContainer.TABLE_WALLET_ACCOUNT + WalletSettings.ETH, 0)
             mAccountIndex.compareAndSet(-1, index)
         }
         return index
@@ -64,7 +64,7 @@ class EthWalletController(private val mManager: BCMWalletManager) : IBaseWalletC
         mAccountIndex.set(index)
         val prefs = mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
         val edit = prefs.edit()
-        edit.putInt(BCMWalletManager.TABLE_WALLET_ACCOUNT + WalletSettings.ETH, index)
+        edit.putInt(BCMWalletManagerContainer.TABLE_WALLET_ACCOUNT + WalletSettings.ETH, index)
         edit.apply()
     }
 

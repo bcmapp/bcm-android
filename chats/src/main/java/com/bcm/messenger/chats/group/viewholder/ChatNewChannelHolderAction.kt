@@ -11,6 +11,7 @@ import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.repositories.ThreadRepo
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -37,7 +38,7 @@ class ChatNewChannelHolderAction() : BaseChatHolderAction<ShareChannelView>(), S
 
         bodyView.setTitleContent(data.name, data.intro)
         if (data.gid > 0) {
-            val address = GroupUtil.addressFromGid(data.gid)
+            val address = GroupUtil.addressFromGid(AMELogin.majorContext, data.gid)
             if (address != null) {
                 bodyView.setAvater(address)
             }

@@ -17,8 +17,6 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.getSelectedLocale
-import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.database.repositories.Repository
@@ -61,7 +59,6 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     private val TAG = "MessageListFragment"
-    private var masterSecret: MasterSecret? = null
 
     private lateinit var viewModel: ThreadListViewModel
 
@@ -90,8 +87,6 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        masterSecret = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_MASTER_SECRET)
-                ?: BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
         archive = arguments?.getBoolean(ARouterConstants.PARAM.PRIVATE_CHAT.IS_ARCHIVED_EXTRA, false)
                 ?: false
 
@@ -130,7 +125,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
         } catch (ex: Exception) {
             ALog.e(TAG, "onActivityCreated fail, get major recipient fail", ex)
             try {
-                AmeModuleCenter.user().logoutMenu()
+                AmeModuleCenter.user(getAccountContext())?.logoutMenu()
             } catch (ex: Exception) {
                 activity?.finish()
             }
@@ -181,7 +176,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
         }
 
         AmePushProcess.checkSystemBannerNotice()
-        PushUtil.loadSystemMessages()
+        PushUtil.loadSystemMessages(getAccountContext())
     }
 
     private fun showShadeView(isLoading: Boolean) {
@@ -232,7 +227,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
 
     private fun initializeListAdapter(context: Context) {
         ALog.d(TAG, "initializeListAdapter")
-        val masterSecret = this.masterSecret ?: return
+        val masterSecret = getMasterSecret()
         val adapter = MessageListAdapter(context, masterSecret, GlideApp.with(AppContextHolder.APP_CONTEXT), getSelectedLocale(context), object : MessageListAdapter.IThreadHolderDelete {
             override fun onViewClicked(adapter: MessageListAdapter, viewHolder: RecyclerView.ViewHolder) {
                 if (viewHolder is MessageListAdapter.ThreadViewHolder) {
@@ -249,7 +244,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
 
     fun clearThreadUnreadState() {
         AmeDispatcher.io.dispatch {
-            val threadRepo = Repository.getThreadRepo()
+            val threadRepo = Repository.getThreadRepo(getAccountContext())
             val unreadList = ArrayList<ThreadRecord>()
             mAdapter?.getTrueDataList()?.forEach { threadRecord ->
                 if (threadRecord.unreadCount > 0) {
@@ -347,7 +342,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
 
     private fun checkUnhandledRequest(unreadCount: Int = 0) {
         Observable.create<Pair<Int, Int>> {
-            val requestDao = UserDatabase.getDatabase().friendRequestDao()
+            val requestDao = UserDatabase.getDatabase(getAccountContext()).friendRequestDao()
             var unread = unreadCount
             if (unread == 0) {
                 unread = requestDao.queryUnreadCount()

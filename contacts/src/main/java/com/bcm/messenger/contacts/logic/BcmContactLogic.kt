@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.records.RecipientSettings
@@ -94,6 +93,7 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
         ALog.i(TAG, "init")
 
         fun doAfterFirstSync() {
+            AmeModuleCenter.serverDaemon(mAccountContext).addConnectionListener(this)
             BcmFinderManager.get(mAccountContext).registerFinder(contactFinder)
             if (mLocalLiveData == null) {
                 mLocalLiveData = Repository.getRecipientRepo(mAccountContext)?.getRecipientsLiveData()
@@ -140,6 +140,7 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
             mContactListDisposable = null
             mCurrentContactListRef.set(listOf())
             contactFinder.cancel()
+            AmeModuleCenter.serverDaemon(mAccountContext).removeConnectionListener(this)
             BcmFinderManager.get(mAccountContext).unRegisterFinder(contactFinder)
             mLocalLiveData?.removeObserver(mObserver)
             mLocalLiveData = null
@@ -180,7 +181,7 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
             return
         }
 
-        if (recipient.relationship == RecipientRepo.Relationship.FOLLOW && !recipient.isBackgroundRequestAddFriendFlag && !recipient.isSelf) {
+        if (recipient.relationship == RecipientRepo.Relationship.FOLLOW && !recipient.isBackgroundRequestAddFriendFlag && !recipient.isLogin) {
             recipient.isBackgroundRequestAddFriendFlag = true
             ALog.d(TAG, "checkRequestFriendForOldVersion recipient: ${recipient.address} is follow")
             if (!mBackgroundRequestQueue.contains(recipient)) {
@@ -256,9 +257,9 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
 
             val bcmList = mutableListOf<Recipient>()
             try {
-                bcmList.add(Recipient.from(mAccountContext, Address.fromSerialized(mAccountContext.uid), true))
+                bcmList.add(Recipient.from(mAccountContext, mAccountContext.uid, true))
                 bcmList.addAll(mCurrentContactListRef.get().map {settings ->
-                    Recipient.fromSnapshot(mAccountContext, Address.fromSerialized(settings.uid), settings)
+                    Recipient.fromSnapshot(mAccountContext, settings.uid, settings)
                 })
 
                 contactFinder.updateContact(bcmList, Recipient.getRecipientComparator())
@@ -472,7 +473,7 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
             }
         }
 
-        val targetRecipient = Recipient.from(mAccountContext, Address.fromSerialized(targetUid), false)
+        val targetRecipient = Recipient.from(mAccountContext, targetUid, false)
         if (targetRecipient.identityKey.isNullOrEmpty()) {
             AmeModuleCenter.contact(mAccountContext)?.fetchProfile(targetRecipient) {
 
@@ -504,7 +505,7 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
                         if (response?.code() in 200..299) {
                             try {
                                 if (approved) {
-                                    val otherRecipient = Recipient.from(mAccountContext, Address.fromSerialized(proposer), false)
+                                    val otherRecipient = Recipient.from(mAccountContext, proposer, false)
                                     handleBecomeFriend(otherRecipient) {
                                         callback?.invoke(it)
                                     }
@@ -528,7 +529,7 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
             }
         }
 
-        val targetRecipient = Recipient.from(mAccountContext, Address.fromSerialized(targetUid), false)
+        val targetRecipient = Recipient.from(mAccountContext, targetUid, false)
         if (targetRecipient.identityKey.isNullOrEmpty()) {
             ALog.i(TAG, "replyAddFriend approved: $approved identityKey is null, need update profile")
             AmeModuleCenter.contact(mAccountContext)?.fetchProfile(targetRecipient) {
@@ -556,7 +557,7 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
             override fun onResponse(response: Response?, id: Long) {
                 ALog.i(TAG, "Delete friend success = ${response?.code() in 200..299}")
                 if (response?.code() in 200..299) {
-                    val recipient = Recipient.from(mAccountContext, Address.fromSerialized(targetUid), false)
+                    val recipient = Recipient.from(mAccountContext, targetUid, false)
                     handleDeleteFriend(recipient, false) {
                         callback?.invoke(it)
                     }
@@ -618,8 +619,8 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
         }
 
         try {
-            val decryptProposer = BCMEncryptUtils.decryptSource(request.proposerBytes.toByteArray())
-            val targetRecipient = Recipient.from(mAccountContext, Address.fromSerialized(decryptProposer), false)
+            val decryptProposer = BCMEncryptUtils.decryptSource(mAccountContext, request.proposerBytes.toByteArray())
+            val targetRecipient = Recipient.from(mAccountContext, decryptProposer, false)
             if (targetRecipient.identityKey.isNullOrEmpty()) {
                 AmeModuleCenter.contact(mAccountContext)?.fetchProfile(targetRecipient) {
                     AmeDispatcher.io.dispatch {
@@ -648,8 +649,8 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
                 }
             }
 
-            val decryptTarget = BCMEncryptUtils.decryptSource(reply.targetBytes.toByteArray())
-            val targetRecipient = Recipient.from(mAccountContext, Address.fromSerialized(decryptTarget), false)
+            val decryptTarget = BCMEncryptUtils.decryptSource(mAccountContext, reply.targetBytes.toByteArray())
+            val targetRecipient = Recipient.from(mAccountContext, decryptTarget, false)
             if (targetRecipient.identityKey.isNullOrEmpty()) {
                 AmeModuleCenter.contact(mAccountContext)?.fetchProfile(targetRecipient) {
                     AmeDispatcher.io.dispatch {
@@ -680,8 +681,8 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
         ALog.i(TAG, "Handle delete friend request")
         waitForReady()
         try {
-            val decryptProposer = BCMEncryptUtils.decryptSource(delete.proposerBytes.toByteArray())
-            val recipient = Recipient.from(mAccountContext, Address.fromSerialized(decryptProposer), false)
+            val decryptProposer = BCMEncryptUtils.decryptSource(mAccountContext, delete.proposerBytes.toByteArray())
+            val recipient = Recipient.from(mAccountContext, decryptProposer, false)
             handleDeleteFriend(recipient, true)
 
         } catch (e: Throwable) {
@@ -802,7 +803,7 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
 
     private fun createRequestBody(context: Context, handleBackground: Boolean, recipient: Recipient, memo: String): String {
         ALog.i(TAG, "createRequestBody")
-        val self = Recipient.from(mAccountContext, Address.fromSerialized(mAccountContext.uid), true)
+        val self = Recipient.from(mAccountContext, mAccountContext.uid, true)
         val identityKey = Base64.decode(recipient.identityKey)
         val publicKey = ByteArray(32)
         var index = 0
@@ -810,7 +811,7 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
             index = 1
         }
         System.arraycopy(identityKey, index, publicKey, 0, 32)
-        val key = BCMEncryptUtils.calculateAgreementKeyWithMe(context, publicKey)
+        val key = BCMEncryptUtils.calculateAgreementKeyWithMe(mAccountContext, publicKey)
         val nameKeySource = self.privacyProfile.nameKey
         val nameKey = if (nameKeySource.isNullOrEmpty()) {
             ""
@@ -844,7 +845,7 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
             index = 1
         }
         System.arraycopy(identityKey, index, publicKey, 0, 32)
-        val key = BCMEncryptUtils.calculateAgreementKeyWithMe(context, publicKey) ?: throw Exception("calculateAgreementKeyWithMe fail")
+        val key = BCMEncryptUtils.calculateAgreementKeyWithMe(mAccountContext, publicKey) ?: throw Exception("calculateAgreementKeyWithMe fail")
         val requestBody = GsonUtils.fromJson<BcmContactCore.FriendRequestBody>(requestBodyString, object : TypeToken<BcmContactCore.FriendRequestBody>(){}.type)
 
         val memo = if (requestBody.requestMemo.isEmpty()) {

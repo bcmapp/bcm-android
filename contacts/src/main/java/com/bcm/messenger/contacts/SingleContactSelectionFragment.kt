@@ -24,7 +24,6 @@ import com.bcm.messenger.contacts.adapter.ContactsListLoader
 import com.bcm.messenger.contacts.components.RecipientRecyclerView
 import com.bcm.messenger.contacts.components.RecipientSelectionView
 import com.bcm.messenger.contacts.components.SelectionEnableChecker
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 import io.reactivex.Observable
@@ -71,7 +70,7 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
     private var mContactLoader = object : LoaderManager.LoaderCallbacks<List<Recipient>> {
 
         override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<Recipient>> {
-            return ContactsListLoader(AppContextHolder.APP_CONTEXT, mFromGroup, mIncludeMe)
+            return ContactsListLoader(getAccountContext(), mFromGroup, mIncludeMe)
         }
 
         override fun onLoadFinished(loader: Loader<List<Recipient>>, data: List<Recipient>) {

@@ -7,29 +7,30 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
+import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
+import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.startBcmActivityForResult
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.model.TransactionDisplay
 import com.bcm.messenger.wallet.model.WalletDisplay
+import com.bcm.messenger.wallet.model.WalletTransferEvent
 import com.bcm.messenger.wallet.presenter.ImportantLiveData
 import com.bcm.messenger.wallet.presenter.WalletViewModel
 import com.bcm.messenger.wallet.ui.WalletConfirmDialog
 import com.bcm.messenger.wallet.utils.TransactionAdapter
 import com.bcm.messenger.wallet.utils.WalletSettings
-import com.bcm.messenger.wallet.utils.BCMWalletManager
-import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.wallet_detail_activity.*
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.wallet.model.WalletTransferEvent
-import com.bcm.route.api.BcmRouter
-import com.bcm.messenger.common.SwipeBaseActivity
 
 /**
  * 对应币种钱包的详细页面
@@ -99,7 +100,7 @@ class WalletDetailActivity : SwipeBaseActivity() {
                         if (it) {
                             val intent = Intent(this, AssetsReceiveActivity::class.java)
                             intent.putExtra(ARouterConstants.PARAM.WALLET.WALLET_COIN, mWalletDisplay)
-                            startActivityForResult(intent, REQUEST_RECEIVE)
+                            startBcmActivityForResult(intent, REQUEST_RECEIVE)
                         }
                     }
                 }
@@ -118,7 +119,7 @@ class WalletDetailActivity : SwipeBaseActivity() {
                         if (it) {
                             val intent = Intent(this, SendTransactionActivity::class.java)
                             intent.putExtra(ARouterConstants.PARAM.WALLET.WALLET_COIN, mWalletDisplay)
-                            startActivityForResult(intent, REQUEST_TRANSFER)
+                            startBcmActivityForResult(intent, REQUEST_TRANSFER)
                         }
                     }
                 }
@@ -128,7 +129,9 @@ class WalletDetailActivity : SwipeBaseActivity() {
 
     private fun initData() {
 
-        mWalletModel = WalletViewModel.of(this)
+        mWalletModel = WalletViewModel.of(this).apply {
+            setAccountContext(getAccountContext())
+        }
         mWalletDisplay = intent.getParcelableExtra(ARouterConstants.PARAM.WALLET.WALLET_COIN)
         mWalletDisplay.setManager(mWalletModel?.getManager())
         mWalletModel?.eventData?.observe(this, Observer { event ->
@@ -189,7 +192,7 @@ class WalletDetailActivity : SwipeBaseActivity() {
                 // 添加交易详情页
                 val intent = Intent(this@WalletDetailActivity, TransactionDetailActivity::class.java)
                 intent.putExtra(ARouterConstants.PARAM.WALLET.TRANSFER_DETAIL, transaction)
-                startActivity(intent)
+                startBcmActivity(intent)
             }
 
         })

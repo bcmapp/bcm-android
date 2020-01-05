@@ -387,7 +387,7 @@ public class RecipientDatabase extends Database {
     
     private void createBlockMessage(@NonNull Recipient recipient, boolean blocked) {
 
-        if (recipient.isSelf()) {
+        if (recipient.isLogin()) {
             return;
         }
         String blockMessage;
@@ -959,7 +959,7 @@ public class RecipientDatabase extends Database {
     private void createFriendMessage(@NonNull Recipient recipient, boolean isFriend) {
 
         
-        if (recipient.isSelf()) {
+        if (recipient.isLogin()) {
             ALog.d(TAG, "address: " + recipient.getAddress().serialize() + " set major friend: " + isFriend);
             ALog.i(TAG, "set major friend: " + isFriend);
         }else {

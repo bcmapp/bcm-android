@@ -2,9 +2,10 @@ package com.bcm.messenger.wallet.model
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.wallet.provider.WalletModuleImp
-import com.bcm.messenger.wallet.utils.*
+import com.bcm.messenger.wallet.utils.BCMWalletManagerContainer
+import com.bcm.messenger.wallet.utils.BtcExchangeCalculator
+import com.bcm.messenger.wallet.utils.EthExchangeCalculator
+import com.bcm.messenger.wallet.utils.WalletSettings
 import com.orhanobut.logger.Logger
 import java.math.BigDecimal
 
@@ -14,9 +15,9 @@ import java.math.BigDecimal
 class WalletDisplay(baseWallet: BCMWallet, amount: String, type: Byte = NORMAL) : Comparable<WalletDisplay>, Parcelable {
 
     @Transient
-    private var mManager: BCMWalletManager? = null
+    private var mManager: BCMWalletManagerContainer.BCMWalletManager? = null
 
-    fun setManager(manager: BCMWalletManager?) {
+    fun setManager(manager: BCMWalletManagerContainer.BCMWalletManager?) {
         mManager = manager
     }
 

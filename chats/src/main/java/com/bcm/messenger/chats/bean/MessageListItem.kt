@@ -13,7 +13,6 @@ import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.api.BindableConversationListItem
 import com.bcm.messenger.common.api.Unbindable
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.core.getSelectedLocale
@@ -22,6 +21,7 @@ import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.database.repositories.ThreadRepo
 import com.bcm.messenger.common.event.GroupNameOrAvatarChanged
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.RecipientAvatarView
@@ -218,7 +218,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                     if (message.isLiveMessage()) {
                         val owner = GroupLogic.getGroupInfo(groupId)?.owner
                         if (owner != null) {
-                            val r = Recipient.from(context, Address.from(context, owner), true)
+                            val r = Recipient.from(AMELogin.majorContext, owner, true)
                             val des = (message.content as AmeGroupMessage.LiveContent).getDescription(r)
                             message.content.setRecipientCallback(, this)
                             des

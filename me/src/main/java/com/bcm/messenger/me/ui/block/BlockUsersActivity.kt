@@ -2,14 +2,13 @@ package com.bcm.messenger.me.ui.block
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bcm.messenger.common.core.Address
+import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -77,7 +76,7 @@ class BlockUsersActivity : SwipeBaseActivity() {
             val recipientList = ArrayList<Recipient>()
             val blockUsers = Repository.getRecipientRepo(getAccountContext())?.getBlockedUsers()
             blockUsers?.forEach { user ->
-                recipientList.add(Recipient.fromSnapshot(getAccountContext(), Address.fromSerialized(user.uid), user))
+                recipientList.add(Recipient.fromSnapshot(getAccountContext(), user.uid, user))
             }
             it.onNext(recipientList)
             it.onComplete()

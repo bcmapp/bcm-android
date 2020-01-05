@@ -3,7 +3,6 @@ package com.bcm.messenger.wallet.fragment
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
@@ -12,16 +11,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.utils.AmeAppLifecycle
+import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.model.FeePlan
 import com.bcm.messenger.wallet.model.WalletDisplay
 import com.bcm.messenger.wallet.presenter.WalletViewModel
 import com.bcm.messenger.wallet.ui.WalletConfirmDialog
 import com.bcm.messenger.wallet.utils.BtcExchangeCalculator
-import com.bcm.messenger.wallet.utils.BCMWalletManager
 import com.bcm.messenger.wallet.utils.BtcWalletController
 import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
@@ -30,8 +34,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.wallet_send_fragment.*
 import kotlinx.android.synthetic.main.wallet_send_transaction_layout.*
-import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.utility.StringAppearanceUtil
 import java.math.BigDecimal
 
 
@@ -39,7 +41,7 @@ import java.math.BigDecimal
  * 发送btc页面
  * created wjh in 2018/5/30
  **/
-class SendBitcoinFragment : Fragment(), ITransferAction {
+class SendBitcoinFragment : BaseFragment(), ITransferAction {
 
     private var mFeePlan: FeePlan? = null
     private lateinit var mWalletDisplay: WalletDisplay
@@ -58,7 +60,9 @@ class SendBitcoinFragment : Fragment(), ITransferAction {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        mWalletModel = WalletViewModel.of(activity!!)
+        mWalletModel = WalletViewModel.of(activity!!).apply {
+            setAccountContext(getAccountContext())
+        }
         mWalletDisplay = arguments?.getParcelable(ARouterConstants.PARAM.WALLET.WALLET_COIN) ?: return
         mWalletDisplay.setManager(mWalletModel?.getManager())
 

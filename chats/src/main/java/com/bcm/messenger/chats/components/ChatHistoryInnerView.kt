@@ -16,12 +16,12 @@ import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.getString
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.InputLengthFilter
 import com.bcm.messenger.utility.logger.ALog
 
@@ -128,7 +128,7 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
                 }
                 is AmeGroupMessageDetail -> {
                     recipient = if (newData) {
-                        val r = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(it.senderId), true)
+                        val r = Recipient.from(AMELogin.majorContext, Address.fromSerialized(it.senderId), true)
                         mRecipientList[r.address.serialize()] = r
                         r.addListener(this)
                         r
@@ -139,7 +139,7 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
                 }
                 is HistoryMessageDetail -> {
                     recipient = if (newData) {
-                        val r = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(it.sender ?: ""), true)
+                        val r = Recipient.from(AMELogin.majorContext, Address.fromSerialized(it.sender ?: ""), true)
                         mRecipientList[r.address.serialize()] = r
                         r.addListener(this)
                         r

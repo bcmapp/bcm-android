@@ -5,21 +5,21 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
+import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.model.BCMWallet
-import com.bcm.messenger.wallet.model.WalletDisplay
 import com.bcm.messenger.wallet.model.BCMWalletAccountDisplay
+import com.bcm.messenger.wallet.model.WalletDisplay
 import com.bcm.messenger.wallet.presenter.ImportantLiveData
 import com.bcm.messenger.wallet.presenter.WalletViewModel
 import com.bcm.messenger.wallet.utils.WalletListAdapter
 import com.bcm.messenger.wallet.utils.WalletSettings
-import com.bcm.messenger.wallet.utils.BCMWalletManager
 import kotlinx.android.synthetic.main.wallet_list_activity.*
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.common.SwipeBaseActivity
 
 /**
  * 某种数字货币的列表页面
@@ -55,7 +55,9 @@ class WalletListActivity : SwipeBaseActivity() {
     }
 
     private fun initData() {
-        mWalletModel = WalletViewModel.of(this)
+        mWalletModel = WalletViewModel.of(this).apply {
+            setAccountContext(getAccountContext())
+        }
         mCoinType = intent.getStringExtra(ARouterConstants.PARAM.WALLET.COIN_TYPE)
         when (mCoinType) {
             WalletSettings.BTC -> list_title_bar.setCenterText(getString(R.string.wallet_list_btc_title))
@@ -68,7 +70,7 @@ class WalletListActivity : SwipeBaseActivity() {
             override fun onDetail(wallet: WalletDisplay) {
                 val intent = Intent(this@WalletListActivity, WalletDetailActivity::class.java)
                 intent.putExtra(ARouterConstants.PARAM.WALLET.WALLET_COIN, wallet)
-                startActivity(intent)
+                startBcmActivity(intent)
             }
         })
 

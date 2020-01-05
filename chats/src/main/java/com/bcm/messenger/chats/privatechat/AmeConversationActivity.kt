@@ -161,7 +161,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
         window?.setStatusBarLightMode()
     }
 
-    override fun onNewIntent(intent: Intent) {
+    override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         ALog.i(TAG, "onNewIntent")
         if (isFinishing) {
@@ -169,14 +169,14 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
             return
         }
 
-        val address = intent.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
+        val address = intent?.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
         if (address != null) {
             val recipient = Recipient.from(getAccountContext(), address, true)
             if (::mRecipient.isInitialized && recipient != mRecipient) {
                 mRecipient.removeListener(this)
                 mRecipient = recipient
                 recipient.addListener(this)
-                mConversationModel?.init(mConversationModel?.getThreadId() ?: 0L, recipient)
+                mConversationModel?.init(getAccountContext(), mConversationModel?.getThreadId() ?: 0L, recipient)
             }
 
         } else {
@@ -574,7 +574,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
                 }))
 
-        if (!mRecipient.isGroupRecipient && !mRecipient.isSelf) {
+        if (!mRecipient.isGroupRecipient && !mRecipient.isLogin) {
             bottom_panel.addOptionItem(
                     BottomPanelItem(getString(R.string.chats_more_option_call), R.drawable.chats_icon_call, object : BottomPanelClickListener {
                         override fun onClick(name: String, view: View) {
@@ -621,7 +621,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     }
 
                 }))
-        if (!mRecipient.isSelf) {
+        if (!mRecipient.isLogin) {
             bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_shredder), R.drawable.chats_72_recall, object : BottomPanelClickListener {
                 override fun onClick(name: String, view: View) {
                     checkRecipientBlock {
@@ -672,7 +672,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
         }
 
         val threadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, 0L)
-        mConversationModel?.init(threadId, mRecipient)
+        mConversationModel?.init(getAccountContext(), threadId, mRecipient)
 
         glideRequests = GlideApp.with(this)
 

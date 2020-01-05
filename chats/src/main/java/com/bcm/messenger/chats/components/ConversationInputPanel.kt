@@ -446,7 +446,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
     fun setBurnAfterReadVisible(recipient: Recipient, callback: ((v: View) -> Unit)?) {
 
-        panel_burn_toggle.visibility = if (!recipient.isSelf && callback != null) View.VISIBLE else View.GONE
+        panel_burn_toggle.visibility = if (!recipient.isLogin && callback != null) View.VISIBLE else View.GONE
         panel_burn_delay_tv.visibility = panel_burn_toggle.visibility
         if (callback != null) {
             setBurnExpireAfterRead(recipient.expireMessages)

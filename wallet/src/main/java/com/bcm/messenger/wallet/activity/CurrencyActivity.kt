@@ -3,15 +3,14 @@ package com.bcm.messenger.wallet.activity
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.presenter.WalletViewModel
 import com.bcm.messenger.wallet.utils.CurrencyAdapter
-import com.bcm.messenger.wallet.utils.WalletSettings
 import kotlinx.android.synthetic.main.wallet_currency_activity.*
-import com.bcm.messenger.common.SwipeBaseActivity
 
 /**
  * Created by wjh on 2018/6/2
@@ -26,7 +25,9 @@ class CurrencyActivity : SwipeBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.wallet_currency_activity)
 
-        mWalletModel = WalletViewModel.of(this)
+        mWalletModel = WalletViewModel.of(this).apply {
+            setAccountContext(getAccountContext())
+        }
         mCurrencyCode = mWalletModel?.getManager()?.getCurrentCurrency() ?: ""
 
         currency_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {

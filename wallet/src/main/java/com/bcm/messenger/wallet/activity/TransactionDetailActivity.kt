@@ -4,9 +4,16 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.utility.QREncoder
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.model.TransactionDisplay
+import com.bcm.messenger.wallet.presenter.WalletViewModel
 import com.bcm.messenger.wallet.utils.WalletSettings
 import com.orhanobut.logger.Logger
 import io.reactivex.Observable
@@ -14,12 +21,6 @@ import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.wallet_transaction_detail_activity.*
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.utility.QREncoder
-import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.wallet.presenter.WalletViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,7 +43,9 @@ class TransactionDetailActivity : SwipeBaseActivity() {
             }
         })
 
-        mWalletModel = WalletViewModel.of(this)
+        mWalletModel = WalletViewModel.of(this).apply {
+            setAccountContext(getAccountContext())
+        }
         initView()
 
     }

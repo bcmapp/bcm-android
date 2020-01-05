@@ -9,12 +9,12 @@ import com.bcm.messenger.common.grouprepository.room.dao.AdHocChannelDao
 import com.bcm.messenger.common.grouprepository.room.dao.AdHocMessageDao
 import com.bcm.messenger.common.grouprepository.room.dao.AdHocSessionDao
 import com.bcm.messenger.common.grouprepository.room.entity.AdHocSessionInfo
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.utility.dispatcher.AmeDispatcher
-import io.reactivex.Observable
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AmeTimeUtil
-import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.messenger.utility.logger.ALog
+import io.reactivex.Observable
 
 class AdHocSessionCache(ready:(list:List<AdHocSession>)->Unit) {
 
@@ -24,7 +24,7 @@ class AdHocSessionCache(ready:(list:List<AdHocSession>)->Unit) {
     init {
         ALog.i("AdHocSessionCache", "init begin")
         fun initPrivateChatUser(sessionList: List<AdHocSession>) {
-            val repo = Repository.getRecipientRepo()
+            val repo = Repository.getRecipientRepo(AMELogin.majorContext)
             val uidMap = mutableMapOf<String, AdHocSession>()
             sessionList.forEach {
                 if (it.isChat()) {
@@ -34,11 +34,11 @@ class AdHocSessionCache(ready:(list:List<AdHocSession>)->Unit) {
             val settings = repo?.getRecipients(uidMap.keys)
             settings?.forEach {
                 ALog.i("AdHocSessionCache", "initPrivateChatUser uid: ${it.uid}")
-                uidMap[it.uid]?.updateRecipient(Recipient.fromSnapshot(AppContextHolder.APP_CONTEXT, Address.fromSerialized(it.uid), it))
+                uidMap[it.uid]?.updateRecipient(Recipient.fromSnapshot(AMELogin.majorContext, Address.fromSerialized(it.uid), it))
             }
         }
 
-        BcmFinderManager.get().registerFinder(sessionFinder)
+        BcmFinderManager.get(AMELogin.majorContext).registerFinder(sessionFinder)
         Observable.create<List<AdHocSession>> { em ->
             val sessionList = mutableListOf<AdHocSession>()
             val messageDao = messageDao()
@@ -73,7 +73,7 @@ class AdHocSessionCache(ready:(list:List<AdHocSession>)->Unit) {
             val session = AdHocSession(sessionId, "", uid, timestamp = AmeTimeUtil.localTimeMillis())
             sessionList[sessionId] = session
             AmeDispatcher.io.dispatch {
-                session.updateRecipient(Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(uid), false))
+                session.updateRecipient(Recipient.from(AMELogin.majorContext, Address.fromSerialized(uid), false))
                 sessionFinder.updateSource(sessionList.values.toList())
                 val dbSession = AdHocSessionInfo(sessionId, session.cid, session.uid, timestamp = session.timestamp)
                 getDao().saveSession(dbSession)
@@ -175,15 +175,15 @@ class AdHocSessionCache(ready:(list:List<AdHocSession>)->Unit) {
     }
 
     private fun messageDao(): AdHocMessageDao {
-        return UserDatabase.getDatabase().adHocMessageDao()
+        return UserDatabase.getDatabase(AMELogin.majorContext).adHocMessageDao()
     }
 
     private fun getDao(): AdHocSessionDao {
-        return UserDatabase.getDatabase().adHocSessionDao()
+        return UserDatabase.getDatabase(AMELogin.majorContext).adHocSessionDao()
     }
 
     private fun channelDao(): AdHocChannelDao {
-        return UserDatabase.getDatabase().adHocChannelDao()
+        return UserDatabase.getDatabase(AMELogin.majorContext).adHocChannelDao()
     }
 
     fun updatePin(sessionId: String, pin: Boolean): Boolean {

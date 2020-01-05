@@ -1,13 +1,13 @@
 package com.bcm.messenger.common.core;
 
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.utils.GroupUtil;
 import com.bcm.messenger.utility.DelimiterUtil;
@@ -17,6 +17,7 @@ import com.bcm.messenger.utility.proguard.NotGuard;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,32 +40,39 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
     private static final Pattern PUBLIC_PATTERN = Pattern.compile("^[a-zA-Z0-9]+");
     private static final Pattern emailPattern = android.util.Patterns.EMAIL_ADDRESS;
 
-    public static final Address UNKNOWN = new Address(UNKNOWN_STRING);
+    public static final Address UNKNOWN = new Address(UNKNOWN_STRING, UNKNOWN_STRING);
 
     private static final String TAG = "Address";
 
     @NonNull
+    private final String context;
+    @NonNull
     private final String address;
 
-    private Boolean isGroup = null; // Cache
-    private Boolean isPublicKey = null; // Cache
+    private Boolean isGroup = null;
+    private Boolean isPublicKey = null;
     private Boolean isEmail = null;
 
-    private Address(@NonNull String address) {
+    private Address(@NonNull String context, @NonNull String address) {
+        this.context = context;
         this.address = address;
     }
 
     public Address(Parcel in) {
-        this(in.readString());
+        this(in.readString(), in.readString());
     }
 
-    public static @NonNull
-    Address fromSerialized(@NonNull String serialized) {
-        return new Address(serialized);
+//    public static @NonNull
+//    Address fromSerialized(@NonNull String serialized) {
+//        return new Address(serialized);
+//    }
+
+    public static Address from(@NonNull String serialized) {
+        return new Address(serialized, serialized);
     }
 
-    public static Address from(@NonNull Context context, @NonNull String serialized) {
-        return new Address(serialized);
+    public static Address from(@NonNull AccountContext context, @NonNull String serialized) {
+        return new Address(context.getUid(), serialized);
     }
 
     public static @NonNull
@@ -73,7 +81,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
         List<Address> addresses = new LinkedList<>();
 
         for (String escapedAddress : escapedAddresses) {
-            addresses.add(Address.fromSerialized(DelimiterUtil.unescape(escapedAddress, delimiter)));
+            addresses.add(Address.from(DelimiterUtil.unescape(escapedAddress, delimiter)));
         }
 
         return addresses;
@@ -160,11 +168,15 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
 
     @Override
     public String toString() {
-        return address;
+        return context + "_" + address;
     }
 
     public String serialize() {
         return address;
+    }
+
+    public String context() {
+        return context;
     }
 
     public String format() {
@@ -182,12 +194,14 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
         if (other == null || !(other instanceof Address)) {
             return false;
         }
-        return address.equals(((Address) other).address);
+
+        Address oa = (Address)other;
+        return context.equals(oa.context) && address.equals(oa.address);
     }
 
     @Override
     public int hashCode() {
-        return address.hashCode();
+        return Objects.hash(context, address);
     }
 
     @Override
@@ -197,12 +211,17 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(context);
         dest.writeString(address);
     }
 
     @Override
     public int compareTo(@NonNull Address other) {
-        return address.compareTo(other.address);
+        int result = context.compareTo(other.context);
+        if (result == 0) {
+            return address.compareTo(other.address);
+        }
+        return result;
     }
 
 

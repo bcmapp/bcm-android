@@ -129,7 +129,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
 
     }
 
-    override fun onNewIntent(intent: Intent) {
+    override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         ALog.w(TAG, "onNewIntent()")
         if (isFinishing) {
@@ -244,7 +244,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                     override fun onClick(name: String, view: View) {
                         if (groupModel?.myRole() == AmeGroupMemberInfo.OWNER) {
                             Observable.create(ObservableOnSubscribe<Boolean> {
-                                val liveInfo = GroupLiveInfoManager.getInstance(getAccountContext()).getCurrentLiveInfo(groupId)
+                                val liveInfo = GroupLiveInfoManager.get(getAccountContext()).getCurrentLiveInfo(groupId)
                                 if (liveInfo != null)
                                     it.onNext(liveInfo.liveStatus == GroupLiveInfo.LiveStatus.LIVING.value || liveInfo.liveStatus == GroupLiveInfo.LiveStatus.PAUSE.value)
                                 else {

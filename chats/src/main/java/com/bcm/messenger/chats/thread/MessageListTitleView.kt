@@ -18,13 +18,15 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat.getColor
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.event.ServiceConnectEvent
+import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.server.ConnectState
+import com.bcm.messenger.common.server.IServerConnectStateListener
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.AppUtil.getString
 import com.bcm.messenger.common.utils.dp2Px
@@ -37,11 +39,9 @@ import com.bcm.messenger.utility.network.NetworkUtil
 import com.bcm.netswitchy.proxy.IProxyStateChanged
 import com.bcm.netswitchy.proxy.ProxyManager
 import com.bcm.route.api.BcmRouter
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
-class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxyStateChanged, RecipientModifiedListener {
+
+class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxyStateChanged, RecipientModifiedListener, IServerConnectStateListener {
 
     private val INIT = 0
     private val OFFLINE = 1
@@ -62,7 +62,7 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     fun init() {
-        EventBus.getDefault().register(this)
+        AmeModuleCenter.serverDaemon(AMELogin.majorContext).addConnectionListener(this)
         NetworkUtil.addListener(this)
         ProxyManager.setListener(this)
         recipient.addListener(this)
@@ -83,7 +83,7 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
     }
 
     fun unInit() {
-        EventBus.getDefault().unregister(this)
+        AmeModuleCenter.serverDaemon(AMELogin.majorContext).removeConnectionListener(this)
         NetworkUtil.removeListener(this)
         recipient.removeListener(this)
     }
@@ -103,8 +103,7 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
         update()
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(e: ServiceConnectEvent) {
+    override fun onServerConnectionChanged(accountContext: AccountContext, newState: ConnectState) {
         update()
     }
 
@@ -224,7 +223,7 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
     }
 
     private fun getState(): Int {
-        val serviceConnectState = AmeModuleCenter.serverDaemon().state()
+        val serviceConnectState = AmeModuleCenter.serverDaemon(AMELogin.majorContext).state()
         return when {
             !NetworkUtil.isConnected() -> {
                 OFFLINE

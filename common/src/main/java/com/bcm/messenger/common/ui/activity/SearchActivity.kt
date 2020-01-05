@@ -69,7 +69,6 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
     private var mRecentSearchFragment: Fragment? = null
     private var mCurrentSearchFragment: Fragment? = null
     private var mDisplayFragment: Fragment? = null
-    private lateinit var accountContext: AccountContext
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -101,9 +100,6 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
 
     private fun init() {
         ALog.d(TAG, "init")
-
-        accountContext = intent.getParcelableExtra(ARouterConstants.Account.ACCOUNT_CONTEXT)
-
         search_top_v.post {
             search_top_v.layoutParams = search_top_v.layoutParams.apply {
                 height += getStatusBarHeight()
@@ -230,7 +226,7 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
     }
 
     override fun onSelect(type: BcmFinderType, key: String) {
-        BcmFinderManager.get(accountContext).saveRecord(type, key)
+        BcmFinderManager.get(getAccountContext()).saveRecord(type, key)
     }
 
     override fun onMore(type: BcmFinderType, key: String) {

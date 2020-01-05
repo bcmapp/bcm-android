@@ -7,13 +7,13 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.utils.AccountContextMap
-import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
+import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import com.bcm.messenger.utility.AppContextHolder
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
@@ -36,7 +36,7 @@ import java.io.ObjectOutputStream
  *      }
  *  }
  */
-object BcmFinderManager:AccountContextMap<BcmFinderManager.BcmFinderManagerImpl>({
+object BcmFinderManager: AccountContextMap<BcmFinderManager.BcmFinderManagerImpl>({
     BcmFinderManagerImpl(it)
 }) {
     private const val TAG = "BcmFinderManager"

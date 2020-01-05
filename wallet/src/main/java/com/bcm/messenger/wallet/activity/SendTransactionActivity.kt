@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.bcm.route.annotation.Route
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.fragment.ITransferAction
@@ -18,8 +18,8 @@ import com.bcm.messenger.wallet.presenter.ImportantLiveData
 import com.bcm.messenger.wallet.presenter.WalletViewModel
 import com.bcm.messenger.wallet.ui.WalletConfirmDialog
 import com.bcm.messenger.wallet.utils.WalletSettings
+import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
-import com.bcm.messenger.common.SwipeBaseActivity
 
 /**
  * 转账页
@@ -54,9 +54,7 @@ class SendTransactionActivity : SwipeBaseActivity() {
         } as Fragment
         val args = Bundle()
         args.putParcelable(ARouterConstants.PARAM.WALLET.WALLET_COIN, walletDisplay)
-        fragment.arguments = args
-        t.add(R.id.container, fragment)
-        t.commit()
+        initFragment(R.id.container, fragment, args)
         mTransferAction = fragment as ITransferAction
         initData()
     }

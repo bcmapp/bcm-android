@@ -171,7 +171,7 @@ class AvatarDownloadJob(context: Context, private val logic: BcmProfileLogic) : 
                             ALog.d(TAG, "downloadAvatar done avatarHd: ${privacyProfile.avatarHDUri}, avatarLd: ${privacyProfile.avatarLDUri}")
                             Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
 
-                            if (recipient.isSelf) {
+                            if (recipient.isLogin) {
                                 AmeModuleCenter.user(logic.mAccountContext)?.saveAccount(recipient, null, recipient.privacyAvatar)
                             }
                             callback(true)

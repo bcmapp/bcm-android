@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * created by wangjianhong on 2018/07/17
  */
-class BtcWalletController(private val mManager: BCMWalletManager) : IBaseWalletController {
+class BtcWalletController(private val mManager: BCMWalletManagerContainer.BCMWalletManager) : IBaseWalletController {
 
     companion object {
         private const val TAG = "BtcWalletController"
@@ -50,7 +50,7 @@ class BtcWalletController(private val mManager: BCMWalletManager) : IBaseWalletC
     init {
         var configuration = mConfiguration
         if (configuration == null) {
-            configuration = BitcoinConfiguration(BCMWalletManager.getSuperPreferences(AppContextHolder.APP_CONTEXT))
+            configuration = BitcoinConfiguration(BCMWalletManagerContainer.getSuperPreferences(AppContextHolder.APP_CONTEXT))
             mConfiguration = configuration
         }
         if (mApi == null) {
@@ -134,7 +134,7 @@ class BtcWalletController(private val mManager: BCMWalletManager) : IBaseWalletC
         var index = mAccountIndex.get()
         if (index < 0) {
             val prefs = mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
-            index = prefs.getInt(BCMWalletManager.TABLE_WALLET_ACCOUNT + WalletSettings.BTC, 0)
+            index = prefs.getInt(BCMWalletManagerContainer.TABLE_WALLET_ACCOUNT + WalletSettings.BTC, 0)
             mAccountIndex.compareAndSet(-1, index)
         }
         return index
@@ -144,7 +144,7 @@ class BtcWalletController(private val mManager: BCMWalletManager) : IBaseWalletC
         mAccountIndex.set(index)
         val prefs = mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT)
         val edit = prefs.edit()
-        edit.putInt(BCMWalletManager.TABLE_WALLET_ACCOUNT + WalletSettings.BTC, index)
+        edit.putInt(BCMWalletManagerContainer.TABLE_WALLET_ACCOUNT + WalletSettings.BTC, index)
         edit.apply()
     }
 
@@ -236,7 +236,7 @@ class BtcWalletController(private val mManager: BCMWalletManager) : IBaseWalletC
                 urlBuilder.append("&n=1")
                 request.url(urlBuilder.toString())
                 ALog.i(TAG, "checkValid url: ${urlBuilder.toString()}")
-                val response = BCMWalletManager.provideHttpClient().newCall(request.build()).execute()
+                val response = BCMWalletManagerContainer.provideHttpClient().newCall(request.build()).execute()
                 if (response.isSuccessful) {
                     val responseString = response.body()!!.string()
                     ALog.i(TAG, "checkValid btc response: $responseString")

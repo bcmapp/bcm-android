@@ -73,7 +73,7 @@ class NewChatActivity : SwipeBaseActivity() {
                     if (!AppUtil.checkNetwork()) {
                         return
                     }
-                    val targetSet = mSelectSet.filter { !it.isSelf }
+                    val targetSet = mSelectSet.filter { !it.isLogin }
                     if (targetSet.size < 2) {
                         AmePopup.result.failure(this@NewChatActivity, getString(R.string.chats_group_create_lack_description), true)
                         return

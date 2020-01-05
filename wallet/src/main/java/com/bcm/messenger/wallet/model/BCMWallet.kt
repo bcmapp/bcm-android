@@ -1,9 +1,10 @@
 package com.bcm.messenger.wallet.model
 
-import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.utility.proguard.NotGuard
 import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.wallet.utils.*
+import com.bcm.messenger.utility.proguard.NotGuard
+import com.bcm.messenger.wallet.utils.BCMWalletManagerContainer
+import com.bcm.messenger.wallet.utils.BtcWalletController
+import com.bcm.messenger.wallet.utils.WalletSettings
 import com.google.gson.annotations.SerializedName
 import org.bitcoinj.core.LegacyAddress
 import org.web3j.utils.Numeric
@@ -17,9 +18,9 @@ data class BCMWallet(@SerializedName("address") val address: String, @Serialized
                      @SerializedName("accountIndex") val accountIndex: Int, @SerializedName("addTime") val addTime: Long) : Serializable, NotGuard {
 
     @Transient
-    private var mManager: BCMWalletManager? = null
+    private var mManager: BCMWalletManagerContainer.BCMWalletManager? = null
 
-    fun setManager(manager: BCMWalletManager) {
+    fun setManager(manager: BCMWalletManagerContainer.BCMWalletManager) {
         mManager = manager
     }
 

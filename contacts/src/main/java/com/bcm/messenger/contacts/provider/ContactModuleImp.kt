@@ -26,6 +26,7 @@ import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.activity.SearchActivity
 import com.bcm.messenger.common.utils.AmeAppLifecycle
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.contacts.BcmUserCardActivity
 import com.bcm.messenger.contacts.R
 import com.bcm.messenger.contacts.logic.BcmContactLogic
@@ -66,19 +67,19 @@ class ContactModuleImp : IContactModule {
     }
 
     override fun initModule() {
-        AmeModuleCenter.serverDispatcher(accountContext).addListener(contactRequestReceiver)
+        AmeModuleCenter.serverDispatcher().addListener(contactRequestReceiver)
     }
 
     override fun uninitModule() {
-        AmeModuleCenter.serverDispatcher(accountContext).removeListener(contactRequestReceiver)
+        AmeModuleCenter.serverDispatcher().removeListener(contactRequestReceiver)
     }
 
     override fun clear() {
-        BcmFinderManager.get().clearRecord()
+        BcmFinderManager.get(accountContext).clearRecord()
     }
 
     override fun openSearch(context: Context) {
-        SearchActivity.callSearchActivity(context, "", false, false, CurrentSearchFragment::class.java.name, RecentSearchFragment::class.java.name, 0)
+        SearchActivity.callSearchActivity(context, accountContext, "", false, false, CurrentSearchFragment::class.java.name, RecentSearchFragment::class.java.name, 0)
     }
 
     override fun openContactDataActivity(context: Context, address: Address, nick: String?) {
@@ -88,7 +89,7 @@ class ContactModuleImp : IContactModule {
         if (context !is Activity) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        context.startActivity(intent)
+        context.startBcmActivity(accountContext, intent)
     }
 
     override fun openContactDataActivity(context: Context, address: Address, fromGroup: Long) {
@@ -98,7 +99,7 @@ class ContactModuleImp : IContactModule {
         if (context !is Activity) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        context.startActivity(intent)
+        context.startBcmActivity(accountContext, intent)
     }
 
     override fun openContactDataActivity(context: Context, address: Address, nick: String?, fromGroup: Long) {
@@ -109,7 +110,7 @@ class ContactModuleImp : IContactModule {
         if (context !is Activity) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        context.startActivity(intent)
+        context.startBcmActivity(accountContext, intent)
     }
 
     override fun discernScanData(context: Context, qrCode: String, callback: ((result: Boolean) -> Unit)?) {
@@ -138,7 +139,7 @@ class ContactModuleImp : IContactModule {
                         }else {
                             val recipientSetting = Recipient.fromJson(qrCode)
                             if (recipientSetting == null || recipientSetting.uid.isNullOrEmpty()) {
-                                BcmRouter.getInstance().get(ARouterConstants.Activity.QR_DISPLAY).putString(ARouterConstants.PARAM.PARAM_QR_CODE, qrCode).navigation(context)
+                                BcmRouter.getInstance().get(ARouterConstants.Activity.QR_DISPLAY).putString(ARouterConstants.PARAM.PARAM_QR_CODE, qrCode).startBcmActivity(accountContext, context)
                                 callback?.invoke(false)
                             } else {
                                 scanRecipientQrCode(context, qrCode, true, callback)
@@ -198,7 +199,7 @@ class ContactModuleImp : IContactModule {
         }
         Observable.create(ObservableOnSubscribe<Address> {
 
-            val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(recipientQR.uid), false)
+            val recipient = Recipient.from(accountContext, Address.fromSerialized(recipientQR.uid), false)
             it.onNext(recipient.address)
             it.onComplete()
 
@@ -236,8 +237,8 @@ class ContactModuleImp : IContactModule {
         Observable.create(ObservableOnSubscribe<Boolean> {
 
             for (address in addressList) {
-                val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, address, false)
-                Repository.getRecipientRepo()?.setBlocked(recipient, block)
+                val recipient = Recipient.from(accountContext, address, false)
+                Repository.getRecipientRepo(accountContext)?.setBlocked(recipient, block)
                 notify(true, address, it)
             }
 
@@ -259,15 +260,15 @@ class ContactModuleImp : IContactModule {
 
         Observable.create(ObservableOnSubscribe<Boolean> {
 
-            val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, address, false)
+            val recipient = Recipient.from(accountContext, address, false)
             if (recipient.isBlocked == block) {
                 it.onNext(true)
                 it.onComplete()
                 return@ObservableOnSubscribe
             }
-            Repository.getRecipientRepo()?.setBlocked(recipient, block)
+            Repository.getRecipientRepo(accountContext)?.setBlocked(recipient, block)
 
-            AmeModuleCenter.accountJobMgr()?.add(MultiDeviceBlockedUpdateJob(AppContextHolder.APP_CONTEXT))
+            AmeModuleCenter.accountJobMgr(accountContext)?.add(MultiDeviceBlockedUpdateJob(AppContextHolder.APP_CONTEXT))
 
             it.onNext(true)
             it.onComplete()
@@ -342,7 +343,7 @@ class ContactModuleImp : IContactModule {
 
     override fun handleFriendPropertyChanged(targetUid: String, callback: ((result: Boolean) -> Unit)?) {
         Observable.create<Boolean> {
-            mContactLogic.handleFriendPropertyChanged(Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(targetUid), false)) { res ->
+            mContactLogic.handleFriendPropertyChanged(Recipient.from(accountContext, Address.fromSerialized(targetUid), false)) { res ->
                 it.onNext(res)
                 it.onComplete()
             }
@@ -381,7 +382,7 @@ class ContactModuleImp : IContactModule {
 
     override fun updatePrivacyProfile(context: Context, recipient: Recipient, newEncryptName: String?, newEncryptAvatarLD: String?, newEncryptAvatarHD: String?, allowStranger: Boolean) {
         mProfileLogic.handlePrivacyProfileChanged(context, recipient, recipient.privacyProfile, newEncryptName, newEncryptAvatarLD, newEncryptAvatarHD, allowStranger)
-        Repository.getRecipientRepo()?.setPrivacyProfile(recipient, recipient.privacyProfile)
+        Repository.getRecipientRepo(accountContext)?.setPrivacyProfile(recipient, recipient.privacyProfile)
 
     }
 

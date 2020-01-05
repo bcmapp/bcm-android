@@ -2,22 +2,23 @@ package com.bcm.messenger.contacts
 
 import android.os.Bundle
 import android.view.View
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
-import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.recipients.RecipientModifiedListener
+import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
-import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.utils.RxBus
+import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.contacts_activity_handle_friend_request.*
-import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.recipients.RecipientModifiedListener
 
 /**
  * Created by Kin on 2019/5/17
@@ -69,7 +70,7 @@ class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListen
     private fun sendReply(approve: Boolean) {
         ALog.i(TAG, "Start to send reply approve $approve")
         AmePopup.loading.show(this)
-        AmeModuleCenter.contact().replyFriend(recipient.address.serialize(), approve, request) {
+        AmeModuleCenter.contact(getAccountContext())?.replyFriend(recipient.address.serialize(), approve, request) {
             AmePopup.loading.dismiss()
             if (it) {
                 RxBus.post(HANDLED_REQ, Pair(request.id ?: 0L, true))
@@ -88,10 +89,10 @@ class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListen
     }
 
     private fun initData() {
-        recipient = Recipient.from(this, Address.fromSerialized(request.proposer), true)
+        recipient = Recipient.from(getAccountContext(), Address.fromSerialized(request.proposer), true)
         recipient.addListener(this)
 
-        handle_req_avatar.setPhoto(recipient)
+        handle_req_avatar.setPhoto(getAccountContext(), recipient)
         handle_req_name.text = recipient.name
 
         if (request.memo.isNotEmpty()) {
@@ -106,7 +107,7 @@ class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListen
         Observable.create<BcmFriendRequest> {
             val id = intent.getLongExtra("id", -1L)
             if (id != -1L) {
-                it.onNext(UserDatabase.getDatabase().friendRequestDao().query(id))
+                it.onNext(UserDatabase.getDatabase(getAccountContext()).friendRequestDao().query(id))
                 ALog.logForSecret(TAG, "Get id = $id request")
             }
             it.onComplete()
@@ -123,7 +124,7 @@ class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListen
     override fun onModified(recipient: Recipient) {
         this.recipient = recipient
 
-        handle_req_avatar.setPhoto(recipient)
+        handle_req_avatar.setPhoto(getAccountContext(), recipient)
         handle_req_name.text = recipient.name
     }
 }

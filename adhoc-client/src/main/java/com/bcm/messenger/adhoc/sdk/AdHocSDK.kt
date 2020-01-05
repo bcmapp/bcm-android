@@ -23,11 +23,14 @@ import com.bcm.imcore.im.util.secure.IDHHelper
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.common.AmeNotification
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
+import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getString
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.ble.BleUtil
@@ -158,7 +161,7 @@ object AdHocSDK {
         sdkApi.addAdHocListener(adHocListener)
         sdkApi.init(object :IAccountAuth.Stub() {
             override fun sign(data: ByteArray): ByteArray {
-                val priKey: ECPrivateKey = Curve.decodePrivatePoint(BCMEncryptUtils.getMyPrivateKey(AppContextHolder.APP_CONTEXT))
+                val priKey: ECPrivateKey = Curve.decodePrivatePoint(BCMEncryptUtils.getMyPrivateKey(AMELogin.majorContext))
                 return BCMPrivateKeyUtils.sign(priKey, data)
             }
 
@@ -169,7 +172,7 @@ object AdHocSDK {
             }
 
             override fun getPublicKey(): ByteArray {
-                return BCMEncryptUtils.getMyPublicKey(AppContextHolder.APP_CONTEXT)
+                return BCMEncryptUtils.getMyPublicKey(AMELogin.majorContext)
             }
 
             override fun getUid(): String {
@@ -177,7 +180,7 @@ object AdHocSDK {
             }
 
             override fun getName(): String {
-                return Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(AMELogin.majorUid), true).name
+                return Recipient.from(AMELogin.majorContext, Address.fromSerialized(AMELogin.majorUid), true).name
             }
 
             override fun getAccountDir(): String {

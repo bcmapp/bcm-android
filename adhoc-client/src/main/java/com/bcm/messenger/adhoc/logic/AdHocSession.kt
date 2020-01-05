@@ -2,8 +2,8 @@ package com.bcm.messenger.adhoc.logic
 
 import com.bcm.messenger.adhoc.util.AdHocUtil
 import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.utility.AppContextHolder
 
 data class AdHocSession(val sessionId:String,
                         val cid:String,
@@ -50,7 +50,7 @@ data class AdHocSession(val sessionId:String,
             AdHocChannelLogic.getChannel(cid)?.viewName() ?: cid
         } else {
             if (mRecipient == null) {
-                mRecipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(uid), true)
+                mRecipient = Recipient.from(AMELogin.majorContext, Address.fromSerialized(uid), true)
             }
             mRecipient?.name ?: uid
         }
