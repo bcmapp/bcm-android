@@ -79,11 +79,11 @@ class LoginModuleImpl : ILoginModule
     }
 
     override fun genTime(uid: String): Long {
-        return AmeLoginLogic.accountHistory.getAccount(uid)?.genKeyTime ?: 0
+        return AmeLoginLogic.getAccount(uid)?.genKeyTime ?: 0
     }
 
     override fun registrationId(uid: String): Int {
-        return AmeLoginLogic.getMajorAccount()?.registrationId ?: 0
+        return AmeLoginLogic.getAccount(uid)?.registrationId ?: 0
     }
 
     override fun gcmToken(): String {
@@ -99,15 +99,15 @@ class LoginModuleImpl : ILoginModule
     }
 
     override fun signalingKey(uid: String): String? {
-        return AmeLoginLogic.getMajorAccount()?.signalingKey
+        return AmeLoginLogic.getAccount(uid)?.signalingKey
     }
 
     override fun isSignedPreKeyRegistered(uid: String): Boolean {
-        return AmeLoginLogic.getMajorAccount()?.signedPreKeyRegistered ?: false
+        return AmeLoginLogic.getAccount(uid)?.signedPreKeyRegistered ?: false
     }
 
     override fun setSignedPreKeyRegistered(uid: String, registered: Boolean) {
-        val accountData = AmeLoginLogic.getMajorAccount()
+        val accountData = AmeLoginLogic.getAccount(uid)
         if (accountData != null) {
             accountData.signedPreKeyRegistered = registered
             AmeLoginLogic.saveAccount(accountData)
@@ -150,8 +150,8 @@ class LoginModuleImpl : ILoginModule
         return AmeLoginLogic.mySupport()
     }
 
-    override fun refreshMySupport2Server() {
-        AmeLoginLogic.refreshMySupportFeature()
+    override fun refreshMySupport2Server(accountContext: AccountContext) {
+        AmeLoginLogic.refreshMySupportFeature(accountContext)
     }
 
     override fun restoreLastLoginState() {
@@ -170,8 +170,8 @@ class LoginModuleImpl : ILoginModule
         }
     }
 
-    override fun continueLoginSuccess() {
-        AmeLoginLogic.initAfterLoginSuccess()
+    override fun continueLoginSuccess(accountContext: AccountContext) {
+        AmeLoginLogic.initAfterLoginSuccess(accountContext)
     }
 
     override fun refreshPrekeys(accountContext: AccountContext) {
@@ -182,8 +182,8 @@ class LoginModuleImpl : ILoginModule
         AmeLoginLogic.rotateSignedPreKey(accountContext)
     }
 
-    override fun updateAllowReceiveStrangers(allow: Boolean, callback: ((succeed: Boolean) -> Unit)?) {
-        AmeLoginLogic.updateAllowReceiveStrangers(allow, callback)
+    override fun updateAllowReceiveStrangers(accountContext: AccountContext, allow: Boolean, callback: ((succeed: Boolean) -> Unit)?) {
+        AmeLoginLogic.updateAllowReceiveStrangers(accountContext, allow, callback)
     }
 
     override fun getAccountContext(uid: String): AccountContext {

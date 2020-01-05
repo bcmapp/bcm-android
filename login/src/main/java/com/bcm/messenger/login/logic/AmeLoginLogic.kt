@@ -10,6 +10,7 @@ import com.bcm.messenger.common.config.BcmFeatureSupport
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.MasterSecretUtil
 import com.bcm.messenger.common.crypto.PreKeyUtil
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.database.repositories.IdentityRepo
 import com.bcm.messenger.common.database.repositories.Repository
@@ -17,16 +18,15 @@ import com.bcm.messenger.common.gcm.FcmUtil
 import com.bcm.messenger.common.grouprepository.room.database.GroupDatabase
 import com.bcm.messenger.common.metrics.ReportUtil
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.AmeProvider
+import com.bcm.messenger.common.provider.IUmengModule
+import com.bcm.messenger.common.provider.accountmodule.IWalletModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.service.RotateSignedPreKeyListener
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.common.provider.accountmodule.IGroupModule
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
-import com.bcm.messenger.common.provider.accountmodule.IWalletModule
 import com.bcm.messenger.login.R
 import com.bcm.messenger.login.bean.*
 import com.bcm.messenger.utility.AmeTimeUtil
@@ -181,18 +181,18 @@ object AmeLoginLogic {
 
     }
 
-    private fun handleLocalLogin(uid: String, context: Context) {
+    private fun handleLocalLogin(accountContext: AccountContext, context: Context) {
 
         val currentAccount = getMajorAccount() ?: return
         RotateSignedPreKeyListener.schedule(context)
 
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onAccountLogin(AppContextHolder.APP_CONTEXT, currentAccount.uid)
 
-        AmeProvider.get<IUserModule>(ARouterConstants.Provider.PROVIDER_USER_BASE)?.doForLogin(currentAccount.uid, null, currentAccount.name, currentAccount.avatar)
+        AmeModuleCenter.user(accountContext)?.doForLogin(currentAccount.uid, null, currentAccount.name, currentAccount.avatar)
 
-        AmeProvider.get<IGroupModule>(ARouterConstants.Provider.PROVIDER_GROUP_BASE)?.doOnLogin()
+        AmeModuleCenter.group(accountContext)?.doOnLogin()
 
-        refreshMySupportFeature()
+        refreshMySupportFeature(accountContext)
 
         ReportUtil.loginEnded(true)
 
@@ -286,6 +286,7 @@ object AmeLoginLogic {
     /**
      * do login
      */
+    @SuppressLint("CheckResult")
     private fun login(data: AmeAccountData, password: String, result: (succeed: Boolean, exception: Throwable?, error: String) -> Unit) {
         ReportUtil.loginStartTime = System.currentTimeMillis()
         AmeDispatcher.io.dispatch {
@@ -322,7 +323,7 @@ object AmeLoginLogic {
                 setTmpToken(data.uid, signalPassword)
                 mRegisterNick = data.name
 
-                AmeLoginCore.login(loginParams)
+                AmeLoginCore.login(getAccountContext(data.uid), loginParams)
                         .subscribeOn(AmeDispatcher.singleScheduler)
                         .observeOn(AmeDispatcher.singleScheduler)
                         .doOnNext {
@@ -377,7 +378,7 @@ object AmeLoginLogic {
                     val sign = BCMPrivateKeyUtils.sign(priKey, uid)
                     ALog.logForSecret(TAG, "unregister uid: $uid, sign: $sign")
 
-                    AmeLoginCore.unregister(uid, URLEncoder.encode(sign))
+                    AmeLoginCore.unregister(getAccountContext(uid), URLEncoder.encode(sign))
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.io())
                             .doOnNext {
@@ -464,7 +465,7 @@ object AmeLoginLogic {
                     "", org.whispersystems.signalservice.internal.util.Base64.encodeBytes(getDeviceName().toByteArray()), true, true)
             val regParams = AmeRegisterParams(sign, nonce, accountParams)
 
-            AmeLoginCore.register(regParams)
+            AmeLoginCore.register(getAccountContext(uid), regParams)
                     .subscribeOn(AmeDispatcher.singleScheduler)
                     .observeOn(AmeDispatcher.singleScheduler)
                     .doOnNext {
@@ -504,52 +505,52 @@ object AmeLoginLogic {
 
         if (!DatabaseFactory.isDatabaseExist(AppContextHolder.APP_CONTEXT) || isRegister || (TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT) && TextSecurePreferences.getMigrateFailedCount(AppContextHolder.APP_CONTEXT) < 3)) {
             TextSecurePreferences.setHasDatabaseMigrated(AppContextHolder.APP_CONTEXT)
-            initAfterLoginSuccess(uid, ecKeyPair, password)
+            initAfterLoginSuccess(getAccountContext(uid), ecKeyPair, password)
         } else {
             loginTempData = Triple(uid, ecKeyPair, password)
         }
     }
 
-    fun initAfterLoginSuccess() {
+    fun initAfterLoginSuccess(accountContext: AccountContext) {
         val tempData = loginTempData ?: throw RuntimeException("Login temp data is null!")
-        initAfterLoginSuccess(tempData.first, tempData.second, tempData.third)
+        initAfterLoginSuccess(accountContext, tempData.second, tempData.third)
     }
 
-    private fun initAfterLoginSuccess(uid: String, ecKeyPair: ECKeyPair, password: String) {
-        ALog.logForSecret(TAG, "initAfterLoginSuccess uid: $uid")
+    private fun initAfterLoginSuccess(accountContext: AccountContext, ecKeyPair: ECKeyPair, password: String) {
+        ALog.logForSecret(TAG, "initAfterLoginSuccess uid: ${accountContext.uid}")
 
-        initIdentityKey(uid, ecKeyPair)
+        initIdentityKey(accountContext, ecKeyPair)
 
-        PushUtil.registerPush(getAccountContext(uid))
+        PushUtil.registerPush(accountContext)
 
-        handleLocalLogin(uid, AppContextHolder.APP_CONTEXT)
+        handleLocalLogin(accountContext, AppContextHolder.APP_CONTEXT)
 
         loginTempData = null
     }
 
     @Throws(Exception::class)
-    private fun initIdentityKey(uid: String, ecKeyPair: ECKeyPair) {
+    private fun initIdentityKey(accountContext: AccountContext, ecKeyPair: ECKeyPair) {
         try {
             val identityKeyPair = IdentityKeyPair(IdentityKey(ecKeyPair.publicKey), ecKeyPair.privateKey)
             val records = PreKeyUtil.generatePreKeys(AppContextHolder.APP_CONTEXT)
             val signedPreKey = PreKeyUtil.generateSignedPreKey(AppContextHolder.APP_CONTEXT, identityKeyPair, true)
-            if (!AmeLoginCore.refreshPreKeys(identityKeyPair.publicKey, signedPreKey, records)) {
-                throw Exception("pre key upload failed, uid: $uid")
+            if (!AmeLoginCore.refreshPreKeys(accountContext, identityKeyPair.publicKey, signedPreKey, records)) {
+                throw Exception("pre key upload failed, uid: ${accountContext.uid}")
             }
 
-            Repository.getIdentityRepo(getAccountContext(uid)).saveIdentity(uid, identityKeyPair.publicKey, IdentityRepo.VerifiedStatus.VERIFIED,
+            Repository.getIdentityRepo(accountContext).saveIdentity(accountContext.uid, identityKeyPair.publicKey, IdentityRepo.VerifiedStatus.VERIFIED,
                     true, System.currentTimeMillis(), true)
         } catch (e: Exception) {
             ALog.logForSecret(TAG, "loginSucceed generate prekey or prekey upload failed, ${e.message}", e)
-            quit(getAccountContext(uid), false)
+            quit(accountContext, false)
             ReportUtil.loginEnded(false)
             throw e
         }
     }
 
     @SuppressLint("CheckResult")
-    fun refreshMySupportFeature() {
-        AmeLoginCore.uploadMyFunctionSupport(support)
+    fun refreshMySupportFeature(accountContext: AccountContext) {
+        AmeLoginCore.uploadMyFunctionSupport(accountContext, support)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .doOnError {
@@ -740,10 +741,6 @@ object AmeLoginLogic {
         return path
     }
 
-    fun authPassword(uid: String): String {
-        return accountHistory.getAccount(uid)?.signalPassword ?: ""
-    }
-
     /**
      * query nonce
      */
@@ -756,6 +753,7 @@ object AmeLoginLogic {
                 }
     }
 
+    @SuppressLint("CheckResult")
     private fun requestChallengeTarget(keypair: ECKeyPair, result: (target: String?) -> Unit) {
 
         Observable.create(ObservableOnSubscribe<String> {
@@ -878,8 +876,9 @@ object AmeLoginLogic {
         AmeModuleCenter.accountJobMgr(accountContext)?.add(RotateSignedPreKeyJob(AppContextHolder.APP_CONTEXT))
     }
 
-    fun updateAllowReceiveStrangers(allow: Boolean, callback: ((succeed: Boolean) -> Unit)?) {
-        AmeLoginCore.updateAllowReceiveStrangers(allow)
+    @SuppressLint("CheckResult")
+    fun updateAllowReceiveStrangers(accountContext: AccountContext, allow: Boolean, callback: ((succeed: Boolean) -> Unit)?) {
+        AmeLoginCore.updateAllowReceiveStrangers(accountContext, allow)
                 .observeOn(AmeDispatcher.mainScheduler)
                 .doOnError {
                     callback?.invoke(false)

@@ -68,12 +68,12 @@ interface ILoginModule : IAmeModule {
     /**
      * refresh current client function support flag to server
      */
-    fun refreshMySupport2Server()
+    fun refreshMySupport2Server(accountContext: AccountContext)
 
     /**
      * continue login
      */
-    fun continueLoginSuccess()
+    fun continueLoginSuccess(accountContext: AccountContext)
 
     /**
      * refresh one time key
@@ -88,7 +88,7 @@ interface ILoginModule : IAmeModule {
     /**
      * update stranger message receive flag
      */
-    fun updateAllowReceiveStrangers(allow: Boolean, callback: ((succeed: Boolean) -> Unit)?)
+    fun updateAllowReceiveStrangers(accountContext: AccountContext, allow: Boolean, callback: ((succeed: Boolean) -> Unit)?)
 
     fun getAccountContext(uid: String): AccountContext
     fun refreshOfflineToken()

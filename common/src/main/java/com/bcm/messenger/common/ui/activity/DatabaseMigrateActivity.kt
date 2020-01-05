@@ -69,7 +69,7 @@ class DatabaseMigrateActivity : AppCompatActivity() {
                 migrate_loading.stopAnim()
                 migrate_loading.visibility = View.INVISIBLE
                 if (it == -2) {
-                    doForAlwaysFailed()
+                    doForAlwaysFailed(accountContext)
                 }
                 return@doMigrate
             }
@@ -77,12 +77,12 @@ class DatabaseMigrateActivity : AppCompatActivity() {
             migrate_progress_text.text = String.format("%d%%", (it.toFloat() / 22f * 100).toInt())
 
             if (it == 22) {
-                migrateFinish()
+                migrateFinish(accountContext)
             }
         }
     }
 
-    private fun migrateFinish(isFailed: Boolean = false) {
+    private fun migrateFinish(accountContext: AccountContext, isFailed: Boolean = false) {
         ALog.i(TAG, "Migrate finish")
         migrate_loading.stopAnim()
         migrate_loading.visibility = View.INVISIBLE
@@ -92,7 +92,7 @@ class DatabaseMigrateActivity : AppCompatActivity() {
             ALog.i(TAG, "Continue login progress")
             migrate_progress_text.text = getString(R.string.common_database_migrate_finish_login)
             Observable.create<Unit> {
-                login.continueLoginSuccess()
+                login.continueLoginSuccess(accountContext)
                 it.onNext(Unit)
                 it.onComplete()
             }.subscribeOn(AmeDispatcher.singleScheduler)
@@ -124,7 +124,7 @@ class DatabaseMigrateActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun doForAlwaysFailed() {
+    private fun doForAlwaysFailed(accountContext: AccountContext) {
         ALog.i(TAG, "Migrate failed for 3 times.")
         AlertDialog.Builder(this)
                 .setTitle(R.string.common_database_migrate_failed)
@@ -136,7 +136,7 @@ class DatabaseMigrateActivity : AppCompatActivity() {
                         contactProvider.doForLogin()
 
                         AmeDispatcher.mainThread.dispatch {
-                            migrateFinish(true)
+                            migrateFinish(accountContext,true)
                         }
                     }
                 }
