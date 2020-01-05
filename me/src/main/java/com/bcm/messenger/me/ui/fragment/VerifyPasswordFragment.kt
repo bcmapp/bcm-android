@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -20,7 +20,6 @@ import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.common.utils.showKeyboard
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.ViewUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -35,7 +34,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by Kin on 2018/9/3
  */
-class VerifyPasswordFragment : Fragment() {
+class VerifyPasswordFragment : BaseFragment() {
     private val TAG = "VerifyPasswordFragment"
 
     private var verifyCallback: ((success: Boolean) -> Unit)? = null
@@ -139,7 +138,7 @@ class VerifyPasswordFragment : Fragment() {
                 val weakThis = WeakReference(this)
                 Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
                     try {
-                        val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(realUid), false)
+                        val recipient = Recipient.from(getAccountContext(), Address.fromSerialized(realUid), false)
                         val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
                             avatar
                         } else {

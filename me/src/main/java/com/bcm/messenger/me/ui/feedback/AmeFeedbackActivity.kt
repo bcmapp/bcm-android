@@ -59,7 +59,6 @@ class AmeFeedbackActivity : SwipeBaseActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
         })
 
         feedback_description.post {
@@ -69,6 +68,7 @@ class AmeFeedbackActivity : SwipeBaseActivity() {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == BcmPickPhotoConstants.PICK_PHOTO_REQUEST && data != null) {
             val selectPaths = data.getSerializableExtra(BcmPickPhotoConstants.EXTRA_PATH_LIST) as ArrayList<SelectedModel>
             selectPaths.forEach {
@@ -122,7 +122,7 @@ class AmeFeedbackActivity : SwipeBaseActivity() {
     private fun submit() {
         hideKeyboard()
         AmePopup.loading.show(this)
-        AmeModuleCenter.user().feedback(viewModel.categoryText, feedback_description.text.toString(), viewModel.screenshotlist) { result, cause ->
+        AmeModuleCenter.user(getAccountContext())?.feedback(viewModel.categoryText, feedback_description.text.toString(), viewModel.screenshotlist) { result, cause ->
             AmePopup.loading.dismiss()
             if (result) {
                 AmePopup.result.succeed(this, getString(R.string.me_str_succeed)) {
@@ -132,7 +132,5 @@ class AmeFeedbackActivity : SwipeBaseActivity() {
                 AmePopup.result.failure(this, getString(R.string.me_str_failed))
             }
         }
-
     }
-
 }

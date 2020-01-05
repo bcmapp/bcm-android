@@ -188,7 +188,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
                 val weakThis = WeakReference(this)
                 Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
                     try {
-                        val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(realUid), false)
+                        val recipient = Recipient.from(getAccountContext(), Address.fromSerialized(realUid), false)
                         val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
                             avatar
                         }else {
@@ -202,12 +202,9 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
                 }).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ recipient ->
-
                             weakThis.get()?.relogin_input_pin_nikename?.text = recipient.name
-                            weakThis.get()?.relogin_input_pin_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
-
-                        }, { _ ->
-
+                            weakThis.get()?.relogin_input_pin_avatar?.setPhoto(getAccountContext(), recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                        }, {
                         })
 
             }

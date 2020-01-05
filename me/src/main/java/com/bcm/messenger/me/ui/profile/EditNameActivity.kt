@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
@@ -18,7 +17,6 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.me.R
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.InputLengthFilter
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.route.annotation.Route
@@ -39,15 +37,9 @@ class EditNameActivity : SwipeBaseActivity(), RecipientModifiedListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_fragment_edit_name)
 
-        val accountContext = intent.getParcelableExtra<AccountContext>(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
-        if (accountContext == null) {
-            finish()
-            return
-        }
-
         mForLocal = intent.getBooleanExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, false)
 
-        recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(accountContext.uid), true)
+        recipient = Recipient.from(getAccountContext(), Address.fromSerialized(getAccountContext().uid), true)
         recipient.addListener(this)
         initView()
     }

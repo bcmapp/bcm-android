@@ -8,6 +8,7 @@ import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.login.bean.AmeAccountData
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.fingerprint.BiometricVerifyUtil
@@ -17,13 +18,9 @@ import kotlinx.android.synthetic.main.me_activity_pin_lock_setting.*
 /**
  * bcm.social.01 2018/10/10.
  */
-class PinLockSettingActivity: SwipeBaseActivity() {
+class PinLockSettingActivity : SwipeBaseActivity() {
     companion object {
         const val CHECK_PIN_FOR_SWITCH_FINGER_PRINT = 10
-
-        fun router(activity: Activity){
-            activity.startActivity(Intent(activity, PinLockSettingActivity::class.java))
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +43,7 @@ class PinLockSettingActivity: SwipeBaseActivity() {
         me_switch_6_digit_pin.setSwitchEnable(false)
         me_switch_6_digit_pin.setOnClickListener {
             val pinSize = AmePinLogic.lengthOfPin()
-            if (pinSize == PinInputActivity.INPUT_SIZE_6){
+            if (pinSize == PinInputActivity.INPUT_SIZE_6) {
                 PinInputActivity.routerChangedPin(this, PinInputActivity.INPUT_SIZE_4)
             } else {
                 PinInputActivity.routerChangedPin(this, PinInputActivity.INPUT_SIZE_6)
@@ -85,41 +82,37 @@ class PinLockSettingActivity: SwipeBaseActivity() {
 
     }
 
-    private fun updateSetting(){
+    private fun updateSetting() {
         me_switch_6_digit_pin.setSwitchStatus(AmePinLogic.lengthOfPin() == PinInputActivity.INPUT_SIZE_6)
         if (BiometricVerifyUtil.canUseBiometricFeature()) {
             me_pin_unlock_with_fingerprint.setSwitchStatus(AmePinLogic.isUnlockWithFingerprintEnable())
         }
 
-        val appLockTime = AmePinLogic.appLockTime()
-        val text = when(appLockTime){
+        val text = when (AmePinLogic.appLockTime()) {
             AmeAccountData.APP_LOCK_5_MIN -> getString(R.string.me_pin_lock_5_minutes)
             AmeAccountData.APP_LOCK_INSTANTLY -> getString(R.string.me_pin_lock_instantly)
             else -> getString(R.string.me_pin_lock_one_hour)
         }
 
         me_pin_lock_auto.setTip(content = text)
-
     }
 
     override fun onResume() {
         super.onResume()
-        if (!AmePinLogic.hasPin()){
-            PinLockInitActivity.router(this)
-            me_disable_pin.postDelayed({finish()}, 50)
-        }
-        else {
+        if (!AmePinLogic.hasPin()) {
+            val intent = Intent(this, PinLockInitActivity::class.java)
+            startBcmActivity(getAccountContext(), intent)
+            me_disable_pin.postDelayed({ finish() }, 50)
+        } else {
             updateSetting()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CHECK_PIN_FOR_SWITCH_FINGER_PRINT && resultCode == Activity.RESULT_OK){
+        if (requestCode == CHECK_PIN_FOR_SWITCH_FINGER_PRINT && resultCode == Activity.RESULT_OK) {
             AmePinLogic.enableUnlockWithFingerprint(!AmePinLogic.isUnlockWithFingerprintEnable())
             me_pin_unlock_with_fingerprint.setSwitchStatus(AmePinLogic.isUnlockWithFingerprintEnable())
         }
     }
-
-
 }

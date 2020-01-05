@@ -1,6 +1,5 @@
 package com.bcm.messenger.me.ui.pinlock
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -8,16 +7,12 @@ import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmePinLogic
 import kotlinx.android.synthetic.main.me_activity_init_pin_lock.*
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.utils.startBcmActivity
 
 /**
  * bcm.social.01 2018/10/10.
  */
 class PinLockInitActivity : SwipeBaseActivity() {
-    companion object {
-        fun router(activity: Activity) {
-            activity.startActivity(Intent(activity, PinLockInitActivity::class.java))
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +31,8 @@ class PinLockInitActivity : SwipeBaseActivity() {
     override fun onResume() {
         super.onResume()
         if (AmePinLogic.hasPin()) {
-            PinLockSettingActivity.router(this)
+            val intent = Intent(this, PinLockSettingActivity::class.java)
+            startBcmActivity(getAccountContext(), intent)
             me_enable_pin_lock.postDelayed({
                 finish()
             }, 50)

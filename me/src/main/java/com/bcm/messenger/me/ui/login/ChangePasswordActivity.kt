@@ -1,8 +1,6 @@
 package com.bcm.messenger.me.ui.login
 
 import android.os.Bundle
-import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.me.R
 
@@ -11,16 +9,7 @@ class ChangePasswordActivity : SwipeBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_change_password)
 
-        val accountContext = intent.getParcelableExtra<AccountContext>(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
-        if (accountContext == null) {
-            finish()
-            return
-        }
-
         val fragment = ChangePasswordFragment()
-        fragment.arguments = Bundle().apply {
-            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
-        }
         initFragment(R.id.change_password_container, fragment, null)
     }
 

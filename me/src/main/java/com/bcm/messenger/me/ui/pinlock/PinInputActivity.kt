@@ -10,11 +10,9 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getNavigationBarHeight
-import com.bcm.messenger.common.utils.getStatusBarHeight
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.fingerprint.BiometricVerifyUtil
 import com.bcm.messenger.me.logic.AmePinLogic
@@ -51,34 +49,34 @@ class PinInputActivity : SwipeBaseActivity() {
         const val DISABLE_PIN = 6
         const val CHECK_PIN = 7
 
-        fun router(activity: Activity, pinSize: Int, viewStyle: Int) {
+        fun router(activity: SwipeBaseActivity, pinSize: Int, viewStyle: Int) {
             val intent = Intent(activity, PinInputActivity::class.java)
             intent.putExtra(INPUT_STYPE, viewStyle)
             intent.putExtra(INPUT_SIZE, pinSize)
-            activity.startActivity(intent)
+            activity.startBcmActivity(activity.getAccountContext(), intent)
         }
 
-        fun routerChangedPin(activity: Activity, newPinStyle: Int) {
+        fun routerChangedPin(activity: SwipeBaseActivity, newPinStyle: Int) {
             val intent = Intent(activity, PinInputActivity::class.java)
             intent.putExtra(INPUT_STYPE, CHANGE_PIN)
             intent.putExtra(INPUT_SIZE, AmePinLogic.lengthOfPin())
             intent.putExtra(NEW_PIN_STYLE, newPinStyle)
-            activity.startActivity(intent)
+            activity.startBcmActivity(activity.getAccountContext(), intent)
         }
 
-        fun routerCheckPin(activity: Activity, requestCode: Int) {
+        fun routerCheckPin(activity: SwipeBaseActivity, requestCode: Int) {
             val intent = Intent(activity, PinInputActivity::class.java)
             intent.putExtra(INPUT_STYPE, CHECK_PIN)
             intent.putExtra(INPUT_SIZE, AmePinLogic.lengthOfPin())
             intent.putExtra(CHECK_PIN_REQUEST_CODE, requestCode)
-            activity.startActivityForResult(intent, requestCode)
+            activity.startBcmActivityForResult(activity.getAccountContext(), intent, requestCode)
         }
 
         fun routerVerifyUnlock(activity: Activity) {
             val intent = Intent(activity, PinInputActivity::class.java)
             intent.putExtra(INPUT_STYPE, VERIFY_UNLOCK)
             intent.putExtra(INPUT_SIZE, AmePinLogic.lengthOfPin())
-            activity.startActivity(intent)
+            activity.startBcmActivity(AMELogin.majorContext, intent)
         }
     }
 

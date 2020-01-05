@@ -3,8 +3,6 @@ package com.bcm.messenger.me.ui.login.backup
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.fragment.VerifyPasswordFragment
@@ -37,27 +35,15 @@ class VerifyFingerprintActivity : SwipeBaseActivity() {
     }
 
     private fun initView() {
-        val accountContext = intent.getParcelableExtra<AccountContext>(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
-        if (accountContext == null) {
-            ALog.e(TAG, "Account context has not been passed from previous activity!")
-            finish()
-            return
-        }
-
-        switchToPasswordFragment(accountContext)
+        switchToPasswordFragment()
     }
 
-    private fun switchToPasswordFragment(accountContext: AccountContext) {
+    private fun switchToPasswordFragment() {
         val f = VerifyPasswordFragment()
                 .setHasFingerprint(false)
                 .setHasLockout(false)
                 .setCallback(this::handleCallback)
-        f.arguments = Bundle().apply {
-            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
-        }
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.container, f)
-                .commitAllowingStateLoss()
+        initFragment(R.id.container, f, null)
     }
 
     private fun handleCallback(success: Boolean) {

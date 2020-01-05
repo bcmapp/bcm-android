@@ -5,7 +5,6 @@ import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.view.View
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.FullTransSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
@@ -45,7 +44,6 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
     private val TAG = "ImageViewActivity"
 
     private lateinit var recipient: Recipient
-    private lateinit var accountContext: AccountContext
     private var futureBitmap: Bitmap? = null
     private var isSaving = false
     private var mForLocal = false
@@ -58,13 +56,6 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
         mForLocal = intent.getBooleanExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, false)
         mEditable = intent.getBooleanExtra(ARouterConstants.PARAM.ME.PROFILE_EDIT, true)
 
-        val accountContext = intent.getParcelableExtra<AccountContext>(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
-        if (accountContext == null) {
-            finish()
-            return
-        }
-
-        this.accountContext = accountContext
         if (!mEditable) {
             photo_preview_dock.setRightInvisible()
         } else {
@@ -81,7 +72,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
         })
 
         try {
-            recipient = Recipient.from(this, Address.fromSerialized(accountContext.uid), true)
+            recipient = Recipient.from(getAccountContext(), Address.fromSerialized(getAccountContext().uid), true)
         } catch (ex: Exception) {
             ALog.e(TAG, "get major recipient fail", ex)
             finish()
@@ -249,7 +240,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
             lp.height = target
             avatar_container.layoutParams = lp
         }
-        avatar_container.setPhoto(accountContext, recipient, photoType)
+        avatar_container.setPhoto(getAccountContext(), recipient, photoType)
     }
 
     override fun onModified(recipient: Recipient) {

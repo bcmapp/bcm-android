@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.provider.IContactModule
@@ -22,8 +21,8 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.me_activity_block_users.*
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.route.api.BcmRouter
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -37,7 +36,7 @@ class BlockUsersActivity : SwipeBaseActivity() {
     private var adapter: BlockUserAdapter? = null
 
     private val selectList: MutableList<Recipient> = ArrayList()
-    private val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
+    private var contactProvider: IContactModule? = null
 
     private var mRightMenu: TextView? = null
 
@@ -46,7 +45,6 @@ class BlockUsersActivity : SwipeBaseActivity() {
         setContentView(R.layout.me_activity_block_users)
 
         block_user_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
-
             override fun onClickLeft() {
                 if (isEdit) selectBack()
                 else finish()
@@ -59,6 +57,8 @@ class BlockUsersActivity : SwipeBaseActivity() {
         })
 
         mRightMenu = block_user_title_bar.getRightView().second as? TextView
+
+        contactProvider = AmeModuleCenter.contact(getAccountContext())
 
         initAdapter()
     }
@@ -155,7 +155,7 @@ class BlockUsersActivity : SwipeBaseActivity() {
 
         @SuppressLint("CheckResult")
         fun remove(recipient: Recipient) {
-            contactProvider.blockContact(recipient.address, false) {
+            contactProvider?.blockContact(recipient.address, false) {
                 if (it) {
                     blockUserList.remove(recipient)
                     callback.invoke(blockUserList.size)
@@ -170,8 +170,7 @@ class BlockUsersActivity : SwipeBaseActivity() {
                 recordBlockList.removeAll(list)
 
                 val addressList = list.map { it.address }
-                contactProvider.blockContact(addressList, block = false) { resultList ->
-
+                contactProvider?.blockContact(addressList, block = false) { resultList ->
                     for (address in resultList) {
                         val r = list.find { it.address == address }
                         if (r != null) {

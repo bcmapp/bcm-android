@@ -15,9 +15,7 @@ import com.bcm.route.annotation.Route
 
 @Route(routePath = ARouterConstants.Activity.VERIFY_PASSWORD)
 class VerifyKeyActivity : SwipeBaseActivity() {
-
     companion object {
-
         const val ACCOUNT_ID = "account_id"
         const val BACKUP_JUMP_ACTION = "BACKUP_JUMP_ACTION"
         const val NEED_FINISH = "NEED_FINISH"
@@ -44,18 +42,12 @@ class VerifyKeyActivity : SwipeBaseActivity() {
         arg?.putBoolean(NEED_FINISH, true)
         if (controlType == DELETE_PROFILE || controlType == SHOW_QRCODE_BACKUP || controlType == CHANGE_PIN || controlType == CLEAR_PIN) {
             val f = VerifyPasswordFragment()
-            f.arguments = arg
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.register_container, f)
-                    .commit()
+            initFragment(R.id.register_container, f, arg)
         } else {
             if (controlType == LOGIN_PROFILE) {
                 val f = LoginVerifyPinFragment()
                 arg?.putString(RegistrationActivity.RE_LOGIN_ID, intent.getStringExtra(RegistrationActivity.RE_LOGIN_ID))
-                f.arguments = arg
-                supportFragmentManager.beginTransaction()
-                        .replace(R.id.register_container, f)
-                        .commit()
+                initFragment(R.id.register_container, f, arg)
             }
         }
     }

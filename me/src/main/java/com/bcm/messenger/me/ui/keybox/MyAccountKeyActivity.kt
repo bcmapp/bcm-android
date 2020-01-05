@@ -12,8 +12,6 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.core.content.FileProvider
-import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
@@ -48,15 +46,12 @@ import java.util.*
 class MyAccountKeyActivity : SwipeBaseActivity() {
 
     private val TAG = "MyAccountKeyActivity"
-    private lateinit var accountContext: AccountContext
 
     override fun onCreate(savedInstanceState: Bundle?) {
         disableStatusBarLightMode()
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_my_account_key)
-
-        accountContext = intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
 
         account_my_title.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
@@ -98,11 +93,11 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
         keybox_account_divider?.visibility = View.GONE
         keybox_account_qr?.visibility = View.VISIBLE
 
-        val genKeyTime = AmeLoginLogic.accountHistory.getGenKeyTime(accountContext.uid)
-        val backupTime = AmeLoginLogic.accountHistory.getBackupTime(accountContext.uid)
+        val genKeyTime = AmeLoginLogic.accountHistory.getGenKeyTime(getAccountContext().uid)
+        val backupTime = AmeLoginLogic.accountHistory.getBackupTime(getAccountContext().uid)
 
         // 新老帐号兼容
-        val account = AmeLoginLogic.getAccount(accountContext.uid)
+        val account = AmeLoginLogic.getAccount(getAccountContext().uid)
         if (account != null) {
             createAccountQRCodeWithAccountData(account)
         }
@@ -141,7 +136,7 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
     }
 
     private fun fetchProfile() {
-        val account = AmeLoginLogic.accountHistory.getAccount(accountContext.uid)
+        val account = AmeLoginLogic.accountHistory.getAccount(getAccountContext().uid)
         val realUid: String? = account?.uid
         val name: String? = account?.name
         val avatar: String? = account?.avatar
@@ -150,7 +145,7 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
             val weakThis = WeakReference(this)
             Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
                 try {
-                    val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(realUid), false)
+                    val recipient = Recipient.from(getAccountContext(), Address.fromSerialized(realUid), false)
                     val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
                         avatar
                     } else {
@@ -166,7 +161,7 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
                     .subscribe({ recipient ->
                         weakThis.get()?.keybox_account_openid?.text = "${getString(R.string.me_id_title)}: $realUid"
                         weakThis.get()?.keybox_account_name?.text = recipient.name
-                        weakThis.get()?.keybox_account_img?.setPhoto(accountContext, recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                        weakThis.get()?.keybox_account_img?.setPhoto(getAccountContext(), recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
                     }, {
                     })
         }

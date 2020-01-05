@@ -32,15 +32,12 @@ import java.util.regex.Pattern
  */
 class ChangePasswordFragment : AbsRegistrationFragment() {
     private val TAG = "ChangePasswordFragment"
-    private lateinit var accountContext: AccountContext
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.me_fragment_change_password, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        accountContext = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) ?: return
-
         change_password_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
                 activity?.finish()
@@ -158,7 +155,7 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
             userProvider.changePinPasswordAsync(activity as? AppCompatActivity, origin_pwd_edit.text.toString(), confirm_pwd_edit.text.toString()) { result, _ ->
                 if (result) {
                     AmePopup.loading.dismiss()
-                    AmeLoginLogic.accountHistory.resetBackupState(accountContext.uid)
+                    AmeLoginLogic.accountHistory.resetBackupState(getAccountContext().uid)
                     AmePopup.result.succeed(activity, getString(R.string.me_change_password_success)) {
                         try {
                             //更改密码之后，提示备份账号
@@ -171,7 +168,7 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
                                     }
                                     .withOkListener {
                                         val intent = Intent(activity, MyAccountKeyActivity::class.java)
-                                        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, accountContext.uid)
+                                        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, getAccountContext().uid)
                                         startActivity(intent)
 
                                         activity?.finish()

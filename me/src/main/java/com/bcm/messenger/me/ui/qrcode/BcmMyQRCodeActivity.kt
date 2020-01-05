@@ -18,19 +18,10 @@ class BcmMyQRCodeActivity: SwipeBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val accountContext = intent.getParcelableExtra<AccountContext>(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
-        if (accountContext == null) {
-            finish()
-            return
-        }
-
         setContentView(R.layout.me_activity_my_qr_code)
 
         val fragment = MyQRFragment()
-        val bundle = Bundle().apply {
-            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
-        }
-        initFragment(R.id.me_qr_fragment, fragment, bundle)
+        initFragment(R.id.me_qr_fragment, fragment, null)
 
         my_qr_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
