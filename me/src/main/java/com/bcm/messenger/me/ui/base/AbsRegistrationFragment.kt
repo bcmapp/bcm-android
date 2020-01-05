@@ -3,8 +3,8 @@ package com.bcm.messenger.me.ui.base
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.view.View
-import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.route.api.BcmRouter
@@ -12,7 +12,7 @@ import com.bcm.route.api.BcmRouter
 /**
  * ling created in 2018/6/7
  **/
-abstract class AbsRegistrationFragment : Fragment() {
+abstract class AbsRegistrationFragment : BaseFragment() {
 
     companion object {
         fun showAnimatorForView(view: View?) {

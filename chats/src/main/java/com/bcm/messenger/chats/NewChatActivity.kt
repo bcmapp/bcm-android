@@ -13,16 +13,12 @@ import com.bcm.messenger.common.api.IContactsAction
 import com.bcm.messenger.common.api.IContactsCallback
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.event.HomeTopEvent
-import com.bcm.messenger.common.navigationWithAccountContext
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.startBcmActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.getColorCompat
-import com.bcm.messenger.common.utils.setStatusBarLightMode
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.netswitchy.configure.AmeConfigure
 import com.bcm.route.api.BcmRouter

@@ -1,6 +1,7 @@
 package com.bcm.messenger.common
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Looper
@@ -91,6 +92,18 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         Looper.myQueue().addIdleHandler(idleHandler)
 
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onActivityCreate(this)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val accountContext: AccountContext? = intent?.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        if (accountContext != null) {
+            ALog.w(TAG, "onNewIntent, new accountContext: ${accountContext.uid}")
+            mAccountContext = accountContext
+            mLoginRecipient.removeListener(mLoginModifiedListener)
+            mLoginRecipient = Recipient.login(accountContext)
+            mLoginRecipient.addListener(mLoginModifiedListener)
+        }
     }
 
     override fun finish() {
@@ -206,9 +219,13 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     fun <T : Fragment> initFragment(@IdRes target: Int,
                                             fragment: T,
                                             extras: Bundle?): T {
-        if (extras != null) {
-            fragment.arguments = extras
+        val newArg = Bundle().apply {
+            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, getAccountContext())
         }
+        if (extras != null) {
+            newArg.putAll(extras)
+        }
+        fragment.arguments = newArg
         supportFragmentManager.beginTransaction()
                 .replace(target, fragment)
                 .commitAllowingStateLoss()

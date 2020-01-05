@@ -1,12 +1,12 @@
 package com.bcm.messenger.chats.map
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -19,7 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions
  *
  * Created by zjl on 2018/6/23.
  */
-class GooglePreviewFragment : Fragment(), OnMapReadyCallback {
+class GooglePreviewFragment : BaseFragment(), OnMapReadyCallback {
 
     var mapFragment: SupportMapFragment? = null
     var latitude: Double = 0.0

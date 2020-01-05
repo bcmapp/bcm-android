@@ -34,6 +34,7 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.GsonUtils
+import com.bcm.messenger.utility.bcmhttp.exception.NoContentException
 import com.bcm.messenger.utility.bcmhttp.callback.FileDownCallback
 import com.bcm.messenger.utility.bcmhttp.exception.NoContentException
 import com.bcm.messenger.utility.bcmhttp.facade.AmeEmpty
@@ -244,7 +245,6 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
 
 
     private fun checkUploadPrepare(handledRecipient: Recipient, forName: Boolean): Observable<Boolean> {
-
         ALog.d(TAG, "checkUploadPrepare uid: ${handledRecipient.address}, forName: $forName")
         return Observable.create<Recipient> {
             it.onNext(handledRecipient.resolve())
@@ -270,7 +270,6 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                 .flatMap { toUpload ->
             val recipient = handledRecipient.resolve()
             val privacyProfile = recipient.privacyProfile
-            Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, privacyProfile)
             if (toUpload) {
                 val encryptName = getPrivacyContent(name, privacyProfile.nameKey, privacyProfile.version)
                 ALog.d(TAG, "setEncryptName: $encryptName")
@@ -896,7 +895,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         var profileKeyString = ""
         try {
             val wrapper = SyncHttpWrapper(IMHttp.get(mAccountContext))
-            val profileKeyString = wrapper.get<String>(BcmHttpApiHelper.getApi(PROFILE_KEY_PATH), null, String::class.java)
+            profileKeyString = wrapper.get<String>(BcmHttpApiHelper.getApi(PROFILE_KEY_PATH), null, String::class.java)
 
         }catch (ex: NoContentException) {
             ALog.e(TAG, "downloadProfileKeys getProfileKeys error", ex)
@@ -1158,6 +1157,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             }
         }
 
+
         if (!newEncryptAvatarHD.isNullOrEmpty() && newEncryptAvatarHD != privacyProfile.encryptedAvatarHD) {
             privacyProfile.encryptedAvatarHD = newEncryptAvatarHD
             avatarHdChanged = true
@@ -1348,13 +1348,12 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                             val recipient = data.recipient.resolve()
                             val detail = profileJson.optString(recipient.address.serialize())
                             ALog.d(TAG, "fetch uid: ${recipient.address}, profile : $detail")
-                            var profileData = if (!detail.isNullOrEmpty()) {
+                            val profileData = if (!detail.isNullOrEmpty()) {
                                 GsonUtils.fromJson(detail, PlaintextServiceProfile::class.java)
-
                             }else {
                                 PlaintextServiceProfile()
                             }
-                            handleIndividualRecipient(AppContextHolder.APP_CONTEXT, recipient, profileData, false, data.forceUpdate)
+                            handleIndividualRecipient(AppContextHolder.APP_CONTEXT, recipient, profileData, data.forceUpdate)
                             recipient.setNeedRefreshProfile(false)
                         }
                     }

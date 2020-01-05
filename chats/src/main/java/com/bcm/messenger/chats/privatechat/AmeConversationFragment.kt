@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,12 +16,13 @@ import com.bcm.messenger.chats.components.ConversationItemPopWindow
 import com.bcm.messenger.chats.components.ConversationStickNoticeLayout
 import com.bcm.messenger.chats.components.UnreadMessageBubbleView
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.crypto.MasterSecret
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -36,7 +36,7 @@ import java.util.*
 /**
  * 
  */
-class AmeConversationFragment : Fragment(), RecipientModifiedListener {
+class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
 
     interface ChangeReadStateListener {
         fun onOperateMarkThreadRead()
@@ -101,7 +101,8 @@ class AmeConversationFragment : Fragment(), RecipientModifiedListener {
         initViewModel()
     }
 
-    fun onNewIntent() {
+    override fun onNewIntent() {
+        super.onNewIntent()
         initResource()
         initViewModel()
     }
@@ -136,7 +137,7 @@ class AmeConversationFragment : Fragment(), RecipientModifiedListener {
         this.mLastSeen = activity.intent.getLongExtra(ARouterConstants.PARAM.PRIVATE_CHAT.LAST_SEEN_EXTRA, -1)
         this.mStickNoticeLayout = null
 
-        checkRecipientUpdate(Recipient.from(activity, activity.intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ADDRESS), true))
+        checkRecipientUpdate(Recipient.from(getAccountContext(), activity.intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ADDRESS), true))
     }
 
     private fun initViewModel() {

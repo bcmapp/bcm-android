@@ -6,16 +6,23 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.map.bean.GoogleLocation
-import com.bcm.messenger.common.core.MapApiConstants
-import com.bcm.messenger.common.api.MapBaseInterface
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.api.MapActionCallback
+import com.bcm.messenger.common.api.MapBaseInterface
+import com.bcm.messenger.common.bcmhttp.TPHttp
 import com.bcm.messenger.common.core.LocationItem
+import com.bcm.messenger.common.core.MapApiConstants
+import com.bcm.messenger.common.core.getSelectedLocale
+import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.bcmhttp.callback.JsonDeserializeCallback
+import com.bcm.messenger.utility.bcmhttp.facade.BaseHttp
+import com.bcm.messenger.utility.logger.ALog
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.data.DataBufferUtils
@@ -33,21 +40,13 @@ import com.google.android.gms.tasks.Tasks
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.utils.AppUtil
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import okhttp3.Call
-import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.utility.bcmhttp.callback.JsonDeserializeCallback
-import com.bcm.messenger.utility.bcmhttp.facade.BaseHttp
-import com.bcm.messenger.common.core.getSelectedLocale
-import com.bcm.messenger.common.bcmhttp.TPHttp
 import java.text.DecimalFormat
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
-import kotlin.Exception
 import kotlin.math.sqrt
 
 
@@ -55,7 +54,7 @@ import kotlin.math.sqrt
  * google map fragment
  * Created by zjl on 2018/6/25.
  */
-class GoogleMapFragment : Fragment(), OnMapReadyCallback, MapBaseInterface, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+class GoogleMapFragment : BaseFragment(), OnMapReadyCallback, MapBaseInterface, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private val TAG = "GoogleMapFragment"
     private var mapFragment: SupportMapFragment? = null

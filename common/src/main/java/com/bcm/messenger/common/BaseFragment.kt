@@ -61,4 +61,15 @@ open class BaseFragment : Fragment() {
     protected open fun onLoginRecipientRefresh() {
 
     }
+
+    protected open fun onNewIntent() {
+        val accountContext: AccountContext? = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        if (accountContext != null) {
+            ALog.w(TAG, "onNewIntent, new accountContext: ${accountContext.uid}")
+            mAccountContext = accountContext
+            mAccountRecipient.removeListener(mModifiedListener)
+            mAccountRecipient = Recipient.login(accountContext)
+            mAccountRecipient.addListener(mModifiedListener)
+        }
+    }
 }

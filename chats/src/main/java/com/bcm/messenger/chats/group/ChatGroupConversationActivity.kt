@@ -244,7 +244,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                     override fun onClick(name: String, view: View) {
                         if (groupModel?.myRole() == AmeGroupMemberInfo.OWNER) {
                             Observable.create(ObservableOnSubscribe<Boolean> {
-                                val liveInfo = GroupLiveInfoManager.getInstance().getCurrentLiveInfo(groupId)
+                                val liveInfo = GroupLiveInfoManager.getInstance(getAccountContext()).getCurrentLiveInfo(groupId)
                                 if (liveInfo != null)
                                     it.onNext(liveInfo.liveStatus == GroupLiveInfo.LiveStatus.LIVING.value || liveInfo.liveStatus == GroupLiveInfo.LiveStatus.PAUSE.value)
                                 else {
@@ -389,7 +389,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
             finish()
             return
         }
-        groupRecipient = Recipient.recipientFromNewGroup(this, groupInfo)
+        groupRecipient = Recipient.recipientFromNewGroup(getAccountContext(), groupInfo)
         val newThreadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, -1L)
         if (newThreadId <= 0) {
             ThreadListViewModel.getThreadId(groupRecipient ?: return) {
@@ -557,7 +557,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
     private fun initializeDraft() {
 
         Observable.create(ObservableOnSubscribe<String> {
-            val draftRepo = Repository.getDraftRepo()
+            val draftRepo = Repository.getDraftRepo(getAccountContext())
             val drafts = draftRepo.getDrafts(threadId)
             val draftText = drafts.getSnippet(AppContextHolder.APP_CONTEXT)
             if (!draftText.isNullOrEmpty()) {

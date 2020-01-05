@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.recipients.Recipient
@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.me_fragment_other_profile.*
  *
  * Created by wjh on 2019-12-11
  */
-class OtherProfileFragment : Fragment(), RecipientModifiedListener {
+class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
 
     companion object {
         private const val TAG = "OtherProfileFragment"
@@ -45,7 +45,7 @@ class OtherProfileFragment : Fragment(), RecipientModifiedListener {
             activity?.finish()
             return
         }
-        recipient = Recipient.from(view.context, address, true)
+        recipient = Recipient.from(getAccountContext(), address, true)
         recipient.addListener(this)
         initView()
     }
@@ -175,7 +175,7 @@ class OtherProfileFragment : Fragment(), RecipientModifiedListener {
      */
     private fun initProfile(recipient: Recipient) {
 
-        profile_icon?.setPhoto(recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
+        profile_icon?.setPhoto(getAccountContext(), recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
         profile_name_item?.setTip(recipient.bcmName ?: recipient.address.format())
 
         if (recipient.relationship != RecipientRepo.Relationship.STRANGER && recipient.relationship != RecipientRepo.Relationship.REQUEST) {
@@ -187,7 +187,7 @@ class OtherProfileFragment : Fragment(), RecipientModifiedListener {
             }else {
                 profile_display_icon_notice?.visibility = View.GONE
                 profile_display_icon?.visibility = View.VISIBLE
-                profile_display_icon?.setPhoto(recipient, IndividualAvatarView.LOCAL_PHOTO_TYPE)
+                profile_display_icon?.setPhoto(getAccountContext(), recipient, IndividualAvatarView.LOCAL_PHOTO_TYPE)
             }
             if (recipient.localName.isNullOrEmpty()) {
                 profile_display_alias_item?.setTip(getString(R.string.me_other_local_empty_action))

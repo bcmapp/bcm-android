@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.chats.R
@@ -22,6 +21,7 @@ import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.chats.group.setting.ChatGroupContentClear
 import com.bcm.messenger.chats.group.viewholder.*
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.grouprepository.events.MessageEvent
@@ -52,7 +52,7 @@ import java.util.concurrent.atomic.AtomicLong
 /**
  * Fragment for group chat
  */
-class ChatGroupConversationFragment : Fragment() {
+class ChatGroupConversationFragment : BaseFragment() {
 
     private val TAG = "ChatTTConversationFragment"
     private val GET_COUNT = 100
@@ -109,7 +109,8 @@ class ChatGroupConversationFragment : Fragment() {
         }
     }
 
-    fun onNewIntent() {
+    override fun onNewIntent() {
+        super.onNewIntent()
         initResources()
         initListAdapter()
     }
@@ -206,7 +207,7 @@ class ChatGroupConversationFragment : Fragment() {
         groupId = activity.intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1L)
         groupModel = GroupLogic.getModel(groupId)
         val groupInfo = groupModel?.getGroupInfo() ?: return
-        recipient = Recipient.recipientFromNewGroup(context, groupInfo)
+        recipient = Recipient.recipientFromNewGroup(getAccountContext(), groupInfo)
         lastIndexAtomic.set(0L)
         frontIndexAtomic.set(0L)
         hasFront = false

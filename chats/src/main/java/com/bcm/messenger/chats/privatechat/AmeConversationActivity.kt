@@ -40,7 +40,6 @@ import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
 import com.bcm.messenger.common.imagepicker.bean.SelectedModel
 import com.bcm.messenger.common.mms.*
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.providers.PersistentBlobProvider
@@ -143,7 +142,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
         val address = intent.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
         if (address != null) {
-            mRecipient = Recipient.from(this, address, true)
+            mRecipient = Recipient.from(getAccountContext(), address, true)
             mRecipient.addListener(this)
 
         } else {
@@ -172,7 +171,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
         val address = intent.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
         if (address != null) {
-            val recipient = Recipient.from(this, address, true)
+            val recipient = Recipient.from(getAccountContext(), address, true)
             if (::mRecipient.isInitialized && recipient != mRecipient) {
                 mRecipient.removeListener(this)
                 mRecipient = recipient
@@ -691,7 +690,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     private fun initializeProfiles() {
         mProfileDisposable?.dispose()
-        mProfileDisposable = AmeModuleCenter.contact().fetchProfile(mRecipient) {}
+        mProfileDisposable = AmeModuleCenter.contact(getAccountContext())?.fetchProfile(mRecipient) {}
     }
 
     private fun checkRecipientBlock(callback: (continueAction: Boolean) -> Unit): Boolean {
@@ -813,7 +812,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
     private fun initializeReceivers() {
         recipientsStaleReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                mRecipient = Recipient.from(context, mRecipient.address, true)
+                mRecipient = Recipient.from(getAccountContext(), mRecipient.address, true)
                 mRecipient.addListener(this@AmeConversationActivity)
                 onModified(mRecipient)
                 mFragment.reloadList()
