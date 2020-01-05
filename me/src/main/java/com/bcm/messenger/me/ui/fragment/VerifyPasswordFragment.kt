@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -46,7 +47,6 @@ class VerifyPasswordFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         verify_pin_input_clear.isEnabled = false
         verify_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
@@ -79,7 +79,7 @@ class VerifyPasswordFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        fetchProfile(arguments?.getString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID))
+        fetchProfile(arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT))
 
         updateVerifyInput(verify_pin_input_text.text.isNotEmpty())
 
@@ -128,9 +128,9 @@ class VerifyPasswordFragment : Fragment() {
         }
     }
 
-    private fun fetchProfile(accountId: String?) {
-        if (!accountId.isNullOrEmpty()) {
-            val account = AmeLoginLogic.accountHistory.getAccount(accountId)
+    private fun fetchProfile(accountContext: AccountContext?) {
+        if (accountContext != null) {
+            val account = AmeLoginLogic.accountHistory.getAccount(accountContext.uid)
             val realUid: String? = account?.uid
             val name: String? = account?.name
             val avatar: String? = account?.avatar
@@ -154,10 +154,9 @@ class VerifyPasswordFragment : Fragment() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ recipient ->
                             weakThis.get()?.verify_pin_name?.text = recipient.name
-                            weakThis.get()?.verify_pin_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                            weakThis.get()?.verify_pin_avatar?.setPhoto(accountContext, recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
                         }, {})
             }
-
         } else {
             activity?.finish()
         }

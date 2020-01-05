@@ -5,6 +5,7 @@ import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.view.View
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.FullTransSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
@@ -44,6 +45,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
     private val TAG = "ImageViewActivity"
 
     private lateinit var recipient: Recipient
+    private lateinit var accountContext: AccountContext
     private var futureBitmap: Bitmap? = null
     private var isSaving = false
     private var mForLocal = false
@@ -55,9 +57,17 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
 
         mForLocal = intent.getBooleanExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, false)
         mEditable = intent.getBooleanExtra(ARouterConstants.PARAM.ME.PROFILE_EDIT, true)
+
+        val accountContext = intent.getParcelableExtra<AccountContext>(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        if (accountContext == null) {
+            finish()
+            return
+        }
+
+        this.accountContext = accountContext
         if (!mEditable) {
             photo_preview_dock.setRightInvisible()
-        }else {
+        } else {
             photo_preview_dock.setRightVisible()
         }
         photo_preview_dock.setListener(object : CommonTitleBar2.TitleBarClickListener() {
@@ -71,7 +81,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
         })
 
         try {
-            recipient = Recipient.from(this, intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ADDRESS) as Address, true)
+            recipient = Recipient.from(this, Address.fromSerialized(accountContext.uid), true)
         } catch (ex: Exception) {
             ALog.e(TAG, "get major recipient fail", ex)
             finish()
@@ -87,19 +97,17 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
     private fun handleMore() {
 
         fun openChooseDialog() {
-
             val popBuilder = AmePopup.bottom.newBuilder()
             if (!mForLocal && !recipient.isSelf) {
                 popBuilder.withPopItem(AmeBottomPopup.PopupItem(getString(R.string.common_save_to_album)) {
-
-                    PermissionUtil.checkStorage(this) {granted ->
+                    PermissionUtil.checkStorage(this) { granted ->
                         if (granted) {
                             Observable.create(ObservableOnSubscribe<Boolean> {
                                 try {
                                     val outBitmap = avatar_container?.getPhoto()
                                     if (outBitmap == null) {
                                         it.onNext(false)
-                                    }else {
+                                    } else {
                                         val outputDirectory = StorageUtil.getImageDir()
                                         if (!outputDirectory.exists()) {
                                             outputDirectory.mkdirs()
@@ -121,26 +129,21 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
                                 }
                             }).subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe {success ->
+                                    .subscribe { success ->
                                         if (success) {
                                             AmePopup.result.succeed(this, getString(R.string.common_save_success), true)
                                         } else {
                                             AmePopup.result.succeed(this, getString(R.string.common_save_fail), true)
                                         }
                                     }
-                        }else {
+                        } else {
                             AmePopup.result.succeed(this, getString(R.string.common_save_fail), true)
-
                         }
                     }
-
-                })
-                        .withDoneTitle(getString(R.string.common_cancel))
-
+                }).withDoneTitle(getString(R.string.common_cancel))
             } else {
-
                 popBuilder.withPopItem(AmeBottomPopup.PopupItem(getString(R.string.common_take_photo)) {
-                    PermissionUtil.checkCamera(this) {granted ->
+                    PermissionUtil.checkCamera(this) { granted ->
                         if (granted) {
                             BcmPickPhotoView.Builder(this@ImageViewActivity)
                                     .setCapturePhoto(true)
@@ -153,24 +156,22 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
                                     .build().start()
                         }
                     }
-
-                })
-                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.common_choose_photo)) {
-                    BcmPickPhotoView.Builder(this@ImageViewActivity)
-                            .setCropImage(true)
-                            .addCropCallback(object : CropResultCallback {
-                                override fun cropResult(bmp: Bitmap) {
-                                    onImageCropComplete(bmp)
-                                }
-                            })
-                            .build().start()
-                })
-                .withDismissListener {
-                    if (isLocalAvatarNull()) {
-                        finish()
-                    }
-                }
-                .withDoneTitle(getString(R.string.common_cancel))
+                }).withPopItem(AmeBottomPopup.PopupItem(getString(R.string.common_choose_photo)) {
+                            BcmPickPhotoView.Builder(this@ImageViewActivity)
+                                    .setCropImage(true)
+                                    .addCropCallback(object : CropResultCallback {
+                                        override fun cropResult(bmp: Bitmap) {
+                                            onImageCropComplete(bmp)
+                                        }
+                                    })
+                                    .build().start()
+                        })
+                        .withDismissListener {
+                            if (isLocalAvatarNull()) {
+                                finish()
+                            }
+                        }
+                        .withDoneTitle(getString(R.string.common_cancel))
 
                 if (mForLocal && !recipient.localAvatar.isNullOrEmpty()) {
                     popBuilder.withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_local_profile_reset_button), AmeBottomPopup.PopupItem.CLR_RED) {
@@ -182,7 +183,6 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
                                 })
                                 .withDoneTitle(getString(R.string.common_cancel))
                                 .show(this)
-
                     })
                 }
             }
@@ -197,7 +197,6 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
     }
 
 
-
     override fun onDestroy() {
         super.onDestroy()
         if (::recipient.isInitialized) {
@@ -206,7 +205,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
         if (futureBitmap?.isRecycled == false) {
             try {
                 futureBitmap?.recycle()
-            }catch (ex: Exception) {
+            } catch (ex: Exception) {
                 ALog.e(TAG, "recycle error", ex)
             }
         }
@@ -225,21 +224,20 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
     }
 
     private fun requestPhoto(recipient: Recipient) {
-
         if (isLocalAvatarNull()) {
             image_root?.setBackgroundColor(getColorCompat(R.color.common_color_transparent))
             photo_preview_dock?.visibility = View.GONE
             avatar_container?.visibility = View.GONE
             handleMore()
             return
-        }else {
+        } else {
             image_root?.setBackgroundColor(getColorCompat(R.color.common_color_black))
             photo_preview_dock?.visibility = View.VISIBLE
             avatar_container?.visibility = View.VISIBLE
         }
         val photoType = if (!mForLocal) {
             IndividualAvatarView.PROFILE_PHOTO_TYPE
-        }else {
+        } else {
             IndividualAvatarView.LOCAL_PHOTO_TYPE
         }
 
@@ -251,8 +249,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
             lp.height = target
             avatar_container.layoutParams = lp
         }
-        avatar_container.setPhoto(recipient, photoType)
-
+        avatar_container.setPhoto(accountContext, recipient, photoType)
     }
 
     override fun onModified(recipient: Recipient) {
@@ -279,13 +276,9 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
                 AmePopup.result.succeed(this, getString(R.string.me_edit_save_success_description)) {
                     finish()
                 }
-
-            }else {
+            } else {
                 AmePopup.result.failure(this, getString(R.string.me_edit_save_fail_description))
-
             }
-
         }
-
     }
 }

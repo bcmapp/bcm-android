@@ -9,6 +9,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.repositories.RecipientRepo
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonSettingItem
@@ -17,6 +18,7 @@ import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.provider.UserModuleImp
 import com.bcm.messenger.utility.QuickOpCheck
@@ -24,14 +26,12 @@ import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.me_fragment_other_profile.*
 
 /**
- *
  * Created by wjh on 2019-12-11
+ *
+ * This fragment CAN use major account context.
  */
 class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
-
-    companion object {
-        private const val TAG = "OtherProfileFragment"
-    }
+    private val TAG = "OtherProfileFragment"
 
     private lateinit var recipient: Recipient
 
@@ -64,7 +64,6 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     private fun initView() {
-
         profile_title_bar?.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
                 activity?.finish()
@@ -128,8 +127,7 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
     private fun handleNameEdit(forLocal: Boolean) {
         //如果是自己，则进入的是个人编辑页面，这里可以点击，否则是其他联系人的个人资料页面，这里无法点击，必须是备注那里才可以点击
         if (forLocal) {
-            startActivity(Intent(activity, EditNameActivity::class.java).apply {
-                putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)
+            startBcmActivity(getAccountContext(), Intent(activity, EditNameActivity::class.java).apply {
                 putExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, forLocal)
             })
         }
@@ -140,31 +138,27 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
      */
     private fun handleAvatarEdit(forLocal: Boolean) {
         val intent = Intent(activity, ImageViewActivity::class.java)
-        intent.putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)
         intent.putExtra(ARouterConstants.PARAM.ME.PROFILE_EDIT, true)
         intent.putExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, forLocal)
-        startActivity(intent)
+        startBcmActivity(getAccountContext(), intent)
     }
 
     /**
      * 处理重置备注头像和昵称为profile
      */
     private fun handleReset() {
-        if(recipient.localName.isNullOrEmpty() && recipient.localAvatar.isNullOrEmpty()) {
+        if (recipient.localName.isNullOrEmpty() && recipient.localAvatar.isNullOrEmpty()) {
             ALog.d("ProfileActivity", "handleReset do nothing, because localName and localAvatar is null")
             return
         }
         AmePopup.bottom.newBuilder()
                 .withTitle(getString(R.string.me_local_profile_all_reset_notice, recipient.name))
                 .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_local_profile_reset_button), AmeBottomPopup.PopupItem.CLR_RED) {
-
                     val provider = UserModuleImp()
                     provider.updateNameProfile(recipient, "") {
                         provider.updateAvatarProfile(recipient, null) {
-
                         }
                     }
-
                 })
                 .withDoneTitle(getString(R.string.common_cancel))
                 .show(activity)
@@ -174,32 +168,27 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
      * 初始化profile
      */
     private fun initProfile(recipient: Recipient) {
-
         profile_icon?.setPhoto(getAccountContext(), recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
         profile_name_item?.setTip(recipient.bcmName ?: recipient.address.format())
 
         if (recipient.relationship != RecipientRepo.Relationship.STRANGER && recipient.relationship != RecipientRepo.Relationship.REQUEST) {
-
             if (recipient.localAvatar.isNullOrEmpty()) {
                 profile_display_icon_notice?.visibility = View.VISIBLE
                 profile_display_icon?.visibility = View.GONE
-
-            }else {
+            } else {
                 profile_display_icon_notice?.visibility = View.GONE
                 profile_display_icon?.visibility = View.VISIBLE
                 profile_display_icon?.setPhoto(getAccountContext(), recipient, IndividualAvatarView.LOCAL_PHOTO_TYPE)
             }
             if (recipient.localName.isNullOrEmpty()) {
                 profile_display_alias_item?.setTip(getString(R.string.me_other_local_empty_action))
-
-            }else {
+            } else {
                 profile_display_alias_item?.setTip(recipient.localName ?: "")
             }
             if (recipient.localName.isNullOrEmpty() && recipient.localAvatar.isNullOrEmpty()) {
                 profile_display_clear?.setTextColor(getColorCompat(R.color.common_color_black_70))
-            }else {
+            } else {
                 profile_display_clear?.setTextColor(getColorCompat(R.color.common_content_warning_color))
-
             }
         }
     }

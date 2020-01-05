@@ -1,15 +1,21 @@
 package com.bcm.messenger.common.bcmhttp.interceptor.metrics
 
+import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.metrics.API_TOPIC_ALIYUN
 import com.bcm.messenger.common.metrics.API_TOPIC_AWS_S3
 import com.bcm.messenger.common.metrics.API_TOPIC_BS2
 import com.bcm.messenger.common.metrics.ReportUtil
+import com.bcm.messenger.common.provider.AmeProvider
+import com.bcm.messenger.common.provider.accountmodule.IMetricsModule
 import okhttp3.Request
 
 /**
  * 
  */
-class FileMetricsInterceptor : MetricsInterceptor() {
+class FileMetricsInterceptor(accountContext: AccountContext) : MetricsInterceptor() {
+    private val metricsProvider = AmeProvider.getAccountModule<IMetricsModule>(ARouterConstants.Provider.REPORT_BASE, accountContext)
+
     override fun onComplete(req: Request, succeed: Boolean, code: Int, duration: Long) {
         val url = req.url()
         val topic = when {
@@ -23,7 +29,7 @@ class FileMetricsInterceptor : MetricsInterceptor() {
 
         // Files report using "reqMethod_host" format.
         if (succeed) {
-            ReportUtil.addCustomNetworkReportData(topic
+            metricsProvider?.addCustomNetworkReportData(topic
                     , url.host()
                     , 0
                     , req.method()
@@ -31,7 +37,7 @@ class FileMetricsInterceptor : MetricsInterceptor() {
                     , code.toString()
                     , duration)
         } else {
-            ReportUtil.addCustomNetworkReportData(topic
+            metricsProvider?.addCustomNetworkReportData(topic
                     , url.host()
                     , 0
                     , req.method()

@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.getColorCompat
@@ -31,14 +31,16 @@ import java.util.regex.Pattern
  * Created by wjh on 2019-12-10
  */
 class ChangePasswordFragment : AbsRegistrationFragment() {
-
     private val TAG = "ChangePasswordFragment"
+    private lateinit var accountContext: AccountContext
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.me_fragment_change_password, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        accountContext = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) ?: return
+
         change_password_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
                 activity?.finish()
@@ -59,7 +61,6 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
-
         }
 
         origin_pwd_clear.setOnClickListener {
@@ -114,8 +115,7 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
             new_pwd_notice.text = getString(R.string.me_change_password_weak_description)
             ALog.d(TAG, "new_pwd_edit is weak")
             false
-        }
-        else if (!checkLegitimateForNewPassword()) {
+        } else if (!checkLegitimateForNewPassword()) {
             new_pwd_notice.visibility = View.VISIBLE
             confirm_pwd_notice.visibility = if (confirm_pwd_edit.text.isNullOrEmpty()) View.GONE else View.VISIBLE
             new_pwd_notice.setTextColor(getColorCompat(R.color.common_app_green_color))
@@ -124,8 +124,7 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
             confirm_pwd_notice.text = getString(R.string.me_change_password_not_match_description)
             ALog.d(TAG, "new_pwd_edit not match confirm_pwd_edit")
             false
-        }
-        else {
+        } else {
             new_pwd_notice.visibility = View.VISIBLE
             confirm_pwd_notice.visibility = View.VISIBLE
             new_pwd_notice.setTextColor(getColorCompat(R.color.common_app_green_color))
@@ -136,7 +135,7 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
         }
         if (enable) {
             change_password_title_bar?.enableRight()
-        }else {
+        } else {
             change_password_title_bar?.disableRight()
         }
         return enable
@@ -153,16 +152,14 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
     private fun handleChangePassword() {
         if (origin_pwd_edit.text.toString() == new_pwd_edit.text.toString()) {
             AmePopup.result.failure(activity, getString(R.string.me_change_password_same_origin_warning), true)
-        }else {
+        } else {
             AmePopup.loading.show(activity)
             val userProvider = UserModuleImp()
-            userProvider.changePinPasswordAsync(activity as? AppCompatActivity, origin_pwd_edit.text.toString(), confirm_pwd_edit.text.toString()
-            ) { result, _ ->
+            userProvider.changePinPasswordAsync(activity as? AppCompatActivity, origin_pwd_edit.text.toString(), confirm_pwd_edit.text.toString()) { result, _ ->
                 if (result) {
                     AmePopup.loading.dismiss()
-                    AmeLoginLogic.accountHistory.resetBackupState(AMELogin.uid)
+                    AmeLoginLogic.accountHistory.resetBackupState(accountContext.uid)
                     AmePopup.result.succeed(activity, getString(R.string.me_change_password_success)) {
-
                         try {
                             //更改密码之后，提示备份账号
                             AmePopup.center.newBuilder().withCancelable(true)
@@ -174,7 +171,7 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
                                     }
                                     .withOkListener {
                                         val intent = Intent(activity, MyAccountKeyActivity::class.java)
-                                        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, AMELogin.uid)
+                                        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, accountContext.uid)
                                         startActivity(intent)
 
                                         activity?.finish()
@@ -185,7 +182,6 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
                             ALog.e(TAG, "handleChangePassword after show notice fail", ex)
                         }
                     }
-
                 } else {
                     AmePopup.loading.dismiss()
                     AmePopup.result.failure(activity, getString(R.string.me_change_password_error))

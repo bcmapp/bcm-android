@@ -16,12 +16,10 @@ open class BaseFragment : Fragment() {
     }
     private lateinit var mAccountContext: AccountContext
     private lateinit var mAccountRecipient: Recipient
-    private var mModifiedListener = object : RecipientModifiedListener {
-        override fun onModified(recipient: Recipient) {
-            if (mAccountRecipient == recipient) {
-                mAccountRecipient = recipient
-                onLoginRecipientRefresh()
-            }
+    private var mModifiedListener = RecipientModifiedListener { recipient ->
+        if (mAccountRecipient == recipient) {
+            mAccountRecipient = recipient
+            onLoginRecipientRefresh()
         }
     }
     private var isActive: Boolean = false

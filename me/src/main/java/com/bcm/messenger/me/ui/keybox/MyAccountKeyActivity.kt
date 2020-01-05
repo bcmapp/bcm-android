@@ -12,10 +12,11 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.core.content.FileProvider
+import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -47,7 +48,7 @@ import java.util.*
 class MyAccountKeyActivity : SwipeBaseActivity() {
 
     private val TAG = "MyAccountKeyActivity"
-    private lateinit var accountId: String
+    private lateinit var accountContext: AccountContext
 
     override fun onCreate(savedInstanceState: Bundle?) {
         disableStatusBarLightMode()
@@ -55,7 +56,7 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_my_account_key)
 
-        accountId = intent.getStringExtra(VerifyKeyActivity.ACCOUNT_ID)
+        accountContext = intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
 
         account_my_title.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
@@ -81,7 +82,7 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
             UserModuleImp().gotoBackupTutorial()
         }
 
-        fetchProfile(accountId)
+        fetchProfile()
 
         window?.setStatusBarLightMode()
     }
@@ -97,11 +98,11 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
         keybox_account_divider?.visibility = View.GONE
         keybox_account_qr?.visibility = View.VISIBLE
 
-        val genKeyTime = AmeLoginLogic.accountHistory.getGenKeyTime(AMELogin.uid)
-        val backupTime = AmeLoginLogic.accountHistory.getBackupTime(AMELogin.uid)
+        val genKeyTime = AmeLoginLogic.accountHistory.getGenKeyTime(accountContext.uid)
+        val backupTime = AmeLoginLogic.accountHistory.getBackupTime(accountContext.uid)
 
         // 新老帐号兼容
-        val account = AmeLoginLogic.getAccount(accountId)
+        val account = AmeLoginLogic.getAccount(accountContext.uid)
         if (account != null) {
             createAccountQRCodeWithAccountData(account)
         }
@@ -139,41 +140,35 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
         }
     }
 
-    private fun fetchProfile(accountId: String) {
-        if (accountId.isNotEmpty()) {
-            val account = AmeLoginLogic.accountHistory.getAccount(accountId)
-            val realUid: String? = account?.uid
-            val name: String? = account?.name
-            val avatar: String? = account?.avatar
+    private fun fetchProfile() {
+        val account = AmeLoginLogic.accountHistory.getAccount(accountContext.uid)
+        val realUid: String? = account?.uid
+        val name: String? = account?.name
+        val avatar: String? = account?.avatar
 
-            if (!realUid.isNullOrEmpty()) {
-
-                val weakThis = WeakReference(this)
-                Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
-                    try {
-                        val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(realUid), false)
-                        val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
-                            avatar
-                        }else {
-                            null
-                        }
-                        recipient.setProfile(recipient.profileKey, name, finalAvatar)
-                        emitter.onNext(recipient)
-                    } finally {
-                        emitter.onComplete()
+        if (!realUid.isNullOrEmpty()) {
+            val weakThis = WeakReference(this)
+            Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
+                try {
+                    val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(realUid), false)
+                    val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
+                        avatar
+                    } else {
+                        null
                     }
-                }).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ recipient ->
-                            weakThis.get()?.keybox_account_openid?.text = "${getString(R.string.me_id_title)}: $realUid"
-                            weakThis.get()?.keybox_account_name?.text = recipient.name
-                            weakThis.get()?.keybox_account_img?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
-
-                        }, { _ ->
-
-                        })
-
-            }
+                    recipient.setProfile(recipient.profileKey, name, finalAvatar)
+                    emitter.onNext(recipient)
+                } finally {
+                    emitter.onComplete()
+                }
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ recipient ->
+                        weakThis.get()?.keybox_account_openid?.text = "${getString(R.string.me_id_title)}: $realUid"
+                        weakThis.get()?.keybox_account_name?.text = recipient.name
+                        weakThis.get()?.keybox_account_img?.setPhoto(accountContext, recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                    }, {
+                    })
         }
     }
 
@@ -218,7 +213,8 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
                 if (!tempQRCodeFile.exists()) {
                     tempQRCodeFile.createNewFile()
                 }
-                val bitmap = (keybox_account_qr?.drawable as? BitmapDrawable)?.bitmap ?: throw Exception("qr drawable is null")
+                val bitmap = (keybox_account_qr?.drawable as? BitmapDrawable)?.bitmap
+                        ?: throw Exception("qr drawable is null")
                 val bos = FileOutputStream(tempQRCodeFile)
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos)
                 bos.flush()
@@ -287,5 +283,4 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
             initData()
         })
     }
-
 }

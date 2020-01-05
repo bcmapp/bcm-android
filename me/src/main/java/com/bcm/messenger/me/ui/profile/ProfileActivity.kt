@@ -15,7 +15,6 @@ import com.bcm.route.annotation.Route
  */
 @Route(routePath = ARouterConstants.Activity.PROFILE_EDIT)
 class ProfileActivity : SwipeBaseActivity() {
-
     companion object {
         private const val TAG = "ProfileActivity"
     }
@@ -23,7 +22,7 @@ class ProfileActivity : SwipeBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_profile)
-        var recipient: Recipient? = null
+        val recipient: Recipient?
         try {
             val address = intent.getParcelableExtra<Address?>(ARouterConstants.PARAM.PARAM_ADDRESS)
             recipient = if (address == null) {
@@ -31,24 +30,22 @@ class ProfileActivity : SwipeBaseActivity() {
             } else {
                 Recipient.from(AMELogin.majorContext, address, true)
             }
-
         } catch (ex: Exception) {
             ALog.e(TAG, "from recipient fail", ex)
             finish()
             return
         }
 
-        if (recipient.isSelf) {
+        if (intent.getBooleanExtra(ARouterConstants.PARAM.ME.PROFILE_EDIT_SELF, false)) {
             initFragment(R.id.profile_root_container, MyProfileFragment(), Bundle().apply {
-                putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)
+                putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, getAccountContext())
                 putString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID, recipient.address.serialize())
             })
         } else {
             initFragment(R.id.profile_root_container, OtherProfileFragment(), Bundle().apply {
+                putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, getAccountContext())
                 putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)
             })
         }
-
     }
-
 }

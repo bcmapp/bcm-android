@@ -359,7 +359,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
                     checkMetrics(state == ConnectState.CONNECTED)
                 }
             }
-            this.connectionListener?.forEach {
+            this.connectionListener.forEach {
                 it.onServerConnectionChanged(accountContext, state)
             }
         }
@@ -415,8 +415,8 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
             return
         }
 
-        ReportUtil.addCustomCounterReportData(COUNTER_TOPIC_BCM_SERVER, COUNTER_WEBSOCKET_SUCCESS, connected)
-        ReportUtil.addCustomCounterReportData(COUNTER_TOPIC_BCM_SERVER, COUNTER_WEBSOCKET_FAIL, !connected)
+        reportProvider?.addCustomCounterReportData(COUNTER_TOPIC_BCM_SERVER, COUNTER_WEBSOCKET_SUCCESS, connected)
+        reportProvider?.addCustomCounterReportData(COUNTER_TOPIC_BCM_SERVER, COUNTER_WEBSOCKET_FAIL, !connected)
     }
 
 }

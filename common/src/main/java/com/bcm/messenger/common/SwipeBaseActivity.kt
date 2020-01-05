@@ -45,12 +45,10 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     private var checkDisposable: Disposable? = null
     private var checkStartTime = System.currentTimeMillis()
 
-    private var mLoginModifiedListener = object : RecipientModifiedListener {
-        override fun onModified(recipient: Recipient) {
-            if (mLoginRecipient == recipient) {
-                mLoginRecipient = recipient
-                onLoginRecipientRefresh()
-            }
+    private var mLoginModifiedListener = RecipientModifiedListener { recipient ->
+        if (mLoginRecipient == recipient) {
+            mLoginRecipient = recipient
+            onLoginRecipientRefresh()
         }
     }
 

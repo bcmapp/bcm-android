@@ -117,7 +117,7 @@ object AmeModuleCenter {
             UserDatabase.resetDatabase(accountContext)
         }
 
-        ReportUtil.init()
+        ReportUtil.init(accountContext)
 
         this.init(accountContext)
 

@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
@@ -20,7 +21,6 @@ import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.InputLengthFilter
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
-import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_fragment_edit_name.*
@@ -39,15 +39,15 @@ class EditNameActivity : SwipeBaseActivity(), RecipientModifiedListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_fragment_edit_name)
 
-        mForLocal = intent.getBooleanExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, false)
-        val address = intent.getParcelableExtra<Address?>(ARouterConstants.PARAM.PARAM_ADDRESS)
-        if (address == null) {
-            ALog.e(TAG, "address is null")
+        val accountContext = intent.getParcelableExtra<AccountContext>(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        if (accountContext == null) {
             finish()
             return
         }
 
-        recipient = Recipient.from(AppContextHolder.APP_CONTEXT, address, true)
+        mForLocal = intent.getBooleanExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, false)
+
+        recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(accountContext.uid), true)
         recipient.addListener(this)
         initView()
     }

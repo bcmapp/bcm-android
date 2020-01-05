@@ -18,10 +18,7 @@ import com.bcm.messenger.common.provider.accountmodule.IChatModule
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeLoadingPopup
-import com.bcm.messenger.common.utils.AmeAppLifecycle
-import com.bcm.messenger.common.utils.RxBus
-import com.bcm.messenger.common.utils.getColorCompat
-import com.bcm.messenger.common.utils.getPackageInfo
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmePinLogic
@@ -43,14 +40,13 @@ import kotlinx.android.synthetic.main.me_activity_settings.*
 import java.lang.ref.WeakReference
 import java.util.*
 
-
 /**
  * Created by zjl on 2018/4/27.
  */
 @Route(routePath = ARouterConstants.Activity.SETTINGS)
 class SettingActivity : SwipeBaseActivity() {
-
     private val TAG = "SettingActivity"
+
     private val REQUEST_SETTING = 100
     private val TAG_SSR = "ssrStageChanged"
     private var mChatModule: IChatModule? = null
@@ -70,7 +66,7 @@ class SettingActivity : SwipeBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_settings)
 
-        mChatModule = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONVERSATION_BASE).navigationWithCast()
+        mChatModule = AmeModuleCenter.chat(getAccountContext())
 
         initView()
         initData()
@@ -86,8 +82,6 @@ class SettingActivity : SwipeBaseActivity() {
     }
 
     private fun initView() {
-
-
         notification_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
                 finish()
@@ -95,60 +89,55 @@ class SettingActivity : SwipeBaseActivity() {
         })
 
         setting_notification.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick){
+            if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-           
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && (!RomUtil.isMiui() || RomUtil.getMIUIVersionCode() >= 8)) {
                 gotoNotificationChannelSetting(AmeNotification.getDefaultChannel(baseContext))
             } else {
-                startActivity(Intent(this, NotificationSettingActivity::class.java))
+                startBcmActivity(getAccountContext(), Intent(this, NotificationSettingActivity::class.java))
             }
         }
 
         setting_language.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick){
+            if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            startActivityForResult(Intent(this, LanguageSelectActivity::class.java), REQUEST_SETTING)
+            startBcmActivityForResult(getAccountContext(), Intent(this, LanguageSelectActivity::class.java), REQUEST_SETTING)
         }
 
         setting_tts.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick){
+            if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
 
             try {
-            
                 val intent = Intent().apply {
                     action = "com.android.settings.TTS_SETTINGS"
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
                 startActivity(intent)
                 overridePendingTransition(R.anim.common_slide_from_right, R.anim.utility_slide_silent)
-
             } catch (e: Exception) {
-                
                 try {
                     val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }
                     startActivity(intent)
                     overridePendingTransition(R.anim.common_slide_from_right, R.anim.utility_slide_silent)
-
                 } catch (e: Exception) {
-                    
                     AmeAppLifecycle.failure(getString(R.string.me_setting_tts_cannot_open), true)
                 }
             }
         }
 
-
         setting_storage.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick){
+            if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            BcmRouter.getInstance().get(ARouterConstants.Activity.CLEAN_STORAGE).navigation(this, REQUEST_SETTING)
+            BcmRouter.getInstance().get(ARouterConstants.Activity.CLEAN_STORAGE)
+                    .startBcmActivity(getAccountContext(), this, REQUEST_SETTING)
         }
 
         setting_adhoc.setOnClickListener {
@@ -163,15 +152,15 @@ class SettingActivity : SwipeBaseActivity() {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-
-            startActivity(Intent(it.context, ProxySettingActivity::class.java))
+            val intent = Intent(it.context, ProxySettingActivity::class.java)
+            startBcmActivity(getAccountContext(), intent)
         }
 
         setting_blocked_user.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick){
+            if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            startActivity(Intent(this, BlockUsersActivity::class.java))
+            startBcmActivity(getAccountContext(), Intent(this, BlockUsersActivity::class.java))
         }
 
         setting_block_stranger.setSwitchEnable(false)
@@ -186,11 +175,10 @@ class SettingActivity : SwipeBaseActivity() {
                 if (!success) {
                     AmePopup.loading.dismiss()
                     AmePopup.result.failure(this, getString(R.string.me_setting_block_stranger_error), true)
-                }else {
+                } else {
                     getAccountRecipient().privacyProfile.allowStranger = allowStranger
                     updateStrangerState()
                     AmePopup.loading.dismiss(AmeLoadingPopup.DELAY_DEFAULT)
-
                 }
             }
         }
@@ -200,9 +188,9 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
             if (AmePinLogic.hasPin()) {
-                startActivityForResult(Intent(this, PinLockSettingActivity::class.java), REQUEST_SETTING)
+                startBcmActivityForResult(getAccountContext(), Intent(this, PinLockSettingActivity::class.java), REQUEST_SETTING)
             } else {
-                startActivityForResult(Intent(this, PinLockInitActivity::class.java), REQUEST_SETTING)
+                startBcmActivityForResult(getAccountContext(), Intent(this, PinLockInitActivity::class.java), REQUEST_SETTING)
             }
         }
 
@@ -240,7 +228,7 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
             val intent = Intent(this, AmeFeedbackActivity::class.java)
-            startActivity(intent)
+            startBcmActivity(getAccountContext(), intent)
         }
 
         setting_faq.setOnClickListener {
@@ -259,12 +247,11 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
             val intent = Intent(this, AboutActivity::class.java)
-            startActivity(intent)
+            startBcmActivity(getAccountContext(), intent)
         }
     }
 
     private fun initData() {
-
         val tipColor = getColorCompat(R.color.common_content_second_color)
         setting_language.setTip(LanguageViewModel.getDisplayName(SuperPreferences.getLanguageString(this, Locale.getDefault().language)), contentColor = tipColor)
 
@@ -274,17 +261,16 @@ class SettingActivity : SwipeBaseActivity() {
             ALog.i(TAG, "queryAllConversationStorageSize  callback")
             setting_storage?.setTip(StringAppearanceUtil.formatByteSizeString(it.storageUsed()), contentColor = tipColor)
         }
-        setting_pin_lock.setTip(if(AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip), contentColor = tipColor)
+        setting_pin_lock.setTip(if (AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip), contentColor = tipColor)
         setting_rtc_p2p.setSwitchStatus(TextSecurePreferences.isTurnOnly(this))
 
         setting_screen_secure.setSwitchStatus(TextSecurePreferences.isScreenSecurityEnabled(this))
 
         val weakThis = WeakReference(this)
-        BcmUpdateUtil.checkUpdate { hasUpdate, forceUpdate, version ->
+        BcmUpdateUtil.checkUpdate { hasUpdate, _, _ ->
             if (hasUpdate) {
                 weakThis.get()?.setting_about?.setTip("", iconRes = R.drawable.common_red_dot_circle)
-
-            }else {
+            } else {
                 weakThis.get()?.setting_about?.hideTip()
             }
         }
@@ -303,7 +289,6 @@ class SettingActivity : SwipeBaseActivity() {
             intent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
             startActivity(intent)
             overridePendingTransition(R.anim.common_slide_from_right, R.anim.utility_slide_silent)
-
         } catch (e: Exception) {
             ALog.d(TAG, "Cannot open notification page.")
         }

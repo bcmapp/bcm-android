@@ -1,16 +1,27 @@
 package com.bcm.messenger.me.ui.login
 
 import android.os.Bundle
+import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.me.R
 
 class ChangePasswordActivity : SwipeBaseActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_change_password)
 
-        initFragment(R.id.change_password_container, ChangePasswordFragment(), null)
+        val accountContext = intent.getParcelableExtra<AccountContext>(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        if (accountContext == null) {
+            finish()
+            return
+        }
+
+        val fragment = ChangePasswordFragment()
+        fragment.arguments = Bundle().apply {
+            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+        }
+        initFragment(R.id.change_password_container, fragment, null)
     }
 
     fun gotoNote() {
@@ -21,6 +32,4 @@ class ChangePasswordActivity : SwipeBaseActivity() {
                 .addToBackStack("change_pwd_note")
                 .commit()
     }
-
-
 }

@@ -461,6 +461,7 @@ object ARouterConstants {
         object ME {
             const val PROFILE_EDIT = "profile_edit"
             const val PROFILE_FOR_LOCAL = "profile_for_local"
+            const val PROFILE_EDIT_SELF = "profile_edit_self"
         }
     }
 

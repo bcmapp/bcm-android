@@ -74,8 +74,6 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
             }
         })
 
-
-
         CleanConversationStorageLogic.collectionAllConversationStorageSize()
     }
 
@@ -100,7 +98,7 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
             if (allFinished) {
                 allConversationStorage = CleanConversationStorageLogic.getAllConversationStorageSize()
             }
-            if (dataSource.size() == 0){
+            if (dataSource.size() == 0) {
                 dataSource.updateDataSource(CleanConversationStorageLogic.getConversationList())
             } else {
                 dataSource.refresh()
@@ -108,16 +106,16 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
         }
     }
 
-    private fun showCleanAllConversationStoragePop(){
-        val cleanStoragePopCreator = CleanAllConversationStorageSelectionViewCreater(allConversationStorage){
-            if (CleanConversationStorageLogic.getStorageSizeByType(it) == 0L){
+    private fun showCleanAllConversationStoragePop() {
+        val cleanStoragePopCreator = CleanAllConversationStorageSelectionViewCreater(allConversationStorage) {
+            if (CleanConversationStorageLogic.getStorageSizeByType(it) == 0L) {
                 AmePopup.bottom.dismiss()
                 return@CleanAllConversationStorageSelectionViewCreater
             }
             val type = it
             AmePopup.bottom.newBuilder()
                     .withTitle(getString(R.string.chats_clear_selection_storage))
-                    .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clean_clear), AmeBottomPopup.PopupItem.CLR_RED){
+                    .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clean_clear), AmeBottomPopup.PopupItem.CLR_RED) {
                         clearAll(type)
                     }).withDoneTitle(getString(R.string.common_cancel)).show(this)
         }
@@ -133,23 +131,23 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
                 .show(this)
     }
 
-    private fun clearAll(type:Int) {
+    private fun clearAll(type: Int) {
         AmePopup.loading.show(this@CleanStorageActivity)
         CleanConversationStorageLogic.clearAllConversationMediaMessage(type)
     }
 
 
     override fun getViewHolderType(adapter: AmeRecycleViewAdapter<Address>, position: Int, data: Address): Int {
-       return when(data){
+        return when (data) {
             CleanConversationStorageLogic.ADDRESS_ALL -> R.layout.chats_data_storage_title_cell
             else -> R.layout.chats_data_storage_item_cell
         }
     }
 
     override fun bindViewHolder(adapter: AmeRecycleViewAdapter<Address>, viewHolder: AmeRecycleViewAdapter.ViewHolder<Address>) {
-        when(viewHolder){
+        when (viewHolder) {
             is AllStorageHolder -> {
-                if (CleanConversationStorageLogic.isAllCollectionFinished()){
+                if (CleanConversationStorageLogic.isAllCollectionFinished()) {
                     viewHolder.sizeView.text = StringAppearanceUtil.formatByteSizeString(allConversationStorage.storageUsed())
                 } else {
                     viewHolder.sizeView.text = getString(R.string.chats_clean_calculating)
@@ -158,14 +156,14 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
             is ConversationStorageHolder -> {
                 val data = viewHolder.getData()
                 if (null != data) {
-                    if (CleanConversationStorageLogic.isCollectedFinished(data)){
+                    if (CleanConversationStorageLogic.isCollectedFinished(data)) {
                         val size = CleanConversationStorageLogic.getConversationStorageSize(data)
                         viewHolder.sizeView.text = StringAppearanceUtil.formatByteSizeString(size)
                     } else {
                         viewHolder.sizeView.text = getString(R.string.chats_clean_calculating)
                     }
-                    val recipient = Recipient.from(this, data, true)
-                    viewHolder.recipientPhotoView.showRecipientAvatar(recipient)
+                    val recipient = Recipient.from(getAccountContext(), data, true)
+                    viewHolder.recipientPhotoView.showRecipientAvatar(getAccountContext(), recipient)
                     viewHolder.nameView.text = recipient.name
                 }
             }
@@ -173,11 +171,10 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
     }
 
     override fun unbindViewHolder(adapter: AmeRecycleViewAdapter<Address>, viewHolder: AmeRecycleViewAdapter.ViewHolder<Address>) {
-
     }
 
     override fun createViewHolder(adapter: AmeRecycleViewAdapter<Address>, inflater: LayoutInflater, parent: ViewGroup, viewType: Int): AmeRecycleViewAdapter.ViewHolder<Address> {
-        return when(viewType){
+        return when (viewType) {
             R.layout.chats_data_storage_title_cell -> {
                 AllStorageHolder(inflater.inflate(viewType, parent, false), this)
             }
@@ -189,8 +186,8 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
 
     override fun onViewClicked(adapter: AmeRecycleViewAdapter<Address>, viewHolder: AmeRecycleViewAdapter.ViewHolder<Address>) {
         val itemData = viewHolder.getData()
-        if(null != itemData && itemData != CleanConversationStorageLogic.ADDRESS_ALL){
-            if (CleanConversationStorageLogic.isCollectedFinished(itemData)){
+        if (null != itemData && itemData != CleanConversationStorageLogic.ADDRESS_ALL) {
+            if (CleanConversationStorageLogic.isCollectedFinished(itemData)) {
                 MediaBrowserActivity.router(itemData, true)
             } else {
                 ToastUtil.show(this@CleanStorageActivity, getString(R.string.chats_collecting_wait_text))
@@ -199,12 +196,12 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
     }
 
 
-
-    class AllStorageHolder(view:View, activity: CleanStorageActivity): AmeRecycleViewAdapter.ViewHolder<Address>(view){
+    class AllStorageHolder(view: View, activity: CleanStorageActivity) : AmeRecycleViewAdapter.ViewHolder<Address>(view) {
         val sizeView = view.findViewById<TextView>(R.id.clear_conversation_size)
+
         init {
-            view.findViewById<TextView>(R.id.text_clear_all).setOnClickListener{
-                if (CleanConversationStorageLogic.isAllCollectionFinished()){
+            view.findViewById<TextView>(R.id.text_clear_all).setOnClickListener {
+                if (CleanConversationStorageLogic.isAllCollectionFinished()) {
                     activity.showCleanAllConversationStoragePop()
                 } else {
                     ToastUtil.show(it.context, "Statistics in progress, please try again later ...")
@@ -213,7 +210,7 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
         }
     }
 
-    class ConversationStorageHolder(view:View): AmeRecycleViewAdapter.ViewHolder<Address>(view) {
+    class ConversationStorageHolder(view: View) : AmeRecycleViewAdapter.ViewHolder<Address>(view) {
         val sizeView = view.findViewById<TextView>(R.id.clear_conversation_size)
         val nameView = view.findViewById<TextView>(R.id.clear_conversation_name)
         val recipientPhotoView = view.findViewById<RecipientAvatarView>(R.id.clear_conversation_photo)

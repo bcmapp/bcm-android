@@ -12,9 +12,9 @@ import com.bcm.messenger.common.SwipeBaseActivity
 /**
  * bcm.social.01 2018/10/10.
  */
-class PinLockInitActivity: SwipeBaseActivity() {
+class PinLockInitActivity : SwipeBaseActivity() {
     companion object {
-        fun router(activity:Activity){
+        fun router(activity: Activity) {
             activity.startActivity(Intent(activity, PinLockInitActivity::class.java))
         }
     }
@@ -28,20 +28,18 @@ class PinLockInitActivity: SwipeBaseActivity() {
             }
         })
 
-        me_enable_pin_lock.setOnClickListener{
+        me_enable_pin_lock.setOnClickListener {
             PinInputActivity.router(this, PinInputActivity.INPUT_SIZE_4, PinInputActivity.INPUT_PIN)
         }
-
-
     }
 
     override fun onResume() {
         super.onResume()
-        if (AmePinLogic.hasPin()){
+        if (AmePinLogic.hasPin()) {
             PinLockSettingActivity.router(this)
             me_enable_pin_lock.postDelayed({
                 finish()
-            },50)
+            }, 50)
         }
     }
 }

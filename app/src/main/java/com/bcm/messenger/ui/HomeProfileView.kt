@@ -24,6 +24,7 @@ import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getScreenWidth
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.login.bean.AmeAccountData
 import com.bcm.messenger.me.ui.scan.NewScanActivity
 import com.bcm.messenger.ui.widget.IProfileView
@@ -64,7 +65,8 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     var accountItem = HomeAccountItem(TYPE_ADD, AmeAccountData())
         set(value) {
             field = value
-            recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(field.account.uid), true)
+            accountContext = AMELogin.accountContext(field.account.uid)
+            recipient = Recipient.from(accountContext, Address.fromSerialized(field.account.uid), true)
         }
 
     private var recipient = Recipient.major()
@@ -77,6 +79,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
                 setProfile()
             }
         }
+    private var accountContext = AMELogin.accountContext("")
 
     var isAccountBackup = true
         set(value) {
@@ -108,7 +111,6 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         ALog.i(TAG, "updateHomeUnread: $unread")
         home_profile_unread.unreadCount = unread
         AmePushProcess.updateAppBadge(AppContextHolder.APP_CONTEXT, unread)
-
     }
 
     private fun showAnimation() = AnimatorSet().apply {
@@ -170,7 +172,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            it.context.startActivity(Intent(it.context, NewScanActivity::class.java).apply {
+            it.context.startBcmActivity(accountContext, Intent(it.context, NewScanActivity::class.java).apply {
                 putExtra(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_CONTACT)
                 putExtra(ARouterConstants.PARAM.SCAN.HANDLE_DELEGATE, true)
             })
@@ -181,8 +183,8 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             }
             BcmRouter.getInstance()
                     .get(ARouterConstants.Activity.PROFILE_EDIT)
-                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.from(context, AMELogin.uid))
-                    .navigation(context)
+                    .putBoolean(ARouterConstants.PARAM.ME.PROFILE_EDIT_SELF, true)
+                    .startBcmActivity(accountContext)
         }
         home_profile_wallet_icon.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
@@ -190,7 +192,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             }
             BcmRouter.getInstance()
                     .get(ARouterConstants.Activity.WALLET_MAIN)
-                    .navigation(context)
+                    .startBcmActivity(accountContext)
         }
         home_profile_vault_icon.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
@@ -265,7 +267,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     private fun logoutShowViews() {
-        home_profile_avatar.showPrivateAvatar(recipient)
+        home_profile_avatar.showPrivateAvatar(accountContext, recipient)
 
         home_profile_avatar.visibility = View.VISIBLE
         home_profile_delete.visibility = View.VISIBLE
@@ -281,7 +283,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
 
     private fun inactiveShowViews() {
         setViewsAlpha(0f)
-        home_profile_avatar.showPrivateAvatar(recipient)
+        home_profile_avatar.showPrivateAvatar(accountContext, recipient)
 
         home_profile_avatar.visibility = View.VISIBLE
         home_profile_delete.visibility = View.GONE
@@ -296,7 +298,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     private fun activeShowViews() {
-        home_profile_avatar.showPrivateAvatar(recipient)
+        home_profile_avatar.showPrivateAvatar(accountContext, recipient)
 
         home_profile_avatar.visibility = View.INVISIBLE
         home_profile_delete.visibility = View.GONE
@@ -430,7 +432,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     private fun setProfile() {
-        home_profile_avatar.showPrivateAvatar(recipient)
+        home_profile_avatar.showPrivateAvatar(accountContext, recipient)
         home_profile_name.text = recipient.name
     }
 }

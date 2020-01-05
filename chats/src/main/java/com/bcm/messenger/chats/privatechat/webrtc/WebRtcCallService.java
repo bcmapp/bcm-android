@@ -166,7 +166,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         }
     }
 
-
     public static void clearWebRtcCallType() {
         sCurrentCallType = -1;
     }

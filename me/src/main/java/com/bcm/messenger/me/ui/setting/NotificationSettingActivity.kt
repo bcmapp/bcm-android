@@ -30,8 +30,6 @@ class NotificationSettingActivity : SwipeBaseActivity() {
             }
         })
 
-
-
         setting_notification.setSwitchEnable(false)
         setting_notification.setSwitchStatus(TextSecurePreferences.isNotificationsEnabled(AppContextHolder.APP_CONTEXT))
         setting_notification.setOnClickListener {

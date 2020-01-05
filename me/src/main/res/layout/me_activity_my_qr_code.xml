@@ -15,11 +15,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <fragment
+    <FrameLayout
         android:id="@+id/me_qr_fragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:name="com.bcm.messenger.me.ui.scan.MyQRFragment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -42,7 +42,7 @@ import kotlinx.android.synthetic.main.me_item_keybox_title.view.*
 /**
  * Created by zjl on 2018/8/15.
  */
-@Route(routePath = ARouterConstants.Activity.ME_KEYBOX)
+@Deprecated("Will be deleted")
 class KeyBoxControlActivity : SwipeBaseActivity() {
 
     private val TAG = "KeyBoxControlActivity"

@@ -13,7 +13,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.provider.IContactModule
-import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.me.R
 import io.reactivex.Observable
@@ -76,9 +75,9 @@ class BlockUsersActivity : SwipeBaseActivity() {
         block_user_list.layoutManager = LinearLayoutManager(this)
         Observable.create(ObservableOnSubscribe<MutableList<Recipient>> {
             val recipientList = ArrayList<Recipient>()
-            val blockUsers = Repository.getRecipientRepo()?.getBlockedUsers()
+            val blockUsers = Repository.getRecipientRepo(getAccountContext())?.getBlockedUsers()
             blockUsers?.forEach { user ->
-                recipientList.add(Recipient.fromSnapshot(this, Address.fromSerialized(user.uid), user))
+                recipientList.add(Recipient.fromSnapshot(getAccountContext(), Address.fromSerialized(user.uid), user))
             }
             it.onNext(recipientList)
             it.onComplete()
@@ -100,18 +99,18 @@ class BlockUsersActivity : SwipeBaseActivity() {
     fun selectBack() {
         isEdit = false
         adapter?.resume()
-        mRightMenu?.text = AppUtil.getString(this, R.string.me_self_edit_button)
+        mRightMenu?.text = getString(R.string.me_self_edit_button)
     }
 
     fun edit() {
         isEdit = true
-        mRightMenu?.text = AppUtil.getString(this, R.string.common_done)
+        mRightMenu?.text = getString(R.string.common_done)
         adapter?.removeVisible(true)
     }
 
     fun done() {
         isEdit = false
-        mRightMenu?.text = AppUtil.getString(this, R.string.me_self_edit_button)
+        mRightMenu?.text = getString(R.string.me_self_edit_button)
         adapter?.removeVisible(false)
         if (selectList.size > 0) {
             adapter?.removeList(selectList)
@@ -224,7 +223,7 @@ class BlockUsersActivity : SwipeBaseActivity() {
             } else {
                 selectItem.visibility = View.GONE
             }
-            recipientImg.setPhoto(recipient)
+            recipientImg.setPhoto(getAccountContext(), recipient)
             recipientName.text = recipient.name
         }
     }

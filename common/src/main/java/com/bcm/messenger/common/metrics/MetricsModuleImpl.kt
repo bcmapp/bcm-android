@@ -26,31 +26,39 @@ class MetricsModuleImpl : IMetricsModule {
 
     }
 
+    override fun launchEnd() {
+        ReportUtil.launchEnded()
+    }
+
+    override fun setAdhocRunning(isRunning: Boolean) {
+        ReportUtil.setAdhocRunning(isRunning)
+    }
+
     override fun addNetworkReportData(serverIp: String?, port: Int, reqMethod: String?, path: String?, returnCode: String, time: Long) {
-        ReportUtil.addNetworkReportData(serverIp, port, reqMethod, path, returnCode, time)
+        ReportUtil.addNetworkReportData(accountContext, serverIp, port, reqMethod, path, returnCode, time)
     }
 
     override fun addLbsNetworkReportData(serverIp: String?, port: Int, reqMethod: String?, path: String?, returnCode: String, time: Long) {
-        ReportUtil.addLbsNetworkReportData(serverIp, port, reqMethod, path, returnCode, time)
+        ReportUtil.addLbsNetworkReportData(accountContext, serverIp, port, reqMethod, path, returnCode, time)
     }
 
     override fun addCallNetworkReportData(serverIp: String?, port: Int, reqMethod: String?, path: String?, returnCode: String, time: Long) {
-        ReportUtil.addCallNetworkReportData(serverIp, port, reqMethod, path, returnCode, time)
+        ReportUtil.addCallNetworkReportData(accountContext, serverIp, port, reqMethod, path, returnCode, time)
     }
 
     override fun addCustomNetworkReportData(topic: String, serverIp: String?, port: Int, reqMethod: String?, path: String?, returnCode: String, time: Long) {
-        ReportUtil.addCustomNetworkReportData(topic, serverIp, port, reqMethod, path, returnCode, time)
+        ReportUtil.addCustomNetworkReportData(accountContext, topic, serverIp, port, reqMethod, path, returnCode, time)
     }
 
     override fun addDataErrorReportData(exceptionName: String) {
-        ReportUtil.addDataErrorReportData(exceptionName)
+        ReportUtil.addDataErrorReportData(accountContext, exceptionName)
     }
 
     override fun addSystemErrorReportData(exceptionName: String) {
-        ReportUtil.addSystemErrorReportData(exceptionName)
+        ReportUtil.addSystemErrorReportData(accountContext, exceptionName)
     }
 
     override fun addCustomCounterReportData(topic: String, counterName: String, increment: Boolean) {
-        ReportUtil.addCustomCounterReportData(topic, counterName, increment)
+        ReportUtil.addCustomCounterReportData(accountContext, topic, counterName, increment)
     }
 }

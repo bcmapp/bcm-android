@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.fragment.VerifyPasswordFragment
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -37,16 +37,23 @@ class VerifyFingerprintActivity : SwipeBaseActivity() {
     }
 
     private fun initView() {
-        switchToPasswordFragment(false)
+        val accountContext = intent.getParcelableExtra<AccountContext>(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        if (accountContext == null) {
+            ALog.e(TAG, "Account context has not been passed from previous activity!")
+            finish()
+            return
+        }
+
+        switchToPasswordFragment(accountContext)
     }
 
-    private fun switchToPasswordFragment(hasFingerprint: Boolean, lockout: Boolean = false) {
+    private fun switchToPasswordFragment(accountContext: AccountContext) {
         val f = VerifyPasswordFragment()
-                .setHasFingerprint(hasFingerprint)
-                .setHasLockout(lockout)
+                .setHasFingerprint(false)
+                .setHasLockout(false)
                 .setCallback(this::handleCallback)
         f.arguments = Bundle().apply {
-            putString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID, AMELogin.uid)
+            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
         }
         supportFragmentManager.beginTransaction()
                 .replace(R.id.container, f)

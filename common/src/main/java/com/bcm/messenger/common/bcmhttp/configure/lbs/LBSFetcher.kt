@@ -1,7 +1,11 @@
 package com.bcm.messenger.common.bcmhttp.configure.lbs
 
 import android.net.Uri
+import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.metrics.*
+import com.bcm.messenger.common.provider.AmeProvider
+import com.bcm.messenger.common.provider.accountmodule.IMetricsModule
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.listener.SafeWeakListeners
@@ -9,9 +13,10 @@ import com.bcm.messenger.utility.logger.ALog
 import com.bcm.netswitchy.configure.AmeConfigure
 import com.bcm.netswitchy.configure.RxConfigHttp
 
-class LBSFetcher(val type: String) {
+class LBSFetcher(accountContext: AccountContext, val type: String) {
     val listeners = SafeWeakListeners<ILBSFetchResult>()
     private var fetchingIndex = 0
+    private val metricsProvider = AmeProvider.getAccountModule<IMetricsModule>(ARouterConstants.Provider.REPORT_BASE, accountContext)
 
     /**
      * @param fetchIndex
@@ -32,10 +37,10 @@ class LBSFetcher(val type: String) {
                 val lbs = AmeConfigure.queryLBS(url)
                 val endTime = System.currentTimeMillis()
 
-                ReportUtil.addCustomNetworkReportData(NET_TOPIC_LBS_SERVER, seedUri.host, seedUri.port, "", LBS_LBS, METRIC_SUCCESS, endTime - startTime)
+                metricsProvider?.addCustomNetworkReportData(NET_TOPIC_LBS_SERVER, seedUri.host, seedUri.port, "", LBS_LBS, METRIC_SUCCESS, endTime - startTime)
 
-                ReportUtil.addCustomCounterReportData(COUNTER_TOPIC_LBS, COUNTER_LBS_SUCCESS)
-                ReportUtil.addCustomCounterReportData(COUNTER_TOPIC_LBS, COUNTER_LBS_FAIL, false)
+                metricsProvider?.addCustomCounterReportData(COUNTER_TOPIC_LBS, COUNTER_LBS_SUCCESS)
+                metricsProvider?.addCustomCounterReportData(COUNTER_TOPIC_LBS, COUNTER_LBS_FAIL, false)
 
                 val imServerList = lbs.services.map { server -> ServerNode(ServerNode.SCHEME, server.ip, server.port, server.area, server.priority) }
                 LBSManager.saveServerList(type, imServerList)
@@ -49,13 +54,13 @@ class LBSFetcher(val type: String) {
 
                 if (statusCode == ServerCodeUtil.CODE_PARSE_ERROR) {
                     //,
-                    ReportUtil.addCustomNetworkReportData(NET_TOPIC_LBS_SERVER, seedUri.host, seedUri.port, "", LBS_LBS, METRIC_SUCCESS, endTime - startTime)
+                    metricsProvider?.addCustomNetworkReportData(NET_TOPIC_LBS_SERVER, seedUri.host, seedUri.port, "", LBS_LBS, METRIC_SUCCESS, endTime - startTime)
                 } else {
-                    ReportUtil.addCustomNetworkReportData(NET_TOPIC_LBS_SERVER, seedUri.host, seedUri.port, "", LBS_LBS, METRIC_FAILED, endTime - startTime)
+                    metricsProvider?.addCustomNetworkReportData(NET_TOPIC_LBS_SERVER, seedUri.host, seedUri.port, "", LBS_LBS, METRIC_FAILED, endTime - startTime)
                 }
 
-                ReportUtil.addCustomCounterReportData(COUNTER_TOPIC_LBS, COUNTER_LBS_FAIL)
-                ReportUtil.addCustomCounterReportData(COUNTER_TOPIC_LBS, COUNTER_LBS_SUCCESS, false)
+                metricsProvider?.addCustomCounterReportData(COUNTER_TOPIC_LBS, COUNTER_LBS_FAIL)
+                metricsProvider?.addCustomCounterReportData(COUNTER_TOPIC_LBS, COUNTER_LBS_SUCCESS, false)
 
                 listeners.forEach {
                     it.onLBSFetchResult(false, fetchingIndex)

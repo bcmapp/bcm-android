@@ -19,12 +19,13 @@ import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.event.HomeTopEvent
-import com.bcm.messenger.common.metrics.ReportUtil
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.provider.accountmodule.IChatModule
+import com.bcm.messenger.common.provider.accountmodule.IMetricsModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.BcmRecyclerView
@@ -78,10 +79,12 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
     private lateinit var titleView: MessageListTitleView
     private var mWaitForShortLink: Boolean = false //是否等待短链生成
     private var messageListFragment: MessageListFragment? = null
+    // TODO: Replace when major user is Changed.
+    private val metricsProvider = AmeProvider.getAccountModule<IMetricsModule>(ARouterConstants.Provider.REPORT_BASE, AMELogin.majorContext)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ReportUtil.launchEnded()
+        metricsProvider?.launchEnd()
 
         setSwipeBackEnable(false)
 
@@ -163,9 +166,9 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
             home_adhoc_main.visibility = View.VISIBLE
 
-            AmeModuleCenter.serverDaemon().stopDaemon()
-            AmeModuleCenter.serverDaemon().stopConnection()
-            ReportUtil.setAdhocRunning(true)
+            AmeModuleCenter.serverDaemon(getAccountContext()).stopDaemon()
+            AmeModuleCenter.serverDaemon(getAccountContext()).stopConnection()
+            metricsProvider?.setAdhocRunning(true)
 
             mPixelManager = PixelManager.Builder().target(PixelActivity::class.java).build()
             mPixelManager?.start(AppContextHolder.APP_CONTEXT)
@@ -185,9 +188,9 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
             home_adhoc_main.visibility = View.GONE
 
-            AmeModuleCenter.serverDaemon().startDaemon()
-            AmeModuleCenter.serverDaemon().checkConnection(true)
-            ReportUtil.setAdhocRunning(false)
+            AmeModuleCenter.serverDaemon(getAccountContext()).startDaemon()
+            AmeModuleCenter.serverDaemon(getAccountContext()).checkConnection(true)
+            metricsProvider?.setAdhocRunning(false)
 
             mPixelManager?.quit(AppContextHolder.APP_CONTEXT)
         }
@@ -209,14 +212,14 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
             if (SchemeLaunchHelper.hasIntent()) {
                 checkSchemeLaunch()
             }
-            checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(AMELogin.uid) > 0)
+            checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(getAccountContext().uid) > 0)
         }
 
         // check need fetch profile or avatar
         if (recipient.needRefreshProfile()) {
-            AmeModuleCenter.contact().checkNeedFetchProfileAndIdentity(recipient, callback = null)
+            AmeModuleCenter.contact(getAccountContext())?.checkNeedFetchProfileAndIdentity(recipient, callback = null)
         } else {
-            AmeModuleCenter.contact().checkNeedDownloadAvatarWithAll(recipient)
+            AmeModuleCenter.contact(getAccountContext())?.checkNeedDownloadAvatarWithAll(recipient)
         }
     }
 
@@ -232,14 +235,14 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         super.onNewIntent(newIntent)
         intent = newIntent
 
-        if (AmeModuleCenter.user().isPinLocked()) {
-            AmeModuleCenter.user().showPinLock()
+        if (AmeModuleCenter.user(getAccountContext())?.isPinLocked() == true) {
+            AmeModuleCenter.user(getAccountContext())?.showPinLock()
             SchemeLaunchHelper.storeSchemeIntent(newIntent)
         } else {
             //查看系统banner消息是否存在
             AmePushProcess.checkSystemBannerNotice()
             //拉取系统消息
-            PushUtil.loadSystemMessages()
+            PushUtil.loadSystemMessages(getAccountContext())
 
             checkSchemeLaunch()
         }
@@ -380,11 +383,11 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     private fun initRecipientData() {
         updateRecipientData(recipient)
-        checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(AMELogin.uid) > 0)
+        checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(getAccountContext().uid) > 0)
     }
 
     private fun updateRecipientData(recipient: Recipient) {
-        home_toolbar_avatar.showPrivateAvatar(recipient)
+        home_toolbar_avatar.showPrivateAvatar(getAccountContext(), recipient)
     }
 
     private fun initPullDownView() {
@@ -486,7 +489,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     height == 0 -> {
                         home_toolbar_avatar.setPrivateElevation(0f)
                         home_toolbar_avatar.getIndividualAvatarView().showCoverText()
-                        home_toolbar_avatar.showPrivateAvatar(recipient)
+                        home_toolbar_avatar.showPrivateAvatar(getAccountContext(), recipient)
 
                         home_toolbar.layoutParams = (home_toolbar.layoutParams as ConstraintLayout.LayoutParams).apply {
                             topMargin = 0
@@ -618,10 +621,9 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         if (shareLink.isNullOrEmpty()) {
             mWaitForShortLink = true
             AmeAppLifecycle.showLoading()
-            AmeModuleCenter.contact().updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
+            AmeModuleCenter.contact(getAccountContext())?.updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
                 AmeAppLifecycle.hideLoading()
             }
-
         } else {
             mWaitForShortLink = false
             CommonShareView.Builder()
@@ -629,7 +631,6 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     .setType(CommonShareView.Config.TYPE_TEXT)
                     .show(this)
         }
-
     }
 
     private fun showAnim(view: View) {

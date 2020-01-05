@@ -16,13 +16,14 @@ import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.common.utils.saveTextToBoard
+import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.startBcmActivityForResult
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.destroy.DestroyAccountDialog
 import com.bcm.messenger.me.ui.destroy.DestroyCheckPasswordFragment
 import com.bcm.messenger.me.ui.keybox.MyAccountKeyActivity
 import com.bcm.messenger.me.ui.keybox.SwitchAccountAdapter
-import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
 import com.bcm.messenger.me.ui.login.ChangePasswordActivity
 import com.bcm.messenger.me.ui.login.backup.VerifyFingerprintActivity
 import com.bcm.messenger.me.ui.qrcode.BcmMyQRCodeActivity
@@ -32,11 +33,11 @@ import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.me_fragment_my_profile.*
 
 /**
- *
  * Created by wjh on 2019-12-11
+ *
+ * This fragment MUST use the account context which is got from the arguments.
  */
 class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
-
     companion object {
         private const val TAG = "MyProfileFragment"
         private const val VERIFY_REQUEST = 1
@@ -49,8 +50,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
         if (requestCode == VERIFY_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 val intent = Intent(activity, MyAccountKeyActivity::class.java)
-                intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, getAccountRecipient().address.serialize())
-                startActivity(intent)
+                startBcmActivity(getAccountContext(), intent)
             }
         }
     }
@@ -60,12 +60,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val address: Address? = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ADDRESS)
-        if (address == null) {
-            activity?.finish()
-            return
-        }
-        recipient = Recipient.from(getAccountContext(), address, true)
+        recipient = Recipient.from(getAccountContext(), Address.fromSerialized(getAccountContext().uid), true)
         recipient.addListener(this)
         initView()
     }
@@ -89,7 +84,6 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     private fun initView() {
-
         profile_title_bar?.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
                 activity?.finish()
@@ -110,12 +104,12 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
             handleNameEdit()
         }
 
-
         profile_account_item?.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            startActivityForResult(Intent(activity, VerifyFingerprintActivity::class.java), VERIFY_REQUEST)
+            val intent = Intent(activity, VerifyFingerprintActivity::class.java)
+            startBcmActivityForResult(getAccountContext(), intent, VERIFY_REQUEST)
         }
 
         profile_change_pwd_item?.setOnClickListener {
@@ -123,7 +117,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
                 return@setOnClickListener
             }
             val intent = Intent(activity, ChangePasswordActivity::class.java)
-            startActivity(intent)
+            startBcmActivity(getAccountContext(), intent)
         }
 
         profile_logout_btn?.setOnClickListener {
@@ -153,7 +147,6 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
             }.show(fm, "destroy_dialog")
         }
 
-
         profile_title_bar?.setCenterText(getString(R.string.me_profile_title))
         profile_id_item?.setTip(InputLengthFilter.filterString(getAccountRecipient().address.serialize(), 15), 0)
         if (!isReleaseBuild()) {
@@ -167,7 +160,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
 
         profile_qr_item?.setOnClickListener {
             val intent = Intent(activity, BcmMyQRCodeActivity::class.java)
-            startActivity(intent)
+            startBcmActivity(getAccountContext(), intent)
         }
 
         initProfile(recipient)
@@ -190,29 +183,24 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
      * 处理名称编辑
      */
     private fun handleNameEdit() {
-        startActivity(Intent(activity, EditNameActivity::class.java).apply {
-            putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)
-        })
-
+        startBcmActivity(getAccountContext(), Intent(activity, EditNameActivity::class.java))
     }
 
     /**
      * 处理头像编辑
      */
     private fun handleAvatarEdit() {
-        val intent = Intent(activity, ImageViewActivity::class.java)
-        intent.putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)
-        intent.putExtra(ARouterConstants.PARAM.ME.PROFILE_EDIT, true)
-        startActivity(intent)
+        val intent = Intent(activity, ImageViewActivity::class.java).apply {
+            putExtra(ARouterConstants.PARAM.ME.PROFILE_EDIT, true)
+        }
+        startBcmActivity(getAccountContext(), intent)
     }
 
     /**
      * 初始化profile
      */
     private fun initProfile(recipient: Recipient) {
-
         profile_icon?.setPhoto(getAccountContext(), recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
         profile_name_item?.setTip(recipient.bcmName ?: recipient.address.format())
     }
-
 }

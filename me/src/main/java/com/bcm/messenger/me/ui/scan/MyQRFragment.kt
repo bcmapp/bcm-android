@@ -12,6 +12,7 @@ import androidx.core.content.FileProvider
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BaseFragment
+import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
@@ -39,6 +40,7 @@ import java.io.File
 class MyQRFragment : BaseFragment(), RecipientModifiedListener {
 
     private val TAG = "MyQRFragment"
+    private lateinit var accountContext: AccountContext
     private lateinit var recipient: Recipient
     private lateinit var mAccountContext: AccountContext
 
@@ -113,7 +115,6 @@ class MyQRFragment : BaseFragment(), RecipientModifiedListener {
                         })
             }else {
                 AmeModuleCenter.contact(mAccountContext)?.updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
-
                 }
             }
         }

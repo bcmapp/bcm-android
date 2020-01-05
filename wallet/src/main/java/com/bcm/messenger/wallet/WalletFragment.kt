@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.dp2Px
@@ -147,6 +148,13 @@ class WalletFragment : BaseFragment() {
 
     private fun initViewModel() {
         val activity = activity ?: return
+
+        val accountContext = activity.intent.getParcelableExtra<AccountContext>(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        if (accountContext == null) {
+            activity.finish()
+            return
+        }
+
         updateWalletTotal()
 
         mWalletModel = WalletViewModel.of(activity)

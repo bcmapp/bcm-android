@@ -169,7 +169,7 @@ object AmeLoginLogic {
         AmeModuleCenter.contact(accountContext)?.doForLogOut()
         AmeModuleCenter.user(accountContext)?.doForLogout()
 
-        ReportUtil.unInit()
+        ReportUtil.unInit(accountContext)
         AmePushProcess.clearNotificationCenter()
         AmePushProcess.updateAppBadge(AppContextHolder.APP_CONTEXT, 0)
         AmeProvider.get<IWalletModule>(ARouterConstants.Provider.PROVIDER_WALLET_BASE)?.logoutWallet()
@@ -194,7 +194,7 @@ object AmeLoginLogic {
 
         refreshMySupportFeature(accountContext)
 
-        ReportUtil.loginEnded(true)
+        ReportUtil.loginEnded(getAccountContext(uid), true)
 
     }
 
@@ -543,7 +543,7 @@ object AmeLoginLogic {
         } catch (e: Exception) {
             ALog.logForSecret(TAG, "loginSucceed generate prekey or prekey upload failed, ${e.message}", e)
             quit(accountContext, false)
-            ReportUtil.loginEnded(false)
+            ReportUtil.loginEnded(getAccountContext(uid), false)
             throw e
         }
     }
