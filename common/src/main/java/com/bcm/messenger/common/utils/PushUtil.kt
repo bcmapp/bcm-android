@@ -78,7 +78,7 @@ object PushUtil {
     @Throws(IOException::class)
     private fun registerPush2Server(accountContext: AccountContext, gcmRegistrationId: String, umengRegistrationId: String) {
         val registration = GcmRegistrationId(gcmRegistrationId, umengRegistrationId, true)
-        RxIMHttp.getHttp(accountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(REGISTER_GCM_PATH), GsonUtils.toJson(registration), AmeEmpty::class.java)
+        RxIMHttp.get(accountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(REGISTER_GCM_PATH), GsonUtils.toJson(registration), AmeEmpty::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .doOnError {
@@ -88,7 +88,7 @@ object PushUtil {
     }
 
     private fun unregisterPush2Server(accountContext: AccountContext) {
-        RxIMHttp.getHttp(accountContext).delete<AmeEmpty>(BcmHttpApiHelper.getApi(REGISTER_GCM_PATH),null,"",AmeEmpty::class.java)
+        RxIMHttp.get(accountContext).delete<AmeEmpty>(BcmHttpApiHelper.getApi(REGISTER_GCM_PATH),null,"",AmeEmpty::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .doOnError {
@@ -132,7 +132,7 @@ object PushUtil {
      * App
      */
     private fun getSystemMessages(accountContext: AccountContext): Observable<ServerResult<SystemMessageList>> {
-        return RxIMHttp.getHttp(accountContext).get<ServerResult<SystemMessageList>>(BcmHttpApiHelper.getApi(SYSTEM_MESSAGE_GET),
+        return RxIMHttp.get(accountContext).get<ServerResult<SystemMessageList>>(BcmHttpApiHelper.getApi(SYSTEM_MESSAGE_GET),
                 null, object : TypeToken<ServerResult<SystemMessageList>>() {}.type)
     }
 
@@ -140,7 +140,7 @@ object PushUtil {
      * ，
      */
     fun confirmSystemMessages(accountContext: AccountContext, maxMid: Long): Observable<AmeEmpty> {
-        return RxIMHttp.getHttp(accountContext).delete<AmeEmpty>(BcmHttpApiHelper.getApi(String.format(SYSTEM_MESSAGE_DELETE_MAXID, maxMid)),
+        return RxIMHttp.get(accountContext).delete<AmeEmpty>(BcmHttpApiHelper.getApi(String.format(SYSTEM_MESSAGE_DELETE_MAXID, maxMid)),
                 null, null, object : TypeToken<ServerResult<Void>>() {}.type)
     }
 

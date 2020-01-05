@@ -1,6 +1,7 @@
 package com.bcm.messenger.common.database.records
 
 import androidx.room.Ignore
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.model.PrivateChatDbModel
@@ -49,9 +50,9 @@ class MessageRecord() : ChatMessageModel() {
                 other.expiresStartTime == expiresStartTime
     }
 
-    fun getRecipient(): Recipient {
+    fun getRecipient(accountContext: AccountContext): Recipient {
         if (!::recipient.isInitialized) {
-            recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(uid), true)
+            recipient = Recipient.from(accountContext, Address.fromSerialized(uid), true)
         }
         return recipient
     }

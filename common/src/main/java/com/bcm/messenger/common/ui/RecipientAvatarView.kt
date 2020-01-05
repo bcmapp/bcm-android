@@ -82,7 +82,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         when {
             !groupInfo?.iconUrl.isNullOrBlank() -> {
                 ALog.i(TAG, "Group icon url is not empty")
-                showGroupAvatar(accountContext, Recipient.recipientFromNewGroupIdAsync(AppContextHolder.APP_CONTEXT, gid))
+                showGroupAvatar(accountContext, Recipient.recipientFromNewGroupIdAsync(accountContext, gid))
             }
             showSplice -> {
                 ALog.i(TAG, "Have temp splice avatar")

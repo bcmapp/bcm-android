@@ -3,6 +3,7 @@ package com.bcm.messenger.chats.group.logic
 import android.annotation.SuppressLint
 import android.text.TextUtils
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.database.db.UserDatabase
@@ -29,7 +30,7 @@ import java.util.*
 import kotlin.collections.HashSet
 import kotlin.math.min
 
-class GroupAutoGenerateLogic {
+class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
     companion object {
         const val TAG = "GroupAutoGenerateLogic"
     }
@@ -41,7 +42,7 @@ class GroupAutoGenerateLogic {
         Observable.create<Void> {
             try {
                 val params = paramsDao().queryAvatarParams(gid)
-                val gInfo = GroupInfoDataManager.queryOneGroupInfo(gid) ?: return@create
+                val gInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid) ?: return@create
 
                 if (gInfo.name.isNotEmpty() && gInfo.iconUrl.isNotEmpty()) {
                     return@create
@@ -53,10 +54,10 @@ class GroupAutoGenerateLogic {
 
                 val memberInfoList = if (null != params) {
                     val list = params.toUserList()
-                    val mList = UserDataManager.queryGroupMemberList(gid, list).filter { member -> member.role != AmeGroupMemberInfo.VISITOR }.toMutableList()
+                    val mList = UserDataManager.queryGroupMemberList(accountContext, gid, list).filter { member -> member.role != AmeGroupMemberInfo.VISITOR }.toMutableList()
                     if (mList.size < 4) {
                         val existList = mList.map { m -> m.uid.serialize() }
-                        val dbTop4List = UserDataManager.queryTopNGroupMember(gid, 4).filter { m -> !existList.contains(m.uid.serialize()) }
+                        val dbTop4List = UserDataManager.queryTopNGroupMember(accountContext, gid, 4).filter { m -> !existList.contains(m.uid.serialize()) }
                         mList.addAll(dbTop4List.subList(0, min(dbTop4List.size, 4 - mList.size)))
                         if (mList.isEmpty()) {
                             ALog.i(TAG, "$gid member list is empty")
@@ -88,9 +89,9 @@ class GroupAutoGenerateLogic {
                 var newParams: GroupAvatarParams? = null
 
                 val queryMember = if (memberInfoList.isEmpty()) {
-                    GroupLogic.queryTopMemberInfoList(gid, 4)
+                    GroupLogic.get(accountContext).queryTopMemberInfoList(gid, 4)
                 } else {
-                    GroupLogic.getGroupMemberInfos(gid, memberInfoList)
+                    GroupLogic.get(accountContext).getGroupMemberInfos(gid, memberInfoList)
                 }
 
                 queryMember.subscribeOn(AmeDispatcher.singleScheduler)
@@ -124,7 +125,7 @@ class GroupAutoGenerateLogic {
                             gInfo.spliceName = combineName
                             gInfo.chnSpliceName = chnCombineName
                             gInfo.spliceAvatar = path
-                            GroupLogic.updateAutoGenGroupNameAndAvatar(gid, combineName, chnCombineName, path)
+                            GroupLogic.get(accountContext).updateAutoGenGroupNameAndAvatar(gid, combineName, chnCombineName, path)
 
                             if (TextUtils.isEmpty(oldPath)) {
                                 BcmFileUtils.delete(oldPath)
@@ -136,9 +137,9 @@ class GroupAutoGenerateLogic {
 
                             generatingSet.remove(gid)
 
-                            GroupLogic.updateAutoGenGroupNameAndAvatar(gid, combineName, chnCombineName, "")
+                            GroupLogic.get(accountContext).updateAutoGenGroupNameAndAvatar(gid, combineName, chnCombineName, "")
 
-                            val newInfo = GroupInfoDataManager.queryOneGroupInfo(gid)
+                            val newInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
                                     ?: return@doOnError
 
                             if (newInfo.spliceName == gInfo.spliceName && newInfo.iconUrl == gInfo.iconUrl) {
@@ -273,7 +274,7 @@ class GroupAutoGenerateLogic {
         var index = 0
         for (member in memberList) {
             val uid = member.uid.toString()
-            if (uid.isNotBlank() && uid != AMELogin.uid) {
+            if (uid.isNotBlank() && uid != accountContext.uid) {
                 val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, member.uid, true)
                 val name = BcmGroupNameUtil.getGroupMemberName(recipient, member)
                 spliceName += InputLengthFilter.filterSpliceName(name, 10)
@@ -319,6 +320,6 @@ class GroupAutoGenerateLogic {
     }
 
     private fun paramsDao(): GroupAvatarParamsDao {
-        return UserDatabase.getDatabase().groupAvatarParamsDao()
+        return UserDatabase.getDatabase(accountContext).groupAvatarParamsDao()
     }
 }

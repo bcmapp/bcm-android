@@ -3,6 +3,7 @@ package com.bcm.messenger.chats.group.logic
 import android.annotation.SuppressLint
 import com.bcm.messenger.chats.group.core.GroupMemberCore
 import com.bcm.messenger.chats.group.core.group.GroupMemberEntity
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.utils.md5
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -12,7 +13,7 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.schedulers.Schedulers
 
-class GroupMemberInfoNetLoader {
+class GroupMemberInfoNetLoader(private val accountContext: AccountContext) {
     private val loadMap = HashMap<String, RequestState<GroupMemberEntity>>()
     private val listLoadMap = HashMap<String, RequestState<List<GroupMemberEntity>>>()
 
@@ -43,7 +44,7 @@ class GroupMemberInfoNetLoader {
                 .flatMap {
                     if (!it.requesting) {
                         it.requesting = true
-                        GroupMemberCore.getGroupMemberInfo(gid, uid)
+                        GroupMemberCore.getGroupMemberInfo(accountContext, gid, uid)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AmeDispatcher.singleScheduler)
                     } else {
@@ -90,7 +91,7 @@ class GroupMemberInfoNetLoader {
                 .flatMap {
                     if (!it.requesting) {
                         it.requesting = true
-                        GroupMemberCore.getGroupMembers(gid, uids)
+                        GroupMemberCore.getGroupMembers(accountContext, gid, uids)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AmeDispatcher.singleScheduler)
                     } else {

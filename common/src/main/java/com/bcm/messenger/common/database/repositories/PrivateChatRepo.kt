@@ -183,7 +183,7 @@ class PrivateChatRepo(private val accountContext: AccountContext) {
         return messageId
     }
 
-    fun insertIncomingTextMessage(message: IncomingTextMessage): Pair<Long, Long> {
+    fun insertIncomingTextMessage(accountContext: AccountContext, message: IncomingTextMessage): Pair<Long, Long> {
         val model = MessageRecord()
         val threadRepo = Repository.getThreadRepo(accountContext)
 
@@ -205,7 +205,7 @@ class PrivateChatRepo(private val accountContext: AccountContext) {
             message.isIdentityDefault -> status = status or KEY_EXCHANGE_IDENTITY_DEFAULT_BIT
         }
 
-        val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, message.sender, true)
+        val recipient = Recipient.from(accountContext, message.sender, true)
         var unread = message.isSecureMessage || message.isPreKeyBundle && !message.isIdentityUpdate && !message.isIdentityDefault && !message.isIdentityVerified
         if (message is IncomingLocationMessage) {
             unread = when (message.payloadType.toLong()) {
@@ -245,7 +245,7 @@ class PrivateChatRepo(private val accountContext: AccountContext) {
         return Pair(threadId, messageId)
     }
 
-    fun insertIncomingMediaMessage(masterSecret: MasterSecret, message: IncomingMediaMessage): Pair<Long, Long> {
+    fun insertIncomingMediaMessage(accountContext: AccountContext, masterSecret: MasterSecret, message: IncomingMediaMessage): Pair<Long, Long> {
         val model = MessageRecord()
         val threadRepo = Repository.getThreadRepo(accountContext)
 
@@ -253,7 +253,7 @@ class PrivateChatRepo(private val accountContext: AccountContext) {
         if (message.isPushMessage) status = status or PUSH_MESSAGE_BIT
         if (message.isExpirationUpdate) status = status or EXPIRATION_TIMER_UPDATE_BIT
 
-        val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, message.from, true)
+        val recipient = Recipient.from(accountContext, message.from, true)
         val threadId = threadRepo.getThreadIdFor(recipient)
 
         model.body = message.body.orEmpty()

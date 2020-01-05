@@ -24,7 +24,7 @@ class IMServerConnectionChecker:IConnectionChecker {
 
         ALog.d("IMServerConnectionChecker", url)
         return Observable.create<Boolean> { emit ->
-            IMHttp.getHttp(AMELogin.majorContext).get()
+            IMHttp.get(AMELogin.majorContext).get()
                     .url(url)
                     .build()
                     .writeTimeOut(1000)

@@ -56,7 +56,7 @@ object MessageDataManager {
         message.isFileEncrypted = fileInfo.random != null
         getDao(accountContext).updateMessage(message)
 
-        EventBus.getDefault().post(MessageEvent(message.gid, MessageEvent.EventType.ATTACHMENT_DOWNLOAD_SUCCESS,
+        EventBus.getDefault().post(MessageEvent(accountContext, message.gid, MessageEvent.EventType.ATTACHMENT_DOWNLOAD_SUCCESS,
                 listOf(GroupMessageTransform.transformToModel(message)
                         ?: return)))
     }
@@ -71,7 +71,7 @@ object MessageDataManager {
         message.isFileEncrypted = fileInfo.random != null
         getDao(accountContext).updateMessage(message)
 
-        EventBus.getDefault().post(MessageEvent(message.gid, MessageEvent.EventType.THUMBNAIL_DOWNLOAD_SUCCESS,
+        EventBus.getDefault().post(MessageEvent(accountContext, message.gid, MessageEvent.EventType.THUMBNAIL_DOWNLOAD_SUCCESS,
                 listOf(GroupMessageTransform.transformToModel(message))))
     }
 
@@ -93,7 +93,7 @@ object MessageDataManager {
 
         getDao(accountContext).updateMessage(message)
         notifyThreadUpdate(accountContext, message.gid)
-        EventBus.getDefault().post(MessageEvent(message.gid, indexId, MessageEvent.EventType.DELETE_ONE_MESSAGE))
+        EventBus.getDefault().post(MessageEvent(accountContext, message.gid, indexId, MessageEvent.EventType.DELETE_ONE_MESSAGE))
     }
 
 
@@ -111,7 +111,7 @@ object MessageDataManager {
             }
             getDao(accountContext).updateMessages(list)
 
-            if (Repository.getThreadRepo(accountContext).getThreadIdIfExist(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid)) > 0) {
+            if (Repository.getThreadRepo(accountContext).getThreadIdIfExist(Recipient.recipientFromNewGroupId(accountContext, gid)) > 0) {
                 notifyThreadUpdate(accountContext, gid)
             }
         }
@@ -148,7 +148,7 @@ object MessageDataManager {
 
             val groupMessageDetail = GroupMessageTransform.transformToModel(message)
             groupMessageDetail?.let {
-                EventBus.getDefault().post(MessageEvent(message.gid, MessageEvent.EventType.SEND_MESSAGE_UPDATE, listOf(it)))
+                EventBus.getDefault().post(MessageEvent(accountContext, message.gid, MessageEvent.EventType.SEND_MESSAGE_UPDATE, listOf(it)))
             }
             0
         } else {
@@ -192,7 +192,7 @@ object MessageDataManager {
 
             val groupMessageDetail = GroupMessageTransform.transformToModel(message)
             groupMessageDetail?.let {
-                EventBus.getDefault().post(MessageEvent(gid, MessageEvent.EventType.SEND_MESSAGE_UPDATE, listOf(it)))
+                EventBus.getDefault().post(MessageEvent(accountContext, gid, MessageEvent.EventType.SEND_MESSAGE_UPDATE, listOf(it)))
             }
         }
 
@@ -385,7 +385,7 @@ object MessageDataManager {
         if (sendMessage.is_confirm == GroupMessage.CONFIRM_MESSAGE) {
             val messageDetail = GroupMessageTransform.transformToModel(sendMessage)
             messageDetail?.let {
-                EventBus.getDefault().post(MessageEvent(sendMessage.gid, MessageEvent.EventType.SEND_MESSAGE_INSERT, listOf(it)))
+                EventBus.getDefault().post(MessageEvent(accountContext, sendMessage.gid, MessageEvent.EventType.SEND_MESSAGE_INSERT, listOf(it)))
             }
         }
         return indexId
@@ -436,7 +436,7 @@ object MessageDataManager {
 
         if (message.is_confirm == GroupMessage.CONFIRM_MESSAGE) {
             // ThreadId
-            val groupRecipient = Recipient.from(AppContextHolder.APP_CONTEXT,
+            val groupRecipient = Recipient.from(accountContext,
                     GroupUtil.addressFromGid(message.gid),
                     false)
 
@@ -473,7 +473,7 @@ object MessageDataManager {
                 if (isNotify) {
                     notifyThreadUpdate(accountContext, message.gid)
                 }
-                EventBus.getDefault().post(GroupMessageMissedEvent(message.gid, savedMaxMid, message.mid-1))
+                EventBus.getDefault().post(GroupMessageMissedEvent(accountContext, message.gid, savedMaxMid, message.mid-1))
                 //,
                 return InsertMessageResult(INSERT_SUCCESS, message.gid, savedMaxMid, message.mid, indexId)
             }
@@ -490,7 +490,7 @@ object MessageDataManager {
                     }
                     //UI
                     GroupMessageTransform.transformToModel(message)?.let {
-                        EventBus.getDefault().post(MessageEvent(message.gid, message.id, MessageEvent.EventType.RECEIVE_MESSAGE_INSERT, listOf(it)))
+                        EventBus.getDefault().post(MessageEvent(accountContext, message.gid, message.id, MessageEvent.EventType.RECEIVE_MESSAGE_INSERT, listOf(it)))
                     }
 
                 } else {
@@ -613,7 +613,7 @@ object MessageDataManager {
         notifyThreadUpdate(accountContext, databaseMessage.gid)
 
         GroupMessageTransform.transformToModel(databaseMessage)?.let {
-            EventBus.getDefault().post(MessageEvent(databaseMessage.gid, MessageEvent.EventType.SEND_MESSAGE_UPDATE, listOf(it)))
+            EventBus.getDefault().post(MessageEvent(accountContext, databaseMessage.gid, MessageEvent.EventType.SEND_MESSAGE_UPDATE, listOf(it)))
         }
 
     }

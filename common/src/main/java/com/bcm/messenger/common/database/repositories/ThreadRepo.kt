@@ -17,7 +17,6 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTransform
 import com.bcm.messenger.common.grouprepository.room.entity.GroupLiveInfo
 import com.bcm.messenger.common.mms.PartAuthority
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -118,7 +117,7 @@ class ThreadRepo(private val accountContext:AccountContext) {
     fun getAllThreads() = threadDao.queryAllThreads()
 
     fun getThreadIdFor(uid: String): Long {
-        return getThreadIdFor(Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(uid), true))
+        return getThreadIdFor(Recipient.from(accountContext, Address.fromSerialized(uid), true))
     }
 
     @Synchronized
@@ -195,14 +194,14 @@ class ThreadRepo(private val accountContext:AccountContext) {
 
     fun cleanConversationContentForGroup(threadId: Long, gid: Long) {
         Repository.getDraftRepo(accountContext).clearDrafts(threadId)
-        GroupLiveInfoManager.getInstance(accountContext).deleteLiveInfoWhenLeaveGroup(gid)
+        GroupLiveInfoManager.get(accountContext).deleteLiveInfoWhenLeaveGroup(gid)
         MessageDataManager.deleteMessagesByGid(accountContext, gid)
         deleteThread(threadId)
     }
 
     fun deleteConversationForGroup(gid: Long, threadId: Long) {
         Repository.getDraftRepo(accountContext).clearDrafts(threadId)
-        GroupLiveInfoManager.getInstance(accountContext).deleteLiveInfoWhenLeaveGroup(gid)
+        GroupLiveInfoManager.get(accountContext).deleteLiveInfoWhenLeaveGroup(gid)
         MessageDataManager.deleteMessagesByGid(accountContext, gid)
         updateByNewGroup(gid)
     }
@@ -254,12 +253,12 @@ class ThreadRepo(private val accountContext:AccountContext) {
 
     fun updateByNewGroup(gid: Long, time: Long? = null) {
         val message = GroupMessageTransform.transformToModel(MessageDataManager.fetchLastMessage(accountContext, gid))
-        var threadId = getThreadIdIfExist(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid))
+        var threadId = getThreadIdIfExist(Recipient.recipientFromNewGroupId(accountContext, gid))
         if (threadId <= 0L && (null == message || null == message.message)) {
             ALog.i(TAG, "updateByNewGroup gid: $gid, no thread, no message, return")
             return
         } else if (threadId <= 0L) {
-            threadId = getThreadIdFor(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid))
+            threadId = getThreadIdFor(Recipient.recipientFromNewGroupId(accountContext, gid))
         }
 
         val drafts = Repository.getDraftRepo(accountContext).getDrafts(threadId)
@@ -336,7 +335,7 @@ class ThreadRepo(private val accountContext:AccountContext) {
             map[r.uid] = r
         }
         Repository.getRecipientRepo(accountContext)?.getRecipients(uidList)?.forEach { settings ->
-            map[settings.uid]?.setRecipient(Recipient.fromSnapshot(AppContextHolder.APP_CONTEXT, Address.fromSerialized(settings.uid), settings))
+            map[settings.uid]?.setRecipient(Recipient.fromSnapshot(accountContext, Address.fromSerialized(settings.uid), settings))
         }
         return threadList
     }
@@ -351,9 +350,9 @@ class ThreadRepo(private val accountContext:AccountContext) {
 
     fun updateLiveState(gid: Long, status: Int) {
         val threadId = if (status == GroupLiveInfo.LiveStatus.REMOVED.value || status == GroupLiveInfo.LiveStatus.STOPED.value || status == GroupLiveInfo.LiveStatus.EMPTY.value) {
-            getThreadIdIfExist(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid))
+            getThreadIdIfExist(Recipient.recipientFromNewGroupId(accountContext, gid))
         } else {
-            getThreadIdFor(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid))
+            getThreadIdFor(Recipient.recipientFromNewGroupId(accountContext, gid))
         }
         if (threadId <= 0) return
         threadDao.updateLiveStatus(threadId, status)

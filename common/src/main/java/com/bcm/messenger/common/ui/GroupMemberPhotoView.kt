@@ -90,7 +90,7 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
 
         if (this.recipient?.address != address) {
             recipient?.removeListener(this)
-            this.recipient = Recipient.from(context, address, true)
+            this.recipient = Recipient.from(accountContext, address, true)
             recipient?.addListener(this)
         }
 

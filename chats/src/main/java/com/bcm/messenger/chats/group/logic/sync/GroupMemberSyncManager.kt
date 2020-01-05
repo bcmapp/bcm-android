@@ -36,7 +36,7 @@ class GroupMemberSyncManager(private val accountContext: AccountContext) {
 
     private fun syncGroupMemberImpl(gid: Long, roles: List<Long>, fromUid: String, createTime: Long, finished: (firstPage: Boolean, finish: Boolean, memberList: List<GroupMember>) -> Unit) {
         ALog.i("GroupMemberSyncManager", "syncGroupMemberImpl $gid from: $fromUid createTime: $createTime")
-        GroupMemberCore.getGroupMemberByPage(gid, roles, fromUid, createTime, PAGE_SIZE)
+        GroupMemberCore.getGroupMemberByPage(accountContext, gid, roles, fromUid, createTime, PAGE_SIZE)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .subscribe({

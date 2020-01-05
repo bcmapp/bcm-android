@@ -220,13 +220,13 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                         if (owner != null) {
                             val r = Recipient.from(context, Address.from(context, owner), true)
                             val des = (message.content as AmeGroupMessage.LiveContent).getDescription(r)
-                            message.content.setRecipientCallback(this)
+                            message.content.setRecipientCallback(, this)
                             des
                         } else {
                             ""
                         }
                     } else {
-                        message.content.setRecipientCallback(this)
+                        message.content.setRecipientCallback(, this)
                         val text = message.content.getDescribe(groupId, )
                         text
                     }
@@ -248,7 +248,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                 } else if (record.isLocation()) {
                     val message = record.getGroupMessage()
                     if (message != null){
-                        message.content.setRecipientCallback(this)
+                        message.content.setRecipientCallback(, this)
                         val text = if(message.type == AmeGroupMessage.CONTROL_MESSAGE) {
                             val content = message.content as AmeGroupMessage.ControlContent
                             if(content.actionCode == AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE) {

@@ -1,6 +1,7 @@
 package com.bcm.messenger.common.database.records
 
 import androidx.room.Ignore
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.model.ThreadDbModel
@@ -24,10 +25,10 @@ class ThreadRecord : ThreadDbModel() {
         this.recipient = recipient
     }
 
-    fun getRecipient(): Recipient {
+    fun getRecipient(accountContext: AccountContext): Recipient {
         if (!::recipient.isInitialized) {
             ALog.d(TAG, "getRecipient init")
-            recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(uid), true)
+            recipient = Recipient.from(accountContext, Address.fromSerialized(uid), true)
         }
         return recipient
     }

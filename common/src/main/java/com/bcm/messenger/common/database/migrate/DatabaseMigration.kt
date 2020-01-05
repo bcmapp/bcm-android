@@ -2,6 +2,7 @@ package com.bcm.messenger.common.database.migrate
 
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.crypto.MasterCipher
+import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.database.RecipientDatabase
 import com.bcm.messenger.common.database.db.MigrateDatabase
@@ -32,14 +33,13 @@ import io.reactivex.schedulers.Schedulers
  */
 object DatabaseMigration : IDatabaseMigration {
     private val TAG = "DatabaseMigration"
-
-    private val masterSecret = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
     private val threadIdMap = hashMapOf<Long, Long>()
 
     private var isUpgrading = false
 
     override fun doMigrate(accountContext: AccountContext, callback: (finishCount: Int) -> Unit) {
         val migrateDatabase = MigrateDatabase(accountContext)
+        val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
         if (masterSecret != null && !isUpgrading) {
             isUpgrading = true
             Observable.create<Int> {
@@ -50,11 +50,11 @@ object DatabaseMigration : IDatabaseMigration {
                 it.onNext(0)
 
                 ALog.i(TAG, "Start migrate threads")
-                doMigrateThreads(migrateDatabase)
+                doMigrateThreads(migrateDatabase, masterSecret)
                 it.onNext(1)
 
                 ALog.i(TAG, "Start migrate drafts")
-                doMigrateDrafts(migrateDatabase)
+                doMigrateDrafts(migrateDatabase, masterSecret)
                 it.onNext(2)
 
                 ALog.i(TAG, "Start migrate push")
@@ -62,7 +62,7 @@ object DatabaseMigration : IDatabaseMigration {
                 it.onNext(3)
 
                 ALog.i(TAG, "Start migrate private messages")
-                doMigrateMessages(migrateDatabase)
+                doMigrateMessages(migrateDatabase, masterSecret)
                 it.onNext(4)
 
                 ALog.i(TAG, "Start migrate identity key")
@@ -136,7 +136,7 @@ object DatabaseMigration : IDatabaseMigration {
                 it.onNext(21)
 
                 ALog.i(TAG, "Close all database to encrypt")
-                doEncryptDatabase(accountContext, migrateDatabase)
+                doEncryptDatabase(accountContext, migrateDatabase, masterSecret)
                 it.onNext(22)
 
                 ALog.i(TAG, "Migrate completed")
@@ -160,7 +160,7 @@ object DatabaseMigration : IDatabaseMigration {
         }
     }
 
-    private fun doMigrateThreads(migrateDatabase: MigrateDatabase) {
+    private fun doMigrateThreads(migrateDatabase: MigrateDatabase, masterSecret: MasterSecret) {
         val threadDatabase = DatabaseFactory.getThreadDatabase(AppContextHolder.APP_CONTEXT)
 
         val cursor = threadDatabase.conversationList
@@ -173,7 +173,7 @@ object DatabaseMigration : IDatabaseMigration {
         }
     }
 
-    private fun doMigrateDrafts(migrateDatabase: MigrateDatabase) {
+    private fun doMigrateDrafts(migrateDatabase: MigrateDatabase, masterSecret: MasterSecret) {
         val draftDatabase = DatabaseFactory.getDraftDatabase(AppContextHolder.APP_CONTEXT)
         val masterCipher = MasterCipher(masterSecret)
 
@@ -200,7 +200,7 @@ object DatabaseMigration : IDatabaseMigration {
         } while (pair != null)
     }
 
-    private fun doMigrateMessages(migrateDatabase: MigrateDatabase) {
+    private fun doMigrateMessages(migrateDatabase: MigrateDatabase, masterSecret: MasterSecret) {
         val mmsSmsDatabase = DatabaseFactory.getMmsSmsDatabase(AppContextHolder.APP_CONTEXT)
 
         threadIdMap.keys.forEach {
@@ -402,12 +402,12 @@ object DatabaseMigration : IDatabaseMigration {
         }
     }
 
-    private fun doEncryptDatabase(accountContext: AccountContext, migrateDatabase: MigrateDatabase) {
+    private fun doEncryptDatabase(accountContext: AccountContext, migrateDatabase: MigrateDatabase, masterSecret: MasterSecret) {
         migrateDatabase.closeDatabase()
 
         // Do encryption if version is release build.
         if (isReleaseBuild()) {
-            SQLCipherUtils.encrypt(AppContextHolder.APP_CONTEXT, "user_${accountContext.uid}.db", masterSecret!!.encryptionKey.encoded)
+            SQLCipherUtils.encrypt(AppContextHolder.APP_CONTEXT, "user_${accountContext.uid}.db", masterSecret.encryptionKey.encoded)
         }
 
         UserDatabase.resetDatabase(accountContext)

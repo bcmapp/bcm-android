@@ -116,7 +116,7 @@ object GroupInfoDataManager {
 
     fun insertGroupInfo(accountContext: AccountContext, groupInfo: GroupInfo) {
         //recipient
-        val recipient = Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, groupInfo.gid)
+        val recipient = Recipient.recipientFromNewGroupId(accountContext, groupInfo.gid)
         Repository.getRecipientRepo(accountContext)?.setProfile(recipient, null, groupInfo.name, groupInfo.iconUrl)
 
         if (getDao(accountContext).loadGroupInfoByGid(groupInfo.gid) == null) {

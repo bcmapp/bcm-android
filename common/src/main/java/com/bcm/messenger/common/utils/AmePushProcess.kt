@@ -287,8 +287,11 @@ object AmePushProcess {
             if (notify.bcmdata != null) {
                 notify.bcmdata.contactChat?.uid?.let {
                     try {
-                        val decryptSource = BCMEncryptUtils.decryptSource(it.toByteArray())
-                        notify.bcmdata.contactChat.uid = decryptSource
+                        notify.bcmdata.contactChat.uid = if(null != accountContext) {
+                            BCMEncryptUtils.decryptSource(accountContext, it.toByteArray())
+                        } else {
+                            ""
+                        }
                     } catch (e: Exception) {
                         ALog.e(TAG, "Uid decrypted failed!")
                         return
@@ -338,7 +341,7 @@ object AmePushProcess {
 
                 offlineUnreadSet.clear()
                 offlineUnreadSet.addAll(Repository.getThreadRepo(accountContext).getAllThreadsWithRecipientReady().mapNotNull {
-                    val r = it.getRecipient()
+                    val r = it.getRecipient(accountContext)
                     if (r.isMuted || it.unreadCount <= 0) {
                         null
                     }else {
@@ -361,7 +364,7 @@ object AmePushProcess {
 
                 val privateUid = privateChat?.uid
                 if (privateUid != null) {
-                    val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(privateUid), false)
+                    val recipient = Recipient.from(accountContext, Address.fromSerialized(privateUid), false)
                     if (!recipient.isMuted) {
                         offlineUnreadSet.add(privateUid)
                     }
@@ -482,14 +485,18 @@ object AmePushProcess {
             notifyData.uid?.let {uid ->
                 val address = Address.from(AppContextHolder.APP_CONTEXT, uid)
                 val builder = AmeNotification.getDefaultNotificationBuilder(AppContextHolder.APP_CONTEXT)
-                val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, address, false)
+                val recipient = if(null != accountContext) {
+                    Recipient.from(accountContext, address, false)
+                } else {
+                    null
+                }
 
-                if (recipient.isMuted) {
+                if (recipient?.isMuted == true) {
                     return
                 }
 
                 if (TextSecurePreferences.isNotificationsEnabled(AppContextHolder.APP_CONTEXT)) {
-                    setAlarm(builder, recipient.ringtone, recipient.vibrate)
+                    setAlarm(builder, recipient?.ringtone, recipient?.vibrate?:RecipientDatabase.VibrateState.DEFAULT)
                 }
 
                 notifyBar(builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),

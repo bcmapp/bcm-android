@@ -39,14 +39,14 @@ class SystemTipsViewHolder(containerView: View) : RecyclerView.ViewHolder(contai
 
     fun unBindData() {
         if(::data.isInitialized) {
-            data.setRecipientCallback(null)
+            data.setRecipientCallback(, null)
         }
     }
 
     fun bindData(messageRecord: AmeGroupMessageDetail) {
         this.messageRecord = messageRecord
         this.data = messageRecord.message.content as AmeGroupMessage.SystemContent
-        this.data.setRecipientCallback(this)
+        this.data.setRecipientCallback(, this)
         refreshTip(itemView.context)
     }
 

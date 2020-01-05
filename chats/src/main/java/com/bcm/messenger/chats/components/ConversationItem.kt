@@ -619,7 +619,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
 
     private fun handleControlMessage(record: MessageRecord, message: AmeGroupMessage<*>) {
         val content = message.content as AmeGroupMessage.ControlContent
-        content.setRecipientCallback(this)
+        content.setRecipientCallback(, this)
         specialNotifyLayout?.visibility = View.VISIBLE
         if (content.actionCode == AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE) {
             if (record.isFailed() || record.isPendingInsecureFallback()) {
@@ -672,7 +672,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         specialNotifyLayout?.visibility = View.VISIBLE
         alertView?.setNone()
         val content = message.content as AmeGroupMessage.FriendContent
-        content.setRecipientCallback(this)
+        content.setRecipientCallback(, this)
         specialNotifyText?.text = content.getDescribe(0, )
     }
 
@@ -681,7 +681,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         specialNotifyLayout?.visibility = View.VISIBLE
         alertView?.setNone()
         val content = message.content as AmeGroupMessage.SystemContent
-        content.setRecipientCallback(this)
+        content.setRecipientCallback(, this)
         specialNotifyText?.text = content.getDescribe(0, )
         if (content.tipType == AmeGroupMessage.SystemContent.TIP_CHAT_STRANGER_RESTRICTION && !messageRecipient.isFriend) {
             val span = SpannableStringBuilder(content.getDescribe(0, ))
