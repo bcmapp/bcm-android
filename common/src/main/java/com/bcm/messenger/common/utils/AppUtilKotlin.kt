@@ -16,6 +16,7 @@ import android.graphics.drawable.GradientDrawable
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.Process
 import android.provider.MediaStore
 import android.provider.Settings
@@ -36,12 +37,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.RomUtil
 import com.bcm.messenger.utility.logger.ALog
+import com.bcm.route.api.BcmRouterIntent
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -66,6 +69,63 @@ import java.util.zip.ZipOutputStream
  * Created by Kin on 2019/5/15
  */
 private const val TAG = "AppUtilKotlin"
+
+private fun checkIntent(accountContext: AccountContext, intent: Intent) {
+    if (!intent.hasExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)) {
+        intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+    }
+}
+
+private fun checkBundle(accountContext: AccountContext, bundle: Bundle) {
+    if (bundle.getParcelable<AccountContext>(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) == null) {
+        bundle.putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+    }
+}
+
+fun Activity.startBcmActivity(accountContext: AccountContext, intent: Intent) {
+    checkIntent(accountContext, intent)
+    startActivity(intent)
+}
+
+fun Activity.startBcmActivityForResult(accountContext: AccountContext, intent: Intent, requestCode: Int) {
+    checkIntent(accountContext, intent)
+    startActivityForResult(intent, requestCode)
+}
+
+fun Activity.startBcmActivityForResult(accountContext: AccountContext, intent: Intent, requestCode: Int, options: Bundle?) {
+    checkIntent(accountContext, intent)
+    startActivityForResult(intent, requestCode, options)
+}
+
+fun Context.startBcmActivity(accountContext: AccountContext, intent: Intent) {
+    checkIntent(accountContext, intent)
+    startActivity(intent)
+}
+
+fun Context.startBcmActivity(accountContext: AccountContext, intent: Intent, options: Bundle?) {
+    checkIntent(accountContext, intent)
+    startActivity(intent, options)
+}
+
+fun BcmRouterIntent.startBcmActivity(accountContext: AccountContext) {
+    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+    navigation()
+}
+
+fun BcmRouterIntent.startBcmActivity(accountContext: AccountContext, context: Context) {
+    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+    navigation(context)
+}
+
+fun BcmRouterIntent.startBcmActivity(accountContext: AccountContext, activity: Activity, requestCode: Int) {
+    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+    navigation(activity, requestCode)
+}
+
+fun <T> BcmRouterIntent.navigationWithAccountContext(accountContext: AccountContext): T {
+    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+    return navigationWithCast<T>()
+}
 
 
 /**
