@@ -97,13 +97,34 @@ fun Activity.startBcmActivityForResult(accountContext: AccountContext, intent: I
     startActivityForResult(intent, requestCode, options)
 }
 
+fun Fragment.startBcmActivity(accountContext: AccountContext, intent: Intent) {
+    checkIntent(accountContext, intent)
+    startActivity(intent)
+}
+
+fun Fragment.startBcmActivityForResult(accountContext: AccountContext, intent: Intent, requestCode: Int) {
+    checkIntent(accountContext, intent)
+    startActivityForResult(intent, requestCode)
+}
+
+fun Fragment.startBcmActivityForResult(accountContext: AccountContext, intent: Intent, requestCode: Int, options: Bundle?) {
+    checkIntent(accountContext, intent)
+    startActivityForResult(intent, requestCode, options)
+}
+
 fun Context.startBcmActivity(accountContext: AccountContext, intent: Intent) {
     checkIntent(accountContext, intent)
+    if (this !is Activity) {
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
     startActivity(intent)
 }
 
 fun Context.startBcmActivity(accountContext: AccountContext, intent: Intent, options: Bundle?) {
     checkIntent(accountContext, intent)
+    if (this !is Activity) {
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
     startActivity(intent, options)
 }
 
