@@ -38,7 +38,6 @@ import com.bcm.messenger.common.expiration.IExpiringScheduler;
 import com.bcm.messenger.common.jobs.ContextJob;
 import com.bcm.messenger.common.jobs.RetrieveProfileJob;
 import com.bcm.messenger.common.mms.IncomingMediaMessage;
-import com.bcm.messenger.common.mms.MmsException;
 import com.bcm.messenger.common.mms.OutgoingExpirationUpdateMessage;
 import com.bcm.messenger.common.mms.OutgoingMediaMessage;
 import com.bcm.messenger.common.mms.OutgoingSecureMediaMessage;
@@ -92,10 +91,8 @@ import org.whispersystems.libsignal.state.SessionStore;
 import org.whispersystems.libsignal.state.SignalProtocolStore;
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.crypto.SignalServiceCipher;
-import org.whispersystems.signalservice.api.messages.SignalServiceAttachment;
 import org.whispersystems.signalservice.api.messages.SignalServiceContent;
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
-import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.messages.SignalServiceReceiptMessage;
 import org.whispersystems.signalservice.api.messages.calls.AnswerMessage;
 import org.whispersystems.signalservice.api.messages.calls.BusyMessage;
@@ -119,12 +116,13 @@ import kotlin.Pair;
 
 public class PushDecryptJob extends ContextJob {
 
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
     public static final String TAG = PushDecryptJob.class.getSimpleName();
 
     private final long messageId;
     private final long smsMessageId;
+    private Repository repository;
 
     public PushDecryptJob(Context context, AccountContext accountContext, long pushMessageId) {
         this(context, accountContext, pushMessageId, -1);
@@ -138,6 +136,13 @@ public class PushDecryptJob extends ContextJob {
                 .create());
         this.messageId = pushMessageId;
         this.smsMessageId = smsMessageId;
+
+        Repository repository = Repository.getInstance(accountContext);
+        if (repository == null) {
+            ALog.logForSecret(TAG, "User " + accountContext.getUid() + " is not login");
+            return;
+        }
+        this.repository = repository;
     }
 
     @Override
@@ -151,11 +156,14 @@ public class PushDecryptJob extends ContextJob {
             ALog.e(TAG, "Skipping job, waiting for migration...");
             return;
         }
+        if (this.repository == null) {
+            ALog.logForSecret(TAG, "User " + accountContext.getUid() + " is not login");
+            return;
+        }
 
         MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(accountContext);
-        PushRepo pushRepo = Repository.getPushRepo(accountContext);
+        PushRepo pushRepo = repository.getPushRepo(accountContext);
         SignalServiceProtos.Envelope envelope = pushRepo.get(messageId);
-        Optional<Long> optionalSmsMessageId = smsMessageId > 0 ? Optional.of(smsMessageId) : Optional.<Long>absent();
 
         MasterSecretUnion masterSecretUnion;
 
@@ -165,7 +173,7 @@ public class PushDecryptJob extends ContextJob {
             masterSecretUnion = new MasterSecretUnion(masterSecret);
         }
 
-        handleMessage(masterSecretUnion, envelope, optionalSmsMessageId);
+        handleMessage(masterSecretUnion, envelope);
         pushRepo.delete(messageId);
     }
 
@@ -184,7 +192,7 @@ public class PushDecryptJob extends ContextJob {
      * The envelop here is already the envelop after decrypting the source. There is no problem in directly getting the source.
      * Decrypted sourceExtra is placed in PushReceivedJob
      */
-    private void handleMessage(MasterSecretUnion masterSecret, SignalServiceProtos.Envelope envelope, Optional<Long> smsMessageId) {
+    private void handleMessage(MasterSecretUnion masterSecret, SignalServiceProtos.Envelope envelope) {
         try {
             SignalProtocolStore axolotlStore = new SignalProtocolStoreImpl(context);
             SignalServiceAddress localAddress = new SignalServiceAddress(accountContext.getUid());
@@ -200,18 +208,15 @@ public class PushDecryptJob extends ContextJob {
             if (content.getDataMessage().isPresent()) {
                 SignalServiceDataMessage message = content.getDataMessage().get();
                 if (message.isEndSession()) {
-                    handleEndSessionMessage(masterSecret, envelope, message, smsMessageId);
-                } else if (message.isGroupUpdate()) {
-                    handleGroupMessage(masterSecret, envelope, message, smsMessageId);
-                }
-                else if (message.isExpirationUpdate()) {
-                    handleExpirationUpdate(masterSecret, envelope, message, smsMessageId);
+                    handleEndSessionMessage(envelope, message);
+                } else if (message.isExpirationUpdate()) {
+                    handleExpirationUpdate(masterSecret, envelope, message);
                 } else if (message.getAttachments().isPresent()) {
-                    handleMediaMessage(masterSecret, envelope, message, smsMessageId);
+                    handleMediaMessage(masterSecret, envelope, message);
                 } else if (message.isLocation()) {
-                    handleLocationMessage(masterSecret, envelope, message, smsMessageId);
+                    handleLocationMessage(masterSecret, envelope, message);
                 } else if (message.getBody().isPresent()) {
-                    handleTextMessage(masterSecret, envelope, message, smsMessageId);
+                    handleTextMessage(masterSecret, envelope, message);
                 }
 
                 if (message.getProfileKey().isPresent() && message.getProfileKey().get().length == 32) {
@@ -224,9 +229,9 @@ public class PushDecryptJob extends ContextJob {
                 if (syncMessage.getSent().isPresent())
                     handleSynchronizeSentMessage(masterSecret, envelope, syncMessage.getSent().get());
                 else if (syncMessage.getRequest().isPresent())
-                    handleSynchronizeRequestMessage(masterSecret, syncMessage.getRequest().get());
+                    handleSynchronizeRequestMessage(syncMessage.getRequest().get());
                 else if (syncMessage.getRead().isPresent())
-                    handleSynchronizeReadMessage(masterSecret, syncMessage.getRead().get(), envelope.getTimestamp());
+                    handleSynchronizeReadMessage(syncMessage.getRead().get(), envelope.getTimestamp());
                 else if (syncMessage.getVerified().isPresent())
                     handleSynchronizeVerifiedMessage(masterSecret, syncMessage.getVerified().get());
                 else
@@ -236,13 +241,13 @@ public class PushDecryptJob extends ContextJob {
                 SignalServiceCallMessage message = content.getCallMessage().get();
 
                 if (message.getOfferMessage().isPresent())
-                    handleCallOfferMessage(envelope, message.getOfferMessage().get(), smsMessageId);
+                    handleCallOfferMessage(envelope, message.getOfferMessage().get());
                 else if (message.getAnswerMessage().isPresent())
                     handleCallAnswerMessage(envelope, message.getAnswerMessage().get());
                 else if (message.getIceUpdateMessages().isPresent())
                     handleCallIceUpdateMessage(envelope, message.getIceUpdateMessages().get());
                 else if (message.getHangupMessage().isPresent())
-                    handleCallHangupMessage(envelope, message.getHangupMessage().get(), smsMessageId);
+                    handleCallHangupMessage(envelope, message.getHangupMessage().get());
                 else if (message.getBusyMessage().isPresent())
                     handleCallBusyMessage(envelope, message.getBusyMessage().get());
             } else if (content.getReceiptMessage().isPresent()) {
@@ -261,46 +266,39 @@ public class PushDecryptJob extends ContextJob {
                 AmeModuleCenter.INSTANCE.login().refreshPrekeys(accountContext);
             }
             //After receiving the message, you should notify the private chat window to update the thread
-            EventBus.getDefault().post(new MessageReceiveNotifyEvent(envelope.getSource(), Repository.getThreadRepo(accountContext).getThreadIdIfExist(envelope.getSource())));
+            EventBus.getDefault().post(new MessageReceiveNotifyEvent(envelope.getSource(), repository.getThreadRepo(accountContext).getThreadIdIfExist(envelope.getSource())));
 
         } catch (InvalidVersionException e) {
             ALog.e(TAG, e);
-            handleInvalidVersionMessage(masterSecret, envelope, smsMessageId);
-        } catch (InvalidMessageException | InvalidKeyIdException | InvalidKeyException | MmsException | NoSessionException e) {
+            handleInvalidVersionMessage(envelope);
+        } catch (InvalidMessageException | InvalidKeyIdException | InvalidKeyException | NoSessionException e) {
             ALog.e(TAG, e);
-            handleCorruptMessage(masterSecret, envelope, smsMessageId, e);
+            handleCorruptMessage(masterSecret, envelope);
         } catch (LegacyMessageException e) {
             ALog.e(TAG, e);
-            handleLegacyMessage(masterSecret, envelope, smsMessageId);
+            handleLegacyMessage(envelope);
         } catch (DuplicateMessageException e) {
             ALog.e(TAG, e);
-            handleDuplicateMessage(masterSecret, envelope, smsMessageId);
         } catch (UntrustedIdentityException e) {
             ALog.e(TAG, e);
-            handleUntrustedIdentityMessage(masterSecret, envelope, smsMessageId);
+            handleUntrustedIdentityMessage(envelope);
         }
     }
 
     private void handleCallOfferMessage(@NonNull SignalServiceProtos.Envelope envelope,
-                                        @NonNull OfferMessage message,
-                                        @NonNull Optional<Long> smsMessageId) {
+                                        @NonNull OfferMessage message) {
         ALog.logForSecret(TAG, "handleCallOfferMessage:" + message.getDescription());
 
-        if (smsMessageId.isPresent()) {
-            PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
-            chatRepo.setMessageMissedCall(smsMessageId.get());
-        } else {
-            try {
-                Intent intent = new Intent(context, WebRtcCallService.class);
-                intent.setAction(WebRtcCallService.ACTION_INCOMING_CALL);
-                intent.putExtra(WebRtcCallService.EXTRA_CALL_ID, message.getId());
-                intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, Address.from(accountContext, envelope.getSource()));
-                intent.putExtra(WebRtcCallService.EXTRA_REMOTE_DESCRIPTION, message.getDescription());
-                intent.putExtra(WebRtcCallService.EXTRA_TIMESTAMP, envelope.getTimestamp());
-                AppUtilKotlinKt.startForegroundServiceCompat(context, intent);
-            } catch (Exception ex) {
-                ALog.e(TAG, "handleCallOfferMessage error", ex);
-            }
+        try {
+            Intent intent = new Intent(context, WebRtcCallService.class);
+            intent.setAction(WebRtcCallService.ACTION_INCOMING_CALL);
+            intent.putExtra(WebRtcCallService.EXTRA_CALL_ID, message.getId());
+            intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, Address.from(accountContext, envelope.getSource()));
+            intent.putExtra(WebRtcCallService.EXTRA_REMOTE_DESCRIPTION, message.getDescription());
+            intent.putExtra(WebRtcCallService.EXTRA_TIMESTAMP, envelope.getTimestamp());
+            AppUtilKotlinKt.startForegroundServiceCompat(context, intent);
+        } catch (Exception ex) {
+            ALog.e(TAG, "handleCallOfferMessage error", ex);
         }
     }
 
@@ -339,22 +337,16 @@ public class PushDecryptJob extends ContextJob {
     }
 
     private void handleCallHangupMessage(@NonNull SignalServiceProtos.Envelope envelope,
-                                         @NonNull HangupMessage message,
-                                         @NonNull Optional<Long> smsMessageId) {
+                                         @NonNull HangupMessage message) {
         ALog.i(TAG, "handleCallHangupMessage");
-        if (smsMessageId.isPresent()) {
-            PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
-            chatRepo.setMessageMissedCall(smsMessageId.get());
-        } else {
-            try {
-                Intent intent = new Intent(context, WebRtcCallService.class);
-                intent.setAction(WebRtcCallService.ACTION_REMOTE_HANGUP);
-                intent.putExtra(WebRtcCallService.EXTRA_CALL_ID, message.getId());
-                intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, Address.from(accountContext, envelope.getSource()));
-                AppUtilKotlinKt.startForegroundServiceCompat(context, intent);
-            } catch (Exception ex) {
-                ALog.e(TAG, "handleCallHangupMessage error", ex);
-            }
+        try {
+            Intent intent = new Intent(context, WebRtcCallService.class);
+            intent.setAction(WebRtcCallService.ACTION_REMOTE_HANGUP);
+            intent.putExtra(WebRtcCallService.EXTRA_CALL_ID, message.getId());
+            intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, Address.from(accountContext, envelope.getSource()));
+            AppUtilKotlinKt.startForegroundServiceCompat(context, intent);
+        } catch (Exception ex) {
+            ALog.e(TAG, "handleCallHangupMessage error", ex);
         }
     }
 
@@ -372,33 +364,26 @@ public class PushDecryptJob extends ContextJob {
         }
     }
 
-    private void handleEndSessionMessage(@NonNull MasterSecretUnion masterSecret,
-                                         @NonNull SignalServiceProtos.Envelope envelope,
-                                         @NonNull SignalServiceDataMessage message,
-                                         @NonNull Optional<Long> smsMessageId) {
+    private void handleEndSessionMessage(@NonNull SignalServiceProtos.Envelope envelope,
+                                         @NonNull SignalServiceDataMessage message) {
         ALog.i(TAG, "handleEndSessionMessage");
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
         IncomingTextMessage incomingTextMessage = new IncomingTextMessage(Address.from(accountContext, envelope.getSource()),
                 envelope.getSourceDevice(),
                 message.getTimestamp(),
-                "", Optional.<SignalServiceGroup>absent(), 0);
+                "", Optional.absent(), 0);
 
-        Long threadId = null;
+        long threadId;
 
-        if (!smsMessageId.isPresent()) {
-            IncomingEndSessionMessage incomingEndSessionMessage = new IncomingEndSessionMessage(incomingTextMessage);
-            kotlin.Pair<Long, Long> insertResult = chatRepo.insertIncomingTextMessage(incomingEndSessionMessage);
+        IncomingEndSessionMessage incomingEndSessionMessage = new IncomingEndSessionMessage(incomingTextMessage);
+        kotlin.Pair<Long, Long> insertResult = chatRepo.insertIncomingTextMessage(incomingEndSessionMessage);
 
-            if (insertResult.getSecond() > 0)
-                threadId = insertResult.getFirst();
-            else
-                threadId = null;
-        } else {
-            chatRepo.setMessageEndSession(smsMessageId.get());
-            threadId = chatRepo.getThreadIdForMessage(smsMessageId.get());
-        }
+        if (insertResult.getSecond() > 0)
+            threadId = insertResult.getFirst();
+        else
+            threadId = 0L;
 
-        if (threadId != null) {
+        if (threadId > 0L) {
             SessionStore sessionStore = new TextSecureSessionStore(context);
             sessionStore.deleteAllSessions(envelope.getSource());
 
@@ -406,15 +391,14 @@ public class PushDecryptJob extends ContextJob {
         }
     }
 
-    private long handleSynchronizeSentEndSessionMessage(@NonNull MasterSecretUnion masterSecret,
-                                                        @NonNull SentTranscriptMessage message) {
+    private long handleSynchronizeSentEndSessionMessage(@NonNull SentTranscriptMessage message) {
         ALog.i(TAG, "handleSynchronizeSentEndSessionMessage");
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
         Recipient recipient = getSyncMessageDestination(message);
         OutgoingTextMessage outgoingTextMessage = new OutgoingTextMessage(recipient, "", -1);
         OutgoingEndSessionMessage outgoingEndSessionMessage = new OutgoingEndSessionMessage(outgoingTextMessage);
 
-        long threadId = Repository.getThreadRepo(accountContext).getThreadIdFor(recipient);
+        long threadId = repository.getThreadRepo(accountContext).getThreadIdFor(recipient);
 
         if (!recipient.isGroupRecipient()) {
             SessionStore sessionStore = new TextSecureSessionStore(context);
@@ -429,53 +413,25 @@ public class PushDecryptJob extends ContextJob {
         return threadId;
     }
 
-    private void handleGroupMessage(@NonNull MasterSecretUnion masterSecret,
-                                    @NonNull SignalServiceProtos.Envelope envelope,
-                                    @NonNull SignalServiceDataMessage message,
-                                    @NonNull Optional<Long> smsMessageId) {
-        ALog.i(TAG, "handleGroupMessage");
-
-        if (smsMessageId.isPresent()) {
-            Repository.getChatRepo(accountContext).deleteMessage(smsMessageId.get());
-        }
-    }
-
-    private void handleUnknownGroupMessage(@NonNull SignalServiceProtos.Envelope envelope,
-                                           @NonNull SignalServiceGroup group) {
-        ALog.i(TAG, "handleUnknownGroupMessage");
-
-        JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
-        if (manager != null) {
-            manager.add(new RequestGroupInfoJob(context, accountContext, envelope.getSource(), group.getGroupId()));
-        }
-    }
-
     private void handleExpirationUpdate(@NonNull MasterSecretUnion masterSecret,
                                         @NonNull SignalServiceProtos.Envelope envelope,
-                                        @NonNull SignalServiceDataMessage message,
-                                        @NonNull Optional<Long> smsMessageId)
-            throws MmsException {
-
+                                        @NonNull SignalServiceDataMessage message) {
         ALog.i(TAG, "handleExpirationUpdate");
 
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
         Recipient recipient = getMessageDestination(envelope, message);
         IncomingMediaMessage mediaMessage = new IncomingMediaMessage(masterSecret,
                 Address.from(accountContext, envelope.getSource()),
                 message.getTimestamp(), -1,
                 message.getExpiresInSeconds() * 1000, true,
                 Optional.fromNullable(envelope.getRelay()),
-                Optional.<String>absent(), message.getGroupInfo(),
-                Optional.<List<SignalServiceAttachment>>absent());
+                Optional.absent(), message.getGroupInfo(),
+                Optional.absent());
 
 
         chatRepo.insertIncomingMediaMessage(masterSecret.getMasterSecret().get(), mediaMessage);
 
-        Repository.getRecipientRepo(accountContext).setExpireTime(recipient, message.getExpiresInSeconds());
-
-        if (smsMessageId.isPresent()) {
-            Repository.getChatRepo(accountContext).deleteMessage(smsMessageId.get());
-        }
+        repository.getRecipientRepo().setExpireTime(recipient, message.getExpiresInSeconds());
     }
 
     private void handleSynchronizeVerifiedMessage(@NonNull MasterSecretUnion masterSecret,
@@ -486,15 +442,13 @@ public class PushDecryptJob extends ContextJob {
 
     private void handleSynchronizeSentMessage(@NonNull MasterSecretUnion masterSecret,
                                               @NonNull SignalServiceProtos.Envelope envelope,
-                                              @NonNull SentTranscriptMessage message)
-            throws MmsException {
+                                              @NonNull SentTranscriptMessage message) {
         ALog.i(TAG, "handleSynchronizeSentMessage");
-        Long threadId;
+        long threadId;
 
         if (message.getMessage().isEndSession()) {
-            threadId = handleSynchronizeSentEndSessionMessage(masterSecret, message);
+            threadId = handleSynchronizeSentEndSessionMessage(message);
         } else if (message.getMessage().isGroupUpdate()) {
-
             threadId = -1L;
         } else if (message.getMessage().isExpirationUpdate()) {
             threadId = handleSynchronizeSentExpirationUpdate(masterSecret, message);
@@ -515,17 +469,16 @@ public class PushDecryptJob extends ContextJob {
 
 
             if (recipient != null && !recipient.isProfileSharing()) {
-                Repository.getRecipientRepo(accountContext).setProfileSharing(recipient, true);
+                repository.getRecipientRepo(accountContext).setProfileSharing(recipient, true);
             }
         }
 
-        if (threadId != null) {
-            Repository.getThreadRepo(accountContext).setRead(threadId, true);
+        if (threadId > 0L) {
+            repository.getThreadRepo(accountContext).setRead(threadId, true);
         }
     }
 
-    private void handleSynchronizeRequestMessage(@NonNull MasterSecretUnion masterSecret,
-                                                 @NonNull RequestMessage message) {
+    private void handleSynchronizeRequestMessage(@NonNull RequestMessage message) {
         ALog.i(TAG, "handleSynchronizeRequestMessage");
 
         JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
@@ -535,30 +488,25 @@ public class PushDecryptJob extends ContextJob {
             }
 
             if (message.isGroupsRequest()) {
-                manager
-                        .add(new MultiDeviceGroupUpdateJob(getContext()));
+                manager.add(new MultiDeviceGroupUpdateJob(getContext()));
             }
 
             if (message.isBlockedListRequest()) {
-                manager
-                        .add(new MultiDeviceBlockedUpdateJob(getContext()));
+                manager.add(new MultiDeviceBlockedUpdateJob(getContext()));
             }
 
             if (message.isConfigurationRequest()) {
-                manager
-                        .add(new MultiDeviceReadReceiptUpdateJob(getContext(), TextSecurePreferences.isReadReceiptsEnabled(getContext())));
+                manager.add(new MultiDeviceReadReceiptUpdateJob(getContext(), TextSecurePreferences.isReadReceiptsEnabled(getContext())));
             }
-
         }
     }
 
-    private void handleSynchronizeReadMessage(@NonNull MasterSecretUnion masterSecret,
-                                              @NonNull List<ReadMessage> readMessages,
+    private void handleSynchronizeReadMessage(@NonNull List<ReadMessage> readMessages,
                                               long envelopeTimestamp) {
         ALog.i(TAG, "handleSynchronizeReadMessage");
 
         for (ReadMessage readMessage : readMessages) {
-            List<kotlin.Pair<Long, Long>> expiring = Repository.getChatRepo(accountContext).setTimestampRead(readMessage.getSender(), readMessage.getTimestamp(), envelopeTimestamp);
+            List<kotlin.Pair<Long, Long>> expiring = repository.getChatRepo(accountContext).setTimestampRead(readMessage.getSender(), readMessage.getTimestamp(), envelopeTimestamp);
 
             IExpiringScheduler manager = ExpirationManager.INSTANCE.scheduler(accountContext);
             for (Pair<Long, Long> expiringMessage : expiring) {
@@ -570,13 +518,11 @@ public class PushDecryptJob extends ContextJob {
 
     private void handleMediaMessage(@NonNull MasterSecretUnion masterSecret,
                                     @NonNull SignalServiceProtos.Envelope envelope,
-                                    @NonNull SignalServiceDataMessage message,
-                                    @NonNull Optional<Long> smsMessageId)
-            throws MmsException {
+                                    @NonNull SignalServiceDataMessage message) {
 
         ALog.i(TAG, "handleMediaMessage");
 
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
         Recipient recipient = getMessageDestination(envelope, message);
         long expiresIn = 0;
         if (recipient.getExpireMessages() > 0) {
@@ -596,7 +542,7 @@ public class PushDecryptJob extends ContextJob {
                 message.getAttachments());
 
         if (message.getExpiresInSeconds() != recipient.getExpireMessages()) {
-            handleExpirationUpdate(masterSecret, envelope, message, Optional.<Long>absent());
+            handleExpirationUpdate(masterSecret, envelope, message);
         }
 
         if (recipient.getAddress().isIndividual()) {
@@ -604,39 +550,34 @@ public class PushDecryptJob extends ContextJob {
         }
 
         kotlin.Pair<Long, Long> insertResult = chatRepo.insertIncomingMediaMessage(masterSecret.getMasterSecret().get(), mediaMessage);
-        List<AttachmentRecord> attachments = Repository.getAttachmentRepo(accountContext).getAttachments(insertResult.getSecond());
+        List<AttachmentRecord> attachments = repository.getAttachmentRepo(accountContext).getAttachments(insertResult.getSecond());
 
 
         JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
         if (manager != null) {
             for (AttachmentRecord attachment : attachments) {
-                manager.add(new AttachmentDownloadJob(context, insertResult.getSecond(), attachment.getId(), attachment.getUniqueId(), false));
+                manager.add(new AttachmentDownloadJob(context, accountContext, insertResult.getSecond(), attachment.getId(), attachment.getUniqueId(), false));
 
                 if (!masterSecret.getMasterSecret().isPresent()) {
                     manager.add(new AttachmentFileNameJob(context, accountContext, masterSecret.getAsymmetricMasterSecret().get(), attachment, mediaMessage));
                 }
             }
         }
-
-        if (smsMessageId.isPresent()) {
-            Repository.getChatRepo(accountContext).deleteMessage(smsMessageId.get());
-        }
     }
 
 
     private long handleSynchronizeSentExpirationUpdate(@NonNull MasterSecretUnion masterSecret,
-                                                       @NonNull SentTranscriptMessage message)
-            throws MmsException {
+                                                       @NonNull SentTranscriptMessage message) {
         ALog.i(TAG, "handleSynchronizeSentExpirationUpdate");
 
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
         Recipient recipient = getSyncMessageDestination(message);
 
         OutgoingExpirationUpdateMessage expirationUpdateMessage = new OutgoingExpirationUpdateMessage(recipient,
                 message.getTimestamp(),
                 message.getMessage().getExpiresInSeconds() * 1000);
 
-        long threadId = Repository.getThreadRepo(accountContext).getThreadIdFor(recipient);
+        long threadId = repository.getThreadRepo(accountContext).getThreadIdFor(recipient);
         long messageId = chatRepo.insertOutgoingMediaMessage(threadId, masterSecret.getMasterSecret().get(), expirationUpdateMessage, null);
 
         chatRepo.setMessageSendSuccess(messageId);
@@ -649,11 +590,10 @@ public class PushDecryptJob extends ContextJob {
     }
 
     private long handleSynchronizeSentMediaMessage(@NonNull MasterSecretUnion masterSecret,
-                                                   @NonNull SentTranscriptMessage message)
-            throws MmsException {
+                                                   @NonNull SentTranscriptMessage message) {
         ALog.i(TAG, "handleSynchronizeSentMediaMessage");
 
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
         Recipient recipients = getSyncMessageDestination(message);
         OutgoingMediaMessage mediaMessage = new OutgoingMediaMessage(recipients, message.getMessage().getBody().orNull(),
                 PointerAttachment.forPointers(masterSecret, message.getMessage().getAttachments()),
@@ -667,15 +607,15 @@ public class PushDecryptJob extends ContextJob {
             handleSynchronizeSentExpirationUpdate(masterSecret, message);
         }
 
-        long threadId = Repository.getThreadRepo(accountContext).getThreadIdFor(recipients);
+        long threadId = repository.getThreadRepo(accountContext).getThreadIdFor(recipients);
         long messageId = chatRepo.insertOutgoingMediaMessage(threadId, masterSecret.getMasterSecret().get(), mediaMessage, null);
 
         chatRepo.setMessageSendSuccess(messageId);
 
-        for (AttachmentRecord attachment : Repository.getAttachmentRepo(accountContext).getAttachments(messageId)) {
+        for (AttachmentRecord attachment : repository.getAttachmentRepo(accountContext).getAttachments(messageId)) {
             JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
             if (jobManager != null) {
-                jobManager.add(new AttachmentDownloadJob(context, messageId, attachment.getId(), attachment.getUniqueId(), false));
+                jobManager.add(new AttachmentDownloadJob(context, accountContext, messageId, attachment.getId(), attachment.getUniqueId(), false));
             }
         }
 
@@ -695,14 +635,12 @@ public class PushDecryptJob extends ContextJob {
 
     private void handleLocationMessage(@NonNull MasterSecretUnion masterSecret,
                                        @NonNull SignalServiceProtos.Envelope envelope,
-                                       @NonNull SignalServiceDataMessage message,
-                                       @NonNull Optional<Long> smsMessageId)
-            throws MmsException {
+                                       @NonNull SignalServiceDataMessage message) {
 
         ALog.i(TAG, "handleLocationMessage");
 
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
-        ThreadRepo threadRepo = Repository.getThreadRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
+        ThreadRepo threadRepo = repository.getThreadRepo(accountContext);
         Recipient recipient = getMessageDestination(envelope, message);
 
         String body = message.getBody().isPresent() ? message.getBody().get() : "";
@@ -719,14 +657,13 @@ public class PushDecryptJob extends ContextJob {
                 body = new AmeGroupMessage<>(AmeGroupMessage.CONTROL_MESSAGE, new AmeGroupMessage.ControlContent(AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE, recipient.getAddress().serialize(), "", 0L)).toString();
             } else if (controlContent.getActionCode() == 1) {
                 // ignore
-
             } else if (controlContent.getActionCode() == AmeGroupMessage.ControlContent.ACTION_RECALL_MESSAGE) {
                 long threadId = threadRepo.getThreadIdIfExist(recipient);
                 Long recallMessageDateSent = controlContent.getMessageId();
                 if (threadId >= 0) {
                     boolean hasMessage = false;
                     if (recallMessageDateSent != null) {
-                        hasMessage = Repository.getChatRepo(accountContext).deleteIncomingMessageByDateSent(threadId, recallMessageDateSent);
+                        hasMessage = chatRepo.deleteIncomingMessageByDateSent(threadId, recallMessageDateSent);
                     }
                     if (!hasMessage) {
                         return;
@@ -748,17 +685,21 @@ public class PushDecryptJob extends ContextJob {
             long threadId = threadRepo.getThreadIdFor(recipient);
             if (threadId > 0) {
                 IContactModule contactModule = AmeModuleCenter.INSTANCE.contact(accountContext);
+                if (contactModule == null) {
+                    ALog.w(TAG, "Contact module is null!");
+                    return;
+                }
                 switch (content.getType()) {
                     case AmeGroupMessage.ExchangeProfileContent.RESPONSE:
                         ALog.i(TAG, "Get response type, update profile keys");
                         contactModule.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient,
-                                    new ProfileKeyModel(content.getNickName(), content.getAvatar(), content.getVersion()));
+                                new ProfileKeyModel(content.getNickName(), content.getAvatar(), content.getVersion()));
 
                         break;
                     case AmeGroupMessage.ExchangeProfileContent.REQUEST:
                         ALog.i(TAG, "Get request type, update profile keys and save request to thread");
                         contactModule.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient,
-                                    new ProfileKeyModel(content.getNickName(), content.getAvatar(), content.getVersion()));
+                                new ProfileKeyModel(content.getNickName(), content.getAvatar(), content.getVersion()));
                     case AmeGroupMessage.ExchangeProfileContent.CHANGE:
                         ALog.i(TAG, "Get change type, save request to thread");
                         threadRepo.setProfileRequest(threadId, true);
@@ -767,9 +708,6 @@ public class PushDecryptJob extends ContextJob {
                     default:
                         break;
                 }
-            }
-            if (smsMessageId.isPresent()) {
-                chatRepo.deleteMessage(smsMessageId.get());
             }
             return;
         } else if (newMessage.getType() == AmeGroupMessage.RECEIPT) {
@@ -792,96 +730,73 @@ public class PushDecryptJob extends ContextJob {
                 }
                 threadRepo.setDecryptFailData(recipient.getAddress().serialize(), data.toJson());
             }
-            if (smsMessageId.isPresent()) {
-                chatRepo.deleteMessage(smsMessageId.get());
-            }
             return;
         } else {
             if (message.getExpiresInSeconds() != recipient.getExpireMessages()) {
-                handleExpirationUpdate(masterSecret, envelope, message, Optional.<Long>absent());
+                handleExpirationUpdate(masterSecret, envelope, message);
             }
         }
 
-        long threadId = -1L;
-        if (smsMessageId.isPresent() && !message.getGroupInfo().isPresent()) {
-            threadId = chatRepo.updateBundleMessage(smsMessageId.get());
-        } else {
-            long expiresIn = 0;
-            if (newMessage.getType() != AmeGroupMessage.CONTROL_MESSAGE && newMessage.getType() != AmeGroupMessage.SCREEN_SHOT_MESSAGE) {
-                if (recipient.getExpireMessages() > 0) {
-                    expiresIn = recipient.getExpireMessages() * 1000;
-                }
-                if (AmeConfigure.INSTANCE.isOutgoingAutoDelete()) {
-                    expiresIn = message.getExpiresInSeconds() * 1000;
-                }
+        long expiresIn = 0;
+        if (newMessage.getType() != AmeGroupMessage.CONTROL_MESSAGE && newMessage.getType() != AmeGroupMessage.SCREEN_SHOT_MESSAGE) {
+            if (recipient.getExpireMessages() > 0) {
+                expiresIn = recipient.getExpireMessages() * 1000;
             }
-
-            IncomingTextMessage commonMessage = new IncomingTextMessage(Address.from(accountContext, envelope.getSource()),
-                    envelope.getSourceDevice(),
-                    currentDateSentStamp, body,
-                    message.getGroupInfo(),
-                    expiresIn);
-
-            IncomingLocationMessage textMessage = new IncomingLocationMessage(commonMessage, body);
-
-            kotlin.Pair<Long, Long> insertResult = chatRepo.insertIncomingTextMessage(textMessage);
-
-            if (smsMessageId.isPresent()) {
-                chatRepo.deleteMessage(smsMessageId.get());
+            if (AmeConfigure.INSTANCE.isOutgoingAutoDelete()) {
+                expiresIn = message.getExpiresInSeconds() * 1000;
             }
         }
 
+        IncomingTextMessage commonMessage = new IncomingTextMessage(Address.from(accountContext, envelope.getSource()),
+                envelope.getSourceDevice(),
+                currentDateSentStamp, body,
+                message.getGroupInfo(),
+                expiresIn);
+
+        IncomingLocationMessage textMessage = new IncomingLocationMessage(commonMessage, body);
+
+        chatRepo.insertIncomingTextMessage(textMessage);
     }
 
     private void handleTextMessage(@NonNull MasterSecretUnion masterSecret,
                                    @NonNull SignalServiceProtos.Envelope envelope,
-                                   @NonNull SignalServiceDataMessage message,
-                                   @NonNull Optional<Long> smsMessageId)
-            throws MmsException {
+                                   @NonNull SignalServiceDataMessage message) {
 
         ALog.i(TAG, "handleTextMessage");
 
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
         String body = message.getBody().isPresent() ? message.getBody().get() : "";
         Recipient recipient = getMessageDestination(envelope, message);
 
         if (message.getExpiresInSeconds() != recipient.getExpireMessages()) {
-            handleExpirationUpdate(masterSecret, envelope, message, Optional.<Long>absent());
+            handleExpirationUpdate(masterSecret, envelope, message);
         }
 
         if (recipient.getAddress().isIndividual()) {
             AmePushProcess.INSTANCE.processPush(accountContext, new AmePushProcess.BcmData(new AmePushProcess.BcmNotify(AmePushProcess.CHAT_NOTIFY, new AmePushProcess.ChatNotifyData(recipient.getAddress().serialize()), null, null, null, null)));
         }
-        Long threadId;
-        if (smsMessageId.isPresent() && !message.getGroupInfo().isPresent()) {
-//            threadId = database.updateBundleMessageBody(masterSecret, smsMessageId.get(), body).second;
-        } else {
-            long expiresIn = 0;
-            if (recipient.getExpireMessages() > 0) {
-                expiresIn = recipient.getExpireMessages() * 1000;
-            } else if (AmeConfigure.INSTANCE.isOutgoingAutoDelete()) {
-                expiresIn = message.getExpiresInSeconds() * 1000;
-            }
 
-            IncomingTextMessage textMessage = new IncomingTextMessage(Address.from(accountContext, envelope.getSource()),
-                    envelope.getSourceDevice(),
-                    message.getTimestamp(), body,
-                    message.getGroupInfo(),
-                    expiresIn);
-
-            textMessage = new IncomingEncryptedMessage(textMessage, body);
-
-            chatRepo.insertIncomingTextMessage(textMessage);
-
-            if (smsMessageId.isPresent())
-                chatRepo.deleteMessage(smsMessageId.get());
+        long expiresIn = 0;
+        if (recipient.getExpireMessages() > 0) {
+            expiresIn = recipient.getExpireMessages() * 1000;
+        } else if (AmeConfigure.INSTANCE.isOutgoingAutoDelete()) {
+            expiresIn = message.getExpiresInSeconds() * 1000;
         }
+
+        IncomingTextMessage textMessage = new IncomingTextMessage(Address.from(accountContext, envelope.getSource()),
+                envelope.getSourceDevice(),
+                message.getTimestamp(), body,
+                message.getGroupInfo(),
+                expiresIn);
+
+        textMessage = new IncomingEncryptedMessage(textMessage, body);
+
+        chatRepo.insertIncomingTextMessage(textMessage);
     }
 
 
     private long handleSynchronizeSentTextMessage(@NonNull MasterSecretUnion masterSecret,
-                                                  @NonNull SentTranscriptMessage message)
-            throws MmsException {
+                                                  @NonNull SentTranscriptMessage message) {
 
         ALog.i(TAG, "handleSynchronizeSentTextMessage");
 
@@ -893,9 +808,9 @@ public class PushDecryptJob extends ContextJob {
             handleSynchronizeSentExpirationUpdate(masterSecret, message);
         }
 
-        long threadId = Repository.getThreadRepo(accountContext).getThreadIdFor(recipient);
+        long threadId = repository.getThreadRepo(accountContext).getThreadIdFor(recipient);
 
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
         long messageId;
 
         if (recipient.getAddress().isGroup()) {
@@ -922,32 +837,24 @@ public class PushDecryptJob extends ContextJob {
         return threadId;
     }
 
-    private void handleInvalidVersionMessage(@NonNull MasterSecretUnion masterSecret,
-                                             @NonNull SignalServiceProtos.Envelope envelope,
-                                             @NonNull Optional<Long> smsMessageId) {
+    private void handleInvalidVersionMessage(@NonNull SignalServiceProtos.Envelope envelope) {
 
         ALog.i(TAG, "handleInvalidVersionMessage");
 
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
 
-        if (!smsMessageId.isPresent()) {
-            kotlin.Pair<Long, Long> insertResult = insertPlaceholder(envelope);
+        kotlin.Pair<Long, Long> insertResult = insertPlaceholder(envelope);
 
-            if (insertResult.getSecond() > 0) {
-                chatRepo.setMessageInvalidVersionKeyExchange(insertResult.getSecond());
-            }
-        } else {
-            chatRepo.setMessageInvalidVersionKeyExchange(smsMessageId.get());
+        if (insertResult.getSecond() > 0) {
+            chatRepo.setMessageInvalidVersionKeyExchange(insertResult.getSecond());
         }
     }
 
     private void handleCorruptMessage(@NonNull MasterSecretUnion masterSecret,
-                                      @NonNull SignalServiceProtos.Envelope envelope,
-                                      @NonNull Optional<Long> smsMessageId,
-                                      @NonNull Exception e) {
+                                      @NonNull SignalServiceProtos.Envelope envelope) {
         ALog.i(TAG, "handleCorruptMessage");
 
-        ThreadRepo threadRepo = Repository.getThreadRepo(accountContext);
+        ThreadRepo threadRepo = repository.getThreadRepo(accountContext);
         String dataJson = threadRepo.getDecryptFailData(envelope.getSource());
         DecryptFailData data;
         if (dataJson != null && !dataJson.isEmpty()) {
@@ -997,55 +904,23 @@ public class PushDecryptJob extends ContextJob {
         }
     }
 
-    private void handleNoSessionMessage(@NonNull MasterSecretUnion masterSecret,
-                                        @NonNull SignalServiceProtos.Envelope envelope,
-                                        @NonNull Optional<Long> smsMessageId) {
-        ALog.i(TAG, "handleNoSessionMessage");
-
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
-
-        if (!smsMessageId.isPresent()) {
-            kotlin.Pair<Long, Long> insertResult = insertPlaceholder(envelope);
-
-            if (insertResult.getSecond() > 0) {
-                chatRepo.setMessageNoSession(insertResult.getSecond());
-            }
-        } else {
-            chatRepo.setMessageNoSession(smsMessageId.get());
-        }
-    }
-
-    private void handleLegacyMessage(@NonNull MasterSecretUnion masterSecret,
-                                     @NonNull SignalServiceProtos.Envelope envelope,
-                                     @NonNull Optional<Long> smsMessageId) {
+    private void handleLegacyMessage(@NonNull SignalServiceProtos.Envelope envelope) {
 
         ALog.i(TAG, "handleLegacyMessage");
 
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
 
-        if (!smsMessageId.isPresent()) {
-            kotlin.Pair<Long, Long> insertResult = insertPlaceholder(envelope);
+        kotlin.Pair<Long, Long> insertResult = insertPlaceholder(envelope);
 
-            if (insertResult.getSecond() > 0) {
-                chatRepo.setMessageLegacyVersion(insertResult.getSecond());
-            }
-        } else {
-            chatRepo.setMessageLegacyVersion(smsMessageId.get());
+        if (insertResult.getSecond() > 0) {
+            chatRepo.setMessageLegacyVersion(insertResult.getSecond());
         }
     }
 
-    private void handleDuplicateMessage(@NonNull MasterSecretUnion masterSecret,
-                                        @NonNull SignalServiceProtos.Envelope envelope,
-                                        @NonNull Optional<Long> smsMessageId) {
-        // Let's start ignoring these now
-    }
-
-    private void handleUntrustedIdentityMessage(@NonNull MasterSecretUnion masterSecret,
-                                                @NonNull SignalServiceProtos.Envelope envelope,
-                                                @NonNull Optional<Long> smsMessageId) {
+    private void handleUntrustedIdentityMessage(@NonNull SignalServiceProtos.Envelope envelope) {
         ALog.i(TAG, "handleUntrustedIdentityMessage");
         try {
-            PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+            PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
             Address sourceAddress = Address.from(accountContext, envelope.getSource());
             byte[] serialized = envelope.hasLegacyMessage() ? envelope.getLegacyMessage().toByteArray() : envelope.getContent().toByteArray();
             PreKeySignalMessage whisperMessage = new PreKeySignalMessage(serialized);
@@ -1055,17 +930,11 @@ public class PushDecryptJob extends ContextJob {
             IncomingTextMessage textMessage = new IncomingTextMessage(sourceAddress,
                     envelope.getSourceDevice(),
                     envelope.getTimestamp(), encoded,
-                    Optional.<SignalServiceGroup>absent(), 0);
+                    Optional.absent(), 0);
 
-            if (!smsMessageId.isPresent()) {
-                IncomingPreKeyBundleMessage bundleMessage = new IncomingPreKeyBundleMessage(textMessage, encoded, envelope.hasLegacyMessage());
+            IncomingPreKeyBundleMessage bundleMessage = new IncomingPreKeyBundleMessage(textMessage, encoded, envelope.hasLegacyMessage());
 
-                chatRepo.insertIncomingTextMessage(bundleMessage);
-
-            } else {
-                chatRepo.setMessagePreKeyBundle(smsMessageId.get());
-
-            }
+            chatRepo.insertIncomingTextMessage(bundleMessage);
         } catch (InvalidMessageException | InvalidVersionException e) {
             throw new AssertionError(e);
         }
@@ -1076,8 +945,7 @@ public class PushDecryptJob extends ContextJob {
         ALog.i(TAG, "handleProfileKey");
 
         RecipientRepo recipientRepo = Repository.getRecipientRepo(accountContext);
-        Address sourceAddress = Address.from(accountContext, envelope.getSource());
-        Recipient recipient = Recipient.from(sourceAddress, false);
+        Recipient recipient = Recipient.from(accountContext, envelope.getSource(), false);
 
         if (recipient.getProfileKey() == null || !MessageDigest.isEqual(recipient.getProfileKey(), message.getProfileKey().get())) {
             if (recipientRepo != null) {
@@ -1097,7 +965,7 @@ public class PushDecryptJob extends ContextJob {
 
         for (long timestamp : message.getTimestamps()) {
             Log.w(TAG, String.format("Received encrypted delivery receipt: (XXXXX, %d)", timestamp));
-            Repository.getChatRepo(accountContext).incrementDeliveryReceiptCount(envelope.getSource(), timestamp);
+            repository.getChatRepo(accountContext).incrementDeliveryReceiptCount(envelope.getSource(), timestamp);
         }
     }
 
@@ -1109,34 +977,32 @@ public class PushDecryptJob extends ContextJob {
             for (long timestamp : message.getTimestamps()) {
                 Log.w(TAG, String.format("Received encrypted read receipt: (XXXXX, %d)", timestamp));
 
-                Repository.getChatRepo(accountContext).incrementReadReceiptCount(envelope.getSource(), timestamp);
+                repository.getChatRepo(accountContext).incrementReadReceiptCount(envelope.getSource(), timestamp);
             }
         }
     }
 
     private kotlin.Pair<Long, Long> insertPlaceholder(@NonNull SignalServiceProtos.Envelope envelope) {
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
         IncomingTextMessage textMessage = new IncomingTextMessage(Address.from(accountContext, envelope.getSource()),
                 envelope.getSourceDevice(),
                 envelope.getTimestamp(), "",
-                Optional.<SignalServiceGroup>absent(), 0);
+                Optional.absent(), 0);
 
         return chatRepo.insertIncomingTextMessage(textMessage);
     }
 
     private Recipient getSyncMessageDestination(SentTranscriptMessage message) {
-        if (message.getMessage().getGroupInfo().isPresent()) {
-            return Recipient.from(Address.from(accountContext, GroupUtil.getEncodedId(message.getMessage().getGroupInfo().get().getGroupId(), false)), false);
-        } else {
-            return Recipient.from(Address.from(accountContext, message.getDestination().get()), false);
+        if (!message.getMessage().getGroupInfo().isPresent()) {
+            return Recipient.from(accountContext, message.getDestination().get(), false);
         }
+        return null;
     }
 
     private Recipient getMessageDestination(SignalServiceProtos.Envelope envelope, SignalServiceDataMessage message) {
-        if (message.getGroupInfo().isPresent()) {
-            return Recipient.from(Address.from(accountContext, GroupUtil.getEncodedId(message.getGroupInfo().get().getGroupId(), false)), false);
-        } else {
-            return Recipient.from(Address.from(accountContext, envelope.getSource()), false);
+        if (!message.getGroupInfo().isPresent()) {
+            return Recipient.from(accountContext, envelope.getSource(), false);
         }
+        return null;
     }
 }

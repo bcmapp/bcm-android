@@ -11,7 +11,6 @@ import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.database.NoSuchMessageException;
 import com.bcm.messenger.common.database.records.MessageRecord;
 import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
-import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.event.TextSendEvent;
 import com.bcm.messenger.common.event.UserOfflineEvent;
 import com.bcm.messenger.common.event.VersionTooLowEvent;
@@ -60,8 +59,11 @@ public class PushTextSendJob extends PushSendJob {
 
     @Override
     public void onPushSend(MasterSecret masterSecret) throws NoSuchMessageException, RetryLaterException {
-
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
+        if (chatRepo == null) {
+            ALog.w(TAG, "User is not login");
+            return;
+        }
         MessageRecord record = chatRepo.getMessage(messageId);
         if (record == null) {
             throw new NoSuchMessageException("Message id " + messageId + " not found");
@@ -111,7 +113,7 @@ public class PushTextSendJob extends PushSendJob {
     @Override
     public void onCanceled() {
         ALog.i(TAG, "onCanceled");
-        Repository.getChatRepo(accountContext).setMessageSendFail(messageId);
+        repository.getChatRepo(accountContext).setMessageSendFail(messageId);
     }
 
     private void deliver(MessageRecord message)
@@ -154,7 +156,7 @@ public class PushTextSendJob extends PushSendJob {
         if (messageRecord.isLocation()) {
             AmeGroupMessage message = AmeGroupMessage.Companion.messageFromJson(messageRecord.getBody());
             if (message.getType() == AmeGroupMessage.EXCHANGE_PROFILE || message.getType() == AmeGroupMessage.RECEIPT) {
-                Repository.getChatRepo(accountContext).deleteMessage(messageRecord.getThreadId(), messageRecord.getId());
+                repository.getChatRepo(accountContext).deleteMessage(messageRecord.getThreadId(), messageRecord.getId());
             }
         }
     }

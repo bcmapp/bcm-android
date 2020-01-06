@@ -18,11 +18,13 @@ import com.bcm.messenger.chats.mediabrowser.BaseMediaBrowserViewModel
 import com.bcm.messenger.chats.mediabrowser.IMediaBrowserMenuProxy
 import com.bcm.messenger.chats.mediabrowser.MediaHandleViewModel
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
@@ -35,11 +37,11 @@ import kotlinx.android.synthetic.main.chats_media_browser_activity.*
 @Route(routePath = ARouterConstants.Activity.CHAT_MEDIA_BROWSER)
 class MediaBrowserActivity : SwipeBaseActivity() {
     companion object {
-        fun router(address:Address, deleteMode:Boolean = false){
+        fun router(accountContext: AccountContext, address:Address, deleteMode:Boolean = false){
             BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_MEDIA_BROWSER)
                     .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
                     .putBoolean(BROWSER_MODE, deleteMode)
-                    .navigation()
+                    .startBcmActivity(accountContext)
         }
 
         //param

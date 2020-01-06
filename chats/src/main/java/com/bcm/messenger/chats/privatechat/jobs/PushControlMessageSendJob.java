@@ -4,13 +4,11 @@ import android.content.Context;
 
 import com.bcm.messenger.chats.privatechat.core.BcmChatCore;
 import com.bcm.messenger.common.AccountContext;
-import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.AmeGroupMessage;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.database.records.MessageRecord;
 import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
-import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.event.ReEditEvent;
 import com.bcm.messenger.common.event.RecallFailEvent;
 import com.bcm.messenger.common.exception.InsecureFallbackApprovalException;
@@ -66,7 +64,7 @@ public class PushControlMessageSendJob extends PushSendJob {
     @Override
     public void onPushSend(MasterSecret masterSecret) {
         ALog.i(TAG, "OnPushSend send recall message start.");
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
 
         MessageRecord messageRecord = chatRepo.getMessage(messageId);
         if (messageRecord == null) return;
@@ -78,8 +76,7 @@ public class PushControlMessageSendJob extends PushSendJob {
             int expiresIn = (int) (messageRecord.getExpiresTime() / 1000);
 
             String recallMessage = new AmeGroupMessage<>(AmeGroupMessage.CONTROL_MESSAGE, new AmeGroupMessage.ControlContent(AmeGroupMessage.ControlContent.ACTION_RECALL_MESSAGE,
-                    accountContext.getUid(),"",
-                    messageRecord.getDateSent())).toString();
+                    accountContext.getUid(),"", messageRecord.getDateSent())).toString();
             OutgoingLocationMessage recallInsertMessage = new OutgoingLocationMessage(messageRecord.getRecipient(accountContext), recallMessage, (messageRecord.getRecipient(accountContext).getExpireMessages() * 1000));
 
             SignalServiceDataMessage textSecureMessage = SignalServiceDataMessage.newBuilder()
@@ -123,16 +120,13 @@ public class PushControlMessageSendJob extends PushSendJob {
             throws UntrustedIdentityException, InsecureFallbackApprovalException, RetryLaterException {
         try {
             BcmChatCore.INSTANCE.sendSilentMessage(address, message);
-        }
-        catch (UnregisteredUserException e) {
+        } catch (UnregisteredUserException e) {
             ALog.e(TAG, e);
             throw new InsecureFallbackApprovalException(e);
-        }
-        catch (VersionTooLowException e) {
+        } catch (VersionTooLowException e) {
             ALog.e(TAG, e);
             throw new InsecureFallbackApprovalException(e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             ALog.e(TAG, e);
             throw new RetryLaterException(e);
         }

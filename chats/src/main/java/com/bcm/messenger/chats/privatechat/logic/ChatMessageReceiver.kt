@@ -64,7 +64,7 @@ class ChatMessageReceiver : IServerDataListener {
         return true
     }
 
-    private fun addressFromEnvelope(uid:String, envelope: SignalServiceProtos.Envelope): SignalServiceAddress {
+    private fun addressFromEnvelope(uid: String, envelope: SignalServiceProtos.Envelope): SignalServiceAddress {
         return SignalServiceAddress(uid,
                 if (envelope.hasRelay())
                     Optional.fromNullable(envelope.relay)
@@ -93,7 +93,7 @@ class ChatMessageReceiver : IServerDataListener {
         val source = Address.from(accountContext, fromUid)
         val recipient = Recipient.from(source, false)
 
-        when(envelope.type) {
+        when (envelope.type) {
             SignalServiceProtos.Envelope.Type.RECEIPT -> {
                 ALog.i(TAG, "recv recipient:" + System.currentTimeMillis())
 
@@ -108,11 +108,9 @@ class ChatMessageReceiver : IServerDataListener {
             SignalServiceProtos.Envelope.Type.CIPHERTEXT, SignalServiceProtos.Envelope.Type.PREKEY_BUNDLE -> {
                 ALog.i(TAG, "recv message:" + System.currentTimeMillis())
                 if (!recipient.isBlocked) {
-                    val messageId = Repository.getPushRepo(accountContext)?.insert(envelope)
-                    if (messageId != null) {
-                        val jobManager = AmeModuleCenter.accountJobMgr(accountContext)
-                        jobManager?.add(PushDecryptJob(context, accountContext, messageId))
-                    }
+                    val messageId = Repository.getPushRepo(accountContext)?.insert(envelope) ?: -1L
+                    val jobManager = AmeModuleCenter.accountJobMgr(accountContext)
+                    jobManager?.add(PushDecryptJob(context, accountContext, messageId))
                 } else {
                     ALog.w(TAG, "*** Received blocked push message, ignoring...")
                 }
@@ -175,7 +173,6 @@ class ChatMessageReceiver : IServerDataListener {
                     } catch (e: Exception) {
                         ALog.w(TAG, "Untrusted identity key from handleMismatchedDevices")
                     }
-
                 }
             }
         } catch (e: Exception) {
@@ -184,7 +181,6 @@ class ChatMessageReceiver : IServerDataListener {
     }
 
     private fun getRealUid(accountContext: AccountContext, encryptSource: ByteArray): String? {
-        //
         return try {
             val decodeString = String(Base64.decode(encryptSource), StandardCharsets.UTF_8)
             val json = JSONObject(decodeString)

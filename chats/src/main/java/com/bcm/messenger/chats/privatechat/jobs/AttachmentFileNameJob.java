@@ -13,6 +13,7 @@ import com.bcm.messenger.common.crypto.AsymmetricMasterSecret;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.MasterSecretUtil;
 import com.bcm.messenger.common.database.records.AttachmentRecord;
+import com.bcm.messenger.common.database.repositories.AttachmentRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.jobs.MasterSecretJob;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
@@ -32,8 +33,11 @@ public class AttachmentFileNameJob extends MasterSecretJob {
     private final long attachmentUniqueId;
     private final String encryptedFileName;
 
-    public AttachmentFileNameJob(@NonNull Context context, @NonNull AccountContext accountContext, @NonNull AsymmetricMasterSecret asymmetricMasterSecret,
-                                 @NonNull AttachmentRecord attachment, @NonNull IncomingMediaMessage message) {
+    public AttachmentFileNameJob(@NonNull Context context,
+                                 @NonNull AccountContext accountContext,
+                                 @NonNull AccountContext accountContext, @NonNull AsymmetricMasterSecret asymmetricMasterSecret,
+                                 @NonNull AttachmentRecord attachment,
+                                 @NonNull IncomingMediaMessage message) {
         super(context, accountContext, new JobParameters.Builder().withPersistence()
                 .withRequirement(new MasterSecretRequirement(context))
                 .create());
@@ -49,7 +53,10 @@ public class AttachmentFileNameJob extends MasterSecretJob {
 
         String plaintextFileName = new AsymmetricMasterCipher(MasterSecretUtil.getAsymmetricMasterSecret(accountContext, masterSecret)).decryptBody(encryptedFileName);
 
-        Repository.getAttachmentRepo(accountContext).updateFileName(attachmentRowId, attachmentUniqueId, plaintextFileName);
+        AttachmentRepo attachmentRepo = Repository.getAttachmentRepo(accountContext);
+        if (attachmentRepo != null) {
+            attachmentRepo.updateFileName(attachmentRowId, attachmentUniqueId, plaintextFileName);
+        }
     }
 
     @Override
@@ -82,6 +89,4 @@ public class AttachmentFileNameJob extends MasterSecretJob {
 
         return null;
     }
-
-
 }

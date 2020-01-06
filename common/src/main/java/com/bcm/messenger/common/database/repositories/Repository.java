@@ -271,6 +271,111 @@ public class Repository {
         return userDatabase.runInTransaction(callable);
     }
 
+    @NonNull
+    public UserDatabase getUserDatabase() {
+        return userDatabase;
+    }
+
+    @NonNull
+    public PrivateChatRepo getChatRepo() {
+        return chatRepo;
+    }
+
+    @NonNull
+    public AttachmentRepo getAttachmentRepo() {
+        return attachmentRepo;
+    }
+
+    @NonNull
+    public ThreadRepo getThreadRepo() {
+        return threadRepo;
+    }
+
+    @NonNull
+    public DraftRepo getDraftRepo() {
+        return draftRepo;
+    }
+
+    @NonNull
+    public RecipientRepo getRecipientRepo() {
+        return recipientRepo;
+    }
+
+    @NonNull
+    public IdentityRepo getIdentityRepo() {
+        return identityRepo;
+    }
+
+    @NonNull
+    public PushRepo getPushRepo() {
+        return pushRepo;
+    }
+
+    @NonNull
+    public GroupMessageDao getGroupMessageRepo() {
+        return userDatabase.groupMessageDao();
+    }
+
+    @NonNull
+    public GroupMemberDao getGroupMemberRepo() {
+        return userDatabase.groupMemberDao();
+    }
+
+    @NonNull
+    public GroupLiveInfoDao getGroupLiveInfoRepo() {
+        return userDatabase.groupLiveInfoDao();
+    }
+
+    @NonNull
+    public BcmFriendDao getBcmFriendRepo() {
+        return userDatabase.bcmFriendDao();
+    }
+
+    @NonNull
+    public ChatHideMessageDao getChatHideMessageRepo() {
+        return userDatabase.chatControlMessageDao();
+    }
+
+    @NonNull
+    public FriendRequestDao getFriendRequestRepo() {
+        return userDatabase.friendRequestDao();
+    }
+
+    @NonNull
+    public GroupAvatarParamsDao getGroupAvatarParamsRepo() {
+        return userDatabase.groupAvatarParamsDao();
+    }
+
+    @NonNull
+    public NoteRecordDao getNoteRecordRepo() {
+        return userDatabase.noteRecordDao();
+    }
+
+    @NonNull
+    public AdHocChannelDao getAdHocChannelRepo() {
+        return userDatabase.adHocChannelDao();
+    }
+
+    @NonNull
+    public AdHocSessionDao getAdHocSessionRepo() {
+        return userDatabase.adHocSessionDao();
+    }
+
+    @NonNull
+    public AdHocMessageDao getAdHocMessageRepo() {
+        return userDatabase.adHocMessageDao();
+    }
+
+    @NonNull
+    public GroupJoinInfoDao getGroupJoinInfoRepo() {
+        return userDatabase.groupJoinInfoDao();
+    }
+
+    @NonNull
+    public GroupKeyDao getGroupKeyRepo() {
+        return userDatabase.groupKeyDao();
+    }
+
     private Repository(AccountContext context) {
         accountContext = context;
         userDatabase = UserDatabase.openDatabase(accountContext, true);

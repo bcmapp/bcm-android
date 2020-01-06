@@ -18,6 +18,7 @@ import com.bcm.messenger.chats.mediapreview.MediaViewActivity
 import com.bcm.messenger.chats.provider.ChatModuleImp
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.records.MessageRecord
@@ -34,7 +35,7 @@ import java.lang.ref.WeakReference
 /**
  * bcm.social.01 2018/10/16.
  */
-class MediaBrowserFragment : Fragment(), IMediaBrowserMenuProxy {
+class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
 
     private val TAG = "MediaBrowserFragment"
 

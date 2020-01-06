@@ -57,10 +57,6 @@ public class AttachmentDownloadJob extends MasterSecretJob {
 
     private int mTry = 0;
 
-    public AttachmentDownloadJob(Context context, AccountContext accountContext, long messageId, AttachmentId attachmentId, boolean manual) {
-        this(context, accountContext, messageId, attachmentId.getRowId(), attachmentId.getUniqueId(), manual);
-    }
-
     public AttachmentDownloadJob(Context context, AccountContext accountContext, long messageId, long attachmentId, long uniqueId, boolean manual) {
         super(context, accountContext, JobParameters.newBuilder()
                 .withGroupId(AttachmentDownloadJob.class.getCanonicalName())
@@ -73,7 +69,6 @@ public class AttachmentDownloadJob extends MasterSecretJob {
         this.partRowId = attachmentId;
         this.partUniqueId = uniqueId;
         this.manual = manual;
-
     }
 
     @Override
@@ -84,39 +79,49 @@ public class AttachmentDownloadJob extends MasterSecretJob {
     @Override
     public void onRun(MasterSecret masterSecret) {
         final AttachmentRepo repo = Repository.getAttachmentRepo(accountContext);
+        if (repo == null) {
+            ALog.w(TAG, "User is not login, get a null repo");
+            return;
+        }
+
         final AttachmentId attachmentId = new AttachmentId(partRowId, partUniqueId);
         final AttachmentRecord record = repo.getAttachment(partRowId, partUniqueId);
 
         if (record == null) {
-            Log.w(TAG, "attachment no longer exists.");
+            ALog.w(TAG, "attachment no longer exists.");
             return;
         }
 
         if (!record.isInProgress()) {
-            Log.w(TAG, "Attachment was already downloaded.");
+            ALog.w(TAG, "Attachment was already downloaded.");
             return;
         }
 
         if (!manual && !AttachmentUtil.isAutoDownloadPermitted(context, record)) {
-            Log.w(TAG, "Attachment can't be auto downloaded...");
+            ALog.w(TAG, "Attachment can't be auto downloaded...");
             return;
         }
 
         repo.setTransferState(record, AttachmentDbModel.TransferState.STARTED);
 
         try {
-            retrieveAttachment(masterSecret, attachmentId, record);
+            retrieveAttachment(masterSecret, repo, attachmentId, record);
         } catch (Throwable t) {
-            markFailed(attachmentId);
+            markFailed(repo, attachmentId);
             ALog.e(TAG, t);
         }
-
     }
 
     @Override
     public void onCanceled() {
         final AttachmentId attachmentId = new AttachmentId(partRowId, partUniqueId);
-        markFailed(attachmentId);
+        final AttachmentRepo repo = Repository.getAttachmentRepo(accountContext);
+        if (repo == null) {
+            ALog.w(TAG, "User is not login, get a null repo");
+            return;
+        }
+
+        markFailed(repo, attachmentId);
     }
 
     @Override
@@ -133,6 +138,7 @@ public class AttachmentDownloadJob extends MasterSecretJob {
     }
 
     private void retrieveAttachment(MasterSecret masterSecret,
+                                    final AttachmentRepo repo,
                                     final AttachmentId attachmentId,
                                     final AttachmentRecord attachment) {
 
@@ -150,19 +156,19 @@ public class AttachmentDownloadJob extends MasterSecretJob {
                     }
                 }));
 
-                Repository.getAttachmentRepo(accountContext).insertForPlaceholder(masterSecret, partRowId, partUniqueId, fileInfo);
+                repo.insertForPlaceholder(masterSecret, partRowId, partUniqueId, fileInfo);
             } else {
                 throw new AssertionError("MasterSecret is null");
             }
         } catch (InvalidPartException | NonSuccessfulResponseCodeException | InvalidMessageException e) {
             Log.w(TAG, e);
-            markFailed(attachmentId);
+            markFailed(repo, attachmentId);
         } catch (RemoteFileNotFoundException e) {
             ALog.w(TAG, "Attachment file not found");
-            markNotFound(attachmentId);
+            markNotFound(repo, attachmentId);
         } catch (IOException e) {
             ALog.w(TAG, "Download attachment failed, " + e.getMessage());
-            markFailed(attachmentId);
+            markFailed(repo, attachmentId);
         } finally {
             if (attachmentFile != null) {
                 attachmentFile.delete();
@@ -239,15 +245,13 @@ public class AttachmentDownloadJob extends MasterSecretJob {
         }
     }
 
-    private void markNotFound(AttachmentId attachmentId) {
-        AttachmentRepo repo = Repository.getAttachmentRepo(accountContext);
+    private void markNotFound(AttachmentRepo repo, AttachmentId attachmentId) {
         repo.setTransferState(attachmentId.getRowId(), attachmentId.getUniqueId(), AttachmentDbModel.TransferState.NOT_FOUND);
         repo.cleanUris(attachmentId.getRowId(), attachmentId.getUniqueId());
     }
 
-    private void markFailed(AttachmentId attachmentId) {
-        Repository.getAttachmentRepo(accountContext)
-                .setTransferState(attachmentId.getRowId(), attachmentId.getUniqueId(), AttachmentDbModel.TransferState.FAILED);
+    private void markFailed(AttachmentRepo repo, AttachmentId attachmentId) {
+        repo.setTransferState(attachmentId.getRowId(), attachmentId.getUniqueId(), AttachmentDbModel.TransferState.FAILED);
     }
 
     @VisibleForTesting

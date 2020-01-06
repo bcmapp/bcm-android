@@ -1,7 +1,6 @@
 package com.bcm.messenger.chats.provider
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.FragmentActivity
@@ -34,6 +33,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.GroupUtil
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.common.utils.startForegroundServiceCompat
 import com.bcm.messenger.utility.logger.ALog
@@ -84,7 +84,6 @@ class ChatModuleImp : IChatModule {
             intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, address)
             intent.putExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, callType)
             context.startForegroundServiceCompat(intent)
-
         } catch (ex: Exception) {
             ALog.e(TAG, "startRtcCallService fail", ex)
         }
@@ -101,12 +100,7 @@ class ChatModuleImp : IChatModule {
             if (callType != null) {
                 activityIntent.putExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, callType)
             }
-            if(context is Activity) {
-                context.startBcmActivity(accountContext, activityIntent)
-            }else {
-                activityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                context.startBcmActivity(accountContext, activityIntent)
-            }
+            context.startBcmActivity(accountContext, activityIntent)
         } catch (ex: Exception) {
             ALog.e(TAG, "startRtcCallService fail", ex)
         }
@@ -114,12 +108,11 @@ class ChatModuleImp : IChatModule {
 
     @SuppressLint("CheckResult")
     override fun deleteMessage(context: Context, accountContext: AccountContext, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)?) {
-        if(messageSet.isEmpty()) {
+        if (messageSet.isEmpty()) {
             callback?.invoke(emptySet())
             return
         }
 
-  
         fun transformToEntity(messageDetail: AmeGroupMessageDetail): GroupMessage {
 
             val msg = GroupMessage()
@@ -175,13 +168,13 @@ class ChatModuleImp : IChatModule {
                                     }
                                 }
                                 MessageDataManager.deleteMessages(accountContext, conversationId, groupMessageList)
-                                EventBus.getDefault().post(MessageEvent(accountContext, conversationId, messageSet.map {
-                                    (it as AmeGroupMessageDetail).indexId
+                                EventBus.getDefault().post(MessageEvent(accountContext, conversationId, messageSet.map { detail ->
+                                    (detail as AmeGroupMessageDetail).indexId
                                 }))
                             } else {
                                 val ids = mutableListOf<Long>()
-                                messageSet.forEach {
-                                    val m = it as MessageRecord
+                                messageSet.forEach { record ->
+                                    val m = record as MessageRecord
                                     ids.add(m.id)
                                 }
                                 Repository.getChatRepo(accountContext)?.deleteMessages(conversationId, ids)
@@ -282,7 +275,7 @@ class ChatModuleImp : IChatModule {
 
     override fun forwardMessage(context: Context, accountContext: AccountContext, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)?) {
         if (messageSet.isNotEmpty()) {
-            if(messageSet.size > 15) {
+            if (messageSet.size > 15) {
                 AmeAppLifecycle.failure(context.getString(R.string.chats_max_forward_error), true)
                 callback?.invoke(messageSet)
                 return
@@ -325,7 +318,6 @@ class ChatModuleImp : IChatModule {
             }
             val activity = context as? FragmentActivity ?: AmeAppLifecycle.current() as FragmentActivity
             if (hasCannotForwardType) {
-
                 AmePopup.center.newBuilder()
                         .withTitle(context.getString(R.string.chats_forward_multiple_notice))
                         .withContent(context.getString(R.string.chats_forward_multiple_contains_ban_messages))
@@ -336,12 +328,7 @@ class ChatModuleImp : IChatModule {
                                 putExtra(ForwardActivity.MULTI_INDEX_ID, msgIdList.toLongArray())
                                 putExtra(ForwardActivity.GID, if (isGroup) conversationId else ARouterConstants.PRIVATE_MEDIA_CHAT)
                             }
-                            if(activity == null) {
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                context.startActivity(intent)
-                            }else {
-                                activity.startActivity(intent)
-                            }
+                            activity.startBcmActivity(accountContext, intent)
                             callback?.invoke(emptySet())
 
                         }.show(activity)
@@ -350,12 +337,7 @@ class ChatModuleImp : IChatModule {
                     putExtra(ForwardActivity.MULTI_INDEX_ID, msgIdList.toLongArray())
                     putExtra(ForwardActivity.GID, if (isGroup) conversationId else ARouterConstants.PRIVATE_MEDIA_CHAT)
                 }
-                if(activity == null) {
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    context.startActivity(intent)
-                }else {
-                    activity.startActivity(intent)
-                }
+                activity.startBcmActivity(accountContext, intent)
 
                 callback?.invoke(emptySet())
             }
@@ -363,7 +345,7 @@ class ChatModuleImp : IChatModule {
     }
 
     override fun toConversationBrowser(address: Address, deleteMode: Boolean) {
-        MediaBrowserActivity.router(address, deleteMode)
+        MediaBrowserActivity.router(accountContext, address, deleteMode)
     }
 
     override fun queryAllConversationStorageSize(callback: ((result: ConversationStorage) -> Unit)?) {
@@ -385,5 +367,4 @@ class ChatModuleImp : IChatModule {
         CleanConversationStorageLogic.removeCallback()
         CleanConversationStorageLogic.clearCache()
     }
-
 }

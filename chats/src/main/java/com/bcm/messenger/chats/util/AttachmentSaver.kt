@@ -1,6 +1,5 @@
 package com.bcm.messenger.chats.util
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -35,9 +34,6 @@ import java.util.*
  * Created by wjh on 2018/6/14
  */
 object AttachmentSaver {
-
-
-    @SuppressLint("CheckResult")
     fun saveAttachmentOnAsync(activity: AppCompatActivity, mediaUrl: String?, mediaType: String?, name: String?) {
         AmePopup.loading.show(activity)
         Observable.create(ObservableOnSubscribe<Pair<Boolean, File?>> {
@@ -54,7 +50,6 @@ object AttachmentSaver {
             } finally {
                 it.onComplete()
             }
-
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnTerminate {
@@ -63,17 +58,14 @@ object AttachmentSaver {
                 .subscribe { result ->
                     if (result.first) {
                         AmePopup.result.succeed(activity, activity.getString(R.string.chats_media_preview_save_success), true) {
-
                         }
                     } else {
                         AmePopup.result.failure(activity, activity.getString(R.string.chats_media_preview_save_fail), true) {
-
                         }
                     }
                 }
     }
 
-    @SuppressLint("CheckResult")
     fun saveAttachmentOnAsync(activity: AppCompatActivity, masterSecret: MasterSecret, mediaUri: Uri?, mediaType: String?, name: String?) {
         AmePopup.loading.show(activity)
         Observable.create(ObservableOnSubscribe<Pair<Boolean, File?>> {
@@ -99,15 +91,12 @@ object AttachmentSaver {
                 .subscribe({ result ->
                     if (result.first) {
                         AmePopup.result.succeed(activity, activity.getString(R.string.chats_media_preview_save_success), true) {
-
                         }
                     } else {
                         AmePopup.result.failure(activity, activity.getString(R.string.chats_media_preview_save_fail), true) {
-
                         }
                     }
                 }, {
-
                 })
     }
 
@@ -195,7 +184,6 @@ object AttachmentSaver {
                     arrayOf(contentType), null)
 
             return attachmentFile
-
         } finally {
             outputStream?.close()
         }
@@ -238,7 +226,6 @@ object AttachmentSaver {
                     arrayOf(contentType), null)
 
             return attachmentFile
-
         } finally {
             outputStream?.close()
         }
@@ -313,7 +300,5 @@ object AttachmentSaver {
         return result
     }
 
-    class Attachment(var uri: Uri, var contentType: String, var date: Long, var fileName: String?) {
-
-    }
+    class Attachment(var uri: Uri, var contentType: String, var date: Long, var fileName: String?)
 }

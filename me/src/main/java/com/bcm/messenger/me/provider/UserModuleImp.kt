@@ -499,7 +499,7 @@ class UserModuleImp : IUserModule
         val keyPair = BCMPrivateKeyUtils.generateKeyPair()
         val otherPrivateKeyArray = keyPair.privateKey.serialize()
 
-        val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(AppContextHolder.APP_CONTEXT)
+        val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(accountContext)
         val myPublicKeyArray = (myKeyPair.publicKey.publicKey as DjbECPublicKey).publicKey
 
         val dhPassword = Curve25519.getInstance(Curve25519.BEST).calculateAgreement(myPublicKeyArray, otherPrivateKeyArray)
@@ -511,7 +511,7 @@ class UserModuleImp : IUserModule
 
     override fun decryptPhone(phoneBunk: String): String {
         val pair = phoneBunk.split("-!-")
-        val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(AppContextHolder.APP_CONTEXT)
+        val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(accountContext)
         val dhPassword = Curve25519.getInstance(Curve25519.BEST)
                 .calculateAgreement(Base64.decode(pair[1]), myKeyPair.privateKey.serialize())
 
@@ -663,6 +663,6 @@ class UserModuleImp : IUserModule
             return
         }
 
-        SwitchAccountAdapter().switchAccount(activity, accountContext.uid, Recipient.fromSelf(activity, true))
+        SwitchAccountAdapter().switchAccount(activity, accountContext.uid, Recipient.from(accountContext, Address.fromSerialized(accountContext.uid), true))
     }
 }

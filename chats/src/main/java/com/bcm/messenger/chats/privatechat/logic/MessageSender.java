@@ -19,13 +19,10 @@ package com.bcm.messenger.chats.privatechat.logic;
 import android.content.Context;
 
 import com.bcm.messenger.chats.privatechat.jobs.PushControlMessageSendJob;
-import com.bcm.messenger.chats.privatechat.jobs.PushGroupSendJob;
 import com.bcm.messenger.chats.privatechat.jobs.PushHideMessageSendJob;
 import com.bcm.messenger.chats.privatechat.jobs.PushMediaSendJob;
 import com.bcm.messenger.chats.privatechat.jobs.PushTextSendJob;
-import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.crypto.MasterSecret;
-import com.bcm.messenger.common.database.db.UserDatabase;
 import com.bcm.messenger.common.database.records.MessageRecord;
 import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
@@ -179,11 +176,6 @@ public class MessageSender {
         }
     }
 
-    public static void resendGroupMessage(Context context, MessageRecord messageRecord, Address filterAddress) {
-        if (!messageRecord.isMediaMessage()) throw new AssertionError("Not Group");
-        sendGroupPush(context, messageRecord.getRecipient(), messageRecord.getId(), filterAddress);
-    }
-
     /**
      * resend message
      * @param context Context.
@@ -305,14 +297,6 @@ public class MessageSender {
             jobManager.add(new PushMediaSendJob(context, messageId, recipient.getAddress()));
         }
     }
-
-    private static void sendGroupPush(Context context, Recipient recipient, long messageId, Address filterAddress) {
-        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr();
-        if (jobManager != null) {
-            jobManager.add(new PushGroupSendJob(context, messageId, recipient.getAddress(), filterAddress));
-        }
-    }
-
 
     private static boolean isGroupPushSend(Recipient recipient) {
         return recipient.getAddress().isGroup() &&

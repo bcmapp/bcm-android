@@ -7,7 +7,6 @@ import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.utils.isUsingNetwork
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.bcmhttp.exception.NoContentException
 import com.bcm.messenger.utility.logger.ALog
@@ -266,7 +265,7 @@ class ReportLogic(
         val pubKey: String
         try {
             uid = accountContext.uid
-            val publicKey = IdentityKeyUtil.getIdentityKey(AppContextHolder.APP_CONTEXT)
+            val publicKey = IdentityKeyUtil.getIdentityKey(accountContext)
             pubKey = Base64.encodeBytes((publicKey.publicKey as DjbECPublicKey).serialize())
 
             if (uid.isBlank() || pubKey.isBlank()) {
@@ -307,7 +306,7 @@ class ReportLogic(
             val area = RedirectInterceptorHelper.imServerInterceptor.getCurrentServer().area.toString()
             if (histogramList.size + counterList.size <= 100) {
 
-                val signature = Base64.encodeBytes(BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, uid.toByteArray()))
+                val signature = Base64.encodeBytes(BCMEncryptUtils.signWithMe(accountContext, uid.toByteArray()))
                 val reportData = ReportData(1, uid, pubKey, signature,
                         ClientInfo(area, netType.typeName),
                         histogramList, counterList)
@@ -319,7 +318,7 @@ class ReportLogic(
                 val reportDataList = mutableListOf<ReportData>()
                 while (histogramList.size > 0 || counterList.size > 0) {
 
-                    val signature = Base64.encodeBytes(BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, uid.toByteArray()))
+                    val signature = Base64.encodeBytes(BCMEncryptUtils.signWithMe(accountContext, uid.toByteArray()))
                     if (histogramList.size > 100) {
 
                         val subList = histogramList.subList(0, 100)

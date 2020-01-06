@@ -321,7 +321,7 @@ object ChatFileEncryptDecryptUtil {
 
     private fun checkFileExist(accountContext: AccountContext, hash: String, isThumbnail: Boolean): FileInfo? {
         if (isThumbnail) {
-            val privateAttachment = Repository.getAttachmentRepo(accountContext).getExistThumbnailData(hash)
+            val privateAttachment = Repository.getAttachmentRepo(accountContext)?.getExistThumbnailData(hash)
             if (privateAttachment?.thumbHash == hash) {
                 return FileInfo(File(privateAttachment.thumbnailUri!!.path), 0L, privateAttachment.thumbRandom!!, privateAttachment.thumbHash!!)
             }
@@ -331,7 +331,7 @@ object ChatFileEncryptDecryptUtil {
                 return FileInfo(File(Uri.parse(groupMessage.thumbnailUri).path), 0L, groupMessage.thumbRandom!!, groupMessage.thumbHash!!)
             }
         } else {
-            val privateAttachment = Repository.getAttachmentRepo(accountContext).getExistAttachmentData(hash)
+            val privateAttachment = Repository.getAttachmentRepo(accountContext)?.getExistAttachmentData(hash)
             if (privateAttachment?.dataHash == hash) {
                 return FileInfo(File(privateAttachment.dataUri!!.path), privateAttachment.dataSize, privateAttachment.dataRandom!!, privateAttachment.dataHash!!)
             }

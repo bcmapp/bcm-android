@@ -57,7 +57,6 @@ internal object ReportUtil : LBSFetcher.ILBSFetchResult {
             val sliceJson = preference.getString("slice", "")
 
             if (!sliceJson.isNullOrBlank()) {
-
                 ALog.i(TAG, "Found cache slices")
                 val sliceStorage = GsonUtils.fromJson(sliceJson, SliceStorage::class.java)
                 sliceStorage.sliceList.forEach { slice ->
@@ -225,9 +224,9 @@ internal object ReportUtil : LBSFetcher.ILBSFetchResult {
         uploader = MetricsUploader()
 
         val accountContext = accountMap[accountMap.keys.first()]!!.accountContext
-        val publicKey = IdentityKeyUtil.getIdentityKey(AppContextHolder.APP_CONTEXT)
+        val publicKey = IdentityKeyUtil.getIdentityKey(accountContext)
         val pubKey = Base64.encodeBytes((publicKey.publicKey as DjbECPublicKey).serialize())
-        val signature = Base64.encodeBytes(BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, accountContext.uid.toByteArray()))
+        val signature = Base64.encodeBytes(BCMEncryptUtils.signWithMe(accountContext, accountContext.uid.toByteArray()))
 
         val configReq = HistogramConfigReq(accountContext.uid, pubKey, signature)
         val configs = uploader.getTimeSplicesConfig(accountContext, configReq)

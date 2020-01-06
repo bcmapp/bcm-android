@@ -20,9 +20,15 @@ import java.io.IOException
 /**
  * Created by Kin on 2019/5/8
  */
-class PushHideMessageSendJob(context: Context, accountContext: AccountContext, private val messageId: Long, destination: Address) :
-        PushSendJob(context, accountContext, constructParameters(context, destination, "control")) {
-
+class PushHideMessageSendJob(
+        context: Context,
+        accountContext: AccountContext,
+        private val messageId: Long,
+        destination: Address)
+    : PushSendJob(
+        context,
+        accountContext,
+        constructParameters(context, destination, "control")) {
     private val TAG = "PushHideMessageSendJob"
 
     override fun onShouldRetryThrowable(exception: Exception?): Boolean {
@@ -34,8 +40,7 @@ class PushHideMessageSendJob(context: Context, accountContext: AccountContext, p
     }
 
     override fun onPushSend(masterSecret: MasterSecret?) {
-        val dao = Repo.getDatabase().chatControlMessageDao()
-        val message = dao.queryHideMessage(messageId)
+        val message = repository.chatHideMessageRepo.queryHideMessage(messageId)
 
         try {
             ALog.i(TAG, "Push send $messageId, time is ${message.sendTime}")
@@ -75,6 +80,5 @@ class PushHideMessageSendJob(context: Context, accountContext: AccountContext, p
             ALog.e(TAG, e)
             throw RetryLaterException(e)
         }
-
     }
 }

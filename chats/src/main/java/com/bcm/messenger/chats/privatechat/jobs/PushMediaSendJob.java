@@ -14,7 +14,6 @@ import com.bcm.messenger.common.database.NoSuchMessageException;
 import com.bcm.messenger.common.database.records.AttachmentRecord;
 import com.bcm.messenger.common.database.records.MessageRecord;
 import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
-import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.event.UserOfflineEvent;
 import com.bcm.messenger.common.event.VersionTooLowEvent;
 import com.bcm.messenger.common.exception.InsecureFallbackApprovalException;
@@ -23,7 +22,6 @@ import com.bcm.messenger.common.exception.UndeliverableMessageException;
 import com.bcm.messenger.common.expiration.ExpirationManager;
 import com.bcm.messenger.common.jobs.RetrieveProfileJob;
 import com.bcm.messenger.common.mms.MediaConstraints;
-import com.bcm.messenger.common.mms.MmsException;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.utility.logger.ALog;
@@ -61,10 +59,8 @@ public class PushMediaSendJob extends PushSendJob {
     }
 
     @Override
-    public void onPushSend(MasterSecret masterSecret)
-            throws RetryLaterException, MmsException, NoSuchMessageException,
-            UndeliverableMessageException {
-        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+    public void onPushSend(MasterSecret masterSecret) throws NoSuchMessageException {
+        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
 
         MessageRecord record = chatRepo.getMessage(messageId);
         if (record == null) {
@@ -76,7 +72,7 @@ public class PushMediaSendJob extends PushSendJob {
 
             deliver(masterSecret, record);
             chatRepo.setMessageSendSuccess(messageId);
-            markAttachmentsUploaded(messageId, record.getAttachments());
+            markAttachmentsUploaded(record.getAttachments());
 
             if (record.getExpiresTime() > 0 && !record.isExpirationTimerUpdate()) {
                 chatRepo.setMessageExpiresStart(messageId);
@@ -96,7 +92,6 @@ public class PushMediaSendJob extends PushSendJob {
             JobManager accountJobManager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
             if (accountJobManager != null) {
                 accountJobManager.add(new RetrieveProfileJob(context,accountContext, Recipient.from(accountContext, uie.getE164Number(), false)));
-
             }
             chatRepo.setMessageSendFail(record.getId());
         } catch (Exception e) {
@@ -117,7 +112,7 @@ public class PushMediaSendJob extends PushSendJob {
     @Override
     public void onCanceled() {
         ALog.i(TAG, "onCanceled");
-        Repository.getChatRepo(accountContext).setMessageSendFail(messageId);
+        repository.getChatRepo(accountContext).setMessageSendFail(messageId);
         notifyMediaMessageDeliveryFailed(context, messageId);
     }
 

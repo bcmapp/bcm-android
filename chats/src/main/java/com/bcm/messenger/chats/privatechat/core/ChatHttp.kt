@@ -13,7 +13,6 @@ import com.bcm.messenger.common.bcmhttp.interceptor.metrics.NormalMetricsInterce
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.utils.AccountContextMap
 import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.identityKey
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.bcmhttp.exception.NoContentException
 import com.bcm.messenger.utility.bcmhttp.facade.BaseHttp
@@ -56,7 +55,7 @@ object ChatHttp : AccountContextMap<ChatHttp.ChatHttpImpl> ({
                     .addInterceptor(BcmAuthHeaderInterceptor(accountContext))
                     .addInterceptor(RedirectInterceptor(lbsType(), IMServerUrl.IM_DEFAULT))
                     .addInterceptor(IMServerErrorCodeInterceptor())
-                    .addInterceptor(NormalMetricsInterceptor())
+                    .addInterceptor(NormalMetricsInterceptor(accountContext))
                     .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                     .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                     .build()
@@ -127,7 +126,7 @@ object ChatHttp : AccountContextMap<ChatHttp.ChatHttpImpl> ({
 
                         bundles.add(PreKeyBundle(device.registrationId, device.deviceId, preKeyId,
                                 preKey, signedPreKeyId, signedPreKey, signedPreKeySignature,
-                                response.identityKey.identityKey()))
+                                response.identityKey))
                     }
                 } else {
                     throw IOException("Empty prekey list")
@@ -172,7 +171,7 @@ object ChatHttp : AccountContextMap<ChatHttp.ChatHttpImpl> ({
                 }
 
                 return PreKeyBundle(device.registrationId, device.deviceId, preKeyId, preKey,
-                        signedPreKeyId, signedPreKey, signedPreKeySignature, response.identityKey.identityKey())
+                        signedPreKeyId, signedPreKey, signedPreKeySignature, response.identityKey)
             } catch (nfe: NotFoundException) {
                 throw UnregisteredUserException(destination.number, nfe)
             }
