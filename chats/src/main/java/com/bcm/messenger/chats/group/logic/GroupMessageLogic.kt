@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.text.TextUtils
 import com.bcm.messenger.chats.group.core.GroupManagerCore
 import com.bcm.messenger.chats.group.core.group.GroupMessageEntity
-import com.bcm.messenger.chats.group.logic.secure.GroupKeyRotate
 import com.bcm.messenger.chats.group.logic.sync.GroupOfflineDecryptFailCounter
 import com.bcm.messenger.chats.group.logic.sync.GroupOfflineSyncManager
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
@@ -17,7 +16,7 @@ import com.bcm.messenger.common.grouprepository.events.*
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.GroupLiveInfoManager
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
-import com.bcm.messenger.common.grouprepository.manager.UserDataManager
+import com.bcm.messenger.common.grouprepository.manager.GroupMemberManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMemberChanged
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTransform
@@ -375,7 +374,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                                 info.role = member.role
                                 info.gid = gid
                                 if (changed.action == AmeGroupMemberChanged.LEAVE) {
-                                    info.role = UserDataManager.queryGroupMemberRole(accountContext, info.gid, member.uid
+                                    info.role = GroupMemberManager.queryGroupMemberRole(accountContext, info.gid, member.uid
                                             ?: "")
                                 }
                                 list.add(info)

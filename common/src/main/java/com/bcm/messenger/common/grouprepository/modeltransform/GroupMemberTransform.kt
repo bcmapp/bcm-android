@@ -13,7 +13,7 @@ object GroupMemberTransform {
         member.createTime = dbUser.joinTime
         member.gid = dbUser.gid
         member.role = dbUser.role
-        member.uid = Address.fromSerialized(dbUser.uid)
+        member.uid = Address.from(dbUser.uid)
 
         member.customNickname = dbUser.customNickname
         member.nickname = dbUser.nickname

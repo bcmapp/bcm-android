@@ -54,21 +54,13 @@ object ChatHttp : AccountContextMap<ChatHttp.ChatHttpImpl> ({
                     .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
                     .hostnameVerifier(BaseHttp.trustAllHostVerify())
                     .addInterceptor(BcmAuthHeaderInterceptor(accountContext))
-                    .addInterceptor(RedirectInterceptor(lbsType(), IMServerUrl.IM_DEFAULT))
+                    .addInterceptor(RedirectInterceptorHelper.imServerInterceptor)
                     .addInterceptor(IMServerErrorCodeInterceptor())
                     .addInterceptor(AccountMetricsInterceptor(accountContext))
                     .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                     .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                     .build()
             setClient(client)
-        }
-
-        private fun lbsType(): String {
-            return if (AppUtil.isReleaseBuild() || !AppUtil.isTestEnvEnable()) {
-                BuildConfig.IM_SERVICE_NAME
-            } else {
-                BuildConfig.IM_TEST_SERVICE_NAME
-            }
         }
 
         @Throws(NoContentException::class, BaseHttp.HttpErrorException::class)

@@ -9,7 +9,7 @@ import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.events.*
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
-import com.bcm.messenger.common.grouprepository.manager.UserDataManager
+import com.bcm.messenger.common.grouprepository.manager.GroupMemberManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMemberChanged
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupInfoTransform
@@ -235,7 +235,7 @@ class GroupMessageReceiver : IServerDataListener {
             info.role = member.role
             info.gid = message.gid
             if (message.action == AmeGroupMemberChanged.LEAVE) {
-                info.role = UserDataManager.queryGroupMemberRole(accountContext, info.gid, member.uid)
+                info.role = GroupMemberManager.queryGroupMemberRole(accountContext, info.gid, member.uid)
             }
             list.add(info)
         }

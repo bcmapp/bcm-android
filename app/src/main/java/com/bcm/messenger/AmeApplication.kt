@@ -188,7 +188,7 @@ class AmeApplication : MultiDexApplication() {
         ProxyManager.refresh()
 
         LBSManager.addMetricsListener(ReportConfigure)
-        LBSManager.refresh()
+        LBSManager.refresh(null)
     }
 
     private fun setRxJavaErrorHandler() {

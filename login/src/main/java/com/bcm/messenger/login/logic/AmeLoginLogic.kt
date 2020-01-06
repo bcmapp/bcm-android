@@ -140,7 +140,7 @@ object AmeLoginLogic {
             return context
         }
 
-        if (uid == tmpAccountContext.uid) {
+        if (uid == tmpAccountContext.uid && tmpAccountContext.password.isNotEmpty()) {
             return tmpAccountContext
         }
 

@@ -33,11 +33,11 @@ object GroupLiveInfoManager:AccountContextMap<GroupLiveInfoManager.GroupLiveInfo
         }
 
 
-        private val dao: GroupLiveInfoDao
-            get() = UserDatabase.getDatabase(accountContext).groupLiveInfoDao()
+        private val dao: GroupLiveInfoDao?
+            get() = Repository.getGroupLiveInfoRepo(accountContext)
 
         fun deleteLiveInfoWhenLeaveGroup(gid: Long) {
-            dao.deleteLiveInfoByGid(gid)
+            dao?.deleteLiveInfoByGid(gid)
             updateThreadLiveState(gid, GroupLiveInfo.LiveStatus.EMPTY.value)
         }
 
@@ -55,17 +55,17 @@ object GroupLiveInfoManager:AccountContextMap<GroupLiveInfoManager.GroupLiveInfo
             groupLiveInfo.duration = duration
             groupLiveInfo.liveStatus = GroupLiveInfo.LiveStatus.STASH.value
             groupLiveInfo.isConfirmed = false
-            return dao.insert(groupLiveInfo)
+            return dao?.insert(groupLiveInfo)?:-1
         }
 
         //
         fun clearStashLiveInfo(index: Long) {
-            dao.delete(dao.loadLiveInfoByIndexId(index))
+            dao?.delete(dao?.loadLiveInfoByIndexId(index)?:return)
         }
 
         //
         fun updateWhenSendLiveMessage(index: Long, message: AmeGroupMessage.LiveContent) {
-            val groupLiveInfo = dao.loadLiveInfoByIndexId(index)
+            val groupLiveInfo = dao?.loadLiveInfoByIndexId(index)
             if (groupLiveInfo != null) {
                 when {
                     message.isStartLive() -> {
@@ -96,7 +96,7 @@ object GroupLiveInfoManager:AccountContextMap<GroupLiveInfoManager.GroupLiveInfo
                         groupLiveInfo.currentSeekTime = message.duration
                     }
                 }
-                dao.update(groupLiveInfo)
+                dao?.update(groupLiveInfo)
                 updateLiveModel(groupLiveInfo)
                 updateThreadLiveState(groupLiveInfo.gid, groupLiveInfo.liveStatus)
                 executeAutoStopLiveTask(groupLiveInfo)
@@ -105,29 +105,23 @@ object GroupLiveInfoManager:AccountContextMap<GroupLiveInfoManager.GroupLiveInfo
         }
 
         //=================================== ，  ================================================
-        //
         fun handleReceiveLiveMessage(gid: Long, message: AmeGroupMessage.LiveContent, isOfflineMessage: Boolean) {
-            //，，，，。
-            val groupLiveInfo = dao.loadLatestLiveInfoByGid(gid)
+            val groupLiveInfo = dao?.loadLatestLiveInfoByGid(gid)
             if (groupLiveInfo == null) {
                 createAndChangeLiveStateByMessage(gid, message, isOfflineMessage)
             } else if (groupLiveInfo.liveId > message.id) {
-                //,
                 return
-            } else if (groupLiveInfo.liveId == message.id) {//
-                if (message.actionTime <= groupLiveInfo.currentActionTime) {//
+            } else if (groupLiveInfo.liveId == message.id) {
+                if (message.actionTime <= groupLiveInfo.currentActionTime) {
                     return
-                } else {//
+                } else {
                     changeLiveStateByMessage(groupLiveInfo, message)
                 }
             } else if (message.id > groupLiveInfo.liveId) {
-                //TODO:,
                 createAndChangeLiveStateByMessage(gid, message, isOfflineMessage)
             }
         }
 
-
-        //，，
         private fun createAndChangeLiveStateByMessage(gid: Long, message: AmeGroupMessage.LiveContent, isOfflineMessage: Boolean) {
             val groupLiveInfo = GroupLiveInfo()
             groupLiveInfo.gid = gid
@@ -161,7 +155,7 @@ object GroupLiveInfoManager:AccountContextMap<GroupLiveInfoManager.GroupLiveInfo
                     groupLiveInfo.liveStatus = GroupLiveInfo.LiveStatus.REMOVED.value
                 }
             }
-            dao.insert(groupLiveInfo)
+            dao?.insert(groupLiveInfo)
             //
             updateLiveModel(groupLiveInfo)
             //Thread
@@ -197,7 +191,7 @@ object GroupLiveInfoManager:AccountContextMap<GroupLiveInfoManager.GroupLiveInfo
                     groupLiveInfo.liveStatus = GroupLiveInfo.LiveStatus.REMOVED.value
                 }
             }
-            dao.update(groupLiveInfo)
+            dao?.update(groupLiveInfo)
             executeAutoStopLiveTask(groupLiveInfo)
             updateLiveModel(groupLiveInfo)
             updateThreadLiveState(groupLiveInfo.gid, groupLiveInfo.liveStatus)
@@ -218,7 +212,7 @@ object GroupLiveInfoManager:AccountContextMap<GroupLiveInfoManager.GroupLiveInfo
 
         //
         fun getCurrentLiveInfo(gid: Long): GroupLiveInfo? {
-            val groupLiveInfo = dao.loadLatestLiveInfoByGid(gid)
+            val groupLiveInfo = dao?.loadLatestLiveInfoByGid(gid)
             if (groupLiveInfo == null) return groupLiveInfo
             //
             if (groupLiveInfo.isLiveStatus && groupLiveInfo.livePlayHasDone()) {
@@ -236,7 +230,7 @@ object GroupLiveInfoManager:AccountContextMap<GroupLiveInfoManager.GroupLiveInfo
         }
 
         private fun updateThreadLiveState(gid: Long, status: Int = getCurrentLiveInfo(gid)?.liveStatus ?: 0) {
-            Repository.getThreadRepo(accountContext).updateLiveState(gid, status)
+            Repository.getThreadRepo(accountContext)?.updateLiveState(gid, status)
         }
 
         private fun updateLiveModel(groupLiveInfo: GroupLiveInfo) {
@@ -266,7 +260,7 @@ object GroupLiveInfoManager:AccountContextMap<GroupLiveInfoManager.GroupLiveInfo
                 if (it.liveStatus != GroupLiveInfo.LiveStatus.STOPED.value) {
                     it.liveStatus = GroupLiveInfo.LiveStatus.STOPED.value
                 }
-                dao.update(groupLiveInfo)
+                dao?.update(groupLiveInfo)
                 if (groupLiveInfo.gid != currentPlayingGid && !isOfflineMessage) {
                     MessageDataManager.systemNotice(accountContext, it.gid, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_LIVE_END))
                 }

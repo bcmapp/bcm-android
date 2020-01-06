@@ -19,7 +19,7 @@ object GroupJoinRequestTransform {
 
         return BcmGroupJoinRequest(dbRequest.gid,
                 dbRequest.uid,
-                comment?.name?:Address.fromSerialized(dbRequest.uid).format(),
+                comment?.name?:Address.from(dbRequest.uid).format(),
                 dbRequest.reqId,
                 dbRequest.mid,
                 dbRequest.inviter,

@@ -7,6 +7,7 @@ import com.bcm.messenger.common.bcmhttp.imserver.DevIMServerIterator
 import com.bcm.messenger.common.bcmhttp.imserver.DevMetricsServerIterator
 import com.bcm.messenger.common.bcmhttp.imserver.IMServerIterator
 import com.bcm.messenger.common.bcmhttp.imserver.IServerIterator
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
 import com.bcm.messenger.utility.logger.ALog
@@ -50,7 +51,7 @@ class RedirectInterceptor(private val lbsType: String, private val defaultServer
     }
 
     init {
-        LBSManager.query(lbsType, lbsFetchIndex, listener)
+        LBSManager.query(AMELogin.majorContext,lbsType, lbsFetchIndex, listener)
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -123,7 +124,7 @@ class RedirectInterceptor(private val lbsType: String, private val defaultServer
     fun getCurrentServer(): IMServerUrl {
         //，lbs
         if (!serverIterator.isValid()) {
-            LBSManager.query(lbsType, lbsFetchIndex, listener)
+            LBSManager.query(AMELogin.majorContext, lbsType, lbsFetchIndex, listener)
         }
         return currentServer
     }
@@ -133,7 +134,7 @@ class RedirectInterceptor(private val lbsType: String, private val defaultServer
 
         //，lbs
         if (!serverIterator.isValid()) {
-            LBSManager.query(lbsType, lbsFetchIndex, listener)
+            LBSManager.query(AMELogin.majorContext, lbsType, lbsFetchIndex, listener)
         }
         return currentServer
     }

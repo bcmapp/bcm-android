@@ -9,11 +9,10 @@ import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.event.GroupNameOrAvatarChanged
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
-import com.bcm.messenger.common.grouprepository.manager.UserDataManager
+import com.bcm.messenger.common.grouprepository.manager.GroupMemberManager
 import com.bcm.messenger.common.grouprepository.room.dao.GroupAvatarParamsDao
 import com.bcm.messenger.common.grouprepository.room.entity.GroupAvatarParams
 import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
@@ -54,10 +53,10 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
 
                 val memberInfoList = if (null != params) {
                     val list = params.toUserList()
-                    val mList = UserDataManager.queryGroupMemberList(accountContext, gid, list).filter { member -> member.role != AmeGroupMemberInfo.VISITOR }.toMutableList()
+                    val mList = GroupMemberManager.queryGroupMemberList(accountContext, gid, list).filter { member -> member.role != AmeGroupMemberInfo.VISITOR }.toMutableList()
                     if (mList.size < 4) {
                         val existList = mList.map { m -> m.uid.serialize() }
-                        val dbTop4List = UserDataManager.queryTopNGroupMember(accountContext, gid, 4).filter { m -> !existList.contains(m.uid.serialize()) }
+                        val dbTop4List = GroupMemberManager.queryTopNGroupMember(accountContext, gid, 4).filter { m -> !existList.contains(m.uid.serialize()) }
                         mList.addAll(dbTop4List.subList(0, min(dbTop4List.size, 4 - mList.size)))
                         if (mList.isEmpty()) {
                             ALog.i(TAG, "$gid member list is empty")

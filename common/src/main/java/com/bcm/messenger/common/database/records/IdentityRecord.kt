@@ -12,8 +12,8 @@ import org.whispersystems.libsignal.IdentityKey
  * Created by Kin on 2019/9/26
  */
 class IdentityRecord : IdentityDbModel() {
-    fun getAddress(accountContext: AccountContext): Address {
-        return Address.from(accountContext, uid)
+    fun getAddress(): Address {
+        return Address.from(uid)
     }
 
     @Ignore lateinit var identityKey: IdentityKey

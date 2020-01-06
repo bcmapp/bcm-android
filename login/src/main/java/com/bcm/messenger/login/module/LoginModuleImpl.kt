@@ -308,7 +308,7 @@ class LoginModuleImpl : ILoginModule
                     }
                 }
             } else {
-                LBSManager.refresh()
+                LBSManager.refresh(AMELogin.majorContext)
                 val loginList = AmeLoginLogic.accountHistory.getAllLoginContext()
                 loginList.forEach {
                     AmeModuleCenter.serverDaemon(it).checkConnection()

@@ -8,13 +8,12 @@ import com.bcm.messenger.common.core.corebean.GroupMemberSyncState
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.GroupLiveInfoManager
-import com.bcm.messenger.common.grouprepository.manager.UserDataManager
+import com.bcm.messenger.common.grouprepository.manager.GroupMemberManager
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupInfoTransform
 import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMember
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -280,11 +279,11 @@ class GroupCache(val cacheReady: () -> Unit) {
     }
 
     fun saveMember(dbMember: List<GroupMember>) {
-        UserDataManager.insertGroupDbMembers(dbMember)
+        GroupMemberManager.insertGroupDbMembers(dbMember)
     }
 
     fun deleteMembers(groupId: Long, mlist: MutableList<String>) {
-        UserDataManager.deleteMember(groupId, mlist)
+        GroupMemberManager.deleteMember(groupId, mlist)
     }
 
     fun setBroadcastSharingData(gid: Long, doing: Boolean) {

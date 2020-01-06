@@ -1,6 +1,8 @@
 package com.bcm.messenger.common.bcmhttp.configure.lbs
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BuildConfig
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.isLbsEnable
 import com.bcm.messenger.common.utils.isTestEnvEnable
@@ -25,10 +27,10 @@ object LBSManager : INetworkConnectionListener {
         getFetcher(metricsServerLbsType()).listeners.addListener(lbsFetchResult)
     }
 
-    fun query(type: String, fetchingIndex: Int = 0, listener: LBSFetcher.ILBSFetchResult) {
+    fun query(accountContext: AccountContext, type: String, fetchingIndex: Int = 0, listener: LBSFetcher.ILBSFetchResult) {
         val fetcher = getFetcher(type)
         fetcher.listeners.addListener(listener)
-        fetcher.request(fetchingIndex)
+        fetcher.request(accountContext, fetchingIndex)
     }
 
     private fun getFetcher(type: String): LBSFetcher {
@@ -40,14 +42,14 @@ object LBSManager : INetworkConnectionListener {
         return fetcher
     }
 
-    fun refresh() {
+    fun refresh(accountContext: AccountContext?) {
         if (lbsFetcherMap.isEmpty()) {
             getFetcher(imServerLbsType())
             getFetcher(metricsServerLbsType())
         }
 
         lbsFetcherMap.values.forEach {
-            it.refresh()
+            it.refresh(accountContext)
         }
     }
 
@@ -96,7 +98,7 @@ object LBSManager : INetworkConnectionListener {
         if (NetworkUtil.isConnected()) {
             if (networkType != NetworkUtil.netType()) {
                 networkType = NetworkUtil.netType()
-                refresh()
+                refresh(AMELogin.majorContext)
             }
         }
     }

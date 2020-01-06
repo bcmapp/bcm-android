@@ -3,8 +3,7 @@ package com.bcm.messenger.common.grouprepository.model
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
-import com.bcm.messenger.common.grouprepository.manager.UserDataManager
-import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.grouprepository.manager.GroupMemberManager
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.proguard.NotGuard
 
@@ -68,7 +67,7 @@ data class AmeGroupMemberChanged(val accountContext: AccountContext, val groupId
 
                 if (memberList.isNotEmpty()) {
                     for (u in memberList) {
-                        UserDataManager.insertGroupMembers(accountContext, memberList)
+                        GroupMemberManager.insertGroupMembers(accountContext, memberList)
                     }
                 }
             }
@@ -78,7 +77,7 @@ data class AmeGroupMemberChanged(val accountContext: AccountContext, val groupId
                 detail.message = AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO, systemContent)
 
                 if (memberList.isNotEmpty()) {
-                    UserDataManager.deleteMember(accountContext, memberList)
+                    GroupMemberManager.deleteMember(accountContext, memberList)
                 }
             }
             UPDATE -> {
@@ -86,7 +85,7 @@ data class AmeGroupMemberChanged(val accountContext: AccountContext, val groupId
                 detail.message = AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO, systemContent)
 
                 if (memberList.isNotEmpty()) {
-                    UserDataManager.updateGroupMembers(accountContext, memberList)
+                    GroupMemberManager.updateGroupMembers(accountContext, memberList)
                 }
             }
             else -> {

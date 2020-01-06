@@ -30,14 +30,13 @@ import com.bcm.messenger.common.grouprepository.events.*
 import com.bcm.messenger.common.grouprepository.manager.BcmGroupJoinManager
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
-import com.bcm.messenger.common.grouprepository.manager.UserDataManager
+import com.bcm.messenger.common.grouprepository.manager.GroupMemberManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMemberChanged
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupInfoTransform
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMemberTransform
 import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
 import com.bcm.messenger.common.grouprepository.room.entity.GroupJoinRequestInfo
 import com.bcm.messenger.common.grouprepository.room.entity.JoinGroupReqComment
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
@@ -831,7 +830,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             stash.succeedList = memberInfos
 
                             if (dbGroupInfo.role == AmeGroupMemberInfo.OWNER || dbGroupInfo.needOwnerConfirm == 0) {
-                                UserDataManager.insertGroupMembers(accountContext, memberInfos)
+                                GroupMemberManager.insertGroupMembers(accountContext, memberInfos)
                             }
                         }
 
@@ -983,7 +982,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AmeDispatcher.ioScheduler)
                     .flatMap { queryList ->
-                        val localList = UserDataManager.queryGroupMemberList(accountContext, groupId, uidList)
+                        val localList = GroupMemberManager.queryGroupMemberList(accountContext, groupId, uidList)
                         queryList.removeAll(localList.map { it.uid.serialize() })
                         if (queryList.isEmpty()) {
                             Observable.just(localList)
@@ -1122,7 +1121,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         }
 
                         for (delete in uidList) {
-                            UserDataManager.deleteMember(accountContext, groupId, delete)
+                            GroupMemberManager.deleteMember(accountContext, groupId, delete)
                         }
                     }
                     .observeOn(AmeDispatcher.mainScheduler)
@@ -1194,24 +1193,24 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                                 .subscribeOn(AmeDispatcher.ioScheduler)
                                 .observeOn(AmeDispatcher.ioScheduler)
                                 .map {
-                                    UserDataManager.insertGroupMembers(accountContext, change.memberList)
+                                    GroupMemberManager.insertGroupMembers(accountContext, change.memberList)
                                     it
                                 }
                                 .observeOn(AmeDispatcher.mainScheduler)
                                 .subscribe({
                                     listenerRef.get()?.onMemberUpdate(change.groupId, it)
                                 }, {})
-                        UserDataManager.insertGroupMembers(accountContext, change.memberList)
+                        GroupMemberManager.insertGroupMembers(accountContext, change.memberList)
                         GroupInfoDataManager.increaseMemberCount(accountContext, change.groupId, 1L)
                         groupCache.setGroupMemberState(change.groupId, GroupMemberSyncState.DIRTY)
                     }
                     AmeGroupMemberChanged.UPDATE -> {
                         queryGroupInfo(change.groupId, null)
-                        UserDataManager.updateGroupMembers(accountContext, change.memberList)
+                        GroupMemberManager.updateGroupMembers(accountContext, change.memberList)
                     }
                     AmeGroupMemberChanged.LEAVE -> {
                         GroupInfoDataManager.increaseMemberCount(accountContext, change.groupId, -1L)
-                        UserDataManager.deleteMember(accountContext, change.memberList)
+                        GroupMemberManager.deleteMember(accountContext, change.memberList)
                         groupCache.setGroupMemberState(change.groupId, GroupMemberSyncState.DIRTY)
                     }
                 }
@@ -1605,7 +1604,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             groupCache.setGroupMemberState(gid, GroupMemberSyncState.SYNING)
             groupMemberSync.syncGroupMember(gid, fromUid, fromTime, listOf(AmeGroupMemberInfo.OWNER, AmeGroupMemberInfo.MEMBER, AmeGroupMemberInfo.ADMIN)) { firstPage, finish, list ->
                 if (firstPage) {
-                    UserDataManager.clear(accountContext, gid)
+                    GroupMemberManager.clear(accountContext, gid)
 
                     val owner = groupCache.getGroupInfo(gid)?.owner
                     if (owner?.isNotEmpty() == true) {
@@ -1614,12 +1613,12 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         ownerMember.uid = Address.fromSerialized(owner)
                         ownerMember.role = AmeGroupMemberInfo.OWNER
                         ownerMember.createTime = 0
-                        UserDataManager.insertGroupMember(accountContext, ownerMember)
+                        GroupMemberManager.insertGroupMember(accountContext, ownerMember)
                     }
                 }
 
                 if (list.isNotEmpty()) {
-                    UserDataManager.insertGroupDbMembers(accountContext, list)
+                    GroupMemberManager.insertGroupDbMembers(accountContext, list)
                 }
 
                 if (finish) {
@@ -1638,7 +1637,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                 var fromUid = ""
                 var fromTime = 0L
                 if (groupCache.getGroupInfo(gid)?.memberSyncState == GroupMemberSyncState.SYNING) {
-                    val groupMember = UserDataManager.getLastMember(accountContext, gid)
+                    val groupMember = GroupMemberManager.getLastMember(accountContext, gid)
                     fromUid = groupMember?.uid ?: ""
                     fromTime = groupMember?.joinTime ?: 0L
                 }
