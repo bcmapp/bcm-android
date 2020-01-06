@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bcm.messenger.common.AccountContext;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.utils.GroupUtil;
 import com.bcm.messenger.utility.DelimiterUtil;
@@ -40,12 +41,12 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
     private static final Pattern PUBLIC_PATTERN = Pattern.compile("^[a-zA-Z0-9]+");
     private static final Pattern emailPattern = android.util.Patterns.EMAIL_ADDRESS;
 
-    public static final Address UNKNOWN = new Address(UNKNOWN_STRING, UNKNOWN_STRING);
+    public static final Address UNKNOWN = new Address(AMELogin.INSTANCE.getMajorContext(), UNKNOWN_STRING);
 
     private static final String TAG = "Address";
 
     @NonNull
-    private final String context;
+    private final AccountContext context;
     @NonNull
     private final String address;
 
@@ -53,13 +54,13 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
     private Boolean isPublicKey = null;
     private Boolean isEmail = null;
 
-    private Address(@NonNull String context, @NonNull String address) {
+    private Address(@NonNull AccountContext context, @NonNull String address) {
         this.context = context;
         this.address = address;
     }
 
     public Address(Parcel in) {
-        this(in.readString(), in.readString());
+        this(in.readParcelable(AccountContext.class.getClassLoader()), in.readString());
     }
 
 //    public static @NonNull
@@ -68,11 +69,11 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
 //    }
 
     public static Address from(@NonNull String serialized) {
-        return new Address(serialized, serialized);
+        return new Address(AMELogin.INSTANCE.getMajorContext(), serialized);
     }
 
     public static Address from(@NonNull AccountContext context, @NonNull String serialized) {
-        return new Address(context.getUid(), serialized);
+        return new Address(context, serialized);
     }
 
     public static @NonNull
@@ -168,14 +169,14 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
 
     @Override
     public String toString() {
-        return context + "_" + address;
+        return context.getUid() + "_" + address;
     }
 
     public String serialize() {
         return address;
     }
 
-    public String context() {
+    public AccountContext context() {
         return context;
     }
 
@@ -211,7 +212,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(context);
+        dest.writeParcelable(context, flags);
         dest.writeString(address);
     }
 

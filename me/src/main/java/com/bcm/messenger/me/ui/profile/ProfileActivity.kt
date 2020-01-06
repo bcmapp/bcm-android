@@ -4,7 +4,6 @@ import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.logger.ALog
@@ -28,7 +27,7 @@ class ProfileActivity : SwipeBaseActivity() {
             recipient = if (address == null) {
                 Recipient.major()
             } else {
-                Recipient.from(AMELogin.majorContext, address, true)
+                Recipient.from(address, true)
             }
         } catch (ex: Exception) {
             ALog.e(TAG, "from recipient fail", ex)

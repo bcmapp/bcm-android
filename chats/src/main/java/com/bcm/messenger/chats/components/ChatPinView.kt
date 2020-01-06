@@ -8,12 +8,12 @@ import android.view.View
 import android.widget.ImageView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.imagepicker.widget.CropRoundCornerTransform
 import com.bcm.messenger.common.mms.DecryptableStreamUriLoader
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.AppUtil
@@ -171,9 +171,9 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
         messageDetailRecord?.let {
             val content = it.message.content as? AmeGroupMessage.ContactContent
             content?.uid?.let {
-                val recipient = Recipient.from(context, Address.from(context, it), true)
+                val recipient = Recipient.from(AMELogin.majorContext, it, true)
                 recipient.addListener(this)
-                chat_pin_recipient_photo.setPhoto(recipient)
+                chat_pin_recipient_photo.setPhoto(AMELogin.majorContext, recipient)
             }
 
         }

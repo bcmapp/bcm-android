@@ -178,7 +178,7 @@ class SchemeLaunchHelper(val context: Context) {
                         val threadId = con.threadId
                         val address = con.address
                         if (threadId <= 0L && address != null && con.createIfNotExist) {
-                            ThreadListViewModel.getThreadId(Recipient.from(AMELogin.majorContext, address, true)) {newThreadId ->
+                            ThreadListViewModel.getThreadId(Recipient.from(address, true)) {newThreadId ->
                                 BcmRouter.getInstance()
                                         .get(con.path)
                                         .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)

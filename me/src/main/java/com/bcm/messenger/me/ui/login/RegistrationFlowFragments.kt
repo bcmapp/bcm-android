@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.recipients.Recipient
@@ -166,7 +165,7 @@ class ReloginFragment : AbsRegistrationFragment() {
             val weakThis = WeakReference(this)
             Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
                 try {
-                    val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(realUid), false)
+                    val recipient = Recipient.from(getAccountContext(), realUid, false)
                     val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
                         avatar
                     }else {

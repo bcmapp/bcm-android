@@ -11,8 +11,8 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.chats.R
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -59,21 +59,21 @@ class FlowChatLayout @JvmOverloads constructor(context: Context, attrs: Attribut
 
     private fun addMessageView(message: AmeGroupMessageDetail) {
         if (!text1ShowFlag) {
-            recipient1 = Recipient.from(context, Address.fromSerialized(message.senderId
-                    ?: return), true)
+            recipient1 = Recipient.from(AMELogin.majorContext, message.senderId
+                    ?: return, true)
             recipient1?.addListener(this)
-            recipientImg1.setPhoto(recipient1)
-            flowText1.text = message.message.content.getDescribe(message.gid, )
+            recipientImg1.setPhoto(AMELogin.majorContext,  recipient1)
+            flowText1.text = message.message.content.getDescribe(message.gid, AMELogin.majorContext)
             enter(flowChatLayout1)
             if (text2ShowFlag) {
                 exit(flowChatLayout2)
             }
         } else if (!text2ShowFlag) {
-            recipient2 = Recipient.from(context, Address.fromSerialized(message.senderId
-                    ?: return), true)
+            recipient2 = Recipient.from(AMELogin.majorContext, message.senderId
+                    ?: return, true)
             recipient2?.addListener(this)
-            recipientImg2.setPhoto(recipient2)
-            flowText2.text = message.message.content.getDescribe(message.gid, )
+            recipientImg2.setPhoto(AMELogin.majorContext, recipient2)
+            flowText2.text = message.message.content.getDescribe(message.gid, AMELogin.majorContext)
             enter(flowChatLayout2)
             if (text1ShowFlag) {
                 exit(flowChatLayout1)

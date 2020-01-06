@@ -46,7 +46,7 @@ class ContactCardShareForwardActivity : SwipeBaseActivity() {
             return
         }
         mFromAddress = address
-        mFromRecipient = Recipient.from(this, address, true)
+        mFromRecipient = Recipient.from(address, true)
         initView()
     }
 

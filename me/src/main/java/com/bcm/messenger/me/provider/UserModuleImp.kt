@@ -401,13 +401,13 @@ class UserModuleImp : IUserModule
         }
     }
 
-    override fun doForLogin(uid: String, profileKey: ByteArray?, profileName: String?, profileAvatar: String?) {
+    override fun doForLogin(account: Address, profileKey: ByteArray?, profileName: String?, profileAvatar: String?) {
         val context = AppContextHolder.APP_CONTEXT
         Recipient.clearCache(context)
         if (null != profileKey) {
             ProfileKeyUtil.setProfileKey(context, Base64.encodeBytes(profileKey))
         }
-        val recipient = Recipient.from(context, Address.fromSerialized(uid), false)
+        val recipient = Recipient.from(account, false)
 
         var changed = false
         val name = if (!profileName.isNullOrEmpty()) {

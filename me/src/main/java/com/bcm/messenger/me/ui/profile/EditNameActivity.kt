@@ -8,7 +8,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -39,7 +38,7 @@ class EditNameActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
         mForLocal = intent.getBooleanExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, false)
 
-        recipient = Recipient.from(getAccountContext(), Address.fromSerialized(getAccountContext().uid), true)
+        recipient = Recipient.from(getAccountContext(), getAccountContext().uid, true)
         recipient.addListener(this)
         initView()
     }

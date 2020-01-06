@@ -508,9 +508,9 @@ public class PushDecryptJob extends ContextJob {
             Recipient recipient = null;
 
             if (message.getDestination().isPresent()) {
-                recipient = Recipient.from(context, Address.from(context, message.getDestination().get()), false);
+                recipient = Recipient.from(Address.from(context, message.getDestination().get()), false);
             } else if (message.getMessage().getGroupInfo().isPresent()) {
-                recipient = Recipient.from(context, Address.fromSerialized(GroupUtil.getEncodedId(message.getMessage().getGroupInfo().get().getGroupId(), false)), false);
+                recipient = Recipient.from(Address.from(,GroupUtil.getEncodedId(message.getMessage().getGroupInfo().get().getGroupId(), false)), false);
             }
 
 

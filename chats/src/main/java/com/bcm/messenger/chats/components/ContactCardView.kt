@@ -7,10 +7,10 @@ import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.event.HomeTopEvent
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.provider.IContactModule
@@ -64,7 +64,7 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
     }
 
     fun setContact(groupId: Long, content: AmeGroupMessage.ContactContent, isOutgoing: Boolean) {
-        val recipient = Recipient.from(context, Address.fromSerialized(content.uid), true)
+        val recipient = Recipient.from(AMELogin.majorContext, content.uid, true)
         if (mRecipient == recipient) {
             return
         }

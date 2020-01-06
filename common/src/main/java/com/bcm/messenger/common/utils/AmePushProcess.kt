@@ -364,7 +364,7 @@ object AmePushProcess {
 
                 val privateUid = privateChat?.uid
                 if (privateUid != null) {
-                    val recipient = Recipient.from(accountContext, Address.fromSerialized(privateUid), false)
+                    val recipient = Recipient.from(accountContext, privateUid, false)
                     if (!recipient.isMuted) {
                         offlineUnreadSet.add(privateUid)
                     }
@@ -483,10 +483,9 @@ object AmePushProcess {
             ALog.i(TAG, "receive push group data -- background!!!")
 
             notifyData.uid?.let {uid ->
-                val address = Address.from(AppContextHolder.APP_CONTEXT, uid)
                 val builder = AmeNotification.getDefaultNotificationBuilder(AppContextHolder.APP_CONTEXT)
                 val recipient = if(null != accountContext) {
-                    Recipient.from(accountContext, address, false)
+                    Recipient.from(accountContext, uid, false)
                 } else {
                     null
                 }

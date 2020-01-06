@@ -7,8 +7,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.groups.GroupUpdateModel;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.recipients.RecipientModifiedListener;
 import com.bcm.messenger.utility.Base64;
@@ -69,7 +69,7 @@ public class GroupDescription {
                 Gson gson = new Gson();
                 groupUpdateModel = gson.fromJson(groupContext.getMembers(0), GroupUpdateModel.class);
                 for (String member : groupUpdateModel.getNumbers()) {
-                    Recipient recipient = Recipient.from(context, Address.from(context, member), true);
+                    Recipient recipient = Recipient.from(AMELogin.INSTANCE.getMajorContext(), member, true);
                     this.members.add(recipient);
                 }
             } catch (Exception ignore) {

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.FullTransSwipeBaseActivity
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
 import com.bcm.messenger.common.imagepicker.CropResultCallback
 import com.bcm.messenger.common.recipients.Recipient
@@ -72,7 +71,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
         })
 
         try {
-            recipient = Recipient.from(getAccountContext(), Address.fromSerialized(getAccountContext().uid), true)
+            recipient = Recipient.from(getAccountContext(), getAccountContext().uid, true)
         } catch (ex: Exception) {
             ALog.e(TAG, "get major recipient fail", ex)
             finish()

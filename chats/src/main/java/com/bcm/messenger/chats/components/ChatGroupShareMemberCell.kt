@@ -8,8 +8,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.ui.GroupMemberPhotoView
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.ui.GroupMemberPhotoView
 
 /**
  * bcm.social.01 2018/6/6.
@@ -48,13 +49,13 @@ class ChatGroupShareMemberCell : LinearLayout {
             this.member = member
 
             val recipient = if(null != member){
-                Recipient.from(context, member, true)
+                Recipient.from(member, true)
             } else {
                 null
             }
 
             nameView.text = recipient?.name?:""
-            avatarView.setAvatar(member)
+            avatarView.setAvatar(member?.context() ?: AMELogin.majorContext, member)
         }
         changeSelectView(checked)
     }

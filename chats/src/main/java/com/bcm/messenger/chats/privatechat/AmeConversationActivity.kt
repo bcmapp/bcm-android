@@ -142,7 +142,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
         val address = intent.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
         if (address != null) {
-            mRecipient = Recipient.from(getAccountContext(), address, true)
+            mRecipient = Recipient.from(address, true)
             mRecipient.addListener(this)
 
         } else {
@@ -171,7 +171,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
         val address = intent?.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
         if (address != null) {
-            val recipient = Recipient.from(getAccountContext(), address, true)
+            val recipient = Recipient.from(address, true)
             if (::mRecipient.isInitialized && recipient != mRecipient) {
                 mRecipient.removeListener(this)
                 mRecipient = recipient
@@ -812,7 +812,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
     private fun initializeReceivers() {
         recipientsStaleReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                mRecipient = Recipient.from(getAccountContext(), mRecipient.address, true)
+                mRecipient = Recipient.from(mRecipient.address, true)
                 mRecipient.addListener(this@AmeConversationActivity)
                 onModified(mRecipient)
                 mFragment.reloadList()

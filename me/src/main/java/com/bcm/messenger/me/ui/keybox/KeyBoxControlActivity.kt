@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -30,7 +29,6 @@ import com.bcm.messenger.me.ui.login.RegistrationActivity
 import com.bcm.messenger.me.ui.login.backup.VerifyFingerprintActivity
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -344,17 +342,17 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
             }
 
             if (account.version > AmeAccountData.V2 || account.uid.isNotEmpty()) {
-                val r = Recipient.from(containerView.context, Address.fromSerialized(account.uid), true)
+                val r = Recipient.from(getAccountContext(), account.uid, true)
                 this.recipient = r
                 r.addListener(this)
                 r.setProfile(account.name, account.avatar)
-                containerView.keybox_account_img.setPhoto(r, account.name, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                containerView.keybox_account_img.setPhoto(getAccountContext(), r, account.name, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
 
             }else {
                 if (account.avatar.isNotEmpty()) {
                     containerView.keybox_account_img.requestPhoto(account.avatar, R.drawable.common_recipient_photo_default_small, R.drawable.common_recipient_photo_default_small)
                 }else {
-                    containerView.keybox_account_img.setPhoto(null, account.name, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                    containerView.keybox_account_img.setPhoto(getAccountContext(),null, account.name, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
                 }
             }
         }
@@ -380,7 +378,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
                 if (localAccount != null) {
                     this.recipient?.setProfile(localAccount.name, localAccount.avatar)
                 }
-                containerView.keybox_account_img.setPhoto(recipient, localAccount?.name, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                containerView.keybox_account_img.setPhoto(getAccountContext(), recipient, localAccount?.name, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
             }
         }
     }

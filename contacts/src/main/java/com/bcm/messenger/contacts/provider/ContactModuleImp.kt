@@ -237,7 +237,7 @@ class ContactModuleImp : IContactModule {
         Observable.create(ObservableOnSubscribe<Boolean> {
 
             for (address in addressList) {
-                val recipient = Recipient.from(accountContext, address, false)
+                val recipient = Recipient.from(address, false)
                 Repository.getRecipientRepo(accountContext)?.setBlocked(recipient, block)
                 notify(true, address, it)
             }

@@ -132,7 +132,7 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
         this.mLastSeen = activity.intent.getLongExtra(ARouterConstants.PARAM.PRIVATE_CHAT.LAST_SEEN_EXTRA, -1)
         this.mStickNoticeLayout = null
 
-        checkRecipientUpdate(Recipient.from(getAccountContext(), activity.intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ADDRESS), true))
+        checkRecipientUpdate(Recipient.from(activity.intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ADDRESS), true))
     }
 
     private fun initViewModel() {

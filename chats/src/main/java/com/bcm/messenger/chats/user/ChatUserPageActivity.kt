@@ -276,7 +276,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
     private fun initData() {
         val address = intent.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
         threadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, -1)
-        mRecipient = Recipient.from(this, address, true)
+        mRecipient = Recipient.from(address, true)
         mRecipient.addListener(this)
 
         ThreadListViewModel.getCurrentThreadModel()?.checkPin(threadId) {

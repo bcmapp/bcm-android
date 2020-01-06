@@ -13,13 +13,13 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.group.viewholder.ChatViewHolder
 import com.bcm.messenger.chats.util.ChatComponentListener
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.DecryptableStreamUriLoader
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -165,8 +165,8 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                 reply_file.visibility = View.GONE
                 reply_image.visibility = View.GONE
                 reply_photo.visibility = View.VISIBLE
-                val r = Recipient.from(context, Address.from(context, replyContent.uid), true)
-                reply_photo.setPhoto(r)
+                val r = Recipient.from(AMELogin.majorContext, replyContent.uid, true)
+                reply_photo.setPhoto(AMELogin.majorContext, r)
             }
             replyContent is AmeGroupMessage.ThumbnailContent -> {
                 reply_file.visibility = View.GONE

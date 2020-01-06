@@ -13,7 +13,6 @@ import android.view.Window
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
@@ -188,7 +187,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
                 val weakThis = WeakReference(this)
                 Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
                     try {
-                        val recipient = Recipient.from(getAccountContext(), Address.fromSerialized(realUid), false)
+                        val recipient = Recipient.from(getAccountContext(), realUid, false)
                         val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
                             avatar
                         }else {

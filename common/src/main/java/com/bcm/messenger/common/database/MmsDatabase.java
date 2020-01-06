@@ -55,6 +55,7 @@ import com.bcm.messenger.common.mms.OutgoingGroupMediaMessage;
 import com.bcm.messenger.common.mms.OutgoingMediaMessage;
 import com.bcm.messenger.common.mms.SlideDeck;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.provider.bean.ConversationStorage;
 import com.bcm.messenger.common.recipients.Recipient;
@@ -275,10 +276,10 @@ public class MmsDatabase extends MessagingDatabase {
 
     private long getThreadIdFor(IncomingMediaMessage retrieved) throws RecipientFormattingException, MmsException {
         if (retrieved.getGroupId() != null) {
-            Recipient groupRecipients = Recipient.from(context, retrieved.getGroupId(), true);
+            Recipient groupRecipients = Recipient.from(retrieved.getGroupId(), true);
             return DatabaseFactory.getThreadDatabase(context).getThreadIdFor(groupRecipients);
         } else {
-            Recipient sender = Recipient.from(context, retrieved.getFrom(), true);
+            Recipient sender = Recipient.from(retrieved.getFrom(), true);
             return DatabaseFactory.getThreadDatabase(context).getThreadIdFor(sender);
         }
     }
@@ -1396,10 +1397,10 @@ public class MmsDatabase extends MessagingDatabase {
             if (TextUtils.isEmpty(serialized) || "insert-address-token".equals(serialized)) {
                 address = Address.UNKNOWN;
             } else {
-                address = Address.fromSerialized(serialized);
+                address = Address.from(AMELogin.INSTANCE.getMajorContext(), serialized);
 
             }
-            return Recipient.from(context, address, true);
+            return Recipient.from(address, true);
         }
 
         private List<IdentityKeyMismatch> getMismatchedIdentities(String document) {

@@ -254,15 +254,22 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     @NonNull
+    public static Recipient from(@NonNull Address address, boolean asynchronous) {
+        ALog.d(TAG, "from accountContext:" + address.context().getUid() + ", from(uid: " + address.serialize() + ", asynchronous:" + asynchronous + ")");
+        return getProvider(address.context()).getRecipient(AppContextHolder.APP_CONTEXT, address, null, asynchronous);
+    }
+
+
+    @NonNull
     public static Recipient from(@NonNull AccountContext context, @NonNull String uid, boolean asynchronous) {
-        ALog.d(TAG, "from accountContext:" + context.getUid() + ", from(asynchronous:" + asynchronous + ")");
+        ALog.d(TAG, "from accountContext:" + context.getUid() + ", from(uid: " + uid + ", (asynchronous:" + asynchronous + ")");
         return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, Address.from(context, uid), null, asynchronous);
     }
 
 
     @NonNull
     public static Recipient fromSnapshot(@NonNull AccountContext context, @NonNull String uid, @NonNull RecipientSettings settings) {
-        ALog.d(TAG, "from accountContext:" + context.getUid() + ", fromSnapshot");
+        ALog.d(TAG, "from accountContext:" + context.getUid() + ", fromSnapshot(uid: " + uid + ")");
         RecipientDetails details = new RecipientDetails(uid, null, null, settings, null);
         return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, Address.from(context, uid), details, false);
     }

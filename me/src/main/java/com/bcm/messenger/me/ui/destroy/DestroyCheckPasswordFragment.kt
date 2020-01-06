@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
@@ -77,7 +76,7 @@ class DestroyCheckPasswordFragment : BaseFragment() {
             val weakThis = WeakReference(this)
             Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
                 try {
-                    val recipient = Recipient.from(getAccountContext(), Address.fromSerialized(realUid), false)
+                    val recipient = Recipient.from(getAccountContext(), realUid, false)
                     val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
                         avatar
                     } else {

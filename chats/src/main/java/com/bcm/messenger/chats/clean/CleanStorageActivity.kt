@@ -162,7 +162,7 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
                     } else {
                         viewHolder.sizeView.text = getString(R.string.chats_clean_calculating)
                     }
-                    val recipient = Recipient.from(getAccountContext(), data, true)
+                    val recipient = Recipient.from(data, true)
                     viewHolder.recipientPhotoView.showRecipientAvatar(getAccountContext(), recipient)
                     viewHolder.nameView.text = recipient.name
                 }
