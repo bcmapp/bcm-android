@@ -11,9 +11,8 @@ import com.bcm.messenger.common.database.IdentityDatabase
 import com.bcm.messenger.common.database.RecipientDatabase
 import com.bcm.messenger.common.database.model.*
 import com.bcm.messenger.common.database.records.PrivacyProfile
-import com.bcm.messenger.common.database.repositories.Repository
+import com.bcm.messenger.common.database.repositories.AttachmentRepo
 import com.bcm.messenger.common.grouprepository.room.entity.*
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.logger.ALog
@@ -193,7 +192,7 @@ class MigrateDatabase(private val accountContext: AccountContext) {
                     attachmentValues.put("fast_preflight_id", attachment.fastPreflightId)
                     attachmentValues.put("duration", attachment.duration)
                     attachmentValues.put("url", attachment.url)
-                    attachmentValues.put("type", Repository.getAttachmentRepo(accountContext).getMediaType(attachment.contentType).type)
+                    attachmentValues.put("type", AttachmentRepo.getMediaType(attachment.contentType).type)
                     attachmentList.add(attachmentValues)
                 }
             }

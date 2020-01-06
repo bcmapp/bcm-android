@@ -19,16 +19,18 @@ package com.bcm.messenger.common.crypto;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.bcm.messenger.common.AccountContext;
-import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.Base64;
 import com.bcm.messenger.utility.Util;
+
 import org.whispersystems.libsignal.InvalidKeyException;
 import org.whispersystems.libsignal.ecc.Curve;
 import org.whispersystems.libsignal.ecc.ECKeyPair;
@@ -93,7 +95,7 @@ public class MasterSecretUtil {
     }
 
     public static void clearMasterSecretPassphrase(@NonNull AccountContext accountContext) {
-        AppContextHolder.APP_CONTEXT.getSharedPreferences(getPreferencesName(accountContext),0).edit().clear().apply();
+        AppContextHolder.APP_CONTEXT.getSharedPreferences(getPreferencesName(accountContext), 0).edit().clear().apply();
     }
 
     public static MasterSecret changeMasterSecretPassphrase(@NonNull AccountContext accountContext,
@@ -119,7 +121,7 @@ public class MasterSecretUtil {
             byte[] encryptionSecret = Util.split(combinedSecrets, 16, 20)[0];
             byte[] macSecret = Util.split(combinedSecrets, 16, 20)[1];
 
-            return new MasterSecret(new SecretKeySpec(encryptionSecret, "AES"),
+            return new MasterSecret(accountContext, new SecretKeySpec(encryptionSecret, "AES"),
                     new SecretKeySpec(macSecret, "HmacSHA1"));
 
         } catch (Exception e) {
@@ -183,7 +185,7 @@ public class MasterSecretUtil {
             save(accountContext, "master_secret", encryptedAndMacdMasterSecret);
             save(accountContext, "passphrase_initialized", true);
 
-            return new MasterSecret(new SecretKeySpec(encryptionSecret, "AES"),
+            return new MasterSecret(accountContext, new SecretKeySpec(encryptionSecret, "AES"),
                     new SecretKeySpec(macSecret, "HmacSHA1"));
         } catch (GeneralSecurityException e) {
             Log.w("keyutil", e);
@@ -380,7 +382,7 @@ public class MasterSecretUtil {
         return result;
     }
 
-    public static String getPreferencesName(@NonNull AccountContext accountContext){
-        return PREFERENCES_NAME+ accountContext.getUid();
+    public static String getPreferencesName(@NonNull AccountContext accountContext) {
+        return PREFERENCES_NAME + accountContext.getUid();
     }
 }

@@ -6,11 +6,10 @@ import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.database.RecipientDatabase
 import com.bcm.messenger.common.database.db.MigrateDatabase
-import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.grouprepository.room.database.GroupDatabase
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -149,13 +148,13 @@ object DatabaseMigration : IDatabaseMigration {
                         // ，，
                         ALog.e(TAG, "Migrate failed", it)
 //                        UserDatabase.getDatabase().clearAllTables()
-                        val returnCode = doMigrateFailed(migrateDatabase)
+                        val returnCode = doMigrateFailed(accountContext, migrateDatabase)
                         isUpgrading = false
                         callback(returnCode)
                     })
         } else {
             ALog.e(TAG, "MasterSecret is null!!")
-            val returnCode = doMigrateFailed(migrateDatabase)
+            val returnCode = doMigrateFailed(accountContext, migrateDatabase)
             callback(returnCode)
         }
     }
@@ -410,18 +409,18 @@ object DatabaseMigration : IDatabaseMigration {
             SQLCipherUtils.encrypt(AppContextHolder.APP_CONTEXT, "user_${accountContext.uid}.db", masterSecret.encryptionKey.encoded)
         }
 
-        UserDatabase.resetDatabase(accountContext)
+        Repository.getInstance(accountContext)
     }
 
-    private fun doMigrateFailed(migrateDatabase: MigrateDatabase): Int {
+    private fun doMigrateFailed(accountContext: AccountContext, migrateDatabase: MigrateDatabase): Int {
         migrateDatabase.deleteDatabase()
 
         // Set failed count
-        var migrateFailedCount = TextSecurePreferences.getMigrateFailedCount(AppContextHolder.APP_CONTEXT)
+        var migrateFailedCount = TextSecurePreferences.getMigrateFailedCount(accountContext)
         if (migrateFailedCount < 3) {
             migrateFailedCount++
         }
-        TextSecurePreferences.setMigrateFailedCount(AppContextHolder.APP_CONTEXT, migrateFailedCount)
+        TextSecurePreferences.setMigrateFailedCount(accountContext, migrateFailedCount)
 
         return if (migrateFailedCount == 3) -2 else -1
 //        return -2

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.bcm.messenger.common.BuildConfig;
 import com.bcm.messenger.common.attachments.AttachmentId;
 import com.bcm.messenger.common.crypto.MasterSecret;
+import com.bcm.messenger.common.database.repositories.AttachmentRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager;
 import com.bcm.messenger.common.providers.PartProvider;
@@ -60,17 +61,27 @@ public class PartAuthority {
             GroupUriParser groupParser = new GroupUriParser(uri);
             switch (match) {
                 case PART_ROW:
-                    return Repository.getAttachmentRepo().getAttachmentStream(masterSecret, parser.getPartId().getRowId(), parser.getPartId().getUniqueId(), 0);
+                    AttachmentRepo repo = Repository.getAttachmentRepo(masterSecret.getAccountContext());
+                    if (repo == null) {
+                        return null;
+                    }
+                    return repo.getAttachmentStream(masterSecret, parser.getPartId().getRowId(), parser.getPartId().getUniqueId(), 0);
                 case THUMB_ROW:
-                    return Repository.getAttachmentRepo().getThumbnailStream(masterSecret, parser.getPartId().getRowId(), parser.getPartId().getUniqueId());
+                    AttachmentRepo repo1 = Repository.getAttachmentRepo(masterSecret.getAccountContext());
+                    if (repo1 == null) {
+                        return null;
+                    }
+                    return repo1.getThumbnailStream(masterSecret, parser.getPartId().getRowId(), parser.getPartId().getUniqueId());
                 case PERSISTENT_ROW:
                     return PersistentBlobProvider.getInstance(context).getStream(masterSecret, ContentUris.parseId(uri));
                 case SINGLE_USE_ROW:
                     return SingleUseBlobProvider.getInstance().getStream(ContentUris.parseId(uri));
                 case GROUP_ROW:
-                    return MessageDataManager.INSTANCE.getFileStream(masterSecret, groupParser.getGid(), groupParser.getIndexId(), 0);
+                    return MessageDataManager.INSTANCE.getFileStream(masterSecret.getAccountContext(), masterSecret,
+                            groupParser.getGid(), groupParser.getIndexId(), 0);
                 case GROUP_THUMB_ROW:
-                    return MessageDataManager.INSTANCE.getThumbnailStream(masterSecret, groupParser.getGid(), groupParser.getIndexId());
+                    return MessageDataManager.INSTANCE.getThumbnailStream(masterSecret.getAccountContext(), masterSecret,
+                            groupParser.getGid(), groupParser.getIndexId());
                 default:
                     return context.getContentResolver().openInputStream(uri);
             }

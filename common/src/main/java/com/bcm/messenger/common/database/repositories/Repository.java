@@ -41,9 +41,9 @@ public class Repository {
     private PushRepo pushRepo;
 
     @Nullable
-    public static Repository getInstance(AccountContext accountContext) {
+    public static Repository getInstance(@Nullable AccountContext accountContext) {
         synchronized (Repository.class) {
-            if (!accountContext.isLogin()) {
+            if (accountContext == null || !accountContext.isLogin()) {
                 return null;
             }
             Repository repo = repositoryHashMap.get(accountContext);

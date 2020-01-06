@@ -45,14 +45,18 @@ public class PartDataSource implements DataSource {
     if (PartAuthority.isGroupUri(uri)) {
       GroupUriParser groupUriParser = new GroupUriParser(uri);
 
-      AmeGroupMessageDetail messageDetail = MessageDataManager.INSTANCE.fetchOneMessageByGidAndIndexId(groupUriParser.getGid(), groupUriParser.getIndexId());
+      AmeGroupMessageDetail messageDetail = MessageDataManager.INSTANCE.fetchOneMessageByGidAndIndexId(masterSecret.getAccountContext(), groupUriParser.getGid(), groupUriParser.getIndexId());
 
       if (messageDetail == null) throw new IOException("GroupMessage not found");
 
-      this.inputSteam = MessageDataManager.INSTANCE.getFileStream(masterSecret, groupUriParser.getGid(), groupUriParser.getIndexId(), dataSpec.position);
+      this.inputSteam = MessageDataManager.INSTANCE.getFileStream(masterSecret.getAccountContext(), masterSecret, groupUriParser.getGid(), groupUriParser.getIndexId(), dataSpec.position);
       dataSize = messageDetail.getAttachmentSize();
     } else {
-      AttachmentRepo     attachmentRepo     = Repository.getAttachmentRepo();
+      AttachmentRepo     attachmentRepo     = Repository.getAttachmentRepo(masterSecret.getAccountContext());
+      if (attachmentRepo == null) {
+        throw new IOException("Attachment repo is null");
+      }
+
       PartUriParser      partUri            = new PartUriParser(uri);
       AttachmentRecord   attachment         = attachmentRepo.getAttachment(partUri.getPartId().getRowId(), partUri.getPartId().getUniqueId());
 

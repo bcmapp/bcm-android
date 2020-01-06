@@ -8,10 +8,10 @@ import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.bcmhttp.FileHttp;
 import com.bcm.messenger.common.bcmhttp.IMHttp;
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptorHelper;
-import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.GsonUtils;
 import com.bcm.messenger.utility.bcmhttp.call.callbuilder.individualbodybuilder.FileCallBuilder;
@@ -220,11 +220,15 @@ public class AmeFileUploader {
      * @param filePaths Will be uploaded files paths.
      * @param callback Upload callback.
      */
-    public static void uploadMultiFileToAws(@NonNull Context context, @NonNull AttachmentType type, final List<String> filePaths, final MultiFileUploadCallback callback) {
+    public static void uploadMultiFileToAws(@NonNull AccountContext accountContext,
+                                            @NonNull Context context,
+                                            @NonNull AttachmentType type,
+                                            final List<String> filePaths,
+                                            final MultiFileUploadCallback callback) {
         final Map<String, FileUploadResult> failedResultMap = new HashMap<>();
         final Map<String, FileUploadResult> successResultMap = new HashMap<>();
         for (final String filePath : filePaths) {
-            uploadAttachmentToAws(context, type, new File(filePath), new FileUploadCallback() {
+            uploadAttachmentToAws(accountContext, context, type, new File(filePath), new FileUploadCallback() {
                 @Override
                 public void onUploadSuccess(String url, String id) {
                     synchronized (TAG) {
@@ -256,11 +260,14 @@ public class AmeFileUploader {
         }
     }
 
-    public static void uploadMultiStreamToAws(@NonNull AttachmentType type, final List<StreamUploadData> uploadDataList, final MultiStreamUploadCallback callback) {
+    public static void uploadMultiStreamToAws(@NonNull AccountContext accountContext,
+                                              @NonNull AttachmentType type,
+                                              @NonNull final List<StreamUploadData> uploadDataList,
+                                              final MultiStreamUploadCallback callback) {
         final Map<StreamUploadData, FileUploadResult> failedResultMap = new HashMap<>();
         final Map<StreamUploadData, FileUploadResult> successResultMap = new HashMap<>();
         for (final StreamUploadData data : uploadDataList) {
-            uploadStreamToAws(type, data, new StreamUploadCallback() {
+            uploadStreamToAws(accountContext, type, data, new StreamUploadCallback() {
                 @Override
                 public void onUploadSuccess(String url, String id) {
                     synchronized (TAG) {
@@ -300,16 +307,23 @@ public class AmeFileUploader {
      * @param file File to upload
      * @param callback Upload callback
      */
-    public static void uploadAttachmentToAws(@NonNull final Context context, @NonNull AttachmentType type,
-                                             @NonNull final File file, @NonNull final FileUploadCallback callback) {
-        uploadAttachmentToAws(context, type, file, callback, Callback.THREAD_CURRENT);
+    public static void uploadAttachmentToAws(@NonNull AccountContext accountContext,
+                                             @NonNull final Context context,
+                                             @NonNull AttachmentType type,
+                                             @NonNull final File file,
+                                             @NonNull final FileUploadCallback callback) {
+        uploadAttachmentToAws(accountContext, context, type, file, callback, Callback.THREAD_CURRENT);
     }
 
 
-    public static void uploadAttachmentToAws(@NonNull final Context context, @NonNull AttachmentType type,
-                                             @NonNull final File file, @NonNull final FileUploadCallback callback, final int threadMode) {
+    public static void uploadAttachmentToAws(@NonNull AccountContext accountContext,
+                                             @NonNull final Context context,
+                                             @NonNull AttachmentType type,
+                                             @NonNull final File file,
+                                             @NonNull final FileUploadCallback callback,
+                                             final int threadMode) {
 
-        getAwsUploadInfo(type, new JsonDeserializeCallback<AwsUploadResEntity>() {
+        getAwsUploadInfo(accountContext, type, new JsonDeserializeCallback<AwsUploadResEntity>() {
             @Override
             public void onError(Call call, Exception e, long id) {
                 callback.onUploadFailed(file.getAbsolutePath(), e.getMessage());
@@ -342,9 +356,13 @@ public class AmeFileUploader {
         });
     }
 
-    public static void uploadStreamToAws(@NonNull AttachmentType type, @NonNull final StreamUploadData data, @NonNull final StreamUploadCallback callback, final int threadMode) {
+    public static void uploadStreamToAws(@NonNull AccountContext accountContext,
+                                         @NonNull AttachmentType type,
+                                         @NonNull final StreamUploadData data,
+                                         @NonNull final StreamUploadCallback callback,
+                                         final int threadMode) {
 
-        getAwsUploadInfo(type, new JsonDeserializeCallback<AwsUploadResEntity>() {
+        getAwsUploadInfo(accountContext, type, new JsonDeserializeCallback<AwsUploadResEntity>() {
             @Override
             public void onError(Call call, Exception e, long id) {
                 callback.onUploadFailed(data, e.getMessage());
@@ -383,15 +401,20 @@ public class AmeFileUploader {
      * @param file
      * @param callback
      */
-    public static void uploadGroupAvatar(@NonNull Context context, @NonNull final File file, @NonNull final FileUploadCallback callback) {
-        uploadAttachmentToAws(context, AttachmentType.PROFILE, file, callback, Callback.THREAD_MAIN);
+    public static void uploadGroupAvatar(@NonNull AccountContext accountContext,
+                                         @NonNull Context context,
+                                         @NonNull final File file,
+                                         @NonNull final FileUploadCallback callback) {
+        uploadAttachmentToAws(accountContext, context, AttachmentType.PROFILE, file, callback, Callback.THREAD_MAIN);
     }
 
-    private static void getAwsUploadInfo(AttachmentType type, JsonDeserializeCallback<AwsUploadResEntity> callback) {
+    private static void getAwsUploadInfo(AccountContext accountContext,
+                                         AttachmentType type,
+                                         JsonDeserializeCallback<AwsUploadResEntity> callback) {
         int region = RedirectInterceptorHelper.INSTANCE.getImServerInterceptor().getCurrentServer().getArea();
         String body = new AwsUploadReqEntity(type.getType(), Integer.toString(region)).toJson();
 
-        IMHttp.INSTANCE.postString()
+        IMHttp.INSTANCE.get(accountContext).postString()
                 .url(BcmHttpApiHelper.INSTANCE.getApi(AWS_UPLOAD_INFO_PATH))
                 .addHeader("content-type", "application/json")
                 .content(body)

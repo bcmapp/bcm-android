@@ -5,11 +5,11 @@
  */
 package com.bcm.messenger.chats.privatechat.core
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException
 import com.bcm.messenger.common.core.AddressUtil
 import com.bcm.messenger.common.crypto.SecurityEvent
 import com.bcm.messenger.common.crypto.storage.SignalProtocolStoreImpl
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -64,9 +64,9 @@ object BcmChatCore {
      */
 
     @Throws(IOException::class, UntrustedIdentityException::class)
-    fun sendReceipt(recipient: SignalServiceAddress, message: SignalServiceReceiptMessage) {
+    fun sendReceipt(accountContext: AccountContext, recipient: SignalServiceAddress, message: SignalServiceReceiptMessage) {
         val content = createReceiptContent(message)
-        sendMessage(recipient, message.getWhen(), content, PushPurpose.SILENT)
+        sendMessage(accountContext, recipient, message.getWhen(), content, PushPurpose.SILENT)
     }
 
     /**
@@ -78,9 +78,9 @@ object BcmChatCore {
      */
 
     @Throws(IOException::class, UntrustedIdentityException::class)
-    fun sendCallMessage(recipient: SignalServiceAddress, message: SignalServiceCallMessage) {
+    fun sendCallMessage(accountContext: AccountContext, recipient: SignalServiceAddress, message: SignalServiceCallMessage) {
         val content = createCallContent(message)
-        sendMessage(recipient, AmeTimeUtil.getMessageSendTime(), content, PushPurpose.CALLING)
+        sendMessage(accountContext, recipient, AmeTimeUtil.getMessageSendTime(), content, PushPurpose.CALLING)
     }
 
     /**
@@ -93,15 +93,19 @@ object BcmChatCore {
      */
 
     @Throws(UntrustedIdentityException::class, IOException::class, VersionTooLowException::class)
-    fun sendMessage(recipient: SignalServiceAddress, message: SignalServiceDataMessage, isSupportAws: Boolean) {
-        val content = createMessageContent(message, isSupportAws)
+    fun sendMessage(accountContext: AccountContext,
+                    recipient: SignalServiceAddress,
+                    message: SignalServiceDataMessage,
+                    isSupportAws: Boolean) {
+        val content = createMessageContent(accountContext, message, isSupportAws)
         val timestamp = message.timestamp
         val silent = message.groupInfo.isPresent && message.groupInfo.get().type == SignalServiceGroup.Type.REQUEST_INFO
-        val response = sendMessage(recipient, timestamp, content, if (silent) PushPurpose.SILENT else PushPurpose.NORMAL)
+        val response = sendMessage(accountContext, recipient, timestamp,
+                content, if (silent) PushPurpose.SILENT else PushPurpose.NORMAL)
 
         if (response != null && response.needsSync) {
             val syncMessage = createMultiDeviceSentTranscriptContent(content, Optional.of(recipient), timestamp)
-            sendMessage(mySignalAddress(), timestamp, syncMessage, PushPurpose.NORMAL)
+            sendMessage(accountContext, mySignalAddress(accountContext), timestamp, syncMessage, PushPurpose.NORMAL)
         }
 
         if (message.isEndSession) {
@@ -120,14 +124,16 @@ object BcmChatCore {
      */
 
     @Throws(UntrustedIdentityException::class, IOException::class, VersionTooLowException::class)
-    fun sendSilentMessage(recipient: SignalServiceAddress, message: SignalServiceDataMessage) {
-        val content = createMessageContent(message)
+    fun sendSilentMessage(accountContext: AccountContext,
+                          recipient: SignalServiceAddress,
+                          message: SignalServiceDataMessage) {
+        val content = createMessageContent(accountContext, message)
         val timestamp = message.timestamp
-        val response = sendMessage(recipient, timestamp, content, PushPurpose.SILENT)
+        val response = sendMessage(accountContext, recipient, timestamp, content, PushPurpose.SILENT)
 
         if (response != null && response.needsSync) {
             val syncMessage = createMultiDeviceSentTranscriptContent(content, Optional.of(recipient), timestamp)
-            sendMessage(mySignalAddress(), timestamp, syncMessage, PushPurpose.SILENT)
+            sendMessage(accountContext, mySignalAddress(accountContext), timestamp, syncMessage, PushPurpose.SILENT)
         }
 
         if (message.isEndSession) {
@@ -146,16 +152,16 @@ object BcmChatCore {
      */
 
     @Throws(IOException::class, EncapsulatedExceptions::class)
-    fun sendMessage(recipients: List<SignalServiceAddress>, message: SignalServiceDataMessage) {
-        val content = createMessageContent(message)
+    fun sendMessage(accountContext: AccountContext, recipients: List<SignalServiceAddress>, message: SignalServiceDataMessage) {
+        val content = createMessageContent(accountContext, message)
         val timestamp = message.timestamp
         val silent = message.isGroupUpdate
-        val response = sendMessage(recipients, timestamp, content, if (silent) PushPurpose.SILENT else PushPurpose.NORMAL)
+        val response = sendMessage(accountContext, recipients, timestamp, content, if (silent) PushPurpose.SILENT else PushPurpose.NORMAL)
 
         try {
             if (response.needsSync) {
                 val syncMessage = createMultiDeviceSentTranscriptContent(content, Optional.absent(), timestamp)
-                sendMessage(mySignalAddress(), timestamp, syncMessage, PushPurpose.NORMAL)
+                sendMessage(accountContext, mySignalAddress(accountContext), timestamp, syncMessage, PushPurpose.NORMAL)
             }
         } catch (e: UntrustedIdentityException) {
             response.addException(e)
@@ -168,14 +174,12 @@ object BcmChatCore {
 
 
     @Throws(IOException::class, UntrustedIdentityException::class)
-    fun sendMessage(message: SignalServiceSyncMessage) {
+    fun sendMessage(accountContext: AccountContext, message: SignalServiceSyncMessage) {
         val content: ByteArray
 
         if (message.contacts.isPresent) {
-            content = createMultiDeviceContactsContent(message.contacts.get().contactsStream.asStream(),
+            content = createMultiDeviceContactsContent(accountContext, message.contacts.get().contactsStream.asStream(),
                     message.contacts.get().isComplete)
-        } else if (message.groups.isPresent) {
-            content = createMultiDeviceGroupsContent(message.groups.get().asStream())
         } else if (message.read.isPresent) {
             content = createMultiDeviceReadContent(message.read.get())
         } else if (message.blockedList.isPresent) {
@@ -183,17 +187,17 @@ object BcmChatCore {
         } else if (message.configuration.isPresent) {
             content = createMultiDeviceConfigurationContent(message.configuration.get())
         } else if (message.verified.isPresent) {
-            sendMessage(message.verified.get())
+            sendMessage(accountContext, message.verified.get())
             return
         } else {
             throw IOException("Unsupported sync message!")
         }
 
-        sendMessage(mySignalAddress(), AmeTimeUtil.getMessageSendTime(), content, PushPurpose.NORMAL)
+        sendMessage(accountContext, mySignalAddress(accountContext), AmeTimeUtil.getMessageSendTime(), content, PushPurpose.NORMAL)
     }
 
     @Throws(IOException::class, UntrustedIdentityException::class)
-    private fun sendMessage(message: VerifiedMessage) {
+    private fun sendMessage(accountContext: AccountContext, message: VerifiedMessage) {
         val nullMessageBody = DataMessage.newBuilder()
                 .setBody(Base64.encodeBytes(Util.getRandomLengthBytes(140)))
                 .build()
@@ -208,11 +212,11 @@ object BcmChatCore {
                 .build()
                 .toByteArray()
 
-        val response = sendMessage(SignalServiceAddress(message.destination), message.timestamp, content, PushPurpose.NORMAL)
+        val response = sendMessage(accountContext, SignalServiceAddress(message.destination), message.timestamp, content, PushPurpose.NORMAL)
 
         if (response != null && response.needsSync) {
             val syncMessage = createMultiDeviceVerifiedContent(message, nullMessage.toByteArray())
-            sendMessage(mySignalAddress(), message.timestamp, syncMessage, PushPurpose.NORMAL)
+            sendMessage(accountContext, mySignalAddress(accountContext), message.timestamp, syncMessage, PushPurpose.NORMAL)
         }
     }
 
@@ -233,10 +237,10 @@ object BcmChatCore {
     }
 
     @Throws(IOException::class)
-    private fun createMessageContent(message: SignalServiceDataMessage, isSupportAws: Boolean): ByteArray {
+    private fun createMessageContent(accountContext: AccountContext, message: SignalServiceDataMessage, isSupportAws: Boolean): ByteArray {
         val container = Content.newBuilder()
         val builder = DataMessage.newBuilder()
-        val pointers = createAttachmentPointers(message.attachments, isSupportAws)
+        val pointers = createAttachmentPointers(accountContext, message.attachments, isSupportAws)
 
         if (!pointers.isEmpty()) {
             builder.addAllAttachments(pointers)
@@ -244,10 +248,6 @@ object BcmChatCore {
 
         if (message.body.isPresent) {
             builder.body = message.body.get()
-        }
-
-        if (message.groupInfo.isPresent) {
-            builder.group = createGroupContent(message.groupInfo.get())
         }
 
         if (message.isEndSession) {
@@ -280,10 +280,11 @@ object BcmChatCore {
     }
 
     @Throws(IOException::class)
-    private fun createMessageContent(message: SignalServiceDataMessage): ByteArray {
+    private fun createMessageContent(accountContext: AccountContext,
+                                     message: SignalServiceDataMessage): ByteArray {
         val container = Content.newBuilder()
         val builder = DataMessage.newBuilder()
-        val pointers = createAttachmentPointers(message.attachments, true)
+        val pointers = createAttachmentPointers(accountContext, message.attachments, true)
 
         if (!pointers.isEmpty()) {
             builder.addAllAttachments(pointers)
@@ -291,10 +292,6 @@ object BcmChatCore {
 
         if (message.body.isPresent) {
             builder.body = message.body.get()
-        }
-
-        if (message.groupInfo.isPresent) {
-            builder.group = createGroupContent(message.groupInfo.get())
         }
 
         if (message.isEndSession) {
@@ -362,22 +359,14 @@ object BcmChatCore {
     }
 
     @Throws(IOException::class)
-    private fun createMultiDeviceContactsContent(contacts: SignalServiceAttachmentStream, complete: Boolean): ByteArray {
+    private fun createMultiDeviceContactsContent(accountContext: AccountContext,
+                                                 contacts: SignalServiceAttachmentStream,
+                                                 complete: Boolean): ByteArray {
         val container = Content.newBuilder()
         val builder = createSyncMessageBuilder()
         builder.setContacts(SyncMessage.Contacts.newBuilder()
-                .setBlob(createAttachmentPointer(contacts))
+                .setBlob(createAttachmentPointer(accountContext, contacts))
                 .setComplete(complete))
-
-        return container.setSyncMessage(builder).build().toByteArray()
-    }
-
-    @Throws(IOException::class)
-    private fun createMultiDeviceGroupsContent(groups: SignalServiceAttachmentStream): ByteArray {
-        val container = Content.newBuilder()
-        val builder = createSyncMessageBuilder()
-        builder.setGroups(SyncMessage.Groups.newBuilder()
-                .setBlob(createAttachmentPointer(groups)))
 
         return container.setSyncMessage(builder).build().toByteArray()
     }
@@ -475,41 +464,16 @@ object BcmChatCore {
     }
 
     @Throws(IOException::class)
-    private fun createGroupContent(group: SignalServiceGroup): GroupContext {
-        val builder = GroupContext.newBuilder()
-        builder.id = ByteString.copyFrom(group.groupId)
-
-        if (group.type != SignalServiceGroup.Type.DELIVER) {
-            if (group.type == SignalServiceGroup.Type.UPDATE)
-                builder.type = GroupContext.Type.UPDATE
-            else if (group.type == SignalServiceGroup.Type.QUIT)
-                builder.type = GroupContext.Type.QUIT
-            else if (group.type == SignalServiceGroup.Type.REQUEST_INFO)
-                builder.type = GroupContext.Type.REQUEST_INFO
-            else
-                throw AssertionError("Unknown type: " + group.type)
-
-            if (group.name.isPresent) builder.name = group.name.get()
-            if (group.members.isPresent) builder.addAllMembers(group.members.get())
-
-            if (group.avatar.isPresent && group.avatar.get().isStream) {
-                val pointer = createAttachmentPointer(group.avatar.get().asStream())
-                builder.avatar = pointer
-            }
-        } else {
-            builder.type = GroupContext.Type.DELIVER
-        }
-
-        return builder.build()
-    }
-
-    @Throws(IOException::class)
-    private fun sendMessage(recipients: List<SignalServiceAddress>, timestamp: Long, content: ByteArray, pushPurpose: PushPurpose): SendMessageResponseList {
+    private fun sendMessage(accountContext: AccountContext,
+                            recipients: List<SignalServiceAddress>,
+                            timestamp: Long,
+                            content: ByteArray,
+                            pushPurpose: PushPurpose): SendMessageResponseList {
         val responseList = SendMessageResponseList()
 
         for (recipient in recipients) {
             try {
-                val response = sendMessage(recipient, timestamp, content, pushPurpose)
+                val response = sendMessage(accountContext, recipient, timestamp, content, pushPurpose)
                 responseList.addResponse(response)
             } catch (e: UntrustedIdentityException) {
                 Log.w(TAG, e)
@@ -528,24 +492,28 @@ object BcmChatCore {
     }
 
     @Throws(UntrustedIdentityException::class, IOException::class)
-    private fun sendMessage(recipient: SignalServiceAddress, timestamp: Long, content: ByteArray, pushPurpose: PushPurpose): SendMessageResponse? {
+    private fun sendMessage(accountContext: AccountContext,
+                            recipient: SignalServiceAddress,
+                            timestamp: Long,
+                            content: ByteArray,
+                            pushPurpose: PushPurpose): SendMessageResponse? {
         for (i in 0..2) {
             try {
-                val messages = getEncryptedMessages(recipient, timestamp, content, pushPurpose)
+                val messages = getEncryptedMessages(accountContext, recipient, timestamp, content, pushPurpose)
 
                 try {
                     ALog.w(TAG, "Transmitting over pipe...")
-                    return AmeModuleCenter.serverDaemon().sendMessage(messages)
+                    return AmeModuleCenter.serverDaemon(accountContext).sendMessage(messages)
                 } catch (e: IOException) {
                     ALog.e(TAG, "sendMessage", e)
                 }
 
 
                 ALog.w(TAG, "Not transmitting over pipe...")
-                return ChatHttp.sendMessage(messages)
+                return ChatHttp.get(accountContext).sendMessage(messages)
             } catch (mde: MismatchedDevicesException) {
                 Log.w(TAG, mde)
-                handleMismatchedDevices(recipient, mde.mismatchedDevices)
+                handleMismatchedDevices(accountContext, recipient, mde.mismatchedDevices)
             } catch (ste: StaleDevicesException) {
                 Log.w(TAG, ste)
                 handleStaleDevices(recipient, ste.staleDevices)
@@ -557,7 +525,9 @@ object BcmChatCore {
     }
 
     @Throws(IOException::class)
-    private fun createAttachmentPointers(attachments: Optional<List<SignalServiceAttachment>>, isSupportAws: Boolean): List<AttachmentPointer> {
+    private fun createAttachmentPointers(accountContext: AccountContext,
+                                         attachments: Optional<List<SignalServiceAttachment>>,
+                                         isSupportAws: Boolean): List<AttachmentPointer> {
         val pointers = LinkedList<AttachmentPointer>()
 
         if (!attachments.isPresent || attachments.get().isEmpty()) {
@@ -569,9 +539,9 @@ object BcmChatCore {
             if (attachment.isStream) {
                 Log.w(TAG, "Found attachment, creating pointer...")
                 if (isSupportAws) {
-                    pointers.add(createAwsAttachmentPointer(attachment.asStream()))
+                    pointers.add(createAwsAttachmentPointer(accountContext, attachment.asStream()))
                 } else {
-                    pointers.add(createAttachmentPointer(attachment.asStream()))
+                    pointers.add(createAttachmentPointer(accountContext, attachment.asStream()))
                 }
             }
         }
@@ -580,7 +550,8 @@ object BcmChatCore {
     }
 
     @Throws(IOException::class)
-    private fun createAwsAttachmentPointer(attachment: SignalServiceAttachmentStream): AttachmentPointer {
+    private fun createAwsAttachmentPointer(accountContext: AccountContext,
+                                           attachment: SignalServiceAttachmentStream): AttachmentPointer {
         val attachmentKey = attachment.attachmentKey
         val paddedLength = PaddingInputStream.getPaddedSize(attachment.length)
         val ciphertextLength = AttachmentCipherOutputStream.getCiphertextLength(paddedLength)
@@ -590,7 +561,7 @@ object BcmChatCore {
                 AttachmentCipherOutputStreamFactory(attachmentKey),
                 attachment.listener)
 
-        val attachmentUrlAndDigest = ChatHttp.uploadAttachmentToAws(attachmentData, attachment.fileName.orNull())
+        val attachmentUrlAndDigest = ChatHttp.get(accountContext).uploadAttachmentToAws(attachmentData, attachment.fileName.orNull())
         attachment.setUploadResult(0L, attachmentUrlAndDigest.first(), attachmentUrlAndDigest.second())
 
         val builder = AttachmentPointer.newBuilder()
@@ -615,7 +586,8 @@ object BcmChatCore {
     }
 
     @Throws(IOException::class)
-    private fun createAttachmentPointer(attachment: SignalServiceAttachmentStream): AttachmentPointer {
+    private fun createAttachmentPointer(accountContext: AccountContext,
+                                        attachment: SignalServiceAttachmentStream): AttachmentPointer {
         val attachmentKey = attachment.attachmentKey
         val paddedLength = PaddingInputStream.getPaddedSize(attachment.length)
         val ciphertextLength = AttachmentCipherOutputStream.getCiphertextLength(paddedLength)
@@ -625,7 +597,7 @@ object BcmChatCore {
                 AttachmentCipherOutputStreamFactory(attachmentKey),
                 attachment.listener)
 
-        val attachmentUrlAndDigest = ChatHttp.uploadAttachmentToAws(attachmentData, attachment.fileName.orNull())
+        val attachmentUrlAndDigest = ChatHttp.get(accountContext).uploadAttachmentToAws(attachmentData, attachment.fileName.orNull())
         attachment.setUploadResult(0L, attachmentUrlAndDigest.first(), attachmentUrlAndDigest.second())
 
         val builder = AttachmentPointer.newBuilder()
@@ -652,19 +624,20 @@ object BcmChatCore {
 
 
     @Throws(IOException::class, UntrustedIdentityException::class)
-    private fun getEncryptedMessages(recipient: SignalServiceAddress,
+    private fun getEncryptedMessages(accountContext: AccountContext,
+                                     recipient: SignalServiceAddress,
                                      timestamp: Long,
                                      plaintext: ByteArray,
                                      pushPurpose: PushPurpose): OutgoingPushMessageList {
         val messages = LinkedList<OutgoingPushMessage>()
 
-        if (recipient.number != mySignalAddress().number) {
-            messages.add(getEncryptedMessage(recipient, SignalServiceAddress.DEFAULT_DEVICE_ID, plaintext, pushPurpose))
+        if (recipient.number != mySignalAddress(accountContext).number) {
+            messages.add(getEncryptedMessage(accountContext, recipient, SignalServiceAddress.DEFAULT_DEVICE_ID, plaintext, pushPurpose))
         }
 
         for (deviceId in store.getSubDeviceSessions(recipient.number)) {
             if (store.containsSession(SignalProtocolAddress(recipient.number, deviceId))) {
-                messages.add(getEncryptedMessage(recipient, deviceId, plaintext, pushPurpose))
+                messages.add(getEncryptedMessage(accountContext, recipient, deviceId, plaintext, pushPurpose))
             }
         }
 
@@ -673,9 +646,14 @@ object BcmChatCore {
 
     //
     @Throws(IOException::class, UntrustedIdentityException::class)
-    private fun getEncryptedMessage(recipient: SignalServiceAddress, deviceId: Int, plaintext: ByteArray, pushPurpose: PushPurpose): OutgoingPushMessage {
+    private fun getEncryptedMessage(accountContext: AccountContext,
+                                    recipient: SignalServiceAddress,
+                                    deviceId: Int,
+                                    plaintext: ByteArray,
+                                    pushPurpose: PushPurpose): OutgoingPushMessage {
+
         val signalProtocolAddress = SignalProtocolAddress(recipient.number, deviceId)
-        val cipher = SignalServiceCipher(mySignalAddress(), store)
+        val cipher = SignalServiceCipher(mySignalAddress(accountContext), store)
 
         var containsSession = store.containsSession(signalProtocolAddress)
         if (containsSession) {
@@ -689,7 +667,7 @@ object BcmChatCore {
 
         if (!containsSession) {
             try {
-                val preKeys = ChatHttp.getPreKeys(recipient, deviceId)
+                val preKeys = ChatHttp.get(accountContext).getPreKeys(recipient, deviceId)
 
                 for (preKey in preKeys) {
                     try {
@@ -712,7 +690,6 @@ object BcmChatCore {
             } catch (e: InvalidKeyException) {
                 throw IOException(e)
             }
-
         }
 
         try {
@@ -720,11 +697,11 @@ object BcmChatCore {
         } catch (e: org.whispersystems.libsignal.UntrustedIdentityException) {
             throw UntrustedIdentityException("Untrusted on send", recipient.number, e.untrustedIdentity)
         }
-
     }
 
     @Throws(IOException::class, UntrustedIdentityException::class)
-    private fun handleMismatchedDevices(recipient: SignalServiceAddress,
+    private fun handleMismatchedDevices(accountContext: AccountContext,
+                                        recipient: SignalServiceAddress,
                                         mismatchedDevices: MismatchedDevices) {
         try {
             for (extraDeviceId in mismatchedDevices.extraDevices) {
@@ -732,7 +709,7 @@ object BcmChatCore {
             }
 
             for (missingDeviceId in mismatchedDevices.missingDevices) {
-                val preKey = ChatHttp.getPreKey(recipient, missingDeviceId)
+                val preKey = ChatHttp.get(accountContext).getPreKey(recipient, missingDeviceId)
 
                 try {
                     val sessionBuilder = SessionBuilder(store, SignalProtocolAddress(recipient.number, missingDeviceId))
@@ -741,12 +718,10 @@ object BcmChatCore {
                     Log.e(TAG, "Untrusted identity key from handleMismatchedDevices ")
                     throw UntrustedIdentityException("Untrusted identity key!", recipient.number, preKey.identityKey)
                 }
-
             }
         } catch (e: InvalidKeyException) {
             throw IOException(e)
         }
-
     }
 
     private fun handleStaleDevices(recipient: SignalServiceAddress, staleDevices: StaleDevices) {
@@ -755,7 +730,7 @@ object BcmChatCore {
         }
     }
 
-    private fun mySignalAddress(): SignalServiceAddress {
-        return SignalServiceAddress(AMELogin.uid)
+    private fun mySignalAddress(accountContext: AccountContext): SignalServiceAddress {
+        return SignalServiceAddress(accountContext.uid)
     }
 }

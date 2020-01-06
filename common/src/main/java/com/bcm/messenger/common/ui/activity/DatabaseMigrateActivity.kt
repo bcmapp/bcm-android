@@ -10,7 +10,6 @@ import com.bcm.messenger.common.R
 import com.bcm.messenger.common.database.migrate.DatabaseMigration
 import com.bcm.messenger.common.database.migrate.IDatabaseMigration
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.utils.setStatusBarLightMode
@@ -110,9 +109,9 @@ class DatabaseMigrateActivity : AppCompatActivity() {
     }
 
     private fun doOtherInit(isFailed: Boolean) {
-        TextSecurePreferences.setHasDatabaseMigrated(this)
+        TextSecurePreferences.setHasDatabaseMigrated(accountContext)
         if (!isFailed) {
-            TextSecurePreferences.setMigrateFailedCount(this, 0)
+            TextSecurePreferences.setMigrateFailedCount(accountContext, 0)
         }
 
         AmeModuleCenter.onLoginSucceed(accountContext)

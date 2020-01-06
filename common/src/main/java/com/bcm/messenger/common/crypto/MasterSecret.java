@@ -19,6 +19,7 @@ package com.bcm.messenger.common.crypto;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.utility.proguard.NotGuard;
 
 import java.util.Arrays;
@@ -45,6 +46,7 @@ public class MasterSecret implements Parcelable, NotGuard {
 
   private final SecretKeySpec encryptionKey;
   private final SecretKeySpec macKey;
+  private final AccountContext accountContext;
 
   public static final Parcelable.Creator<MasterSecret> CREATOR = new Parcelable.Creator<MasterSecret>() {
     @Override
@@ -58,7 +60,8 @@ public class MasterSecret implements Parcelable, NotGuard {
     }
   };
 
-  public MasterSecret(SecretKeySpec encryptionKey, SecretKeySpec macKey) {
+  public MasterSecret(AccountContext accountContext, SecretKeySpec encryptionKey, SecretKeySpec macKey) {
+    this.accountContext = accountContext;
     this.encryptionKey = encryptionKey;
     this.macKey        = macKey;
   }
@@ -70,6 +73,7 @@ public class MasterSecret implements Parcelable, NotGuard {
     byte[] macKeyBytes = new byte[in.readInt()];
     in.readByteArray(macKeyBytes);
 
+    this.accountContext = in.readParcelable(AccountContext.class.getClassLoader());
     this.encryptionKey = new SecretKeySpec(encryptionKeyBytes, "AES");
     this.macKey        = new SecretKeySpec(macKeyBytes, "HmacSHA1");
 
@@ -87,12 +91,17 @@ public class MasterSecret implements Parcelable, NotGuard {
     return this.macKey;
   }
 
+  public AccountContext getAccountContext() {
+    return accountContext;
+  }
+
   @Override
   public void writeToParcel(Parcel out, int flags) {
     out.writeInt(encryptionKey.getEncoded().length);
     out.writeByteArray(encryptionKey.getEncoded());
     out.writeInt(macKey.getEncoded().length);
     out.writeByteArray(macKey.getEncoded());
+    out.writeParcelable(accountContext, 0);
   }
 
   @Override

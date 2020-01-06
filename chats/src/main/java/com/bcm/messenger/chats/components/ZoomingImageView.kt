@@ -19,6 +19,7 @@ import com.bcm.messenger.common.mms.DecryptableStreamUriLoader.DecryptableUri
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.mms.PartAuthority
 import com.bcm.messenger.common.preferences.TextSecurePreferences
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.ui.subsampling.AttachmentBitmapDecoder
 import com.bcm.messenger.common.ui.subsampling.AttachmentRegionDecoder
@@ -62,14 +63,14 @@ class ZoomingImageView @JvmOverloads constructor(context: Context, attrs: Attrib
     private class AttachmentBitmapDecoderFactory : DecoderFactory<AttachmentBitmapDecoder> {
         @Throws(IllegalAccessException::class, InstantiationException::class)
         override fun make(): AttachmentBitmapDecoder {
-            return AttachmentBitmapDecoder()
+            return AttachmentBitmapDecoder(AMELogin.majorContext)
         }
     }
 
     private class AttachmentRegionDecoderFactory : DecoderFactory<AttachmentRegionDecoder> {
         @Throws(IllegalAccessException::class, InstantiationException::class)
         override fun make(): AttachmentRegionDecoder {
-            return AttachmentRegionDecoder()
+            return AttachmentRegionDecoder(AMELogin.majorContext)
         }
     }
 
@@ -109,7 +110,7 @@ class ZoomingImageView @JvmOverloads constructor(context: Context, attrs: Attrib
         }
         this.downloadView = findViewById(R.id.download_progress)
 
-        this.mStandardImageView.setOnScaleChangeListener { scaleFactor, focusX, focusY ->
+        this.mStandardImageView.setOnScaleChangeListener { _, _, _ ->
             //ALog.d(TAG, "OnScaleChange: ${this.mStandardImageView.scale}")
             val diff = abs(this.mStandardImageView.scale - 1.0f)
             showQRTag(diff < 0.05f)
@@ -129,7 +130,7 @@ class ZoomingImageView @JvmOverloads constructor(context: Context, attrs: Attrib
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        val showNotice = TextSecurePreferences.getBooleanPreference(context, TextSecurePreferences.QR_DISCERN_NOTICE, false)
+        val showNotice = TextSecurePreferences.getBooleanPreference(AMELogin.majorContext, TextSecurePreferences.QR_DISCERN_NOTICE, false)
         ALog.d(TAG, "onAttachedToWindow showNotice: $showNotice, isShown: $isShown")
         if (mTagList.isNotEmpty() && showNotice && this.isShown) {
             handleDefaultQrTagClick(mTagList[0], true)
@@ -458,7 +459,7 @@ class ZoomingImageView @JvmOverloads constructor(context: Context, attrs: Attrib
             mCheckDispose = Observable.create(ObservableOnSubscribe<Array<Result>> {
 
                 try {
-                    showNotice = TextSecurePreferences.getBooleanPreference(context, TextSecurePreferences.QR_DISCERN_NOTICE, false)
+                    showNotice = TextSecurePreferences.getBooleanPreference(AMELogin.majorContext, TextSecurePreferences.QR_DISCERN_NOTICE, false)
                     ALog.d(TAG, "beginScanQrCode")
                     val width = bitmap.width
                     val height = bitmap.height
@@ -577,8 +578,7 @@ class ZoomingImageView @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
     private fun handleDefaultQrTagClick(tag: QRTagBean, popupAutoDismiss: Boolean) {
-
-        TextSecurePreferences.setBooleanPreference(context, TextSecurePreferences.QR_DISCERN_NOTICE, false)
+        TextSecurePreferences.setBooleanPreference(AMELogin.majorContext, TextSecurePreferences.QR_DISCERN_NOTICE, false)
         QrCodeReaderPopWindow.createPopup(context, tag.view, tag, popupAutoDismiss) {
             if (it) {
                 doQrDiscern(context, tag.data)

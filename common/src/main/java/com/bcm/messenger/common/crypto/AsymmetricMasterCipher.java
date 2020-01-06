@@ -17,6 +17,7 @@
  */
 package com.bcm.messenger.common.crypto;
 
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.utility.Base64;
 import com.bcm.messenger.utility.Util;
 import org.whispersystems.libsignal.InvalidKeyException;
@@ -105,7 +106,7 @@ public class AsymmetricMasterCipher {
   private MasterCipher getMasterCipherForSecret(byte[] secretBytes) {
     SecretKeySpec cipherKey   = deriveCipherKey(secretBytes);
     SecretKeySpec macKey      = deriveMacKey(secretBytes);
-    MasterSecret masterSecret = new MasterSecret(cipherKey, macKey);
+    MasterSecret masterSecret = new MasterSecret(AMELogin.INSTANCE.getMajorContext(), cipherKey, macKey);
 
     return new MasterCipher(masterSecret);
   }

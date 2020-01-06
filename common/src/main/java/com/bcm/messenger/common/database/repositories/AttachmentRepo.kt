@@ -36,9 +36,22 @@ import java.util.concurrent.Callable
 class AttachmentRepo(
         private val accountContext: AccountContext,
         private val repository: Repository) {
+
+    companion object {
+        @JvmStatic
+        fun getMediaType(contentType: String): AttachmentDbModel.AttachmentType {
+            return when {
+                contentType.startsWith("image/") -> AttachmentDbModel.AttachmentType.IMAGE
+                contentType.startsWith("video/") -> AttachmentDbModel.AttachmentType.VIDEO
+                contentType == "audio/aac" -> AttachmentDbModel.AttachmentType.AUDIO
+                else -> AttachmentDbModel.AttachmentType.DOCUMENT
+            }
+        }
+    }
+
     private val TAG = "AttachmentRepo"
 
-    private val attachmentDao = repository.userDatabase.getAttachmentDao();
+    private val attachmentDao = repository.userDatabase.getAttachmentDao()
     private val thumbnailExecutor = Util.newSingleThreadedLifoExecutor()
 
     inner class ThumbnailFetchCallable(private val masterSecret: MasterSecret, private val attachmentId: Long, private val uniqueId: Long) : Callable<InputStream?> {
@@ -96,15 +109,6 @@ class AttachmentRepo(
         val bitmap = retriever.getFrameAtTime(1000)
         retriever.release()
         return bitmap
-    }
-
-    fun getMediaType(contentType: String): AttachmentDbModel.AttachmentType {
-        return when {
-            contentType.startsWith("image/") -> AttachmentDbModel.AttachmentType.IMAGE
-            contentType.startsWith("video/") -> AttachmentDbModel.AttachmentType.VIDEO
-            contentType == "audio/aac" -> AttachmentDbModel.AttachmentType.AUDIO
-            else -> AttachmentDbModel.AttachmentType.DOCUMENT
-        }
     }
 
     fun getAttachmentStream(masterSecret: MasterSecret, id: Long, uniqueId: Long, offset: Long = 0): InputStream? {

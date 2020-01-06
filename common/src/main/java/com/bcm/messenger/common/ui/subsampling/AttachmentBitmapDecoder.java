@@ -1,11 +1,13 @@
 package com.bcm.messenger.common.ui.subsampling;
 
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.mms.PartAuthority;
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
@@ -14,7 +16,12 @@ import com.davemorrissey.labs.subscaleview.decoder.SkiaImageDecoder;
 
 import java.io.InputStream;
 
-public class AttachmentBitmapDecoder implements ImageDecoder{
+public class AttachmentBitmapDecoder implements ImageDecoder {
+  private AccountContext accountContext;
+
+  public AttachmentBitmapDecoder(@NonNull AccountContext accountContext) {
+    this.accountContext = accountContext;
+  }
 
   @Override
   public Bitmap decode(Context context, Uri uri) throws Exception {
@@ -22,7 +29,7 @@ public class AttachmentBitmapDecoder implements ImageDecoder{
       return new SkiaImageDecoder().decode(context, uri);
     }
 
-    MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(context);
+    MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(accountContext);
 
     if (masterSecret == null) {
       throw new IllegalStateException("Can't decode without secret");
@@ -45,6 +52,4 @@ public class AttachmentBitmapDecoder implements ImageDecoder{
       if (inputStream != null) inputStream.close();
     }
   }
-
-
 }

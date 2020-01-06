@@ -9,6 +9,9 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.mms.PartAuthority;
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
@@ -25,6 +28,11 @@ public class AttachmentRegionDecoder implements ImageRegionDecoder {
   private SkiaImageRegionDecoder passthrough;
 
   private BitmapRegionDecoder bitmapRegionDecoder;
+  private AccountContext accountContext;
+
+  public AttachmentRegionDecoder(@NonNull AccountContext accountContext) {
+    this.accountContext = accountContext;
+  }
 
   @Override
   public Point init(Context context, Uri uri) throws Exception {
@@ -34,7 +42,7 @@ public class AttachmentRegionDecoder implements ImageRegionDecoder {
       return passthrough.init(context, uri);
     }
 
-    MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(context);
+    MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(accountContext);
 
     if (masterSecret == null) {
       throw new IllegalStateException("No master secret available...");

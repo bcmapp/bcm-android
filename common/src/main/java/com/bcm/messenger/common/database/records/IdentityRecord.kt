@@ -1,6 +1,7 @@
 package com.bcm.messenger.common.database.records
 
 import androidx.room.Ignore
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.model.IdentityDbModel
 import com.bcm.messenger.common.database.repositories.IdentityRepo
@@ -11,8 +12,8 @@ import org.whispersystems.libsignal.IdentityKey
  * Created by Kin on 2019/9/26
  */
 class IdentityRecord : IdentityDbModel() {
-    fun getAddress(): Address {
-        return Address.fromSerialized(uid)
+    fun getAddress(accountContext: AccountContext): Address {
+        return Address.from(accountContext, uid)
     }
 
     @Ignore lateinit var identityKey: IdentityKey

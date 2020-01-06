@@ -36,14 +36,17 @@ import com.bcm.messenger.common.core.AmeGroupMessage;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.common.database.records.AttachmentRecord;
+import com.bcm.messenger.common.database.repositories.AttachmentRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager;
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail;
 import com.bcm.messenger.common.mms.GroupUriParser;
 import com.bcm.messenger.common.mms.HistoryUriParser;
 import com.bcm.messenger.common.mms.PartUriParser;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.utility.MemoryFileUtil;
 import com.bcm.messenger.utility.Util;
+import com.bcm.messenger.utility.logger.ALog;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -98,7 +101,7 @@ public class PartProvider extends ContentProvider {
 
     @Override
     public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
-        final MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(getContext());
+        final MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(AMELogin.INSTANCE.getMajorContext());
         Log.w(TAG, "openFile() called!");
 
         if (masterSecret == null) {
@@ -150,14 +153,19 @@ public class PartProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case SINGLE_ROW:
                 PartUriParser partUriParser = new PartUriParser(uri);
-                AttachmentRecord attachmentRecord = Repository.getAttachmentRepo().getAttachment(partUriParser.getPartId().getRowId(), partUriParser.getPartId().getUniqueId());
+                AttachmentRepo repo = Repository.getAttachmentRepo(AMELogin.INSTANCE.getMajorContext());
+                if (repo == null) {
+                    ALog.w(TAG, "AttachmentRepo is null!");
+                    return null;
+                }
+                AttachmentRecord attachmentRecord = repo.getAttachment(partUriParser.getPartId().getRowId(), partUriParser.getPartId().getUniqueId());
 
                 if (attachmentRecord != null) {
                     return attachmentRecord.getContentType();
                 }
             case GROUP_ROW:
                 GroupUriParser uriParser = new GroupUriParser(uri);
-                AmeGroupMessageDetail messageDetail = MessageDataManager.INSTANCE.fetchOneMessageByGidAndIndexId(uriParser.getGid(), uriParser.getIndexId());
+                AmeGroupMessageDetail messageDetail = MessageDataManager.INSTANCE.fetchOneMessageByGidAndIndexId(AMELogin.INSTANCE.getMajorContext(), uriParser.getGid(), uriParser.getIndexId());
 
                 if (messageDetail == null || !messageDetail.getMessage().isFile()) return null;
 
@@ -184,7 +192,12 @@ public class PartProvider extends ContentProvider {
         switch (uriMatcher.match(url)) {
             case SINGLE_ROW:
                 PartUriParser partUri = new PartUriParser(url);
-                AttachmentRecord attachmentRecord = Repository.getAttachmentRepo().getAttachment(partUri.getPartId().getRowId(), partUri.getPartId().getUniqueId());
+                AttachmentRepo repo = Repository.getAttachmentRepo(AMELogin.INSTANCE.getMajorContext());
+                if (repo == null) {
+                    ALog.w(TAG, "AttachmentRepo is null!");
+                    return null;
+                }
+                AttachmentRecord attachmentRecord = repo.getAttachment(partUri.getPartId().getRowId(), partUri.getPartId().getUniqueId());
 
                 if (attachmentRecord == null) return null;
 
@@ -201,7 +214,7 @@ public class PartProvider extends ContentProvider {
                 return matrixCursor;
             case GROUP_ROW:
                 GroupUriParser uriParser = new GroupUriParser(url);
-                AmeGroupMessageDetail messageDetail = MessageDataManager.INSTANCE.fetchOneMessageByGidAndIndexId(uriParser.getGid(), uriParser.getIndexId());
+                AmeGroupMessageDetail messageDetail = MessageDataManager.INSTANCE.fetchOneMessageByGidAndIndexId(AMELogin.INSTANCE.getMajorContext(), uriParser.getGid(), uriParser.getIndexId());
 
                 if (messageDetail == null || !messageDetail.getMessage().isFile()) return null;
 
@@ -242,14 +255,20 @@ public class PartProvider extends ContentProvider {
     }
 
     private ParcelFileDescriptor getParcelStreamForAttachment(MasterSecret masterSecret, AttachmentId attachmentId) throws IOException {
-        InputStream stream = Repository.getAttachmentRepo().getAttachmentStream(masterSecret, attachmentId.getRowId(), attachmentId.getUniqueId(), 0);
+        AttachmentRepo repo = Repository.getAttachmentRepo(AMELogin.INSTANCE.getMajorContext());
+        if (repo == null) {
+            ALog.w(TAG, "AttachmentRepo is null!");
+            return null;
+        }
+
+        InputStream stream = repo.getAttachmentStream(masterSecret, attachmentId.getRowId(), attachmentId.getUniqueId(), 0);
         if (stream == null) {
             throw new FileNotFoundException("Attachment file not found");
         }
         long plaintextLength = Util.getStreamLength(stream);
         MemoryFile memoryFile = new MemoryFile(attachmentId.toString(), Util.toIntExact(plaintextLength));
 
-        InputStream in = Repository.getAttachmentRepo().getAttachmentStream(masterSecret, attachmentId.getRowId(), attachmentId.getUniqueId(), 0);
+        InputStream in = repo.getAttachmentStream(masterSecret, attachmentId.getRowId(), attachmentId.getUniqueId(), 0);
         OutputStream out = memoryFile.getOutputStream();
 
         Util.copy(in, out);
@@ -260,14 +279,14 @@ public class PartProvider extends ContentProvider {
     }
 
     private ParcelFileDescriptor getGroupStreamForAttachment(MasterSecret masterSecret, long gid, long indexId) throws IOException {
-        InputStream stream = MessageDataManager.INSTANCE.getFileStream(masterSecret, gid, indexId, 0);
+        InputStream stream = MessageDataManager.INSTANCE.getFileStream(masterSecret.getAccountContext(), masterSecret, gid, indexId, 0);
         if (stream == null) {
             throw new FileNotFoundException("Attachment file not found");
         }
         long plaintextLength = Util.getStreamLength(stream);
         MemoryFile memoryFile = new MemoryFile("(gid: " + gid + ", index id: " + indexId + ")", Util.toIntExact(plaintextLength));
 
-        InputStream in = MessageDataManager.INSTANCE.getFileStream(masterSecret, gid, indexId, 0);
+        InputStream in = MessageDataManager.INSTANCE.getFileStream(masterSecret.getAccountContext(), masterSecret, gid, indexId, 0);
         OutputStream out = memoryFile.getOutputStream();
 
         Util.copy(in, out);

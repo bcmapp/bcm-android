@@ -1,17 +1,17 @@
 package com.bcm.messenger.common.sms;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
+
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.AmeGroupMessage;
 import com.bcm.messenger.utility.AmeTimeUtil;
 import com.bcm.messenger.utility.AmeURLUtil;
-import com.bcm.messenger.common.utils.GroupUtil;
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
@@ -50,10 +50,12 @@ public class IncomingTextMessage implements Parcelable {
 
     protected int payloadType = 0;
 
-    public IncomingTextMessage(@NonNull Context context, @NonNull SmsMessage message, int subscriptionId) {
+    public IncomingTextMessage(@NonNull AccountContext accountContext,
+                               @NonNull SmsMessage message,
+                               int subscriptionId) {
         this.message = message.getDisplayMessageBody();
         this.payloadType = parseBodyPayloadType(this.message);
-        this.sender = Address.from(context, message.getDisplayOriginatingAddress());
+        this.sender = Address.from(accountContext, message.getDisplayOriginatingAddress());
         this.senderDeviceId = SignalServiceAddress.DEFAULT_DEVICE_ID;
         this.protocol = message.getProtocolIdentifier();
         this.serviceCenterAddress = message.getServiceCenterAddress();
@@ -81,12 +83,7 @@ public class IncomingTextMessage implements Parcelable {
         this.push = true;
         this.subscriptionId = -1;
         this.expiresInMillis = expiresInMillis;
-
-        if (group.isPresent()) {
-            this.groupId = Address.fromSerialized(GroupUtil.getEncodedId(group.get().getGroupId(), false));
-        } else {
-            this.groupId = null;
-        }
+        this.groupId = null;
     }
 
 
