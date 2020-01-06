@@ -8,10 +8,11 @@ import com.bcm.messenger.adhoc.sdk.AdHocSDK
 import com.bcm.messenger.adhoc.ui.channel.AdHocConversationActivity
 import com.bcm.messenger.adhoc.ui.setting.AdHocSettingActivity
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.utils.AmeAppLifecycle
+import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 
 @Route(routePath = ARouterConstants.Provider.PROVIDER_AD_HOC)
@@ -56,7 +57,7 @@ class AdHocModuleImpl : IAdHocModule {
         val activity = AmeAppLifecycle.current()
         if (null != activity) {
             val intent = Intent(activity, AdHocSettingActivity::class.java)
-            activity.startActivity(intent)
+            activity.startBcmActivity(AMELogin.majorContext, intent)
         }
     }
 
@@ -72,7 +73,7 @@ class AdHocModuleImpl : IAdHocModule {
         AdHocSessionLogic.addChatSession(uid) { sessionId ->
             ALog.i("AdHocProviderImp", "gotoPrivateChat sessionId: $sessionId")
             if (sessionId.isNotEmpty()) {
-                context.startActivity(Intent(context, AdHocConversationActivity::class.java).apply {
+                context.startBcmActivity(AMELogin.majorContext, Intent(context, AdHocConversationActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, sessionId)
                 })
             }

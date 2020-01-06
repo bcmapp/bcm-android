@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.SharedElementCallback
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
@@ -21,19 +20,17 @@ import com.bcm.messenger.chats.mediapreview.viewmodel.MediaViewGroupViewModel2
 import com.bcm.messenger.chats.mediapreview.viewmodel.MediaViewHistoryViewModel
 import com.bcm.messenger.chats.mediapreview.viewmodel.MediaViewPrivateViewModel
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.FullTransSwipeBaseActivity
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.setLocale
-import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
-import com.bcm.messenger.common.utils.AmeAppLifecycle
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
+import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.common.utils.MediaUtil
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.chats_activity_media_view.*
@@ -42,7 +39,7 @@ import kotlinx.android.synthetic.main.chats_activity_media_view.*
  * 
  * Created by Kin on 2018/10/31
  */
-class MediaViewActivity : AppCompatActivity() {
+class MediaViewActivity : FullTransSwipeBaseActivity() {
 
     companion object {
         private const val TAG = "MediaViewActivity"
@@ -67,21 +64,12 @@ class MediaViewActivity : AppCompatActivity() {
 
     private lateinit var viewModel: BaseMediaViewModel
     private lateinit var adapter: MediaViewPagerAdapter
-    private lateinit var masterSecret: MasterSecret
     private val mediaDataList = mutableListOf<MediaViewData>()
     private var enterTransitionId = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chats_activity_media_view)
-
-        val ms = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
-        if (ms == null) {
-            ALog.i(TAG, "Get master secret failed, activity finish")
-            finish()
-            return
-        }
-        masterSecret = ms
 
         enterFullScreen()
         initView()
@@ -150,9 +138,9 @@ class MediaViewActivity : AppCompatActivity() {
                 }
                 val intent = Intent(this@MediaViewActivity, MediaBrowserActivity::class.java).apply {
                     val address: Address = if (data.msgType == MSG_TYPE_PRIVATE) {
-                        (data.sourceMsg as MessageRecord).getRecipient().address
+                        (data.sourceMsg as MessageRecord).getRecipient(getAccountContext()).address
                     } else {
-                        GroupUtil.addressFromGid((data.sourceMsg as AmeGroupMessageDetail).gid)
+                        GroupUtil.addressFromGid(getAccountContext(), (data.sourceMsg as AmeGroupMessageDetail).gid)
                     }
                     putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, address)
                     putExtra(ARouterConstants.PARAM.PARAM_INDEX_ID, data.indexId)
@@ -349,7 +337,8 @@ class MediaViewActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment {
             val f = MediaViewFragment()
             f.setData(getItemData(position))
-            f.setMasterSecret(masterSecret)
+            f.setMasterSecret(getMasterSecret())
+            f.setAccountContext(getAccountContext())
             f.setListener(fragmentListener)
             return f
         }

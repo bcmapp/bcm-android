@@ -16,12 +16,15 @@ open class BaseFragment : Fragment() {
     companion object {
         private const val TAG = "BaseFragment"
     }
+
     private lateinit var mAccountContext: AccountContext
     private lateinit var mAccountRecipient: Recipient
     private var mModifiedListener = RecipientModifiedListener { recipient ->
         if (mAccountRecipient == recipient) {
             mAccountRecipient = recipient
-            onLoginRecipientRefresh()
+            if (isAdded) {
+                onLoginRecipientRefresh()
+            }
         }
     }
     private var isActive: Boolean = false
@@ -31,6 +34,19 @@ open class BaseFragment : Fragment() {
     fun getAccountRecipient() = mAccountRecipient
 
     fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(mAccountContext) ?: throw Exception("getMasterSecret is null")
+
+    fun setAccountContext(context: AccountContext) {
+        mAccountContext = context
+        setAccountRecipient(Recipient.login(context))
+    }
+
+    private fun setAccountRecipient(recipient: Recipient) {
+        if (::mAccountRecipient.isInitialized) {
+            mAccountRecipient.removeListener(mModifiedListener)
+        }
+        mAccountRecipient = recipient
+        mAccountRecipient.addListener(mModifiedListener)
+    }
 
     open fun setActive(isActive: Boolean) {
         this.isActive = isActive
@@ -55,9 +71,7 @@ open class BaseFragment : Fragment() {
             activity?.finish()
             return
         }
-        mAccountContext = accountContext
-        mAccountRecipient = Recipient.login(accountContext)
-        mAccountRecipient.addListener(mModifiedListener)
+        setAccountContext(accountContext)
     }
 
     protected open fun onLoginRecipientRefresh() {
@@ -68,10 +82,7 @@ open class BaseFragment : Fragment() {
         val accountContext: AccountContext? = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
         if (accountContext != null) {
             ALog.w(TAG, "onNewIntent, new accountContext: ${accountContext.uid}")
-            mAccountContext = accountContext
-            mAccountRecipient.removeListener(mModifiedListener)
-            mAccountRecipient = Recipient.login(accountContext)
-            mAccountRecipient.addListener(mModifiedListener)
+            setAccountContext(accountContext)
         }
     }
 }

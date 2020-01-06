@@ -13,7 +13,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -21,13 +21,12 @@ import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
 import com.bcm.messenger.common.ui.emoji.EmojiTextView
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.QuickOpCheck
-import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.adhoc_channel_member_list_activity.*
 
 /**
  *
  */
-class AdHocChannelMemberListActivity: SwipeBaseActivity(),AmeRecycleViewAdapter.IViewHolderDelegate<ChannelUserInfo> {
+class AdHocChannelMemberListActivity: SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<ChannelUserInfo> {
     private val dataSource = object : SelectionDataSource<ChannelUserInfo>() {
         override fun getItemId(position: Int): Long {
             return EncryptUtils.byteArrayToLong(getData(position).uid.toByteArray())
@@ -65,12 +64,11 @@ class AdHocChannelMemberListActivity: SwipeBaseActivity(),AmeRecycleViewAdapter.
             return
         }
         val holder = viewHolder as MemberHolder
-        val address = Address.fromSerialized(holder.getData()?.uid ?: return)
+        val address = Address.from(getAccountContext(), holder.getData()?.uid ?: return)
         if (address.isCurrentLogin) {
             return
         }
-        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigation() as IContactModule
-        provider.openContactDataActivity(this, address, holder.getData()?.name)
+        AmeModuleCenter.contact(getAccountContext())?.openContactDataActivity(this, address, holder.getData()?.name)
     }
 
     inner class MemberHolder(view: View):AmeRecycleViewAdapter.ViewHolder<ChannelUserInfo>(view) {
@@ -78,7 +76,7 @@ class AdHocChannelMemberListActivity: SwipeBaseActivity(),AmeRecycleViewAdapter.
         private val name = view.findViewById<EmojiTextView>(R.id.adhoc_member_item_name)
         override fun setData(data: ChannelUserInfo) {
             super.setData(data)
-            avatar.setPhoto(AMELogin.majorContext, Recipient.from(AMELogin.majorContext, Address.fromSerialized(data.uid), true), data.name, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+            avatar.setPhoto(AMELogin.majorContext, Recipient.from(AMELogin.majorContext, data.uid, true), data.name, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
             name.text = data.name
         }
     }

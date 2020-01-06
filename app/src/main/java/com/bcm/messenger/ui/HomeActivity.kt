@@ -22,10 +22,8 @@ import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.provider.accountmodule.IChatModule
-import com.bcm.messenger.common.provider.accountmodule.IMetricsModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.BcmRecyclerView
@@ -159,6 +157,9 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     .get(ARouterConstants.Activity.APP_HOME_AD_HOC_MAIN)
                     .navigation() as Fragment
 
+            adhocMain.arguments = Bundle().apply {
+                putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, AMELogin.majorContext)
+            }
             addFragment.add(R.id.home_adhoc_main, adhocMain, adHocMainTag)
             addFragment.commit()
 

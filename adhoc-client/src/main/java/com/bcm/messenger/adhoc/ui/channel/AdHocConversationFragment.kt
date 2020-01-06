@@ -64,7 +64,8 @@ class AdHocConversationFragment : BaseFragment() {
         }
 
 
-    fun onNewIntent() {
+    override fun onNewIntent() {
+        super.onNewIntent()
         initAdapter()
         initResource()
     }

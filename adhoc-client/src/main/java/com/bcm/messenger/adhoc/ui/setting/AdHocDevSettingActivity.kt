@@ -1,25 +1,18 @@
 package com.bcm.messenger.adhoc.ui.setting
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.sdk.AdHocConnState
 import com.bcm.messenger.adhoc.sdk.AdHocSDK
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import kotlinx.android.synthetic.main.adhoc_dev_setting_view.*
-import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.utility.QuickOpCheck
-import java.lang.StringBuilder
 
 class AdHocDevSettingActivity: SwipeBaseActivity(), AdHocSDK.IAdHocSDKEventListener {
-    companion object {
-        fun router(context:Context) {
-            val intent = Intent(context, AdHocDevSettingActivity::class.java)
-            context.startActivity(intent)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,7 +74,8 @@ class AdHocDevSettingActivity: SwipeBaseActivity(), AdHocSDK.IAdHocSDKEventListe
                 return@setOnClickListener
             }
 
-            AdHocLogActivity.router(this)
+            val intent = Intent(this, AdHocLogActivity::class.java)
+            startBcmActivity(intent)
         }
 
         updateState()

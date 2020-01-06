@@ -7,12 +7,10 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import androidx.annotation.IdRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.SharedElementCallback
 import androidx.core.view.ViewCompat
-import androidx.fragment.app.Fragment
 import com.bcm.messenger.adhoc.R
+import com.bcm.messenger.common.FullTransSwipeBaseActivity
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.setLocale
@@ -24,7 +22,7 @@ import kotlinx.android.synthetic.main.adhoc_activity_media_preview.*
  * adhoc preview
  * Created by Kin on 2018/10/31
  */
-class AdHocPreviewActivity : AppCompatActivity() {
+class AdHocPreviewActivity : FullTransSwipeBaseActivity() {
 
     interface OnPreviewListener {
         fun onInit(index: Long, mid: String, type: Long)
@@ -50,6 +48,7 @@ class AdHocPreviewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSwipeBackEnable(false)
         ALog.i(TAG, "onCreate")
         setContentView(R.layout.adhoc_activity_media_preview)
         initView()
@@ -84,19 +83,6 @@ class AdHocPreviewActivity : AppCompatActivity() {
         postponeEnterTransition()
         ALog.i(TAG, "initView")
         initResources()
-    }
-
-
-    private fun <T : Fragment> initFragment(@IdRes target: Int,
-                                            fragment: T,
-                                            extras: Bundle?): T {
-        if (extras != null) {
-            fragment.arguments = extras
-        }
-        supportFragmentManager.beginTransaction()
-                .replace(target, fragment)
-                .commitAllowingStateLoss()
-        return fragment
     }
 
     private fun initResources() {
@@ -139,9 +125,6 @@ class AdHocPreviewActivity : AppCompatActivity() {
         })
 
         preview_more_view.setMoreViewListener(mFragment ?: return)
-//        enterTransitionId = intent.getLongExtra(INDEX_ID, 0L)
-//        startPostponedEnterTransition()
-//        ViewCompat.setTransitionName(preview_container, "${ShareElements.Activity.MEDIA_PREIVEW}$enterTransitionId")
 
     }
 

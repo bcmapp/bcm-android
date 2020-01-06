@@ -15,11 +15,13 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.util.ChatComponentListener
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.activity.ApkInstallRequestActivity
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmFileUtils
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -95,10 +97,10 @@ open class AdHocPreviewClickListener : ChatComponentListener {
         private fun gotoActivity(context: Context, intent: Intent, bundle: Bundle?) {
             try {
                 if (context is Activity) {
-                    context.startActivity(intent, bundle)
+                    context.startBcmActivity(AMELogin.majorContext, intent, bundle)
                 } else {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(intent, bundle)
+                    context.startBcmActivity(AMELogin.majorContext, intent, bundle)
                 }
             } catch (ex: Exception) {
                 ALog.e(TAG, "gotoActivity error", ex)

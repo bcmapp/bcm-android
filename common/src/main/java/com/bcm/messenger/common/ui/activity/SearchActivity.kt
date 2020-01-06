@@ -208,7 +208,11 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
 
         var f: Fragment? = mCurrentSearchFragment
         if (f == null) {
-            f = supportFragmentManager.fragmentFactory.instantiate(classLoader, mCurrentFragmentClazz.orEmpty())
+            f = supportFragmentManager.fragmentFactory.instantiate(classLoader, mCurrentFragmentClazz.orEmpty()).apply {
+                arguments = Bundle().apply {
+                    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, getAccountContext())
+                }
+            }
             mCurrentSearchFragment = f
             tran.add(R.id.search_main_layout, f)
 

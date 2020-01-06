@@ -1,7 +1,5 @@
 package com.bcm.messenger.adhoc.ui.setting
 
-import android.content.Context
-import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.SpannableString
@@ -18,26 +16,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.sdk.AdHocSDK
 import com.bcm.messenger.adhoc.sdk.LogData
-import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.utility.logger.ALog
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.adhoc_channel_log_activity.*
-import com.bcm.messenger.common.SwipeBaseActivity
 import java.text.SimpleDateFormat
 
 class AdHocLogActivity: SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<LogData> {
     private val dataSource = AdHocSDK.getLogSource()
     private val sdf = SimpleDateFormat("HH:mm:ss.SSS")
     private var canAutoScroll = true
-
-    companion object {
-        fun router(context: Context) {
-            val intent = Intent(context, AdHocLogActivity::class.java)
-            context.startActivity(intent)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

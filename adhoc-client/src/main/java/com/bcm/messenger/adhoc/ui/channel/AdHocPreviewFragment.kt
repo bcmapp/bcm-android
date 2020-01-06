@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
 import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
@@ -17,13 +16,12 @@ import com.bcm.messenger.adhoc.logic.AdHocMessageModel
 import com.bcm.messenger.chats.mediapreview.DragLayout
 import com.bcm.messenger.chats.mediapreview.MediaMoreView
 import com.bcm.messenger.chats.util.AttachmentSaver
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.ui.popup.ToastUtil
-import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.MediaUtil
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.video.VideoPlayer
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -35,7 +33,7 @@ import kotlin.math.min
  * adhoc preview fragment
  * Created by Kin on 2018/10/31
  */
-class AdHocPreviewFragment : Fragment(), MediaMoreView.MoreViewActionListener {
+class AdHocPreviewFragment : BaseFragment(), MediaMoreView.MoreViewActionListener {
 
     private val TAG = "AdHocPreviewFragment"
     private val glide = GlideApp.with(AppContextHolder.APP_CONTEXT)
@@ -177,7 +175,7 @@ class AdHocPreviewFragment : Fragment(), MediaMoreView.MoreViewActionListener {
 
             preview_player?.hideVideoThumbnail()
             if (mediaUri != null) {
-                preview_player?.setVideoSource(BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) ?: throw Exception("getMasterSecret fail"), mediaUri, false)
+                preview_player?.setVideoSource(getMasterSecret(), mediaUri, false)
             }
         }
     }

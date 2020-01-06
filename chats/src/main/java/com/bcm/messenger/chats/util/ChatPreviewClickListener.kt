@@ -235,10 +235,10 @@ open class ChatPreviewClickListener : ChatComponentListener {
         private fun gotoActivity(context: Context, intent: Intent, bundle: Bundle?) {
             try {
                 if (context is Activity) {
-                    context.startActivity(intent, bundle)
+                    context.startBcmActivity(AMELogin.majorContext, intent, bundle)
                 } else {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(intent, bundle)
+                    context.startBcmActivity(AMELogin.majorContext, intent, bundle)
                 }
             } catch (ex: Exception) {
                 ALog.e(TAG, "gotoActivity error", ex)

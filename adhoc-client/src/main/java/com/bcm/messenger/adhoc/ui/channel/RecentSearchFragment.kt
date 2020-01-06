@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.adhoc.R
@@ -16,6 +15,7 @@ import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.adhoc.logic.AdHocSession
 import com.bcm.messenger.adhoc.logic.AdHocSessionLogic
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.api.ISearchCallback
 import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.finder.BcmFinderType
@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.adhoc_fragment_recent_search.*
 /**
  * Created by wjh on 2019/4/3
  */
-class RecentSearchFragment() : Fragment(), AdHocChannelLogic.IAdHocChannelListener {
+class RecentSearchFragment() : BaseFragment(), AdHocChannelLogic.IAdHocChannelListener {
 
     private var mChecker = object : BcmFinderManager.SearchRecordChecker {
         override fun isValid(record: SearchRecordDetail): Boolean {
@@ -61,7 +61,7 @@ class RecentSearchFragment() : Fragment(), AdHocChannelLogic.IAdHocChannelListen
         val adapter = RecentAdapter(context ?: return)
         recent_list.adapter = adapter
 
-        BcmFinderManager.get().querySearchRecord(mChecker) {
+        BcmFinderManager.get(getAccountContext()).querySearchRecord(mChecker) {
             recent_title_tv?.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
             ALog.i("RecentSearchFragment", "querySearchRecord list: ${it.size}")
             adapter.setDataList(it)

@@ -80,7 +80,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
         channel_invite_item.setOnClickListener {
             val channel = AdHocChannelLogic.getChannel(mSessionInfo?.cid ?: "")
             if (channel != null) {
-                startActivity(Intent(this, AdHocInviteJoinActivity::class.java).apply {
+                startBcmActivity(Intent(this, AdHocInviteJoinActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.ADHOC.CID, channel.cid)
                     putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, mSessionId)
                 })
@@ -261,7 +261,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
                 val intent = Intent(it.context, AdHocChannelMemberListActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, mSessionId)
                 }
-                startActivity(intent)
+                startBcmActivity(intent)
             }
 
             updateMemberList()
@@ -299,7 +299,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
             return
         }
         val holder = viewHolder as MemberHolder
-        val address = Address.fromSerialized(holder.getData()?.uid ?: return)
+        val address = Address.from(getAccountContext(), holder.getData()?.uid ?: return)
         if (address.isCurrentLogin) {
             return
         }
@@ -314,7 +314,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
         override fun setData(data: ChannelUserInfo) {
             super.setData(data)
 
-            avatar.setPhoto(AMELogin.majorContext, Recipient.from(AMELogin.majorContext, Address.fromSerialized(data.uid), true), data.name, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+            avatar.setPhoto(AMELogin.majorContext, Recipient.from(AMELogin.majorContext, data.uid, true), data.name, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
             name.text = data.name
         }
     }

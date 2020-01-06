@@ -1,6 +1,5 @@
 package com.bcm.messenger.adhoc.ui.channel
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -8,20 +7,13 @@ import android.text.TextWatcher
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocSessionLogic
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.showKeyboard
+import com.bcm.messenger.common.utils.startBcmActivity
 import kotlinx.android.synthetic.main.adhoc_chanel_join_activity.*
-import com.bcm.messenger.common.SwipeBaseActivity
 
 class AdHocJoinChannelActivity: SwipeBaseActivity(), TextWatcher {
-    companion object {
-        fun router(context:Context, title:String, option:String) {
-            val intent = Intent(context, AdHocJoinChannelActivity::class.java)
-            intent.putExtra("name", title)
-            intent.putExtra("option", option)
-            context.startActivity(intent)
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -93,7 +85,7 @@ class AdHocJoinChannelActivity: SwipeBaseActivity(), TextWatcher {
         AdHocSessionLogic.addChannelSession(name, passwd) {
             //enter session
             if (it.isNotEmpty()) {
-                startActivity(Intent(this, AdHocConversationActivity::class.java).apply {
+                startBcmActivity(Intent(this, AdHocConversationActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, it)
                 })
             }

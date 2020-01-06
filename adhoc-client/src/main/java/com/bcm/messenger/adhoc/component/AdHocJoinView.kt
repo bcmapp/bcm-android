@@ -3,8 +3,8 @@ package com.bcm.messenger.adhoc.component
 import android.content.Context
 import android.content.Intent
 import android.text.SpannableStringBuilder
-import androidx.constraintlayout.widget.ConstraintLayout
 import android.util.AttributeSet
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocChannel
 import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
@@ -12,10 +12,12 @@ import com.bcm.messenger.adhoc.logic.AdHocSessionLogic
 import com.bcm.messenger.adhoc.ui.channel.AdHocConversationActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.utility.QuickOpCheck
-import com.bcm.messenger.utility.StringAppearanceUtil
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.getDrawable
+import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.utility.QuickOpCheck
+import com.bcm.messenger.utility.StringAppearanceUtil
 import kotlinx.android.synthetic.main.adhoc_join_view.view.*
 
 /**
@@ -39,7 +41,7 @@ class AdHocJoinView @JvmOverloads constructor(context: Context, attrs: Attribute
             val content = mContent ?: return@setOnClickListener
             AdHocSessionLogic.addChannelSession(content.name, content.password) {
                 if (it.isNotEmpty()) {
-                    context.startActivity(Intent(context, AdHocConversationActivity::class.java).apply {
+                    context.startBcmActivity(AMELogin.majorContext, Intent(context, AdHocConversationActivity::class.java).apply {
                         putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, it)
                     })
                 }

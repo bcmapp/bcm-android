@@ -7,13 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.fragment.app.Fragment
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.mediabrowser.MediaVideoDurationEvent
 import com.bcm.messenger.chats.mediapreview.bean.MSG_TYPE_PRIVATE
 import com.bcm.messenger.chats.mediapreview.bean.MediaViewData
 import com.bcm.messenger.chats.util.GroupAttachmentProgressEvent
 import com.bcm.messenger.chats.util.HistoryGroupAttachmentProgressEvent
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.MessageRecord
@@ -39,7 +39,7 @@ import kotlin.math.min
  * media preview fragment
  * Created by Kin on 2018/10/31
  */
-class MediaViewFragment : Fragment() {
+class MediaViewFragment : BaseFragment() {
 
     private val TAG = "MediaViewFragment"
     private var mData: MediaViewData? = null
@@ -250,7 +250,7 @@ class MediaViewFragment : Fragment() {
         EventBus.getDefault().post(MediaVideoDurationEvent(attachmentId, durationInSections))
         Observable.create<Boolean> {
             try {
-                Repository.getAttachmentRepo().updateDuration(attachmentId.rowId, attachmentId.uniqueId, durationInSections)
+                Repository.getAttachmentRepo(getAccountContext())?.updateDuration(attachmentId.rowId, attachmentId.uniqueId, durationInSections)
                 it.onNext(true)
             } catch (ex: Exception) {
                 ALog.e(TAG, "updateVideoDuration", ex)

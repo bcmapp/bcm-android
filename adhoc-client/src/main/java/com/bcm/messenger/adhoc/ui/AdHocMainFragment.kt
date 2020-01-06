@@ -83,7 +83,7 @@ class AdHocMainFragment: BaseFragment(),
         if (requestCode == FIND_SESSION_REQUEST && resultCode == Activity.RESULT_OK) {
             val targetSession = data?.getStringExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION)
             if (targetSession != null) {
-                startActivity(Intent(context, AdHocConversationActivity::class.java).apply {
+                startBcmActivity(Intent(context, AdHocConversationActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, targetSession)
                 })
             }
@@ -103,10 +103,16 @@ class AdHocMainFragment: BaseFragment(),
             override fun onClickRight() {
                 AmePopup.bottom.newBuilder()
                         .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.adhoc_create_chat_room)){
-                            AdHocJoinChannelActivity.router(context?:return@PopupItem, getString(R.string.adhoc_create_chat_room), getString(R.string.adhoc_chat_room_create))
+                            val intent = Intent(context, AdHocJoinChannelActivity::class.java)
+                            intent.putExtra("name", getString(R.string.adhoc_create_chat_room))
+                            intent.putExtra("option", getString(R.string.adhoc_chat_room_create))
+                            startBcmActivity(intent)
                         })
-                        .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.adhoc_join_chat_room)){
-                            AdHocJoinChannelActivity.router(context?:return@PopupItem, getString(R.string.adhoc_join_chat_room), getString(R.string.adhoc_chat_room_join))
+                        .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.adhoc_join_chat_room)) {
+                            val intent = Intent(context, AdHocJoinChannelActivity::class.java)
+                            intent.putExtra("name", getString(R.string.adhoc_join_chat_room))
+                            intent.putExtra("option", getString(R.string.adhoc_chat_room_join))
+                            startBcmActivity(intent)
                         })
                         .withDoneTitle(getString(R.string.common_cancel))
                         .show(this@AdHocMainFragment.context as? FragmentActivity)
@@ -119,9 +125,8 @@ class AdHocMainFragment: BaseFragment(),
                 return@setOnClickListener
             }
 
-
             val intent = Intent(it.context, AdHocSettingActivity::class.java)
-            it.context.startActivity(intent)
+            startBcmActivity(intent)
         }
 
         adhoc_main_device_error.setOnClickListener {
@@ -139,7 +144,7 @@ class AdHocMainFragment: BaseFragment(),
             val settingGuide = adhoc_main_toolbar.getCenterView().second?.findViewById<View>(R.id.adhoc_setting_guide)
             settingGuide?.setOnClickListener(MultiClickObserver(5, object : MultiClickObserver.MultiClickListener {
                 override fun onMultiClick(view: View?, count: Int) {
-                    AdHocDevSettingActivity.router(context as Activity)
+                    startBcmActivity(Intent(context, AdHocDevSettingActivity::class.java))
                 }
             }))
         }
@@ -209,7 +214,7 @@ class AdHocMainFragment: BaseFragment(),
                 setMode(CommonSearchBar.MODE_DISPLAY)
                 setOnSearchActionListener(object : CommonSearchBar.OnSearchActionListener {
                     override fun onJump() {
-                        SearchActivity.callSearchActivity(context, "", true, false, CurrentSearchFragment::class.java.name, RecentSearchFragment::class.java.name, 0)
+                        SearchActivity.callSearchActivity(context, getAccountContext(),"", true, false, CurrentSearchFragment::class.java.name, RecentSearchFragment::class.java.name, 0)
                     }
 
                     override fun onSearch(keyword: String) {
@@ -251,7 +256,7 @@ class AdHocMainFragment: BaseFragment(),
         }
         if (viewHolder is AdHocItemHolder) {
             val data = viewHolder.getData() as AdHocSession
-            startActivity(Intent(context, AdHocConversationActivity::class.java).apply {
+            startBcmActivity(Intent(context, AdHocConversationActivity::class.java).apply {
                 putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, data.sessionId)
             })
         }

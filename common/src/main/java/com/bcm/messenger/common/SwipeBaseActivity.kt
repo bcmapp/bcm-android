@@ -38,6 +38,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     private lateinit var mAccountContext: AccountContext
     private lateinit var mLoginRecipient: Recipient
+
     private var disableDefaultTransition = false
     private var disabledClipboardCheck = false
     private var disabledLightStatusBar = false
@@ -81,8 +82,8 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
             return
         }
         mAccountContext = accountContext
-        mLoginRecipient = Recipient.login(mAccountContext)
-        mLoginRecipient.addListener(mLoginModifiedListener)
+        setAccountContext(accountContext)
+
         mHelper = SwipeBackActivityHelper(this)
         mHelper.onActivityCreate()
         swipeBackLayout.setScrimColor(getColorCompat(R.color.common_color_transparent))
@@ -97,10 +98,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         val accountContext: AccountContext? = intent?.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
         if (accountContext != null) {
             ALog.w(TAG, "onNewIntent, new accountContext: ${accountContext.uid}")
-            mAccountContext = accountContext
-            mLoginRecipient.removeListener(mLoginModifiedListener)
-            mLoginRecipient = Recipient.login(accountContext)
-            mLoginRecipient.addListener(mLoginModifiedListener)
+            setAccountContext(accountContext)
         }
     }
 
@@ -196,6 +194,19 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     fun getAccountContext(): AccountContext = mAccountContext
 
     fun getAccountRecipient(): Recipient = mLoginRecipient
+
+    fun setAccountContext(context: AccountContext) {
+        mAccountContext = context
+        setAccountRecipient(Recipient.login(context))
+    }
+
+    private fun setAccountRecipient(recipient: Recipient) {
+        if (::mLoginRecipient.isInitialized) {
+            mLoginRecipient.removeListener(mLoginModifiedListener)
+        }
+        mLoginRecipient = recipient
+        mLoginRecipient.addListener(mLoginModifiedListener)
+    }
 
     /**
      * Disable default activity transition animation if you want to specify a custom one.

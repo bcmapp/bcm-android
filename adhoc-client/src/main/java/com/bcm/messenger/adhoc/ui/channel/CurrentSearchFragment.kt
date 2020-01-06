@@ -8,13 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.component.AdHocSessionAvatar
 import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.adhoc.logic.AdHocSession
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.api.ISearchAction
 import com.bcm.messenger.common.api.ISearchCallback
 import com.bcm.messenger.common.finder.BcmFinderManager
@@ -22,6 +22,7 @@ import com.bcm.messenger.common.finder.BcmFinderType
 import com.bcm.messenger.common.finder.SearchItemData
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -30,7 +31,7 @@ import kotlinx.android.synthetic.main.adhoc_fragment_current_search.*
 /**
  * Created by wjh on 2019/4/3
  */
-class CurrentSearchFragment() : Fragment(), ISearchAction, AdHocChannelLogic.IAdHocChannelListener {
+class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic.IAdHocChannelListener {
 
     private val TAG = "CurrentSearchFragment"
 
@@ -117,9 +118,9 @@ class CurrentSearchFragment() : Fragment(), ISearchAction, AdHocChannelLogic.IAd
         }
         showLoading()
         if (searchLimit) {
-            BcmFinderManager.get().querySearchResultLimit(keyword, types, callback)
+            BcmFinderManager.get(getAccountContext()).querySearchResultLimit(keyword, types, callback)
         }else {
-            BcmFinderManager.get().querySearchResult(keyword, types, callback)
+            BcmFinderManager.get(getAccountContext()).querySearchResult(keyword, types, callback)
         }
     }
 
@@ -161,7 +162,7 @@ class CurrentSearchFragment() : Fragment(), ISearchAction, AdHocChannelLogic.IAd
                     a.onSelect(data?.type ?: return@setOnClickListener, session.sessionId)
                 }
                 a?.finish()
-                startActivity(Intent(it.context, AdHocConversationActivity::class.java).apply {
+                startBcmActivity(Intent(it.context, AdHocConversationActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, session.sessionId)
                 })
             }
