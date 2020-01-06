@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
+import com.bcm.messenger.common.database.dao.DraftDao
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.model.DraftDbModel
 import com.bcm.messenger.utility.logger.ALog
@@ -12,7 +13,10 @@ import java.util.*
 /**
  * Created by Kin on 2019/9/17
  */
-class DraftRepo(private val accountContext: AccountContext) {
+class DraftRepo(
+        private val accountContext: AccountContext,
+        private val draftDao: DraftDao
+) {
 
 
     class Draft(val type: String, val value: String) {
@@ -68,7 +72,6 @@ class DraftRepo(private val accountContext: AccountContext) {
     }
 
     private val TAG = "DraftRepo"
-    private val draftDao = UserDatabase.getDatabase(accountContext).getDraftDao()
 
     fun insertDrafts(threadId: Long, drafts: List<Draft>) {
         UserDatabase.getDatabase(accountContext).runInTransaction {

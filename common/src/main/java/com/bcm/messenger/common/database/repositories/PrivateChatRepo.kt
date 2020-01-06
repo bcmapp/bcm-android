@@ -6,7 +6,7 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.MessagingDatabase
-import com.bcm.messenger.common.database.db.UserDatabase
+import com.bcm.messenger.common.database.dao.PrivateChatDao
 import com.bcm.messenger.common.database.model.PrivateChatDbModel
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.mms.IncomingMediaMessage
@@ -18,21 +18,21 @@ import com.bcm.messenger.common.sms.IncomingTextMessage
 import com.bcm.messenger.common.sms.OutgoingTextMessage
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.RxBus
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import java.util.*
 
 /**
  * Created by Kin on 2019/9/16
  */
-class PrivateChatRepo(private val accountContext: AccountContext) {
+class PrivateChatRepo(
+        private val accountContext: AccountContext,
+        private val chatDao: PrivateChatDao
+) {
     companion object {
         const val CHANGED_TAG = "MessageChanged"
     }
 
     private val TAG = "PrivateChatRepo"
-
-    private val chatDao = UserDatabase.getDatabase(accountContext).getPrivateChatDao()
 
     private fun notifyMessageChanged(event: PrivateChatEvent) {
         RxBus.post(event)
@@ -183,7 +183,7 @@ class PrivateChatRepo(private val accountContext: AccountContext) {
         return messageId
     }
 
-    fun insertIncomingTextMessage(accountContext: AccountContext, message: IncomingTextMessage): Pair<Long, Long> {
+    fun insertIncomingTextMessage(message: IncomingTextMessage): Pair<Long, Long> {
         val model = MessageRecord()
         val threadRepo = Repository.getThreadRepo(accountContext)
 
@@ -245,7 +245,7 @@ class PrivateChatRepo(private val accountContext: AccountContext) {
         return Pair(threadId, messageId)
     }
 
-    fun insertIncomingMediaMessage(accountContext: AccountContext, masterSecret: MasterSecret, message: IncomingMediaMessage): Pair<Long, Long> {
+    fun insertIncomingMediaMessage(masterSecret: MasterSecret, message: IncomingMediaMessage): Pair<Long, Long> {
         val model = MessageRecord()
         val threadRepo = Repository.getThreadRepo(accountContext)
 

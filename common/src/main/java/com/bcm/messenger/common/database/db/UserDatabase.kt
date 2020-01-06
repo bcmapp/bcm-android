@@ -9,10 +9,8 @@ import com.bcm.messenger.common.database.converters.PrivacyProfileConverter
 import com.bcm.messenger.common.database.converters.UriConverter
 import com.bcm.messenger.common.database.dao.*
 import com.bcm.messenger.common.database.model.*
-import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.room.dao.*
 import com.bcm.messenger.common.grouprepository.room.entity.*
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.utility.AppContextHolder
@@ -52,44 +50,14 @@ import java.io.File
     UriConverter::class,
     PrivacyProfileConverter::class
 ])
-abstract class UserDatabase : RoomDatabase() {
+internal abstract class UserDatabase : RoomDatabase() {
     companion object {
         private const val TAG = "UserDatabase"
 
         const val USER_DATABASE_VERSION = 3
 
-        @Volatile
-        private var sInstance: UserDatabase? = null
-
-        fun getDatabase(accountContext: AccountContext): UserDatabase {
-            //todo wangshuhe
-            if (sInstance == null) {
-                synchronized(UserDatabase::class.java) {
-                    if (sInstance == null) {
-                        sInstance = openDatabase(accountContext)
-                    }
-                }
-            }
-            return sInstance!!
-        }
-
-        @Synchronized
-        fun closeDatabase() {
-            try {
-                sInstance?.close()
-                sInstance = null
-            } catch (tr: Throwable) {
-                ALog.e(TAG, "Close database failed. Reason is ${tr.message}")
-            }
-        }
-
-        fun resetDatabase(accountContext: AccountContext) {
-            closeDatabase()
-            getDatabase(accountContext)
-            Repository.getInstance(accountContext).reset()
-        }
-
-        private fun openDatabase(accountContext: AccountContext, needCheckDb: Boolean = true): UserDatabase {
+        @JvmStatic
+        fun openDatabase(accountContext: AccountContext, needCheckDb: Boolean = true): UserDatabase {
             val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
             val options = SafeHelperFactory.Options.builder().setClearPassphrase(false).build()
             val factory = SafeHelperFactory(masterSecret?.encryptionKey?.encoded, options)

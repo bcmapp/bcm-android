@@ -6,6 +6,8 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.MessagingDatabase
+import com.bcm.messenger.common.database.dao.PrivateChatDao
+import com.bcm.messenger.common.database.dao.ThreadDao
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.model.ThreadDbModel
 import com.bcm.messenger.common.database.records.AttachmentRecord
@@ -24,7 +26,11 @@ import com.bcm.messenger.utility.logger.ALog
 /**
  * Created by Kin on 2019/9/17
  */
-class ThreadRepo(private val accountContext:AccountContext) {
+class ThreadRepo(
+        private val accountContext:AccountContext,
+        private val threadDao: ThreadDao,
+        private val chatDao: PrivateChatDao
+) {
     private val TAG = "ThreadRepo"
 
     object DistributionTypes {
@@ -35,9 +41,6 @@ class ThreadRepo(private val accountContext:AccountContext) {
         const val INBOX_ZERO = 4
         const val NEW_GROUP = 5
     }
-
-    private val threadDao = UserDatabase.getDatabase(accountContext).getThreadDao()
-    private val chatDao = UserDatabase.getDatabase(accountContext).getPrivateChatDao()
 
     private fun getAttachment(record: MessageRecord): AttachmentRecord? {
         if (!record.isMediaMessage()) {

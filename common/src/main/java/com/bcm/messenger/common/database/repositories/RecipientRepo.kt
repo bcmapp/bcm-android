@@ -5,6 +5,7 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.config.BcmFeatureSupport
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
+import com.bcm.messenger.common.database.dao.RecipientDao
 import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.model.IdentityDbModel
 import com.bcm.messenger.common.database.model.RecipientDbModel
@@ -27,10 +28,11 @@ import org.whispersystems.libsignal.IdentityKey
 /**
  * Created by Kin on 2019/9/24
  */
-class RecipientRepo(private val accountContext: AccountContext) {
+class RecipientRepo(
+        private val accountContext: AccountContext,
+        private val recipientDao: RecipientDao
+) {
     private val TAG = "RecipientRepo"
-
-    private val recipientDao = UserDatabase.getDatabase(accountContext).getRecipientDao()
 
     enum class Relationship(val type: Int) {
         STRANGER(0),

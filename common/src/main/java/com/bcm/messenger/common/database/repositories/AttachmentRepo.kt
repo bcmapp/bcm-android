@@ -10,7 +10,6 @@ import com.bcm.messenger.common.crypto.CtrStreamUtil
 import com.bcm.messenger.common.crypto.DecryptingPartInputStream
 import com.bcm.messenger.common.crypto.EncryptingPartOutputStream
 import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.model.AttachmentDbModel
 import com.bcm.messenger.common.database.records.AttachmentRecord
 import com.bcm.messenger.common.event.PartProgressEvent
@@ -20,6 +19,7 @@ import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.MediaUtil
 import com.bcm.messenger.common.crypto.encrypt.ChatFileEncryptDecryptUtil
 import com.bcm.messenger.common.crypto.encrypt.FileInfo
+import com.bcm.messenger.common.database.dao.AttachmentDao
 import com.bcm.messenger.common.video.exo.CtrDataSource
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.BitmapUtils
@@ -34,10 +34,11 @@ import java.util.concurrent.Callable
 /**
  * Created by Kin on 2019/9/19
  */
-class AttachmentRepo(private val accountContext: AccountContext) {
+class AttachmentRepo(
+        private val accountContext: AccountContext,
+        private val attachmentDao: AttachmentDao
+) {
     private val TAG = "AttachmentRepo"
-
-    private val attachmentDao = UserDatabase.getDatabase(accountContext).getAttachmentDao()
 
     private val thumbnailExecutor = Util.newSingleThreadedLifoExecutor()
 
@@ -351,6 +352,6 @@ class AttachmentRepo(private val accountContext: AccountContext) {
     }
 
     private fun notifyAttachmentUpdate(mid: Long) {
-        Repository.getChatRepo(accountContext).attachmentUpdate(mid)
+        Repository.getChatRepo(accountContext)?.attachmentUpdate(mid)
     }
 }
