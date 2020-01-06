@@ -1,4 +1,4 @@
-package com.bcm.messenger.contacts.net;
+package com.bcm.messenger.common.utils;
 
 import org.whispersystems.signalservice.internal.util.Base64;
 import org.whispersystems.signalservice.internal.util.Util;

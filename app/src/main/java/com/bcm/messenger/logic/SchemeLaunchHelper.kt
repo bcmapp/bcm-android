@@ -9,6 +9,7 @@ import com.bcm.messenger.R
 import com.bcm.messenger.chats.privatechat.webrtc.CameraState
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
@@ -17,17 +18,14 @@ import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
-import com.bcm.messenger.common.provider.accountmodule.IChatModule
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.base64Decode
-import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.common.provider.accountmodule.IChatModule
-import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.contacts.FriendRequestsListActivity
 import com.bcm.messenger.share.SystemShareActivity
 import com.bcm.messenger.ui.HomeActivity
@@ -166,7 +164,6 @@ class SchemeLaunchHelper(val context: Context) {
         try {
             val current = AmeAppLifecycle.current() ?: return
             if (!data.isNullOrEmpty()) {
-                ALog.d(TAG, "handleTopEvent data: $data")
                 val event = GsonUtils.fromJson<HomeTopEvent>(data, object : TypeToken<HomeTopEvent>() {}.type)
                 fun continueAction() {
                     if (event.finishTop) {
@@ -178,7 +175,7 @@ class SchemeLaunchHelper(val context: Context) {
                         val threadId = con.threadId
                         val address = con.address
                         if (threadId <= 0L && address != null && con.createIfNotExist) {
-                            ThreadListViewModel.getThreadId(Recipient.from(address, true)) {newThreadId ->
+                            ThreadListViewModel.getThreadId(Recipient.from(address, true)) { newThreadId ->
                                 BcmRouter.getInstance()
                                         .get(con.path)
                                         .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
@@ -200,8 +197,7 @@ class SchemeLaunchHelper(val context: Context) {
 
                     val call = event.callEvent
                     if (call != null) {
-                        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONVERSATION_BASE).navigationWithCast<IChatModule>()
-                        provider.startRtcCallService(AppContextHolder.APP_CONTEXT, call.address.serialize(), CameraState.Direction.NONE.ordinal)
+                        AmeModuleCenter.chat(AMELogin.majorContext)?.startRtcCallService(AppContextHolder.APP_CONTEXT, call.address, CameraState.Direction.NONE.ordinal)
                     }
                 }
 
@@ -240,8 +236,7 @@ class SchemeLaunchHelper(val context: Context) {
             return
         }
         val name = uri.getQueryParameter("name")
-        val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-        contactProvider.openContactDataActivity(AppContextHolder.APP_CONTEXT, Address.fromSerialized(uid), name)
+        AmeModuleCenter.contact(AMELogin.majorContext)?.openContactDataActivity(AppContextHolder.APP_CONTEXT, Address.from(AMELogin.majorContext, uid), name)
     }
 
     private fun doForGroupJoin(uri: Uri) {
@@ -287,9 +282,10 @@ class SchemeLaunchHelper(val context: Context) {
             ALog.i(TAG, "routeToChat by message")
 
             val notify = Gson().fromJson(message, AmePushProcess.BcmNotify::class.java)
+            val accountContext = checkTargetHashRight(notify.targetHash) ?: return
             notify.contactChat?.uid?.let {
                 try {
-                    val decryptSource = BCMEncryptUtils.decryptSource(it.toByteArray())
+                    val decryptSource = BCMEncryptUtils.decryptSource(accountContext, it.toByteArray())
                     notify.contactChat?.uid = decryptSource
                 } catch (e: Exception) {
                     ALog.e(TAG, "Uid decrypted failed!")
@@ -298,10 +294,10 @@ class SchemeLaunchHelper(val context: Context) {
             }
             if (null != notify) {
                 when {
-                    notify.contactChat != null -> toChat(notify.contactChat)
-                    notify.groupChat != null -> toGroup(notify.groupChat)
-                    notify.friendMsg != null -> toFriendReq(notify.contactChat)
-                    notify.adhocChat != null -> toAdHoc(notify.adhocChat)
+                    notify.contactChat != null -> toChat(accountContext, notify.contactChat)
+                    notify.groupChat != null -> toGroup(accountContext, notify.groupChat)
+                    notify.friendMsg != null -> toFriendReq(accountContext, notify.contactChat)
+                    notify.adhocChat != null -> toAdHoc(accountContext, notify.adhocChat)
                 }
             }
         } catch (e: JsonSyntaxException) {
@@ -336,17 +332,16 @@ class SchemeLaunchHelper(val context: Context) {
 
     }
 
-    private fun toChat(data: AmePushProcess.ChatNotifyData?) {
+    private fun toChat(accountContext: AccountContext, data: AmePushProcess.ChatNotifyData?) {
         val current = AmeAppLifecycle.current() ?: return
-
         val uid = data?.uid
         if (uid != null) {
-            val address = Address.fromSerialized(uid)
-            ThreadListViewModel.getThreadId(Recipient.from(AppContextHolder.APP_CONTEXT, address, true)) {
+            val address = Address.from(accountContext, uid)
+            ThreadListViewModel.getThreadId(Recipient.from(address, true)) {
                 BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_CONVERSATION_PATH)
                         .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
                         .putLong(ARouterConstants.PARAM.PARAM_THREAD, it)
-                        .navigation(current)
+                        .startBcmActivity(accountContext, current)
             }
         } else {
             ALog.e(TAG, "chat - unknown push data")
@@ -354,7 +349,7 @@ class SchemeLaunchHelper(val context: Context) {
 
     }
 
-    private fun toGroup(data: AmePushProcess.GroupNotifyData?) {
+    private fun toGroup(accountContext: AccountContext, data: AmePushProcess.GroupNotifyData?) {
         val current = AmeAppLifecycle.current() ?: return
         if (data?.gid != null && data.mid != null) {
             BcmRouter.getInstance()
@@ -363,27 +358,26 @@ class SchemeLaunchHelper(val context: Context) {
                     .putLong(ARouterConstants.PARAM.PARAM_THREAD, -1)
                     .putBoolean(ARouterConstants.PARAM.PRIVATE_CHAT.IS_ARCHIVED_EXTRA, true)
                     .putInt(ARouterConstants.PARAM.PRIVATE_CHAT.DISTRIBUTION_TYPE_EXTRA, ThreadRepo.DistributionTypes.NEW_GROUP)
-                    .navigation(current)
+                    .startBcmActivity(accountContext, current)
         } else {
             ALog.e(TAG, "group - unknown push data")
         }
     }
 
-    private fun toFriendReq(data: AmePushProcess.FriendNotifyData?) {
+    private fun toFriendReq(accountContext: AccountContext, data: AmePushProcess.FriendNotifyData?) {
         val current = AmeAppLifecycle.current() ?: return
-        AmeAppLifecycle.current()?.startActivity(Intent(current, FriendRequestsListActivity::class.java))
+        AmeAppLifecycle.current()?.startBcmActivity(accountContext, Intent(current, FriendRequestsListActivity::class.java))
     }
 
-    private fun toAdHoc(data: AmePushProcess.AdHocNotifyData?) {
+    private fun toAdHoc(accountContext: AccountContext, data: AmePushProcess.AdHocNotifyData?) {
         val current = AmeAppLifecycle.current() ?: return
         if (!data?.session.isNullOrEmpty()) {
-
             val adHocProvider = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
             if (adHocProvider?.isAdHocMode() == true) {
                 BcmRouter.getInstance()
                         .get(ARouterConstants.Activity.ADHOC_CONVERSATION)
                         .putString(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, data?.session)
-                        .navigation(current)
+                        .startBcmActivity(accountContext, current)
             } else {
                 ALog.i(TAG, "if not adhoc，ignore")
             }
@@ -391,5 +385,21 @@ class SchemeLaunchHelper(val context: Context) {
         } else {
             ALog.w(TAG, "adhoc -- unknown push data")
         }
+    }
+
+    /**
+     * check offline target hash can route
+     */
+    private fun checkTargetHashRight(targetHash: Long): AccountContext? {
+        val accountContext = AmePushProcess.findAccountContext(targetHash)
+        if (accountContext == null) {
+            ALog.w(TAG, "checkTargetHashRight fail, find account context null")
+            return null
+        }
+        if (accountContext != AMELogin.majorContext) {
+            ALog.w(TAG, "checkTargetHashRight fail, accountContext is not major")
+            return null
+        }
+        return accountContext
     }
 }

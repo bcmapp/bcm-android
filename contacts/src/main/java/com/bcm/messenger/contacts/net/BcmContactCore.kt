@@ -10,6 +10,7 @@ import com.bcm.messenger.common.database.records.RecipientSettings
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
+import com.bcm.messenger.common.utils.BcmHash
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.EncryptUtils

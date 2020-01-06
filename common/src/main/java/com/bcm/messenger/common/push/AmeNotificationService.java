@@ -17,10 +17,12 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import com.bcm.messenger.common.ARouterConstants;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.BuildConfig;
 import com.bcm.messenger.common.utils.AmePushProcess;
 import com.bcm.messenger.common.utils.AppUtil;
 import com.bcm.messenger.common.utils.BcmFileUtils;
+import com.bcm.messenger.common.utils.BcmHash;
 import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.logger.ALog;
 import com.bcm.route.api.BcmRouter;
@@ -41,10 +43,11 @@ public class AmeNotificationService extends Service {
     public final static int ACTION_INSTALL = 3;
     public final static int SYSTEM_WEB_URL = 4;
     public final static int ACTION_FRIEND_REQ = 5;
-    public final static int ACTION_ADHOC = 6;//
+    public final static int ACTION_ADHOC = 6;
 
     public final static String ACTION = "PUSH_ACTION";
     public final static String ACTION_DATA = "PUSH_ACTION_DATA";
+    public final static String ACTION_CONTEXT = "PUSH_ACTION_CONTEXT";
 
     public AmeNotificationService() {
         handler = new Handler(Looper.getMainLooper());
@@ -104,12 +107,17 @@ public class AmeNotificationService extends Service {
                 .navigation();
     }
 
-    private void toChat(Intent intent){
+    private void toChat(Intent intent) {
         AmePushProcess.ChatNotifyData data = intent.getParcelableExtra(ACTION_DATA);
-        if (data != null && data.getUid() != null){
+        AccountContext accountContext = intent.getParcelableExtra(ACTION_CONTEXT);
+        if (data != null && data.getUid() != null) {
+            long targetHash = 0L;
+            if (accountContext != null) {
+                targetHash = BcmHash.hash(accountContext.getUid().getBytes());
+            }
             BcmRouter.getInstance()
                     .get(ARouterConstants.Activity.APP_LAUNCH_PATH)
-                    .putString("bcmdata", new Gson().toJson(new AmePushProcess.BcmNotify(AmePushProcess.CHAT_NOTIFY, data, null, null, null, null)))
+                    .putString("bcmdata", new Gson().toJson(new AmePushProcess.BcmNotify(AmePushProcess.CHAT_NOTIFY, targetHash, data, null, null, null, null)))
                     .navigation();
 
         } else {
@@ -120,10 +128,15 @@ public class AmeNotificationService extends Service {
 
     private void toGroup(Intent intent){
         AmePushProcess.GroupNotifyData data = intent.getParcelableExtra(ACTION_DATA);
-        if (data != null && data.getGid() != null && data.getMid() != null){
+        AccountContext accountContext = intent.getParcelableExtra(ACTION_CONTEXT);
+        if (data != null && data.getGid() != null && data.getMid() != null) {
+            long targetHash = 0L;
+            if (accountContext != null) {
+                targetHash = BcmHash.hash(accountContext.getUid().getBytes());
+            }
             BcmRouter.getInstance()
                     .get(ARouterConstants.Activity.APP_LAUNCH_PATH)
-                    .putString("bcmdata", new Gson().toJson(new AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, null, data, null, null, null)))
+                    .putString("bcmdata", new Gson().toJson(new AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, targetHash,null, data, null, null, null)))
                     .navigation();
         } else {
             ALog.e(TAG, "group - unknown push data");
@@ -171,18 +184,28 @@ public class AmeNotificationService extends Service {
         if (data == null) {
             data = new AmePushProcess.FriendNotifyData("", 1, "");
         }
+        AccountContext accountContext = intent.getParcelableExtra(ACTION_CONTEXT);
+        long targetHash = 0L;
+        if (accountContext != null) {
+            targetHash = BcmHash.hash(accountContext.getUid().getBytes());
+        }
         BcmRouter.getInstance()
                 .get(ARouterConstants.Activity.APP_LAUNCH_PATH)
-                .putString("bcmdata", new Gson().toJson(new AmePushProcess.BcmNotify(AmePushProcess.FRIEND_NOTIFY, null, null, data, null, null)))
+                .putString("bcmdata", new Gson().toJson(new AmePushProcess.BcmNotify(AmePushProcess.FRIEND_NOTIFY, targetHash,null, null, data, null, null)))
                 .navigation();
     }
 
     private void toAdHoc(Intent intent) {
         AmePushProcess.AdHocNotifyData data = intent.getParcelableExtra(ACTION_DATA);
+        AccountContext accountContext = intent.getParcelableExtra(ACTION_CONTEXT);
         if (data != null && !TextUtils.isEmpty(data.getSession())) {
+            long targetHash = 0L;
+            if (accountContext != null) {
+                targetHash = BcmHash.hash(accountContext.getUid().getBytes());
+            }
             BcmRouter.getInstance()
                     .get(ARouterConstants.Activity.APP_LAUNCH_PATH)
-                    .putString("bcmdata", new Gson().toJson(new AmePushProcess.BcmNotify(AmePushProcess.ADHOC_NOTIFY, null, null, null,  data, null)))
+                    .putString("bcmdata", new Gson().toJson(new AmePushProcess.BcmNotify(AmePushProcess.ADHOC_NOTIFY, targetHash,null, null, null,  data, null)))
                     .navigation();
         }else {
             ALog.w(TAG, "adhoc -- unknown push data");
@@ -196,11 +219,12 @@ public class AmeNotificationService extends Service {
     }
 
 
-    public static PendingIntent getIntent(@Nullable Parcelable data, int action, int id){
+    public static PendingIntent getIntent(@Nullable AccountContext accountContext, @Nullable Parcelable data, int action, int id){
         Intent notificationIntent = new Intent();
         notificationIntent.putExtra(ACTION, action);
         if (data != null) {
             notificationIntent.putExtra(ACTION_DATA, data);
+            notificationIntent.putExtra(ACTION_CONTEXT, accountContext);
         }
         notificationIntent.setClass(AppContextHolder.APP_CONTEXT, AmeNotificationService.class);
 

@@ -91,5 +91,8 @@ interface ILoginModule : IAmeModule {
     fun updateAllowReceiveStrangers(accountContext: AccountContext, allow: Boolean, callback: ((succeed: Boolean) -> Unit)?)
 
     fun getAccountContext(uid: String): AccountContext
+
     fun refreshOfflineToken()
+
+    fun getLoginAccountContextList(): List<AccountContext>
 }

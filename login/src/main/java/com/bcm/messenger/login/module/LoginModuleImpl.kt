@@ -194,6 +194,10 @@ class LoginModuleImpl : ILoginModule
         return AmeLoginLogic.refreshOfflineToken()
     }
 
+    override fun getLoginAccountContextList(): List<AccountContext> {
+        return AmeLoginLogic.accountHistory.getAllLoginContext()
+    }
+
     override fun onForegroundChanged(isForeground: Boolean) {
         ALog.i(TAG, "onForegroundChanged $isForeground")
         if (isLogin()) {

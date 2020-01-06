@@ -14,11 +14,11 @@ import com.bcm.messenger.common.AmeNotification
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.RecipientDatabase
-import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.push.AmeNotificationService
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AmeTimeUtil
@@ -57,9 +57,9 @@ object AmePushProcess {
     private const val downloadNotificationId = 3
 
     private var pushInitTime = 0L
-    private var offlineUnreadSet = mutableSetOf<String>()
-    private var adhocOfflineUnreadSet = mutableSetOf<String>()
-    private var friendReqUnreadCount = 0
+    private var mUnreadCountMap = mutableMapOf<AccountContext, MutableSet<String>>()
+    private var mAdHocUnreadCountMap = mutableMapOf<AccountContext, MutableSet<String>>()
+    private var mFriendReqUnreadCountMap = mutableMapOf<AccountContext, Int>()
 
     private var lastNotifyTime = 0L
 
@@ -231,6 +231,7 @@ object AmePushProcess {
     }
 
     class BcmNotify(@SerializedName("notifytype") val notifyType: Int,
+                    @SerializedName("targetid") val targetHash: Long,
                     @SerializedName("contactchat") val contactChat: ChatNotifyData?,
                     @SerializedName("groupchat") val groupChat: GroupNotifyData?,
                     @SerializedName("friendmsg") val friendMsg: FriendNotifyData?,
@@ -244,13 +245,13 @@ object AmePushProcess {
 
         if (AMELogin.isLogin && null != notify) {
             if (TextSecurePreferences.isNotificationsEnabled(AppContextHolder.APP_CONTEXT) &&
-                    TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT)) { //
+                    TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT)) {
                 Observable.create<Unit> {
                     if (needShowOffline()) {
                         incrementOfflineUnreadCount(accountContext, notify)
                         handleNotify(accountContext, notify.bcmdata?.contactChat)
                         handleNotify(accountContext, notify.bcmdata?.groupChat)
-                        handleNotify(notify.bcmdata?.friendMsg)
+                        handleNotify(accountContext, notify.bcmdata?.friendMsg)
                         handleNotify(accountContext, notify.bcmdata?.adhocChat)
 
                     } else {
@@ -275,7 +276,10 @@ object AmePushProcess {
 
     }
 
-    fun processPush(accountContext: AccountContext?, pushContent: String) {
+    /**
+     * from offline push
+     */
+    fun processPush(pushContent: String) {
         try {
             if (!AMELogin.isLogin) {
                 ALog.i(TAG, "processPush Current is not login")
@@ -284,13 +288,15 @@ object AmePushProcess {
             ALog.d(TAG, "processPush: $pushContent")
             val notify = Gson().fromJson(pushContent, BcmData::class.java)
             if (notify.bcmdata != null) {
+                val accountContext = findAccountContext(notify.bcmdata.targetHash)
+                if (accountContext == null) {
+                    ALog.w(TAG, "processPush fail, find accountContext null")
+                    return
+                }
                 notify.bcmdata.contactChat?.uid?.let {
                     try {
-                        notify.bcmdata.contactChat.uid = if(null != accountContext) {
-                            BCMEncryptUtils.decryptSource(accountContext, it.toByteArray())
-                        } else {
-                            ""
-                        }
+                        notify.bcmdata.contactChat.uid = BCMEncryptUtils.decryptSource(accountContext, it.toByteArray())
+
                     } catch (e: Exception) {
                         ALog.e(TAG, "Uid decrypted failed!")
                         return
@@ -316,7 +322,8 @@ object AmePushProcess {
             val lastMsg = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.majorUid + "_" + SystemNotifyData.TYPE_BANNER, "")
             val msg = GsonUtils.fromJson(lastMsg, SystemNotifyData::class.java)
             if (lastMsg.isNotEmpty() && msg.type == SystemNotifyData.TYPE_BANNER) {
-                val data = BcmData(BcmNotify(SYSTEM_NOTIFY, null, null, null, null, msg))
+                val targetHash = BcmHash.hash(AMELogin.majorUid.toByteArray())
+                val data = BcmData(BcmNotify(SYSTEM_NOTIFY, targetHash, null, null, null, null, msg))
                 processPush(AMELogin.majorContext, data)
             }
         }
@@ -338,8 +345,13 @@ object AmePushProcess {
 
             if (privateChat != null || groupChat != null || friendRequest != null) {
 
-                offlineUnreadSet.clear()
-                offlineUnreadSet.addAll(Repository.getThreadRepo(accountContext).getAllThreadsWithRecipientReady().mapNotNull {
+                var unreadSet = mUnreadCountMap[accountContext]
+                if (unreadSet == null) {
+                    unreadSet = mutableSetOf()
+                    mUnreadCountMap[accountContext] = unreadSet
+                }
+                unreadSet.clear()
+                unreadSet.addAll(Repository.getThreadRepo(accountContext)?.getAllThreadsWithRecipientReady()?.mapNotNull {
                     val r = it.getRecipient(accountContext)
                     if (r.isMuted || it.unreadCount <= 0) {
                         null
@@ -350,14 +362,13 @@ object AmePushProcess {
                             it.uid
                         }
                     }
-                })
+                } ?: setOf())
 
                 val groupId = groupChat?.gid
                 if (groupId != null) {
-                    val mute = GroupInfoDataManager.queryOneAmeGroupInfo(accountContext, groupId)?.mute
-                            ?: true
+                    val mute = GroupInfoDataManager.queryOneAmeGroupInfo(accountContext, groupId)?.mute ?: true
                     if (!mute) {
-                        offlineUnreadSet.add(groupId.toString())
+                        unreadSet.add(groupId.toString())
                     }
                 }
 
@@ -365,23 +376,29 @@ object AmePushProcess {
                 if (privateUid != null) {
                     val recipient = Recipient.from(accountContext, privateUid, false)
                     if (!recipient.isMuted) {
-                        offlineUnreadSet.add(privateUid)
+                        unreadSet.add(privateUid)
                     }
                 }
 
-                friendReqUnreadCount = UserDatabase.getDatabase(accountContext).friendRequestDao().queryUnreadCount()
-
+                var friendReqCount = mFriendReqUnreadCountMap[accountContext] ?: 0
+                friendReqCount = Repository.getFriendRequestRepo(accountContext)?.queryUnreadCount() ?: 0
+                mFriendReqUnreadCountMap[accountContext] = friendReqCount
             }
 
             if (adhocChat != null) {
-                val dao = UserDatabase.getDatabase(accountContext).adHocSessionDao()
 
-                adhocOfflineUnreadSet.clear()
-                adhocOfflineUnreadSet.addAll(dao.loadAllUnreadSession().map {
+                val dao = Repository.getAdHocSessionRepo(accountContext)
+                var unreadSet = mAdHocUnreadCountMap[accountContext]
+                if (unreadSet == null) {
+                    unreadSet = mutableSetOf()
+                    mAdHocUnreadCountMap[accountContext] = unreadSet
+                }
+                unreadSet.clear()
+                unreadSet.addAll(dao?.loadAllUnreadSession()?.map {
                     it.sessionId
-                })
-                if (dao.querySession(data.bcmdata.adhocChat.session)?.mute != true) {
-                    adhocOfflineUnreadSet.add(data.bcmdata.adhocChat.session)
+                } ?: setOf())
+                if (dao?.querySession(data.bcmdata.adhocChat.session)?.mute != true) {
+                    unreadSet.add(data.bcmdata.adhocChat.session)
                 }
 
             }
@@ -435,10 +452,9 @@ object AmePushProcess {
             if (!AppForeground.foreground()) { //Umeng，App，Umeng
                 val builder = AmeNotification.getDefaultNotificationBuilder(AppContextHolder.APP_CONTEXT)
                 setAlarm(builder, null, RecipientDatabase.VibrateState.ENABLED)
-                notifySystemMessageBar(builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
+                notifySystemMessageBar(accountContext, builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
                         AmeNotificationService.ACTION_HOME)
             }
-            //
             if (null != accountContext) {
                 PushUtil.confirmSystemMessages(accountContext, notifyData.id).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -480,7 +496,6 @@ object AmePushProcess {
     private fun handleNotify(accountContext: AccountContext?, notifyData: ChatNotifyData?) {
         if (null != notifyData) {
             ALog.i(TAG, "receive push group data -- background!!!")
-
             notifyData.uid?.let {uid ->
                 val builder = AmeNotification.getDefaultNotificationBuilder(AppContextHolder.APP_CONTEXT)
                 val recipient = if(null != accountContext) {
@@ -497,10 +512,9 @@ object AmePushProcess {
                     setAlarm(builder, recipient?.ringtone, recipient?.vibrate?:RecipientDatabase.VibrateState.DEFAULT)
                 }
 
-                notifyBar(builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
+                notifyBar(accountContext, builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
                         AmeNotificationService.ACTION_CHAT)
             }
-
         }
     }
 
@@ -520,20 +534,20 @@ object AmePushProcess {
 
             if (notifyData.isAt == true || !mute) {
                 setAlarm(builder, null, RecipientDatabase.VibrateState.ENABLED)
-                notifyBar(builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
+                notifyBar(accountContext, builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
                         AmeNotificationService.ACTION_GROUP)
             }
         }
     }
 
-    private fun handleNotify(notifyData: FriendNotifyData?) {
+    private fun handleNotify(accountContext: AccountContext?, notifyData: FriendNotifyData?) {
         if (notifyData == null) return
         ALog.i(TAG, "handle friend notify")
-
-        val content = if (friendReqUnreadCount <= 1) {
+        val friendReqCount = getFriendRequestUnreadCount()
+        val content = if (friendReqCount <= 1) {
             AppContextHolder.APP_CONTEXT.getString(R.string.common_notification_friend_single)
         } else {
-            AppContextHolder.APP_CONTEXT.getString(R.string.common_notification_friend_multiple, friendReqUnreadCount)
+            AppContextHolder.APP_CONTEXT.getString(R.string.common_notification_friend_multiple, friendReqCount)
         }
 
         val context = AppContextHolder.APP_CONTEXT
@@ -549,12 +563,12 @@ object AmePushProcess {
         }
         builder.setAutoCancel(true)
         val notificationId = System.currentTimeMillis().toInt()
-        builder.setContentIntent(AmeNotificationService.getIntent(null, AmeNotificationService.ACTION_FRIEND_REQ, notificationId))
+        builder.setContentIntent(AmeNotificationService.getIntent(accountContext,null, AmeNotificationService.ACTION_FRIEND_REQ, notificationId))
         val notification = builder.build()
 
         AmeDispatcher.mainThread.dispatch({
             mFriendReqNotification = notification
-            updateAppBadge(AppContextHolder.APP_CONTEXT, offlineUnreadSet.size, friendReqUnreadCount)
+            updateAppBadge(AppContextHolder.APP_CONTEXT, getChatUnreadCount(), friendReqCount)
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
             notificationManager?.notify(friendNotificationId, notification)
             ALog.i(TAG, "notify bar start end $notificationId")
@@ -568,10 +582,10 @@ object AmePushProcess {
     private fun handleNotify(accountContext: AccountContext?, notifyData: AdHocNotifyData?) {
         if (notifyData != null && accountContext != null) {
             val builder = AmeNotification.getAdHocNotificationBuilder(AppContextHolder.APP_CONTEXT)
-            val enable = UserDatabase.getDatabase(accountContext).adHocSessionDao().querySession(notifyData.session)?.mute != true
+            val enable = Repository.getAdHocSessionRepo(accountContext)?.querySession(notifyData.session)?.mute != true
             if (notifyData.isAt || enable) {
                 setAlarm(builder, null, RecipientDatabase.VibrateState.ENABLED)
-                notifyBar(builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
+                notifyBar(accountContext, builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
                         AmeNotificationService.ACTION_ADHOC)
             }else {
                 ALog.w(TAG, "handleAdHocNotify isAt: ${notifyData.isAt}, enable: $enable")
@@ -582,19 +596,19 @@ object AmePushProcess {
     /**
      *
      */
-    private fun notifyBar(builder: NotificationCompat.Builder, msg: Parcelable, context: Context?, notificationId: Int, action: Int) {
+    private fun notifyBar(accountContext: AccountContext?, builder: NotificationCompat.Builder, msg: Parcelable, context: Context?, notificationId: Int, action: Int) {
         try {
             if (null != context) {
-                val pendingIntent = AmeNotificationService.getIntent(msg, action, notificationId)
+                val pendingIntent = AmeNotificationService.getIntent(accountContext, msg, action, notificationId)
                 val appName = context.resources.getString(R.string.app_name)
 
                 var chatCount = 0
                 var friendReqCount = 0
                 if (msg is AdHocNotifyData) {
-                    chatCount = adhocOfflineUnreadSet.size
+                    chatCount = getAdHocUnreadCount()
                 }else if (msg is GroupNotifyData || msg is ChatNotifyData) {
-                    chatCount = offlineUnreadSet.size
-                    friendReqCount = friendReqUnreadCount
+                    chatCount = getChatUnreadCount()
+                    friendReqCount = getFriendRequestUnreadCount()
                 }
 
                 if (chatCount <= 0) {
@@ -614,6 +628,7 @@ object AmePushProcess {
                         .setContentText(content)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setAutoCancel(true)
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     builder.setSmallIcon(R.drawable.icon_notification_alpha).setColor(AppUtil.getColor(context.resources, R.color.common_color_black))
                 }
@@ -636,10 +651,10 @@ object AmePushProcess {
         }
     }
 
-    private fun notifySystemMessageBar(builder: NotificationCompat.Builder, msg: Parcelable, context: Context?, notificationId: Int, action: Int) {
+    private fun notifySystemMessageBar(accountContext: AccountContext?, builder: NotificationCompat.Builder, msg: Parcelable, context: Context?, notificationId: Int, action: Int) {
         try {
             if (null != context) {
-                val pendingIntent = AmeNotificationService.getIntent(msg, action, notificationId)
+                val pendingIntent = AmeNotificationService.getIntent(accountContext, msg, action, notificationId)
                 val appName = context.resources.getString(R.string.app_name)
 
                 ALog.i(TAG, "notify bar start $notificationId")
@@ -695,9 +710,9 @@ object AmePushProcess {
         ALog.i(TAG, "clearNotificationCenter")
         val notificationManager = AppContextHolder.APP_CONTEXT.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
         notificationManager?.cancelAll()
-        offlineUnreadSet.clear()
-        adhocOfflineUnreadSet.clear()
-        friendReqUnreadCount = 0
+        mUnreadCountMap.clear()
+        mAdHocUnreadCountMap.clear()
+        mFriendReqUnreadCountMap.clear()
         mChatNotification = null
         mFriendReqNotification = null
 
@@ -711,7 +726,7 @@ object AmePushProcess {
 
         val notificationManager = AppContextHolder.APP_CONTEXT.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
         notificationManager?.cancel(friendNotificationId)
-        friendReqUnreadCount = 0
+        mFriendReqUnreadCountMap.clear()
         mFriendReqNotification = null
     }
 
@@ -796,4 +811,45 @@ object AmePushProcess {
         }
     }
 
+    /**
+     * find offline push target account context
+     */
+    fun findAccountContext(targetHash: Long): AccountContext? {
+        try {
+            val accountContextList = AmeModuleCenter.login().getLoginAccountContextList()
+            for (ac in accountContextList) {
+                if (BcmHash.hash(ac.uid.toByteArray()) == targetHash) {
+                    return ac
+                }
+            }
+
+        }catch (ex: Exception) {
+            ALog.e(TAG, "findAccountContext error", ex)
+        }
+        return null
+    }
+
+    private fun getChatUnreadCount(): Int {
+        var unreadCount = 0
+        for ((ac, set) in mUnreadCountMap) {
+            unreadCount += set.size
+        }
+        return unreadCount
+    }
+
+    private fun getFriendRequestUnreadCount(): Int {
+        var friendReqCount = 0
+        for ((ac, count) in mFriendReqUnreadCountMap) {
+            friendReqCount += count
+        }
+        return friendReqCount
+    }
+
+    private fun getAdHocUnreadCount(): Int {
+        var unreadCount = 0
+        for ((ac, set) in mAdHocUnreadCountMap) {
+            unreadCount += set.size
+        }
+        return unreadCount
+    }
 }

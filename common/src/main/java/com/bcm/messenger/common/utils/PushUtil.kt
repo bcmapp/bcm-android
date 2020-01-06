@@ -172,7 +172,8 @@ object PushUtil {
                             }
 
                         }
-                        dataMap.values.map { AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.SYSTEM_NOTIFY, null, null, null, null, it)) }
+                        val targetHash = BcmHash.hash(accountContext.uid.toByteArray())
+                        dataMap.values.map { AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.SYSTEM_NOTIFY, targetHash, null, null, null, null, it)) }
                     } else {
                         throw Exception("")
                     }
@@ -187,5 +188,6 @@ object PushUtil {
                 })
     }
 
-    private data class GcmRegistrationId(val gcmRegistrationId: String, val umengRegistrationId: String, val webSocketChannel: Boolean):NotGuard
+    private data class GcmRegistrationId(val gcmRegistrationId: String, val umengRegistrationId: String, val webSocketChannel: Boolean) : NotGuard
+
 }
