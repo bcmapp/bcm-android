@@ -7,12 +7,15 @@ import android.util.Log;
 import androidx.annotation.VisibleForTesting;
 
 import com.bcm.messenger.chats.privatechat.core.ChatFileHttp;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.attachments.AttachmentId;
 import com.bcm.messenger.common.core.BcmHttpApiHelper;
 import com.bcm.messenger.common.crypto.AsymmetricMasterSecret;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.MasterSecretUtil;
 import com.bcm.messenger.common.crypto.MediaKey;
+import com.bcm.messenger.common.crypto.encrypt.ChatFileEncryptDecryptUtil;
+import com.bcm.messenger.common.crypto.encrypt.FileInfo;
 import com.bcm.messenger.common.database.model.AttachmentDbModel;
 import com.bcm.messenger.common.database.records.AttachmentRecord;
 import com.bcm.messenger.common.database.repositories.AttachmentRepo;
@@ -21,8 +24,6 @@ import com.bcm.messenger.common.event.PartProgressEvent;
 import com.bcm.messenger.common.jobs.MasterSecretJob;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
 import com.bcm.messenger.common.utils.AttachmentUtil;
-import com.bcm.messenger.common.crypto.encrypt.ChatFileEncryptDecryptUtil;
-import com.bcm.messenger.common.crypto.encrypt.FileInfo;
 import com.bcm.messenger.utility.HexUtil;
 import com.bcm.messenger.utility.Util;
 import com.bcm.messenger.utility.bcmhttp.exception.RemoteFileNotFoundException;
@@ -56,12 +57,12 @@ public class AttachmentDownloadJob extends MasterSecretJob {
 
     private int mTry = 0;
 
-    public AttachmentDownloadJob(Context context, long messageId, AttachmentId attachmentId, boolean manual) {
-        this(context, messageId, attachmentId.getRowId(), attachmentId.getUniqueId(), manual);
+    public AttachmentDownloadJob(Context context, AccountContext accountContext, long messageId, AttachmentId attachmentId, boolean manual) {
+        this(context, accountContext, messageId, attachmentId.getRowId(), attachmentId.getUniqueId(), manual);
     }
 
-    public AttachmentDownloadJob(Context context, long messageId, long attachmentId, long uniqueId, boolean manual) {
-        super(context, JobParameters.newBuilder()
+    public AttachmentDownloadJob(Context context, AccountContext accountContext, long messageId, long attachmentId, long uniqueId, boolean manual) {
+        super(context, accountContext, JobParameters.newBuilder()
                 .withGroupId(AttachmentDownloadJob.class.getCanonicalName())
                 .withRequirement(new MasterSecretRequirement(context))
                 .withRequirement(new NetworkRequirement(context))
@@ -82,7 +83,7 @@ public class AttachmentDownloadJob extends MasterSecretJob {
 
     @Override
     public void onRun(MasterSecret masterSecret) {
-        final AttachmentRepo repo = Repository.getAttachmentRepo();
+        final AttachmentRepo repo = Repository.getAttachmentRepo(accountContext);
         final AttachmentId attachmentId = new AttachmentId(partRowId, partUniqueId);
         final AttachmentRecord record = repo.getAttachment(partRowId, partUniqueId);
 
@@ -149,7 +150,7 @@ public class AttachmentDownloadJob extends MasterSecretJob {
                     }
                 }));
 
-                Repository.getAttachmentRepo().insertForPlaceholder(masterSecret, partRowId, partUniqueId, fileInfo);
+                Repository.getAttachmentRepo(accountContext).insertForPlaceholder(masterSecret, partRowId, partUniqueId, fileInfo);
             } else {
                 throw new AssertionError("MasterSecret is null");
             }
@@ -182,7 +183,7 @@ public class AttachmentDownloadJob extends MasterSecretJob {
         }
 
         ChatFileHttp.INSTANCE.downloadAttachment(url, destination, pointer.getSize().or(0), maxSizeBytes, listener);
-        return ChatFileEncryptDecryptUtil.decryptAndSaveFile(masterSecret, destination, pointer, ChatFileEncryptDecryptUtil.FileType.PRIVATE);
+        return ChatFileEncryptDecryptUtil.decryptAndSaveFile(accountContext, masterSecret, destination, pointer, ChatFileEncryptDecryptUtil.FileType.PRIVATE);
     }
 
     @VisibleForTesting
@@ -197,7 +198,7 @@ public class AttachmentDownloadJob extends MasterSecretJob {
         }
 
         try {
-            AsymmetricMasterSecret asymmetricMasterSecret = MasterSecretUtil.getAsymmetricMasterSecret(context, masterSecret);
+            AsymmetricMasterSecret asymmetricMasterSecret = MasterSecretUtil.getAsymmetricMasterSecret(accountContext, masterSecret);
             //
             long id = Long.parseLong(attachment.getContentLocation());
             byte[] key = MediaKey.getDecrypted(masterSecret, asymmetricMasterSecret, attachment.getContentKey());
@@ -239,13 +240,13 @@ public class AttachmentDownloadJob extends MasterSecretJob {
     }
 
     private void markNotFound(AttachmentId attachmentId) {
-        AttachmentRepo repo = Repository.getAttachmentRepo();
+        AttachmentRepo repo = Repository.getAttachmentRepo(accountContext);
         repo.setTransferState(attachmentId.getRowId(), attachmentId.getUniqueId(), AttachmentDbModel.TransferState.NOT_FOUND);
         repo.cleanUris(attachmentId.getRowId(), attachmentId.getUniqueId());
     }
 
     private void markFailed(AttachmentId attachmentId) {
-        Repository.getAttachmentRepo()
+        Repository.getAttachmentRepo(accountContext)
                 .setTransferState(attachmentId.getRowId(), attachmentId.getUniqueId(), AttachmentDbModel.TransferState.FAILED);
     }
 

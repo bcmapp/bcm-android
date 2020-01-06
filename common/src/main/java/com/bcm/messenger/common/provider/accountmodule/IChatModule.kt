@@ -1,8 +1,8 @@
 package com.bcm.messenger.common.provider.accountmodule
 
 import android.content.Context
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.accountmodule.IAmeAccountModule
 import com.bcm.messenger.common.provider.bean.ConversationStorage
 
 interface IChatModule : IAmeAccountModule {
@@ -17,27 +17,27 @@ interface IChatModule : IAmeAccountModule {
      * @param address peer uid
      * @param callType #WebRtcCallService
      */
-    fun startRtcCallService(context: Context, address: String, callType: Int)
+    fun startRtcCallService(context: Context, address: Address, callType: Int)
 
     /**
      * run rtc call UI
      */
-    fun startRtcCallActivity(context: Context, callType: Int? = null)
+    fun startRtcCallActivity(context: Context, accountContext: AccountContext, callType: Int? = null)
 
     /**
      * delete group message list
      */
-    fun deleteMessage(context: Context, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)? = null)
+    fun deleteMessage(context: Context, accountContext: AccountContext, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)? = null)
 
     /**
      * recall group message
      */
-    fun recallMessage(context: Context, isGroup: Boolean, messageRecord: Any, callback: ((success: Boolean) -> Unit)? = null)
+    fun recallMessage(context: Context, accountContext: AccountContext, isGroup: Boolean, messageRecord: Any, callback: ((success: Boolean) -> Unit)? = null)
 
     /**
      * forward group message
      */
-    fun forwardMessage(context: Context, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)? = null)
+    fun forwardMessage(context: Context, accountContext: AccountContext, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)? = null)
 
     /**
      * go to conversation media browser activity

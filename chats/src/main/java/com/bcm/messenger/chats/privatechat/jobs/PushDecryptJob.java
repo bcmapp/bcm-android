@@ -446,7 +446,7 @@ public class PushDecryptJob extends ContextJob {
 
         JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
         if (manager != null) {
-            manager.add(new RequestGroupInfoJob(context, envelope.getSource(), group.getGroupId()));
+            manager.add(new RequestGroupInfoJob(context, accountContext, envelope.getSource(), group.getGroupId()));
         }
     }
 
@@ -613,7 +613,7 @@ public class PushDecryptJob extends ContextJob {
                 manager.add(new AttachmentDownloadJob(context, insertResult.getSecond(), attachment.getId(), attachment.getUniqueId(), false));
 
                 if (!masterSecret.getMasterSecret().isPresent()) {
-                    manager.add(new AttachmentFileNameJob(context, masterSecret.getAsymmetricMasterSecret().get(), attachment, mediaMessage));
+                    manager.add(new AttachmentFileNameJob(context, accountContext, masterSecret.getAsymmetricMasterSecret().get(), attachment, mediaMessage));
                 }
             }
         }

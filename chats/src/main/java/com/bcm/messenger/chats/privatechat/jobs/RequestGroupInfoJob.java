@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.bcm.messenger.chats.privatechat.core.BcmChatCore;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException;
 import com.bcm.messenger.common.jobs.ContextJob;
 
@@ -30,8 +31,8 @@ public class RequestGroupInfoJob extends ContextJob {
     private final String source;
     private final byte[] groupId;
 
-    public RequestGroupInfoJob(@NonNull Context context, @NonNull String source, @NonNull byte[] groupId) {
-        super(context, JobParameters.newBuilder()
+    public RequestGroupInfoJob(@NonNull Context context, @NonNull AccountContext accountContext, @NonNull String source, @NonNull byte[] groupId) {
+        super(context, accountContext, JobParameters.newBuilder()
                 .withRequirement(new NetworkRequirement(context))
                 .withPersistence()
                 .withRetryCount(50)

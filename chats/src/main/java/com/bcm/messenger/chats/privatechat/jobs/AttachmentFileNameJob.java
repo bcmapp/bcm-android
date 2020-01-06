@@ -6,6 +6,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.attachments.Attachment;
 import com.bcm.messenger.common.crypto.AsymmetricMasterCipher;
 import com.bcm.messenger.common.crypto.AsymmetricMasterSecret;
@@ -25,63 +26,62 @@ import java.util.Arrays;
 
 public class AttachmentFileNameJob extends MasterSecretJob {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private final long   attachmentRowId;
-  private final long   attachmentUniqueId;
-  private final String encryptedFileName;
+    private final long attachmentRowId;
+    private final long attachmentUniqueId;
+    private final String encryptedFileName;
 
-  public AttachmentFileNameJob(@NonNull Context context, @NonNull AsymmetricMasterSecret asymmetricMasterSecret,
-                               @NonNull AttachmentRecord attachment, @NonNull IncomingMediaMessage message)
-  {
-    super(context, new JobParameters.Builder().withPersistence()
-                                              .withRequirement(new MasterSecretRequirement(context))
-                                              .create());
+    public AttachmentFileNameJob(@NonNull Context context, @NonNull AccountContext accountContext, @NonNull AsymmetricMasterSecret asymmetricMasterSecret,
+                                 @NonNull AttachmentRecord attachment, @NonNull IncomingMediaMessage message) {
+        super(context, accountContext, new JobParameters.Builder().withPersistence()
+                .withRequirement(new MasterSecretRequirement(context))
+                .create());
 
-    this.attachmentRowId    = attachment.getId();
-    this.attachmentUniqueId = attachment.getUniqueId();
-    this.encryptedFileName  = getEncryptedFileName(asymmetricMasterSecret, attachment, message);
-  }
-
-  @Override
-  public void onRun(MasterSecret masterSecret) throws IOException, InvalidMessageException {
-    if (encryptedFileName == null) return;
-
-    String       plaintextFileName = new AsymmetricMasterCipher(MasterSecretUtil.getAsymmetricMasterSecret(context, masterSecret)).decryptBody(encryptedFileName);
-
-    Repository.getAttachmentRepo().updateFileName(attachmentRowId, attachmentUniqueId, plaintextFileName);
-  }
-
-  @Override
-  public boolean onShouldRetryThrowable(Exception exception) {
-    return false;
-  }
-
-  @Override
-  public void onAdded() {
-
-  }
-
-  @Override
-  public void onCanceled() {
-
-  }
-
-  private @Nullable String getEncryptedFileName(@NonNull AsymmetricMasterSecret asymmetricMasterSecret,
-                                                @NonNull AttachmentRecord attachment,
-                                                @NonNull IncomingMediaMessage mediaMessage)
-  {
-    for (Attachment messageAttachment : mediaMessage.getAttachments()) {
-      if (mediaMessage.getAttachments().size() == 1 ||
-          (messageAttachment.getDigest() != null && Arrays.equals(messageAttachment.getDigest(), attachment.getDigest())))
-      {
-        if (messageAttachment.getFileName() == null) return null;
-        else                                         return new AsymmetricMasterCipher(asymmetricMasterSecret).encryptBody(messageAttachment.getFileName());
-      }
+        this.attachmentRowId = attachment.getId();
+        this.attachmentUniqueId = attachment.getUniqueId();
+        this.encryptedFileName = getEncryptedFileName(asymmetricMasterSecret, attachment, message);
     }
 
-    return null;
-  }
+    @Override
+    public void onRun(MasterSecret masterSecret) throws IOException, InvalidMessageException {
+        if (encryptedFileName == null) return;
+
+        String plaintextFileName = new AsymmetricMasterCipher(MasterSecretUtil.getAsymmetricMasterSecret(accountContext, masterSecret)).decryptBody(encryptedFileName);
+
+        Repository.getAttachmentRepo(accountContext).updateFileName(attachmentRowId, attachmentUniqueId, plaintextFileName);
+    }
+
+    @Override
+    public boolean onShouldRetryThrowable(Exception exception) {
+        return false;
+    }
+
+    @Override
+    public void onAdded() {
+
+    }
+
+    @Override
+    public void onCanceled() {
+
+    }
+
+    private @Nullable
+    String getEncryptedFileName(@NonNull AsymmetricMasterSecret asymmetricMasterSecret,
+                                @NonNull AttachmentRecord attachment,
+                                @NonNull IncomingMediaMessage mediaMessage) {
+        for (Attachment messageAttachment : mediaMessage.getAttachments()) {
+            if (mediaMessage.getAttachments().size() == 1 ||
+                    (messageAttachment.getDigest() != null && Arrays.equals(messageAttachment.getDigest(), attachment.getDigest()))) {
+                if (messageAttachment.getFileName() == null) return null;
+                else
+                    return new AsymmetricMasterCipher(asymmetricMasterSecret).encryptBody(messageAttachment.getFileName());
+            }
+        }
+
+        return null;
+    }
 
 
 }

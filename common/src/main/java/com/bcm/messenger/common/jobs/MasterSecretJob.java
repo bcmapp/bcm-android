@@ -2,6 +2,7 @@ package com.bcm.messenger.common.jobs;
 
 import android.content.Context;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.utility.logger.ALog;
@@ -12,45 +13,46 @@ import org.whispersystems.jobqueue.JobParameters;
 
 public abstract class MasterSecretJob extends ContextJob implements NotGuard {
 
-  public MasterSecretJob(Context context, JobParameters parameters) {
-    super(context, parameters);
-  }
+    public MasterSecretJob(Context context, AccountContext accountContext, JobParameters parameters) {
+        super(context, accountContext, parameters);
+    }
 
-  @Override
-  public void onRun() throws Exception {
-    MasterSecret masterSecret = getMasterSecret();
-    try {
-        onRun(masterSecret);
-    } catch (Throwable e){
-        if (e instanceof RuntimeException){
-            ALog.e("MasterSecretJob", e);
-            throw new Exception(e);
-        }
-        else  {
-            throw e;
+    @Override
+    public void onRun() throws Exception {
+        MasterSecret masterSecret = getMasterSecret();
+        try {
+            onRun(masterSecret);
+        } catch (Throwable e) {
+            if (e instanceof RuntimeException) {
+                ALog.e("MasterSecretJob", e);
+                throw new Exception(e);
+            } else {
+                throw e;
+            }
         }
     }
-  }
 
-  @Override
-  public boolean onShouldRetry(Exception exception) {
-      Logger.e(exception, "MasterSecretJob catch error");
-      if (exception instanceof RequirementNotMetException) {
-          return true;
-      }
-    return onShouldRetryThrowable(exception);
-  }
+    @Override
+    public boolean onShouldRetry(Exception exception) {
+        Logger.e(exception, "MasterSecretJob catch error");
+        if (exception instanceof RequirementNotMetException) {
+            return true;
+        }
+        return onShouldRetryThrowable(exception);
+    }
 
-  public abstract void onRun(MasterSecret masterSecret) throws Exception;
-  public abstract boolean onShouldRetryThrowable(Exception exception);
+    public abstract void onRun(MasterSecret masterSecret) throws Exception;
 
-  private MasterSecret getMasterSecret() throws RequirementNotMetException {
-    MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(context);
+    public abstract boolean onShouldRetryThrowable(Exception exception);
 
-          if (masterSecret == null) throw new RequirementNotMetException();
-          else                      return masterSecret;
-  }
+    private MasterSecret getMasterSecret() throws RequirementNotMetException {
+        MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(accountContext);
 
-  protected static class RequirementNotMetException extends Exception {}
+        if (masterSecret == null) throw new RequirementNotMetException();
+        else return masterSecret;
+    }
+
+    protected static class RequirementNotMetException extends Exception {
+    }
 
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.bcm.messenger.chats.privatechat.core.BcmChatCore;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.database.DatabaseFactory;
@@ -43,8 +44,8 @@ public class PushGroupUpdateJob extends ContextJob {
     private final byte[] groupId;
 
 
-    public PushGroupUpdateJob(Context context, String source, byte[] groupId) {
-        super(context, JobParameters.newBuilder()
+    public PushGroupUpdateJob(Context context, AccountContext accountContext, String source, byte[] groupId) {
+        super(context, accountContext, JobParameters.newBuilder()
                 .withPersistence()
                 .withRequirement(new NetworkRequirement(context))
                 .withRetryCount(50)

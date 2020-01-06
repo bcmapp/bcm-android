@@ -2,6 +2,7 @@ package com.bcm.messenger.contacts.logic
 
 import android.annotation.SuppressLint
 import android.content.Context
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.jobs.ContextJob
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -12,7 +13,7 @@ import org.whispersystems.signalservice.api.push.exceptions.PushNetworkException
  *
  * Created by wjh on 2019-12-31
  */
-class ProfileFetchJob(context: Context, private val logic: BcmProfileLogic) : ContextJob(context,
+class ProfileFetchJob(context: Context, accountContext: AccountContext, private val logic: BcmProfileLogic) : ContextJob(context, accountContext,
         JobParameters.newBuilder().withGroupId("RecipientProfileLogic_profileFetchJob")
                 .withRetryCount(3).create()) {
 

@@ -2,16 +2,15 @@ package com.bcm.messenger.chats.privatechat.jobs
 
 import android.content.Context
 import com.bcm.messenger.chats.privatechat.core.BcmChatCore
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.exception.InsecureFallbackApprovalException
 import com.bcm.messenger.common.exception.RetryLaterException
 import com.bcm.messenger.common.grouprepository.room.entity.ChatHideMessage
 import com.bcm.messenger.common.jobs.RetrieveProfileJob
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
@@ -21,7 +20,9 @@ import java.io.IOException
 /**
  * Created by Kin on 2019/5/8
  */
-class PushHideMessageSendJob(context: Context, private val messageId: Long, destination: Address) : PushSendJob(context, constructParameters(context, destination, "control")) {
+class PushHideMessageSendJob(context: Context, accountContext: AccountContext, private val messageId: Long, destination: Address) :
+        PushSendJob(context, accountContext, constructParameters(context, destination, "control")) {
+
     private val TAG = "PushHideMessageSendJob"
 
     override fun onShouldRetryThrowable(exception: Exception?): Boolean {
@@ -33,7 +34,7 @@ class PushHideMessageSendJob(context: Context, private val messageId: Long, dest
     }
 
     override fun onPushSend(masterSecret: MasterSecret?) {
-        val dao = UserDatabase.getDatabase().chatControlMessageDao()
+        val dao = Repo.getDatabase().chatControlMessageDao()
         val message = dao.queryHideMessage(messageId)
 
         try {
@@ -43,7 +44,7 @@ class PushHideMessageSendJob(context: Context, private val messageId: Long, dest
         } catch (e: InsecureFallbackApprovalException) {
             ALog.e(TAG, "Push send fail", e)
         } catch (e: UntrustedIdentityException) {
-            AmeModuleCenter.accountJobMgr()?.add(RetrieveProfileJob(context, Recipient.from(context, Address.fromSerialized(e.e164Number), false)))
+            AmeModuleCenter.accountJobMgr(accountContext)?.add(RetrieveProfileJob(context, accountContext, Recipient.from(accountContext, e.e164Number, false)))
         }
     }
 
@@ -54,7 +55,7 @@ class PushHideMessageSendJob(context: Context, private val messageId: Long, dest
     @Throws(UntrustedIdentityException::class, InsecureFallbackApprovalException::class, RetryLaterException::class)
     private fun deliver(message: ChatHideMessage) {
         try {
-            val individualRecipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(message.destinationAddress), false)
+            val individualRecipient = Recipient.from(accountContext, message.destinationAddress, false)
             val address = getPushAddress(individualRecipient.address)
             val profileKey = getProfileKey(individualRecipient)
             val textSecureMessage = SignalServiceDataMessage.newBuilder()

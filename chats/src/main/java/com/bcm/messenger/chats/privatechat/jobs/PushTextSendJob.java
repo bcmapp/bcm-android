@@ -3,6 +3,7 @@ package com.bcm.messenger.chats.privatechat.jobs;
 import android.content.Context;
 
 import com.bcm.messenger.chats.privatechat.core.BcmChatCore;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.AmeGroupMessage;
@@ -42,12 +43,12 @@ public class PushTextSendJob extends PushSendJob {
     private final long messageId;
     private final boolean sendSilently;
 
-    public PushTextSendJob(Context context, long messageId, Address destination) {
-        this(context, messageId, destination, false);
+    public PushTextSendJob(Context context, AccountContext accountContext, long messageId, Address destination) {
+        this(context, accountContext, messageId, destination, false);
     }
 
-    public PushTextSendJob(Context context, long messageId, Address destination, boolean sendSilently) {
-        super(context, constructParameters(context, destination, "text"));
+    public PushTextSendJob(Context context, AccountContext accountContext, long messageId, Address destination, boolean sendSilently) {
+        super(context, accountContext, constructParameters(context, destination, "text"));
         this.messageId = messageId;
         this.sendSilently = sendSilently;
     }
@@ -60,7 +61,7 @@ public class PushTextSendJob extends PushSendJob {
     @Override
     public void onPushSend(MasterSecret masterSecret) throws NoSuchMessageException, RetryLaterException {
 
-        PrivateChatRepo chatRepo = Repository.getChatRepo();
+        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
         MessageRecord record = chatRepo.getMessage(messageId);
         if (record == null) {
             throw new NoSuchMessageException("Message id " + messageId + " not found");
@@ -74,7 +75,7 @@ public class PushTextSendJob extends PushSendJob {
             if (record.getExpiresTime() > 0) {
                 chatRepo.setMessageExpiresStart(messageId);
 
-                ExpirationManager.INSTANCE.scheduler().scheduleDeletion(record.getId(), record.isMediaMessage(), record.getExpiresTime());
+                ExpirationManager.INSTANCE.scheduler(accountContext).scheduleDeletion(record.getId(), record.isMediaMessage(), record.getExpiresTime());
             }
 
             ALog.i(TAG, "send complete:" + messageId);
@@ -87,9 +88,9 @@ public class PushTextSendJob extends PushSendJob {
             ALog.e(TAG, "UntrustedIdentityException occurred", e);
             EventBus.getDefault().post(new TextSendEvent(messageId, false, e.getMessage()));
 
-            JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr();
+            JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
             if (manager != null) {
-                manager.add(new RetrieveProfileJob(context, Recipient.from(context, Address.fromSerialized(e.getE164Number()), false)));
+                manager.add(new RetrieveProfileJob(context, accountContext, Recipient.from(accountContext, e.getE164Number(), false)));
             }
 
             chatRepo.setMessageSendFail(record.getId());
@@ -110,14 +111,14 @@ public class PushTextSendJob extends PushSendJob {
     @Override
     public void onCanceled() {
         ALog.i(TAG, "onCanceled");
-        Repository.getChatRepo().setMessageSendFail(messageId);
+        Repository.getChatRepo(accountContext).setMessageSendFail(messageId);
     }
 
     private void deliver(MessageRecord message)
             throws UntrustedIdentityException, InsecureFallbackApprovalException, RetryLaterException {
         try {
-            SignalServiceAddress address = getPushAddress(message.getRecipient().getAddress());
-            Optional<byte[]> profileKey = getProfileKey(message.getRecipient());
+            SignalServiceAddress address = getPushAddress(message.getRecipient(accountContext).getAddress());
+            Optional<byte[]> profileKey = getProfileKey(message.getRecipient(accountContext));
             int expiresIn = (int) (message.getExpiresTime() / 1000);
             SignalServiceDataMessage textSecureMessage = SignalServiceDataMessage.newBuilder()
                     .withTimestamp(message.getDateSent())
@@ -137,7 +138,7 @@ public class PushTextSendJob extends PushSendJob {
 
         } catch (UnregisteredUserException e) {
             ALog.e(TAG, e);
-            EventBus.getDefault().post(new UserOfflineEvent(message.getRecipient().getAddress()));
+            EventBus.getDefault().post(new UserOfflineEvent(message.getRecipient(accountContext).getAddress()));
             throw new InsecureFallbackApprovalException(e);
         } catch (VersionTooLowException e) {
             ALog.e(TAG, e);
@@ -153,7 +154,7 @@ public class PushTextSendJob extends PushSendJob {
         if (messageRecord.isLocation()) {
             AmeGroupMessage message = AmeGroupMessage.Companion.messageFromJson(messageRecord.getBody());
             if (message.getType() == AmeGroupMessage.EXCHANGE_PROFILE || message.getType() == AmeGroupMessage.RECEIPT) {
-                Repository.getChatRepo().deleteMessage(messageRecord.getThreadId(), messageRecord.getId());
+                Repository.getChatRepo(accountContext).deleteMessage(messageRecord.getThreadId(), messageRecord.getId());
             }
         }
     }

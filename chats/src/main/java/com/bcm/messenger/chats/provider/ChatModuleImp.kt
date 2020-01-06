@@ -34,6 +34,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.GroupUtil
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.common.utils.startForegroundServiceCompat
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
@@ -72,7 +73,7 @@ class ChatModuleImp : IChatModule {
         WebRtcCallService.checkHasWebRtcCall()
     }
 
-    override fun startRtcCallService(context: Context, address: String, callType: Int) {
+    override fun startRtcCallService(context: Context, address: Address, callType: Int) {
         try {
             if (ChatCallFloatWindow.hasWebRtcCalling()) {
                 ALog.i(TAG, "startRtcCallService fail, hasWebRtcCalling")
@@ -80,7 +81,7 @@ class ChatModuleImp : IChatModule {
             }
             val intent = Intent(context, WebRtcCallService::class.java)
             intent.action = WebRtcCallService.ACTION_OUTGOING_CALL
-            intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, Address.fromSerialized(address))
+            intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, address)
             intent.putExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, callType)
             context.startForegroundServiceCompat(intent)
 
@@ -89,7 +90,7 @@ class ChatModuleImp : IChatModule {
         }
     }
 
-    override fun startRtcCallActivity(context: Context, callType: Int?) {
+    override fun startRtcCallActivity(context: Context, accountContext: AccountContext, callType: Int?) {
         try {
             ALog.d(TAG, "startRtcCallActivity")
             if (ChatCallFloatWindow.hasWebRtcCalling()) {
@@ -101,10 +102,10 @@ class ChatModuleImp : IChatModule {
                 activityIntent.putExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, callType)
             }
             if(context is Activity) {
-                context.startActivity(activityIntent)
+                context.startBcmActivity(accountContext, activityIntent)
             }else {
                 activityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                context.startActivity(activityIntent)
+                context.startBcmActivity(accountContext, activityIntent)
             }
         } catch (ex: Exception) {
             ALog.e(TAG, "startRtcCallService fail", ex)
@@ -112,7 +113,7 @@ class ChatModuleImp : IChatModule {
     }
 
     @SuppressLint("CheckResult")
-    override fun deleteMessage(context: Context, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)?) {
+    override fun deleteMessage(context: Context, accountContext: AccountContext, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)?) {
         if(messageSet.isEmpty()) {
             callback?.invoke(emptySet())
             return
@@ -173,8 +174,8 @@ class ChatModuleImp : IChatModule {
                                         id = it.indexId
                                     }
                                 }
-                                MessageDataManager.deleteMessages(conversationId, groupMessageList)
-                                EventBus.getDefault().post(MessageEvent(conversationId, messageSet.map {
+                                MessageDataManager.deleteMessages(accountContext, conversationId, groupMessageList)
+                                EventBus.getDefault().post(MessageEvent(accountContext, conversationId, messageSet.map {
                                     (it as AmeGroupMessageDetail).indexId
                                 }))
                             } else {
@@ -183,7 +184,7 @@ class ChatModuleImp : IChatModule {
                                     val m = it as MessageRecord
                                     ids.add(m.id)
                                 }
-                                Repository.getChatRepo().deleteMessages(conversationId, ids)
+                                Repository.getChatRepo(accountContext)?.deleteMessages(conversationId, ids)
                             }
                         } catch (ex: Exception) {
                             ALog.e("ConversationProviderImp", "deleteMessage error", ex)
@@ -209,7 +210,7 @@ class ChatModuleImp : IChatModule {
     }
 
     @SuppressLint("CheckResult")
-    override fun recallMessage(context: Context, isGroup: Boolean, messageRecord: Any, callback: ((success: Boolean) -> Unit)?) {
+    override fun recallMessage(context: Context, accountContext: AccountContext, isGroup: Boolean, messageRecord: Any, callback: ((success: Boolean) -> Unit)?) {
         val title: String
         val button: String
         var privateMessage: MessageRecord? = null
@@ -243,8 +244,8 @@ class ChatModuleImp : IChatModule {
                     fun recallResponse(success: Boolean) {
                         if (success) {
                             if (isGroup && groupMessage?.message?.isText() == true) {
-                                EventBus.getDefault().post(ReEditEvent(GroupUtil.addressFromGid(groupMessage.gid),
-                                        groupMessage.indexId, groupMessage.message.content.getDescribe(groupMessage.gid, ).toString()))
+                                EventBus.getDefault().post(ReEditEvent(GroupUtil.addressFromGid(accountContext, groupMessage.gid),
+                                        groupMessage.indexId, groupMessage.message.content.getDescribe(groupMessage.gid, accountContext).toString()))
                             }
                         } else {
                             if (isRecall) {
@@ -256,14 +257,14 @@ class ChatModuleImp : IChatModule {
                     }
 
                     if (isGroup) {
-                        GroupMessageLogic.messageSender.recallMessage(groupMessage, object : com.bcm.messenger.chats.group.logic.MessageSender.SenderCallback {
+                        GroupMessageLogic.get(accountContext).messageSender.recallMessage(groupMessage, object : com.bcm.messenger.chats.group.logic.MessageSender.SenderCallback {
                             override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                                 recallResponse(isSuccess)
                             }
                         })
                     } else {
                         Observable.create(ObservableOnSubscribe<Boolean> { emiter ->
-                            val masterSecret = BCMEncryptUtils.getMasterSecret(context)
+                            val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
                             MessageSender.recall(privateMessage, masterSecret, privateMessage?.isMediaMessage() == true)
                             emiter.onComplete()
                         }).subscribeOn(Schedulers.io())
@@ -279,7 +280,7 @@ class ChatModuleImp : IChatModule {
 
     }
 
-    override fun forwardMessage(context: Context, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)?) {
+    override fun forwardMessage(context: Context, accountContext: AccountContext, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)?) {
         if (messageSet.isNotEmpty()) {
             if(messageSet.size > 15) {
                 AmeAppLifecycle.failure(context.getString(R.string.chats_max_forward_error), true)

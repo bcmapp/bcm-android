@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.ProfileKeyUtil;
@@ -14,7 +15,6 @@ import com.bcm.messenger.common.exception.TextSecureExpiredException;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
 import com.bcm.messenger.common.mms.PartAuthority;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
-import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.recipients.Recipient;
 
 import org.greenrobot.eventbus.EventBus;
@@ -32,8 +32,8 @@ public abstract class PushSendJob extends SendJob {
 
     private static final String TAG = PushSendJob.class.getSimpleName();
 
-    protected PushSendJob(Context context, JobParameters parameters) {
-        super(context, parameters);
+    protected PushSendJob(Context context, AccountContext accountContext, JobParameters parameters) {
+        super(context, accountContext, parameters);
     }
 
     @Deprecated
@@ -59,8 +59,8 @@ public abstract class PushSendJob extends SendJob {
 
     @Override
     protected final void onSend(MasterSecret masterSecret) throws Exception {
-        if (AMELogin.INSTANCE.getSignedPreKeyFailureCount() > getRetryCount()) {
-            AmeModuleCenter.INSTANCE.login().rotateSignedPrekey();
+        if (accountContext.getSignedPreKeyFailureCount() > getRetryCount()) {
+            AmeModuleCenter.INSTANCE.login().rotateSignedPrekey(accountContext);
             throw new TextSecureExpiredException("Too many signed prekey rotation failures");
         }
 

@@ -3,6 +3,7 @@ package com.bcm.messenger.chats.privatechat.jobs;
 import android.content.Context;
 
 import com.bcm.messenger.chats.privatechat.core.BcmChatCore;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException;
 import com.bcm.messenger.common.config.BcmFeatureSupport;
 import com.bcm.messenger.common.core.Address;
@@ -49,8 +50,8 @@ public class PushMediaSendJob extends PushSendJob {
     private static final String TAG = "PushMediaSendJob";
     private final long messageId;
 
-    public PushMediaSendJob(Context context, long messageId, Address destination) {
-        super(context, constructParameters(context, destination, "media"));
+    public PushMediaSendJob(Context context, AccountContext accountContext, long messageId, Address destination) {
+        super(context, accountContext, constructParameters(context, destination, "media"));
         this.messageId = messageId;
     }
 
@@ -63,7 +64,7 @@ public class PushMediaSendJob extends PushSendJob {
     public void onPushSend(MasterSecret masterSecret)
             throws RetryLaterException, MmsException, NoSuchMessageException,
             UndeliverableMessageException {
-        PrivateChatRepo chatRepo = Repository.getChatRepo();
+        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
 
         MessageRecord record = chatRepo.getMessage(messageId);
         if (record == null) {
@@ -80,7 +81,7 @@ public class PushMediaSendJob extends PushSendJob {
             if (record.getExpiresTime() > 0 && !record.isExpirationTimerUpdate()) {
                 chatRepo.setMessageExpiresStart(messageId);
 
-                ExpirationManager.INSTANCE.scheduler().scheduleDeletion(messageId, true, record.getExpiresTime());
+                ExpirationManager.INSTANCE.scheduler(accountContext).scheduleDeletion(messageId, true, record.getExpiresTime());
             }
 
             ALog.i(TAG, "send complete:" + messageId);
@@ -92,9 +93,9 @@ public class PushMediaSendJob extends PushSendJob {
         } catch (UntrustedIdentityException uie) {
             ALog.d(TAG, uie + " address = " + uie.getE164Number() + " identityKey = " + uie.getIdentityKey());
             ALog.e(TAG, "UntrustedIdentityException occurred", uie);
-            JobManager accountJobManager = AmeModuleCenter.INSTANCE.accountJobMgr();
+            JobManager accountJobManager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
             if (accountJobManager != null) {
-                accountJobManager.add(new RetrieveProfileJob(context, Recipient.from(context, Address.fromSerialized(uie.getE164Number()), false)));
+                accountJobManager.add(new RetrieveProfileJob(context,accountContext, Recipient.from(accountContext, uie.getE164Number(), false)));
 
             }
             chatRepo.setMessageSendFail(record.getId());
@@ -116,7 +117,7 @@ public class PushMediaSendJob extends PushSendJob {
     @Override
     public void onCanceled() {
         ALog.i(TAG, "onCanceled");
-        Repository.getChatRepo().setMessageSendFail(messageId);
+        Repository.getChatRepo(accountContext).setMessageSendFail(messageId);
         notifyMediaMessageDeliveryFailed(context, messageId);
     }
 
@@ -125,11 +126,11 @@ public class PushMediaSendJob extends PushSendJob {
             UndeliverableMessageException {
 
         try {
-            SignalServiceAddress address = getPushAddress(message.getRecipient().getAddress());
+            SignalServiceAddress address = getPushAddress(message.getRecipient(accountContext).getAddress());
             MediaConstraints mediaConstraints = MediaConstraints.getPushMediaConstraints();
             List<AttachmentRecord> scaledAttachments = scaleAttachments(masterSecret, mediaConstraints, message.getAttachments());
             List<SignalServiceAttachment> attachmentStreams = getAttachmentsFor(masterSecret, scaledAttachments);
-            Optional<byte[]> profileKey = getProfileKey(message.getRecipient());
+            Optional<byte[]> profileKey = getProfileKey(message.getRecipient(accountContext));
             int expiresIn = (int) (message.getExpiresTime() / 1000);
             SignalServiceDataMessage mediaMessage = SignalServiceDataMessage.newBuilder()
                     .withBody(message.getBody())
@@ -140,7 +141,7 @@ public class PushMediaSendJob extends PushSendJob {
                     .asExpirationUpdate(message.isExpirationTimerUpdate())
                     .build();
 
-            BcmFeatureSupport featureSupport = message.getRecipient().getFeatureSupport();
+            BcmFeatureSupport featureSupport = message.getRecipient(accountContext).getFeatureSupport();
             boolean isSupportAws = featureSupport != null && featureSupport.isSupportAws();
             BcmChatCore.INSTANCE.sendMessage(address, mediaMessage, isSupportAws);
 
@@ -165,7 +166,7 @@ public class PushMediaSendJob extends PushSendJob {
 
         } catch (UnregisteredUserException e) {
             ALog.e(TAG, e);
-            EventBus.getDefault().post(new UserOfflineEvent(message.getRecipient().getAddress()));
+            EventBus.getDefault().post(new UserOfflineEvent(message.getRecipient(accountContext).getAddress()));
             throw new InsecureFallbackApprovalException(e);
         } catch (VersionTooLowException e) {
             ALog.e(TAG, e);

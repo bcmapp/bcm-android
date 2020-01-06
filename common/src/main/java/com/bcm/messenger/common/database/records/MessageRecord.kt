@@ -3,7 +3,6 @@ package com.bcm.messenger.common.database.records
 import androidx.room.Ignore
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.model.PrivateChatDbModel
 import com.bcm.messenger.common.database.repositories.*
 import com.bcm.messenger.common.recipients.Recipient
@@ -52,7 +51,7 @@ class MessageRecord() : ChatMessageModel() {
 
     fun getRecipient(accountContext: AccountContext): Recipient {
         if (!::recipient.isInitialized) {
-            recipient = Recipient.from(accountContext, Address.fromSerialized(uid), true)
+            recipient = Recipient.from(accountContext, uid, true)
         }
         return recipient
     }

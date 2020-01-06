@@ -1,6 +1,7 @@
 package com.bcm.messenger.contacts.logic
 
 import android.content.Context
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.repositories.Repository
@@ -21,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger
  *
  * Created by wjh on 2019-12-31
  */
-class AvatarDownloadJob(context: Context, private val logic: BcmProfileLogic) : ContextJob(context,
+class AvatarDownloadJob(context: Context, accountContext: AccountContext, private val logic: BcmProfileLogic) : ContextJob(context, accountContext,
         JobParameters.newBuilder().withGroupId("RecipientProfileLogic_avatarDownloadJob")
                 .withRetryCount(3).create()) {
 
@@ -169,7 +170,7 @@ class AvatarDownloadJob(context: Context, private val logic: BcmProfileLogic) : 
                                 privacyProfile.isAvatarLdOld = false
                             }
                             ALog.d(TAG, "downloadAvatar done avatarHd: ${privacyProfile.avatarHDUri}, avatarLd: ${privacyProfile.avatarLDUri}")
-                            Repository.getRecipientRepo()?.setPrivacyProfile(recipient, privacyProfile)
+                            Repository.getRecipientRepo(accountContext)?.setPrivacyProfile(recipient, privacyProfile)
 
                             if (recipient.isLogin) {
                                 AmeModuleCenter.user(logic.mAccountContext)?.saveAccount(recipient, null, recipient.privacyAvatar)

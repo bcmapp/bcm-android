@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.annimon.stream.Stream;
-import com.bcm.messenger.chats.privatechat.core.BcmChatCore;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.database.DatabaseFactory;
@@ -27,15 +27,12 @@ import com.bcm.messenger.common.mms.MmsException;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.recipients.RecipientFormattingException;
-import com.bcm.messenger.common.utils.GroupUtil;
 
 import org.whispersystems.jobqueue.JobManager;
 import org.whispersystems.jobqueue.JobParameters;
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException;
 import org.whispersystems.signalservice.api.messages.SignalServiceAttachment;
-import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
-import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.api.push.exceptions.EncapsulatedExceptions;
 import org.whispersystems.signalservice.api.push.exceptions.NetworkFailureException;
@@ -56,8 +53,8 @@ public class PushGroupSendJob extends PushSendJob {
     private final long filterRecipientId; // Deprecated
     private final String filterAddress;
 
-    public PushGroupSendJob(Context context, long messageId, @NonNull Address destination, @Nullable Address filterAddress) {
-        super(context, JobParameters.newBuilder()
+    public PushGroupSendJob(Context context, AccountContext accountContext, long messageId, @NonNull Address destination, @Nullable Address filterAddress) {
+        super(context, accountContext, JobParameters.newBuilder()
                 .withPersistence()
                 .withGroupId(destination.toGroupString())
                 .withRequirement(new MasterSecretRequirement(context))
@@ -76,17 +73,17 @@ public class PushGroupSendJob extends PushSendJob {
     @Override
     public void onPushSend(MasterSecret masterSecret)
             throws MmsException, IOException, NoSuchMessageException {
-        PrivateChatRepo chatRepo = Repository.getChatRepo();
+        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
         MessageRecord record = chatRepo.getMessage(messageId);
 
         try {
-            deliver(masterSecret, record, filterAddress == null ? null : Address.fromSerialized(filterAddress));
+            deliver(masterSecret, record, filterAddress == null ? null : Address.from(accountContext, filterAddress));
 
             chatRepo.setMessageSendSuccess(messageId);
             markAttachmentsUploaded(messageId, record.getAttachments());
             if (record.getExpiresTime() > 0 && !record.isExpirationTimerUpdate()) {
                 chatRepo.setMessageExpiresStart(messageId);
-                ExpirationManager.INSTANCE.scheduler().scheduleDeletion(messageId, true, record.getExpiresTime());
+                ExpirationManager.INSTANCE.scheduler(accountContext).scheduleDeletion(messageId, true, record.getExpiresTime());
             }
         } catch (InvalidNumberException | RecipientFormattingException | UndeliverableMessageException e) {
             Log.w(TAG, e);
@@ -97,15 +94,15 @@ public class PushGroupSendJob extends PushSendJob {
             List<NetworkFailure> failures = new LinkedList<>();
 
             for (NetworkFailureException nfe : e.getNetworkExceptions()) {
-                failures.add(new NetworkFailure(Address.fromSerialized(nfe.getE164number())));
+                failures.add(new NetworkFailure(Address.from(accountContext, nfe.getE164number())));
             }
 
             for (UntrustedIdentityException uie : e.getUntrustedIdentityExceptions()) {
                 Log.w(TAG, uie + "number= " + uie.getE164Number() + " identityKey = " + uie.getIdentityKey());
 
-                JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr();
+                JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
                 if (manager != null) {
-                    manager.add(new RetrieveProfileJob(context, Recipient.from(context, Address.fromSerialized(uie.getE164Number()), false)));
+                    manager.add(new RetrieveProfileJob(context, accountContext, Recipient.from(accountContext, uie.getE164Number(), false)));
                 }
             }
 
@@ -131,14 +128,14 @@ public class PushGroupSendJob extends PushSendJob {
 
     @Override
     public void onCanceled() {
-        Repository.getChatRepo().setMessageSendFail(messageId);
+        Repository.getChatRepo(accountContext).setMessageSendFail(messageId);
     }
 
     private void deliver(MasterSecret masterSecret, MessageRecord message, @Nullable Address filterAddress)
             throws IOException, RecipientFormattingException, InvalidNumberException,
             EncapsulatedExceptions, UndeliverableMessageException {
-        String groupId = message.getRecipient().getAddress().toGroupString();
-        Optional<byte[]> profileKey = getProfileKey(message.getRecipient());
+        String groupId = message.getRecipient(accountContext).getAddress().toGroupString();
+        Optional<byte[]> profileKey = getProfileKey(message.getRecipient(accountContext));
         List<Address> recipients = getGroupMessageRecipients(groupId, messageId);
         MediaConstraints mediaConstraints = MediaConstraints.getPushMediaConstraints();
         List<AttachmentRecord> scaledAttachments = scaleAttachments(masterSecret, mediaConstraints, message.getAttachments());

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.bcm.messenger.chats.privatechat.core.BcmChatCore;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.jobs.ContextJob;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
@@ -27,8 +28,8 @@ public class SendReadReceiptJob extends ContextJob {
     private final List<Long> messageIds;
     private final long timestamp;
 
-    public SendReadReceiptJob(Context context, Address address, List<Long> messageIds) {
-        super(context, JobParameters.newBuilder()
+    public SendReadReceiptJob(Context context, AccountContext accountContext, Address address, List<Long> messageIds) {
+        super(context, accountContext, JobParameters.newBuilder()
                 .withRequirement(new NetworkRequirement(context))
                 .withPersistence()
                 .create());

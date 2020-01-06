@@ -176,7 +176,7 @@ class ContactModuleImp : IContactModule {
                     BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, link).navigation(context)
                     callback?.invoke(true)
                 }else {
-                    openContactDataActivity(context, Address.fromSerialized(result.uid), result.name)
+                    openContactDataActivity(context, Address.from(accountContext, result.uid), result.name)
                     callback?.invoke(true)
                 }
             }
@@ -199,7 +199,7 @@ class ContactModuleImp : IContactModule {
         }
         Observable.create(ObservableOnSubscribe<Address> {
 
-            val recipient = Recipient.from(accountContext, Address.fromSerialized(recipientQR.uid), false)
+            val recipient = Recipient.from(accountContext, recipientQR.uid, false)
             it.onNext(recipient.address)
             it.onComplete()
 
@@ -260,7 +260,7 @@ class ContactModuleImp : IContactModule {
 
         Observable.create(ObservableOnSubscribe<Boolean> {
 
-            val recipient = Recipient.from(accountContext, address, false)
+            val recipient = Recipient.from(address, false)
             if (recipient.isBlocked == block) {
                 it.onNext(true)
                 it.onComplete()
@@ -343,7 +343,7 @@ class ContactModuleImp : IContactModule {
 
     override fun handleFriendPropertyChanged(targetUid: String, callback: ((result: Boolean) -> Unit)?) {
         Observable.create<Boolean> {
-            mContactLogic.handleFriendPropertyChanged(Recipient.from(accountContext, Address.fromSerialized(targetUid), false)) { res ->
+            mContactLogic.handleFriendPropertyChanged(Recipient.from(accountContext, targetUid, false)) { res ->
                 it.onNext(res)
                 it.onComplete()
             }

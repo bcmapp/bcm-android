@@ -3,6 +3,8 @@ package com.bcm.messenger.chats.privatechat.jobs;
 import android.content.Context;
 
 import com.bcm.messenger.chats.privatechat.core.BcmChatCore;
+import com.bcm.messenger.common.AccountContext;
+import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.AmeGroupMessage;
 import com.bcm.messenger.common.crypto.MasterSecret;
@@ -15,7 +17,6 @@ import com.bcm.messenger.common.exception.InsecureFallbackApprovalException;
 import com.bcm.messenger.common.exception.RetryLaterException;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.sms.OutgoingLocationMessage;
-import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.logger.ALog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -24,7 +25,6 @@ import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException;
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.api.push.exceptions.UnregisteredUserException;
-import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException;
 
 import java.io.IOException;
 
@@ -45,14 +45,14 @@ public class PushControlMessageSendJob extends PushSendJob {
     private long messageId;
     private boolean isMms;
 
-    public PushControlMessageSendJob(Context context, long messageId, boolean isMms, Address destination) {
-        super(context, constructParameters(context, destination));
+    public PushControlMessageSendJob(Context context, AccountContext accountContext, long messageId, boolean isMms, Address destination) {
+        super(context, accountContext, constructParameters(context, destination));
         this.messageId = messageId;
         this.isMms = isMms;
     }
 
-    public PushControlMessageSendJob(Context context, String outMessageBody, long messageId, Address destination, ControlType type) {
-        super(context, constructParameters(context, destination));
+    public PushControlMessageSendJob(Context context, AccountContext accountContext, String outMessageBody, long messageId, Address destination, ControlType type) {
+        super(context, accountContext, constructParameters(context, destination));
         this.type = type;
         this.outMessageBody = outMessageBody;
         this.messageId = messageId;
@@ -66,21 +66,21 @@ public class PushControlMessageSendJob extends PushSendJob {
     @Override
     public void onPushSend(MasterSecret masterSecret) {
         ALog.i(TAG, "OnPushSend send recall message start.");
-        PrivateChatRepo chatRepo = Repository.getChatRepo();
+        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
 
         MessageRecord messageRecord = chatRepo.getMessage(messageId);
         if (messageRecord == null) return;
 
         try {
-            SignalServiceAddress address = getPushAddress(Address.fromSerialized(getGroupId()));
-            Recipient individualRecipient = Recipient.from(context, Address.fromSerialized(getGroupId()), true);
+            SignalServiceAddress address = getPushAddress(Address.from(accountContext, getGroupId()));
+            Recipient individualRecipient = Recipient.from(accountContext, getGroupId(), true);
             Optional<byte[]> profileKey = getProfileKey(individualRecipient);
             int expiresIn = (int) (messageRecord.getExpiresTime() / 1000);
 
             String recallMessage = new AmeGroupMessage<>(AmeGroupMessage.CONTROL_MESSAGE, new AmeGroupMessage.ControlContent(AmeGroupMessage.ControlContent.ACTION_RECALL_MESSAGE,
-                    Recipient.fromSelf(AppContextHolder.APP_CONTEXT, true).getAddress().serialize(),"",
+                    accountContext.getUid(),"",
                     messageRecord.getDateSent())).toString();
-            OutgoingLocationMessage recallInsertMessage = new OutgoingLocationMessage(messageRecord.getRecipient(), recallMessage, (messageRecord.getRecipient().getExpireMessages() * 1000));
+            OutgoingLocationMessage recallInsertMessage = new OutgoingLocationMessage(messageRecord.getRecipient(accountContext), recallMessage, (messageRecord.getRecipient(accountContext).getExpireMessages() * 1000));
 
             SignalServiceDataMessage textSecureMessage = SignalServiceDataMessage.newBuilder()
                     .withTimestamp(System.currentTimeMillis())
