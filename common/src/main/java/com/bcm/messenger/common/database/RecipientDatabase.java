@@ -402,7 +402,7 @@ public class RecipientDatabase extends Database {
         long threadId = DatabaseFactory.getThreadDatabase(AppContextHolder.APP_CONTEXT).getThreadIdFor(recipient);
         OutgoingLocationMessage message = new OutgoingLocationMessage(recipient, blockMessage, (recipient.getExpireMessages() * 1000));
         long messageId = DatabaseFactory.getEncryptingSmsDatabase(AppContextHolder.APP_CONTEXT)
-                .insertMessageOutbox(new MasterSecretUnion(BCMEncryptUtils.INSTANCE.getMasterSecret(AppContextHolder.APP_CONTEXT)),
+                .insertMessageOutbox(new MasterSecretUnion(BCMEncryptUtils.INSTANCE.getMasterSecret(AMELogin.INSTANCE.getMajorContext())),
                 threadId, message, false, AmeTimeUtil.INSTANCE.getMessageSendTime(), null);
 
         DatabaseFactory.getEncryptingSmsDatabase(AppContextHolder.APP_CONTEXT).markAsSent(messageId, true);
@@ -565,7 +565,7 @@ public class RecipientDatabase extends Database {
 
     public @NonNull
     Cursor getRecipients(int filter, @Nullable String... addresses) {
-        String localNumber = AMELogin.INSTANCE.getUid();
+        String localNumber = AMELogin.INSTANCE.getMajorUid();
         String sql = "select * from " + TABLE_NAME + " where " + ADDRESS + " != '" + localNumber + "' ";
         if (addresses != null && addresses.length > 0) {
             StringBuilder selectionBuilder = new StringBuilder();
@@ -619,7 +619,7 @@ public class RecipientDatabase extends Database {
 
         try (Cursor cursor = db.query(TABLE_NAME, new String[] { ADDRESS }, null, null, null, null, null)) {
             while (cursor != null && cursor.moveToNext()) {
-                results.add(Recipient.from(context, Address.from(context, cursor.getString(0)), true));
+                results.add(Recipient.from(Address.from(AMELogin.INSTANCE.getMajorContext(), cursor.getString(0)), true));
             }
         }
 
@@ -655,7 +655,7 @@ public class RecipientDatabase extends Database {
 
         try (Cursor cursor = db.query(TABLE_NAME, new String[]{ADDRESS}, REGISTERED + " = ?", new String[]{"1"}, null, null, null)) {
             while (cursor != null && cursor.moveToNext()) {
-                results.add(Address.fromSerialized(cursor.getString(0)));
+                results.add(Address.from(cursor.getString(0)));
             }
         }
 
@@ -666,7 +666,7 @@ public class RecipientDatabase extends Database {
     public void leaveGroup(long... groupIds) {
         List<String> addressList = new ArrayList<>(groupIds.length);
         for (long groupId : groupIds) {
-            addressList.add(GroupUtil.addressFromGid(groupId).serialize());
+            addressList.add(GroupUtil.addressFromGid(AMELogin.INSTANCE.getMajorContext(), groupId).serialize());
         }
         delete(addressList);
     }
@@ -734,7 +734,7 @@ public class RecipientDatabase extends Database {
                         if (s.getRelationship() == Relationship.STRANGER) {
                             ns.setLocalProfile("", "");
 
-                            if (!TextUtils.equals(ns.uid, AMELogin.INSTANCE.getUid())) {
+                            if (!TextUtils.equals(ns.uid, AMELogin.INSTANCE.getMajorUid())) {
                                 PrivacyProfile privacyProfile = ns.getPrivacyProfile();
                                 privacyProfile.setName("");
                                 privacyProfile.setNameKey("");
@@ -791,7 +791,7 @@ public class RecipientDatabase extends Database {
                 params.put(LOCAL_NAME, ns.getLocalName());
                 params.put(LOCAL_AVATAR, ns.getLocalAvatar());
                 params.put(PRIVACY_PROFILE, ns.getPrivacyProfile().toString());
-                Address address = Address.fromSerialized(ns.uid);
+                Address address = Address.from(ns.uid);
                 updateOrInsert(db, address, params);
 
             }
@@ -805,7 +805,7 @@ public class RecipientDatabase extends Database {
                 for (Map.Entry<String, UpdateSettings> entry : updateMap.entrySet()) {
                     updateSettings = entry.getValue();
                     ns = updateSettings.settings;
-                    recipient = Recipient.from(context, Address.fromSerialized(ns.uid), true);
+                    recipient = Recipient.from(Address.from(ns.uid), true);
 //                    recipient = Recipient.fromSnapshot(context, Address.fromSerialized(ns.uid), ns);
                     if (updateSettings.createFriendMsg) {
                         
@@ -842,7 +842,7 @@ public class RecipientDatabase extends Database {
         RecipientSettings find = null;
         try {
             
-            String localNumber = AMELogin.INSTANCE.getUid();
+            String localNumber = AMELogin.INSTANCE.getMajorUid();
             String sql = "select * from " + TABLE_NAME + " where " + ADDRESS + " <> '" + localNumber + "' ";
             sql += " and " + ADDRESS + " not like '" + GroupUtil.ENCODED_TT_GROUP_PREFIX + "%' and " + ADDRESS +
                     " not like '" + GroupUtil.ENCODED_SIGNAL_GROUP_PREFIX + "%' and " + ADDRESS + " not like '" + GroupUtil.ENCODED_MMS_GROUP_PREFIX + "%'";
@@ -942,7 +942,7 @@ public class RecipientDatabase extends Database {
                 }
                 params.put(REGISTERED, registeredState.getId());
 
-                Address address = Address.fromSerialized(setting.uid);
+                Address address = Address.from(AMELogin.INSTANCE.getMajorContext(), setting.uid);
                 updateOrInsert(db, address, params);
 
                 
@@ -979,7 +979,7 @@ public class RecipientDatabase extends Database {
 
             long threadId = DatabaseFactory.getThreadDatabase(AppContextHolder.APP_CONTEXT).getThreadIdFor(recipient);
             long messageId = DatabaseFactory.getEncryptingSmsDatabase(AppContextHolder.APP_CONTEXT)
-                    .insertMessageOutbox(new MasterSecretUnion(BCMEncryptUtils.INSTANCE.getMasterSecret(AppContextHolder.APP_CONTEXT)), threadId,
+                    .insertMessageOutbox(new MasterSecretUnion(BCMEncryptUtils.INSTANCE.getMasterSecret(AMELogin.INSTANCE.getMajorContext())), threadId,
                             textMessage, false, AmeTimeUtil.INSTANCE.getMessageSendTime(), null);
 
             DatabaseFactory.getEncryptingSmsDatabase(AppContextHolder.APP_CONTEXT).markAsSent(messageId, true);
@@ -990,7 +990,7 @@ public class RecipientDatabase extends Database {
     }
 
     private void delete(List<String> addressList) {
-        String localNumber = AMELogin.INSTANCE.getUid();
+        String localNumber = AMELogin.INSTANCE.getMajorUid();
         String sql = "DELETE FROM " + TABLE_NAME + " WHERE " + ADDRESS + " <> '" + localNumber + "' ";
         if (addressList != null && addressList.size() > 0) {
             StringBuilder selectionBuilder = new StringBuilder();
@@ -1001,7 +1001,7 @@ public class RecipientDatabase extends Database {
                     selectionBuilder.append(addressList.get(i));
                     selectionBuilder.append("'");
 
-                    Recipient.clearCache(AppContextHolder.APP_CONTEXT, Address.fromSerialized(addressList.get(i)));
+                    Recipient.clearCache(AppContextHolder.APP_CONTEXT, Address.from(AMELogin.INSTANCE.getMajorContext(), addressList.get(i)));
                 }
 
                 if (i < addressList.size() - 1) {
@@ -1191,7 +1191,7 @@ public class RecipientDatabase extends Database {
             }
 
             try {
-                IdentityDatabase.IdentityRecord record = DatabaseFactory.getIdentityDatabase(AppContextHolder.APP_CONTEXT).getIdentity(Address.fromSerialized(uid)).orNull();
+                IdentityDatabase.IdentityRecord record = DatabaseFactory.getIdentityDatabase(AppContextHolder.APP_CONTEXT).getIdentity(Address.from(uid)).orNull();
                 if (record != null) {
                     this.identityKey = Base64.encodeBytes(record.getIdentityKey().serialize());
                 }
@@ -1415,13 +1415,13 @@ public class RecipientDatabase extends Database {
         public @NonNull
         Address getCurrentAddress() {
             String serialized = cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS));
-            return Address.fromSerialized(serialized);
+            return Address.from(AMELogin.INSTANCE.getMajorContext(), serialized);
         }
 
         public @NonNull
         Recipient getCurrent() {
             String serialized = cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS));
-            return Recipient.from(context, Address.fromSerialized(serialized), false);
+            return Recipient.from(AMELogin.INSTANCE.getMajorContext(), serialized, false);
         }
 
         public @Nullable

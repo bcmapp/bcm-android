@@ -39,6 +39,7 @@ import com.bcm.messenger.common.database.model.SmsMessageRecord;
 import com.bcm.messenger.common.event.MessageDeletedEvent;
 import com.bcm.messenger.common.jobs.TrimThreadJob;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.sms.IncomingGroupMessage;
@@ -350,7 +351,7 @@ public class SmsDatabase extends MessagingDatabase {
             while (cursor.moveToNext()) {
                 if (Types.isOutgoingMessageType(cursor.getLong(cursor.getColumnIndexOrThrow(TYPE)))) {
                     Address theirAddress = messageId.getAddress();
-                    Address ourAddress = Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
+                    Address ourAddress = Address.from(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
 
                     if (ourAddress.equals(theirAddress)) {
                         long id = cursor.getLong(cursor.getColumnIndexOrThrow(ID));
@@ -379,7 +380,7 @@ public class SmsDatabase extends MessagingDatabase {
             while (cursor.moveToNext()) {
                 if (Types.isOutgoingMessageType(cursor.getLong(cursor.getColumnIndexOrThrow(TYPE)))) {
                     Address theirAddress = messageId.getAddress();
-                    Address ourAddress = Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
+                    Address ourAddress = Address.from(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
                     String columnName = deliveryReceipt ? DELIVERY_RECEIPT_COUNT : READ_RECEIPT_COUNT;
 
                     if (ourAddress.equals(theirAddress)) {
@@ -422,7 +423,7 @@ public class SmsDatabase extends MessagingDatabase {
 
             while (cursor.moveToNext()) {
                 Address theirAddress = messageId.getAddress();
-                Address ourAddress = Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
+                Address ourAddress = Address.from(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
 
                 if (ourAddress.equals(theirAddress)) {
                     long id = cursor.getLong(cursor.getColumnIndexOrThrow(ID));
@@ -481,7 +482,7 @@ public class SmsDatabase extends MessagingDatabase {
 
             while (cursor != null && cursor.moveToNext()) {
                 if (Types.isSecureType(cursor.getLong(3))) {
-                    SyncMessageId syncMessageId = new SyncMessageId(Address.fromSerialized(cursor.getString(1)), cursor.getLong(2));
+                    SyncMessageId syncMessageId = new SyncMessageId(Address.from(cursor.getString(1)), cursor.getLong(2));
                     ExpirationInfo expirationInfo = new ExpirationInfo(cursor.getLong(0), cursor.getLong(4), cursor.getLong(5), false);
 
                     results.add(new MarkedMessageInfo(syncMessageId, expirationInfo));
@@ -547,7 +548,7 @@ public class SmsDatabase extends MessagingDatabase {
     }
 
     private void trimThreadJob(long threadId) {
-        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr();
+        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr(AMELogin.INSTANCE.getMajorContext());
         if (null != jobManager) {
             jobManager.add(new TrimThreadJob(context, threadId));
         }
@@ -591,7 +592,7 @@ public class SmsDatabase extends MessagingDatabase {
 
     private @NonNull
     Pair<Long, Long> insertCallLog(@NonNull Address address, long type, boolean unread, long duration, int communicationType) {
-        Recipient recipient = Recipient.from(context, address, true);
+        Recipient recipient = Recipient.from(address, true);
         long threadId = DatabaseFactory.getThreadDatabase(context).getThreadIdFor(recipient);
 
         ContentValues values = new ContentValues(6);
@@ -654,13 +655,13 @@ public class SmsDatabase extends MessagingDatabase {
             type |= Types.KEY_EXCHANGE_IDENTITY_DEFAULT_BIT;
 
         try {
-            Recipient recipient = Recipient.from(context, message.getSender(), true);
+            Recipient recipient = Recipient.from(message.getSender(), true);
             Recipient groupRecipient;
 
             if (message.getGroupId() == null) {
                 groupRecipient = null;
             } else {
-                groupRecipient = Recipient.from(context, message.getGroupId(), true);
+                groupRecipient = Recipient.from(message.getGroupId(), true);
             }
 
             boolean unread = (AppUtil.INSTANCE.isDefaultSmsProvider(context) ||
@@ -1097,7 +1098,7 @@ public class SmsDatabase extends MessagingDatabase {
 
         public SmsMessageRecord getCurrentForMigrate() {
             long messageId = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.ID));
-            Address address = Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(SmsDatabase.ADDRESS)));
+            Address address = Address.from(cursor.getString(cursor.getColumnIndexOrThrow(SmsDatabase.ADDRESS)));
             int addressDeviceId = cursor.getInt(cursor.getColumnIndexOrThrow(SmsDatabase.ADDRESS_DEVICE_ID));
             long type = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.TYPE));
             long dateReceived = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.NORMALIZED_DATE_RECEIVED));
@@ -1111,7 +1112,7 @@ public class SmsDatabase extends MessagingDatabase {
             long expiresIn = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.EXPIRES_IN));
             long expireStarted = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.EXPIRE_STARTED));
 
-            if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
+            if (!TextSecurePreferences.isReadReceiptsEnabled(AMELogin.INSTANCE.getMajorContext())) {
                 readReceiptCount = 0;
             }
 
@@ -1135,7 +1136,7 @@ public class SmsDatabase extends MessagingDatabase {
 
         public SmsMessageRecord getCurrent() {
             long messageId = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.ID));
-            Address address = Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(SmsDatabase.ADDRESS)));
+            Address address = Address.from(cursor.getString(cursor.getColumnIndexOrThrow(SmsDatabase.ADDRESS)));
             int addressDeviceId = cursor.getInt(cursor.getColumnIndexOrThrow(SmsDatabase.ADDRESS_DEVICE_ID));
             long type = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.TYPE));
             long dateReceived = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.NORMALIZED_DATE_RECEIVED));
@@ -1149,12 +1150,12 @@ public class SmsDatabase extends MessagingDatabase {
             long expiresIn = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.EXPIRES_IN));
             long expireStarted = cursor.getLong(cursor.getColumnIndexOrThrow(SmsDatabase.EXPIRE_STARTED));
 
-            if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
+            if (!TextSecurePreferences.isReadReceiptsEnabled(AMELogin.INSTANCE.getMajorContext())) {
                 readReceiptCount = 0;
             }
 
             List<IdentityKeyMismatch> mismatches = getMismatches(mismatchDocument);
-            Recipient recipient = Recipient.from(context, address, true);
+            Recipient recipient = Recipient.from(address, true);
             DisplayRecord.Body body = getBody(cursor);
 
             SmsMessageRecord record = new SmsMessageRecord(context, messageId, body, recipient,
