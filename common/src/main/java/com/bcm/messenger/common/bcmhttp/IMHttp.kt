@@ -19,7 +19,7 @@ object IMHttp: AccountContextMap<BaseHttp>({
             .addInterceptor(BcmAuthHeaderInterceptor(it))
             .addInterceptor(RedirectInterceptorHelper.imServerInterceptor)
             .addInterceptor(IMServerErrorCodeInterceptor())
-            .addInterceptor(NormalMetricsInterceptor(accountContext))
+            .addInterceptor(NormalMetricsInterceptor(it))
             .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
             .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
             .build()

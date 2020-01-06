@@ -21,11 +21,8 @@ import com.bcm.messenger.common.core.setApplicationLanguage
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.crypto.PRNGFixes
 import com.bcm.messenger.common.jobs.GcmRefresh
-import com.bcm.messenger.common.metrics.ReportUtil
-import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IAFModule
-import com.bcm.messenger.common.provider.IUmengModule
+import com.bcm.messenger.common.metrics.ReportConfigure
+import com.bcm.messenger.common.provider.*
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.crash.initCrash
 import com.bcm.messenger.crash.setCrashReportLogs
@@ -76,8 +73,6 @@ class AmeApplication : MultiDexApplication() {
         AppContextHolder.init(this)
         AppForeground.init(this)
 
-        ReportUtil.appLaunchTime = System.currentTimeMillis()
-
         NetworkUtil.init(this)
 
         AmeAppLifecycle.init(this)
@@ -113,6 +108,10 @@ class AmeApplication : MultiDexApplication() {
 
         initNetWork(isReleaseBuild)
         AmePushProcess.clearNotificationCenter()
+
+        if (AMELogin.isLogin) {
+            AmeModuleCenter.metric(AMELogin.majorContext)?.launchStart()
+        }
 
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
@@ -188,7 +187,7 @@ class AmeApplication : MultiDexApplication() {
 
         ProxyManager.refresh()
 
-        LBSManager.addMetricsListener(ReportUtil)
+        LBSManager.addMetricsListener(ReportConfigure)
         LBSManager.refresh()
     }
 

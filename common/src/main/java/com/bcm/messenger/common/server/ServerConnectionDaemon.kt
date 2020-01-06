@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptorHelper
@@ -14,9 +13,7 @@ import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSManager
 import com.bcm.messenger.common.metrics.COUNTER_TOPIC_BCM_SERVER
 import com.bcm.messenger.common.metrics.COUNTER_WEBSOCKET_FAIL
 import com.bcm.messenger.common.metrics.COUNTER_WEBSOCKET_SUCCESS
-import com.bcm.messenger.common.metrics.ReportUtil
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.accountmodule.IMetricsModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.listener.SafeWeakListeners
@@ -65,7 +62,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
 
     private var retryTimer: Disposable? = null
 
-    private val reportProvider = AmeProvider.get<IMetricsModule>(ARouterConstants.Provider.REPORT_BASE)
+    private val metrics = AmeModuleCenter.metric(accountContext)
 
     private var lbsFetchIndex = 0
 
@@ -246,7 +243,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
             val endTime = System.currentTimeMillis()
 
             val serverUrl = RedirectInterceptorHelper.imServerInterceptor.getCurrentServer()
-            reportProvider?.addNetworkReportData(serverUrl.ip, serverUrl.port, requestMessage.verb, requestMessage.path, response.first().toString(), endTime - startTime)
+            metrics?.addNetworkReportData(serverUrl.ip, serverUrl.port, requestMessage.verb, requestMessage.path, response.first().toString(), endTime - startTime)
 
             if (response.first() < 200 || response.first() >= 300) {
                 throw IOException("Non-successful response: " + response.first())
@@ -415,8 +412,8 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
             return
         }
 
-        reportProvider?.addCustomCounterReportData(COUNTER_TOPIC_BCM_SERVER, COUNTER_WEBSOCKET_SUCCESS, connected)
-        reportProvider?.addCustomCounterReportData(COUNTER_TOPIC_BCM_SERVER, COUNTER_WEBSOCKET_FAIL, !connected)
+        metrics?.addCustomCounterReportData(COUNTER_TOPIC_BCM_SERVER, COUNTER_WEBSOCKET_SUCCESS, connected)
+        metrics?.addCustomCounterReportData(COUNTER_TOPIC_BCM_SERVER, COUNTER_WEBSOCKET_FAIL, !connected)
     }
 
 }

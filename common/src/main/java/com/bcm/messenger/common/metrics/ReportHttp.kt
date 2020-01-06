@@ -17,39 +17,13 @@ import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
 class ReportHttp(accountContext: AccountContext) : BaseHttp() {
-    companion object {
-        private val httpClients = HashMap<AccountContext, ReportHttp>()
-
-        fun getHttp(accountContext: AccountContext): ReportHttp {
-            synchronized(httpClients) {
-                var http = httpClients[accountContext]
-                if (null == http) {
-                    http = ReportHttp(accountContext)
-                    httpClients[accountContext] = http
-                }
-                return http
-            }
-        }
-
-        fun removeHttp(accountContext: AccountContext) {
-            synchronized(httpClients) {
-                httpClients.remove(accountContext)
-
-                val gcList = httpClients.keys.filter { !it.isLogin }
-                gcList.forEach {
-                    httpClients.remove(it)
-                }
-            }
-        }
-    }
-
     init {
         val sslFactory = IMServerSSL()
         val clientBuilder = OkHttpClient.Builder()
                 .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
                 .hostnameVerifier(trustAllHostVerify())
                 .addInterceptor(RedirectInterceptorHelper.metricsServerInterceptor)
-                .addInterceptor(ReportMetricInterceptor())
+                .addInterceptor(ReportMetricInterceptor(accountContext))
                 .addInterceptor(BcmAuthHeaderInterceptor(accountContext))
                 .readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
@@ -115,5 +89,4 @@ class ReportHttp(accountContext: AccountContext) : BaseHttp() {
             }
         }
     }
-
 }

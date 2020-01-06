@@ -79,12 +79,10 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
     private lateinit var titleView: MessageListTitleView
     private var mWaitForShortLink: Boolean = false //是否等待短链生成
     private var messageListFragment: MessageListFragment? = null
-    // TODO: Replace when major user is Changed.
-    private val metricsProvider = AmeProvider.getAccountModule<IMetricsModule>(ARouterConstants.Provider.REPORT_BASE, AMELogin.majorContext)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        metricsProvider?.launchEnd()
+        AmeModuleCenter.metric(AMELogin.majorContext)?.launchEnd()
 
         setSwipeBackEnable(false)
 
@@ -168,7 +166,6 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
             AmeModuleCenter.serverDaemon(getAccountContext()).stopDaemon()
             AmeModuleCenter.serverDaemon(getAccountContext()).stopConnection()
-            metricsProvider?.setAdhocRunning(true)
 
             mPixelManager = PixelManager.Builder().target(PixelActivity::class.java).build()
             mPixelManager?.start(AppContextHolder.APP_CONTEXT)
@@ -190,7 +187,6 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
             AmeModuleCenter.serverDaemon(getAccountContext()).startDaemon()
             AmeModuleCenter.serverDaemon(getAccountContext()).checkConnection(true)
-            metricsProvider?.setAdhocRunning(false)
 
             mPixelManager?.quit(AppContextHolder.APP_CONTEXT)
         }

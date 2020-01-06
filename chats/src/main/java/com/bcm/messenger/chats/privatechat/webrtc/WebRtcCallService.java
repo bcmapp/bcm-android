@@ -33,7 +33,6 @@ import com.bcm.messenger.common.database.model.PrivateChatDbModel;
 import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.event.MessageReceiveNotifyEvent;
 import com.bcm.messenger.common.metrics.MetricsConstKt;
-import com.bcm.messenger.common.metrics.ReportUtil;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
 import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.accountmodule.IChatModule;

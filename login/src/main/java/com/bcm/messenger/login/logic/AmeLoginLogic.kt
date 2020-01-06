@@ -16,7 +16,6 @@ import com.bcm.messenger.common.database.repositories.IdentityRepo
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.gcm.FcmUtil
 import com.bcm.messenger.common.grouprepository.room.database.GroupDatabase
-import com.bcm.messenger.common.metrics.ReportUtil
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
@@ -169,7 +168,6 @@ object AmeLoginLogic {
         AmeModuleCenter.contact(accountContext)?.doForLogOut()
         AmeModuleCenter.user(accountContext)?.doForLogout()
 
-        ReportUtil.unInit(accountContext)
         AmePushProcess.clearNotificationCenter()
         AmePushProcess.updateAppBadge(AppContextHolder.APP_CONTEXT, 0)
         AmeProvider.get<IWalletModule>(ARouterConstants.Provider.PROVIDER_WALLET_BASE)?.logoutWallet()
@@ -194,8 +192,7 @@ object AmeLoginLogic {
 
         refreshMySupportFeature(accountContext)
 
-        ReportUtil.loginEnded(getAccountContext(uid), true)
-
+        AmeModuleCenter.metric(accountContext)?.loginEnd(true)
     }
 
     /**
@@ -224,8 +221,8 @@ object AmeLoginLogic {
                         File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-shm").delete()
                         File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-wal").delete()
 
-                        TextSecurePreferences.clear(AppContextHolder.APP_CONTEXT)
-                        MasterSecretUtil.clearMasterSecretPassphrase(AppContextHolder.APP_CONTEXT)
+                        TextSecurePreferences.clear(accountContext)
+                        MasterSecretUtil.clearMasterSecretPassphrase(accountContext)
                         AmeModuleCenter.wallet(accountContext)?.destroyWallet()
                         AmeModuleCenter.contact(accountContext)?.clear()
 
@@ -288,7 +285,6 @@ object AmeLoginLogic {
      */
     @SuppressLint("CheckResult")
     private fun login(data: AmeAccountData, password: String, result: (succeed: Boolean, exception: Throwable?, error: String) -> Unit) {
-        ReportUtil.loginStartTime = System.currentTimeMillis()
         AmeDispatcher.io.dispatch {
             val error: String
             try {
@@ -323,7 +319,10 @@ object AmeLoginLogic {
                 setTmpToken(data.uid, signalPassword)
                 mRegisterNick = data.name
 
-                AmeLoginCore.login(getAccountContext(data.uid), loginParams)
+                val accountContext = getAccountContext(data.uid)
+                AmeModuleCenter.metric(accountContext)?.loginStart()
+
+                AmeLoginCore.login(accountContext, loginParams)
                         .subscribeOn(AmeDispatcher.singleScheduler)
                         .observeOn(AmeDispatcher.singleScheduler)
                         .doOnNext {
@@ -335,6 +334,9 @@ object AmeLoginLogic {
                         }, {
                             ALog.e(TAG, "login error", it)
                             setTmpToken("", "")
+
+                            AmeModuleCenter.metric(accountContext)?.loginEnd(false)
+
                             when (ServerCodeUtil.getNetStatusCode(it)) {
                                 ServerCodeUtil.CODE_LOW_VERSION -> result(false, it, it.message
                                         ?: AppContextHolder.APP_CONTEXT.getString(R.string.login_login_failed))
@@ -499,12 +501,13 @@ object AmeLoginLogic {
 
         saveAccountData(accountId, registrationId, uid, ecKeyPair, signalKey, signalPassword, password, passwordHint)
 
-        initCreatePhrase(AppContextHolder.APP_CONTEXT, ecKeyPair)
+        val accountContext = getAccountContext(uid)
+        initCreatePhrase(accountContext, ecKeyPair)
 
-        AmeModuleCenter.onLoginSucceed(getAccountContext(uid))
+        AmeModuleCenter.onLoginSucceed(accountContext)
 
-        if (!DatabaseFactory.isDatabaseExist(AppContextHolder.APP_CONTEXT) || isRegister || (TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT) && TextSecurePreferences.getMigrateFailedCount(AppContextHolder.APP_CONTEXT) < 3)) {
-            TextSecurePreferences.setHasDatabaseMigrated(AppContextHolder.APP_CONTEXT)
+        if (!DatabaseFactory.isDatabaseExist(AppContextHolder.APP_CONTEXT) || isRegister || (TextSecurePreferences.isDatabaseMigrated(accountContext) && TextSecurePreferences.getMigrateFailedCount(accountContext) < 3)) {
+            TextSecurePreferences.setHasDatabaseMigrated(accountContext)
             initAfterLoginSuccess(getAccountContext(uid), ecKeyPair, password)
         } else {
             loginTempData = Triple(uid, ecKeyPair, password)
@@ -543,7 +546,6 @@ object AmeLoginLogic {
         } catch (e: Exception) {
             ALog.logForSecret(TAG, "loginSucceed generate prekey or prekey upload failed, ${e.message}", e)
             quit(accountContext, false)
-            ReportUtil.loginEnded(getAccountContext(uid), false)
             throw e
         }
     }
@@ -614,17 +616,17 @@ object AmeLoginLogic {
         accountHistory.setMajorLoginAccountUid(accountData.uid)
     }
 
-    private fun initCreatePhrase(context: Context, ecKeyPair: ECKeyPair) {
-        IdentityKeyUtil.rebuildIdentityKeys(AppContextHolder.APP_CONTEXT, ecKeyPair.privateKey.serialize())
+    private fun initCreatePhrase(accountContext: AccountContext, ecKeyPair: ECKeyPair) {
+        IdentityKeyUtil.rebuildIdentityKeys(accountContext, ecKeyPair.privateKey.serialize())
 
-        if (MasterSecretUtil.isPassphraseInitialized(context)) {
+        if (MasterSecretUtil.isPassphraseInitialized(accountContext)) {
             return
         }
         try {
             val passphrase = MasterSecretUtil.UNENCRYPTED_PASSPHRASE
-            val masterSecret = MasterSecretUtil.generateMasterSecret(context, passphrase)
-            MasterSecretUtil.generateAsymmetricMasterSecret(context, masterSecret)
-            TextSecurePreferences.setReadReceiptsEnabled(context, true)
+            val masterSecret = MasterSecretUtil.generateMasterSecret(accountContext, passphrase)
+            MasterSecretUtil.generateAsymmetricMasterSecret(accountContext, masterSecret)
+            TextSecurePreferences.setReadReceiptsEnabled(accountContext, true)
 
         } catch (e: Exception) {
             ALog.logForSecret(TAG, "initCreatePhrase", e)

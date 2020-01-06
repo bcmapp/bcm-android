@@ -9,8 +9,10 @@ import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.R;
 import com.bcm.messenger.common.utils.AppUtil;
+import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.logger.ALog;
 
 import java.util.Arrays;
@@ -73,248 +75,248 @@ public class TextSecurePreferences {
 
     public static final String CONTACT_SYNC_VERSION = "pref_contact_sync_version";
 
-    public static void clear(Context context) {
-        SharedPreferences prefs = getCurrentSharedPreferences(context);
+    public static void clear(AccountContext accountContext) {
+        SharedPreferences prefs = getCurrentSharedPreferences(accountContext);
         if (null != prefs){
             prefs.edit().clear().apply();
         }
     }
 
-    public static boolean isProfileSecret(Context context) {
-        return getBooleanPreference(context, PROFILE_SECRET_PREF, false);
+    public static boolean isProfileSecret(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, PROFILE_SECRET_PREF, false);
     }
 
-    public static boolean isReadReceiptsEnabled(Context context) {
-        return getBooleanPreference(context, READ_RECEIPTS_PREF, false);
+    public static boolean isReadReceiptsEnabled(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, READ_RECEIPTS_PREF, false);
     }
 
-    public static void setReadReceiptsEnabled(Context context, boolean enabled) {
-        setBooleanPreference(context, READ_RECEIPTS_PREF, enabled);
+    public static void setReadReceiptsEnabled(AccountContext accountContext, boolean enabled) {
+        setBooleanPreference(accountContext, READ_RECEIPTS_PREF, enabled);
     }
 
     public static @Nullable
-    String getProfileKey(Context context) {
-        return getStringPreference(context, PROFILE_KEY_PREF, null);
+    String getProfileKey(AccountContext accountContext) {
+        return getStringPreference(accountContext, PROFILE_KEY_PREF, null);
     }
 
-    public static void setProfileKey(Context context, String key) {
-        setStringPreference(context, PROFILE_KEY_PREF, key);
+    public static void setProfileKey(AccountContext accountContext, String key) {
+        setStringPreference(accountContext, PROFILE_KEY_PREF, key);
     }
 
-    public static boolean isTurnOnly(Context context) {
-        return getBooleanPreference(context, ALWAYS_RELAY_CALLS_PREF, false);
+    public static boolean isTurnOnly(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, ALWAYS_RELAY_CALLS_PREF, false);
     }
 
-    public static void setTurnOnly(Context context, Boolean turnOnly) {
-        setBooleanPreference(context, ALWAYS_RELAY_CALLS_PREF, turnOnly);
+    public static void setTurnOnly(AccountContext accountContext, Boolean turnOnly) {
+        setBooleanPreference(accountContext, ALWAYS_RELAY_CALLS_PREF, turnOnly);
     }
 
-    public static boolean isGcmDisabled(Context context) {
-        return getBooleanPreference(context, GCM_DISABLED_PREF, false);
-    }
-
-
-    public static void setMultiDevice(Context context, boolean value) {
-        setBooleanPreference(context, MULTI_DEVICE_PROVISIONED_PREF, value);
-    }
-
-    public static boolean isMultiDevice(Context context) {
-        return getBooleanPreference(context, MULTI_DEVICE_PROVISIONED_PREF, false);
+    public static boolean isGcmDisabled(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, GCM_DISABLED_PREF, false);
     }
 
 
-    public static int getSignedPreKeyFailureCount(Context context) {
-        return getIntegerPreference(context, SIGNED_PREKEY_FAILURE_COUNT_PREF, 0);
+    public static void setMultiDevice(AccountContext accountContext, boolean value) {
+        setBooleanPreference(accountContext, MULTI_DEVICE_PROVISIONED_PREF, value);
+    }
+
+    public static boolean isMultiDevice(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, MULTI_DEVICE_PROVISIONED_PREF, false);
     }
 
 
-    public static boolean isSignedPreKeyRegistered(Context context) {
-        return getBooleanPreference(context, SIGNED_PREKEY_REGISTERED_PREF, false);
+    public static int getSignedPreKeyFailureCount(AccountContext accountContext) {
+        return getIntegerPreference(accountContext, SIGNED_PREKEY_FAILURE_COUNT_PREF, 0);
+    }
+
+
+    public static boolean isSignedPreKeyRegistered(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, SIGNED_PREKEY_REGISTERED_PREF, false);
     }
 
     @Nullable
-    public static String getGcmRegistrationId(Context context) {
-        int storedRegistrationIdVersion = getIntegerPreference(context, GCM_REGISTRATION_ID_VERSION_PREF, 0);
+    public static String getGcmRegistrationId(AccountContext accountContext) {
+        int storedRegistrationIdVersion = getIntegerPreference(accountContext, GCM_REGISTRATION_ID_VERSION_PREF, 0);
 
-        if (storedRegistrationIdVersion != AppUtil.INSTANCE.getVersionCode(context)) {
+        if (storedRegistrationIdVersion != AppUtil.INSTANCE.getVersionCode(AppContextHolder.APP_CONTEXT)) {
             return null;
         } else {
-            return getStringPreference(context, GCM_REGISTRATION_ID_PREF, null);
+            return getStringPreference(accountContext, GCM_REGISTRATION_ID_PREF, null);
         }
     }
 
-    public static long getGcmRegistrationIdLastSetTime(Context context) {
-        return getLongPreference(context, GCM_REGISTRATION_ID_TIME_PREF, 0);
+    public static long getGcmRegistrationIdLastSetTime(AccountContext accountContext) {
+        return getLongPreference(accountContext, GCM_REGISTRATION_ID_TIME_PREF, 0);
     }
 
 
-    public static int getLocalRegistrationId(Context context) {
-        return getIntegerPreference(context, LOCAL_REGISTRATION_ID_PREF, 0);
+    public static int getLocalRegistrationId(AccountContext accountContext) {
+        return getIntegerPreference(accountContext, LOCAL_REGISTRATION_ID_PREF, 0);
     }
 
-    public static long getSignedPreKeyRotationTime(Context context) {
-        return getLongPreference(context, SIGNED_PREKEY_ROTATION_TIME_PREF, 0L);
+    public static long getSignedPreKeyRotationTime(AccountContext accountContext) {
+        return getLongPreference(accountContext, SIGNED_PREKEY_ROTATION_TIME_PREF, 0L);
     }
 
-    public static String getPushServerPassword(Context context) {
-        return getStringPreference(context, GCM_PASSWORD_PREF, "");
+    public static String getPushServerPassword(AccountContext accountContext) {
+        return getStringPreference(accountContext, GCM_PASSWORD_PREF, "");
     }
 
-    public static String getSignalingKey(Context context) {
-        return getStringPreference(context, SIGNALING_KEY_PREF, "");
+    public static String getSignalingKey(AccountContext accountContext) {
+        return getStringPreference(accountContext, SIGNALING_KEY_PREF, "");
     }
 
-    public static void setScreenSecurityEnabled(Context context, boolean value) {
-        setBooleanPreference(context, SCREEN_SECURITY_PREF, value);
+    public static void setScreenSecurityEnabled(AccountContext accountContext, boolean value) {
+        setBooleanPreference(accountContext, SCREEN_SECURITY_PREF, value);
     }
 
-    public static boolean isScreenSecurityEnabled(Context context) {
-        return getBooleanPreference(context, SCREEN_SECURITY_PREF, false);
+    public static boolean isScreenSecurityEnabled(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, SCREEN_SECURITY_PREF, false);
     }
 
-    public static boolean isPushRegistered(Context context) {
-        return getBooleanPreference(context, REGISTERED_GCM_PREF, false);
-    }
-
-
-    public static boolean isNotificationsEnabled(Context context) {
-        return getBooleanPreference(context, NOTIFICATION_PREF, true);
-    }
-
-    public static void setNotificationsEnabled(Context context, boolean value) {
-        setBooleanPreference(context, NOTIFICATION_PREF, value);
-    }
-
-    public static String getNotificationRingtone(Context context) {
-        return getStringPreference(context, RINGTONE_PREF, Settings.System.DEFAULT_NOTIFICATION_URI.toString());
-    }
-
-    public static void setNotificationRingtone(Context context, String ringtoneUri) {
-        setStringPreference(context, RINGTONE_PREF, ringtoneUri);
-    }
-
-    public static boolean isNotificationVibrateEnabled(Context context) {
-        return getBooleanPreference(context, VIBRATE_PREF, true);
-    }
-
-    public static void setNotificationVibrateEnabled(Context context, boolean value) {
-        setBooleanPreference(context, VIBRATE_PREF, value);
+    public static boolean isPushRegistered(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, REGISTERED_GCM_PREF, false);
     }
 
 
-    public static boolean isThreadLengthTrimmingEnabled(Context context) {
-        return getBooleanPreference(context, THREAD_TRIM_ENABLED, false);
+    public static boolean isNotificationsEnabled(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, NOTIFICATION_PREF, true);
     }
 
-    public static int getThreadTrimLength(Context context) {
-        return Integer.parseInt(getStringPreference(context, THREAD_TRIM_LENGTH, "500"));
+    public static void setNotificationsEnabled(AccountContext accountContext, boolean value) {
+        setBooleanPreference(accountContext, NOTIFICATION_PREF, value);
     }
 
-    public static boolean isSystemEmojiPreferred(Context context) {
-        return getBooleanPreference(context, SYSTEM_EMOJI_PREF, false);
+    public static String getNotificationRingtone(AccountContext accountContext) {
+        return getStringPreference(accountContext, RINGTONE_PREF, Settings.System.DEFAULT_NOTIFICATION_URI.toString());
     }
 
-    public static @NonNull
-    Set<String> getMobileMediaDownloadAllowed(Context context) {
-        return getMediaDownloadAllowed(context, MEDIA_DOWNLOAD_MOBILE_PREF, R.array.pref_media_download_mobile_data_default);
+    public static void setNotificationRingtone(AccountContext accountContext, String ringtoneUri) {
+        setStringPreference(accountContext, RINGTONE_PREF, ringtoneUri);
+    }
+
+    public static boolean isNotificationVibrateEnabled(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, VIBRATE_PREF, true);
+    }
+
+    public static void setNotificationVibrateEnabled(AccountContext accountContext, boolean value) {
+        setBooleanPreference(accountContext, VIBRATE_PREF, value);
+    }
+
+
+    public static boolean isThreadLengthTrimmingEnabled(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, THREAD_TRIM_ENABLED, false);
+    }
+
+    public static int getThreadTrimLength(AccountContext accountContext) {
+        return Integer.parseInt(getStringPreference(accountContext, THREAD_TRIM_LENGTH, "500"));
+    }
+
+    public static boolean isSystemEmojiPreferred(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, SYSTEM_EMOJI_PREF, false);
     }
 
     public static @NonNull
-    Set<String> getWifiMediaDownloadAllowed(Context context) {
-        return getMediaDownloadAllowed(context, MEDIA_DOWNLOAD_WIFI_PREF, R.array.pref_media_download_wifi_default);
+    Set<String> getMobileMediaDownloadAllowed(AccountContext accountContext) {
+        return getMediaDownloadAllowed(accountContext, MEDIA_DOWNLOAD_MOBILE_PREF, R.array.pref_media_download_mobile_data_default);
     }
 
     public static @NonNull
-    Set<String> getRoamingMediaDownloadAllowed(Context context) {
-        return getMediaDownloadAllowed(context, MEDIA_DOWNLOAD_ROAMING_PREF, R.array.pref_media_download_roaming_default);
+    Set<String> getWifiMediaDownloadAllowed(AccountContext accountContext) {
+        return getMediaDownloadAllowed(accountContext, MEDIA_DOWNLOAD_WIFI_PREF, R.array.pref_media_download_wifi_default);
+    }
+
+    public static @NonNull
+    Set<String> getRoamingMediaDownloadAllowed(AccountContext accountContext) {
+        return getMediaDownloadAllowed(accountContext, MEDIA_DOWNLOAD_ROAMING_PREF, R.array.pref_media_download_roaming_default);
     }
 
     private static @NonNull
-    Set<String> getMediaDownloadAllowed(Context context, String key, @ArrayRes int defaultValuesRes) {
-        return getStringSetPreference(context,
+    Set<String> getMediaDownloadAllowed(AccountContext accountContext, String key, @ArrayRes int defaultValuesRes) {
+        return getStringSetPreference(accountContext,
                 key,
-                new HashSet<>(Arrays.asList(context.getResources().getStringArray(defaultValuesRes))));
+                new HashSet<>(Arrays.asList(AppContextHolder.APP_CONTEXT.getResources().getStringArray(defaultValuesRes))));
     }
 
-    public static void setHasDatabaseMigrated(Context context) {
-        setBooleanPreference(context, HAS_DATABASE_MIGRATED, true);
+    public static void setHasDatabaseMigrated(AccountContext accountContext) {
+        setBooleanPreference(accountContext, HAS_DATABASE_MIGRATED, true);
     }
 
-    public static boolean isDatabaseMigrated(Context context) {
-        return getBooleanPreference(context, HAS_DATABASE_MIGRATED, false);
+    public static boolean isDatabaseMigrated(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, HAS_DATABASE_MIGRATED, false);
     }
 
-    public static void setMigrateFailedCount(Context context, int count) {
-        setIntegerPrefrence(context, MIGRATE_FAILED_COUNT, count);
+    public static void setMigrateFailedCount(AccountContext accountContext, int count) {
+        setIntegerPrefrence(accountContext, MIGRATE_FAILED_COUNT, count);
     }
 
-    public static int getMigrateFailedCount(Context context) {
-        return getIntegerPreference(context, MIGRATE_FAILED_COUNT, 0);
+    public static int getMigrateFailedCount(AccountContext accountContext) {
+        return getIntegerPreference(accountContext, MIGRATE_FAILED_COUNT, 0);
     }
 
-    public static void setBooleanPreference(Context context, String key, boolean value) {
-        SharedPreferences pref = getCurrentSharedPreferences(context);
+    public static void setBooleanPreference(AccountContext accountContext, String key, boolean value) {
+        SharedPreferences pref = getCurrentSharedPreferences(accountContext);
         if (null != pref){
             pref.edit().putBoolean(key, value).apply();
         }
 
     }
 
-    public static boolean getBooleanPreference(Context context, String key, boolean defaultValue) {
-        SharedPreferences pref = getCurrentSharedPreferences(context);
+    public static boolean getBooleanPreference(AccountContext accountContext, String key, boolean defaultValue) {
+        SharedPreferences pref = getCurrentSharedPreferences(accountContext);
         if (null != pref) {
             return pref.getBoolean(key, defaultValue);
         }
         return defaultValue;
     }
 
-    public static void setStringPreference(Context context, String key, String value) {
-        SharedPreferences pref = getCurrentSharedPreferences(context);
+    public static void setStringPreference(AccountContext accountContext, String key, String value) {
+        SharedPreferences pref = getCurrentSharedPreferences(accountContext);
         if(null != pref){
             pref.edit().putString(key, value).apply();
         }
     }
 
-    public static String getStringPreference(Context context, String key, String defaultValue) {
-        SharedPreferences pref = getCurrentSharedPreferences(context);
+    public static String getStringPreference(AccountContext accountContext, String key, String defaultValue) {
+        SharedPreferences pref = getCurrentSharedPreferences(accountContext);
         if (null != pref) {
             return pref.getString(key, defaultValue);
         }
         return  defaultValue;
     }
 
-    public static int getIntegerPreference(Context context, String key, int defaultValue) {
-        SharedPreferences pref = getCurrentSharedPreferences(context);
+    public static int getIntegerPreference(AccountContext accountContext, String key, int defaultValue) {
+        SharedPreferences pref = getCurrentSharedPreferences(accountContext);
         if (null != pref) {
             return pref.getInt(key, defaultValue);
         }
         return  defaultValue;
     }
 
-    public static void setIntegerPrefrence(Context context, String key, int value) {
-        SharedPreferences pref = getCurrentSharedPreferences(context);
+    public static void setIntegerPrefrence(AccountContext accountContext, String key, int value) {
+        SharedPreferences pref = getCurrentSharedPreferences(accountContext);
         if (null != pref) {
             pref.edit().putInt(key, value).apply();
         }
     }
 
-    public static long getLongPreference(Context context, String key, long defaultValue) {
-        SharedPreferences pref = getCurrentSharedPreferences(context);
+    public static long getLongPreference(AccountContext accountContext, String key, long defaultValue) {
+        SharedPreferences pref = getCurrentSharedPreferences(accountContext);
         if (null != pref) {
             return pref.getLong(key, defaultValue);
         }
         return  defaultValue;
     }
 
-    public static void setLongPreference(Context context, String key, long value) {
-        SharedPreferences pref = getCurrentSharedPreferences(context);
+    public static void setLongPreference(AccountContext accountContext, String key, long value) {
+        SharedPreferences pref = getCurrentSharedPreferences(accountContext);
         if (null != pref) {
             pref.edit().putLong(key, value).apply();
         }
     }
 
-    private static Set<String> getStringSetPreference(Context context, String key, Set<String> defaultValues) {
-        final SharedPreferences pref =  getCurrentSharedPreferences(context);
+    private static Set<String> getStringSetPreference(AccountContext accountContext, String key, Set<String> defaultValues) {
+        final SharedPreferences pref =  getCurrentSharedPreferences(accountContext);
         if (null != pref && pref.contains(key)) {
             return pref.getStringSet(key, Collections.<String>emptySet());
         } else {
@@ -322,16 +324,14 @@ public class TextSecurePreferences {
         }
     }
 
-    private static SharedPreferences getCurrentSharedPreferences(Context context) {
-        String curLogin = SuperPreferences.getStringPreference(context, SuperPreferences.AME_CURRENT_LOGIN);
-        if (!TextUtils.isEmpty(curLogin)) {
-            return context.getSharedPreferences(TABLE_NAME + curLogin, Context.MODE_PRIVATE);
-        }
-        return null;
+    private static SharedPreferences getCurrentSharedPreferences(AccountContext accountContext) {
+        Context context = AppContextHolder.APP_CONTEXT;
+
+        return context.getSharedPreferences(TABLE_NAME + accountContext.getUid(), Context.MODE_PRIVATE);
     }
 
-    public static void setStringSetPreference(Context context, String key, Set<String> values) {
-        final SharedPreferences prefs = getCurrentSharedPreferences(context);
+    public static void setStringSetPreference(AccountContext accountContext, String key, Set<String> values) {
+        final SharedPreferences prefs = getCurrentSharedPreferences(accountContext);
         if (null != prefs){
             prefs.edit().putStringSet(key, values).apply();
         }
@@ -340,8 +340,8 @@ public class TextSecurePreferences {
         }
     }
 
-    public static @Nullable Set<String> getStringSetPreference(Context context, String key) {
-        final SharedPreferences prefs = getCurrentSharedPreferences(context);
+    public static @Nullable Set<String> getStringSetPreference(AccountContext accountContext, String key) {
+        final SharedPreferences prefs = getCurrentSharedPreferences(accountContext);
         if (null != prefs && prefs.contains(key)) {
             return prefs.getStringSet(key, Collections.<String>emptySet());
         } else {
@@ -350,8 +350,8 @@ public class TextSecurePreferences {
         }
     }
 
-    public static void delPreference(Context context, String key) {
-        final SharedPreferences prefs = getCurrentSharedPreferences(context);
+    public static void delPreference(AccountContext accountContext, String key) {
+        final SharedPreferences prefs = getCurrentSharedPreferences(accountContext);
         if (null != prefs) {
             prefs.edit().remove(key).apply();
         } else {

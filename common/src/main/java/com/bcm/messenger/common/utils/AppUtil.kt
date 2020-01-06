@@ -53,6 +53,7 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.RomUtil
 import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.utility.network.NetworkUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -1455,7 +1456,7 @@ object AppUtil {
     }
 
     fun checkNetwork():Boolean {
-        if (isUsingNetwork()) {
+        if (NetworkUtil.isConnected()) {
             return true
         }
 

@@ -29,7 +29,7 @@ object FeedbackReport {
 
     fun feedback(reportType: String, content: String, reportFileList: List<String>, result: (succeed: Boolean) -> Unit): Boolean {
         val data = NYyData("UFB", "[$reportType] $content",
-                AMELogin.uid,
+                AMELogin.majorUid,
                 "0",
                 "",
                 AppUtil.getVersionName(AppContextHolder.APP_CONTEXT),
@@ -94,7 +94,7 @@ object FeedbackReport {
             val client = OkHttpClient.Builder()
                     .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
                     .hostnameVerifier(BaseHttp.trustAllHostVerify())
-                    .addInterceptor(NormalMetricsInterceptor())
+                    .addInterceptor(NormalMetricsInterceptor(AMELogin.majorContext))
                     .addInterceptor(ProgressInterceptor())
                     .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                     .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)

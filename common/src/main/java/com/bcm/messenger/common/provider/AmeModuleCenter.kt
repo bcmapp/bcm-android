@@ -6,7 +6,6 @@ import com.bcm.messenger.common.AccountJobManager
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.database.db.UserDatabase
-import com.bcm.messenger.common.metrics.ReportUtil
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.accountmodule.*
 import com.bcm.messenger.common.server.IServerConnectionDaemon
@@ -116,8 +115,6 @@ object AmeModuleCenter {
         } else {
             UserDatabase.resetDatabase(accountContext)
         }
-
-        ReportUtil.init(accountContext)
 
         this.init(accountContext)
 
