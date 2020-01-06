@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.bcm.messenger.common.crypto.MasterSecret;
-import com.bcm.messenger.common.database.MessagingDatabase.SyncMessageId;
+import com.bcm.messenger.common.deprecated.MessagingDatabase.SyncMessageId;
 import com.bcm.messenger.common.jobs.MasterSecretJob;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;

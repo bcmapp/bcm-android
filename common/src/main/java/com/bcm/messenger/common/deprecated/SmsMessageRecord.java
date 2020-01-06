@@ -15,14 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bcm.messenger.common.database.model;
+package com.bcm.messenger.common.deprecated;
 
 import android.content.Context;
 import android.text.SpannableString;
 
 import com.bcm.messenger.common.R;
-import com.bcm.messenger.common.database.MmsSmsColumns;
-import com.bcm.messenger.common.database.SmsDatabase;
 import com.bcm.messenger.common.database.documents.IdentityKeyMismatch;
 import com.bcm.messenger.common.database.documents.NetworkFailure;
 import com.bcm.messenger.common.recipients.Recipient;
@@ -37,6 +35,7 @@ import java.util.List;
  *
  */
 
+@Deprecated
 public class SmsMessageRecord extends MessageRecord {
 
   public SmsMessageRecord(Context context, long id,

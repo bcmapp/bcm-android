@@ -23,7 +23,7 @@ import com.bcm.messenger.common.crypto.SecurityEvent;
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.common.crypto.storage.SignalProtocolStoreImpl;
 import com.bcm.messenger.common.crypto.storage.TextSecureSessionStore;
-import com.bcm.messenger.common.database.NoSuchMessageException;
+import com.bcm.messenger.common.deprecated.NoSuchMessageException;
 import com.bcm.messenger.common.database.model.DecryptFailData;
 import com.bcm.messenger.common.database.model.ProfileKeyModel;
 import com.bcm.messenger.common.database.records.AttachmentRecord;
@@ -61,7 +61,6 @@ import com.bcm.messenger.common.utils.GroupUtil;
 import com.bcm.messenger.common.utils.IdentityUtil;
 import com.bcm.messenger.common.utils.RxBus;
 import com.bcm.messenger.login.jobs.MultiDeviceBlockedUpdateJob;
-import com.bcm.messenger.login.jobs.MultiDeviceContactUpdateJob;
 import com.bcm.messenger.login.jobs.MultiDeviceGroupUpdateJob;
 import com.bcm.messenger.login.jobs.MultiDeviceReadReceiptUpdateJob;
 import com.bcm.messenger.utility.AppContextHolder;
@@ -482,9 +481,6 @@ public class PushDecryptJob extends ContextJob {
 
         JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
         if (manager != null) {
-            if (message.isContactsRequest()) {
-                manager.add(new MultiDeviceContactUpdateJob(getContext()));
-            }
 
             if (message.isGroupsRequest()) {
                 manager.add(new MultiDeviceGroupUpdateJob(getContext()));

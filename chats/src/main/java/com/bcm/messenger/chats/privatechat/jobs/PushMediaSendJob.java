@@ -10,7 +10,7 @@ import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.MasterSecretUnion;
 import com.bcm.messenger.common.crypto.MediaKey;
-import com.bcm.messenger.common.database.NoSuchMessageException;
+import com.bcm.messenger.common.deprecated.NoSuchMessageException;
 import com.bcm.messenger.common.database.records.AttachmentRecord;
 import com.bcm.messenger.common.database.records.MessageRecord;
 import com.bcm.messenger.common.database.repositories.PrivateChatRepo;

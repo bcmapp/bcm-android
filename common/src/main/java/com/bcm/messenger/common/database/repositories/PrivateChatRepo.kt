@@ -5,7 +5,7 @@ import com.bcm.messenger.common.attachments.Attachment
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.database.MessagingDatabase
+import com.bcm.messenger.common.deprecated.MessagingDatabase
 import com.bcm.messenger.common.database.model.PrivateChatDbModel
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.mms.IncomingMediaMessage

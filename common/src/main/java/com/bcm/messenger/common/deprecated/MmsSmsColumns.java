@@ -1,4 +1,4 @@
-package com.bcm.messenger.common.database;
+package com.bcm.messenger.common.deprecated;
 
 @SuppressWarnings("UnnecessaryInterfaceModifier")
 @Deprecated

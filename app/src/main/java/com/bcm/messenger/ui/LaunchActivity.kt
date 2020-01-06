@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.setLocale
-import com.bcm.messenger.common.database.DatabaseFactory
+import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.activity.DatabaseMigrateActivity

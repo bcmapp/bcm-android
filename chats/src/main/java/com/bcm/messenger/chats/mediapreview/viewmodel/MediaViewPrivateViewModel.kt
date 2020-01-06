@@ -2,11 +2,11 @@ package com.bcm.messenger.chats.mediapreview.viewmodel
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import com.bcm.messenger.chats.mediapreview.BaseMediaViewModel
 import com.bcm.messenger.chats.mediapreview.MediaViewActivity
 import com.bcm.messenger.chats.mediapreview.bean.*
 import com.bcm.messenger.chats.privatechat.jobs.AttachmentDownloadJob
 import com.bcm.messenger.chats.util.AttachmentSaver
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.attachments.AttachmentId
 import com.bcm.messenger.common.attachments.DatabaseAttachment
 import com.bcm.messenger.common.database.model.AttachmentDbModel
@@ -26,17 +26,17 @@ import org.greenrobot.eventbus.EventBus
 /**
  * Created by Kin on 2018/10/17
  */
-class MediaViewPrivateViewModel : BaseMediaViewModel() {
+class MediaViewPrivateViewModel(accountContext: AccountContext) : BaseMediaViewModel(accountContext) {
     companion object {
         const val TAG = "MediaViewPrivateViewModel"
     }
 
-    private val chatRepo = Repository.getChatRepo()
+    private val chatRepo = Repository.getChatRepo(accountContext)
 
     override fun getCurrentData(threadId: Long, indexId: Long, result: (data: MediaViewData) -> Unit) {
         Observable.create(ObservableOnSubscribe<MessageRecord> {
             try {
-                val record = chatRepo.getMessage(indexId)
+                val record = chatRepo?.getMessage(indexId)
                 if (record != null) {
                     it.onNext(record)
                 }
@@ -68,9 +68,11 @@ class MediaViewPrivateViewModel : BaseMediaViewModel() {
     override fun getAllMediaData(threadId: Long, indexId: Long, reverse: Boolean, result: (dataList: List<MediaViewData>) -> Unit) {
         Observable.create(ObservableOnSubscribe<List<MessageRecord>> {
             try {
-                val list = chatRepo.getMediaMessages(threadId)
-                if (reverse) list.reverse()
-                it.onNext(list)
+                val list = chatRepo?.getMediaMessages(threadId)
+                if (list != null) {
+                    if (reverse) list.reverse()
+                    it.onNext(list)
+                }
             } catch (ex: Exception) {
                 ALog.e(TAG, "get all media data error", ex)
             } finally {
@@ -82,14 +84,14 @@ class MediaViewPrivateViewModel : BaseMediaViewModel() {
                     val list: ArrayList<MediaViewData> = ArrayList()
                     it.forEach { record ->
                         val id = record.id
-                        record.getMediaAttachment()?.let { s ->
+                        record.getMediaAttachment()?.also { s ->
                             if (s.isVideo()) {
                                 val data = MediaViewData(id, s.getPartUri(), s.contentType, MEDIA_TYPE_VIDEO, record, MSG_TYPE_PRIVATE)
                                 list.add(data)
                             } else if (s.isImage()) {
                                 val data = MediaViewData(id, s.getPartUri(), s.contentType, MEDIA_TYPE_IMAGE, record, MSG_TYPE_PRIVATE)
                                 list.add(data)
-                            } else {}
+                            }
                         }
                     }
                     result.invoke(list)
@@ -103,7 +105,7 @@ class MediaViewPrivateViewModel : BaseMediaViewModel() {
         }
         Observable.create(ObservableOnSubscribe<Boolean> {
             try {
-                chatRepo.deleteMessage(data.indexId)
+                chatRepo?.deleteMessage(data.indexId)
                 EventBus.getDefault().post(MediaDeleteEvent((data.sourceMsg as MessageRecord).threadId, 0L, data.indexId))
                 it.onNext(true)
             } catch (ex: Exception) {
@@ -205,9 +207,10 @@ class MediaViewPrivateViewModel : BaseMediaViewModel() {
 
         Observable.create(ObservableOnSubscribe<Boolean> {
             try {
-                Repository.getAttachmentRepo().setTransferState(slide, AttachmentDbModel.TransferState.STARTED)
+                Repository.getAttachmentRepo(accountContext)?.setTransferState(slide, AttachmentDbModel.TransferState.STARTED)
 
-                AmeModuleCenter.accountJobMgr()?.add(AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, messageRecord.id, slide.id, slide.uniqueId, true))
+                AmeModuleCenter.accountJobMgr(accountContext)?.add(AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, accountContext,
+                        messageRecord.id, slide.id, slide.uniqueId, true))
 
                 it.onNext(true)
 

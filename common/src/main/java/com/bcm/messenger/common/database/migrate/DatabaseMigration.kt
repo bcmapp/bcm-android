@@ -3,13 +3,12 @@ package com.bcm.messenger.common.database.migrate
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.crypto.MasterCipher
 import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.database.DatabaseFactory
-import com.bcm.messenger.common.database.RecipientDatabase
 import com.bcm.messenger.common.database.db.MigrateDatabase
-import com.bcm.messenger.common.grouprepository.room.database.GroupDatabase
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.repositories.Repository
+import com.bcm.messenger.common.deprecated.*
+import com.bcm.messenger.common.grouprepository.room.dao.*
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -39,6 +38,7 @@ object DatabaseMigration : IDatabaseMigration {
     override fun doMigrate(accountContext: AccountContext, callback: (finishCount: Int) -> Unit) {
         val migrateDatabase = MigrateDatabase(accountContext)
         val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
+        val oldDatabase = DatabaseFactory(accountContext, AppContextHolder.APP_CONTEXT)
         if (masterSecret != null && !isUpgrading) {
             isUpgrading = true
             Observable.create<Int> {
@@ -49,83 +49,83 @@ object DatabaseMigration : IDatabaseMigration {
                 it.onNext(0)
 
                 ALog.i(TAG, "Start migrate threads")
-                doMigrateThreads(migrateDatabase, masterSecret)
+                doMigrateThreads(oldDatabase.thread, migrateDatabase, masterSecret)
                 it.onNext(1)
 
                 ALog.i(TAG, "Start migrate drafts")
-                doMigrateDrafts(migrateDatabase, masterSecret)
+                doMigrateDrafts(oldDatabase.draftDatabase, migrateDatabase, masterSecret)
                 it.onNext(2)
 
                 ALog.i(TAG, "Start migrate push")
-                doMigratePush(migrateDatabase)
+                doMigratePush(oldDatabase.pushDatabase, migrateDatabase)
                 it.onNext(3)
 
                 ALog.i(TAG, "Start migrate private messages")
-                doMigrateMessages(migrateDatabase, masterSecret)
+                doMigrateMessages(oldDatabase.mmsSmsDatabase, oldDatabase, migrateDatabase, masterSecret)
                 it.onNext(4)
 
                 ALog.i(TAG, "Start migrate identity key")
-                doMigrateIdentityKey(migrateDatabase)
+                doMigrateIdentityKey(oldDatabase.identityDatabase, migrateDatabase)
                 it.onNext(5)
 
                 ALog.i(TAG, "Start migrate recipient")
-                doMigrateRecipient(migrateDatabase)
+                doMigrateRecipient(oldDatabase.recipientDatabase, oldDatabase.identityDatabase, migrateDatabase)
                 it.onNext(6)
 
                 ALog.i(TAG, "Start migrate adhoc channel info")
-                doMigrateAdHocChannelInfo(migrateDatabase)
+                doMigrateAdHocChannelInfo(oldDatabase.newGroupDatabase.adHocChannelDao(), migrateDatabase)
                 it.onNext(7)
 
                 ALog.i(TAG, "Start migrate adhoc messages")
-                doMigrateAdHocMessage(migrateDatabase)
+                doMigrateAdHocMessage(oldDatabase.newGroupDatabase.adHocMessageDao(), migrateDatabase)
                 it.onNext(8)
 
                 ALog.i(TAG, "Start migrate adhoc session info")
-                doMigrateSessionInfo(migrateDatabase)
+                doMigrateSessionInfo(oldDatabase.newGroupDatabase.adHocSessionDao(), migrateDatabase)
                 it.onNext(9)
 
                 ALog.i(TAG, "Start migrate bcm friend")
-                doMigrateBcmFriend(migrateDatabase)
+                doMigrateBcmFriend(oldDatabase.newGroupDatabase.bcmFriendDao(), migrateDatabase)
                 it.onNext(10)
 
                 ALog.i(TAG, "Start migrate friend request")
-                doMigrateBcmFriendRequest(migrateDatabase)
+                doMigrateBcmFriendRequest(oldDatabase.newGroupDatabase.friendRequestDao(), migrateDatabase)
                 it.onNext(11)
 
                 ALog.i(TAG, "Start migrate hide messages")
-                doMigrateChatHideMessage(migrateDatabase)
+                doMigrateChatHideMessage(oldDatabase.newGroupDatabase.chatControlMessageDao(), migrateDatabase)
                 it.onNext(12)
 
                 ALog.i(TAG, "Start migrate avatar param")
-                doMigrateGroupAvatarParam(migrateDatabase)
+                doMigrateGroupAvatarParam(oldDatabase.newGroupDatabase.groupAvatarParamsDao(), migrateDatabase)
                 it.onNext(13)
 
                 ALog.i(TAG, "Start migrate group info")
-                doMigrateGroupInfo(migrateDatabase)
+                doMigrateGroupInfo(oldDatabase.newGroupDatabase.groupInfo(), migrateDatabase)
                 it.onNext(14)
 
                 ALog.i(TAG, "Start migrate group join request")
-                doMigrateGroupJoinRequest(migrateDatabase)
+                doMigrateGroupJoinRequest(oldDatabase.newGroupDatabase.groupJoinInfoDao(), migrateDatabase)
                 it.onNext(15)
 
                 ALog.i(TAG, "Start migrate live info")
-                doMigrateLiveInfo(migrateDatabase)
+                doMigrateLiveInfo(oldDatabase.newGroupDatabase.groupLiveInfo(), migrateDatabase)
                 it.onNext(16)
 
                 ALog.i(TAG, "Start migrate group member")
-                doMigrateGroupMember(migrateDatabase)
+                doMigrateGroupMember(oldDatabase.newGroupDatabase.groupMemberDao(), migrateDatabase)
                 it.onNext(17)
 
                 ALog.i(TAG, "Start migrate group message")
-                doMigrateGroupMessage(migrateDatabase)
+                doMigrateGroupMessage(oldDatabase.newGroupDatabase.GroupMessage(), migrateDatabase)
                 it.onNext(18)
 
                 ALog.i(TAG, "Start migrate note record")
-                doMigrateNoteRecord(migrateDatabase)
+                doMigrateNoteRecord(oldDatabase.newGroupDatabase.noteRecordDao(), migrateDatabase)
                 it.onNext(19)
 
                 ALog.i(TAG, "Start migrate group key")
-                doMigrateGroupKey(migrateDatabase)
+                doMigrateGroupKey(oldDatabase.newGroupDatabase.groupKeyDao(), migrateDatabase)
                 it.onNext(20)
 
                 // ，
@@ -135,7 +135,7 @@ object DatabaseMigration : IDatabaseMigration {
                 it.onNext(21)
 
                 ALog.i(TAG, "Close all database to encrypt")
-                doEncryptDatabase(accountContext, migrateDatabase, masterSecret)
+                doEncryptDatabase(accountContext, oldDatabase, migrateDatabase, masterSecret)
                 it.onNext(22)
 
                 ALog.i(TAG, "Migrate completed")
@@ -159,21 +159,18 @@ object DatabaseMigration : IDatabaseMigration {
         }
     }
 
-    private fun doMigrateThreads(migrateDatabase: MigrateDatabase, masterSecret: MasterSecret) {
-        val threadDatabase = DatabaseFactory.getThreadDatabase(AppContextHolder.APP_CONTEXT)
-
+    private fun doMigrateThreads(threadDatabase: ThreadDatabase, migrateDatabase: MigrateDatabase, masterSecret: MasterSecret) {
         val cursor = threadDatabase.conversationList
         val reader = threadDatabase.readerFor(cursor, MasterCipher(masterSecret))
         while (reader.nextForMigrate != null) {
             val oldRecord = reader.currentForMigrate
 
-            val id = migrateDatabase.insertThread(oldRecord)
+            val id = migrateDatabase.insertThread(oldRecord, threadDatabase)
             threadIdMap[oldRecord.threadId] = id
         }
     }
 
-    private fun doMigrateDrafts(migrateDatabase: MigrateDatabase, masterSecret: MasterSecret) {
-        val draftDatabase = DatabaseFactory.getDraftDatabase(AppContextHolder.APP_CONTEXT)
+    private fun doMigrateDrafts(draftDatabase: DraftDatabase, migrateDatabase: MigrateDatabase, masterSecret: MasterSecret) {
         val masterCipher = MasterCipher(masterSecret)
 
         threadIdMap.keys.forEach {
@@ -185,9 +182,7 @@ object DatabaseMigration : IDatabaseMigration {
         }
     }
 
-    private fun doMigratePush(migrateDatabase: MigrateDatabase) {
-        val pushDatabase = DatabaseFactory.getPushDatabase(AppContextHolder.APP_CONTEXT)
-
+    private fun doMigratePush(pushDatabase: PushDatabase, migrateDatabase: MigrateDatabase) {
         val cursor = pushDatabase.pending
         val reader = pushDatabase.readerFor(cursor)
         var pair = reader.nextEnvelop
@@ -199,24 +194,20 @@ object DatabaseMigration : IDatabaseMigration {
         } while (pair != null)
     }
 
-    private fun doMigrateMessages(migrateDatabase: MigrateDatabase, masterSecret: MasterSecret) {
-        val mmsSmsDatabase = DatabaseFactory.getMmsSmsDatabase(AppContextHolder.APP_CONTEXT)
-
+    private fun doMigrateMessages(mmsSmsDatabase: MmsSmsDatabase, databaseFactory: DatabaseFactory, migrateDatabase: MigrateDatabase, masterSecret: MasterSecret) {
         threadIdMap.keys.forEach {
             val newId = threadIdMap[it] ?: throw RuntimeException("Cannot found new thread ID")
             val cursor = mmsSmsDatabase.getConversationAsc(it)
             val reader = mmsSmsDatabase.readerFor(cursor, masterSecret)
-            while (reader.nextMigrate != null) {
-                val oldRecord = reader.currentMigrate
+            while (reader.getNextMigrate(databaseFactory) != null) {
+                val oldRecord = reader.getCurrentMigrate(databaseFactory)
 
                 migrateDatabase.insertMessageAndAttachment(newId, oldRecord)
             }
         }
     }
 
-    private fun doMigrateIdentityKey(migrateDatabase: MigrateDatabase) {
-        val identityDatabase = DatabaseFactory.getIdentityDatabase(AppContextHolder.APP_CONTEXT)
-
+    private fun doMigrateIdentityKey(identityDatabase: IdentityDatabase, migrateDatabase: MigrateDatabase) {
         val cursor = identityDatabase.identities
         val reader = identityDatabase.readerFor(cursor)
         var identityKey = reader?.next
@@ -229,28 +220,22 @@ object DatabaseMigration : IDatabaseMigration {
         } while (identityKey != null)
     }
 
-    private fun doMigrateRecipient(migrateDatabase: MigrateDatabase) {
-        val recipientDatabase = DatabaseFactory.getRecipientDatabase(AppContextHolder.APP_CONTEXT)
-                ?: throw RuntimeException("Recipient database is NULL !!")
-
+    private fun doMigrateRecipient(recipientDatabase: RecipientDatabase, identityDatabase: IdentityDatabase, migrateDatabase: MigrateDatabase) {
         val cursor = recipientDatabase.allDatabaseRecipients
         while (cursor?.moveToNext() == true) {
-            val oldSettings = RecipientDatabase.getRecipientSettings(cursor) ?: continue
+            val oldSettings = RecipientDatabase.getRecipientSettings(cursor, identityDatabase) ?: continue
 
             migrateDatabase.insertRecipient(oldSettings)
         }
     }
 
-    private fun doMigrateAdHocChannelInfo(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().adHocChannelDao()
+    private fun doMigrateAdHocChannelInfo(oldDao: AdHocChannelDao, migrateDatabase: MigrateDatabase) {
         oldDao.loadAllChannel().forEach {
             migrateDatabase.insertAdHocChannel(it)
         }
     }
 
-    private fun doMigrateAdHocMessage(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().adHocMessageDao()
-
+    private fun doMigrateAdHocMessage(oldDao: AdHocMessageDao, migrateDatabase: MigrateDatabase) {
         var page = 0
         while (true) {
             val messageList = oldDao.loadByPage(page * 100)
@@ -263,33 +248,25 @@ object DatabaseMigration : IDatabaseMigration {
         }
     }
 
-    private fun doMigrateSessionInfo(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().adHocSessionDao()
-
+    private fun doMigrateSessionInfo(oldDao: AdHocSessionDao, migrateDatabase: MigrateDatabase) {
         oldDao.loadAllSession().forEach {
             migrateDatabase.insertSessionInfo(it)
         }
     }
 
-    private fun doMigrateBcmFriend(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().bcmFriendDao()
-
+    private fun doMigrateBcmFriend(oldDao: BcmFriendDao, migrateDatabase: MigrateDatabase) {
         oldDao.queryAll().forEach {
             migrateDatabase.insertBcmFriend(it)
         }
     }
 
-    private fun doMigrateBcmFriendRequest(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().friendRequestDao()
-
+    private fun doMigrateBcmFriendRequest(oldDao: FriendRequestDao, migrateDatabase: MigrateDatabase) {
         oldDao.queryAll().forEach {
             migrateDatabase.insertBcmFriendRequest(it)
         }
     }
 
-    private fun doMigrateChatHideMessage(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().chatControlMessageDao()
-
+    private fun doMigrateChatHideMessage(oldDao: ChatHideMessageDao, migrateDatabase: MigrateDatabase) {
         var page = 0
         while (true) {
             val messageList = oldDao.queryByPage(page * 100)
@@ -302,9 +279,7 @@ object DatabaseMigration : IDatabaseMigration {
         }
     }
 
-    private fun doMigrateGroupAvatarParam(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().groupAvatarParamsDao()
-
+    private fun doMigrateGroupAvatarParam(oldDao: GroupAvatarParamsDao, migrateDatabase: MigrateDatabase) {
         var page = 0
         while (true) {
             val paramsList = oldDao.queryByPage(page * 100)
@@ -317,17 +292,13 @@ object DatabaseMigration : IDatabaseMigration {
         }
     }
 
-    private fun doMigrateGroupInfo(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().groupInfo()
-
+    private fun doMigrateGroupInfo(oldDao: GroupInfoDao, migrateDatabase: MigrateDatabase) {
         oldDao.loadAll().forEach {
             migrateDatabase.insertGroupInfo(it)
         }
     }
 
-    private fun doMigrateGroupJoinRequest(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().groupJoinInfoDao()
-
+    private fun doMigrateGroupJoinRequest(oldDao: GroupJoinInfoDao, migrateDatabase: MigrateDatabase) {
         var page = 0
         while (true) {
             val joinInfoList = oldDao.queryByPage(page * 100)
@@ -340,9 +311,7 @@ object DatabaseMigration : IDatabaseMigration {
         }
     }
 
-    private fun doMigrateLiveInfo(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().groupLiveInfo()
-
+    private fun doMigrateLiveInfo(oldDao: GroupLiveInfoDao, migrateDatabase: MigrateDatabase) {
         var page = 0
         while (true) {
             val liveInfoList = oldDao.queryByPage(page * 100)
@@ -355,9 +324,7 @@ object DatabaseMigration : IDatabaseMigration {
         }
     }
 
-    private fun doMigrateGroupMember(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().groupMemberDao()
-
+    private fun doMigrateGroupMember(oldDao: GroupMemberDao, migrateDatabase: MigrateDatabase) {
         var page = 0
         while (true) {
             val memberList = oldDao.queryGroupMemberByPage(page * 500)
@@ -370,9 +337,7 @@ object DatabaseMigration : IDatabaseMigration {
         }
     }
 
-    private fun doMigrateGroupMessage(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().GroupMessage()
-
+    private fun doMigrateGroupMessage(oldDao: GroupMessageDao, migrateDatabase: MigrateDatabase) {
         var page = 0
         while (true) {
             val messageList = oldDao.loadMessageByPage(page * 500)
@@ -385,24 +350,21 @@ object DatabaseMigration : IDatabaseMigration {
         }
     }
 
-    private fun doMigrateNoteRecord(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().noteRecordDao()
-
+    private fun doMigrateNoteRecord(oldDao: NoteRecordDao, migrateDatabase: MigrateDatabase) {
         oldDao.queryNoteList().forEach {
             migrateDatabase.insertNoteRecord(it)
         }
     }
 
-    private fun doMigrateGroupKey(migrateDatabase: MigrateDatabase) {
-        val oldDao = GroupDatabase.getInstance().groupKeyDao()
-
+    private fun doMigrateGroupKey(oldDao: GroupKeyDao, migrateDatabase: MigrateDatabase) {
         oldDao.queryKeys().forEach {
             migrateDatabase.insertGroupKey(it)
         }
     }
 
-    private fun doEncryptDatabase(accountContext: AccountContext, migrateDatabase: MigrateDatabase, masterSecret: MasterSecret) {
+    private fun doEncryptDatabase(accountContext: AccountContext, oldDatabase: DatabaseFactory, migrateDatabase: MigrateDatabase, masterSecret: MasterSecret) {
         migrateDatabase.closeDatabase()
+        oldDatabase.close()
 
         // Do encryption if version is release build.
         if (isReleaseBuild()) {

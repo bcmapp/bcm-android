@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.bcm.messenger.common.database;
+package com.bcm.messenger.common.deprecated;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -22,11 +22,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import androidx.annotation.Nullable;
-
-import com.bcm.messenger.common.contacts.ContactsDatabase;
-import com.bcm.messenger.common.provider.AMELogin;
-import com.bcm.messenger.utility.logger.ALog;
+import com.bcm.messenger.common.AccountContext;
 
 import java.io.File;
 import java.util.Locale;
@@ -72,9 +68,6 @@ public class DatabaseFactory {
     private static final int AWS_ATTACHMENT_VERSION = 59;
 
     private static final String DATABASE_NAME = "messages%s.db";
-    private static final Object lock = new Object();
-
-    private static DatabaseFactory instance;
 
     private DatabaseHelper databaseHelper;
 
@@ -82,153 +75,79 @@ public class DatabaseFactory {
     private final EncryptingSmsDatabase encryptingSms;
     private final MmsDatabase mms;
     private final AttachmentDatabase attachments;
-    private final MediaDatabase media;
     private final ThreadDatabase thread;
     private final MmsSmsDatabase mmsSmsDatabase;
     private final IdentityDatabase identityDatabase;
     private final DraftDatabase draftDatabase;
     private final PushDatabase pushDatabase;
-    private final GroupDatabase groupDatabase;
     private final RecipientDatabase recipientDatabase;
-    private final ContactsDatabase contactsDatabase;
-    private final GroupReceiptDatabase groupReceiptDatabase;
+    private final com.bcm.messenger.common.grouprepository.room.database.GroupDatabase newGroupDatabase;
     private String uid;
 
-    public static DatabaseFactory getInstance(Context context) {
-        synchronized (lock) {
-            String uid = AMELogin.INSTANCE.getMajorUid();
-            if (instance == null) {
-                instance = new DatabaseFactory(context.getApplicationContext(), uid);
-            } else if (!uid.equals(instance.uid)) {
-                instance.reset(context, AMELogin.INSTANCE.getMajorUid());
-            }
-            return instance;
-        }
+    public static boolean isDatabaseExist(AccountContext accountContext, Context context) {
+        return new File(context.getFilesDir().getParent() + "/databases/messages" + accountContext.getUid() + ".db").exists();
     }
 
-    public static boolean isDatabaseExist(Context context) {
-        return new File(context.getFilesDir().getParent() + "/databases/messages" + AMELogin.INSTANCE.getMajorUid() + ".db").exists();
+    public SmsDatabase getSms() {
+        return sms;
     }
 
-    public static MmsSmsDatabase getMmsSmsDatabase(Context context) {
-        return getInstance(context).mmsSmsDatabase;
+    public EncryptingSmsDatabase getEncryptingSms() {
+        return encryptingSms;
     }
 
-    public static ThreadDatabase getThreadDatabase(Context context) {
-        return getInstance(context).thread;
+    public MmsDatabase getMms() {
+        return mms;
     }
 
-    public static SmsDatabase getSmsDatabase(Context context) {
-        return getInstance(context).sms;
+    public AttachmentDatabase getAttachments() {
+        return attachments;
     }
 
-    public static MmsDatabase getMmsDatabase(Context context) {
-        return getInstance(context).mms;
+    public ThreadDatabase getThread() {
+        return thread;
     }
 
-    public static EncryptingSmsDatabase getEncryptingSmsDatabase(Context context) {
-        return getInstance(context).encryptingSms;
+    public MmsSmsDatabase getMmsSmsDatabase() {
+        return mmsSmsDatabase;
     }
 
-    public static AttachmentDatabase getAttachmentDatabase(Context context) {
-        return getInstance(context).attachments;
+    public IdentityDatabase getIdentityDatabase() {
+        return identityDatabase;
     }
 
-    public static MediaDatabase getMediaDatabase(Context context) {
-        return getInstance(context).media;
+    public DraftDatabase getDraftDatabase() {
+        return draftDatabase;
     }
 
-    public static IdentityDatabase getIdentityDatabase(Context context) {
-        return getInstance(context).identityDatabase;
+    public PushDatabase getPushDatabase() {
+        return pushDatabase;
     }
 
-    public static DraftDatabase getDraftDatabase(Context context) {
-        return getInstance(context).draftDatabase;
+    public RecipientDatabase getRecipientDatabase() {
+        return recipientDatabase;
     }
 
-    public static PushDatabase getPushDatabase(Context context) {
-        return getInstance(context).pushDatabase;
+    public com.bcm.messenger.common.grouprepository.room.database.GroupDatabase getNewGroupDatabase() {
+        return newGroupDatabase;
     }
 
-    public static GroupDatabase getGroupDatabase(Context context) {
-        return getInstance(context).groupDatabase;
-    }
+    public DatabaseFactory(AccountContext accountContext, Context context) {
+        this.uid = accountContext.getUid();
 
-    @Nullable
-    public static RecipientDatabase getRecipientDatabase(Context context) {
-        if (!AMELogin.INSTANCE.isLogin()) {
-            return null;
-        } else {
-            return getInstance(context).recipientDatabase;
-        }
-    }
-
-    public static ContactsDatabase getContactsDatabase(Context context) {
-        return getInstance(context).contactsDatabase;
-    }
-
-    public static GroupReceiptDatabase getGroupReceiptDatabase(Context context) {
-        return getInstance(context).groupReceiptDatabase;
-    }
-
-    private DatabaseFactory(Context context, String uid) {
-        this.uid = uid;
-
-        this.databaseHelper = new DatabaseHelper(context, getMessageDBName(uid), null, DATABASE_VERSION);
-        this.sms = new SmsDatabase(context, databaseHelper);
-        this.encryptingSms = new EncryptingSmsDatabase(context, databaseHelper);
-        this.mms = new MmsDatabase(context, databaseHelper);
-        this.attachments = new AttachmentDatabase(context, databaseHelper);
-        this.media = new MediaDatabase(context, databaseHelper);
-        this.thread = new ThreadDatabase(context, databaseHelper);
-        this.mmsSmsDatabase = new MmsSmsDatabase(context, databaseHelper);
-        this.identityDatabase = new IdentityDatabase(context, databaseHelper);
-        this.draftDatabase = new DraftDatabase(context, databaseHelper);
-        this.pushDatabase = new PushDatabase(context, databaseHelper);
-        this.groupDatabase = new GroupDatabase(context, databaseHelper);
-        this.recipientDatabase = new RecipientDatabase(context, databaseHelper);
-        this.groupReceiptDatabase = new GroupReceiptDatabase(context, databaseHelper);
-        this.contactsDatabase = new ContactsDatabase(context);
-        com.bcm.messenger.common.grouprepository.room.database.GroupDatabase.getInstance();
+        this.databaseHelper = new DatabaseHelper(context, getMessageDBName(accountContext.getUid()), null, DATABASE_VERSION);
+        this.sms = new SmsDatabase(context, accountContext, databaseHelper);
+        this.encryptingSms = new EncryptingSmsDatabase(context, accountContext, databaseHelper);
+        this.mms = new MmsDatabase(context, accountContext, databaseHelper);
+        this.attachments = new AttachmentDatabase(context, accountContext, databaseHelper);
+        this.thread = new ThreadDatabase(context, accountContext, databaseHelper);
+        this.mmsSmsDatabase = new MmsSmsDatabase(context, accountContext, databaseHelper);
+        this.identityDatabase = new IdentityDatabase(context, accountContext, databaseHelper);
+        this.draftDatabase = new DraftDatabase(context, accountContext, databaseHelper);
+        this.pushDatabase = new PushDatabase(context, accountContext, databaseHelper);
+        this.recipientDatabase = new RecipientDatabase(context, accountContext, databaseHelper);
+        this.newGroupDatabase = com.bcm.messenger.common.grouprepository.room.database.GroupDatabase.allocDatabase(accountContext);
 //        UserDatabase.Companion.getDatabase();
-    }
-
-    
-    public void reset(Context context, String uid) {
-        ALog.d(TAG, "reset " + uid);
-
-
-        try {
-            this.uid = uid;
-            DatabaseHelper old = this.databaseHelper;
-            this.databaseHelper = null;
-            if (!uid.isEmpty()) {
-                this.databaseHelper = new DatabaseHelper(context, getMessageDBName(uid), null, DATABASE_VERSION);
-            }
-
-            this.sms.reset(databaseHelper);
-            this.encryptingSms.reset(databaseHelper);
-            this.media.reset(databaseHelper);
-            this.mms.reset(databaseHelper);
-            this.attachments.reset(databaseHelper);
-            this.thread.reset(databaseHelper);
-            this.mmsSmsDatabase.reset(databaseHelper);
-            this.identityDatabase.reset(databaseHelper);
-            this.draftDatabase.reset(databaseHelper);
-            this.pushDatabase.reset(databaseHelper);
-            this.groupDatabase.reset(databaseHelper);
-            this.recipientDatabase.reset(databaseHelper);
-            this.groupReceiptDatabase.reset(databaseHelper);
-            com.bcm.messenger.common.grouprepository.room.database.GroupDatabase.resetInstance();
-//            UserDatabase.Companion.resetDatabase();
-
-            if (old != null) {
-                old.close();
-            }
-        } catch (Throwable e) {
-            ALog.e(TAG, e);
-        }
-
     }
 
     private String getMessageDBName(String uid) {
@@ -244,13 +163,12 @@ public class DatabaseFactory {
         this.databaseHelper.getWritableDatabase().execSQL("DELETE FROM " + IdentityDatabase.TABLE_NAME);
         this.databaseHelper.getWritableDatabase().execSQL("DELETE FROM " + DraftDatabase.TABLE_NAME);
         this.databaseHelper.getWritableDatabase().execSQL("DELETE FROM " + PushDatabase.TABLE_NAME);
-        this.databaseHelper.getWritableDatabase().execSQL("DELETE FROM " + GroupDatabase.TABLE_NAME);
         this.databaseHelper.getWritableDatabase().execSQL("DELETE FROM " + RecipientDatabase.TABLE_NAME);
-        this.databaseHelper.getWritableDatabase().execSQL("DELETE FROM " + GroupReceiptDatabase.TABLE_NAME);
     }
 
     public void close() {
         this.databaseHelper.close();
+        this.newGroupDatabase.close();
     }
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
@@ -273,17 +191,13 @@ public class DatabaseFactory {
             db.execSQL(IdentityDatabase.CREATE_TABLE);
             db.execSQL(DraftDatabase.CREATE_TABLE);
             db.execSQL(PushDatabase.CREATE_TABLE);
-            db.execSQL(GroupDatabase.CREATE_TABLE);
             db.execSQL(RecipientDatabase.CREATE_TABLE);
-            db.execSQL(GroupReceiptDatabase.CREATE_TABLE);
 
             executeStatements(db, SmsDatabase.CREATE_INDEXS);
             executeStatements(db, MmsDatabase.CREATE_INDEXS);
             executeStatements(db, AttachmentDatabase.CREATE_INDEXS);
             executeStatements(db, ThreadDatabase.CREATE_INDEXS);
             executeStatements(db, DraftDatabase.CREATE_INDEXS);
-            executeStatements(db, GroupDatabase.CREATE_INDEXS);
-            executeStatements(db, GroupReceiptDatabase.CREATE_INDEXES);
         }
 
        

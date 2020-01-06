@@ -16,9 +16,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.forward.ForwardActivity
 import com.bcm.messenger.chats.mediabrowser.ui.MediaBrowserActivity
 import com.bcm.messenger.chats.mediapreview.bean.*
-import com.bcm.messenger.chats.mediapreview.viewmodel.MediaViewGroupViewModel2
-import com.bcm.messenger.chats.mediapreview.viewmodel.MediaViewHistoryViewModel
-import com.bcm.messenger.chats.mediapreview.viewmodel.MediaViewPrivateViewModel
+import com.bcm.messenger.chats.mediapreview.viewmodel.*
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.FullTransSwipeBaseActivity
 import com.bcm.messenger.common.ShareElements
@@ -285,9 +283,9 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
         ALog.i(TAG, "Init MediaViewActivity data, type = $type, threadId = $threadId, indexId = $indexId")
 
         viewModel = when (type) {
-            TYPE_PRIVATE, TYPE_PRIVATE_BROWSER -> ViewModelProviders.of(this).get(MediaViewPrivateViewModel::class.java)
-            TYPE_GROUP, TYPE_GROUP_BROWSER -> ViewModelProviders.of(this).get(MediaViewGroupViewModel2::class.java)
-            else -> ViewModelProviders.of(this).get(MediaViewHistoryViewModel::class.java)
+            TYPE_PRIVATE, TYPE_PRIVATE_BROWSER -> ViewModelProviders.of(this, MediaViewModelFactory(getAccountContext())).get(MediaViewPrivateViewModel::class.java)
+            TYPE_GROUP, TYPE_GROUP_BROWSER -> ViewModelProviders.of(this, MediaViewModelFactory(getAccountContext())).get(MediaViewGroupViewModel2::class.java)
+            else -> ViewModelProviders.of(this, MediaViewModelFactory(getAccountContext())).get(MediaViewHistoryViewModel::class.java)
         }
 
         if (type == TYPE_HISTORY) {

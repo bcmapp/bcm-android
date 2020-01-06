@@ -7,7 +7,7 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AddressUtil
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.crypto.storage.SignalProtocolStoreImpl
-import com.bcm.messenger.common.database.MessagingDatabase
+import com.bcm.messenger.common.deprecated.MessagingDatabase
 import com.bcm.messenger.common.database.model.DecryptFailData
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.provider.AmeModuleCenter

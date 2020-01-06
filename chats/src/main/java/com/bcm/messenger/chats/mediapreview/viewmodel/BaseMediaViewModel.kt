@@ -1,16 +1,17 @@
-package com.bcm.messenger.chats.mediapreview
+package com.bcm.messenger.chats.mediapreview.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.bcm.messenger.chats.mediapreview.bean.MediaViewData
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.AppContextHolder
 
 /**
  * Created by Kin on 2018/10/31
  */
-abstract class BaseMediaViewModel : ViewModel() {
+abstract class BaseMediaViewModel(protected val accountContext: AccountContext) : ViewModel() {
 
-    protected val masterSecret = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
+    protected val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
 
     abstract fun getCurrentData(threadId: Long, indexId: Long, result: (data: MediaViewData) -> Unit)
 

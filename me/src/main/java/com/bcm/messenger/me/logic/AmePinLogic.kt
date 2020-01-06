@@ -1,6 +1,6 @@
 package com.bcm.messenger.me.logic
 
-import com.bcm.messenger.common.database.DatabaseFactory
+import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AmeAppLifecycle

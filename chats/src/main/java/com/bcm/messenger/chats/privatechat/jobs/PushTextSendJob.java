@@ -8,7 +8,7 @@ import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.AmeGroupMessage;
 import com.bcm.messenger.common.crypto.MasterSecret;
-import com.bcm.messenger.common.database.NoSuchMessageException;
+import com.bcm.messenger.common.deprecated.NoSuchMessageException;
 import com.bcm.messenger.common.database.records.MessageRecord;
 import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
 import com.bcm.messenger.common.event.TextSendEvent;

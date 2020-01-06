@@ -147,7 +147,8 @@ class GroupMediaBrowserViewModel(private val accountContext: AccountContext) : B
                         override fun onResult(success: Boolean, uri: Uri?) {
                             if (success) {
                                 ALog.d(TAG, "download file, uri is $uri")
-                                val file = AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, uri?.toString() ?: "", mimeType, name)
+                                val file = AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, uri?.toString()
+                                        ?: "", mimeType, name)
                                 if (file == null) {
                                     ALog.d(TAG, "download file failed, uri is $uri")
                                     failList.add(data)
@@ -225,7 +226,7 @@ class GroupMediaBrowserViewModel(private val accountContext: AccountContext) : B
         val browserDataList = mutableListOf<MediaBrowseData>()
         groupMessages.forEach {
             val data = getMediaBrowseData(it)
-            if(data != null) {
+            if (data != null) {
                 browserDataList.add(data)
             }
         }
@@ -233,18 +234,18 @@ class GroupMediaBrowserViewModel(private val accountContext: AccountContext) : B
     }
 
     private fun getRealMediaType(mimeType: String, messageDetail: AmeGroupMessageDetail, defaultType: String = "image/*"): String {
-        val targetType = if(mimeType.isNullOrEmpty()) {
+        val targetType = if (mimeType.isNullOrEmpty()) {
             val uri = messageDetail.toAttachmentUri()
-            if(uri != null) {
+            if (uri != null) {
                 MediaUtil.getMimeType(AppContextHolder.APP_CONTEXT, uri)
-            }else {
+            } else {
                 ""
             }
 
-        }else {
+        } else {
             mimeType
         }
-        return if(targetType == null || targetType.isEmpty()) defaultType else targetType
+        return if (targetType == null || targetType.isEmpty()) defaultType else targetType
     }
 
     private fun getMediaBrowseData(messageDetail: AmeGroupMessageDetail): MediaBrowseData? {
@@ -260,13 +261,14 @@ class GroupMediaBrowserViewModel(private val accountContext: AccountContext) : B
             }
             AmeGroupMessage.FILE -> {
                 val content = messageDetail.message.content as AmeGroupMessage.FileContent
-                MediaBrowseData(content.fileName ?: "Unknown file", getRealMediaType(content.mimeType, messageDetail, "DAT/*"), messageDetail.sendTime, messageDetail, true)
+                MediaBrowseData(content.fileName
+                        ?: "Unknown file", getRealMediaType(content.mimeType, messageDetail, "DAT/*"), messageDetail.sendTime, messageDetail, true)
             }
             AmeGroupMessage.LINK -> {
                 val content = messageDetail.message.content as? AmeGroupMessage.LinkContent
-                if (null != content){
+                if (null != content) {
                     MediaBrowseData(content.url, "text/", messageDetail.sendTime, messageDetail, true)
-                }else {
+                } else {
                     null
                 }
             }

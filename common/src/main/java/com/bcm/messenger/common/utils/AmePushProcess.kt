@@ -13,7 +13,7 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.AmeNotification
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.common.database.RecipientDatabase
+import com.bcm.messenger.common.deprecated.RecipientDatabase
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.preferences.TextSecurePreferences
@@ -493,7 +493,7 @@ object AmePushProcess {
                 }
 
                 if (TextSecurePreferences.isNotificationsEnabled(accountContext)) {
-                    setAlarm(accountContext, builder, recipient.ringtone, recipient.vibrate ?:RecipientDatabase.VibrateState.DEFAULT)
+                    setAlarm(accountContext, builder, recipient.ringtone, recipient.vibrate ?: RecipientDatabase.VibrateState.DEFAULT)
                 }
 
                 notifyBar(accountContext, builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),

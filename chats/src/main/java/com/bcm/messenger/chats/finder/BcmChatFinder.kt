@@ -4,7 +4,7 @@ import com.bcm.messenger.common.finder.BcmFindData
 import com.bcm.messenger.common.finder.IBcmFindResult
 import com.bcm.messenger.common.finder.BcmFinderType
 import com.bcm.messenger.common.finder.IBcmFinder
-import com.bcm.messenger.common.database.model.MessageRecord
+import com.bcm.messenger.common.deprecated.MessageRecord
 
 /**
  * Created by bcm.social.01 on 2019/4/8.

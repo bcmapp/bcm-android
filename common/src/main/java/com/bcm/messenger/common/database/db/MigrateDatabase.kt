@@ -5,13 +5,10 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.attachments.DatabaseAttachment
-import com.bcm.messenger.common.database.DatabaseFactory
-import com.bcm.messenger.common.database.DraftDatabase
-import com.bcm.messenger.common.database.IdentityDatabase
-import com.bcm.messenger.common.database.RecipientDatabase
 import com.bcm.messenger.common.database.model.*
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.AttachmentRepo
+import com.bcm.messenger.common.deprecated.*
 import com.bcm.messenger.common.grouprepository.room.entity.*
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
@@ -81,9 +78,8 @@ class MigrateDatabase(private val accountContext: AccountContext) {
         File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-wal").delete()
     }
 
-    fun insertThread(record: ThreadRecord): Long {
+    fun insertThread(record: ThreadRecord, threadDatabase: ThreadDatabase): Long {
         val contentValues = ContentValues(16)
-        val threadDatabase = DatabaseFactory.getThreadDatabase(AppContextHolder.APP_CONTEXT)
 
         contentValues.put("timestamp", record.date)
         contentValues.put("message_count", record.count)

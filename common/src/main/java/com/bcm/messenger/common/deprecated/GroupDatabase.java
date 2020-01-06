@@ -1,4 +1,4 @@
-package com.bcm.messenger.common.database;
+package com.bcm.messenger.common.deprecated;
 
 
 import android.content.ContentValues;
@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.annimon.stream.Stream;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.utils.GroupUtil;
@@ -32,7 +33,7 @@ import java.util.List;
 @Deprecated
 public class GroupDatabase extends Database {
 
-  public static final String DATABASE_UPDATE_ACTION = "com.bcm.messenger.common.database.GroupDatabase.UPDATE";
+  public static final String DATABASE_UPDATE_ACTION = "com.bcm.messenger.common.deprecated.GroupDatabase.UPDATE";
 
   private static final String TAG = GroupDatabase.class.getSimpleName();
 
@@ -81,8 +82,8 @@ public class GroupDatabase extends Database {
 
   static final List<String> TYPED_GROUP_PROJECTION = Stream.of(GROUP_PROJECTION).map(columnName -> TABLE_NAME + "." + columnName).toList();
 
-  public GroupDatabase(Context context, SQLiteOpenHelper databaseHelper) {
-    super(context, databaseHelper);
+  public GroupDatabase(Context context, AccountContext accountContext, SQLiteOpenHelper databaseHelper) {
+    super(context, accountContext, databaseHelper);
   }
 
   public Optional<GroupRecord> getGroup(String groupId) {
@@ -148,7 +149,7 @@ public class GroupDatabase extends Database {
       if (!includeSelf && member.isCurrentLogin())
         continue;
 
-      recipients.add(Recipient.from(member, false));
+      recipients.add(Recipient.from(accountContext, member.serialize(), false));
     }
 
     return recipients;

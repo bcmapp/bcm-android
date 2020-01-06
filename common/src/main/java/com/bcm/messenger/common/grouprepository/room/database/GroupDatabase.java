@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.grouprepository.room.dao.AdHocChannelDao;
 import com.bcm.messenger.common.grouprepository.room.dao.AdHocMessageDao;
 import com.bcm.messenger.common.grouprepository.room.dao.AdHocSessionDao;
@@ -38,7 +39,7 @@ import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage;
 import com.bcm.messenger.common.grouprepository.room.entity.NoteRecord;
 import com.bcm.messenger.common.grouprepository.room.entity.WalletData;
 import com.bcm.messenger.common.grouprepository.room.entity.WalletTransaction;
-import com.bcm.messenger.common.provider.AMELogin;
+
 import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.ClassHelper;
 import com.bcm.messenger.utility.logger.ALog;
@@ -547,44 +548,9 @@ public abstract class GroupDatabase extends RoomDatabase {
         }
     };
 
-    /**
-     * The only instance
-     */
-    private volatile static GroupDatabase sInstance;
-
-    /**
-     * Gets the singleton instance of GroupDatabase.
-     *
-     * @return The singleton instance of GroupDatabase.
-     */
-    public static GroupDatabase getInstance() {
-        if (sInstance == null) {
-            synchronized (GroupDatabase.class) {
-                if (sInstance == null) {
-                    ALog.e("initdb", ClassHelper.getCallerMethodPosition());
-                    sInstance = allocDatabase();
-                }
-            }
-        }
-        return sInstance;
-    }
-
-    //
-    public static synchronized void resetInstance() {
-        try {
-            if (null != sInstance) {
-                sInstance.close();
-                sInstance = null;
-            }
-        } catch (Throwable e) {
-            ALog.e("resetInstance", e);
-        }
-        allocDatabase();
-    }
-
-    private static GroupDatabase allocDatabase() {
+    public static GroupDatabase allocDatabase(AccountContext accountContext) {
         return Room
-                .databaseBuilder(AppContextHolder.APP_CONTEXT, GroupDatabase.class, "new_group" + AMELogin.INSTANCE.getMajorUid())
+                .databaseBuilder(AppContextHolder.APP_CONTEXT, GroupDatabase.class, "new_group" + accountContext.getUid())
                 .addMigrations(MIGRATION_1_2)
                 .addMigrations(MIGRATION_2_3)
                 .addMigrations(MIGRATION_3_4)

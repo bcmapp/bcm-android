@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.bcm.messenger.common.database.model;
+package com.bcm.messenger.common.deprecated;
 
 import android.content.Context;
 import android.text.SpannableString;
 
-import com.bcm.messenger.common.database.MmsSmsColumns;
-import com.bcm.messenger.common.database.SmsDatabase;
+import com.bcm.messenger.common.deprecated.MmsSmsColumns;
+import com.bcm.messenger.common.deprecated.SmsDatabase;
 import com.bcm.messenger.common.recipients.Recipient;
 
 /**
@@ -31,6 +31,7 @@ import com.bcm.messenger.common.recipients.Recipient;
  *
  */
 
+@Deprecated
 public abstract class DisplayRecord {
 
     protected final Context context;

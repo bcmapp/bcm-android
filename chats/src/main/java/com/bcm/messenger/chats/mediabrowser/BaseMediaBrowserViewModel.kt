@@ -2,13 +2,14 @@ package com.bcm.messenger.chats.mediabrowser
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bcm.messenger.common.AccountContext
 
 
 /**
  * media view modle
  * Created by wjh on 2018/10/15
  */
-abstract class BaseMediaBrowserViewModel : ViewModel() {
+abstract class BaseMediaBrowserViewModel(protected val accountContext: AccountContext) : ViewModel() {
 
     companion object {
         const val TYPE_MEDIA = 1

@@ -4,7 +4,7 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bcm.messenger.common.database.AttachmentDatabase;
+import com.bcm.messenger.common.deprecated.AttachmentDatabase;
 
 public abstract class Attachment {
 

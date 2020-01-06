@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 
 import com.bcm.messenger.common.crypto.MasterSecretUnion;
 import com.bcm.messenger.common.crypto.MediaKey;
-import com.bcm.messenger.common.database.AttachmentDatabase;
+import com.bcm.messenger.common.deprecated.AttachmentDatabase;
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.messages.SignalServiceAttachment;
 

@@ -14,15 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.bcm.messenger.common.database.model;
+package com.bcm.messenger.common.deprecated;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
 import android.text.SpannableString;
 
 import com.bcm.messenger.common.R;
-import com.bcm.messenger.common.database.MmsDatabase;
-import com.bcm.messenger.common.database.SmsDatabase.Status;
+import com.bcm.messenger.common.deprecated.SmsDatabase.Status;
 import com.bcm.messenger.common.database.documents.IdentityKeyMismatch;
 import com.bcm.messenger.common.database.documents.NetworkFailure;
 import com.bcm.messenger.common.mms.SlideDeck;
@@ -38,6 +37,7 @@ import java.util.List;
  *
  */
 
+@Deprecated
 public class MediaMmsMessageRecord extends MmsMessageRecord {
   private final static String TAG = MediaMmsMessageRecord.class.getSimpleName();
 

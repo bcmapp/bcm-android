@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.database.MessagingDatabase
+import com.bcm.messenger.common.deprecated.MessagingDatabase
 import com.bcm.messenger.common.database.model.ThreadDbModel
 import com.bcm.messenger.common.database.records.AttachmentRecord
 import com.bcm.messenger.common.database.records.MessageRecord

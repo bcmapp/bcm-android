@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.bcm.messenger.common.database;
+package com.bcm.messenger.common.deprecated;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,12 +26,8 @@ import androidx.annotation.Nullable;
 
 import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
-import com.bcm.messenger.common.provider.AMELogin;
-import com.bcm.messenger.common.utils.IdentityUtil;
-import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.Base64;
 
-import org.greenrobot.eventbus.EventBus;
 import org.whispersystems.libsignal.IdentityKey;
 import org.whispersystems.libsignal.InvalidKeyException;
 import org.whispersystems.libsignal.util.guava.Optional;
@@ -91,12 +86,12 @@ public class IdentityDatabase extends Database {
         }
     }
 
-    IdentityDatabase(Context context, SQLiteOpenHelper databaseHelper) {
-        super(context, databaseHelper);
+    IdentityDatabase(Context context, AccountContext accountContext, SQLiteOpenHelper databaseHelper) {
+        super(context, accountContext, databaseHelper);
     }
 
     public AccountContext getAccountContext() {
-        return AMELogin.INSTANCE.getMajorContext();
+        return accountContext;
     }
 
     public Cursor getIdentities() {
@@ -109,32 +104,6 @@ public class IdentityDatabase extends Database {
         if (cursor == null)
             return null;
         return new IdentityReader(cursor);
-    }
-
-    public Optional<IdentityRecord> getIdentityForNonBlockingApproval(Address address) {
-        SQLiteDatabase database = databaseHelper.getReadableDatabase();
-        Cursor cursor = null;
-
-        try {
-            cursor = database.query(TABLE_NAME, null, ADDRESS + " = ?",
-                    new String[]{address.serialize()}, null, null, null);
-
-            if (cursor != null && cursor.moveToFirst()) {
-                IdentityRecord record = getIdentityRecord(cursor);
-                if (!record.isApprovedNonBlocking()) {
-                    IdentityUtil.saveIdentity(AppContextHolder.APP_CONTEXT, getAccountContext(), address.serialize(), record.identitykey, true);
-                    record = new IdentityRecord(address, record.identitykey, record.verifiedStatus, record.firstUse, record.timestamp, true);
-                }
-                return Optional.of(record);
-            }
-        } catch (InvalidKeyException | IOException e) {
-            throw new AssertionError(e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-
-        return Optional.absent();
     }
 
     public Optional<IdentityRecord> getIdentity(Address address) {
@@ -158,50 +127,6 @@ public class IdentityDatabase extends Database {
         return Optional.absent();
     }
 
-    public void saveIdentity(Address address, IdentityKey identityKey, VerifiedStatus verifiedStatus,
-                             boolean firstUse, long timestamp, boolean nonBlockingApproval) {
-        SQLiteDatabase database = databaseHelper.getWritableDatabase();
-        String identityKeyString = Base64.encodeBytes(identityKey.serialize());
-
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(ADDRESS, address.serialize());
-        contentValues.put(IDENTITY_KEY, identityKeyString);
-        contentValues.put(TIMESTAMP, timestamp);
-        contentValues.put(VERIFIED, verifiedStatus.toInt());
-        contentValues.put(NONBLOCKING_APPROVAL, nonBlockingApproval ? 1 : 0);
-        contentValues.put(FIRST_USE, firstUse ? 1 : 0);
-
-        database.replace(TABLE_NAME, null, contentValues);
-
-        EventBus.getDefault().post(new IdentityRecord(address, identityKey, verifiedStatus,
-                firstUse, timestamp, nonBlockingApproval));
-    }
-
-    public void setApproval(Address address, boolean nonBlockingApproval) {
-        SQLiteDatabase database = databaseHelper.getWritableDatabase();
-
-        ContentValues contentValues = new ContentValues(2);
-        contentValues.put(NONBLOCKING_APPROVAL, nonBlockingApproval);
-
-        database.update(TABLE_NAME, contentValues, ADDRESS + " = ?", new String[]{address.serialize()});
-    }
-
-    public void setVerified(Address address, IdentityKey identityKey, VerifiedStatus verifiedStatus) {
-        SQLiteDatabase database = databaseHelper.getWritableDatabase();
-
-        ContentValues contentValues = new ContentValues(1);
-        contentValues.put(VERIFIED, verifiedStatus.toInt());
-
-        int updated = database.update(TABLE_NAME, contentValues, ADDRESS + " = ? AND " + IDENTITY_KEY + " = ?",
-                new String[]{address.serialize(), Base64.encodeBytes(identityKey.serialize())});
-
-        if (updated > 0) {
-            Optional<IdentityRecord> record = getIdentity(address);
-            if (record.isPresent())
-                EventBus.getDefault().post(record.get());
-        }
-    }
-
     private IdentityRecord getIdentityRecord(@NonNull Cursor cursor) throws IOException, InvalidKeyException {
         String address = cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS));
         String serializedIdentity = cursor.getString(cursor.getColumnIndexOrThrow(IDENTITY_KEY));
@@ -211,7 +136,7 @@ public class IdentityDatabase extends Database {
         boolean firstUse = cursor.getInt(cursor.getColumnIndexOrThrow(FIRST_USE)) == 1;
         IdentityKey identity = new IdentityKey(Base64.decode(serializedIdentity), 0);
 
-        return new IdentityRecord(Address.from(address), identity, VerifiedStatus.forState(verifiedStatus), firstUse, timestamp, nonblockingApproval);
+        return new IdentityRecord(Address.from(accountContext, address), identity, VerifiedStatus.forState(verifiedStatus), firstUse, timestamp, nonblockingApproval);
     }
 
     public static class IdentityRecord {

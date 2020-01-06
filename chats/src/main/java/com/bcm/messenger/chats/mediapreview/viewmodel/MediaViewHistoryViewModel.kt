@@ -1,18 +1,17 @@
 package com.bcm.messenger.chats.mediapreview.viewmodel
 
-import com.bcm.messenger.chats.mediapreview.BaseMediaViewModel
 import com.bcm.messenger.chats.mediapreview.bean.MEDIA_TYPE_IMAGE
 import com.bcm.messenger.chats.mediapreview.bean.MEDIA_TYPE_VIDEO
 import com.bcm.messenger.chats.mediapreview.bean.MSG_TYPE_HISTORY
 import com.bcm.messenger.chats.mediapreview.bean.MediaViewData
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.MediaUtil
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -21,7 +20,7 @@ import io.reactivex.schedulers.Schedulers
 /**
  * Created by Kin on 2018/10/25
  */
-class MediaViewHistoryViewModel : BaseMediaViewModel() {
+class MediaViewHistoryViewModel(accountContext: AccountContext) : BaseMediaViewModel(accountContext) {
     private val TAG = "MediaViewHistoryViewModel"
 
     override fun getCurrentData(threadId: Long, indexId: Long, result: (data: MediaViewData) -> Unit) {}
@@ -29,13 +28,13 @@ class MediaViewHistoryViewModel : BaseMediaViewModel() {
     override fun getAllMediaData(threadId: Long, indexId: Long, reverse: Boolean, result: (dataList: List<MediaViewData>) -> Unit) {
         Observable.create<List<MediaViewData>> {
             if (threadId == ARouterConstants.PRIVATE_TEXT_CHAT) {
-                val message = Repository.getChatRepo().getMessage(indexId)
+                val message = Repository.getChatRepo(accountContext)?.getMessage(indexId)
                 if (message != null) {
                     val groupMessage = AmeGroupMessage.messageFromJson(message.body)
                     it.onNext(generateGroupPreviewList(indexId, AmeGroupMessageDetail().apply { this.message = groupMessage }))
                 }
             } else {
-                val message = MessageDataManager.fetchOneMessageByGidAndIndexId(threadId, indexId)
+                val message = MessageDataManager.fetchOneMessageByGidAndIndexId(accountContext, threadId, indexId)
                 if (message != null) {
                     it.onNext(generateGroupPreviewList(indexId, message))
                 }
@@ -80,7 +79,7 @@ class MediaViewHistoryViewModel : BaseMediaViewModel() {
         val history = AmeHistoryMessageDetail().apply {
             senderId = it.sender
             sendTime = it.sendTime
-            isSendByMe = it.sender == AMELogin.uid
+            isSendByMe = it.sender == accountContext.uid
             sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
             this.message = AmeGroupMessage.messageFromJson(it.messagePayload ?: "")
             thumbPsw = it.thumbPsw

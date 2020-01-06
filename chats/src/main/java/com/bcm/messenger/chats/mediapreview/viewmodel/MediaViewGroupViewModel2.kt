@@ -1,7 +1,7 @@
 package com.bcm.messenger.chats.mediapreview.viewmodel
 
-import com.bcm.messenger.chats.mediapreview.BaseMediaViewModel
 import com.bcm.messenger.chats.mediapreview.bean.*
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
@@ -14,10 +14,10 @@ import org.greenrobot.eventbus.EventBus
 /**
  * Created by Kin on 2018/11/1
  */
-class MediaViewGroupViewModel2 : BaseMediaViewModel() {
+class MediaViewGroupViewModel2(accountContext: AccountContext) : BaseMediaViewModel(accountContext) {
     override fun getCurrentData(threadId: Long, indexId: Long, result: (data: MediaViewData) -> Unit) {
         Observable.create<AmeGroupMessageDetail> {
-            val message = MessageDataManager.fetchOneMessageByGidAndIndexId(threadId, indexId)
+            val message = MessageDataManager.fetchOneMessageByGidAndIndexId(accountContext, threadId, indexId)
             if (message != null) {
                 it.onNext(message)
                 it.onComplete()
@@ -36,7 +36,7 @@ class MediaViewGroupViewModel2 : BaseMediaViewModel() {
 
     override fun getAllMediaData(threadId: Long, indexId: Long, reverse: Boolean, result: (dataList: List<MediaViewData>) -> Unit) {
         Observable.create<List<MediaViewData>> {
-            val messages = MessageDataManager.fetchMediaMessages(threadId)
+            val messages = MessageDataManager.fetchMediaMessages(accountContext, threadId)
             val mediaDataList = mutableListOf<MediaViewData>()
             if (reverse) {
                 messages.forEach { msg ->
@@ -61,7 +61,7 @@ class MediaViewGroupViewModel2 : BaseMediaViewModel() {
         if (data != null)
             Observable.create<Boolean> {
                 try {
-                    MessageDataManager.deleteOneMessageByIndexId((data.sourceMsg as AmeGroupMessageDetail).gid, data.indexId)
+                    MessageDataManager.deleteOneMessageByIndexId(accountContext, (data.sourceMsg as AmeGroupMessageDetail).gid, data.indexId)
                     EventBus.getDefault().post(MediaDeleteEvent(0L, data.sourceMsg.gid, data.indexId))
                     it.onNext(true)
                 } catch (ex: Exception) {

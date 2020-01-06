@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.bcm.messenger.common.database.model;
+package com.bcm.messenger.common.deprecated;
 
 import android.content.Context;
 import android.text.Spannable;
@@ -23,8 +23,6 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 
 import com.bcm.messenger.common.R;
-import com.bcm.messenger.common.database.MmsSmsColumns;
-import com.bcm.messenger.common.database.SmsDatabase;
 import com.bcm.messenger.common.database.documents.IdentityKeyMismatch;
 import com.bcm.messenger.common.database.documents.NetworkFailure;
 import com.bcm.messenger.common.recipients.Recipient;
@@ -42,6 +40,7 @@ import java.util.List;
  * @author Moxie Marlinspike
  *
  */
+@Deprecated
 public abstract class MessageRecord extends DisplayRecord {
 
     //private static final int MAX_DISPLAY_LENGTH = 2000;

@@ -1,7 +1,7 @@
 package com.bcm.messenger.common.database.repositories
 
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.database.NoSuchMessageException
+import com.bcm.messenger.common.deprecated.NoSuchMessageException
 import com.bcm.messenger.common.database.model.PushDbModel
 import com.bcm.messenger.utility.Base64
 import com.google.protobuf.ByteString

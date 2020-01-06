@@ -4,8 +4,8 @@ package com.bcm.messenger.common.attachments;
 import android.net.Uri;
 import androidx.annotation.Nullable;
 
-import com.bcm.messenger.common.database.AttachmentDatabase;
-import com.bcm.messenger.common.database.MmsDatabase;
+import com.bcm.messenger.common.deprecated.AttachmentDatabase;
+import com.bcm.messenger.common.deprecated.MmsDatabase;
 
 public class MmsNotificationAttachment extends Attachment {
 

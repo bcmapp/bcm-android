@@ -1,21 +1,18 @@
-package com.bcm.messenger.common.database;
+package com.bcm.messenger.common.deprecated;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.Uri;
-import androidx.annotation.Nullable;
 import android.util.Log;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.R;
 import org.whispersystems.libsignal.InvalidMessageException;
 import com.bcm.messenger.common.crypto.MasterCipher;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 @Deprecated
 public class DraftDatabase extends Database {
@@ -35,52 +32,8 @@ public class DraftDatabase extends Database {
 
   
   public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
-  public DraftDatabase(Context context, SQLiteOpenHelper databaseHelper) {
-    super(context, databaseHelper);
-  }
-
-  public void insertDrafts(MasterCipher masterCipher, long threadId, List<Draft> drafts) {
-    SQLiteDatabase db    = databaseHelper.getWritableDatabase();
-
-    for (Draft draft : drafts) {
-      ContentValues values = new ContentValues(3);
-      values.put(THREAD_ID, threadId);
-        if (masterCipher != null) {
-            values.put(DRAFT_TYPE, masterCipher.encryptBody(draft.getType()));
-            values.put(DRAFT_VALUE, masterCipher.encryptBody(draft.getValue()));
-        } else {
-            values.put(DRAFT_TYPE, draft.getType());
-            values.put(DRAFT_VALUE, draft.getValue());
-        }
-
-      db.insert(TABLE_NAME, null, values);
-    }
-  }
-
-  public void clearDrafts(long threadId) {
-    SQLiteDatabase db = databaseHelper.getWritableDatabase();
-    db.delete(TABLE_NAME, THREAD_ID + " = ?", new String[] {threadId+""});
-  }
-
-  public void clearDrafts(Set<Long> threadIds) {
-    SQLiteDatabase db        = databaseHelper.getWritableDatabase();
-    StringBuilder  where     = new StringBuilder();
-    List<String>   arguments = new LinkedList<>();
-
-    for (long threadId : threadIds) {
-      where.append(" OR ")
-           .append(THREAD_ID)
-           .append(" = ?");
-
-      arguments.add(String.valueOf(threadId));
-    }
-
-    db.delete(TABLE_NAME, where.toString().substring(4), arguments.toArray(new String[0]));
-  }
-
-  public void clearAllDrafts() {
-    SQLiteDatabase db = databaseHelper.getWritableDatabase();
-    db.delete(TABLE_NAME, null, null);
+  public DraftDatabase(Context context, AccountContext accountContext, SQLiteOpenHelper databaseHelper) {
+    super(context, accountContext, databaseHelper);
   }
 
   public List<Draft> getDrafts(MasterCipher masterCipher, long threadId) {
@@ -147,38 +100,6 @@ public class DraftDatabase extends Database {
       case LOCATION: return context.getString(R.string.common_draft_location_snippet);
       default:       return null;
       }
-    }
-  }
-
-  public static class Drafts extends LinkedList<Draft> {
-    private Draft getDraftOfType(String type) {
-      for (Draft draft : this) {
-        if (type.equals(draft.getType())) {
-          return draft;
-        }
-      }
-      return null;
-    }
-
-    public String getSnippet(Context context) {
-      Draft textDraft = getDraftOfType(Draft.TEXT);
-      if (textDraft != null) {
-        return textDraft.getSnippet(context);
-      } else if (size() > 0) {
-        return get(0).getSnippet(context);
-      } else {
-        return "";
-      }
-    }
-
-    public @Nullable Uri getUriSnippet(Context context) {
-      Draft imageDraft = getDraftOfType(Draft.IMAGE);
-
-      if (imageDraft != null && imageDraft.getValue() != null) {
-        return Uri.parse(imageDraft.getValue());
-      }
-
-      return null;
     }
   }
 }

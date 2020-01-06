@@ -14,18 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.bcm.messenger.common.database;
+package com.bcm.messenger.common.deprecated;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.common.BuildConfig;
 
 import java.util.Set;
 
+@Deprecated
 public abstract class Database {
 
     protected static final String ID_WHERE = "_id = ?";
@@ -37,10 +39,12 @@ public abstract class Database {
     static final String URI_GROUP = "content://"+ BuildConfig.BCM_APPLICATION_ID + "_secure/group";
 
     protected SQLiteOpenHelper databaseHelper;
+    protected AccountContext accountContext;
     protected final Context context;
 
-    public Database(Context context, SQLiteOpenHelper databaseHelper) {
+    public Database(Context context, AccountContext accountContext, SQLiteOpenHelper databaseHelper) {
         this.context = context;
+        this.accountContext = accountContext;
         this.databaseHelper = databaseHelper;
     }
 

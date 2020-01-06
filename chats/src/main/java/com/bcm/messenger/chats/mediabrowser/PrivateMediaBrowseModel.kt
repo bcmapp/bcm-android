@@ -7,6 +7,7 @@ import com.bcm.messenger.chats.clean.CleanConversationStorageLogic
 import com.bcm.messenger.chats.mediapreview.bean.MediaDeleteEvent
 import com.bcm.messenger.chats.privatechat.jobs.AttachmentDownloadJob
 import com.bcm.messenger.chats.util.AttachmentSaver
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.model.AttachmentDbModel
 import com.bcm.messenger.common.database.records.MessageRecord
@@ -28,10 +29,10 @@ import java.util.*
 
 
 /**
- * 
+ *
  * Created by wjh on 2018/10/15
  */
-class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {
+class PrivateMediaBrowseModel(accountContext: AccountContext) : BaseMediaBrowserViewModel(accountContext) {
 
     private val TAG = PrivateMediaBrowseModel::class.java.simpleName
 
@@ -55,7 +56,7 @@ class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {
         mThreadId = threadId
         mMasterSecret = masterSecret
 
-        if(!EventBus.getDefault().isRegistered(this)) {
+        if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
     }
@@ -78,33 +79,36 @@ class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {
             var result: MutableMap<String, MutableList<MediaBrowseData>>? = null
             val records: List<MessageRecord>
             try {
-                val chatRepo = Repository.getChatRepo()
-                records = when (browseType) {
-                    TYPE_MEDIA -> {
-                        mCurrentLoaded.mediaMap.clear()
-                        result = mCurrentLoaded.mediaMap
-                        chatRepo.getMediaMessages(mThreadId)
+                val chatRepo = Repository.getChatRepo(accountContext)
+                if (chatRepo == null) {
+                    it.onNext(mapOf())
+                } else {
+                    records = when (browseType) {
+                        TYPE_MEDIA -> {
+                            mCurrentLoaded.mediaMap.clear()
+                            result = mCurrentLoaded.mediaMap
+                            chatRepo.getMediaMessages(mThreadId)
+                        }
+                        TYPE_FILE -> {
+                            mCurrentLoaded.fileMap.clear()
+                            result = mCurrentLoaded.fileMap
+                            chatRepo.getFileMessages(mThreadId)
+                        }
+                        TYPE_LINK -> {
+                            result = mutableMapOf()
+                            chatRepo.getLinkMessages(mThreadId)
+                        }
+                        else -> {
+                            result = mutableMapOf()
+                            emptyList()
+                        }
                     }
-                    TYPE_FILE -> {
-                        mCurrentLoaded.fileMap.clear()
-                        result = mCurrentLoaded.fileMap
-                        chatRepo.getFileMessages(mThreadId)
-                    }
-                    TYPE_LINK -> {
-                        result = mutableMapOf()
-                        chatRepo.getLinkMessages(mThreadId)
-                    }
-                    else -> {
-                        result = mutableMapOf()
-                        emptyList()
+                    if (records.isNotEmpty()) {
+                        records.forEach { record ->
+                            createMediaBrowseData(result, record)
+                        }
                     }
                 }
-                if (records.isNotEmpty()) {
-                    records.forEach { record ->
-                        createMediaBrowseData(result, record)
-                    }
-                }
-
             } catch (ex: Exception) {
                 ALog.e(TAG, "loadMedia error", ex)
             } finally {
@@ -115,7 +119,6 @@ class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { result ->
-
                     callback.invoke(result)
                 }
     }
@@ -129,8 +132,8 @@ class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {
             fail.addAll(mediaDataList)
             try {
 
-                for(data in mediaDataList) {
-                    if(mStop) {
+                for (data in mediaDataList) {
+                    if (mStop) {
                         break
                     }
                     val record = data.msgSource as? MessageRecord ?: continue
@@ -139,7 +142,7 @@ class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {
                     if (attachmentSlide != null) {
                         try {
                             if (attachmentSlide.transferState != AttachmentDbModel.TransferState.STARTED.state) {
-                                AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, record.id,
+                                AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, accountContext, record.id,
                                         attachmentSlide.id, attachmentSlide.uniqueId, true).onRun(mMasterSecret)
                             }
                             if (AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, mMasterSecret, attachmentSlide.dataUri
@@ -151,9 +154,9 @@ class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {
                         }
                     }
                 }
-            }catch (ex: Exception){
+            } catch (ex: Exception) {
                 ALog.e(TAG, "download error", ex)
-            }finally {
+            } finally {
                 it.onNext(fail)
                 it.onComplete()
             }
@@ -173,35 +176,35 @@ class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {
             val fail = mutableListOf<MediaBrowseData>()
             fail.addAll(mediaDataList)
             try {
-                val chatRepo = Repository.getChatRepo()
-                for(data in mediaDataList) {
-                    if(mStop) {
+                val chatRepo = Repository.getChatRepo(accountContext)
+                for (data in mediaDataList) {
+                    if (mStop) {
                         break
                     }
                     val record = data.msgSource as? MessageRecord ?: continue
                     try {
                         if (MediaUtil.isTextType(data.mediaType)) {
-                            chatRepo.deleteMessage(record.id)
+                            chatRepo?.deleteMessage(record.id)
                         } else {
-                            chatRepo.deleteMessage(record.id)
+                            chatRepo?.deleteMessage(record.id)
                             CleanConversationStorageLogic.messageDeletedForConversation(data.getUserAddress(), data.getStorageType(), data.fileSize())
                         }
                         fail.remove(data)
                         val key = formatMapKey(data)
-                        if(MediaUtil.isImageType(data.mediaType) || MediaUtil.isVideoType(data.mediaType)) {
+                        if (MediaUtil.isImageType(data.mediaType) || MediaUtil.isVideoType(data.mediaType)) {
                             mCurrentLoaded.mediaMap[key]?.remove(data)
-                        }else if(!MediaUtil.isTextType(data.mediaType)) {
+                        } else if (!MediaUtil.isTextType(data.mediaType)) {
                             mCurrentLoaded.fileMap[key]?.remove(data)
                         }
 
-                    }catch (ex: Exception) {
+                    } catch (ex: Exception) {
                         ALog.e(TAG, "record ${data.name} download attachment error")
                     }
 
                 }
-            }catch (ex: Exception){
+            } catch (ex: Exception) {
                 ALog.e(TAG, "download error", ex)
-            }finally {
+            } finally {
                 it.onNext(fail)
                 it.onComplete()
             }
@@ -216,7 +219,7 @@ class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {
 
     @Throws(Exception::class)
     private fun checkValid() {
-        if(!::mMasterSecret.isInitialized) {
+        if (!::mMasterSecret.isInitialized) {
             ALog.w(TAG, "not init first")
             throw IllegalStateException("master is not initialized")
         }
@@ -224,12 +227,13 @@ class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {
 
 
     private fun getBrowseData(context: Context, browseType: Int, record: MessageRecord): MediaBrowseData? {
-        if(record.isMediaMessage()) {
-            val slide = (if (browseType == TYPE_MEDIA) record.getImageAttachment() ?: record.getVideoAttachment() else record.getDocumentAttachment())
+        if (record.isMediaMessage()) {
+            val slide = (if (browseType == TYPE_MEDIA) record.getImageAttachment()
+                    ?: record.getVideoAttachment() else record.getDocumentAttachment())
                     ?: return null
             val name = slide.fileName ?: context.getString(R.string.chats_unknown_file_name)
             return MediaBrowseData(name, slide.contentType, record.dateReceive, record, false)
-        }else {
+        } else {
             return MediaBrowseData(record.body, "text/*", record.dateReceive, record, false)
         }
     }
@@ -240,21 +244,21 @@ class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     fun onEventThumbnailDownload(event: PartProgressEvent) {
-        if(event.progress < event.total) {
+        if (event.progress < event.total) {
             return
         }
         ALog.i(TAG, "onEventThumbnailDownload currentLoaded: ${mCurrentLoaded.mediaMap.count()}, ${mCurrentLoaded.fileMap.count()}")
-        for((key, dataList) in mCurrentLoaded.mediaMap) {
-            for(data in dataList) {
+        for ((key, dataList) in mCurrentLoaded.mediaMap) {
+            for (data in dataList) {
                 val record = data.msgSource as? MessageRecord ?: continue
                 val attachment = record.getImageAttachment() ?: continue
-                if(event.attachment == attachment) {
+                if (event.attachment == attachment) {
                     ALog.i(TAG, "onEventThumbnailDownload setHasData")
 //                    attachment.setHasData(true)
 //                    if (MediaUtil.isVideoType(event.attachment.contentType)) {
 //                        attachment.setHasThumbnail(true)
 //                    }
-                    AmeDispatcher.mainThread.dispatch ({
+                    AmeDispatcher.mainThread.dispatch({
                         data.notifyChanged()
                     }, 300)
                     return
@@ -265,15 +269,15 @@ class PrivateMediaBrowseModel : BaseMediaBrowserViewModel() {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     fun onEventDurationUpdate(event: MediaVideoDurationEvent) {
-        if(event.duration <= 0) {
+        if (event.duration <= 0) {
             return
         }
         ALog.i(TAG, "onEventDurationUpdate duration: ${event.duration}")
-        for((key, dataList) in mCurrentLoaded.mediaMap) {
-            for(data in dataList) {
+        for ((key, dataList) in mCurrentLoaded.mediaMap) {
+            for (data in dataList) {
                 val record = data.msgSource as? MessageRecord ?: continue
                 val attachment = record.getImageAttachment() ?: continue
-                if(event.attachmentId.rowId == attachment.id) {
+                if (event.attachmentId.rowId == attachment.id) {
                     ALog.i(TAG, "onEventDurationUpdate setDuration: ${event.duration}")
                     attachment.duration = event.duration
                     AmeDispatcher.mainThread.dispatch {

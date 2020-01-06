@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.bcm.messenger.common.database;
+package com.bcm.messenger.common.deprecated;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -24,11 +24,9 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bcm.messenger.utility.AppContextHolder;
-
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.crypto.MasterSecret;
-import com.bcm.messenger.common.database.MessagingDatabase.SyncMessageId;
-import com.bcm.messenger.common.database.model.MessageRecord;
+
 import org.whispersystems.libsignal.util.guava.Optional;
 
 import java.util.HashSet;
@@ -243,146 +241,16 @@ public class MmsSmsDatabase extends Database {
     }
 
 
-    public MmsSmsDatabase(Context context, SQLiteOpenHelper databaseHelper) {
-        super(context, databaseHelper);
-    }
-
-    public Cursor getConversation(long threadId, long offset, long limit) {
-        String order = MmsSmsColumns.NORMALIZED_DATE_SENT + " DESC";
-        String selection = MmsSmsColumns.THREAD_ID + " = " + threadId;
-        String limitStr  = limit > 0 || offset > 0 ? offset + ", " + limit : null;
-        Cursor cursor = queryTables(PROJECTION, selection, order, limitStr);
-        setNotifyConversationListeners(cursor, threadId);
-
-        return cursor;
+    public MmsSmsDatabase(Context context, AccountContext accountContext, SQLiteOpenHelper databaseHelper) {
+        super(context, accountContext, databaseHelper);
     }
 
     public Cursor getConversationAsc(long threadId) {
         String order = MmsSmsColumns.NORMALIZED_DATE_SENT + " ASC";
         String selection = MmsSmsColumns.THREAD_ID + " = " + threadId;
         Cursor cursor = queryTables(PROJECTION, selection, order, null);
-        setNotifyConversationListeners(cursor, threadId);
 
         return cursor;
-    }
-
-    public Cursor getConversation(long threadId) {
-        return getConversation(threadId, 0, 0);
-    }
-
-    public Cursor getIdentityConflictMessagesForThread(long threadId) {
-        String order = MmsSmsColumns.NORMALIZED_DATE_RECEIVED + " ASC";
-        String selection = MmsSmsColumns.THREAD_ID + " = " + threadId + " AND " + MmsSmsColumns.MISMATCHED_IDENTITIES + " IS NOT NULL";
-
-        Cursor cursor = queryTables(PROJECTION, selection, order, null);
-        setNotifyConversationListeners(cursor, threadId);
-
-        return cursor;
-    }
-
-    public Cursor getConversationSnippet(long threadId) {
-        String order = MmsSmsColumns.NORMALIZED_DATE_SENT + " DESC";
-        String selection = MmsSmsColumns.THREAD_ID + " = " + threadId;
-        return queryTables(PROJECTION, selection, order, "1");
-    }
-
-   
-    public Cursor getConversationForMedia(long threadId) {
-        String order = MmsSmsColumns.NORMALIZED_DATE_SENT + " DESC";
-        String selection = MmsSmsColumns.THREAD_ID + " = " + threadId + " and " +
-                TRANSPORT + " = '" + MMS_TRANSPORT + "' and " +
-                MmsDatabase.MESSAGE_TYPE + " != " + 0x82 + " and (" +
-                AttachmentDatabase.CONTENT_TYPE + " like 'image/%' or " + AttachmentDatabase.CONTENT_TYPE + " like 'video/%')";
-        return queryTables(PROJECTION, selection, order, null);
-
-    }
-
-
-    
-    public Cursor getConversationForFile(long threadId) {
-        String order = MmsSmsColumns.NORMALIZED_DATE_SENT + " DESC";
-        String selection = MmsSmsColumns.THREAD_ID + " = " + threadId + " and " +
-                TRANSPORT + " = '" + MMS_TRANSPORT + "' and " +
-                MmsDatabase.MESSAGE_TYPE + " != " + 0x82 + " and " +
-                AttachmentDatabase.CONTENT_TYPE + " is not null and " + AttachmentDatabase.CONTENT_TYPE + " != '' and " +
-                AttachmentDatabase.CONTENT_TYPE + " not like 'image/%' and " + AttachmentDatabase.CONTENT_TYPE + " not like 'video/%' and " +
-                AttachmentDatabase.CONTENT_TYPE + " not like 'audio/acc'";
-        return queryTables(PROJECTION, selection, order, null);
-    }
-
-    public Cursor getConversationForLink(long threadId) {
-        return DatabaseFactory.getSmsDatabase(AppContextHolder.APP_CONTEXT).getLinkMessagesByConversation(threadId);
-    }
-
-  
-    public Cursor getUnread() {
-        String order = MmsSmsColumns.NORMALIZED_DATE_RECEIVED + " ASC";
-        String selection = MmsSmsColumns.READ + " = 0 AND " + MmsSmsColumns.NOTIFIED + " = 0";
-
-        return queryTables(PROJECTION, selection, order, null);
-    }
-
-    public int getUnreadCount(long threadId) {
-        String selection = MmsSmsColumns.READ + " = 0 AND " + MmsSmsColumns.NOTIFIED + " = 0 AND " + MmsSmsColumns.THREAD_ID + " = " + threadId;
-        Cursor cursor = queryTables(PROJECTION, selection, null, null);
-
-        try {
-            return cursor != null ? cursor.getCount() : 0;
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-    }
-
-    public int getAllUnreadThreadCount() {
-        String groupBy = MmsSmsColumns.THREAD_ID;
-        String having = "count(" + MmsSmsColumns.THREAD_ID + ")>0";
-        String selection = MmsSmsColumns.READ + " = 0 AND " + MmsSmsColumns.NOTIFIED + " = 0 ";
-        Cursor cursor = queryTables(PROJECTION, selection, null, null, groupBy, having);
-
-        try {
-            return cursor != null ? cursor.getCount() : 0;
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-    }
-
-    public int getConversationCount(long threadId) {
-        int count = DatabaseFactory.getSmsDatabase(context).getMessageCountForThread(threadId);
-        count += DatabaseFactory.getMmsDatabase(context).getMessageCountForThread(threadId);
-
-        return count;
-    }
-
-    public Cursor getDecryptFailMessages(long threadId, long lastShowTime) {
-        String selection = MmsSmsColumns.THREAD_ID + " = " + Long.toString(threadId) + " AND (((" +
-                SmsDatabase.TYPE + " & " + MmsSmsColumns.Types.BASE_TYPE_MASK + ") = " + MmsSmsColumns.Types.BASE_FAIL_CANNOT_DECRYPT_TYPE +
-                ") OR ((" + MmsDatabase.MESSAGE_BOX + " & " + MmsSmsColumns.Types.BASE_TYPE_MASK + ") = " + MmsSmsColumns.Types.BASE_FAIL_CANNOT_DECRYPT_TYPE +
-                ")) AND " + SmsDatabase.DATE_SENT + " > " + Long.toString(lastShowTime);
-        return queryTables(PROJECTION, selection, null, null);
-    }
-
-    public long getLastCannotDecryptMessageId(long threadId) {
-        long smsId = DatabaseFactory.getSmsDatabase(context).getLastCannotDecryptMessage(threadId);
-        long mmsId = DatabaseFactory.getMmsDatabase(context).getLastCannotDecryptMessage(threadId);
-        return smsId >= mmsId ? smsId : mmsId;
-    }
-
-    public boolean markAsCannotDecryptFailed(SyncMessageId syncMessageId) {
-        boolean smsRes = DatabaseFactory.getSmsDatabase(context).markAsCannotDecryptFailed(syncMessageId);
-        boolean mmsRes = DatabaseFactory.getMmsDatabase(context).markAsCannotDecryptFailed(syncMessageId);
-        return smsRes || mmsRes;
-    }
-
-    public void incrementDeliveryReceiptCount(SyncMessageId syncMessageId, long timestamp) {
-        DatabaseFactory.getSmsDatabase(context).incrementReceiptCount(syncMessageId, true, false);
-        DatabaseFactory.getMmsDatabase(context).incrementReceiptCount(syncMessageId, timestamp, true, false);
-    }
-
-    public void incrementReadReceiptCount(SyncMessageId syncMessageId, long timestamp) {
-        DatabaseFactory.getSmsDatabase(context).incrementReceiptCount(syncMessageId, false, true);
-        DatabaseFactory.getMmsDatabase(context).incrementReceiptCount(syncMessageId, timestamp, false, true);
     }
 
     private Cursor queryTables(String[] projection, String selection, String order, String limit) {
@@ -460,57 +328,39 @@ public class MmsSmsDatabase extends Database {
             this(cursor, null);
         }
 
-        private EncryptingSmsDatabase.Reader getSmsReader() {
+        private EncryptingSmsDatabase.Reader getSmsReader(EncryptingSmsDatabase encryptingSmsDatabase, SmsDatabase smsDatabase) {
             if (smsReader == null) {
                 if (masterSecret.isPresent())
-                    smsReader = DatabaseFactory.getEncryptingSmsDatabase(context).readerFor(masterSecret.get(), cursor);
+                    smsReader = encryptingSmsDatabase.readerFor(masterSecret.get(), cursor);
                 else
-                    smsReader = DatabaseFactory.getSmsDatabase(context).readerFor(cursor);
+                    smsReader = smsDatabase.readerFor(cursor);
             }
 
             return smsReader;
         }
 
-        private MmsDatabase.Reader getMmsReader() {
+        private MmsDatabase.Reader getMmsReader(MmsDatabase mmsDatabase) {
             if (mmsReader == null) {
-                mmsReader = DatabaseFactory.getMmsDatabase(context).readerFor(masterSecret.orNull(), cursor);
+                mmsReader = mmsDatabase.readerFor(masterSecret.orNull(), cursor);
             }
 
             return mmsReader;
         }
 
-        public MessageRecord getNext() {
+        public MessageRecord getNextMigrate(DatabaseFactory databaseFactory) {
             if (cursor == null || !cursor.moveToNext())
                 return null;
 
-            return getCurrent();
+            return getCurrentMigrate(databaseFactory);
         }
 
-        public MessageRecord getNextMigrate() {
-            if (cursor == null || !cursor.moveToNext())
-                return null;
-
-            return getCurrentMigrate();
-        }
-
-        public MessageRecord getCurrent() {
+        public MessageRecord getCurrentMigrate(DatabaseFactory databaseFactory) {
             String type = cursor.getString(cursor.getColumnIndexOrThrow(TRANSPORT));
 
             if (MmsSmsDatabase.MMS_TRANSPORT.equals(type))
-                return getMmsReader().getCurrent();
+                return getMmsReader(databaseFactory.getMms()).getCurrentForMigrate(databaseFactory.getAttachments());
             else if (MmsSmsDatabase.SMS_TRANSPORT.equals(type))
-                return getSmsReader().getCurrent();
-            else
-                throw new AssertionError("Bad type: " + type);
-        }
-
-        public MessageRecord getCurrentMigrate() {
-            String type = cursor.getString(cursor.getColumnIndexOrThrow(TRANSPORT));
-
-            if (MmsSmsDatabase.MMS_TRANSPORT.equals(type))
-                return getMmsReader().getCurrentForMigrate();
-            else if (MmsSmsDatabase.SMS_TRANSPORT.equals(type))
-                return getSmsReader().getCurrentForMigrate();
+                return getSmsReader(databaseFactory.getEncryptingSms(), databaseFactory.getSms()).getCurrentForMigrate();
             else
                 throw new AssertionError("Bad type: " + type);
         }

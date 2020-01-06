@@ -1,4 +1,4 @@
-package com.bcm.messenger.common.database.model;
+package com.bcm.messenger.common.deprecated;
 
 
 import android.content.Context;
@@ -12,6 +12,7 @@ import com.bcm.messenger.common.recipients.Recipient;
 
 import java.util.List;
 
+@Deprecated
 public abstract class MmsMessageRecord extends MessageRecord {
 
   private final @NonNull SlideDeck slideDeck;

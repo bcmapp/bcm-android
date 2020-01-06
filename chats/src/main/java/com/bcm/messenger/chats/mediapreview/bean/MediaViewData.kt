@@ -6,6 +6,7 @@ import com.bcm.messenger.chats.components.ZoomingImageView
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.privatechat.jobs.AttachmentDownloadJob
 import com.bcm.messenger.chats.util.AttachmentSaver
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.attachments.AttachmentId
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
@@ -90,14 +91,16 @@ data class MediaViewData(val indexId: Long,
         }
     }
 
-    fun setImage(imageView: ZoomingImageView, glide: GlideRequests, masterSecret: MasterSecret) {
+    fun setImage(imageView: ZoomingImageView,
+                 glide: GlideRequests,
+                 masterSecret: MasterSecret) {
         imageViewRef = WeakReference(imageView)
         if (mediaUri != null) {
             imageView.setImageUri(masterSecret, glide, mediaUri, mimeType)
         } else if (msgType == MSG_TYPE_HISTORY || msgType == MSG_TYPE_GROUP) {
             val messageDetail = sourceMsg as AmeGroupMessageDetail
-            if (messageDetail.thumbnailPartUri != null) {
-                imageView.setImageUri(masterSecret, glide, messageDetail.thumbnailPartUri, mimeType)
+            if (messageDetail.getThumbnailPartUri(masterSecret.accountContext) != null) {
+                imageView.setImageUri(masterSecret, glide, messageDetail.getThumbnailPartUri(masterSecret.accountContext), mimeType)
                 downloadGroupAttachment(imageView, glide, messageDetail, masterSecret)
             } else {
                 downloadGroupThumbnail(imageView, glide, messageDetail, masterSecret)
@@ -126,7 +129,7 @@ data class MediaViewData(val indexId: Long,
         }
     }
 
-    fun setVideoThumbnail(videoPlayer: VideoPlayer, glide: GlideRequests, masterSecret: MasterSecret) {
+    fun setVideoThumbnail(accountContext: AccountContext, videoPlayer: VideoPlayer, glide: GlideRequests, masterSecret: MasterSecret) {
         videoViewRef = WeakReference(videoPlayer)
         when (msgType) {
             MSG_TYPE_PRIVATE -> {
@@ -137,8 +140,8 @@ data class MediaViewData(val indexId: Long,
             }
             MSG_TYPE_GROUP, MSG_TYPE_HISTORY -> {
                 val messageRecord = sourceMsg as AmeGroupMessageDetail
-                if (messageRecord.thumbnailPartUri != null) {
-                    videoPlayer.setVideoThumbnail(DecryptableStreamUriLoader.DecryptableUri(masterSecret, messageRecord.thumbnailPartUri!!), glide)
+                if (messageRecord.getThumbnailPartUri(accountContext) != null) {
+                    videoPlayer.setVideoThumbnail(DecryptableStreamUriLoader.DecryptableUri(masterSecret, messageRecord.getThumbnailPartUri(accountContext)!!), glide)
                 } else {
                     MessageFileHandler.downloadThumbnail(messageRecord, object : MessageFileHandler.MessageFileCallback {
                         override fun onResult(success: Boolean, uri: Uri?) {
@@ -162,21 +165,22 @@ data class MediaViewData(val indexId: Long,
 
     fun downloadVideo(videoPlayer: VideoPlayer, masterSecret: MasterSecret, callback: () -> Unit) {
         when (msgType) {
-            MSG_TYPE_PRIVATE -> downloadPrivateVideo(callback)
+            MSG_TYPE_PRIVATE -> downloadPrivateVideo(masterSecret.accountContext, callback)
             MSG_TYPE_GROUP -> downloadGroupVideo(videoPlayer, sourceMsg as AmeGroupMessageDetail, masterSecret, callback)
             MSG_TYPE_HISTORY -> downloadGroupVideo(videoPlayer, sourceMsg as AmeHistoryMessageDetail, masterSecret, callback)
         }
     }
 
-    private fun downloadPrivateVideo(callback: () -> Unit) {
+    private fun downloadPrivateVideo(accountContext: AccountContext, callback: () -> Unit) {
         val messageRecord = sourceMsg as MessageRecord
         val attachment = messageRecord.getVideoAttachment() ?: return
 
         Observable.create(ObservableOnSubscribe<Boolean> {
             try {
-                Repository.getAttachmentRepo().setTransferState(attachment, AttachmentDbModel.TransferState.STARTED)
+                Repository.getAttachmentRepo(accountContext)?.setTransferState(attachment, AttachmentDbModel.TransferState.STARTED)
 
-                AmeModuleCenter.accountJobMgr()?.add(AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, messageRecord.id, attachment.id, attachment.uniqueId, true))
+                AmeModuleCenter.accountJobMgr(accountContext)?.add(AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, accountContext,
+                        messageRecord.id, attachment.id, attachment.uniqueId, true))
 
                 it.onNext(true)
 

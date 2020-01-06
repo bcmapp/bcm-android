@@ -12,7 +12,7 @@ import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.MasterSecretUtil
 import com.bcm.messenger.common.crypto.PreKeyUtil
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.common.database.DatabaseFactory
+import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.database.repositories.IdentityRepo
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.gcm.FcmUtil

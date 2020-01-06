@@ -1,18 +1,13 @@
-package com.bcm.messenger.common.database;
+package com.bcm.messenger.common.deprecated;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
-
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.utility.Base64;
 import com.google.protobuf.ByteString;
 
-import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.internal.push.SignalServiceProtos;
 import org.whispersystems.signalservice.internal.util.Util;
 
@@ -41,49 +36,8 @@ public class PushDatabase extends Database {
    
     public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
-    public PushDatabase(Context context, SQLiteOpenHelper databaseHelper) {
-        super(context, databaseHelper);
-    }
-
-    public long insert(@NonNull SignalServiceProtos.Envelope envelope) {
-        Optional<Long> messageId = find(envelope);
-
-        if (messageId.isPresent()) {
-            return messageId.get();
-        } else {
-            ContentValues values = new ContentValues();
-            values.put(TYPE, envelope.getType().getNumber());
-            values.put(SOURCE, envelope.getSource());
-            values.put(DEVICE_ID, envelope.getSourceDevice());
-            values.put(LEGACY_MSG, envelope.hasLegacyMessage() ? Base64.encodeBytes(envelope.getLegacyMessage().toByteArray()) : "");
-            values.put(CONTENT, envelope.hasContent() ? Base64.encodeBytes(envelope.getContent().toByteArray()) : "");
-            values.put(TIMESTAMP, envelope.getTimestamp());
-            values.put(SOURCE_REG_ID, envelope.getSourceRegistration());
-
-            return databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, values);
-        }
-    }
-
-    public SignalServiceProtos.Envelope get(long id) throws NoSuchMessageException {
-        Cursor cursor = null;
-
-        try {
-            cursor = databaseHelper.getReadableDatabase().query(TABLE_NAME, null, ID_WHERE,
-                    new String[]{String.valueOf(id)},
-                    null, null, null);
-
-            if (cursor != null && cursor.moveToNext()) {
-                return envelopeFromCursor(cursor);
-            }
-        } catch (IOException e) {
-            Log.w(TAG, e);
-            throw new NoSuchMessageException(e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-
-        throw new NoSuchMessageException("Not found");
+    public PushDatabase(Context context, AccountContext accountContext, SQLiteOpenHelper databaseHelper) {
+        super(context, accountContext, databaseHelper);
     }
 
     public Cursor getPending() {
@@ -96,32 +50,6 @@ public class PushDatabase extends Database {
 
     public Reader readerFor(Cursor cursor) {
         return new Reader(cursor);
-    }
-
-    private Optional<Long> find(SignalServiceProtos.Envelope envelope) {
-        SQLiteDatabase database = databaseHelper.getReadableDatabase();
-        Cursor cursor = null;
-
-        try {
-            cursor = database.query(TABLE_NAME, null, TYPE + " = ? AND " + SOURCE + " = ? AND " +
-                            DEVICE_ID + " = ? AND " + LEGACY_MSG + " = ? AND " +
-                            CONTENT + " = ? AND " + TIMESTAMP + " = ?",
-                    new String[]{String.valueOf(envelope.getType()),
-                            envelope.getSource(),
-                            String.valueOf(envelope.getSourceDevice()),
-                            envelope.hasLegacyMessage() ? Base64.encodeBytes(envelope.getLegacyMessage().toByteArray()) : "",
-                            envelope.hasContent() ? Base64.encodeBytes(envelope.getContent().toByteArray()) : "",
-                            String.valueOf(envelope.getTimestamp())},
-                    null, null, null);
-
-            if (cursor != null && cursor.moveToFirst()) {
-                return Optional.of(cursor.getLong(cursor.getColumnIndexOrThrow(ID)));
-            } else {
-                return Optional.absent();
-            }
-        } finally {
-            if (cursor != null) cursor.close();
-        }
     }
 
     public static class Reader {
