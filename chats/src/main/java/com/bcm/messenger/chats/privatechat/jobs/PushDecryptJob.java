@@ -57,7 +57,6 @@ import com.bcm.messenger.common.sms.OutgoingLocationMessage;
 import com.bcm.messenger.common.sms.OutgoingTextMessage;
 import com.bcm.messenger.common.utils.AmePushProcess;
 import com.bcm.messenger.common.utils.AppUtilKotlinKt;
-import com.bcm.messenger.common.utils.BcmHash;
 import com.bcm.messenger.common.utils.GroupUtil;
 import com.bcm.messenger.common.utils.IdentityUtil;
 import com.bcm.messenger.common.utils.RxBus;
@@ -194,7 +193,7 @@ public class PushDecryptJob extends ContextJob {
      */
     private void handleMessage(MasterSecretUnion masterSecret, SignalServiceProtos.Envelope envelope) {
         try {
-            SignalProtocolStore axolotlStore = new SignalProtocolStoreImpl(context);
+            SignalProtocolStore axolotlStore = new SignalProtocolStoreImpl(context, accountContext);
             SignalServiceAddress localAddress = new SignalServiceAddress(accountContext.getUid());
             SignalServiceCipher cipher = new SignalServiceCipher(localAddress, axolotlStore);
 
@@ -864,7 +863,7 @@ public class PushDecryptJob extends ContextJob {
         }
         if (data.getLastDeleteSessionTime() + 50000 < System.currentTimeMillis()) {
             ALog.i(TAG, "Last delete session time is 5s ago. Delete Session.");
-            SignalProtocolStore store = new SignalProtocolStoreImpl(context);
+            SignalProtocolStore store = new SignalProtocolStoreImpl(context, accountContext);
             SignalProtocolAddress address = new SignalProtocolAddress(envelope.getSource(), SignalServiceAddress.DEFAULT_DEVICE_ID);
             if (store.containsSession(address)) {
                 store.deleteSession(address);
@@ -900,7 +899,7 @@ public class PushDecryptJob extends ContextJob {
         String message = new AmeGroupMessage<>(AmeGroupMessage.RECEIPT, new AmeGroupMessage.ReceiptContent(messageId)).toString();
         OutgoingLocationMessage outgoingLocationMessage = new OutgoingLocationMessage(recipient, message, 0);
         if (masterSecret.getMasterSecret().isPresent()) {
-            MessageSender.sendHideMessage(AppContextHolder.APP_CONTEXT, outgoingLocationMessage);
+            MessageSender.sendHideMessage(AppContextHolder.APP_CONTEXT, accountContext, outgoingLocationMessage);
         }
     }
 
