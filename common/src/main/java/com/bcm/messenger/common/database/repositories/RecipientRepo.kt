@@ -5,8 +5,6 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.config.BcmFeatureSupport
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.database.dao.RecipientDao
-import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.model.IdentityDbModel
 import com.bcm.messenger.common.database.model.RecipientDbModel
 import com.bcm.messenger.common.database.records.PrivacyProfile
@@ -30,9 +28,11 @@ import org.whispersystems.libsignal.IdentityKey
  */
 class RecipientRepo(
         private val accountContext: AccountContext,
-        private val recipientDao: RecipientDao
+        private val repository: Repository
 ) {
     private val TAG = "RecipientRepo"
+
+    private val recipientDao = repository.userDatabase.getRecipientDao()
 
     enum class Relationship(val type: Int) {
         STRANGER(0),
@@ -87,9 +87,9 @@ class RecipientRepo(
                     recipient.address.serialize(), emptyList(), null)).toString()
         }
         val message = OutgoingLocationMessage(recipient, blockMessage, recipient.expireMessages * 1000L)
-        val threadId = Repository.getThreadRepo(accountContext).getThreadIdFor(recipient)
-        val messageId = Repository.getChatRepo(accountContext).insertOutgoingTextMessage(threadId, message, AmeTimeUtil.getMessageSendTime(), null)
-        Repository.getChatRepo(accountContext).setMessageSendSuccess(messageId)
+        val threadId = repository.threadRepo.getThreadIdFor(recipient)
+        val messageId = repository.chatRepo.insertOutgoingTextMessage(threadId, message, AmeTimeUtil.getMessageSendTime(), null)
+        repository.chatRepo.setMessageSendSuccess(messageId)
 
         RxBus.post(recipient.address.serialize(), threadId)
     }
@@ -216,7 +216,7 @@ class RecipientRepo(
             }
 
             val identityKey = IdentityKey(Base64.decode(identityKeyValue), 0)
-            if (Repository.getIdentityRepo(accountContext).getIdentityRecord(address.serialize()) == null) {
+            if (repository.identityRepo.getIdentityRecord(address.serialize()) == null) {
                 ALog.w(TAG, "IdentityKey first use...")
                 return
             }
@@ -248,7 +248,7 @@ class RecipientRepo(
     }
 
     fun updateBcmContacts(settingList: List<RecipientSettings>) {
-        UserDatabase.getDatabase(accountContext).runInTransaction {
+        repository.runInTransaction {
             realUpdateBcmContacts(settingList)
         }
     }
@@ -355,9 +355,9 @@ class RecipientRepo(
             0L
         }
         val textMessage = OutgoingLocationMessage(recipient, messageBody.toString(), expiresTime)
-        val threadId = Repository.getThreadRepo(accountContext).getThreadIdFor(recipient)
-        val messageId = Repository.getChatRepo(accountContext).insertOutgoingTextMessage(threadId, textMessage, AmeTimeUtil.getMessageSendTime(), null)
-        Repository.getChatRepo(accountContext).setMessageSendSuccess(messageId)
+        val threadId = repository.threadRepo.getThreadIdFor(recipient)
+        val messageId = repository.chatRepo.insertOutgoingTextMessage(threadId, textMessage, AmeTimeUtil.getMessageSendTime(), null)
+        repository.chatRepo.setMessageSendSuccess(messageId)
 
         RxBus.post(recipient.address.serialize(), threadId)
     }

@@ -249,6 +249,7 @@ public class Repository {
         if (repo != null) {
             try {
                 repo.userDatabase.close();
+                repo.clear();
             } catch (Throwable tr) {
                 ALog.e(TAG, "Close database failed!", tr);
             }
@@ -376,16 +377,26 @@ public class Repository {
         return userDatabase.groupKeyDao();
     }
 
+    private void clear() {
+        attachmentRepo = null;
+        chatRepo = null;
+        threadRepo = null;
+        draftRepo = null;
+        recipientRepo = null;
+        identityRepo = null;
+        pushRepo = null;
+    }
+
     private Repository(AccountContext context) {
         accountContext = context;
         userDatabase = UserDatabase.openDatabase(accountContext, true);
 
-        attachmentRepo = new AttachmentRepo(accountContext, userDatabase.getAttachmentDao());
-        chatRepo = new PrivateChatRepo(accountContext, userDatabase.getPrivateChatDao());
-        threadRepo = new ThreadRepo(accountContext, userDatabase.getThreadDao(), userDatabase.getPrivateChatDao());
-        draftRepo = new DraftRepo(accountContext, userDatabase.getDraftDao());
-        recipientRepo = new RecipientRepo(accountContext, userDatabase.getRecipientDao());
-        identityRepo = new IdentityRepo(accountContext, userDatabase.getIdentityDao());
-        pushRepo = new PushRepo(accountContext, userDatabase.getPushDao());
+        attachmentRepo = new AttachmentRepo(accountContext, this);
+        chatRepo = new PrivateChatRepo(accountContext, this);
+        threadRepo = new ThreadRepo(accountContext, this);
+        draftRepo = new DraftRepo(accountContext, this);
+        recipientRepo = new RecipientRepo(accountContext, this);
+        identityRepo = new IdentityRepo(accountContext, this);
+        pushRepo = new PushRepo(accountContext, this);
     }
 }

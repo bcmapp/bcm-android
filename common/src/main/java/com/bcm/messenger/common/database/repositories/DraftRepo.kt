@@ -4,8 +4,6 @@ import android.content.Context
 import android.net.Uri
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
-import com.bcm.messenger.common.database.dao.DraftDao
-import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.model.DraftDbModel
 import com.bcm.messenger.utility.logger.ALog
 import java.util.*
@@ -15,9 +13,10 @@ import java.util.*
  */
 class DraftRepo(
         private val accountContext: AccountContext,
-        private val draftDao: DraftDao
+        private val repository: Repository
 ) {
 
+    private val draftDao = repository.userDatabase.getDraftDao()
 
     class Draft(val type: String, val value: String) {
         fun getSnippet(context: Context): String? {
@@ -74,7 +73,7 @@ class DraftRepo(
     private val TAG = "DraftRepo"
 
     fun insertDrafts(threadId: Long, drafts: List<Draft>) {
-        UserDatabase.getDatabase(accountContext).runInTransaction {
+        repository.runInTransaction {
             ALog.i(TAG, "insertDrafts threadId: $threadId, drafts: ${drafts.size}")
             val modelList = mutableListOf<DraftDbModel>()
             drafts.forEach {
@@ -88,7 +87,6 @@ class DraftRepo(
             draftDao.deleteDraft(threadId)
             draftDao.insertDrafts(modelList)
         }
-
     }
 
     fun clearDrafts(threadId: Long) {

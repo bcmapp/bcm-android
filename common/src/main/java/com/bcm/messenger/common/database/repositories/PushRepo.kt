@@ -2,7 +2,6 @@ package com.bcm.messenger.common.database.repositories
 
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.database.NoSuchMessageException
-import com.bcm.messenger.common.database.dao.PushDao
 import com.bcm.messenger.common.database.model.PushDbModel
 import com.bcm.messenger.utility.Base64
 import com.google.protobuf.ByteString
@@ -13,8 +12,9 @@ import org.whispersystems.signalservice.internal.push.SignalServiceProtos
  */
 class PushRepo(
         private val accountContext: AccountContext,
-        private val pushDao: PushDao
-) {
+        private val repository: Repository) {
+
+    private val pushDao = repository.userDatabase.getPushDao()
 
     fun insert(envelope: SignalServiceProtos.Envelope): Long {
         val messageId = find(envelope)

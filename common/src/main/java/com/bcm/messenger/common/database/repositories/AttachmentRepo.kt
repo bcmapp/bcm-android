@@ -19,7 +19,6 @@ import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.MediaUtil
 import com.bcm.messenger.common.crypto.encrypt.ChatFileEncryptDecryptUtil
 import com.bcm.messenger.common.crypto.encrypt.FileInfo
-import com.bcm.messenger.common.database.dao.AttachmentDao
 import com.bcm.messenger.common.video.exo.CtrDataSource
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.BitmapUtils
@@ -36,10 +35,10 @@ import java.util.concurrent.Callable
  */
 class AttachmentRepo(
         private val accountContext: AccountContext,
-        private val attachmentDao: AttachmentDao
-) {
+        private val repository: Repository) {
     private val TAG = "AttachmentRepo"
 
+    private val attachmentDao = repository.userDatabase.getAttachmentDao();
     private val thumbnailExecutor = Util.newSingleThreadedLifoExecutor()
 
     inner class ThumbnailFetchCallable(private val masterSecret: MasterSecret, private val attachmentId: Long, private val uniqueId: Long) : Callable<InputStream?> {
@@ -352,6 +351,6 @@ class AttachmentRepo(
     }
 
     private fun notifyAttachmentUpdate(mid: Long) {
-        Repository.getChatRepo(accountContext)?.attachmentUpdate(mid)
+        repository.chatRepo.attachmentUpdate(mid)
     }
 }

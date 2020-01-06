@@ -23,6 +23,7 @@ import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.event.PartProgressEvent;
 import com.bcm.messenger.common.jobs.MasterSecretJob;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.utils.AttachmentUtil;
 import com.bcm.messenger.utility.HexUtil;
 import com.bcm.messenger.utility.Util;
@@ -99,6 +100,11 @@ public class AttachmentDownloadJob extends MasterSecretJob {
 
         if (!manual && !AttachmentUtil.isAutoDownloadPermitted(context, record)) {
             ALog.w(TAG, "Attachment can't be auto downloaded...");
+            return;
+        }
+
+        if (!accountContext.getUid().equals(AMELogin.INSTANCE.getMajorUid())) {
+            ALog.w(TAG, "Current user is not a major user");
             return;
         }
 
