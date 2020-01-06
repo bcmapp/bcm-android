@@ -70,7 +70,7 @@ object AmeLoginLogic {
     private var mPrefixUid: String? = null
     private var mMask: Long = 0L
 
-    private var mTmpAccountContext = AccountContext("", "", "")
+    private var tmpAccountContext = AccountContext("", "", "")
     private var loginTempData: Triple<String, ECKeyPair, String>? = null
 
     val accountHistory: AmeAccountHistory = AmeAccountHistory()
@@ -110,7 +110,14 @@ object AmeLoginLogic {
      * @return true login, false not login
      */
     fun isLogin(uid: String): Boolean {
-        return accountHistory.isLogin(uid)
+        if (accountHistory.isLogin(uid)){
+            return true
+        }
+
+        if (tmpAccountContext.uid == uid) {
+            return tmpAccountContext.password.isNotEmpty()
+        }
+        return false
     }
 
     /**
@@ -133,8 +140,8 @@ object AmeLoginLogic {
             return context
         }
 
-        if (uid == mTmpAccountContext.uid) {
-            return mTmpAccountContext
+        if (uid == tmpAccountContext.uid) {
+            return tmpAccountContext
         }
 
         return AccountContext(uid, "", "")
@@ -260,7 +267,7 @@ object AmeLoginLogic {
     }
 
     private fun setTmpToken(uid: String, password: String) {
-        mTmpAccountContext = if (uid.isNotEmpty() && password.isNotEmpty()) {
+        tmpAccountContext = if (uid.isNotEmpty() && password.isNotEmpty()) {
             val token = accountHistory.genToken(uid, password)
             AccountContext(uid, token, password)
         } else {
@@ -541,7 +548,7 @@ object AmeLoginLogic {
                 throw Exception("pre key upload failed, uid: ${accountContext.uid}")
             }
 
-            Repository.getIdentityRepo(accountContext).saveIdentity(accountContext.uid, identityKeyPair.publicKey, IdentityRepo.VerifiedStatus.VERIFIED,
+            Repository.getIdentityRepo(accountContext)?.saveIdentity(accountContext.uid, identityKeyPair.publicKey, IdentityRepo.VerifiedStatus.VERIFIED,
                     true, System.currentTimeMillis(), true)
         } catch (e: Exception) {
             ALog.logForSecret(TAG, "loginSucceed generate prekey or prekey upload failed, ${e.message}", e)

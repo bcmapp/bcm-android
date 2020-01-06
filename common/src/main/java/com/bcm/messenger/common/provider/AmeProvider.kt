@@ -54,6 +54,10 @@ object AmeProvider {
                     return module as T
                 }
 
+                if (!context.isLogin) {
+                    return null
+                }
+                
                 val provider = BcmRouter.getInstance().get(providerName).navigationWithCast<T>()
                 if (null != provider && provider is IAmeAccountModule) {
                     provider.setContext(context)
