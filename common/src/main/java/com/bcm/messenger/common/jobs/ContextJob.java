@@ -10,20 +10,21 @@ import org.whispersystems.jobqueue.dependencies.ContextDependent;
 
 public abstract class ContextJob extends Job implements ContextDependent {
 
-  protected transient Context context;
-  protected final AccountContext accountContext;
+    protected transient Context context;
+    protected final AccountContext accountContext;
 
-  protected ContextJob(Context context, AccountContext accountContext, JobParameters parameters) {
-    super(parameters);
-    this.context = context;
-    this.accountContext = accountContext;
-  }
+    protected ContextJob(Context context, AccountContext accountContext, JobParameters parameters) {
+        super(parameters);
+        this.context = context;
+        this.accountContext = accountContext;
+    }
 
-  public void setContext(Context context) {
-    this.context = context;
-  }
+    public void setContext(Context context) {
+        this.context = context;
+    }
 
-  protected Context getContext() {
-    return context;
-  }
+    protected Context getContext() {
+        return context;
+    }
+
 }

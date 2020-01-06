@@ -19,6 +19,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.ReEditEvent
@@ -33,7 +34,6 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.GroupUtil
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.utils.startForegroundServiceCompat
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
@@ -59,11 +59,11 @@ class ChatModuleImp : IChatModule {
     }
 
     override fun initModule() {
-        AmeModuleCenter.serverDispatcher(context).addListener(chatMessageReceiver)
+        AmeModuleCenter.serverDispatcher().addListener(chatMessageReceiver)
     }
 
     override fun uninitModule() {
-        AmeModuleCenter.serverDispatcher(context).removeListener(chatMessageReceiver)
+        AmeModuleCenter.serverDispatcher().removeListener(chatMessageReceiver)
     }
 
     private val TAG = "IConversationProvider"

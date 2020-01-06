@@ -3,6 +3,7 @@ package com.bcm.messenger.common.jobs;
 
 import android.content.Context;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.utility.logger.ALog;
@@ -24,8 +25,8 @@ public class RetrieveProfileJob extends ContextJob {
 
     private final List<Recipient> mRecipientList;
 
-    public RetrieveProfileJob(Context context, List<Recipient> recipientList) {
-        super(context, JobParameters.newBuilder()
+    public RetrieveProfileJob(Context context, AccountContext accountContext, List<Recipient> recipientList) {
+        super(context, accountContext, JobParameters.newBuilder()
                 .withGroupId(RetrieveProfileJob.class.getSimpleName())
                 .withRequirement(new NetworkRequirement(context))
                 .withRetryCount(3)
@@ -34,8 +35,8 @@ public class RetrieveProfileJob extends ContextJob {
 
     }
 
-    public RetrieveProfileJob(Context context, Recipient recipient) {
-        this(context, Arrays.asList(recipient));
+    public RetrieveProfileJob(Context context, AccountContext accountContext, Recipient recipient) {
+        this(context, accountContext, Arrays.asList(recipient));
     }
 
     @Override
@@ -53,7 +54,7 @@ public class RetrieveProfileJob extends ContextJob {
                 recipientList.add(recipient);
             }
         }
-        AmeModuleCenter.INSTANCE.contact().checkNeedFetchProfile(recipientList.toArray(new Recipient[recipientList.size()]), null);
+        AmeModuleCenter.INSTANCE.contact(accountContext).checkNeedFetchProfile(recipientList.toArray(new Recipient[recipientList.size()]), null);
     }
 
     @Override
