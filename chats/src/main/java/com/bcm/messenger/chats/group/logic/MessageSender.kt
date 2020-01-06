@@ -5,11 +5,14 @@ import android.net.Uri
 import android.widget.Toast
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.core.GroupMessageCore
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.ServerResult
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.core.corebean.GroupKeyParam
 import com.bcm.messenger.common.crypto.MasterSecret
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
@@ -17,13 +20,10 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTransform
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.base64Decode
 import com.bcm.messenger.common.utils.base64Encode
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
 import com.bcm.messenger.common.utils.format
 import com.bcm.messenger.utility.*
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
@@ -36,16 +36,13 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.utility.AmeTimeUtil
-import com.bcm.messenger.utility.GsonUtils
 import org.json.JSONArray
 
 /**
  * group message handler
  * Created by zjl on 2018/6/7.
  */
-class MessageSender {
+class MessageSender(private val mAccountContext: AccountContext) {
 
     companion object {
         private const val TAG = "MessageSender"
@@ -81,14 +78,14 @@ class MessageSender {
 
     private val mPendingMsgSet: MutableSet<PendingMsgInfo> by lazy {
         val pendingSet = mutableSetOf<PendingMsgInfo>()
-        TextSecurePreferences.getStringSetPreference(AppContextHolder.APP_CONTEXT, PREF_LAST_PENDING_MSG)?.mapTo(pendingSet) {
+        TextSecurePreferences.getStringSetPreference(mAccountContext, PREF_LAST_PENDING_MSG)?.mapTo(pendingSet) {
             GsonUtils.fromJson(it, object : TypeToken<PendingMsgInfo>() {}.type)
         }
         pendingSet
     }
 
     private fun savePendingSet(value: MutableSet<PendingMsgInfo>) {
-        TextSecurePreferences.setStringSetPreference(AppContextHolder.APP_CONTEXT, PREF_LAST_PENDING_MSG, mPendingMsgSet.map {
+        TextSecurePreferences.setStringSetPreference(mAccountContext, PREF_LAST_PENDING_MSG, mPendingMsgSet.map {
             GsonUtils.toJson(it)
         }.toSet())
     }
@@ -133,7 +130,7 @@ class MessageSender {
             synchronized(this) {
                 val removeList = mutableListOf<PendingMsgInfo>()
                 for (pending in mPendingMsgSet) {
-                    if (MessageDataManager.updateMessageSendStateByIndex(pending.gid, pending.indexId, GroupMessage.SEND_FAILURE) == 0) {
+                    if (MessageDataManager.updateMessageSendStateByIndex(mAccountContext, pending.gid, pending.indexId, GroupMessage.SEND_FAILURE) == 0) {
                         removeList.add(pending)
                         count++
                     }
@@ -159,7 +156,7 @@ class MessageSender {
         val messageDetail = AmeGroupMessageDetail().apply {
             gid = groupId
             sendTime = AmeTimeUtil.getMessageSendTime()
-            senderId = AMELogin.uid
+            senderId = mAccountContext.uid
             isSendByMe = true
             attachmentUri = ""
             this.extContent = extContent
@@ -311,7 +308,7 @@ class MessageSender {
 
     @SuppressLint("CheckResult")
     fun resendMediaMessage(messageDetail: AmeGroupMessageDetail, call: ResendCallback? = null) {
-        val masterSecret = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) ?: return
+        val masterSecret = BCMEncryptUtils.getMasterSecret(mAccountContext) ?: return
 
         Observable.create(ObservableOnSubscribe<String> {
 
@@ -363,16 +360,16 @@ class MessageSender {
         Observable.create(ObservableOnSubscribe<Boolean> { emiter ->
 
             if (null != messageDetail) {
-                val groupInfo = GroupInfoDataManager.queryOneGroupInfo(messageDetail.gid)
+                val groupInfo = GroupInfoDataManager.queryOneGroupInfo(mAccountContext, messageDetail.gid)
                 if (groupInfo == null) {
                     emiter.onError(Exception("GroupInfo is null"))
                 }else {
-                    GroupMessageCore.recallMessage(messageDetail.gid, messageDetail.serverIndex, messageDetail.identityIvString, groupInfo.channelPublicKey.base64Encode().format())
+                    GroupMessageCore.recallMessage(mAccountContext, messageDetail.gid, messageDetail.serverIndex, messageDetail.identityIvString, groupInfo.channelPublicKey.base64Encode().format())
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.io())
                             .subscribe({
                                 if (it.isSuccess) {
-                                    MessageDataManager.recallMessage(AMELogin.uid, messageDetail.gid, messageDetail.serverIndex)
+                                    MessageDataManager.recallMessage(mAccountContext, mAccountContext.uid, messageDetail.gid, messageDetail.serverIndex)
                                 }
                                 emiter.onNext(it.isSuccess)
                                 emiter.onComplete()
@@ -400,20 +397,20 @@ class MessageSender {
 
         var groupMessageDetail: AmeGroupMessageDetail? = null
         Observable.create(ObservableOnSubscribe<Boolean> { emiter ->
-            val detail = MessageDataManager.fetchOneMessageByGidAndIndexId(groupId, indexId)
+            val detail = MessageDataManager.fetchOneMessageByGidAndIndexId(mAccountContext, groupId, indexId)
             groupMessageDetail = detail
             if (null != detail) {
-                val groupInfo = GroupInfoDataManager.queryOneGroupInfo(groupId)
+                val groupInfo = GroupInfoDataManager.queryOneGroupInfo(mAccountContext, groupId)
                 if (groupInfo == null) {
                     emiter.onError(Exception("GroupInfo is null"))
                 }else {
 
-                    GroupMessageCore.recallMessage(groupId, detail.serverIndex, detail.identityIvString, groupInfo.channelPublicKey.base64Encode().format())
+                    GroupMessageCore.recallMessage(mAccountContext, groupId, detail.serverIndex, detail.identityIvString, groupInfo.channelPublicKey.base64Encode().format())
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.io())
                             .subscribe({
                                 if (it.isSuccess) {
-                                    MessageDataManager.recallMessage(AMELogin.uid, groupId, detail.serverIndex)
+                                    MessageDataManager.recallMessage(mAccountContext, mAccountContext.uid, groupId, detail.serverIndex)
                                 }
                                 emiter.onNext(it.isSuccess)
                                 emiter.onComplete()
@@ -458,7 +455,7 @@ class MessageSender {
         ALog.i(TAG, "sendTextMessage begin, indexId: ${messageDetail.indexId} gid: $groupId")
         messageDetail.apply {
             gid = groupId
-            senderId = AMELogin.uid
+            senderId = mAccountContext.uid
             isSendByMe = true
             attachmentUri = ""
         }
@@ -524,7 +521,7 @@ class MessageSender {
 
         message.apply {
             gid = groupId
-            senderId = AMELogin.uid
+            senderId = mAccountContext.uid
             isSendByMe = true
         }
 
@@ -559,8 +556,8 @@ class MessageSender {
                                     message.thumbHash = thumbResult.fileInfo.hash
                                     message.thumbRandom = thumbResult.fileInfo.random
 
-                                    MessageDataManager.updateMessageAttachmentUri(groupId, message.indexId, urlResult.fileInfo)
-                                    MessageDataManager.updateMessageThumbnailUri(groupId, message.indexId, thumbResult.fileInfo)
+                                    MessageDataManager.updateMessageAttachmentUri(mAccountContext, groupId, message.indexId, urlResult.fileInfo)
+                                    MessageDataManager.updateMessageThumbnailUri(mAccountContext, groupId, message.indexId, thumbResult.fileInfo)
 
                                     if (urlResult.url.isNotEmpty() && thumbResult.url.isNotEmpty()) {
                                         content.url = urlResult.url
@@ -596,8 +593,8 @@ class MessageSender {
                                     message.thumbHash = thumbResult.fileInfo.hash
                                     message.thumbRandom = thumbResult.fileInfo.random
 
-                                    MessageDataManager.updateMessageAttachmentUri(groupId, message.indexId, urlResult.fileInfo)
-                                    MessageDataManager.updateMessageThumbnailUri(groupId, message.indexId, thumbResult.fileInfo)
+                                    MessageDataManager.updateMessageAttachmentUri(mAccountContext, groupId, message.indexId, urlResult.fileInfo)
+                                    MessageDataManager.updateMessageThumbnailUri(mAccountContext, groupId, message.indexId, thumbResult.fileInfo)
 
                                     if (urlResult.url.isNotEmpty() && thumbResult.url.isNotEmpty()) {
                                         content.url = urlResult.url
@@ -632,7 +629,7 @@ class MessageSender {
                                     message.dataRandom = result.fileInfo.random
                                     message.attachmentSize = result.fileInfo.size
 
-                                    MessageDataManager.updateMessageAttachmentUri(groupId, message.indexId, result.fileInfo)
+                                    MessageDataManager.updateMessageAttachmentUri(mAccountContext, groupId, message.indexId, result.fileInfo)
 
                                     if (result.url.isNotEmpty()) {
                                         content.url = result.url
@@ -661,7 +658,7 @@ class MessageSender {
                                     message.dataRandom = result.fileInfo.random
                                     message.attachmentSize = result.fileInfo.size
 
-                                    MessageDataManager.updateMessageAttachmentUri(groupId, message.indexId, result.fileInfo)
+                                    MessageDataManager.updateMessageAttachmentUri(mAccountContext, groupId, message.indexId, result.fileInfo)
 
                                     if (result.url.isNotEmpty()) {
                                         content.url = result.url
@@ -710,7 +707,7 @@ class MessageSender {
         ALog.i(TAG, "sendMessage begin, gid: $groupId")
         val messageDetail = AmeGroupMessageDetail().apply {
             gid = groupId
-            senderId = AMELogin.uid
+            senderId = mAccountContext.uid
             isSendByMe = true
             attachmentUri = ""
             sendTime = AmeTimeUtil.getMessageSendTime()
@@ -757,7 +754,7 @@ class MessageSender {
             }
             var messageBody = msg.toString()
 
-            val groupInfo = GroupInfoDataManager.queryOneGroupInfo(messageDetail.gid) ?: throw Exception("groupInfo is null")
+            val groupInfo = GroupInfoDataManager.queryOneGroupInfo(mAccountContext, messageDetail.gid) ?: throw Exception("groupInfo is null")
             groupEncryptSpec = GroupKeyParam(groupInfo.currentKey.base64Decode(), groupInfo.currentKeyVersion)
             val messageEncryptResult: Triple<Boolean, String, Int> = GroupMessageEncryptUtils.encryptMessageProcess(messageBody, groupEncryptSpec)
             messageBody = messageEncryptResult.second
@@ -791,16 +788,16 @@ class MessageSender {
                 Base64.decode(messageDetail.identityIvString)
             }
 
-            val groupInfo = GroupInfoDataManager.queryOneGroupInfo(messageDetail.gid) ?: throw Exception("groupInfo is null")
+            val groupInfo = GroupInfoDataManager.queryOneGroupInfo(mAccountContext, messageDetail.gid) ?: throw Exception("groupInfo is null")
             messageDetail.identityIvString = Base64.encodeBytes(iv)
-            GroupMessageCore.sendGroupMessage(messageDetail.gid, it.first, Base64.encodeBytes(BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, iv)), Base64.encodeBytes(groupInfo.channelPublicKey), it.second)
+            GroupMessageCore.sendGroupMessage(mAccountContext, messageDetail.gid, it.first, Base64.encodeBytes(BCMEncryptUtils.signWithMe(mAccountContext, iv)), Base64.encodeBytes(groupInfo.channelPublicKey), it.second)
 
         }.observeOn(Schedulers.io())
                 .doOnNext {
                     ALog.i(TAG, "realSendGroupMessage end, index: ${messageDetail.indexId}, gid: ${messageDetail.gid}")
                     val spec = groupEncryptSpec
                     if (null != spec) {
-                        MessageDataManager.updateMessageEncryptMode(messageDetail.gid, index, spec.keyVersion)
+                        MessageDataManager.updateMessageEncryptMode(mAccountContext, messageDetail.gid, index, spec.keyVersion)
                     }
 
                     if (it.code == ServerResult.RESULT_SUCCESS) {
@@ -809,7 +806,7 @@ class MessageSender {
                         updateMessageFail(messageDetail)
                     }
 
-                    Repository.getThreadRepo().updateByNewGroup(messageDetail.gid)
+                    Repository.getThreadRepo(mAccountContext)?.updateByNewGroup(messageDetail.gid)
 
                 }
                 .observeOn(Schedulers.io())
@@ -817,12 +814,12 @@ class MessageSender {
                     ALog.e(TAG, "realSendGroupMessage error", it)
                     val spec = groupEncryptSpec
                     if (null != spec) {
-                        MessageDataManager.updateMessageEncryptMode(messageDetail.gid, index, spec.keyVersion)
+                        MessageDataManager.updateMessageEncryptMode(mAccountContext, messageDetail.gid, index, spec.keyVersion)
                     }
 
                     updateMessageFail(messageDetail)
 
-                    Repository.getThreadRepo().updateByNewGroup(messageDetail.gid)
+                    Repository.getThreadRepo(mAccountContext)?.updateByNewGroup(messageDetail.gid)
 
                 }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -845,7 +842,7 @@ class MessageSender {
         messageDetail.sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
         messageDetail.serverIndex = mid
         messageDetail.sendTime = createTime
-        MessageDataManager.updateMessageSendResult(messageDetail.gid, messageDetail.indexId, mid,
+        MessageDataManager.updateMessageSendResult(mAccountContext, messageDetail.gid, messageDetail.indexId, mid,
                 createTime, messageDetail.identityIvString, messageDetail.message.toString(), GroupMessage.SEND_SUCCESS)
     }
 
@@ -856,7 +853,7 @@ class MessageSender {
         if (!visible) {
             groupMessage.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
         }
-        messageDetail.indexId = MessageDataManager.insertSendMessage(groupMessage)
+        messageDetail.indexId = MessageDataManager.insertSendMessage(mAccountContext, groupMessage)
         addPendingItem(messageDetail.gid, messageDetail.indexId)
     }
 
@@ -864,7 +861,7 @@ class MessageSender {
 
         try {
             messageDetail.sendState = AmeGroupMessageDetail.SendState.SENDING
-            val result = MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.SENDING)
+            val result = MessageDataManager.updateMessageSendStateByIndex(mAccountContext, messageDetail.gid, messageDetail.indexId, GroupMessage.SENDING)
             if (result == 0) {
                 addPendingItem(messageDetail.gid, messageDetail.indexId)
             }
@@ -876,7 +873,7 @@ class MessageSender {
     private fun updateMessageFail(message: AmeGroupMessageDetail) {
         removePendingItem(message.gid, message.indexId)
         message.sendState = AmeGroupMessageDetail.SendState.SEND_FAILED
-        MessageDataManager.updateMessageSendStateByIndex(message.gid, message.indexId, GroupMessage.SEND_FAILURE)
+        MessageDataManager.updateMessageSendStateByIndex(mAccountContext, message.gid, message.indexId, GroupMessage.SEND_FAILURE)
     }
 
 }

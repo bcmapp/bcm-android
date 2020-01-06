@@ -11,26 +11,29 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
+import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
 import com.bcm.messenger.common.database.repositories.Repository
-import com.bcm.messenger.common.grouprepository.events.*
+import com.bcm.messenger.common.grouprepository.events.GroupMessageEvent
+import com.bcm.messenger.common.grouprepository.events.GroupMessageMissedEvent
+import com.bcm.messenger.common.grouprepository.events.GroupShareSettingRefreshEvent
+import com.bcm.messenger.common.grouprepository.events.MessageEvent
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.GroupLiveInfoManager
-import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.manager.GroupMemberManager
+import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMemberChanged
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTransform
 import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.common.utils.AmePushProcess
-import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.server.ConnectState
 import com.bcm.messenger.common.server.IServerConnectStateListener
 import com.bcm.messenger.common.ui.grouprepository.events.GroupKeyRefreshCompleteEvent
 import com.bcm.messenger.common.ui.grouprepository.events.GroupKeyRefreshStartEvent
 import com.bcm.messenger.common.utils.AccountContextMap
+import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AmeURLUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -66,7 +69,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
         private val failCounter = GroupOfflineDecryptFailCounter(accountContext)
         private val lastMidCache = ConcurrentHashMap<Long, Long>()
 
-        val messageSender = MessageSender()
+        val messageSender = MessageSender(accountContext)
 
         fun init() {
             inited = true

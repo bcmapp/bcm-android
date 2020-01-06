@@ -23,7 +23,6 @@ import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
-import com.bcm.messenger.common.provider.accountmodule.IChatModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.BcmRecyclerView
@@ -270,8 +269,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
                     val call = event.callEvent
                     if (call != null) {
-                        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONVERSATION_BASE).navigationWithCast<IChatModule>()
-                        provider.startRtcCallService(AppContextHolder.APP_CONTEXT, call.address.serialize(), CameraState.Direction.NONE.ordinal)
+                        AmeModuleCenter.chat(call.address.context())?.startRtcCallService(AppContextHolder.APP_CONTEXT, call.address, CameraState.Direction.NONE.ordinal)
                     }
                 }
 

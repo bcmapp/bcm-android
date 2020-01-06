@@ -61,7 +61,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chats_group_setting_activity)
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
-        val model =  GroupLogic.getModel(groupId)
+        val model =  GroupLogic.get(getAccountContext()).getModel(groupId)
 
         if (model == null) {
             finish()
@@ -114,7 +114,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            MediaBrowserActivity.router(GroupUtil.addressFromGid(mGroupModel.groupId()))
+            MediaBrowserActivity.router(getAccountContext(), GroupUtil.addressFromGid(getAccountContext(), mGroupModel.groupId()))
         }
 
         chats_group_notice_item.setOnClickListener {
@@ -328,7 +328,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
                     }
                 }
         }
-        chats_group_control_avatar.showGroupAvatar(mGroupModel.groupId())
+        chats_group_control_avatar.showGroupAvatar(getAccountContext(), mGroupModel.groupId())
 
         chats_group_member_count.text = mGroupModel.memberCount().toString()
 
@@ -575,7 +575,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
                 chats_group_setting_title.setCenterText(event.name)
             }
             if (event.avatarPath.isNotBlank()) {
-                chats_group_control_avatar.showGroupAvatar(mGroupModel.groupId(), path = event.avatarPath)
+                chats_group_control_avatar.showGroupAvatar(getAccountContext(), mGroupModel.groupId(), path = event.avatarPath)
             }
         }
     }

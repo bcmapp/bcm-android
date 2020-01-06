@@ -23,7 +23,6 @@ import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IUmengModule
 import com.bcm.messenger.common.provider.accountmodule.IWalletModule
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.service.RotateSignedPreKeyListener
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.utils.*
@@ -542,8 +541,8 @@ object AmeLoginLogic {
     private fun initIdentityKey(accountContext: AccountContext, ecKeyPair: ECKeyPair) {
         try {
             val identityKeyPair = IdentityKeyPair(IdentityKey(ecKeyPair.publicKey), ecKeyPair.privateKey)
-            val records = PreKeyUtil.generatePreKeys(AppContextHolder.APP_CONTEXT)
-            val signedPreKey = PreKeyUtil.generateSignedPreKey(AppContextHolder.APP_CONTEXT, identityKeyPair, true)
+            val records = PreKeyUtil.generatePreKeys(AppContextHolder.APP_CONTEXT, accountContext)
+            val signedPreKey = PreKeyUtil.generateSignedPreKey(AppContextHolder.APP_CONTEXT, accountContext, identityKeyPair, true)
             if (!AmeLoginCore.refreshPreKeys(accountContext, identityKeyPair.publicKey, signedPreKey, records)) {
                 throw Exception("pre key upload failed, uid: ${accountContext.uid}")
             }
