@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.config.BcmFeatureSupport
+import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.MasterSecretUtil
 import com.bcm.messenger.common.crypto.PreKeyUtil
@@ -189,11 +190,10 @@ object AmeLoginLogic {
     private fun handleLocalLogin(accountContext: AccountContext, context: Context) {
 
         val currentAccount = getMajorAccount() ?: return
-        RotateSignedPreKeyListener.schedule(context)
 
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onAccountLogin(AppContextHolder.APP_CONTEXT, currentAccount.uid)
 
-        AmeModuleCenter.user(accountContext)?.doForLogin(currentAccount.uid, null, currentAccount.name, currentAccount.avatar)
+        AmeModuleCenter.user(accountContext)?.doForLogin(Address.from(currentAccount.uid), null, currentAccount.name, currentAccount.avatar)
 
         AmeModuleCenter.group(accountContext)?.doOnLogin()
 
@@ -614,7 +614,6 @@ object AmeLoginLogic {
         accountData.pubKey = pubKey
         accountData.registrationId = registrationId
         accountData.gcmDisabled = !gcmToken.isPresent
-        accountData.pushRegistered = true
         accountData.signalPassword = signalPassword
         accountData.signalingKey = signalKey
         accountData.signedPreKeyRegistered = true
@@ -878,11 +877,11 @@ object AmeLoginLogic {
     }
 
     fun refreshPrekeys(accountContext: AccountContext) {
-        AmeModuleCenter.accountJobMgr(accountContext)?.add(RefreshPreKeysJob(AppContextHolder.APP_CONTEXT))
+        AmeModuleCenter.accountJobMgr(accountContext)?.add(RefreshPreKeysJob(AppContextHolder.APP_CONTEXT, accountContext))
     }
 
     fun rotateSignedPreKey(accountContext: AccountContext) {
-        AmeModuleCenter.accountJobMgr(accountContext)?.add(RotateSignedPreKeyJob(AppContextHolder.APP_CONTEXT))
+        AmeModuleCenter.accountJobMgr(accountContext)?.add(RotateSignedPreKeyJob(AppContextHolder.APP_CONTEXT, accountContext))
     }
 
     @SuppressLint("CheckResult")

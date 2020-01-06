@@ -49,11 +49,6 @@ class FcmMessagingService : FirebaseMessagingService() {
     fun onReceive(context: Context, msg: RemoteMessage) {
         ALog.i(TAG, "FCM message...")
 
-        if (!TextSecurePreferences.isPushRegistered(context)) {
-            ALog.w(TAG, "Not push registered!")
-            return
-        }
-
         if (msg.data.containsKey(PAYLOAD_KEY)) {
             try {
                 val bcmData = String.format(Locale.US, "{\"%s\":%s}", PAYLOAD_KEY, msg.data[PAYLOAD_KEY])

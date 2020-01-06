@@ -124,7 +124,7 @@ object AmeModuleCenter {
             serverDaemon(accountContext).startConnection()
         }
 
-        RotateSignedPreKeyListener.schedule(AppContextHolder.APP_CONTEXT)
+        RotateSignedPreKeyListener.schedule(AppContextHolder.APP_CONTEXT, accountContext)
 
         System.gc()
 

@@ -30,7 +30,6 @@ class AmeAccountData : NotGuard {
 
     var registrationId: Int = 0
     var gcmDisabled: Boolean = false
-    var pushRegistered: Boolean = false
     var signalPassword: String = ""
     var signalingKey: String = ""
     var signedPreKeyRegistered: Boolean = false

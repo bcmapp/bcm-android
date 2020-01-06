@@ -89,17 +89,16 @@ class AmeAccountHistory {
     }
 
     private fun fixLoginState(account: AmeAccountData): Int {
-        val context = AppContextHolder.APP_CONTEXT
+        val accountContext = AccountContext(account.uid, "", "")
         if (account.uid == majorAccountUid() && account.signalPassword.isEmpty()) {
             ALog.i(TAG, "fix login state")
-            account.registrationId = TextSecurePreferences.getLocalRegistrationId(context)
-            account.gcmDisabled = TextSecurePreferences.isGcmDisabled(context)
-            account.pushRegistered = TextSecurePreferences.isPushRegistered(context)
-            account.signalPassword = TextSecurePreferences.getPushServerPassword(context)
-            account.signalingKey = TextSecurePreferences.getSignalingKey(context)
-            account.signedPreKeyRegistered = TextSecurePreferences.isSignedPreKeyRegistered(context)
-            account.signedPreKeyFailureCount = TextSecurePreferences.getSignedPreKeyFailureCount(context)
-            account.signedPreKeyRotationTime = TextSecurePreferences.getSignedPreKeyRotationTime(context)
+            account.registrationId = TextSecurePreferences.getLocalRegistrationId(accountContext)
+            account.gcmDisabled = TextSecurePreferences.isGcmDisabled(accountContext)
+            account.signalPassword = TextSecurePreferences.getPushServerPassword(accountContext)
+            account.signalingKey = TextSecurePreferences.getSignalingKey(accountContext)
+            account.signedPreKeyRegistered = TextSecurePreferences.isSignedPreKeyRegistered(accountContext)
+            account.signedPreKeyFailureCount = TextSecurePreferences.getSignedPreKeyFailureCount(accountContext)
+            account.signedPreKeyRotationTime = TextSecurePreferences.getSignedPreKeyRotationTime(accountContext)
             return 1
         }
         return 0

@@ -34,7 +34,6 @@ public class TextSecurePreferences {
 
     private static final String THREAD_TRIM_ENABLED = "pref_trim_threads";
 
-    public static final String REGISTERED_GCM_PREF = "pref_gcm_registered";
     private static final String GCM_PASSWORD_PREF = "pref_gcm_password";
 
     private static final String SIGNALING_KEY_PREF = "pref_signaling_key";
@@ -173,11 +172,6 @@ public class TextSecurePreferences {
     public static boolean isScreenSecurityEnabled(AccountContext accountContext) {
         return getBooleanPreference(accountContext, SCREEN_SECURITY_PREF, false);
     }
-
-    public static boolean isPushRegistered(AccountContext accountContext) {
-        return getBooleanPreference(accountContext, REGISTERED_GCM_PREF, false);
-    }
-
 
     public static boolean isNotificationsEnabled(AccountContext accountContext) {
         return getBooleanPreference(accountContext, NOTIFICATION_PREF, true);
