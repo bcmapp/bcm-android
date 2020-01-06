@@ -624,7 +624,7 @@ object MessageDataManager {
             senderId = accountContext.uid
             isSendByMe = true
             attachmentUri = ""
-            setExtContent(accountContext, null)
+            extContent = null
             isRead = read
             message = AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO, content)
         }

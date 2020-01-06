@@ -447,7 +447,8 @@ public class AmeGroupMessageDetail {
     }
 
     @Nullable
-    public List<Recipient> getAtRecipientList() {
+    public List<Recipient> getAtRecipientList(AccountContext accountContext) {
+        checkAtRecipientList(accountContext);
         return atRecipientList;
     }
 
@@ -463,7 +464,7 @@ public class AmeGroupMessageDetail {
         this.identityIvString = identityIvString;
     }
 
-    public void setExtContentString(@NonNull AccountContext accountContext, @Nullable String extContentString) {
+    public void setExtContentString(@Nullable String extContentString) {
         if (TextUtils.equals(this.extContentString, extContentString)) {
             return;
         }
@@ -471,7 +472,7 @@ public class AmeGroupMessageDetail {
         ALog.d("AmeGroupMessageDetail", "setExtContentString: " + extContentString);
         try {
             ExtensionContent extContent = extContentString == null ? null : GsonUtils.INSTANCE.fromJson(extContentString, ExtensionContent.class);
-            setExtContent(accountContext, extContent);
+            setExtContent(extContent);
 
         } catch (Exception ex) {
             ALog.e("AmeGroupMessageDetail", "setExtContentString error", ex);
@@ -483,20 +484,20 @@ public class AmeGroupMessageDetail {
         return extContent;
     }
 
-    public void setExtContent(@NonNull AccountContext accountContext, @Nullable ExtensionContent extContent) {
+    public void setExtContent(@Nullable ExtensionContent extContent) {
         if (this.extContent == null && extContent == null || (this.extContent != null && this.extContent.equals(extContent))) {
             return;
         }
         this.extContent = extContent;
 
         try {
-            setExtContentString(accountContext, extContent == null ? null : new Gson().toJson(extContent, new TypeToken<ExtensionContent>() {
+            setExtContentString(extContent == null ? null : new Gson().toJson(extContent, new TypeToken<ExtensionContent>() {
             }.getType()));
 
         } catch (Exception ex) {
             ALog.e("AmeGroupMessageDetail", "setExtContent error", ex);
         }
-        checkAtRecipientList(accountContext);
+
     }
 
     /**

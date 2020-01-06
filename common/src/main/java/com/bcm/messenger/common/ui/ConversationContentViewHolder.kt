@@ -2,8 +2,10 @@ package com.bcm.messenger.common.ui
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.api.IConversationContentAction
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.logger.ALog
 
 /**
@@ -26,6 +28,10 @@ abstract class ConversationContentViewHolder<T>(layout: View) : RecyclerView.Vie
 
     fun canLongClick(): Boolean {
         return mCanLongClick
+    }
+
+    fun getAccountContext(): AccountContext {
+        return AMELogin.majorContext
     }
 
     /**

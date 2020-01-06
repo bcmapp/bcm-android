@@ -1,6 +1,7 @@
 package com.bcm.messenger.common.grouprepository.model
 
 import android.net.Uri
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
 import com.bcm.messenger.common.utils.BcmFileUtils
@@ -52,7 +53,7 @@ class AmeHistoryMessageDetail : AmeGroupMessageDetail() {
         return null
     }
 
-    override fun getThumbnailPartUri(): Uri? {
+    override fun getThumbnailPartUri(accoutContext: AccountContext): Uri? {
         if (message.isWithThumbnail()) {
             val content = message.content as AmeGroupMessage.ThumbnailContent
 

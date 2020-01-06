@@ -26,6 +26,7 @@ import com.bcm.messenger.chats.provider.ChatModuleImp
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.chats.util.*
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.api.BindableConversationItem
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -120,8 +121,8 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         override fun onClick(v: View, data: Any) {
             if (data is MessageRecord) {
                 data.attachments.forEach {
-                    Repository.getAttachmentRepo().setTransferStateAsync(it, AttachmentDbModel.TransferState.STARTED)
-                    AmeModuleCenter.accountJobMgr()?.add(AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, messageRecord.id,
+                    Repository.getAttachmentRepo(getAccountContext())?.setTransferStateAsync(it, AttachmentDbModel.TransferState.STARTED)
+                    AmeModuleCenter.accountJobMgr(getAccountContext())?.add(AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, getAccountContext(), messageRecord.id,
                             it.id, it.uniqueId, true))
                 }
             }
@@ -159,6 +160,10 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
 
     private val isInMultiSelectMode: Boolean
         get() = selectedView?.visibility == View.VISIBLE
+
+    fun getAccountContext(): AccountContext {
+        return AMELogin.majorContext
+    }
 
     override fun setOnClickListener(l: OnClickListener?) {
         super.setOnClickListener(ClickListener(l))
@@ -227,7 +232,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         this.batchSelected = batchSelected
         this.conversationRecipient = conversationRecipient
         this.groupThread = conversationRecipient.isGroupRecipient
-        this.messageRecipient = messageRecord.getRecipient()
+        this.messageRecipient = messageRecord.getRecipient(getAccountContext())
         this.messageRecipient.addListener(this)
 
         resetItemState()
@@ -585,7 +590,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
             shareChannelView.setLinkAppearance(R.color.common_color_black, R.color.common_color_379BFF, false)
         }
         shareChannelView.setTitleContent(content.name, content.intro)
-        shareChannelView.setAvater(GroupUtil.addressFromGid(content.gid))
+        shareChannelView.setAvater(GroupUtil.addressFromGid(getAccountContext(), content.gid))
         shareChannelView.setLink(context.getString(R.string.chats_channel_share_describe), false)
         updateAlpha(messageRecord, newGroupShareViewWrapperStub.get(), null)
     }
@@ -602,7 +607,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
             shareChannelView.setLinkAppearance(R.color.common_color_black, R.color.common_color_379BFF, false)
         }
         shareChannelView.setTitleContent(content.name, content.intro)
-        shareChannelView.setAvater(GroupUtil.addressFromGid(content.gid))
+        shareChannelView.setAvater(GroupUtil.addressFromGid(getAccountContext(), content.gid))
         shareChannelView.setLink(content.channel, true)
         shareChannelView.setChannelClickListener(object : ShareChannelView.ChannelOnClickListener {
             override fun onClick(v: View) {
@@ -619,7 +624,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
 
     private fun handleControlMessage(record: MessageRecord, message: AmeGroupMessage<*>) {
         val content = message.content as AmeGroupMessage.ControlContent
-        content.setRecipientCallback(, this)
+        content.setRecipientCallback(getAccountContext(), this)
         specialNotifyLayout?.visibility = View.VISIBLE
         if (content.actionCode == AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE) {
             if (record.isFailed() || record.isPendingInsecureFallback()) {
@@ -627,10 +632,10 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
             } else if (record.isPending()) {
                 specialNotifyText?.text = context.getString(R.string.common_chats_you_clearing_history_tip)
             } else {
-                specialNotifyText?.text = content.getDescribe(0, )
+                specialNotifyText?.text = content.getDescribe(0, getAccountContext())
             }
         } else {
-            specialNotifyText?.text = content.getDescribe(0, )
+            specialNotifyText?.text = content.getDescribe(0, getAccountContext())
         }
         alertView?.setNone()
     }
@@ -672,8 +677,8 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         specialNotifyLayout?.visibility = View.VISIBLE
         alertView?.setNone()
         val content = message.content as AmeGroupMessage.FriendContent
-        content.setRecipientCallback(, this)
-        specialNotifyText?.text = content.getDescribe(0, )
+        content.setRecipientCallback(getAccountContext(), this)
+        specialNotifyText?.text = content.getDescribe(0, getAccountContext())
     }
 
 
@@ -681,10 +686,10 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         specialNotifyLayout?.visibility = View.VISIBLE
         alertView?.setNone()
         val content = message.content as AmeGroupMessage.SystemContent
-        content.setRecipientCallback(, this)
-        specialNotifyText?.text = content.getDescribe(0, )
+        content.setRecipientCallback(getAccountContext(), this)
+        specialNotifyText?.text = content.getDescribe(0, getAccountContext())
         if (content.tipType == AmeGroupMessage.SystemContent.TIP_CHAT_STRANGER_RESTRICTION && !messageRecipient.isFriend) {
-            val span = SpannableStringBuilder(content.getDescribe(0, ))
+            val span = SpannableStringBuilder(content.getDescribe(0, getAccountContext()))
             var addSpan = StringAppearanceUtil.applyAppearance(context.getString(R.string.chats_relation_add_friend_action), color = getColor(R.color.common_color_black))
             addSpan = StringAppearanceUtil.applyAppearance(context, addSpan, true)
             span.append(addSpan)
@@ -783,7 +788,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         when {
             messageRecord.isOutgoing() -> contactPhoto?.visibility = View.GONE
             conversationRecipient.isGroupRecipient -> {
-                contactPhoto?.setPhoto(recipient)
+                contactPhoto?.setPhoto(getAccountContext(), recipient)
                 contactPhoto?.visibility = View.VISIBLE
             }
             else -> contactPhoto?.visibility = View.GONE
@@ -804,7 +809,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                 alertView?.setExpirationTimer(messageRecord.expiresStartTime,
                         messageRecord.expiresTime)
                 alertView?.setExpirationVisible(true)
-                val color = if (messageRecord.getRecipient().expireMessages > 0) {
+                val color = if (messageRecord.getRecipient(getAccountContext()).expireMessages > 0) {
                     R.color.common_color_white_50
                 } else {
                     R.color.common_color_88c0c0c0
@@ -814,8 +819,8 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
 
                 Observable.create<Boolean> {
                     val id = messageRecord.id
-                    Repository.getChatRepo().setMessageExpiresStart(messageRecord.id)
-                    ExpirationManager.scheduler().scheduleDeletion(id, messageRecord.isMediaMessage(), messageRecord.expiresTime)
+                    Repository.getChatRepo(getAccountContext())?.setMessageExpiresStart(messageRecord.id)
+                    ExpirationManager.scheduler(getAccountContext()).scheduleDeletion(id, messageRecord.isMediaMessage(), messageRecord.expiresTime)
                     it.onNext(true)
                     it.onComplete()
 
@@ -896,7 +901,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
 
         ConversationItemPopWindow.ItemPopWindowBuilder(context)
                 .withAnchorView(anchorView)
-                .withRecallVisible(!messageRecord.isFailed() && !messageRecord.isPending() && messageRecord.isOutgoing() && conversationRecipient.address.toString() != AMELogin.uid)
+                .withRecallVisible(!messageRecord.isFailed() && !messageRecord.isPending() && messageRecord.isOutgoing() && conversationRecipient.address.toString() != getAccountContext().uid)
                 .withCopyVisible(false)
                 .withForwardable(slide != null && slide.transferState == AttachmentDbModel.TransferState.DONE.state && !slide.isAudio()) // Only attachment downloaded and is not an audio can be forwarded
                 .withReplyable(false)
@@ -939,7 +944,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         ConversationItemPopWindow.ItemPopWindowBuilder(context)
                 .withAnchorView(anchorView)
                 .withForwardable(forwardable)
-                .withRecallVisible(!messageRecord.isFailed() && !messageRecord.isPending() && messageRecord.isOutgoing() && conversationRecipient.address.toString() != AMELogin.uid)
+                .withRecallVisible(!messageRecord.isFailed() && !messageRecord.isPending() && messageRecord.isOutgoing() && conversationRecipient.address.toString() != getAccountContext().uid)
                 .withCopyVisible(copyVisible)
                 .withReplyable(false)
                 .withOutgoing(messageRecord.isOutgoing())
@@ -1035,7 +1040,6 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                                 if (!groupThread && (messageRecord.isFailed() || messageRecord.isPendingInsecureFallback())) {
                                     Observable.create<Unit> {
                                         if (messageRecipient.isPushGroupRecipient) {
-//                                        MessageSender.resendGroupMessage(context, messageRecord, messageRecipient.address)
                                         } else {
                                             MessageSender.resend(context, masterSecret, messageRecord)
                                         }
@@ -1049,7 +1053,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                             .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.common_delete)) {
                                 Observable.create<Unit> {
 
-                                    Repository.getChatRepo().deleteMessage(messageRecord)
+                                    Repository.getChatRepo(getAccountContext())?.deleteMessage(messageRecord)
                                     it.onComplete()
 
                                 }.subscribeOn(Schedulers.io())

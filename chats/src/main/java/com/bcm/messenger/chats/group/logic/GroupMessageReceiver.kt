@@ -9,8 +9,8 @@ import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.events.*
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
-import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.manager.GroupMemberManager
+import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMemberChanged
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupInfoTransform
@@ -23,7 +23,6 @@ import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.base64Decode
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AmeURLUtil
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.AbstractMessage
@@ -151,7 +150,7 @@ class GroupMessageReceiver : IServerDataListener {
             detail.sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
         }
 
-        detail.setExtContent(accountContext, AmeGroupMessageDetail.ExtensionContent(serverMessage.content))
+        detail.setExtContent(AmeGroupMessageDetail.ExtensionContent(serverMessage.content))
 
         EventBus.getDefault().post(GroupMessageEvent(accountContext, detail))
     }
