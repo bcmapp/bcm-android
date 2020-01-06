@@ -291,6 +291,9 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
             intent.removeExtra(Browser.EXTRA_APPLICATION_ID)
         }
         try {
+            if (!intent.hasExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)) {
+                intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+            }
             super.startActivity(intent)
         } catch (e: Exception) {
             ToastUtil.show(this, getString(R.string.chats_there_is_no_app_available_to_handle_this_link_on_your_device))
@@ -539,7 +542,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                         intent.action = Intent.ACTION_OPEN_DOCUMENT
                         intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                         try {
-                            activity.startActivityForResult(intent, requestCode)
+                            activity.startBcmActivityForResult(accountContext, intent, requestCode)
                             return
                         } catch (anfe: ActivityNotFoundException) {
                             Log.w(TAG, "couldn't complete ACTION_OPEN_DOCUMENT, no activity found. falling back.")
@@ -585,7 +588,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                             if (it) {
                                 val intent = Intent(this@AmeConversationActivity, SendContactActivity::class.java)
                                 intent.putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address)
-                                startActivityForResult(intent, SEND_CONTACT)
+                                startBcmActivityForResult(accountContext, intent, SEND_CONTACT)
                             }
                         }
                     }
@@ -633,9 +636,9 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun initData() {
-        mConversationModel = ViewModelProviders.of(this, AmeConversationModelFactory(getAccountContext())).get(AmeConversationViewModel::class.java)
+        mConversationModel = ViewModelProviders.of(this, AmeConversationModelFactory(accountContext)).get(AmeConversationViewModel::class.java)
 
-        if (!getAccountContext().isLogin) {
+        if (!accountContext.isLogin) {
             finish()
             return
         }
@@ -658,7 +661,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     private fun initializeProfiles() {
         mProfileDisposable?.dispose()
-        mProfileDisposable = AmeModuleCenter.contact(getAccountContext())?.fetchProfile(mRecipient) {}
+        mProfileDisposable = AmeModuleCenter.contact(accountContext)?.fetchProfile(mRecipient) {}
     }
 
     private fun checkRecipientBlock(callback: (continueAction: Boolean) -> Unit): Boolean {

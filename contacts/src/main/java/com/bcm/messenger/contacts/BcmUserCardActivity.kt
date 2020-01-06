@@ -57,13 +57,13 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun initView(address: Address, nick: String?) {
-        val recipient = Recipient.from(getAccountContext(), address, true)
+        val recipient = Recipient.from(accountContext, address, true)
         mRecipient = recipient
         mRecipient?.addListener(this)
 
         mOtherNick = nick
         if (!nick.isNullOrEmpty()) {
-            AmeModuleCenter.contact(getAccountContext())?.updateNickFromOtherWay(recipient, nick)
+            AmeModuleCenter.contact(accountContext)?.updateNickFromOtherWay(recipient, nick)
         }
 
         mAdHocModule = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
@@ -144,7 +144,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
         }
 
         if (mAdHocModule?.isAdHocMode() != true) {
-            mProfileDispose = AmeModuleCenter.contact(getAccountContext())?.fetchProfile(recipient) {
+            mProfileDispose = AmeModuleCenter.contact(accountContext)?.fetchProfile(recipient) {
                 isProfileUpdated = true
                 if (isWaitToChat) {
                     isWaitToChat = false
@@ -163,15 +163,15 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
         mOtherNick = nickname
         val profileKey = ProfileKeyModel.fromKeyConfig(member?.keyConfig)
         if (null != profileKey) {
-            AmeModuleCenter.contact(getAccountContext())?.updateProfileKey(this, recipient, profileKey)
+            AmeModuleCenter.contact(accountContext)?.updateProfileKey(this, recipient, profileKey)
         }
-        anchor_img.setPhoto(getAccountContext(), recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+        anchor_img.setPhoto(accountContext, recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
         anchor_name.text = nickname
         updateActionState(recipient)
 
         val groupMemberNick = member?.nickname // maybe stranger, so should use group member nick name
         if (!groupMemberNick.isNullOrEmpty()) {
-            AmeModuleCenter.contact(getAccountContext())?.updateNickFromOtherWay(recipient, groupMemberNick)
+            AmeModuleCenter.contact(accountContext)?.updateNickFromOtherWay(recipient, groupMemberNick)
         }
     }
 

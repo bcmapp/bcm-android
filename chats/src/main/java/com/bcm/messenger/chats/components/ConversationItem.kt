@@ -715,7 +715,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
             val intent = Intent(context, ChatHistoryActivity::class.java)
             intent.putExtra(ChatHistoryActivity.CHAT_HISTORY_GID, ARouterConstants.PRIVATE_TEXT_CHAT)
             intent.putExtra(ChatHistoryActivity.MESSAGE_INDEX_ID, messageRecord.id)
-            context.startActivity(intent)
+            context.startBcmActivity(getAccountContext(), intent)
         }
         historyView.setOnLongClickListener {
             showPopWindowForTextItem(messageRecord, historyView, forwardable = false)

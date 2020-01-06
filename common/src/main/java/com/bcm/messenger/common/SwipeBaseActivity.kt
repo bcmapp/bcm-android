@@ -36,7 +36,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     private lateinit var mHelper: SwipeBackActivityHelper
 
-    private lateinit var mAccountContext: AccountContext
+    private lateinit var accountContextObj: AccountContext
     private lateinit var mLoginRecipient: Recipient
 
     private var disableDefaultTransition = false
@@ -45,6 +45,8 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     private var checkDisposable: Disposable? = null
     private var checkStartTime = System.currentTimeMillis()
+
+    val accountContext get() = accountContextObj
 
     private var mLoginModifiedListener = RecipientModifiedListener { recipient ->
         if (mLoginRecipient == recipient) {
@@ -75,14 +77,14 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         super.onCreate(savedInstanceState)
         ALog.d(TAG, "onCreate: $localClassName")
         window.setTranslucentStatus()
-        val accountContext: AccountContext? = intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
-        if (accountContext == null) {
-            ALog.w(TAG, "accountContext is null, finish")
+        val accountContextObj: AccountContext? = intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        if (accountContextObj == null) {
+            ALog.w(TAG, "accountContextObj is null, finish")
             finish()
             return
         }
-        mAccountContext = accountContext
-        setAccountContext(accountContext)
+        this.accountContextObj = accountContextObj
+        setAccountContext(accountContextObj)
 
         mHelper = SwipeBackActivityHelper(this)
         mHelper.onActivityCreate()
@@ -95,10 +97,10 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        val accountContext: AccountContext? = intent?.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
-        if (accountContext != null) {
-            ALog.w(TAG, "onNewIntent, new accountContext: ${accountContext.uid}")
-            setAccountContext(accountContext)
+        val accountContextObj: AccountContext? = intent?.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        if (accountContextObj != null) {
+            ALog.w(TAG, "onNewIntent, new accountContextObj: ${accountContextObj.uid}")
+            setAccountContext(accountContextObj)
         }
     }
 
@@ -189,14 +191,12 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     }
 
-    fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(mAccountContext) ?: throw Exception("getMasterSecret is null")
-
-    fun getAccountContext(): AccountContext = mAccountContext
+    fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(accountContextObj) ?: throw Exception("getMasterSecret is null")
 
     fun getAccountRecipient(): Recipient = mLoginRecipient
 
     fun setAccountContext(context: AccountContext) {
-        mAccountContext = context
+        accountContextObj = context
         setAccountRecipient(Recipient.login(context))
     }
 
@@ -229,7 +229,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
                                             fragment: T,
                                             extras: Bundle?): T {
         val newArg = Bundle().apply {
-            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, getAccountContext())
+            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContextObj)
         }
         if (extras != null) {
             newArg.putAll(extras)
@@ -254,7 +254,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     private fun isScreenSecurityEnabled(context: Context): Boolean {
         return try {
             if (AppUtil.isMainProcess()) {
-                TextSecurePreferences.isScreenSecurityEnabled(mAccountContext)
+                TextSecurePreferences.isScreenSecurityEnabled(accountContextObj)
             } else {
                 ApplicationService.impl?.isScreenSecurityEnabled == true
             }

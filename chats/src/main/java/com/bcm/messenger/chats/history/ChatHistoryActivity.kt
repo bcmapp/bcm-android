@@ -159,7 +159,7 @@ class ChatHistoryActivity : SwipeBaseActivity() {
 
     private fun getPrivateMessage() {
         Observable.create<List<AmeHistoryMessageDetail>> {
-            val message = Repository.getChatRepo().getMessage(indexId)
+            val message = Repository.getChatRepo(accountContext)?.getMessage(indexId)
             if (message != null) {
                 val groupMessage = AmeGroupMessage.messageFromJson(message.body)
                 val outerContent = groupMessage.content as AmeGroupMessage.HistoryContent
@@ -173,7 +173,7 @@ class ChatHistoryActivity : SwipeBaseActivity() {
                         serverIndex = index
                         senderId = msg.sender
                         sendTime = msg.sendTime
-                        isSendByMe = msg.sender == AMELogin.uid
+                        isSendByMe = msg.sender == accountContext.uid
                         sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
                         this.message = AmeGroupMessage.messageFromJson(msg.messagePayload ?: "")
                         thumbPsw = msg.thumbPsw
@@ -208,7 +208,7 @@ class ChatHistoryActivity : SwipeBaseActivity() {
 
     private fun getGroupMessage() {
         Observable.create<List<AmeHistoryMessageDetail>> {
-            val message = MessageDataManager.fetchOneMessageByGidAndIndexId(gid, indexId)
+            val message = MessageDataManager.fetchOneMessageByGidAndIndexId(accountContext, gid, indexId)
             if (message != null) {
                 val outerContent = message.message.content as AmeGroupMessage.HistoryContent
 
@@ -221,7 +221,7 @@ class ChatHistoryActivity : SwipeBaseActivity() {
                         serverIndex = index
                         senderId = msg.sender
                         sendTime = msg.sendTime
-                        isSendByMe = msg.sender == AMELogin.uid
+                        isSendByMe = msg.sender == accountContext.uid
                         sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
                         this.message = AmeGroupMessage.messageFromJson(msg.messagePayload ?: "")
                         thumbPsw = msg.thumbPsw

@@ -155,7 +155,7 @@ class WalletFragment : BaseFragment() {
         updateWalletTotal()
 
         mWalletModel = WalletViewModel.of(activity).apply {
-            setAccountContext(getAccountContext())
+            setAccountContext(this@WalletFragment.accountContext)
         }
         //订阅一些重要事件,，以为view可能已经被回收，所以这里都要取问号
         mWalletModel?.eventData?.observeForever { event ->

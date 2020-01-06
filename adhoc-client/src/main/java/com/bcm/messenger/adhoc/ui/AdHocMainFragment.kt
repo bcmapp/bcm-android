@@ -214,7 +214,7 @@ class AdHocMainFragment: BaseFragment(),
                 setMode(CommonSearchBar.MODE_DISPLAY)
                 setOnSearchActionListener(object : CommonSearchBar.OnSearchActionListener {
                     override fun onJump() {
-                        SearchActivity.callSearchActivity(context, getAccountContext(),"", true, false, CurrentSearchFragment::class.java.name, RecentSearchFragment::class.java.name, 0)
+                        SearchActivity.callSearchActivity(context, accountContext,"", true, false, CurrentSearchFragment::class.java.name, RecentSearchFragment::class.java.name, 0)
                     }
 
                     override fun onSearch(keyword: String) {

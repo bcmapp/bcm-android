@@ -26,7 +26,7 @@ class CurrencyActivity : SwipeBaseActivity() {
         setContentView(R.layout.wallet_currency_activity)
 
         mWalletModel = WalletViewModel.of(this).apply {
-            setAccountContext(getAccountContext())
+            setAccountContext(accountContext)
         }
         mCurrencyCode = mWalletModel?.getManager()?.getCurrentCurrency() ?: ""
 

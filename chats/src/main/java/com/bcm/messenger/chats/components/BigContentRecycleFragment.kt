@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.util.TTSUtil
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.MessageRecord
@@ -40,7 +41,7 @@ import java.util.*
  *
  * ling created in 2018/6/20
  **/
-class BigContentRecycleFragment : Fragment(), TextToSpeech.OnInitListener {
+class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
 
     companion object {
 
@@ -100,9 +101,8 @@ class BigContentRecycleFragment : Fragment(), TextToSpeech.OnInitListener {
     private var gid = 0L
     private var lastIndexId = 0L
     private var style: Int = 0
-    private var masterSecret: MasterSecret? = null
     private var threadId: Long = -1L
-    private val chatRepo = Repository.getChatRepo()
+    private val chatRepo = Repository.getChatRepo(accountContext)
     private var tts: TextToSpeech? = null
     private var supportZh: Int = -2
     private var ttsPlay = false
@@ -246,7 +246,7 @@ class BigContentRecycleFragment : Fragment(), TextToSpeech.OnInitListener {
         enterIndexId = lastIndexId
         currentIndexId = lastIndexId
         Observable.create(ObservableOnSubscribe<AmeGroupMessageDetail> {
-            val message = MessageDataManager.fetchOneMessageByGidAndIndexId(gid, lastIndexId)
+            val message = MessageDataManager.fetchOneMessageByGidAndIndexId(accountContext, gid, lastIndexId)
             if (message != null) {
                 it.onNext(message)
                 it.onComplete()
@@ -268,11 +268,10 @@ class BigContentRecycleFragment : Fragment(), TextToSpeech.OnInitListener {
     @SuppressLint("CheckResult")
     private fun initPrivateResources() {
         threadId = arguments?.getLong(THREAD_ID, -1L) ?: -1L
-        masterSecret = arguments?.getParcelable(MASTERSECTRET)
         enterIndexId = lastIndexId
         currentIndexId = lastIndexId
         Observable.create(ObservableOnSubscribe<MessageRecord> {
-            val message = chatRepo.getMessage(lastIndexId)
+            val message = chatRepo?.getMessage(lastIndexId)
             if (message != null) {
                 it.onNext(message)
             }
@@ -369,7 +368,7 @@ class BigContentRecycleFragment : Fragment(), TextToSpeech.OnInitListener {
         if (forwardEnd || forwardFetching) return
         forwardFetching = true
         Observable.create(ObservableOnSubscribe<List<AmeGroupMessageDetail>> {
-            val list = MessageDataManager.fetchTextMessage(gid, lastIndexId, GET_COUNT, false)
+            val list = MessageDataManager.fetchTextMessage(accountContext, gid, lastIndexId, GET_COUNT, false)
             it.onNext(list.reversed())
             it.onComplete()
         }).subscribeOn(Schedulers.io())
@@ -394,7 +393,7 @@ class BigContentRecycleFragment : Fragment(), TextToSpeech.OnInitListener {
         if (backwardEnd || backwardFetching) return
         backwardFetching = true
         Observable.create(ObservableOnSubscribe<List<AmeGroupMessageDetail>> {
-            val list = MessageDataManager.fetchTextMessage(gid, lastIndexId, GET_COUNT, true)
+            val list = MessageDataManager.fetchTextMessage(accountContext, gid, lastIndexId, GET_COUNT, true)
             it.onNext(list)
             it.onComplete()
         }).subscribeOn(Schedulers.io())
@@ -420,7 +419,7 @@ class BigContentRecycleFragment : Fragment(), TextToSpeech.OnInitListener {
         if (forwardEnd || forwardFetching) return
         forwardFetching = true
         Observable.create(ObservableOnSubscribe<List<MessageRecord>> {
-            val messages = chatRepo.getForwardMessages(threadId, currentIndexId, GET_COUNT)
+            val messages = chatRepo?.getForwardMessages(threadId, currentIndexId, GET_COUNT)?: listOf()
             if (messages.size < GET_COUNT) forwardEnd = true
             it.onNext(messages)
             it.onComplete()
@@ -443,7 +442,7 @@ class BigContentRecycleFragment : Fragment(), TextToSpeech.OnInitListener {
         if (backwardEnd || backwardFetching) return
         backwardFetching = true
         Observable.create(ObservableOnSubscribe<List<MessageRecord>> {
-            val messages = chatRepo.getBackwardMessages(threadId, currentIndexId, GET_COUNT)
+            val messages = chatRepo?.getBackwardMessages(threadId, currentIndexId, GET_COUNT)?: listOf()
             if (messages.size < GET_COUNT) backwardEnd = true
             it.onNext(messages)
             it.onComplete()

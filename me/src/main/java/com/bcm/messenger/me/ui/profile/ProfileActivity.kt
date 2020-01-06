@@ -37,12 +37,12 @@ class ProfileActivity : SwipeBaseActivity() {
 
         if (intent.getBooleanExtra(ARouterConstants.PARAM.ME.PROFILE_EDIT_SELF, false)) {
             initFragment(R.id.profile_root_container, MyProfileFragment(), Bundle().apply {
-                putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, getAccountContext())
+                putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
                 putString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID, recipient.address.serialize())
             })
         } else {
             initFragment(R.id.profile_root_container, OtherProfileFragment(), Bundle().apply {
-                putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, getAccountContext())
+                putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
                 putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)
             })
         }

@@ -18,6 +18,7 @@ import com.bcm.messenger.chats.mediabrowser.bean.FileBrowserData
 import com.bcm.messenger.chats.provider.ChatModuleImp
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.recipients.Recipient
@@ -36,7 +37,7 @@ import kotlinx.android.synthetic.main.chats_file_browser_fragment.*
 /**
  * Created by zjl on 2018/10/16.
  */
-class FileBrowserFragment : Fragment(), IMediaBrowserMenuProxy, RecipientModifiedListener {
+class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientModifiedListener {
 
     private val TAG = "FileBrowserFragment"
     private var groupViewModel: GroupMediaBrowserViewModel? = null
@@ -49,7 +50,6 @@ class FileBrowserFragment : Fragment(), IMediaBrowserMenuProxy, RecipientModifie
     private var isDeleteMode: Boolean = false
 
     private var browserType: Int = BaseMediaBrowserViewModel.TYPE_FILE
-    private var masterSecret: MasterSecret? = null
     private var threadId: Long = -1L
     private var gid: Long = -1L
     private var beActive: Boolean = false
@@ -74,7 +74,7 @@ class FileBrowserFragment : Fragment(), IMediaBrowserMenuProxy, RecipientModifie
             }
 
             mAddress?.let {address ->
-                recipient = Recipient.from(act, address, true)
+                recipient = Recipient.from(accountContext, address.serialize(), true)
                 recipient.addListener(this)
                 initResource(act)
 
@@ -120,12 +120,9 @@ class FileBrowserFragment : Fragment(), IMediaBrowserMenuProxy, RecipientModifie
                 gid = GroupUtil.gidFromAddress(address)
                 initGroupResource(activity, gid)
             } else {
-                masterSecret = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_MASTER_SECRET)
-                ThreadListViewModel.getThreadId(recipient) {
+                ThreadListViewModel.getThreadId(accountContext, recipient) {
                     threadId = it
-                    masterSecret?.let {m ->
-                        initPrivateResource(activity, threadId, m)
-                    }
+                    initPrivateResource(activity, threadId, getMasterSecret())
                 }
 
             }

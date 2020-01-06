@@ -7,6 +7,7 @@ import com.bcm.messenger.chats.components.IN_VIEW_CHAT_RECEIVE
 import com.bcm.messenger.chats.components.IN_VIEW_CHAT_SEND
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.history.ChatHistoryActivity
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
@@ -15,7 +16,7 @@ import com.bcm.messenger.utility.logger.ALog
 /**
  * Created by Kin on 2018/10/24
  */
-class ChatHistoryHolderAction() : BaseChatHolderAction<HistoryView>(), View.OnClickListener {
+class ChatHistoryHolderAction(accountContext: AccountContext) : BaseChatHolderAction<HistoryView>(accountContext), View.OnClickListener {
 
     private val TAG = "ChatHistoryHolderAction"
 
@@ -42,7 +43,7 @@ class ChatHistoryHolderAction() : BaseChatHolderAction<HistoryView>(), View.OnCl
     }
 
     override fun resend(messageRecord: AmeGroupMessageDetail) {
-        GroupMessageLogic.messageSender.resendHistoryMessage(messageRecord)
+        GroupMessageLogic.get(accountContext).messageSender.resendHistoryMessage(messageRecord)
     }
 
 }

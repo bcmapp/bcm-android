@@ -48,7 +48,7 @@ class ChatGroupAvatarActivity : SwipeBaseActivity() {
 
         gid = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
         role = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ROLE, AmeGroupMemberInfo.VISITOR)
-        val groupModel = GroupLogic.getModel(gid)
+        val groupModel = GroupLogic.get(accountContext).getModel(gid)
         if (null == groupModel) {
             finish()
             return
@@ -80,7 +80,7 @@ class ChatGroupAvatarActivity : SwipeBaseActivity() {
     }
 
     private fun updateAvatar() {
-        group_avatar.showGroupAvatar(gid, false)
+        group_avatar.showGroupAvatar(accountContext, gid, false)
     }
 
     private fun openChooseDialog() {
@@ -189,7 +189,7 @@ class ChatGroupAvatarActivity : SwipeBaseActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         ALog.d(TAG, "begin uploadGroupAvatar")
-                        AmeFileUploader.uploadGroupAvatar(AppContextHolder.APP_CONTEXT, File(it.first), object : AmeFileUploader.FileUploadCallback() {
+                        AmeFileUploader.uploadGroupAvatar(accountContext, AppContextHolder.APP_CONTEXT, File(it.first), object : AmeFileUploader.FileUploadCallback() {
                             override fun onUploadFailed(filePath: String, msg: String?) {
                                 failed(msg)
                             }
@@ -252,7 +252,7 @@ class ChatGroupAvatarActivity : SwipeBaseActivity() {
                                 finish()
                             }
                         }
-                        group_avatar?.showGroupAvatar(gid, false)
+                        group_avatar?.showGroupAvatar(accountContext, gid, false)
 
                     } else {
                         failed(it.second)

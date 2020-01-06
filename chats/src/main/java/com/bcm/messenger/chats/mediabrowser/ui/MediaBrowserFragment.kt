@@ -67,9 +67,9 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
         mHandleViewModel = handleViewModel
         if (!address.isGroup) {
             val model = ViewModelProviders.of(act).get(PrivateMediaBrowseModel::class.java)
-            val masterSecret = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
-            val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, address, true)
-            ThreadListViewModel.getThreadId(recipient) {
+            val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
+            val recipient = Recipient.from(accountContext, address.serialize(), true)
+            ThreadListViewModel.getThreadId(accountContext, recipient) {
                 threadId = it
                 if (null != masterSecret && threadId >= 0){
                     model.init(threadId, masterSecret)
@@ -149,9 +149,9 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
             intent.putExtra(MediaViewActivity.INDEX_ID, msg.id)
             intent.putExtra(MediaViewActivity.DATA_TYPE, MediaViewActivity.TYPE_PRIVATE_BROWSER)
             if (MediaUtil.isGif(data.mediaType)) {  //
-                act.startActivity(intent)
+                act.startBcmActivity(accountContext, intent)
             } else {
-                act.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(act, mediaView, ShareElements.Activity.MEDIA_PREIVEW + msg.id).toBundle())
+                act.startBcmActivity(accountContext, intent, ActivityOptionsCompat.makeSceneTransitionAnimation(act, mediaView, ShareElements.Activity.MEDIA_PREIVEW + msg.id).toBundle())
             }
         }
     }
@@ -166,9 +166,9 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
             intent.putExtra(MediaViewActivity.INDEX_ID, msg.indexId)
             intent.putExtra(MediaViewActivity.DATA_TYPE, MediaViewActivity.TYPE_GROUP_BROWSER)
             if (MediaUtil.isGif(data.mediaType)) {  //
-                act.startActivity(intent)
+                act.startBcmActivity(accountContext, intent)
             } else {
-                act.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(act, mediaView, ShareElements.Activity.MEDIA_PREIVEW + msg.indexId).toBundle())
+                act.startBcmActivity(accountContext, intent, ActivityOptionsCompat.makeSceneTransitionAnimation(act, mediaView, ShareElements.Activity.MEDIA_PREIVEW + msg.indexId).toBundle())
             }
         }
     }
@@ -206,8 +206,9 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
 
     override fun delete() {
         val weakThis = WeakReference(this)
+        val size = (mHandleViewModel?.selection?.value?.selectionList?.size ?: 0)
         AmePopup.bottom.newBuilder()
-                .withTitle(getString(R.string.chats_media_browser_delete_fromat, (mHandleViewModel?.selection?.value?.selectionList?.size ?: 0)))
+                .withTitle(getString(R.string.chats_media_browser_delete_fromat, size))
                 .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_media_browser_delete), getColorCompat(R.color.common_color_ff3737)) {
                     AmeAppLifecycle.showLoading()
                     mHandleViewModel?.selection?.value?.let {

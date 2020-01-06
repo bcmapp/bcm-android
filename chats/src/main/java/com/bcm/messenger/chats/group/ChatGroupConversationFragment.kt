@@ -205,9 +205,9 @@ class ChatGroupConversationFragment : BaseFragment() {
         val activity = activity ?: return
         threadId = activity.intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, 0L)
         groupId = activity.intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1L)
-        groupModel = GroupLogic.getModel(groupId)
+        groupModel = GroupLogic.get(accountContext).getModel(groupId)
         val groupInfo = groupModel?.getGroupInfo() ?: return
-        recipient = Recipient.recipientFromNewGroup(getAccountContext(), groupInfo)
+        recipient = Recipient.recipientFromNewGroup(accountContext, groupInfo)
         lastIndexAtomic.set(0L)
         frontIndexAtomic.set(0L)
         hasFront = false
@@ -712,7 +712,7 @@ class ChatGroupConversationFragment : BaseFragment() {
                                 .withCancelTitle(getString(R.string.common_cancel))
                                 .withOkTitle(AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_unpin))
                                 .withOkListener {
-                                    GroupMessageLogic.messageSender.sendPinMessage(targetScrollMessage.gid, -1, object : MessageSender.SenderCallback {
+                                    GroupMessageLogic.get(accountContext).messageSender.sendPinMessage(targetScrollMessage.gid, -1, object : MessageSender.SenderCallback {
                                         override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                                         }
                                     })

@@ -215,7 +215,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                         }
                         intent.action = Intent.ACTION_OPEN_DOCUMENT
                         try {
-                            activity.startActivityForResult(intent, requestCode)
+                            activity.startBcmActivityForResult(accountContext, intent, requestCode)
                             return
                         } catch (e: Throwable) {
                             ALog.e(TAG, "couldn't complete ACTION_OPEN_DOCUMENT, no activity found. falling back.", e)
@@ -234,8 +234,8 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                 BottomPanelItem(getString(R.string.chats_more_option_namecard), R.drawable.chats_icon_contact, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         val intent = Intent(this@ChatGroupConversationActivity, SendContactActivity::class.java)
-                        intent.putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, GroupUtil.addressFromGid(groupId))
-                        startActivityForResult(intent, SEND_CONTACT)
+                        intent.putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, GroupUtil.addressFromGid(accountContext, groupId))
+                        startBcmActivityForResult(accountContext, intent, SEND_CONTACT)
                     }
                 }),
                 BottomPanelItem(getString(R.string.chats_more_option_tv), R.drawable.chats_72_tv, object : BottomPanelClickListener {
@@ -244,7 +244,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                     override fun onClick(name: String, view: View) {
                         if (groupModel?.myRole() == AmeGroupMemberInfo.OWNER) {
                             Observable.create(ObservableOnSubscribe<Boolean> {
-                                val liveInfo = GroupLiveInfoManager.get(getAccountContext()).getCurrentLiveInfo(groupId)
+                                val liveInfo = GroupLiveInfoManager.get(accountContext).getCurrentLiveInfo(groupId)
                                 if (liveInfo != null)
                                     it.onNext(liveInfo.liveStatus == GroupLiveInfo.LiveStatus.LIVING.value || liveInfo.liveStatus == GroupLiveInfo.LiveStatus.PAUSE.value)
                                 else {
@@ -262,7 +262,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                                         } else {
                                             val intent = Intent(this@ChatGroupConversationActivity, ChatLiveSettingActivity::class.java)
                                             intent.putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, groupId)
-                                            startActivity(intent)
+                                            startBcmActivity(accountContext, intent)
                                         }
                                     }, {
                                         ALog.e(TAG, "live entry error", it)
@@ -383,16 +383,16 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
         }
         groupId = newGroupId
         bottom_panel.setConversationId(groupId)
-        groupModel = GroupLogic.newModel(groupId)
+        groupModel = GroupLogic.get(accountContext).newModel(groupId)
         val groupInfo = groupModel?.getGroupInfo()
         if (groupInfo == null) {
             finish()
             return
         }
-        groupRecipient = Recipient.recipientFromNewGroup(getAccountContext(), groupInfo)
+        groupRecipient = Recipient.recipientFromNewGroup(accountContext, groupInfo)
         val newThreadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, -1L)
         if (newThreadId <= 0) {
-            ThreadListViewModel.getThreadId(groupRecipient ?: return) {
+            ThreadListViewModel.getThreadId(accountContext, groupRecipient ?: return) {
                 intent.putExtra(ARouterConstants.PARAM.PARAM_THREAD, it)
                 initConversation(it)
             }
@@ -472,7 +472,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                 val title = data.getStringExtra(ARouterConstants.PARAM.MAP.TITLE)
                 val address = data.getStringExtra(ARouterConstants.PARAM.MAP.ADDRESS)
                 if (mapType != 0) {
-                    GroupMessageLogic.messageSender.sendLocationMessage(groupId, latitude, longitude, mapType, title, address, messageCallback)
+                    GroupMessageLogic.get(accountContext).messageSender.sendLocationMessage(groupId, latitude, longitude, mapType, title, address, messageCallback)
                 } else {
                     ALog.w(TAG, "sendLocationMessage fail, mapType is zero")
                 }
@@ -482,11 +482,11 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                     val event = GsonUtils.fromJson<SendContactEvent>(data.getStringExtra(ARouterConstants.PARAM.PARAM_DATA), object : TypeToken<SendContactEvent>() {}.type)
                     if (event.groupId > 0) {
                         event.dataList.forEach {
-                            GroupMessageLogic.messageSender.sendContactMessage(event.groupId, it, null)
+                            GroupMessageLogic.get(accountContext).messageSender.sendContactMessage(event.groupId, it, null)
                         }
                         AmeDispatcher.mainThread.dispatch({
                             if (!event.comment.isNullOrEmpty()) {
-                                GroupMessageLogic.messageSender.sendTextMessage(event.groupId, event.comment.toString())
+                                GroupMessageLogic.get(accountContext).messageSender.sendTextMessage(event.groupId, event.comment.toString())
                             }
                         }, 1000)
 
@@ -557,9 +557,9 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
     private fun initializeDraft() {
 
         Observable.create(ObservableOnSubscribe<String> {
-            val draftRepo = Repository.getDraftRepo(getAccountContext())
-            val drafts = draftRepo.getDrafts(threadId)
-            val draftText = drafts.getSnippet(AppContextHolder.APP_CONTEXT)
+            val draftRepo = Repository.getDraftRepo(accountContext)
+            val drafts = draftRepo?.getDrafts(threadId)
+            val draftText = drafts?.getSnippet(AppContextHolder.APP_CONTEXT)
             if (!draftText.isNullOrEmpty()) {
                 it.onNext(draftText)
             }
@@ -604,9 +604,9 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
 
     private fun handleSendText(text: CharSequence, replyContent: AmeGroupMessage.ReplyContent?, extContent: AmeGroupMessageDetail.ExtensionContent?) {
         if (replyContent == null) {
-            GroupMessageLogic.messageSender.sendTextMessage(groupId, text.toString(), messageCallback, extContent)
+            GroupMessageLogic.get(accountContext).messageSender.sendTextMessage(groupId, text.toString(), messageCallback, extContent)
         } else {
-            GroupMessageLogic.messageSender.sendReplyMessage(groupId, text, replyContent, messageCallback, extContent)
+            GroupMessageLogic.get(accountContext).messageSender.sendReplyMessage(groupId, text, replyContent, messageCallback, extContent)
         }
     }
 
@@ -617,7 +617,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
         }
         Observable.create(ObservableOnSubscribe<Boolean> {
             val file = PersistentBlobProvider.getInstance(this).getFile(ContentUris.parseId(data))
-            GroupMessageLogic.messageSender.sendAudioMessage(getMasterSecret(), groupId,
+            GroupMessageLogic.get(accountContext).messageSender.sendAudioMessage(getMasterSecret(), groupId,
                     AttachmentUtils.getAudioContent(AppContextHolder.APP_CONTEXT, data, fileSize, duration, "")
                             ?: throw Exception("AudioContent is null"), file.absolutePath, messageCallback)
 
@@ -655,7 +655,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                 val size = BitmapUtils.getActualImageSize(selectPath)
                 imageContent.width = size.width
                 imageContent.height = size.height
-                GroupMessageLogic.messageSender.sendImageMessage(getMasterSecret(), groupId, imageContent, uri, selectPath, messageCallback)
+                GroupMessageLogic.get(accountContext).messageSender.sendImageMessage(getMasterSecret(), groupId, imageContent, uri, selectPath, messageCallback)
             } catch (ex: Exception) {
                 ALog.e(TAG, "sendImageMessage fail", ex)
             }
@@ -684,13 +684,13 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
 
             when (attachmentContent) {
                 is AmeGroupMessage.ImageContent -> {
-                    GroupMessageLogic.messageSender.sendImageMessage(getMasterSecret(), groupId, attachmentContent, data, filePath, messageCallback)
+                    GroupMessageLogic.get(accountContext).messageSender.sendImageMessage(getMasterSecret(), groupId, attachmentContent, data, filePath, messageCallback)
                 }
                 is AmeGroupMessage.VideoContent -> {
-                    GroupMessageLogic.messageSender.sendVideoMessage(getMasterSecret(), groupId, data, attachmentContent, filePath, messageCallback)
+                    GroupMessageLogic.get(accountContext).messageSender.sendVideoMessage(getMasterSecret(), groupId, data, attachmentContent, filePath, messageCallback)
                 }
                 is AmeGroupMessage.FileContent -> {
-                    GroupMessageLogic.messageSender.sendDocumentMessage(getMasterSecret(), groupId, attachmentContent, filePath, messageCallback)
+                    GroupMessageLogic.get(accountContext).messageSender.sendDocumentMessage(getMasterSecret(), groupId, attachmentContent, filePath, messageCallback)
                 }
             }
             it.onNext(true)
@@ -720,7 +720,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                 val fileUri = Uri.fromFile(file)
                 val content = AttachmentUtils.getAttachmentContent(AppContextHolder.APP_CONTEXT, fileUri, selectPath)
                         as? AmeGroupMessage.VideoContent ?: throw Exception("videoContent is null")
-                GroupMessageLogic.messageSender.sendVideoMessage(getMasterSecret(), groupId, fileUri, content, selectPath, messageCallback)
+                GroupMessageLogic.get(accountContext).messageSender.sendVideoMessage(getMasterSecret(), groupId, fileUri, content, selectPath, messageCallback)
 
             } catch (ex: Exception) {
                 ALog.e(TAG, "sendVideoMessage error", ex)
@@ -743,7 +743,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
             hideInput()
 
             layout_container?.postDelayed({
-                startActivityForResult(Intent(this, ChatGroupSettingActivity::class.java).apply {
+                startBcmActivityForResult(accountContext, Intent(this, ChatGroupSettingActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, groupId)
                     putExtra(ARouterConstants.PARAM.PARAM_THREAD, threadId)
                 }, DELETE_REQUEST_CODE)

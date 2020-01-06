@@ -299,7 +299,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
             return
         }
         val holder = viewHolder as MemberHolder
-        val address = Address.from(getAccountContext(), holder.getData()?.uid ?: return)
+        val address = Address.from(accountContext, holder.getData()?.uid ?: return)
         if (address.isCurrentLogin) {
             return
         }

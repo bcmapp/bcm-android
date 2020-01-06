@@ -82,7 +82,7 @@ class GroupShareDescriptionActivity : SwipeBaseActivity() {
         }
 
         group_share_shade.showLoading()
-        GroupLogic.checkShareCodeStatus(shareContent.groupId, shareContent.shareCode, shareContent.shareSignature) {succeed, status ->
+        GroupLogic.get(accountContext).checkShareCodeStatus(shareContent.groupId, shareContent.shareCode, shareContent.shareSignature) {succeed, status ->
             group_share_shade.hide()
             if (succeed && (status == BcmShareCodeStatus.INVALID_CODE || status == BcmShareCodeStatus.NOT_EXIST)) {
                 updateDescription(false)

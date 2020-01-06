@@ -64,11 +64,11 @@ class AdHocChannelMemberListActivity: SwipeBaseActivity(), AmeRecycleViewAdapter
             return
         }
         val holder = viewHolder as MemberHolder
-        val address = Address.from(getAccountContext(), holder.getData()?.uid ?: return)
+        val address = Address.from(accountContext, holder.getData()?.uid ?: return)
         if (address.isCurrentLogin) {
             return
         }
-        AmeModuleCenter.contact(getAccountContext())?.openContactDataActivity(this, address, holder.getData()?.name)
+        AmeModuleCenter.contact(accountContext)?.openContactDataActivity(this, address, holder.getData()?.name)
     }
 
     inner class MemberHolder(view: View):AmeRecycleViewAdapter.ViewHolder<ChannelUserInfo>(view) {

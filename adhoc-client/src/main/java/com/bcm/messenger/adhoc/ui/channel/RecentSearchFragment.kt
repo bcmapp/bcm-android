@@ -61,7 +61,7 @@ class RecentSearchFragment() : BaseFragment(), AdHocChannelLogic.IAdHocChannelLi
         val adapter = RecentAdapter(context ?: return)
         recent_list.adapter = adapter
 
-        BcmFinderManager.get(getAccountContext()).querySearchRecord(mChecker) {
+        BcmFinderManager.get(accountContext).querySearchRecord(mChecker) {
             recent_title_tv?.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
             ALog.i("RecentSearchFragment", "querySearchRecord list: ${it.size}")
             adapter.setDataList(it)

@@ -71,7 +71,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
         })
 
         try {
-            recipient = Recipient.from(getAccountContext(), getAccountContext().uid, true)
+            recipient = Recipient.from(accountContext, accountContext.uid, true)
         } catch (ex: Exception) {
             ALog.e(TAG, "get major recipient fail", ex)
             finish()
@@ -239,7 +239,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
             lp.height = target
             avatar_container.layoutParams = lp
         }
-        avatar_container.setPhoto(getAccountContext(), recipient, photoType)
+        avatar_container.setPhoto(accountContext, recipient, photoType)
     }
 
     override fun onModified(recipient: Recipient) {

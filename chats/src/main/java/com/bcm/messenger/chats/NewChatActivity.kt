@@ -80,12 +80,12 @@ class NewChatActivity : SwipeBaseActivity() {
                     }
                     AmePopup.loading.show(this@NewChatActivity)
                     val weakThis = WeakReference(this@NewChatActivity)
-                    GroupLogic.get(getAccountContext()).createGroup("", "", false, "", targetSet) { groupInfo: AmeGroupInfo?, succeed: Boolean, error: String? ->
+                    GroupLogic.get(accountContext).createGroup("", "", false, "", targetSet) { groupInfo: AmeGroupInfo?, succeed: Boolean, error: String? ->
                         AmePopup.loading.dismiss()
                         if (succeed && null != groupInfo && null != groupInfo.gid) {
                             val activity = weakThis.get()
                             if (activity != null && !activity.isFinishing && !activity.isDestroyed) {
-                                val recipient = Recipient.recipientFromNewGroup(getAccountContext(), groupInfo)
+                                val recipient = Recipient.recipientFromNewGroup(accountContext, groupInfo)
                                 AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
                                         HomeTopEvent.ConversationEvent.fromGroupConversation(recipient.address, groupInfo.gid)))
                             }
@@ -103,10 +103,10 @@ class NewChatActivity : SwipeBaseActivity() {
         mGroupsView = LayoutInflater.from(this).inflate(R.layout.chats_layout_new_chat_group, null)
         mGroupsView?.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         mGroupsView?.setOnClickListener {
-            BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_CONTACT_MAIN).startBcmActivity(getAccountContext(), this)
+            BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_CONTACT_MAIN).startBcmActivity(accountContext, this)
         }
 
-        val f = BcmRouter.getInstance().get(ARouterConstants.Fragment.SELECT_SINGLE).navigationWithAccountContext<Fragment>(getAccountContext())
+        val f = BcmRouter.getInstance().get(ARouterConstants.Fragment.SELECT_SINGLE).navigationWithAccountContext<Fragment>(accountContext)
 
         mContactSelection = f as IContactsAction
         mContactSelection.addSearchBar(this)

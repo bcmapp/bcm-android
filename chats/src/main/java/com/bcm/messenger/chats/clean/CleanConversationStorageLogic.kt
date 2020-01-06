@@ -1,6 +1,7 @@
 package com.bcm.messenger.chats.clean
 
 import android.util.Log
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
@@ -60,27 +61,27 @@ object CleanConversationStorageLogic {
         mCallbackMap[tag] = callback
     }
 
-    fun collectionAllConversationStorageSize() {
+    fun collectionAllConversationStorageSize(accountContext: AccountContext) {
         if (collecting) {
             return
         }
         collecting = true
         cancelCollection = false
         collectionFinish = false
-        handleAllConversationStorageCollect()
+        handleAllConversationStorageCollect(accountContext)
     }
 
 
-    private fun handleAllConversationStorageCollect() {
+    private fun handleAllConversationStorageCollect(accountContext: AccountContext) {
         Observable.create<Pair<Address?, Boolean>> {
             try {
-                val list = Repository.getThreadRepo().getAllThreads().map { Address.fromSerialized(it.uid) }
+                val list = Repository.getThreadRepo(accountContext)?.getAllThreads()?.map { Address.from(accountContext, it.uid) }?: listOf()
                 this.threadList = list
                 var timestamp = System.currentTimeMillis()
 
                 for (address in list){
                     if (!cancelCollection){
-                        val size = collectionConversationStorageSize(address)
+                        val size = collectionConversationStorageSize(accountContext, address)
                         storageMap[address] = size
                         if (System.currentTimeMillis() - timestamp > 500){
                             timestamp = System.currentTimeMillis()
@@ -152,12 +153,12 @@ object CleanConversationStorageLogic {
         return allConversationStorage
     }
 
-    fun clearAllConversationMediaMessage(type: Int) {
+    fun clearAllConversationMediaMessage(accountContext: AccountContext, type: Int) {
         if (getStorageSizeByType(type) > 0) {
             if (cleaning) {
                 return
             }
-            handleAllConversationStorageClean(type)
+            handleAllConversationStorageClean(accountContext, type)
         } else {
             for ((tag, callback) in mCallbackMap) {
                 callback.onClean(null, true)
@@ -165,21 +166,21 @@ object CleanConversationStorageLogic {
         }
     }
 
-    private fun handleAllConversationStorageClean(type: Int) {
+    private fun handleAllConversationStorageClean(accountContext: AccountContext, type: Int) {
         Observable.create<Pair<Address?, Boolean>> {
 
             try {
                 val timestamp = System.currentTimeMillis()
-                val list = Repository.getThreadRepo().getAllThreads()
+                val list = Repository.getThreadRepo(accountContext)?.getAllThreads()?: listOf()
                 for (record in list) {
-                    val address = Address.fromSerialized(record.uid)
+                    val address = Address.from(record.uid)
                     if (address.isIndividual){
                         val threadId = record.id
                         if (threadId > 0) {
-                            Repository.getChatRepo().deleteConversationMediaMessages(threadId, type)
+                            Repository.getChatRepo(accountContext)?.deleteConversationMediaMessages(threadId, type)
                         }
                     } else if (address.isNewGroup) {
-                        MessageDataManager.deleteAllMediaMessage(GroupUtil.gidFromAddress(address), type)
+                        MessageDataManager.deleteAllMediaMessage(accountContext, GroupUtil.gidFromAddress(address), type)
                     }
 
                     clearStorageSizeByTypeWithConversation(address, type)
@@ -267,14 +268,14 @@ object CleanConversationStorageLogic {
         return size
     }
 
-    private fun collectionConversationStorageSize(address: Address): ConversationStorage {
+    private fun collectionConversationStorageSize(accountContext: AccountContext, address: Address): ConversationStorage {
         if (address.isIndividual){
-            val threadId = Repository.getThreadRepo().getThreadIdIfExist(address.serialize())
+            val threadId = Repository.getThreadRepo(accountContext)?.getThreadIdIfExist(address.serialize())?:0
             if (threadId > 0){
-                return Repository.getChatRepo().getConversationStorageSize(threadId)
+                return Repository.getChatRepo(accountContext)?.getConversationStorageSize(threadId)?: ConversationStorage(0,0,0)
             }
         } else if(address.isNewGroup) {
-            return MessageDataManager.fetchMediaMessageStorageSize(GroupUtil.gidFromAddress(address))
+            return MessageDataManager.fetchMediaMessageStorageSize(accountContext, GroupUtil.gidFromAddress(address))
         }
 
         Log.e(TAG, "unknown session")

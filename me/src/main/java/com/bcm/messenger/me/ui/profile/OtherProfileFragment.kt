@@ -9,7 +9,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.repositories.RecipientRepo
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonSettingItem
@@ -45,7 +44,7 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
             activity?.finish()
             return
         }
-        recipient = Recipient.from(getAccountContext(), address, true)
+        recipient = Recipient.from(accountContext, address, true)
         recipient.addListener(this)
         initView()
     }
@@ -127,7 +126,7 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
     private fun handleNameEdit(forLocal: Boolean) {
         //如果是自己，则进入的是个人编辑页面，这里可以点击，否则是其他联系人的个人资料页面，这里无法点击，必须是备注那里才可以点击
         if (forLocal) {
-            startBcmActivity(getAccountContext(), Intent(activity, EditNameActivity::class.java).apply {
+            startBcmActivity(accountContext, Intent(activity, EditNameActivity::class.java).apply {
                 putExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, forLocal)
             })
         }
@@ -140,7 +139,7 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
         val intent = Intent(activity, ImageViewActivity::class.java)
         intent.putExtra(ARouterConstants.PARAM.ME.PROFILE_EDIT, true)
         intent.putExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, forLocal)
-        startBcmActivity(getAccountContext(), intent)
+        startBcmActivity(accountContext, intent)
     }
 
     /**
@@ -168,7 +167,7 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
      * 初始化profile
      */
     private fun initProfile(recipient: Recipient) {
-        profile_icon?.setPhoto(getAccountContext(), recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
+        profile_icon?.setPhoto(accountContext, recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
         profile_name_item?.setTip(recipient.bcmName ?: recipient.address.format())
 
         if (recipient.relationship != RecipientRepo.Relationship.STRANGER && recipient.relationship != RecipientRepo.Relationship.REQUEST) {
@@ -178,7 +177,7 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
             } else {
                 profile_display_icon_notice?.visibility = View.GONE
                 profile_display_icon?.visibility = View.VISIBLE
-                profile_display_icon?.setPhoto(getAccountContext(), recipient, IndividualAvatarView.LOCAL_PHOTO_TYPE)
+                profile_display_icon?.setPhoto(accountContext, recipient, IndividualAvatarView.LOCAL_PHOTO_TYPE)
             }
             if (recipient.localName.isNullOrEmpty()) {
                 profile_display_alias_item?.setTip(getString(R.string.me_other_local_empty_action))

@@ -82,7 +82,7 @@ class ContactCardShareForwardActivity : SwipeBaseActivity() {
             val address = mFromAddress ?: return
             AmeAppLifecycle.showLoading()
             val contactContent = AmeGroupMessage.ContactContent(recipient.bcmName ?: recipient.address.format(), address.serialize(), "")
-            GroupMessageLogic.get(getAccountContext()).messageSender.sendContactMessage(toGroupId, contactContent,
+            GroupMessageLogic.get(accountContext).messageSender.sendContactMessage(toGroupId, contactContent,
                     object : com.bcm.messenger.chats.group.logic.MessageSender.SenderCallback {
                 override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                     ALog.d(TAG, "doForwardForGroup result: $isSuccess")
@@ -108,7 +108,7 @@ class ContactCardShareForwardActivity : SwipeBaseActivity() {
         val ameGroupMessage = AmeGroupMessage(AmeGroupMessage.CONTACT, AmeGroupMessage.ContactContent(recipient.bcmName ?: recipient.address.format(), address.serialize(), "")).toString()
         val message = OutgoingLocationMessage(toRecipient, ameGroupMessage, (toRecipient.expireMessages * 1000).toLong())
         Observable.create(ObservableOnSubscribe<Long> {
-            it.onNext(MessageSender.send(this, getAccountContext(), message, -1L, null))
+            it.onNext(MessageSender.send(this, accountContext, message, -1L, null))
             it.onComplete()
 
         }).subscribeOn(Schedulers.io())

@@ -164,8 +164,8 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
             home_adhoc_main.visibility = View.VISIBLE
 
-            AmeModuleCenter.serverDaemon(getAccountContext()).stopDaemon()
-            AmeModuleCenter.serverDaemon(getAccountContext()).stopConnection()
+            AmeModuleCenter.serverDaemon(accountContext).stopDaemon()
+            AmeModuleCenter.serverDaemon(accountContext).stopConnection()
 
             mPixelManager = PixelManager.Builder().target(PixelActivity::class.java).build()
             mPixelManager?.start(AppContextHolder.APP_CONTEXT)
@@ -185,8 +185,8 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
             home_adhoc_main.visibility = View.GONE
 
-            AmeModuleCenter.serverDaemon(getAccountContext()).startDaemon()
-            AmeModuleCenter.serverDaemon(getAccountContext()).checkConnection(true)
+            AmeModuleCenter.serverDaemon(accountContext).startDaemon()
+            AmeModuleCenter.serverDaemon(accountContext).checkConnection(true)
 
             mPixelManager?.quit(AppContextHolder.APP_CONTEXT)
         }
@@ -208,14 +208,14 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
             if (SchemeLaunchHelper.hasIntent()) {
                 checkSchemeLaunch()
             }
-            checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(getAccountContext().uid) > 0)
+            checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(accountContext.uid) > 0)
         }
 
         // check need fetch profile or avatar
         if (recipient.needRefreshProfile()) {
-            AmeModuleCenter.contact(getAccountContext())?.checkNeedFetchProfileAndIdentity(recipient, callback = null)
+            AmeModuleCenter.contact(accountContext)?.checkNeedFetchProfileAndIdentity(recipient, callback = null)
         } else {
-            AmeModuleCenter.contact(getAccountContext())?.checkNeedDownloadAvatarWithAll(recipient)
+            AmeModuleCenter.contact(accountContext)?.checkNeedDownloadAvatarWithAll(recipient)
         }
     }
 
@@ -231,14 +231,14 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         super.onNewIntent(newIntent)
         intent = newIntent
 
-        if (AmeModuleCenter.user(getAccountContext())?.isPinLocked() == true) {
-            AmeModuleCenter.user(getAccountContext())?.showPinLock()
+        if (AmeModuleCenter.user(accountContext)?.isPinLocked() == true) {
+            AmeModuleCenter.user(accountContext)?.showPinLock()
             SchemeLaunchHelper.storeSchemeIntent(newIntent)
         } else {
             //查看系统banner消息是否存在
             AmePushProcess.checkSystemBannerNotice()
             //拉取系统消息
-            PushUtil.loadSystemMessages(getAccountContext())
+            PushUtil.loadSystemMessages(accountContext)
 
             checkSchemeLaunch()
         }
@@ -378,11 +378,11 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     private fun initRecipientData() {
         updateRecipientData(recipient)
-        checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(getAccountContext().uid) > 0)
+        checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(accountContext.uid) > 0)
     }
 
     private fun updateRecipientData(recipient: Recipient) {
-        home_toolbar_avatar.showPrivateAvatar(getAccountContext(), recipient)
+        home_toolbar_avatar.showPrivateAvatar(accountContext, recipient)
     }
 
     private fun initPullDownView() {
@@ -484,7 +484,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     height == 0 -> {
                         home_toolbar_avatar.setPrivateElevation(0f)
                         home_toolbar_avatar.getIndividualAvatarView().showCoverText()
-                        home_toolbar_avatar.showPrivateAvatar(getAccountContext(), recipient)
+                        home_toolbar_avatar.showPrivateAvatar(accountContext, recipient)
 
                         home_toolbar.layoutParams = (home_toolbar.layoutParams as ConstraintLayout.LayoutParams).apply {
                             topMargin = 0
@@ -616,7 +616,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         if (shareLink.isNullOrEmpty()) {
             mWaitForShortLink = true
             AmeAppLifecycle.showLoading()
-            AmeModuleCenter.contact(getAccountContext())?.updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
+            AmeModuleCenter.contact(accountContext)?.updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
                 AmeAppLifecycle.hideLoading()
             }
         } else {

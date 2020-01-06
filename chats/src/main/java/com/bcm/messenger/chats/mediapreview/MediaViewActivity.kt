@@ -31,6 +31,7 @@ import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.common.utils.MediaUtil
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.chats_activity_media_view.*
@@ -138,14 +139,14 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
                 }
                 val intent = Intent(this@MediaViewActivity, MediaBrowserActivity::class.java).apply {
                     val address: Address = if (data.msgType == MSG_TYPE_PRIVATE) {
-                        (data.sourceMsg as MessageRecord).getRecipient(getAccountContext()).address
+                        (data.sourceMsg as MessageRecord).getRecipient(accountContext).address
                     } else {
-                        GroupUtil.addressFromGid(getAccountContext(), (data.sourceMsg as AmeGroupMessageDetail).gid)
+                        GroupUtil.addressFromGid(accountContext, (data.sourceMsg as AmeGroupMessageDetail).gid)
                     }
                     putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, address)
                     putExtra(ARouterConstants.PARAM.PARAM_INDEX_ID, data.indexId)
                 }
-                startActivity(intent)
+                startBcmActivity(accountContext, intent)
             }
 
             override fun moreOptionVisibilityChanged(isShow: Boolean) {
@@ -226,7 +227,7 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
             putExtra(ForwardActivity.GID, gid)
             putExtra(ForwardActivity.INDEX_ID, data.indexId)
         }
-        startActivity(intent)
+        startBcmActivity(accountContext, intent)
     }
 
     private fun saveMedia() {
@@ -338,7 +339,7 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
             val f = MediaViewFragment()
             f.setData(getItemData(position))
             f.setMasterSecret(getMasterSecret())
-            f.setAccountContext(getAccountContext())
+            f.setAccountContext(accountContext)
             f.setListener(fragmentListener)
             return f
         }

@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.getColorCompat
@@ -155,7 +154,7 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
             userProvider.changePinPasswordAsync(activity as? AppCompatActivity, origin_pwd_edit.text.toString(), confirm_pwd_edit.text.toString()) { result, _ ->
                 if (result) {
                     AmePopup.loading.dismiss()
-                    AmeLoginLogic.accountHistory.resetBackupState(getAccountContext().uid)
+                    AmeLoginLogic.accountHistory.resetBackupState(accountContext.uid)
                     AmePopup.result.succeed(activity, getString(R.string.me_change_password_success)) {
                         try {
                             //更改密码之后，提示备份账号
@@ -168,7 +167,7 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
                                     }
                                     .withOkListener {
                                         val intent = Intent(activity, MyAccountKeyActivity::class.java)
-                                        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, getAccountContext().uid)
+                                        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, accountContext.uid)
                                         startActivity(intent)
 
                                         activity?.finish()

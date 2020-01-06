@@ -70,7 +70,7 @@ class ChatGroupNoticeEditActivity : SwipeBaseActivity() {
         EventBus.getDefault().register(this)
 
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
-        val groupModel = GroupLogic.getModel(groupId)
+        val groupModel = GroupLogic.get(accountContext).getModel(groupId)
         if (groupModel == null) {
             finish()
             return

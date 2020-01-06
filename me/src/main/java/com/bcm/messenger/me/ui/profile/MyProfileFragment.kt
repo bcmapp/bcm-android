@@ -49,7 +49,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
         if (requestCode == VERIFY_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 val intent = Intent(activity, MyAccountKeyActivity::class.java)
-                startBcmActivity(getAccountContext(), intent)
+                startBcmActivity(accountContext, intent)
             }
         }
     }
@@ -59,7 +59,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recipient = Recipient.from(getAccountContext(), getAccountContext().uid, true)
+        recipient = Recipient.from(accountContext, accountContext.uid, true)
         recipient.addListener(this)
         initView()
     }
@@ -108,7 +108,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
                 return@setOnClickListener
             }
             val intent = Intent(activity, VerifyFingerprintActivity::class.java)
-            startBcmActivityForResult(getAccountContext(), intent, VERIFY_REQUEST)
+            startBcmActivityForResult(accountContext, intent, VERIFY_REQUEST)
         }
 
         profile_change_pwd_item?.setOnClickListener {
@@ -116,7 +116,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
                 return@setOnClickListener
             }
             val intent = Intent(activity, ChangePasswordActivity::class.java)
-            startBcmActivity(getAccountContext(), intent)
+            startBcmActivity(accountContext, intent)
         }
 
         profile_logout_btn?.setOnClickListener {
@@ -159,7 +159,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
 
         profile_qr_item?.setOnClickListener {
             val intent = Intent(activity, BcmMyQRCodeActivity::class.java)
-            startBcmActivity(getAccountContext(), intent)
+            startBcmActivity(accountContext, intent)
         }
 
         initProfile(recipient)
@@ -182,7 +182,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
      * 处理名称编辑
      */
     private fun handleNameEdit() {
-        startBcmActivity(getAccountContext(), Intent(activity, EditNameActivity::class.java))
+        startBcmActivity(accountContext, Intent(activity, EditNameActivity::class.java))
     }
 
     /**
@@ -192,14 +192,14 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
         val intent = Intent(activity, ImageViewActivity::class.java).apply {
             putExtra(ARouterConstants.PARAM.ME.PROFILE_EDIT, true)
         }
-        startBcmActivity(getAccountContext(), intent)
+        startBcmActivity(accountContext, intent)
     }
 
     /**
      * 初始化profile
      */
     private fun initProfile(recipient: Recipient) {
-        profile_icon?.setPhoto(getAccountContext(), recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
+        profile_icon?.setPhoto(accountContext, recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
         profile_name_item?.setTip(recipient.bcmName ?: recipient.address.format())
     }
 }

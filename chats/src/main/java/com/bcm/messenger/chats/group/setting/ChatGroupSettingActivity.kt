@@ -19,6 +19,7 @@ import com.bcm.messenger.chats.mediabrowser.ui.MediaBrowserActivity
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.corebean.BcmReviewGroupJoinRequest
 import com.bcm.messenger.common.event.GroupNameOrAvatarChanged
@@ -61,7 +62,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chats_group_setting_activity)
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
-        val model =  GroupLogic.get(getAccountContext()).getModel(groupId)
+        val model =  GroupLogic.get(accountContext).getModel(groupId)
 
         if (model == null) {
             finish()
@@ -114,7 +115,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            MediaBrowserActivity.router(getAccountContext(), GroupUtil.addressFromGid(getAccountContext(), mGroupModel.groupId()))
+            MediaBrowserActivity.router(accountContext, GroupUtil.addressFromGid(accountContext,mGroupModel.groupId()))
         }
 
         chats_group_notice_item.setOnClickListener {
@@ -152,7 +153,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            startActivity(Intent(this, GroupShareSettingsActivity::class.java).apply {
+            startBcmActivity(accountContext, Intent(this, GroupShareSettingsActivity::class.java).apply {
                 putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, mGroupModel.groupId())
             })
         }
@@ -328,7 +329,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
                     }
                 }
         }
-        chats_group_control_avatar.showGroupAvatar(getAccountContext(), mGroupModel.groupId())
+        chats_group_control_avatar.showGroupAvatar(accountContext, mGroupModel.groupId())
 
         chats_group_member_count.text = mGroupModel.memberCount().toString()
 
@@ -491,7 +492,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
         if (mGroupModel.myRole() == AmeGroupMemberInfo.OWNER) {
             val newOwner: AmeGroupMemberInfo? = mGroupModel.randomGetGroupMember()
             if (null != newOwner) {
-                ChatGroupChangeOwnerPopWindow.show(this@ChatGroupSettingActivity, mGroupModel.groupId(), newOwner) {
+                ChatGroupChangeOwnerPopWindow.show(accountContext,this@ChatGroupSettingActivity, mGroupModel.groupId(), newOwner) {
                     AmePopup.loading.show(this@ChatGroupSettingActivity)
                     mGroupModel.leaveGroup(it.uid.serialize(), result)
                 }
@@ -517,21 +518,21 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
     }
 
     private fun goToMemberList(groupId: Long, editMode: Boolean = false) {
-        startActivity(Intent(this, ChatGroupMemberListActivity::class.java).apply {
+        startBcmActivity(accountContext, Intent(this, ChatGroupMemberListActivity::class.java).apply {
             putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, groupId)
             putExtra(ChatGroupMemberListActivity.EDIT_MODE, editMode)
         })
     }
 
     private fun goToGroupInfoEdit(groupId: Long, role: Long) {
-        startActivity(Intent(this, ChatGroupProfileActivity::class.java).apply {
+        startBcmActivity(accountContext, Intent(this, ChatGroupProfileActivity::class.java).apply {
             putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, groupId)
             putExtra(ChatGroupProfileActivity.ROLE, role)
         })
     }
 
     private fun goToNotice(groupId: Long) {
-        startActivity(Intent(this, ChatGroupNoticeActivity::class.java).apply {
+        startBcmActivity(accountContext, Intent(this, ChatGroupNoticeActivity::class.java).apply {
             putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, groupId)
         })
     }
@@ -575,7 +576,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
                 chats_group_setting_title.setCenterText(event.name)
             }
             if (event.avatarPath.isNotBlank()) {
-                chats_group_control_avatar.showGroupAvatar(getAccountContext(), mGroupModel.groupId(), path = event.avatarPath)
+                chats_group_control_avatar.showGroupAvatar(accountContext, mGroupModel.groupId(), path = event.avatarPath)
             }
         }
     }
@@ -631,7 +632,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
     override fun onViewClicked(adapter: AmeRecycleViewAdapter<AmeGroupMemberInfo>, viewHolder: AmeRecycleViewAdapter.ViewHolder<AmeGroupMemberInfo>) {
         when (viewHolder.getData()) {
             AmeGroupMemberInfo.MEMBER_ADD_MEMBER -> {
-                startActivity(Intent(this, ChatGroupCreateActivity::class.java).apply {
+                startBcmActivity(accountContext, Intent(this, ChatGroupCreateActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, mGroupModel.groupId())
                     putExtra(ARouterConstants.PARAM.CONTACTS_SELECT.PARAM_SELECT_TYPE, ChatGroupCreateActivity.TYPE_SELECT_ADD_GROUP_MEMBER)
                 })

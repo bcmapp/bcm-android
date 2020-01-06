@@ -342,17 +342,17 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
             }
 
             if (account.version > AmeAccountData.V2 || account.uid.isNotEmpty()) {
-                val r = Recipient.from(getAccountContext(), account.uid, true)
+                val r = Recipient.from(accountContext, account.uid, true)
                 this.recipient = r
                 r.addListener(this)
                 r.setProfile(account.name, account.avatar)
-                containerView.keybox_account_img.setPhoto(getAccountContext(), r, account.name, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                containerView.keybox_account_img.setPhoto(accountContext, r, account.name, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
 
             }else {
                 if (account.avatar.isNotEmpty()) {
                     containerView.keybox_account_img.requestPhoto(account.avatar, R.drawable.common_recipient_photo_default_small, R.drawable.common_recipient_photo_default_small)
                 }else {
-                    containerView.keybox_account_img.setPhoto(getAccountContext(),null, account.name, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                    containerView.keybox_account_img.setPhoto(accountContext,null, account.name, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
                 }
             }
         }
@@ -378,7 +378,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
                 if (localAccount != null) {
                     this.recipient?.setProfile(localAccount.name, localAccount.avatar)
                 }
-                containerView.keybox_account_img.setPhoto(getAccountContext(), recipient, localAccount?.name, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                containerView.keybox_account_img.setPhoto(accountContext, recipient, localAccount?.name, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
             }
         }
     }

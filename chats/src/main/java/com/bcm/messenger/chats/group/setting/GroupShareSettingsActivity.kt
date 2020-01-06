@@ -62,7 +62,7 @@ class GroupShareSettingsActivity : SwipeBaseActivity() {
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
 
         EventBus.getDefault().register(this)
-        val groupModel = GroupLogic.getModel(groupId)
+        val groupModel = GroupLogic.get(accountContext).getModel(groupId)
         if (null == groupModel) {
             finish()
             return
@@ -154,7 +154,7 @@ class GroupShareSettingsActivity : SwipeBaseActivity() {
         }else {
             groupInfo?.name
         }
-        group_share_logo.showGroupAvatar(mGroupModel.groupId(), false)
+        group_share_logo.showGroupAvatar(accountContext, mGroupModel.groupId(), false)
 
     }
 
@@ -468,7 +468,7 @@ class GroupShareSettingsActivity : SwipeBaseActivity() {
     }
 
     private fun goToGroupInfoEdit(groupId: Long, role: Long) {
-        startActivity(Intent(this, ChatGroupProfileActivity::class.java).apply {
+        startBcmActivity(accountContext, Intent(this, ChatGroupProfileActivity::class.java).apply {
             putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, groupId)
             putExtra(ChatGroupProfileActivity.ROLE, role)
         })

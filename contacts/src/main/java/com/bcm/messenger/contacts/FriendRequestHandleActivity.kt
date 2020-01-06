@@ -70,7 +70,7 @@ class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListen
     private fun sendReply(approve: Boolean) {
         ALog.i(TAG, "Start to send reply approve $approve")
         AmePopup.loading.show(this)
-        AmeModuleCenter.contact(getAccountContext())?.replyFriend(recipient.address.serialize(), approve, request) {
+        AmeModuleCenter.contact(accountContext)?.replyFriend(recipient.address.serialize(), approve, request) {
             AmePopup.loading.dismiss()
             if (it) {
                 RxBus.post(HANDLED_REQ, Pair(request.id ?: 0L, true))
@@ -89,10 +89,10 @@ class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListen
     }
 
     private fun initData() {
-        recipient = Recipient.from(getAccountContext(), Address.fromSerialized(request.proposer), true)
+        recipient = Recipient.from(accountContext, Address.fromSerialized(request.proposer), true)
         recipient.addListener(this)
 
-        handle_req_avatar.setPhoto(getAccountContext(), recipient)
+        handle_req_avatar.setPhoto(accountContext, recipient)
         handle_req_name.text = recipient.name
 
         if (request.memo.isNotEmpty()) {
@@ -107,7 +107,7 @@ class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListen
         Observable.create<BcmFriendRequest> {
             val id = intent.getLongExtra("id", -1L)
             if (id != -1L) {
-                it.onNext(UserDatabase.getDatabase(getAccountContext()).friendRequestDao().query(id))
+                it.onNext(UserDatabase.getDatabase(accountContext).friendRequestDao().query(id))
                 ALog.logForSecret(TAG, "Get id = $id request")
             }
             it.onComplete()
@@ -124,7 +124,7 @@ class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListen
     override fun onModified(recipient: Recipient) {
         this.recipient = recipient
 
-        handle_req_avatar.setPhoto(getAccountContext(), recipient)
+        handle_req_avatar.setPhoto(accountContext, recipient)
         handle_req_name.text = recipient.name
     }
 }

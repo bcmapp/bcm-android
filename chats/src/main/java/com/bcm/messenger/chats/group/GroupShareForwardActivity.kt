@@ -74,7 +74,7 @@ class GroupShareForwardActivity : SwipeBaseActivity() {
     private fun doForwardForGroup(toGroupId: Long) {
         try {
             AmeAppLifecycle.showLoading()
-            GroupMessageLogic.messageSender.sendGroupShareMessage(toGroupId, AmeGroupMessage.GroupShareContent.fromJson(mGroupShareString),
+            GroupMessageLogic.get(accountContext).messageSender.sendGroupShareMessage(toGroupId, AmeGroupMessage.GroupShareContent.fromJson(mGroupShareString),
                     object : com.bcm.messenger.chats.group.logic.MessageSender.SenderCallback {
                 override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                     ALog.d(TAG, "doForwardForGroup result: $isSuccess")
@@ -99,7 +99,7 @@ class GroupShareForwardActivity : SwipeBaseActivity() {
         val ameGroupMessage = AmeGroupMessage(AmeGroupMessage.GROUP_SHARE_CARD, AmeGroupMessage.GroupShareContent.fromJson(mGroupShareString)).toString()
         val message = OutgoingLocationMessage(toRecipient, ameGroupMessage, (toRecipient.expireMessages * 1000).toLong())
         Observable.create(ObservableOnSubscribe<Long> {
-            it.onNext(MessageSender.send(this,  message, -1L) {
+            it.onNext(MessageSender.send(this, accountContext, message, -1L) {
 
             })
             it.onComplete()

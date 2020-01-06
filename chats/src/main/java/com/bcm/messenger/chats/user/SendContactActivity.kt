@@ -39,7 +39,7 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
         setContentView(R.layout.chats_activity_send_contact)
 
         val address = intent.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
-        chatRecipient = Recipient.from(getAccountContext(), address.serialize(), true)
+        chatRecipient = Recipient.from(accountContext, address.serialize(), true)
 
         initView()
     }

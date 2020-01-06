@@ -38,7 +38,7 @@ class EditNameActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
         mForLocal = intent.getBooleanExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, false)
 
-        recipient = Recipient.from(getAccountContext(), getAccountContext().uid, true)
+        recipient = Recipient.from(accountContext, accountContext.uid, true)
         recipient.addListener(this)
         initView()
     }

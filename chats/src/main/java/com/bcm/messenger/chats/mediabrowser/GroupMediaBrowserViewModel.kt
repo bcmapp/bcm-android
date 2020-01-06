@@ -6,6 +6,7 @@ import com.bcm.messenger.chats.clean.CleanConversationStorageLogic
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.mediapreview.bean.MediaDeleteEvent
 import com.bcm.messenger.chats.util.AttachmentSaver
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.events.MessageEvent
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
@@ -15,6 +16,7 @@ import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.common.utils.MediaUtil
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -30,12 +32,12 @@ import kotlin.collections.ArrayList
 /**
  * Created by Kin on 2018/10/15
  */
-class GroupMediaBrowserViewModel : BaseMediaBrowserViewModel() {
+class GroupMediaBrowserViewModel(private val accountContext: AccountContext) : BaseMediaBrowserViewModel() {
     private val TAG = "GroupMediaBrowserViewModel"
 
     private var gid = -1L // MUST set before invoking any functions.
     private val dateFormat = SimpleDateFormat(FORMAT_DATE_TITLE, Locale.getDefault())
-    private val masterSecret = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
+    private val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
     private var destroyed = false
 
     init {
@@ -61,9 +63,9 @@ class GroupMediaBrowserViewModel : BaseMediaBrowserViewModel() {
         Observable.create<Map<String, MutableList<MediaBrowseData>>> {
             // Fetch data from DB
             val browserDataList = when (browseType) {
-                BaseMediaBrowserViewModel.TYPE_MEDIA -> transformToBrowserData(MessageDataManager.fetchMediaMessages(gid))
-                BaseMediaBrowserViewModel.TYPE_FILE -> transformToBrowserData(MessageDataManager.fetchFileMessages(gid))
-                BaseMediaBrowserViewModel.TYPE_LINK -> transformToBrowserData(MessageDataManager.fetchLinkMessages(gid))
+                BaseMediaBrowserViewModel.TYPE_MEDIA -> transformToBrowserData(MessageDataManager.fetchMediaMessages(accountContext, gid))
+                BaseMediaBrowserViewModel.TYPE_FILE -> transformToBrowserData(MessageDataManager.fetchFileMessages(accountContext, gid))
+                BaseMediaBrowserViewModel.TYPE_LINK -> transformToBrowserData(MessageDataManager.fetchLinkMessages(accountContext, gid))
                 else -> emptyList()
             }
 
@@ -184,7 +186,7 @@ class GroupMediaBrowserViewModel : BaseMediaBrowserViewModel() {
         }
         Observable.create<Unit> {
             ALog.d(TAG, "delete ${mediaDataList.size} data")
-            val groupAddress = GroupUtil.addressFromGid(gid)
+            val groupAddress = GroupUtil.addressFromGid(accountContext, gid)
 
             val groupData = ArrayList<AmeGroupMessageDetail>()
             mediaDataList.forEach {
@@ -203,8 +205,8 @@ class GroupMediaBrowserViewModel : BaseMediaBrowserViewModel() {
                 indexList.add(msg.indexId)
                 entityList.add(groupMsg)
             }
-            MessageDataManager.deleteMessages(gid, entityList)
-            EventBus.getDefault().post(MessageEvent(gid, indexList))
+            MessageDataManager.deleteMessages(accountContext, gid, entityList)
+            EventBus.getDefault().post(MessageEvent(accountContext, gid, indexList))
             it.onNext(Unit)
             it.onComplete()
         }.subscribeOn(Schedulers.io())

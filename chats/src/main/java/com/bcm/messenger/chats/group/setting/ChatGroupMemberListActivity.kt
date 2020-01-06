@@ -25,6 +25,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
 import com.bcm.messenger.common.utils.hideKeyboard
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.route.api.BcmRouter
@@ -55,7 +56,7 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
         val editMode = intent.getBooleanExtra(EDIT_MODE, false)
 
         EventBus.getDefault().register(this)
-        val groupModel = GroupLogic.getModel(groupId)
+        val groupModel = GroupLogic.get(accountContext).getModel(groupId)
         if (null == groupModel) {
             finish()
             return
@@ -244,7 +245,7 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
         hideKeyboard()
         when (viewHolder.getData()) {
             AmeGroupMemberInfo.MEMBER_ADD_MEMBER -> {
-                startActivity(Intent(this, ChatGroupCreateActivity::class.java).apply {
+                startBcmActivity(accountContext, Intent(this, ChatGroupCreateActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, groupModel.groupId())
                     putExtra(ARouterConstants.PARAM.CONTACTS_SELECT.PARAM_SELECT_TYPE, ChatGroupCreateActivity.TYPE_SELECT_ADD_GROUP_MEMBER)
                 })
@@ -286,7 +287,7 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
 
                 override fun onMatch(data: AmeGroupMemberInfo, compare: String): Boolean {
                     if (data.uid.serialize()?.isNotEmpty() == true) {
-                        val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, data.uid, true)
+                        val recipient = Recipient.from(data.uid, true)
                         val name = BcmGroupNameUtil.getGroupMemberName(recipient, data)
                         return StringAppearanceUtil.containIgnore(name, compare)
                     }

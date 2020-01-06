@@ -56,7 +56,7 @@ class WalletListActivity : SwipeBaseActivity() {
 
     private fun initData() {
         mWalletModel = WalletViewModel.of(this).apply {
-            setAccountContext(getAccountContext())
+            setAccountContext(accountContext)
         }
         mCoinType = intent.getStringExtra(ARouterConstants.PARAM.WALLET.COIN_TYPE)
         when (mCoinType) {

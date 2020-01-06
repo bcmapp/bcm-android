@@ -67,7 +67,7 @@ class DestroyCheckPasswordFragment : BaseFragment() {
     }
 
     private fun fetchProfile() {
-        val account = AmeLoginLogic.accountHistory.getAccount(getAccountContext().uid)
+        val account = AmeLoginLogic.accountHistory.getAccount(accountContext.uid)
         val realUid: String? = account?.uid
         val name: String? = account?.name
         val avatar: String? = account?.avatar
@@ -76,7 +76,7 @@ class DestroyCheckPasswordFragment : BaseFragment() {
             val weakThis = WeakReference(this)
             Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
                 try {
-                    val recipient = Recipient.from(getAccountContext(), realUid, false)
+                    val recipient = Recipient.from(accountContext, realUid, false)
                     val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
                         avatar
                     } else {
@@ -103,7 +103,7 @@ class DestroyCheckPasswordFragment : BaseFragment() {
     private fun gotoUnregister() {
         val psw = destroy_password_input.text.toString()
         AmePopup.result.notice(activity, getString(R.string.me_destroy_other_client_command_sent), true)
-        AmeLoginLogic.unregister(getAccountContext().uid, psw) { succeed, error ->
+        AmeLoginLogic.unregister(accountContext.uid, psw) { succeed, error ->
             AmePopup.result.dismiss()
 
             if (succeed) {

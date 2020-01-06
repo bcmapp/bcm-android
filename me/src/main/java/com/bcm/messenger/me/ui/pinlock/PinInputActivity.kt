@@ -53,7 +53,7 @@ class PinInputActivity : SwipeBaseActivity() {
             val intent = Intent(activity, PinInputActivity::class.java)
             intent.putExtra(INPUT_STYPE, viewStyle)
             intent.putExtra(INPUT_SIZE, pinSize)
-            activity.startBcmActivity(activity.getAccountContext(), intent)
+            activity.startBcmActivity(activity.accountContext, intent)
         }
 
         fun routerChangedPin(activity: SwipeBaseActivity, newPinStyle: Int) {
@@ -61,7 +61,7 @@ class PinInputActivity : SwipeBaseActivity() {
             intent.putExtra(INPUT_STYPE, CHANGE_PIN)
             intent.putExtra(INPUT_SIZE, AmePinLogic.lengthOfPin())
             intent.putExtra(NEW_PIN_STYLE, newPinStyle)
-            activity.startBcmActivity(activity.getAccountContext(), intent)
+            activity.startBcmActivity(activity.accountContext, intent)
         }
 
         fun routerCheckPin(activity: SwipeBaseActivity, requestCode: Int) {
@@ -69,7 +69,7 @@ class PinInputActivity : SwipeBaseActivity() {
             intent.putExtra(INPUT_STYPE, CHECK_PIN)
             intent.putExtra(INPUT_SIZE, AmePinLogic.lengthOfPin())
             intent.putExtra(CHECK_PIN_REQUEST_CODE, requestCode)
-            activity.startBcmActivityForResult(activity.getAccountContext(), intent, requestCode)
+            activity.startBcmActivityForResult(activity.accountContext, intent, requestCode)
         }
 
         fun routerVerifyUnlock(activity: Activity) {
@@ -212,10 +212,10 @@ class PinInputActivity : SwipeBaseActivity() {
                 pin_word_size.visibility = View.GONE
                 pin_word_size.text = getString(R.string.me_forget_pin)
                 val recipient = getAccountRecipient()
-                pin_lock_avatar.setPhoto(getAccountContext(), recipient)
+                pin_lock_avatar.setPhoto(accountContext, recipient)
                 pin_lock_nikename.text = recipient.name
                 recipient.addListener {
-                    pin_lock_avatar.setPhoto(getAccountContext(), recipient)
+                    pin_lock_avatar.setPhoto(accountContext, recipient)
                     pin_lock_nikename.text = recipient.name
                 }
                 input_verify.setOnClickListener {

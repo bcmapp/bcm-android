@@ -17,7 +17,8 @@ open class BaseFragment : Fragment() {
         private const val TAG = "BaseFragment"
     }
 
-    private lateinit var mAccountContext: AccountContext
+    private lateinit var accountContextObj: AccountContext
+    val accountContext get() = accountContextObj
     private lateinit var mAccountRecipient: Recipient
     private var mModifiedListener = RecipientModifiedListener { recipient ->
         if (mAccountRecipient == recipient) {
@@ -29,14 +30,12 @@ open class BaseFragment : Fragment() {
     }
     private var isActive: Boolean = false
 
-    fun getAccountContext() = mAccountContext
-
     fun getAccountRecipient() = mAccountRecipient
 
-    fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(mAccountContext) ?: throw Exception("getMasterSecret is null")
+    fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(accountContextObj) ?: throw Exception("getMasterSecret is null")
 
     fun setAccountContext(context: AccountContext) {
-        mAccountContext = context
+        accountContextObj = context
         setAccountRecipient(Recipient.login(context))
     }
 
@@ -65,13 +64,13 @@ open class BaseFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val accountContext: AccountContext? = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
-        if (accountContext == null) {
-            ALog.w(TAG, "accountContext is null, finish")
+        val accountContextObj: AccountContext? = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        if (accountContextObj == null) {
+            ALog.w(TAG, "accountContextObj is null, finish")
             activity?.finish()
             return
         }
-        setAccountContext(accountContext)
+        setAccountContext(accountContextObj)
     }
 
     protected open fun onLoginRecipientRefresh() {
@@ -79,10 +78,10 @@ open class BaseFragment : Fragment() {
     }
 
     open fun onNewIntent() {
-        val accountContext: AccountContext? = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
-        if (accountContext != null) {
-            ALog.w(TAG, "onNewIntent, new accountContext: ${accountContext.uid}")
-            setAccountContext(accountContext)
+        val accountContextObj: AccountContext? = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        if (accountContextObj != null) {
+            ALog.w(TAG, "onNewIntent, new accountContextObj: ${accountContextObj.uid}")
+            setAccountContext(accountContextObj)
         }
     }
 }

@@ -13,6 +13,7 @@ import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.common.utils.saveTextToBoard
+import com.bcm.messenger.common.utils.startBcmActivity
 import kotlinx.android.synthetic.main.chats_group_activity_edit_group_info.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -40,7 +41,7 @@ class ChatGroupProfileActivity : SwipeBaseActivity() {
 
         EventBus.getDefault().register(this)
 
-        val groupModel = GroupLogic.getModel(groupId)
+        val groupModel = GroupLogic.get(accountContext).getModel(groupId)
         if (null == groupModel) {
             finish()
             return
@@ -57,14 +58,14 @@ class ChatGroupProfileActivity : SwipeBaseActivity() {
             val intent = Intent(this, ChatGroupAvatarActivity::class.java)
             intent.putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, groupId)
             intent.putExtra(ARouterConstants.PARAM.PARAM_GROUP_ROLE, role)
-            startActivity(intent)
+            startBcmActivity(intent)
         }
 
         if (role == AmeGroupMemberInfo.OWNER) {
             group_profile_name_item.setOnClickListener {
                 val intent = Intent(this, ChatGroupEditNameActivity::class.java)
                 intent.putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, groupId)
-                startActivity(intent)
+                startBcmActivity(accountContext, intent)
             }
         } else {
             group_profile_name_item.showRightStatus(CommonSettingItem.RIGHT_NONE)
@@ -90,7 +91,7 @@ class ChatGroupProfileActivity : SwipeBaseActivity() {
         val groupInfo = groupModel.getGroupInfo()
 
         group_profile_name_item.setTip(groupInfo.name)
-        group_avatar.showGroupAvatar(groupInfo.gid, false)
+        group_avatar.showGroupAvatar(accountContext, groupInfo.gid, false)
         group_profile_id_item.setTip(groupInfo.gid.toString())
     }
 

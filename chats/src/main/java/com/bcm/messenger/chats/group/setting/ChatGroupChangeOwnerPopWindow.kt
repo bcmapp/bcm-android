@@ -10,12 +10,14 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.GroupMemberPhotoView
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.AppContextHolder
 import org.greenrobot.eventbus.EventBus
 import java.lang.ref.WeakReference
@@ -28,7 +30,7 @@ object ChatGroupChangeOwnerPopWindow {
     private var newOwner: AmeGroupMemberInfo? = null
     private var groupId: Long = 0
 
-    fun show(activity: FragmentActivity?, groupId: Long, new: AmeGroupMemberInfo, selectionResult: (owner: AmeGroupMemberInfo) -> Unit) {
+    fun show(accountContext: AccountContext, activity: FragmentActivity?, groupId: Long, new: AmeGroupMemberInfo, selectionResult: (owner: AmeGroupMemberInfo) -> Unit) {
         newOwner = new
         this.groupId = groupId
        
@@ -58,7 +60,7 @@ object ChatGroupChangeOwnerPopWindow {
 
                         val activity1 = weakActivity.get()
                         if (activity1 != null && !activity1.isFinishing && null != newOwner) {
-                            activity1.startActivity(Intent(activity1, ChatGroupMemberSelectionActivity::class.java).apply {
+                            activity1.startBcmActivity(accountContext, Intent(activity1, ChatGroupMemberSelectionActivity::class.java).apply {
                                 putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, newOwner!!.gid)
                             })
                         }
@@ -77,11 +79,11 @@ object ChatGroupChangeOwnerPopWindow {
                 if (null != owner){
                     val uid = owner.uid
 
-                    val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, uid, true)
+                    val recipient = Recipient.from(uid, true)
                    val name = BcmGroupNameUtil.getGroupMemberName(recipient, owner)
 
                     nickView?.text = name
-                    avatarView?.setAvatar(AmeGroupMemberInfo.MEMBER, newOwner?.uid, newOwner?.keyConfig)
+                    avatarView?.setAvatar(accountContext, AmeGroupMemberInfo.MEMBER, newOwner?.uid, newOwner?.keyConfig)
                     avatarView?.setUpdateListener {
                         if (it == recipient){
                             nickView?.text = recipient.name

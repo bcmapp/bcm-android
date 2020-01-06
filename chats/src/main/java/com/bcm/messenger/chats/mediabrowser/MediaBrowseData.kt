@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.ImageView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.records.MessageRecord
@@ -55,7 +56,7 @@ data class MediaBrowseData(val name: String,
         view.setImageResource(0)
     }
 
-    fun setThumbnail(background: View?, view: ImageView, overrideWidth: Int, overrideHeight: Int, placeHolderResource: Int) {
+    fun setThumbnail(accountContext: AccountContext, background: View?, view: ImageView, overrideWidth: Int, overrideHeight: Int, placeHolderResource: Int) {
         if (viewRef?.get() == view && backgroundRef?.get() == background) {
             return
         }
@@ -73,14 +74,14 @@ data class MediaBrowseData(val name: String,
                 view.setImageResource(placeHolderResource)
                 if (msg != null) {
                     if (msg.thumbnailPartUri != null) {
-                        showThumbnail(view, msg.thumbnailPartUri!!)
+                        showThumbnail(accountContext, view, msg.thumbnailPartUri!!)
                     } else {
                         MessageFileHandler.downloadThumbnail(msg, object : MessageFileHandler.MessageFileCallback {
                             override fun onResult(success: Boolean, uri: Uri?) {
                                 val current = viewRef?.get()
                                 if (current == view) {
                                     if (success && uri != null) {
-                                        showThumbnail(current, uri)
+                                        showThumbnail(accountContext, current, uri)
                                     }
                                 }
                             }
@@ -94,7 +95,7 @@ data class MediaBrowseData(val name: String,
                 if (uri == null) {
                     view.setImageResource(placeHolderResource)
                 } else {
-                    showThumbnail(view, uri)
+                    showThumbnail(accountContext, view, uri)
                 }
             }
 
@@ -110,10 +111,10 @@ data class MediaBrowseData(val name: String,
         }
     }
 
-    fun refresh() {
+    fun refresh(accountContext: AccountContext) {
         ALog.d("MediaBrowseData", "refresh")
         val view = viewRef?.get() ?: return
-        setThumbnail(backgroundRef?.get(), view, mOverrideWidth, mOverrideHeight, mPlaceHolderResource)
+        setThumbnail(accountContext, backgroundRef?.get(), view, mOverrideWidth, mOverrideHeight, mPlaceHolderResource)
     }
 
 
@@ -142,13 +143,13 @@ data class MediaBrowseData(val name: String,
                 .into(view)
     }
 
-    private fun showThumbnail(view: ImageView?, uri: Uri) {
+    private fun showThumbnail(accountContext: AccountContext, view: ImageView?, uri: Uri) {
         if (null == view || AppUtil.activityFinished(view)) {
             return
         }
 
         GlideApp.with(view)
-                .load(DecryptableStreamUriLoader.DecryptableUri(BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT)
+                .load(DecryptableStreamUriLoader.DecryptableUri(BCMEncryptUtils.getMasterSecret(accountContext)
                         ?: throw Exception("getMasterSecret fail"), uri))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .override(mOverrideWidth, mOverrideHeight)
@@ -221,13 +222,13 @@ data class MediaBrowseData(val name: String,
         return ConversationStorage.TYPE_UN_SUPPORT
     }
 
-    fun getUserAddress(): Address? {
+    fun getUserAddress(accountContext: AccountContext): Address? {
         if (fromGroup) {
             val msg = msgSource as? AmeGroupMessageDetail ?: return null
-            return GroupUtil.addressFromGid(msg.gid)
+            return GroupUtil.addressFromGid(accountContext, msg.gid)
         } else {
             val record = msgSource as? MessageRecord ?: return null
-            return record.getRecipient().address
+            return record.getRecipient(accountContext).address
         }
     }
 }

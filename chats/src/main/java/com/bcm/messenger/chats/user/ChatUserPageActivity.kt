@@ -85,7 +85,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
             }
             BcmRouter.getInstance().get(ARouterConstants.Activity.PROFILE_EDIT)
                     .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address)
-                    .startBcmActivity(getAccountContext(), this)
+                    .startBcmActivity(accountContext, this)
         }
         chat_user_img.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
@@ -93,7 +93,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
             }
             BcmRouter.getInstance().get(ARouterConstants.Activity.PROFILE_EDIT)
                     .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address)
-                    .startBcmActivity(getAccountContext(), this)
+                    .startBcmActivity(accountContext, this)
         }
         chat_user_img.setCallback(object : IndividualAvatarView.RecipientPhotoCallback {
             override fun onLoaded(recipient: Recipient?, bitmap: Bitmap?, success: Boolean) {
@@ -129,9 +129,9 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
                 Observable.create(ObservableOnSubscribe<Boolean> {
                     try {
                         if (isMuted) {
-                            Repository.getRecipientRepo(getAccountContext())?.setMuted(mRecipient, System.currentTimeMillis() + TimeUnit.DAYS.toMillis(3650))
+                            Repository.getRecipientRepo(accountContext)?.setMuted(mRecipient, System.currentTimeMillis() + TimeUnit.DAYS.toMillis(3650))
                         } else {
-                            Repository.getRecipientRepo(getAccountContext())?.setMuted(mRecipient, 0)
+                            Repository.getRecipientRepo(accountContext)?.setMuted(mRecipient, 0)
                         }
                         it.onNext(isMuted)
                     } catch (ex: Exception) {
@@ -155,7 +155,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            MediaBrowserActivity.router(getAccountContext(), mRecipient.address)
+            MediaBrowserActivity.router(accountContext, mRecipient.address)
         }
 
         chat_user_stick.setSwitchEnable(false)
@@ -245,7 +245,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
                 } else {
                     BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND)
                             .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address)
-                            .startBcmActivity(getAccountContext(), this@ChatUserPageActivity)
+                            .startBcmActivity(accountContext, this@ChatUserPageActivity)
                 }
             }
         })
@@ -292,7 +292,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
         chat_user_main_layout.visibility = View.VISIBLE
         markMute(recipient.mutedUntil)
 
-        chat_user_img.setPhoto(getAccountContext(), recipient)
+        chat_user_img.setPhoto(accountContext, recipient)
         chat_user_name.text = recipient.name
         if (!recipient.isLogin) {
             if (isBgLight) {
@@ -350,7 +350,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
         Observable.create(ObservableOnSubscribe<Boolean> {
             try {
                 // Delete chat history
-                Repository.getChatRepo(getAccountContext())?.cleanChatMessages(threadId)
+                Repository.getChatRepo(accountContext)?.cleanChatMessages(threadId)
                 it.onNext(true)
             } catch (ex: Exception) {
                 it.onError(ex)

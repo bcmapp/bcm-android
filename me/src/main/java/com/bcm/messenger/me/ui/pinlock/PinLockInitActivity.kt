@@ -32,7 +32,7 @@ class PinLockInitActivity : SwipeBaseActivity() {
         super.onResume()
         if (AmePinLogic.hasPin()) {
             val intent = Intent(this, PinLockSettingActivity::class.java)
-            startBcmActivity(getAccountContext(), intent)
+            startBcmActivity(accountContext, intent)
             me_enable_pin_lock.postDelayed({
                 finish()
             }, 50)

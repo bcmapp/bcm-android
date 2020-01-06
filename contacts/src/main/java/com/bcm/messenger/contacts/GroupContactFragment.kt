@@ -279,7 +279,7 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
         fun bind(data: GroupContactViewModel.GroupContactViewData) {
             val groupInfo = data.groupInfo
             this.gid = groupInfo.gid
-            this.logoView.showGroupAvatar(getAccountContext(), groupInfo.gid)
+            this.logoView.showGroupAvatar(accountContext, groupInfo.gid)
             this.groupName.text = groupInfo.displayName
         }
 

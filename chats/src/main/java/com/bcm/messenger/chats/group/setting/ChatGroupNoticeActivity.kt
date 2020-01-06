@@ -17,6 +17,7 @@ import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.DateUtils
+import com.bcm.messenger.common.utils.startBcmActivity
 import kotlinx.android.synthetic.main.chats_group_activity_group_notice.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -63,14 +64,14 @@ class ChatGroupNoticeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
 
         EventBus.getDefault().register(this)
-        val groupModel = GroupLogic.getModel(groupId)
+        val groupModel = GroupLogic.get(accountContext).getModel(groupId)
         if (null == groupModel) {
             finish()
             return
         }
         this.groupModel = groupModel
 
-        recipient = Recipient.from(this, Address.fromSerialized(groupModel.getGroupInfo().owner), true)
+        recipient = Recipient.from(accountContext, groupModel.getGroupInfo().owner, true)
         recipient.addListener(this)
         initViews()
     }
@@ -89,7 +90,7 @@ class ChatGroupNoticeActivity : SwipeBaseActivity(), RecipientModifiedListener {
             }
 
             override fun onClickRight() {
-                startActivity(Intent(this@ChatGroupNoticeActivity, ChatGroupNoticeEditActivity::class.java).apply {
+                startBcmActivity(accountContext, Intent(this@ChatGroupNoticeActivity, ChatGroupNoticeEditActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, groupModel.groupId())
                 })
             }
@@ -100,7 +101,7 @@ class ChatGroupNoticeActivity : SwipeBaseActivity(), RecipientModifiedListener {
             notice_container.visibility = View.VISIBLE
             no_notice_layout.visibility = View.GONE
             notice_content_text.text = groupModel.getGroupInfo().noticeContent
-            group_owner_avatar.setAvatar(AmeGroupMemberInfo.OWNER, recipient.address, groupModel.getGroupMember(recipient.address.serialize())?.keyConfig)
+            group_owner_avatar.setAvatar(accountContext, AmeGroupMemberInfo.OWNER, recipient.address, groupModel.getGroupMember(recipient.address.serialize())?.keyConfig)
             group_owner_name_text.text = recipient.name
             notice_update_time_text.text = DateUtils.formatDayTimeForMillisecond(groupModel.getGroupInfo()!!.noticeUpdateTime)
         } else {

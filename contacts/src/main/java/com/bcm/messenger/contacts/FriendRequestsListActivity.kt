@@ -39,7 +39,7 @@ class FriendRequestsListActivity : SwipeBaseActivity() {
         setContentView(R.layout.contacts_activity_friend_request)
 
         viewModel = ViewModelProviders.of(this).get(FriendRequestsListViewModel::class.java).apply {
-            setAccountContext(getAccountContext())
+            setAccountContext(accountContext)
         }
 
         initView()
@@ -100,10 +100,10 @@ class FriendRequestsListActivity : SwipeBaseActivity() {
 
         fun bind(data: BcmFriendRequest) {
             recipient?.removeListener(this)
-            recipient = Recipient.from(getAccountContext(), Address.fromSerialized(data.proposer), true)
+            recipient = Recipient.from(accountContext, Address.fromSerialized(data.proposer), true)
             recipient?.addListener(this)
 
-            itemView.friend_req_avatar.setPhoto(getAccountContext(), recipient)
+            itemView.friend_req_avatar.setPhoto(accountContext, recipient)
             itemView.friend_req_name.text = recipient?.name
 
             if (data.memo.isNotEmpty()) {
@@ -132,7 +132,7 @@ class FriendRequestsListActivity : SwipeBaseActivity() {
             if (this.recipient == recipient) {
                 this.recipient = recipient
 
-                itemView.friend_req_avatar.setPhoto(getAccountContext(), recipient)
+                itemView.friend_req_avatar.setPhoto(accountContext, recipient)
                 itemView.friend_req_name.text = recipient.name
             }
         }

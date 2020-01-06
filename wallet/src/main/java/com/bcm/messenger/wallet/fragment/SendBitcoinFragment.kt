@@ -61,7 +61,7 @@ class SendBitcoinFragment : BaseFragment(), ITransferAction {
         super.onActivityCreated(savedInstanceState)
 
         mWalletModel = WalletViewModel.of(activity!!).apply {
-            setAccountContext(getAccountContext())
+            setAccountContext(accountContext)
         }
         mWalletDisplay = arguments?.getParcelable(ARouterConstants.PARAM.WALLET.WALLET_COIN) ?: return
         mWalletDisplay.setManager(mWalletModel?.getManager())

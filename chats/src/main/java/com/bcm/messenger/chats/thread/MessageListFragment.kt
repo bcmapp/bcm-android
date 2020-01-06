@@ -124,7 +124,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
         } catch (ex: Exception) {
             ALog.e(TAG, "onActivityCreated fail, get major recipient fail", ex)
             try {
-                AmeModuleCenter.user(getAccountContext())?.logoutMenu()
+                AmeModuleCenter.user(accountContext)?.logoutMenu()
             } catch (ex: Exception) {
                 activity?.finish()
             }
@@ -162,7 +162,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     private fun initData() {
-        viewModel = ViewModelProviders.of(this, ThreadModelFactory(getAccountContext())).get(ThreadListViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ThreadModelFactory(accountContext)).get(ThreadListViewModel::class.java)
         viewModel.threadLiveData.observe(this, Observer { data ->
             ALog.i(TAG, "updateThread, size: ${data.data.size}")
             RxBus.post(HomeTabEvent(HomeTabEvent.TAB_CHAT, false, data.unread, false))
@@ -175,7 +175,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
         }
 
         AmePushProcess.checkSystemBannerNotice()
-        PushUtil.loadSystemMessages(getAccountContext())
+        PushUtil.loadSystemMessages(accountContext)
     }
 
     private fun showShadeView(isLoading: Boolean) {
@@ -243,7 +243,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
 
     fun clearThreadUnreadState() {
         AmeDispatcher.io.dispatch {
-            val threadRepo = Repository.getThreadRepo(getAccountContext())
+            val threadRepo = Repository.getThreadRepo(accountContext)
             val unreadList = ArrayList<ThreadRecord>()
             mAdapter?.getTrueDataList()?.forEach { threadRecord ->
                 if (threadRecord.unreadCount > 0) {
@@ -341,7 +341,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
 
     private fun checkUnhandledRequest(unreadCount: Int = 0) {
         Observable.create<Pair<Int, Int>> {
-            val requestDao = Repository.getFriendRequestRepo(getAccountContext())
+            val requestDao = Repository.getFriendRequestRepo(accountContext)
             var unread = unreadCount
             if (unread == 0) {
                 unread = requestDao?.queryUnreadCount() ?: 0

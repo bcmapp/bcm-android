@@ -210,7 +210,7 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
         if (f == null) {
             f = supportFragmentManager.fragmentFactory.instantiate(classLoader, mCurrentFragmentClazz.orEmpty()).apply {
                 arguments = Bundle().apply {
-                    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, getAccountContext())
+                    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
                 }
             }
             mCurrentSearchFragment = f
@@ -230,7 +230,7 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
     }
 
     override fun onSelect(type: BcmFinderType, key: String) {
-        BcmFinderManager.get(getAccountContext()).saveRecord(type, key)
+        BcmFinderManager.get(accountContext).saveRecord(type, key)
     }
 
     override fun onMore(type: BcmFinderType, key: String) {

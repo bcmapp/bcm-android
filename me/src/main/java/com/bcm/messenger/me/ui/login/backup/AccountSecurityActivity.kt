@@ -100,7 +100,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
     }
 
     override fun onLoginRecipientRefresh() {
-        me_account_img?.setPhoto(getAccountContext(), getAccountRecipient())
+        me_account_img?.setPhoto(accountContext, getAccountRecipient())
     }
 
     private fun initCard() {
@@ -161,7 +161,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
                 dateBuilder.setSpan(foregroundColor, dateBuilder.length - extra.length - 1, dateBuilder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
             account_backup_date.text = dateBuilder
-            me_account_img.setPhoto(getAccountContext(), getAccountRecipient())
+            me_account_img.setPhoto(accountContext, getAccountRecipient())
         }
     }
 

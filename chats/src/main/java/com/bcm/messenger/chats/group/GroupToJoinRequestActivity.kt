@@ -112,7 +112,7 @@ class GroupToJoinRequestActivity : SwipeBaseActivity(), RecipientModifiedListene
                 null
             }
 
-            GroupLogic.joinGroupByShareCode(groupShareContent.groupId, groupShareContent.shareCode, groupShareContent.shareSignature, eKeyByteArray, request_memo_input.text.toString()) { succeed, error ->
+            GroupLogic.get(accountContext).joinGroupByShareCode(groupShareContent.groupId, groupShareContent.shareCode, groupShareContent.shareSignature, eKeyByteArray, request_memo_input.text.toString()) { succeed, error ->
                 ALog.d(TAG, "joinGroupByShareCode success: $succeed, error: $error")
                 AmeAppLifecycle.hideLoading()
                 if (succeed) {

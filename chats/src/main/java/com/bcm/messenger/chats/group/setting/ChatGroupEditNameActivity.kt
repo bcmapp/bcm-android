@@ -37,7 +37,7 @@ class ChatGroupEditNameActivity : SwipeBaseActivity() {
         setContentView(R.layout.chats_activity_edit_group_name)
 
         gid = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
-        val model = GroupLogic.getModel(gid)
+        val model = GroupLogic.get(accountContext).getModel(gid)
         if (null == model) {
             finish()
             return

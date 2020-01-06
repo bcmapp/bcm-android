@@ -250,7 +250,7 @@ class MediaViewFragment : BaseFragment() {
         EventBus.getDefault().post(MediaVideoDurationEvent(attachmentId, durationInSections))
         Observable.create<Boolean> {
             try {
-                Repository.getAttachmentRepo(getAccountContext())?.updateDuration(attachmentId.rowId, attachmentId.uniqueId, durationInSections)
+                Repository.getAttachmentRepo(accountContext)?.updateDuration(attachmentId.rowId, attachmentId.uniqueId, durationInSections)
                 it.onNext(true)
             } catch (ex: Exception) {
                 ALog.e(TAG, "updateVideoDuration", ex)

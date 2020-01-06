@@ -138,7 +138,7 @@ class ChatGroupCreateActivity : SwipeBaseActivity(), IContactsCallback {
                 .observeOn(Schedulers.io())
                 .subscribe {
                     val checker = if (type == TYPE_SELECT_ADD_GROUP_MEMBER) {
-                        val groupInfo = GroupLogic.getGroupInfo(groupId)
+                        val groupInfo = GroupLogic.get(accountContext).getGroupInfo(groupId)
                         val newGroup = groupInfo?.newGroup ?: true
                         if (newGroup) {
                             ARouterConstants.PARAM.CONTACTS_SELECT.ENABLE_CHECKER.CHECKER_GROUP_V3
@@ -177,12 +177,12 @@ class ChatGroupCreateActivity : SwipeBaseActivity(), IContactsCallback {
             }
             AmePopup.loading.show(this)
             val weakThis = WeakReference(this)
-            GroupLogic.createGroup("", "", false, "", selectRecipients.toList()) { groupInfo: AmeGroupInfo?, succeed: Boolean, error: String? ->
+            GroupLogic.get(accountContext).createGroup("", "", false, "", selectRecipients.toList()) { groupInfo: AmeGroupInfo?, succeed: Boolean, error: String? ->
                 AmePopup.loading.dismiss()
                 if (succeed && null != groupInfo && null != groupInfo.gid) {
                     val activity = weakThis.get()
                     if (activity != null && !activity.isFinishing && !activity.isDestroyed) {
-                        val recipient = Recipient.recipientFromNewGroup(activity, groupInfo)
+                        val recipient = Recipient.recipientFromNewGroup(accountContext, groupInfo)
                         AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
                                 HomeTopEvent.ConversationEvent.fromGroupConversation(recipient.address, groupInfo.gid)))
                     }
@@ -192,7 +192,7 @@ class ChatGroupCreateActivity : SwipeBaseActivity(), IContactsCallback {
                 }
             }
         } else if (type == TYPE_SELECT_ADD_GROUP_MEMBER) {
-            val groupModel = GroupLogic.getModel(groupId) ?: return
+            val groupModel = GroupLogic.get(accountContext).getModel(groupId) ?: return
             when {
                 groupModel.getGroupInfo().role == AmeGroupMemberInfo.OWNER -> {
                     AmePopup.loading.show(this)

@@ -26,7 +26,7 @@ class GroupContactActivity : SwipeBaseActivity() {
             }
 
             override fun onClickRight() {
-                BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_GROUP_CREATE).startBcmActivity(getAccountContext(), this@GroupContactActivity)
+                BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_GROUP_CREATE).startBcmActivity(accountContext, this@GroupContactActivity)
             }
         })
 

@@ -57,7 +57,7 @@ class BlockUsersActivity : SwipeBaseActivity() {
 
         mRightMenu = block_user_title_bar.getRightView().second as? TextView
 
-        contactProvider = AmeModuleCenter.contact(getAccountContext())
+        contactProvider = AmeModuleCenter.contact(accountContext)
 
         initAdapter()
     }
@@ -74,9 +74,9 @@ class BlockUsersActivity : SwipeBaseActivity() {
         block_user_list.layoutManager = LinearLayoutManager(this)
         Observable.create(ObservableOnSubscribe<MutableList<Recipient>> {
             val recipientList = ArrayList<Recipient>()
-            val blockUsers = Repository.getRecipientRepo(getAccountContext())?.getBlockedUsers()
+            val blockUsers = Repository.getRecipientRepo(accountContext)?.getBlockedUsers()
             blockUsers?.forEach { user ->
-                recipientList.add(Recipient.fromSnapshot(getAccountContext(), user.uid, user))
+                recipientList.add(Recipient.fromSnapshot(accountContext, user.uid, user))
             }
             it.onNext(recipientList)
             it.onComplete()
@@ -221,7 +221,7 @@ class BlockUsersActivity : SwipeBaseActivity() {
             } else {
                 selectItem.visibility = View.GONE
             }
-            recipientImg.setPhoto(getAccountContext(), recipient)
+            recipientImg.setPhoto(accountContext, recipient)
             recipientName.text = recipient.name
         }
     }

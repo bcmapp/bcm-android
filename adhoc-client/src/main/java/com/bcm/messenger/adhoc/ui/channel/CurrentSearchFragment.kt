@@ -118,9 +118,9 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic
         }
         showLoading()
         if (searchLimit) {
-            BcmFinderManager.get(getAccountContext()).querySearchResultLimit(keyword, types, callback)
+            BcmFinderManager.get(accountContext).querySearchResultLimit(keyword, types, callback)
         }else {
-            BcmFinderManager.get(getAccountContext()).querySearchResult(keyword, types, callback)
+            BcmFinderManager.get(accountContext).querySearchResult(keyword, types, callback)
         }
     }
 

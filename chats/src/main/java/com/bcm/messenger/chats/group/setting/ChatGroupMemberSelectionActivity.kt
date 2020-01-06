@@ -36,7 +36,7 @@ class ChatGroupMemberSelectionActivity : SwipeBaseActivity(), AmeRecycleViewAdap
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
 
         EventBus.getDefault().register(this)
-        val groupModel = GroupLogic.getModel(groupId)
+        val groupModel = GroupLogic.get(accountContext).getModel(groupId)
         if (null == groupModel) {
             finish()
             return
@@ -81,7 +81,7 @@ class ChatGroupMemberSelectionActivity : SwipeBaseActivity(), AmeRecycleViewAdap
     private fun updateMemberList() {
         val list = groupModel.getGroupMemberList()
         val listExcludeSelf = ArrayList<AmeGroupMemberInfo>()
-        list?.filterTo(listExcludeSelf) { it.uid.serialize() != AMELogin.uid }
+        list.filterTo(listExcludeSelf) { it.uid.serialize() != accountContext.uid }
         memberDataSource.updateDataSource(listExcludeSelf)
     }
 

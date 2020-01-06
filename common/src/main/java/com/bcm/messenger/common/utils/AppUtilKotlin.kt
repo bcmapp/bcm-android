@@ -100,17 +100,17 @@ fun Activity.startBcmActivityForResult(accountContext: AccountContext, intent: I
 }
 
 fun SwipeBaseActivity.startBcmActivity(intent: Intent) {
-    checkIntent(getAccountContext(), intent)
+    checkIntent(accountContext, intent)
     startActivity(intent)
 }
 
 fun SwipeBaseActivity.startBcmActivityForResult(intent: Intent, requestCode: Int) {
-    checkIntent(getAccountContext(), intent)
+    checkIntent(accountContext, intent)
     startActivityForResult(intent, requestCode)
 }
 
 fun SwipeBaseActivity.startBcmActivityForResult(intent: Intent, requestCode: Int, options: Bundle?) {
-    checkIntent(getAccountContext(), intent)
+    checkIntent(accountContext, intent)
     startActivityForResult(intent, requestCode, options)
 }
 
@@ -130,17 +130,17 @@ fun Fragment.startBcmActivityForResult(accountContext: AccountContext, intent: I
 }
 
 fun BaseFragment.startBcmActivity(intent: Intent) {
-    checkIntent(getAccountContext(), intent)
+    checkIntent(accountContext, intent)
     startActivity(intent)
 }
 
 fun BaseFragment.startBcmActivityForResult(intent: Intent, requestCode: Int) {
-    checkIntent(getAccountContext(), intent)
+    checkIntent(accountContext, intent)
     startActivityForResult(intent, requestCode)
 }
 
 fun BaseFragment.startBcmActivityForResult(intent: Intent, requestCode: Int, options: Bundle?) {
-    checkIntent(getAccountContext(), intent)
+    checkIntent(accountContext, intent)
     startActivityForResult(intent, requestCode, options)
 }
 

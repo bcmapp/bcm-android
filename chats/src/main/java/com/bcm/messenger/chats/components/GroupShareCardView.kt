@@ -20,6 +20,7 @@ import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.getDrawable
 import kotlinx.android.synthetic.main.chats_layout_group_name_card.view.*
 import com.bcm.messenger.common.mms.GlideApp
+import com.bcm.messenger.common.provider.AMELogin
 
 /**
  * Created by wjh on 2019/6/4
@@ -36,7 +37,7 @@ class GroupShareCardView @JvmOverloads constructor(context: Context, attrs: Attr
 
         setOnClickListener {
             if (mUrl.isNotEmpty()) {
-                it.context.startActivity(Intent(it.context, WebActivity::class.java).apply {
+                it.context.startBcmActivity(AMELogin.majorContext, Intent(it.context, WebActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.WEB_URL, mUrl)
                 })
             }

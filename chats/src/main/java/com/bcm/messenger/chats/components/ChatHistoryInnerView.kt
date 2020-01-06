@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
@@ -92,11 +93,11 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
     }
 
 
-    fun setHistoryData(messageList: List<Any>, showName: Boolean = false) {
-        setHistoryData(messageList, showName, true)
+    fun setHistoryData(accountContext: AccountContext, messageList: List<Any>, showName: Boolean = false) {
+        setHistoryData(accountContext, messageList, showName, true)
     }
 
-    private fun setHistoryData(messageList: List<Any>, showName: Boolean = false, newData: Boolean = false) {
+    private fun setHistoryData(accountContext: AccountContext, messageList: List<Any>, showName: Boolean = false, newData: Boolean = false) {
         if (newData) {
             mCurrentMessageList = messageList
             mShowName = showName
@@ -116,7 +117,7 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
                     recipient = if (it.isOutgoing()) {
                         Recipient.major()
                     } else {
-                        it.getRecipient()
+                        it.getRecipient(accountContext)
                     }
                     if (newData) {
                         mRecipientList[recipient.address.serialize()] = recipient
@@ -128,7 +129,7 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
                 }
                 is AmeGroupMessageDetail -> {
                     recipient = if (newData) {
-                        val r = Recipient.from(AMELogin.majorContext, Address.fromSerialized(it.senderId), true)
+                        val r = Recipient.from(accountContext, it.senderId, true)
                         mRecipientList[r.address.serialize()] = r
                         r.addListener(this)
                         r
@@ -139,7 +140,7 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
                 }
                 is HistoryMessageDetail -> {
                     recipient = if (newData) {
-                        val r = Recipient.from(AMELogin.majorContext, Address.fromSerialized(it.sender ?: ""), true)
+                        val r = Recipient.from(accountContext, it.sender ?: "", true)
                         mRecipientList[r.address.serialize()] = r
                         r.addListener(this)
                         r
@@ -247,7 +248,7 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
         val r = mRecipientList[recipient.address.serialize()]
         if (r != null) {
             mRecipientList[recipient.address.serialize()] = recipient
-            setHistoryData(mCurrentMessageList ?: return, mShowName, false)
+            setHistoryData(recipient.address.context(),mCurrentMessageList ?: return, mShowName, false)
         }
     }
 

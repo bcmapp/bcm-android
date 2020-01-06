@@ -59,7 +59,7 @@ class SendEtherFragment : BaseFragment(), ITransferAction {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        mWalletModel = WalletViewModel.of(activity!!).apply { setAccountContext(getAccountContext()) }
+        mWalletModel = WalletViewModel.of(activity!!).apply { setAccountContext(accountContext) }
         mWalletDisplay = arguments?.getParcelable(ARouterConstants.PARAM.WALLET.WALLET_COIN) ?: return
         mWalletDisplay.setManager(mWalletModel?.getManager())
 

@@ -66,7 +66,7 @@ class SettingActivity : SwipeBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_settings)
 
-        mChatModule = AmeModuleCenter.chat(getAccountContext())
+        mChatModule = AmeModuleCenter.chat(accountContext)
 
         initView()
         initData()
@@ -96,7 +96,7 @@ class SettingActivity : SwipeBaseActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && (!RomUtil.isMiui() || RomUtil.getMIUIVersionCode() >= 8)) {
                 gotoNotificationChannelSetting(AmeNotification.getDefaultChannel(baseContext))
             } else {
-                startBcmActivity(getAccountContext(), Intent(this, NotificationSettingActivity::class.java))
+                startBcmActivity(accountContext, Intent(this, NotificationSettingActivity::class.java))
             }
         }
 
@@ -104,7 +104,7 @@ class SettingActivity : SwipeBaseActivity() {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            startBcmActivityForResult(getAccountContext(), Intent(this, LanguageSelectActivity::class.java), REQUEST_SETTING)
+            startBcmActivityForResult(accountContext, Intent(this, LanguageSelectActivity::class.java), REQUEST_SETTING)
         }
 
         setting_tts.setOnClickListener {
@@ -137,7 +137,7 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
             BcmRouter.getInstance().get(ARouterConstants.Activity.CLEAN_STORAGE)
-                    .startBcmActivity(getAccountContext(), this, REQUEST_SETTING)
+                    .startBcmActivity(accountContext, this, REQUEST_SETTING)
         }
 
         setting_adhoc.setOnClickListener {
@@ -153,14 +153,14 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
             val intent = Intent(it.context, ProxySettingActivity::class.java)
-            startBcmActivity(getAccountContext(), intent)
+            startBcmActivity(accountContext, intent)
         }
 
         setting_blocked_user.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            startBcmActivity(getAccountContext(), Intent(this, BlockUsersActivity::class.java))
+            startBcmActivity(accountContext, Intent(this, BlockUsersActivity::class.java))
         }
 
         setting_block_stranger.setSwitchEnable(false)
@@ -171,7 +171,7 @@ class SettingActivity : SwipeBaseActivity() {
 
             val allowStranger = !getAccountRecipient().isAllowStranger
             AmePopup.loading.show(this)
-            AmeModuleCenter.login().updateAllowReceiveStrangers(getAccountContext(), allowStranger) { success ->
+            AmeModuleCenter.login().updateAllowReceiveStrangers(accountContext, allowStranger) { success ->
                 if (!success) {
                     AmePopup.loading.dismiss()
                     AmePopup.result.failure(this, getString(R.string.me_setting_block_stranger_error), true)
@@ -188,9 +188,9 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
             if (AmePinLogic.hasPin()) {
-                startBcmActivityForResult(getAccountContext(), Intent(this, PinLockSettingActivity::class.java), REQUEST_SETTING)
+                startBcmActivityForResult(accountContext, Intent(this, PinLockSettingActivity::class.java), REQUEST_SETTING)
             } else {
-                startBcmActivityForResult(getAccountContext(), Intent(this, PinLockInitActivity::class.java), REQUEST_SETTING)
+                startBcmActivityForResult(accountContext, Intent(this, PinLockInitActivity::class.java), REQUEST_SETTING)
             }
         }
 
@@ -228,7 +228,7 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
             val intent = Intent(this, AmeFeedbackActivity::class.java)
-            startBcmActivity(getAccountContext(), intent)
+            startBcmActivity(accountContext, intent)
         }
 
         setting_faq.setOnClickListener {
@@ -247,7 +247,7 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
             val intent = Intent(this, AboutActivity::class.java)
-            startBcmActivity(getAccountContext(), intent)
+            startBcmActivity(accountContext, intent)
         }
     }
 

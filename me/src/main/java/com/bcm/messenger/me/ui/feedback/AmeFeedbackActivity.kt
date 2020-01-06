@@ -122,7 +122,7 @@ class AmeFeedbackActivity : SwipeBaseActivity() {
     private fun submit() {
         hideKeyboard()
         AmePopup.loading.show(this)
-        AmeModuleCenter.user(getAccountContext())?.feedback(viewModel.categoryText, feedback_description.text.toString(), viewModel.screenshotlist) { result, cause ->
+        AmeModuleCenter.user(accountContext)?.feedback(viewModel.categoryText, feedback_description.text.toString(), viewModel.screenshotlist) { result, cause ->
             AmePopup.loading.dismiss()
             if (result) {
                 AmePopup.result.succeed(this, getString(R.string.me_str_succeed)) {

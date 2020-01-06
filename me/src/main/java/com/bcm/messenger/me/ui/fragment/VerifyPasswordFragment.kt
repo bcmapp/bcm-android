@@ -137,7 +137,7 @@ class VerifyPasswordFragment : BaseFragment() {
                 val weakThis = WeakReference(this)
                 Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
                     try {
-                        val recipient = Recipient.from(getAccountContext(), realUid, false)
+                        val recipient = Recipient.from(this.accountContext, realUid, false)
                         val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
                             avatar
                         } else {

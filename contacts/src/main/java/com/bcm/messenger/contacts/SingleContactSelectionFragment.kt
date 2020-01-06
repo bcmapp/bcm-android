@@ -70,7 +70,7 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
     private var mContactLoader = object : LoaderManager.LoaderCallbacks<List<Recipient>> {
 
         override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<Recipient>> {
-            return ContactsListLoader(getAccountContext(), mFromGroup, mIncludeMe)
+            return ContactsListLoader(accountContext, mFromGroup, mIncludeMe)
         }
 
         override fun onLoadFinished(loader: Loader<List<Recipient>>, data: List<Recipient>) {
@@ -229,13 +229,13 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
         if (gid <= 0) {
             return
         }
-        val memberList = AmeModuleCenter.group(getAccountContext())?.getMembersFromCache(gid)
+        val memberList = AmeModuleCenter.group(accountContext)?.getMembersFromCache(gid)
         if (!memberList.isNullOrEmpty()) {
 
             dispose = Observable.create(ObservableOnSubscribe<List<Recipient>> {
 
                 it.onNext(memberList.map { address ->
-                    Recipient.from(getAccountContext(), Address.fromSerialized(address), true)
+                    Recipient.from(accountContext, Address.fromSerialized(address), true)
                 })
                 it.onComplete()
 
