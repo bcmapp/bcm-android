@@ -4,6 +4,7 @@ import com.bcm.messenger.common.bcmhttp.configure.sslfactory.IMServerSSL
 import com.bcm.messenger.common.bcmhttp.interceptor.BcmAuthHeaderInterceptor
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptorHelper
 import com.bcm.messenger.common.bcmhttp.interceptor.error.IMServerErrorCodeInterceptor
+import com.bcm.messenger.common.bcmhttp.interceptor.metrics.AccountMetricsInterceptor
 import com.bcm.messenger.common.bcmhttp.interceptor.metrics.NormalMetricsInterceptor
 import com.bcm.messenger.common.utils.AccountContextMap
 import com.bcm.messenger.utility.bcmhttp.facade.BaseHttp
@@ -19,7 +20,7 @@ object IMHttp: AccountContextMap<BaseHttp>({
             .addInterceptor(BcmAuthHeaderInterceptor(it))
             .addInterceptor(RedirectInterceptorHelper.imServerInterceptor)
             .addInterceptor(IMServerErrorCodeInterceptor())
-            .addInterceptor(NormalMetricsInterceptor(it))
+            .addInterceptor(AccountMetricsInterceptor(it))
             .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
             .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
             .build()

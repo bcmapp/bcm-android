@@ -9,6 +9,7 @@ import com.bcm.messenger.common.bcmhttp.interceptor.BcmAuthHeaderInterceptor
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptor
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptorHelper
 import com.bcm.messenger.common.bcmhttp.interceptor.error.IMServerErrorCodeInterceptor
+import com.bcm.messenger.common.bcmhttp.interceptor.metrics.AccountMetricsInterceptor
 import com.bcm.messenger.common.bcmhttp.interceptor.metrics.NormalMetricsInterceptor
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.utils.AccountContextMap
@@ -55,7 +56,7 @@ object ChatHttp : AccountContextMap<ChatHttp.ChatHttpImpl> ({
                     .addInterceptor(BcmAuthHeaderInterceptor(accountContext))
                     .addInterceptor(RedirectInterceptor(lbsType(), IMServerUrl.IM_DEFAULT))
                     .addInterceptor(IMServerErrorCodeInterceptor())
-                    .addInterceptor(NormalMetricsInterceptor(accountContext))
+                    .addInterceptor(AccountMetricsInterceptor(accountContext))
                     .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                     .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                     .build()

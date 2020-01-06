@@ -94,7 +94,7 @@ object FeedbackReport {
             val client = OkHttpClient.Builder()
                     .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
                     .hostnameVerifier(BaseHttp.trustAllHostVerify())
-                    .addInterceptor(NormalMetricsInterceptor(AMELogin.majorContext))
+                    .addInterceptor(NormalMetricsInterceptor())
                     .addInterceptor(ProgressInterceptor())
                     .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                     .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)

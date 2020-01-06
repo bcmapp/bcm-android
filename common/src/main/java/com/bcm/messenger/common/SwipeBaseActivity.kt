@@ -243,7 +243,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     private fun isScreenSecurityEnabled(context: Context): Boolean {
         return try {
             if (AppUtil.isMainProcess()) {
-                TextSecurePreferences.isScreenSecurityEnabled(context)
+                TextSecurePreferences.isScreenSecurityEnabled(mAccountContext)
             } else {
                 ApplicationService.impl?.isScreenSecurityEnabled == true
             }
