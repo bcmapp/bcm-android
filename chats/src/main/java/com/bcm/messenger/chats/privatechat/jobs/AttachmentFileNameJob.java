@@ -34,7 +34,6 @@ public class AttachmentFileNameJob extends MasterSecretJob {
     private final String encryptedFileName;
 
     public AttachmentFileNameJob(@NonNull Context context,
-                                 @NonNull AccountContext accountContext,
                                  @NonNull AccountContext accountContext, @NonNull AsymmetricMasterSecret asymmetricMasterSecret,
                                  @NonNull AttachmentRecord attachment,
                                  @NonNull IncomingMediaMessage message) {

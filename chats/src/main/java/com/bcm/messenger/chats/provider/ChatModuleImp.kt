@@ -33,7 +33,6 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.GroupUtil
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.common.utils.startForegroundServiceCompat
 import com.bcm.messenger.utility.logger.ALog

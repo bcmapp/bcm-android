@@ -581,7 +581,7 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
                     replyAddFriend(recipient.address.serialize(), true, decryptProposer, request.signature)
                 } else {
                     ALog.i(TAG, "Not an auto reply message, save to database")
-                    val friendDao = UserDatabase.getDatabase(mAccountContext).friendRequestDao()
+                    val friendDao = Repository.getFriendRequestRepo(mAccountContext)
                     val dbRequest = BcmFriendRequest(decryptProposer, request.timestamp, pair.second, request.signature)
                     when (recipient.relationship) {
                         RecipientRepo.Relationship.BREAK,
@@ -593,20 +593,21 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
                                 AmeModuleCenter.contact(mAccountContext)?.handleFriendPropertyChanged(recipient.address.serialize())
                             }
 
-                            UserDatabase.getDatabase(mAccountContext).runInTransaction {
-                                val existsRequests = friendDao.queryExistsRequests(decryptProposer)
-                                if (existsRequests.isNotEmpty()) {
+                            Repository.getInstance(mAccountContext)?.runInTransaction {
+                                val existsRequests = friendDao?.queryExistsRequests(decryptProposer)
+                                if (!existsRequests.isNullOrEmpty()) {
                                     dbRequest.id = existsRequests[0].id
                                     if (existsRequests.size > 1) {
                                         friendDao.delete(existsRequests.subList(1, existsRequests.size))
                                     }
                                 }
-                                friendDao.insert(dbRequest)
+                                friendDao?.insert(dbRequest)
                             }
 
-                            val unreadCount = friendDao.queryUnreadCount()
-                            RxBus.post(FriendRequestEvent(unreadCount))
-
+                            val unreadCount = friendDao?.queryUnreadCount()
+                            if (unreadCount != null) {
+                                RxBus.post(FriendRequestEvent(unreadCount))
+                            }
                             AmePushProcess.processPush(mAccountContext, AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.FRIEND_NOTIFY, null, null,
                                     AmePushProcess.FriendNotifyData(recipient.address.serialize()), null, null)))
                         }

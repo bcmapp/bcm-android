@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.bcm.messenger.chats.privatechat.core.BcmChatCore;
 import com.bcm.messenger.common.AccountContext;
+import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.AmeGroupMessage;
 import com.bcm.messenger.common.crypto.MasterSecret;
