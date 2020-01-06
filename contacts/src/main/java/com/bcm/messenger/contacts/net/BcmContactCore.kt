@@ -1,18 +1,17 @@
 package com.bcm.messenger.contacts.net
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.IMHttp
 import com.bcm.messenger.common.bcmhttp.RxIMHttp
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.records.RecipientSettings
 import com.bcm.messenger.common.database.repositories.RecipientRepo
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.utility.AmeTimeUtil
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.bcmhttp.callback.Callback
@@ -34,7 +33,7 @@ import org.whispersystems.signalservice.internal.util.Base64
 /**
  * Created by bcm.social.01 on 2019/3/11.
  */
-class BcmContactCore {
+class BcmContactCore(private val mAccountContext: AccountContext) {
 
     companion object {
         private const val TAG = "BcmContactCore"
@@ -162,7 +161,7 @@ class BcmContactCore {
         if (!AppUtil.isReleaseBuild()) {
             ALog.i(TAG, "genContactSyncRequest: " + GsonUtils.toJson(reqJson))
         }
-        return RxIMHttp.post<ContactSyncResponse>(BcmHttpApiHelper.getApi(SYNC_FRIEND_API), reqJson, ContactSyncResponse::class.java)
+        return RxIMHttp.get(mAccountContext).post<ContactSyncResponse>(BcmHttpApiHelper.getApi(SYNC_FRIEND_API), reqJson, ContactSyncResponse::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .map {
@@ -208,7 +207,7 @@ class BcmContactCore {
         if (!AppUtil.isReleaseBuild()) {
             ALog.i(TAG, "uploadFriendList: $reqJson")
         }
-        return RxIMHttp.put<AmeEmpty>(BcmHttpApiHelper.getApi(SYNC_FRIEND_API), null, reqJson, object : TypeToken<AmeEmpty>() {}.type)
+        return RxIMHttp.get(mAccountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(SYNC_FRIEND_API), null, reqJson, object : TypeToken<AmeEmpty>() {}.type)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .map {
@@ -239,7 +238,7 @@ class BcmContactCore {
         val keyPair = BCMPrivateKeyUtils.generateKeyPair()
         val otherPrivateKeyArray = keyPair.privateKey.serialize()
 
-        val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(AppContextHolder.APP_CONTEXT)
+        val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(mAccountContext)
         val myPublicKeyArray = (myKeyPair.publicKey.publicKey as DjbECPublicKey).publicKey
 
         val dhPassword = Curve25519.getInstance(Curve25519.BEST).calculateAgreement(myPublicKeyArray, otherPrivateKeyArray)
@@ -269,7 +268,7 @@ class BcmContactCore {
         }
 
         val part = GsonUtils.fromJson(partString, FriendListPart::class.java)
-        val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(AppContextHolder.APP_CONTEXT)
+        val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(mAccountContext)
         val dhPassword = Curve25519.getInstance(Curve25519.BEST)
                 .calculateAgreement(Base64.decode(part.contacts_key), myKeyPair.privateKey.serialize())
 
@@ -297,8 +296,8 @@ class BcmContactCore {
 
     fun sendAddFriendReq(targetUid: String, payload: String, callback: Callback<Response>) {
         val timestamp = AmeTimeUtil.serverTimeMillis()
-        val signatureString = "${AMELogin.uid}$targetUid$timestamp$payload$REQUEST_ADD_FRIEND"
-        val signature = BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, signatureString.toByteArray())
+        val signatureString = "${mAccountContext.uid}$targetUid$timestamp$payload$REQUEST_ADD_FRIEND"
+        val signature = BCMEncryptUtils.signWithMe(mAccountContext, signatureString.toByteArray())
         val jsonObj = JSONObject()
         jsonObj.put("target", targetUid)
         jsonObj.put("timestamp", timestamp)
@@ -306,7 +305,7 @@ class BcmContactCore {
         jsonObj.put("signature", Base64.encodeBytes(signature))
         val content = jsonObj.toString()
 
-        IMHttp.putString()
+        IMHttp.get(mAccountContext).putString()
                 .url(BcmHttpApiHelper.getApi(REQUEST_ADD_FRIEND))
                 .content(content)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
@@ -316,8 +315,8 @@ class BcmContactCore {
 
     fun sendAddFriendReply(approved: Boolean, proposer: String, payload: String, addFriendSignature: String, callback: Callback<Response>) {
         val timestamp = AmeTimeUtil.serverTimeMillis()
-        val signatureString = "${AMELogin.uid}$approved$proposer$timestamp$payload$addFriendSignature$REQUEST_REPLAY_ADD_FRIEND"
-        val signature = BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, signatureString.toByteArray())
+        val signatureString = "${mAccountContext.uid}$approved$proposer$timestamp$payload$addFriendSignature$REQUEST_REPLAY_ADD_FRIEND"
+        val signature = BCMEncryptUtils.signWithMe(mAccountContext, signatureString.toByteArray())
         val jsonObj = JSONObject()
         jsonObj.put("approved", approved)
         jsonObj.put("proposer", proposer)
@@ -327,7 +326,7 @@ class BcmContactCore {
         jsonObj.put("requestSignature", addFriendSignature)
         val content = jsonObj.toString()
 
-        IMHttp.putString()
+        IMHttp.get(mAccountContext).putString()
                 .url(BcmHttpApiHelper.getApi(REQUEST_REPLAY_ADD_FRIEND))
                 .content(content)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
@@ -337,15 +336,15 @@ class BcmContactCore {
 
     fun sendDeleteFriendReq(targetUid: String, callback: Callback<Response>) {
         val timestamp = AmeTimeUtil.serverTimeMillis()
-        val signatureString = "${AMELogin.uid}$targetUid$timestamp$REQUEST_DELETE_FRIEND"
-        val signature = BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, signatureString.toByteArray())
+        val signatureString = "${mAccountContext.uid}$targetUid$timestamp$REQUEST_DELETE_FRIEND"
+        val signature = BCMEncryptUtils.signWithMe(mAccountContext, signatureString.toByteArray())
         val jsonObj = JSONObject()
         jsonObj.put("target", targetUid)
         jsonObj.put("timestamp", timestamp)
         jsonObj.put("signature", Base64.encodeBytes(signature))
         val content = jsonObj.toString()
 
-        IMHttp.deleteString()
+        IMHttp.get(mAccountContext).deleteString()
                 .url(BcmHttpApiHelper.getApi(REQUEST_DELETE_FRIEND))
                 .content(content)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
@@ -361,7 +360,7 @@ class BcmContactCore {
         if (!isReleaseBuild()) {
             ALog.d(TAG, "uploadContactFilters request body: $bodyObjString")
         }
-        IMHttp.putString()
+        IMHttp.get(mAccountContext).putString()
                 .url(BcmHttpApiHelper.getApi(CONTACT_FILTER_API))
                 .content(bodyObjString)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
@@ -416,7 +415,7 @@ class BcmContactCore {
         bodyObj.put("patches", patchArray)
         val bodyObjString = bodyObj.toString()
         ALog.d(TAG, "patchContactFilters request body: $bodyObjString")
-        IMHttp.patchString()
+        IMHttp.get(mAccountContext).patchString()
                 .url(BcmHttpApiHelper.getApi(CONTACT_FILTER_API))
                 .content(bodyObjString)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
@@ -460,7 +459,7 @@ class BcmContactCore {
     }
 
     fun deleteContactFilters(callback: (response: Boolean) -> Unit) {
-        IMHttp.deleteString()
+        IMHttp.get(mAccountContext).deleteString()
                 .url(BcmHttpApiHelper.getApi(CONTACT_FILTER_API))
                 .build()
                 .enqueue(object : OriginCallback() {

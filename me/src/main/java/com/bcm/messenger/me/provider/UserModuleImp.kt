@@ -427,7 +427,7 @@ class UserModuleImp : IUserModule
         }
 
         AmeModuleCenter.contact(accountContext)?.fetchProfile(recipient) {}
-        AmeNoteLogic.getInstance().updateUser(uid)
+        AmeNoteLogic.getInstance().updateUser(account.serialize())
 
     }
 
@@ -582,7 +582,7 @@ class UserModuleImp : IUserModule
             AmePopup.center.dismiss()
             BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_DESTROY)
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.fromSerialized(uid))
+                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.from(accountContext, uid))
                     .putString(ARouterConstants.PARAM.PARAM_CLIENT_INFO, info)
                     .putString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID, uid)
                     .navigation(activity)
@@ -663,6 +663,6 @@ class UserModuleImp : IUserModule
             return
         }
 
-        SwitchAccountAdapter().switchAccount(activity, accountContext.uid, Recipient.from(accountContext, Address.fromSerialized(accountContext.uid), true))
+        SwitchAccountAdapter().switchAccount(activity, accountContext.uid, Recipient.login(accountContext))
     }
 }

@@ -1,9 +1,9 @@
 package com.bcm.messenger.contacts.logic
 
 import android.content.Context
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.contacts.net.BcmContactCore
 import com.bcm.messenger.utility.Base64
@@ -16,7 +16,7 @@ import org.whispersystems.libsignal.ecc.ECKeyPair
 /**
  * Created by wjh on 2019/5/29
  */
-class BcmContactFilter(private val coreApi: BcmContactCore) {
+class BcmContactFilter(private val mAccountContext: AccountContext, private val coreApi: BcmContactCore) {
 
     companion object {
         private const val TAG = "BcmContactFilter"
@@ -64,7 +64,7 @@ class BcmContactFilter(private val coreApi: BcmContactCore) {
                 virtualFriendList = createNewVirtualFriend(context)
             }
             mBloomFilter.updateDataArray(newBloomSize)
-            mBloomFilter.insert(AMELogin.uid.toByteArray())
+            mBloomFilter.insert(mAccountContext.uid.toByteArray())
             for (uid in virtualFriendList) {
                 mBloomFilter.insert(uid.toByteArray())
             }

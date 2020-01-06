@@ -89,7 +89,7 @@ class ChatModuleImp : IChatModule {
         }
     }
 
-    override fun startRtcCallActivity(context: Context, accountContext: AccountContext, callType: Int?) {
+    override fun startRtcCallActivity(context: Context, callType: Int?) {
         try {
             ALog.d(TAG, "startRtcCallActivity")
             if (ChatCallFloatWindow.hasWebRtcCalling()) {
@@ -107,8 +107,8 @@ class ChatModuleImp : IChatModule {
     }
 
     @SuppressLint("CheckResult")
-    override fun deleteMessage(context: Context, accountContext: AccountContext, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)?) {
-        if (messageSet.isEmpty()) {
+    override fun deleteMessage(context: Context, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)?) {
+        if(messageSet.isEmpty()) {
             callback?.invoke(emptySet())
             return
         }
@@ -203,7 +203,7 @@ class ChatModuleImp : IChatModule {
     }
 
     @SuppressLint("CheckResult")
-    override fun recallMessage(context: Context, accountContext: AccountContext, isGroup: Boolean, messageRecord: Any, callback: ((success: Boolean) -> Unit)?) {
+    override fun recallMessage(context: Context, isGroup: Boolean, messageRecord: Any, callback: ((success: Boolean) -> Unit)?) {
         val title: String
         val button: String
         var privateMessage: MessageRecord? = null
@@ -273,7 +273,7 @@ class ChatModuleImp : IChatModule {
 
     }
 
-    override fun forwardMessage(context: Context, accountContext: AccountContext, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)?) {
+    override fun forwardMessage(context: Context, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)?) {
         if (messageSet.isNotEmpty()) {
             if (messageSet.size > 15) {
                 AmeAppLifecycle.failure(context.getString(R.string.chats_max_forward_error), true)

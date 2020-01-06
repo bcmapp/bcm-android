@@ -1,5 +1,6 @@
 package com.bcm.messenger.contacts.logic
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.database.records.RecipientSettings
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.database.repositories.Repository
@@ -24,7 +25,7 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * bcm.social.01 2019/3/12.
  */
-class BcmContactCache() {
+class BcmContactCache(private val mAccountContext: AccountContext) {
 
     companion object {
         private const val TAG = "BcmContactCache"
@@ -72,9 +73,9 @@ class BcmContactCache() {
                     }
                 }catch (ex: Exception) {}
 
-                val oldVersionHandlingList = friendRoom.getHandingList()
-                friendRoom.clearHandlingList()
-                val localList = Repository.getRecipientRepo()?.getAllContacts() ?: emptyList()
+                val oldVersionHandlingList = friendRoom.getHandingList(mAccountContext)
+                friendRoom.clearHandlingList(mAccountContext)
+                val localList = Repository.getRecipientRepo(mAccountContext)?.getAllContacts() ?: emptyList()
                 for (setting in localList) {
                     mMyContactMap[setting.uid] = BcmContactCore.ContactItem.from(setting)
                 }
@@ -284,7 +285,7 @@ class BcmContactCache() {
         }
 
         // 更新本地数据库
-        Repository.getRecipientRepo()?.updateBcmContacts(updateList)
+        Repository.getRecipientRepo(mAccountContext)?.updateBcmContacts(updateList)
 
     }
 

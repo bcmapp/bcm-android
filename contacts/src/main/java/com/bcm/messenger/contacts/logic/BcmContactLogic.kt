@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.records.RecipientSettings
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.database.repositories.Repository
@@ -65,13 +64,13 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
     private val mInitFlag: AtomicReference<CountDownLatch> = AtomicReference(CountDownLatch(1))
     private val mQuitSyncFlag: AtomicReference<CountDownLatch> = AtomicReference(CountDownLatch(1))
 
-    private val coreApi = BcmContactCore()
+    private val coreApi = BcmContactCore(mAccountContext)
 
-    private val contactFilter = BcmContactFilter(coreApi)
+    private val contactFilter = BcmContactFilter(mAccountContext, coreApi)
 
     private val contactFinder = BcmContactFinder()
 
-    private val cache = BcmContactCache()
+    private val cache = BcmContactCache(mAccountContext)
 
     private var mObserver: Observer<List<RecipientSettings>> = Observer {
         onContactListChanged(it)
