@@ -30,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.annimon.stream.Stream;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.R;
 import com.bcm.messenger.common.attachments.Attachment;
 import com.bcm.messenger.common.attachments.DatabaseAttachment;
@@ -165,17 +166,20 @@ public class MmsDatabase extends MessagingDatabase {
 
     private final JobManager jobManager;
 
-    
     public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
     public MmsDatabase(Context context, SQLiteOpenHelper databaseHelper) {
         super(context, databaseHelper);
-        this.jobManager = AmeModuleCenter.INSTANCE.accountJobMgr();
+        this.jobManager = AmeModuleCenter.INSTANCE.accountJobMgr(AMELogin.INSTANCE.getMajorContext());
     }
 
     @Override
     protected String getTableName() {
         return TABLE_NAME;
+    }
+
+    public AccountContext getAccountContext() {
+        return AMELogin.INSTANCE.getMajorContext();
     }
 
     public int getMessageCountForThread(long threadId) {
@@ -221,7 +225,7 @@ public class MmsDatabase extends MessagingDatabase {
 
             while (cursor.moveToNext()) {
                 if (Types.isOutgoingMessageType(cursor.getLong(cursor.getColumnIndexOrThrow(MESSAGE_BOX)))) {
-                    Address theirAddress = Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
+                    Address theirAddress = Address.from(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
                     Address ourAddress = messageId.getAddress();
                     String columnName = deliveryReceipt ? DELIVERY_RECEIPT_COUNT : READ_RECEIPT_COUNT;
 
@@ -485,7 +489,7 @@ public class MmsDatabase extends MessagingDatabase {
 
             while (cursor.moveToNext()) {
                 if (Types.isOutgoingMessageType(cursor.getLong(cursor.getColumnIndexOrThrow(MESSAGE_BOX)))) {
-                    Address theirAddress = Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
+                    Address theirAddress = Address.from(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
                     Address ourAddress = messageId.getAddress();
 
                     if (ourAddress.equals(theirAddress) || theirAddress.isGroup()) {
@@ -526,7 +530,7 @@ public class MmsDatabase extends MessagingDatabase {
 
             while (cursor != null && cursor.moveToNext()) {
                 if (Types.isSecureType(cursor.getLong(3))) {
-                    SyncMessageId syncMessageId = new SyncMessageId(Address.fromSerialized(cursor.getString(1)), cursor.getLong(2));
+                    SyncMessageId syncMessageId = new SyncMessageId(Address.from(cursor.getString(1)), cursor.getLong(2));
                     ExpirationInfo expirationInfo = new ExpirationInfo(cursor.getLong(0), cursor.getLong(4), cursor.getLong(5), true);
 
                     result.add(new MarkedMessageInfo(syncMessageId, expirationInfo));
@@ -556,7 +560,7 @@ public class MmsDatabase extends MessagingDatabase {
             cursor = database.query(TABLE_NAME, new String[]{ID, THREAD_ID, MESSAGE_BOX, EXPIRES_IN, ADDRESS}, DATE_SENT + " = ?", new String[]{String.valueOf(messageId.getTimetamp())}, null, null, null, null);
 
             while (cursor.moveToNext()) {
-                Address theirAddress = Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
+                Address theirAddress = Address.from(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
                 Address ourAddress = messageId.getAddress();
 
                 if (ourAddress.equals(theirAddress) || theirAddress.isGroup()) {
@@ -657,7 +661,7 @@ public class MmsDatabase extends MessagingDatabase {
                 long threadId = cursor.getLong(cursor.getColumnIndexOrThrow(THREAD_ID));
                 int distributionType = DatabaseFactory.getThreadDatabase(context).getDistributionType(threadId);
 
-                Recipient recipient = Recipient.from(context, Address.fromSerialized(address), false);
+                Recipient recipient = Recipient.from(Address.from(address), false);
 
                 if (body != null && (Types.isGroupQuit(outboxType) || Types.isGroupUpdate(outboxType))) {
                     return new OutgoingGroupMediaMessage(recipient, body, attachments, timestamp, 0);
@@ -779,7 +783,7 @@ public class MmsDatabase extends MessagingDatabase {
 
         notifyConversationListeners(threadId);
         if (jobManager != null) {
-            jobManager.add(new TrimThreadJob(context, threadId));
+            jobManager.add(new TrimThreadJob(context, getAccountContext(), threadId));
         }
         return Optional.of(new InsertResult(messageId, threadId));
     }
@@ -816,7 +820,7 @@ public class MmsDatabase extends MessagingDatabase {
         }
 
         if (jobManager != null) {
-            jobManager.add(new TrimThreadJob(context, threadId));
+            jobManager.add(new TrimThreadJob(context, getAccountContext(), threadId));
         }
     }
 
@@ -893,7 +897,7 @@ public class MmsDatabase extends MessagingDatabase {
         DatabaseFactory.getThreadDatabase(context).setHasSent(threadId, true);
 
         if (jobManager != null) {
-            jobManager.add(new TrimThreadJob(context, threadId));
+            jobManager.add(new TrimThreadJob(context, getAccountContext(), threadId));
         }
 
         return messageId;
@@ -1235,7 +1239,7 @@ public class MmsDatabase extends MessagingDatabase {
         private final int subscriptionId;
 
         MmsNotificationInfo(@Nullable String from, String contentLocation, String transactionId, int subscriptionId) {
-            this.from = from == null ? null : Address.fromSerialized(from);
+            this.from = from == null ? null : Address.from(from);
             this.contentLocation = contentLocation;
             this.transactionId = transactionId;
             this.subscriptionId = subscriptionId;
@@ -1337,7 +1341,7 @@ public class MmsDatabase extends MessagingDatabase {
             long expiresIn = cursor.getLong(cursor.getColumnIndexOrThrow(MmsDatabase.EXPIRES_IN));
             long expireStarted = cursor.getLong(cursor.getColumnIndexOrThrow(MmsDatabase.EXPIRE_STARTED));
 
-            if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
+            if (!TextSecurePreferences.isReadReceiptsEnabled(AMELogin.INSTANCE.getMajorContext())) {
                 readReceiptCount = 0;
             }
 
@@ -1373,7 +1377,7 @@ public class MmsDatabase extends MessagingDatabase {
             long expiresIn = cursor.getLong(cursor.getColumnIndexOrThrow(MmsDatabase.EXPIRES_IN));
             long expireStarted = cursor.getLong(cursor.getColumnIndexOrThrow(MmsDatabase.EXPIRE_STARTED));
 
-            if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
+            if (!TextSecurePreferences.isReadReceiptsEnabled(AMELogin.INSTANCE.getMajorContext())) {
                 readReceiptCount = 0;
             }
 

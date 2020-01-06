@@ -28,7 +28,7 @@ class PushHideMessageSendJob(
     : PushSendJob(
         context,
         accountContext,
-        constructParameters(context, destination, "control")) {
+        constructParameters(context, accountContext, destination, "control")) {
     private val TAG = "PushHideMessageSendJob"
 
     override fun onShouldRetryThrowable(exception: Exception?): Boolean {
@@ -62,12 +62,12 @@ class PushHideMessageSendJob(
         try {
             val individualRecipient = Recipient.from(accountContext, message.destinationAddress, false)
             val address = getPushAddress(individualRecipient.address)
-            val profileKey = getProfileKey(individualRecipient)
+//            val profileKey = getProfileKey(individualRecipient)
             val textSecureMessage = SignalServiceDataMessage.newBuilder()
                     .withTimestamp(message.sendTime)
                     .withBody(message.content)
                     .withExpiration(0)
-                    .withProfileKey(profileKey.orNull())
+//                    .withProfileKey(profileKey.orNull())
                     .asEndSessionMessage(false)
                     .asLocation(true)
                     .build()

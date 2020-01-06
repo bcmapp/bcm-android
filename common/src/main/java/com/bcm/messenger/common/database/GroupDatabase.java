@@ -8,17 +8,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.text.TextUtils;
+
 import com.annimon.stream.Stream;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.recipients.Recipient;
-import com.bcm.messenger.utility.BitmapUtils;
 import com.bcm.messenger.common.utils.GroupUtil;
+import com.bcm.messenger.utility.BitmapUtils;
 
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentPointer;
+
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -145,7 +148,7 @@ public class GroupDatabase extends Database {
       if (!includeSelf && member.isCurrentLogin())
         continue;
 
-      recipients.add(Recipient.from(context, member, false));
+      recipients.add(Recipient.from(member, false));
     }
 
     return recipients;

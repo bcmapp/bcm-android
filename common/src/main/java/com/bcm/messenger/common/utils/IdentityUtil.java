@@ -94,10 +94,10 @@ public class IdentityUtil {
         }
     }
 
-    public static void saveIdentity(Context context, String number, IdentityKey identityKey, boolean nonBlockingApproval) {
+    public static void saveIdentity(Context context, AccountContext accountContext, String number, IdentityKey identityKey, boolean nonBlockingApproval) {
         synchronized (SESSION_LOCK) {
-            TextSecureIdentityKeyStore identityKeyStore = new TextSecureIdentityKeyStore(context);
-            SessionStore sessionStore = new TextSecureSessionStore(context);
+            TextSecureIdentityKeyStore identityKeyStore = new TextSecureIdentityKeyStore(context, accountContext);
+            SessionStore sessionStore = new TextSecureSessionStore(context, accountContext);
             SignalProtocolAddress address = new SignalProtocolAddress(number, 1);
 
             if (identityKeyStore.saveIdentity(address, identityKey, nonBlockingApproval)) {
@@ -111,10 +111,10 @@ public class IdentityUtil {
         }
     }
 
-    public static void saveIdentity(Context context, String number, IdentityKey identityKey) {
+    public static void saveIdentity(Context context, AccountContext accountContext, String number, IdentityKey identityKey) {
         synchronized (SESSION_LOCK) {
-            IdentityKeyStore identityKeyStore = new TextSecureIdentityKeyStore(context);
-            SessionStore sessionStore = new TextSecureSessionStore(context);
+            IdentityKeyStore identityKeyStore = new TextSecureIdentityKeyStore(context, accountContext);
+            SessionStore sessionStore = new TextSecureSessionStore(context, accountContext);
             SignalProtocolAddress address = new SignalProtocolAddress(number, 1);
 
             if (identityKeyStore.saveIdentity(address, identityKey)) {
@@ -151,7 +151,7 @@ public class IdentityUtil {
                     (identityRecord == null ||
                             identityRecord.getIdentityKey().equals(verifiedMessage.getIdentityKey()) ||
                             identityRecord.getVerifyStatus() != IdentityRepo.VerifiedStatus.VERIFIED)) {
-                saveIdentity(context, verifiedMessage.getDestination(), verifiedMessage.getIdentityKey(), true);
+                saveIdentity(context, accountContext, verifiedMessage.getDestination(), verifiedMessage.getIdentityKey(), true);
                 identityRepo.setVerified(recipient.getAddress().serialize(), verifiedMessage.getIdentityKey(), IdentityRepo.VerifiedStatus.DEFAULT);
                 markIdentityVerified(context, masterSecret, recipient, true, true);
             }

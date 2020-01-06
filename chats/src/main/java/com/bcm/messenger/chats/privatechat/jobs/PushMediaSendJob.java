@@ -28,7 +28,6 @@ import com.bcm.messenger.utility.logger.ALog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.whispersystems.jobqueue.JobManager;
-import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException;
 import org.whispersystems.signalservice.api.messages.SignalServiceAttachment;
 import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentStream;
@@ -49,7 +48,7 @@ public class PushMediaSendJob extends PushSendJob {
     private final long messageId;
 
     public PushMediaSendJob(Context context, AccountContext accountContext, long messageId, Address destination) {
-        super(context, accountContext, constructParameters(context, destination, "media"));
+        super(context, accountContext, constructParameters(context, accountContext, destination, "media"));
         this.messageId = messageId;
     }
 
@@ -125,14 +124,14 @@ public class PushMediaSendJob extends PushSendJob {
             MediaConstraints mediaConstraints = MediaConstraints.getPushMediaConstraints();
             List<AttachmentRecord> scaledAttachments = scaleAttachments(masterSecret, mediaConstraints, message.getAttachments());
             List<SignalServiceAttachment> attachmentStreams = getAttachmentsFor(masterSecret, scaledAttachments);
-            Optional<byte[]> profileKey = getProfileKey(message.getRecipient(accountContext));
+//            Optional<byte[]> profileKey = getProfileKey(message.getRecipient(accountContext));
             int expiresIn = (int) (message.getExpiresTime() / 1000);
             SignalServiceDataMessage mediaMessage = SignalServiceDataMessage.newBuilder()
                     .withBody(message.getBody())
                     .withAttachments(attachmentStreams)
                     .withTimestamp(message.getDateSent())
                     .withExpiration(expiresIn)
-                    .withProfileKey(profileKey.orNull())
+//                    .withProfileKey(profileKey.orNull())
                     .asExpirationUpdate(message.isExpirationTimerUpdate())
                     .build();
 

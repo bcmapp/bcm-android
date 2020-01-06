@@ -221,7 +221,7 @@ class RecipientRepo(
                 return
             }
             ALog.d(TAG, "IdentityKey save")
-            IdentityUtil.saveIdentity(AppContextHolder.APP_CONTEXT, address.serialize(), identityKey, true)
+            IdentityUtil.saveIdentity(AppContextHolder.APP_CONTEXT, accountContext, address.serialize(), identityKey, true)
         } catch (e: Exception) {
             ALog.w(TAG, e.message)
         }

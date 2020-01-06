@@ -24,7 +24,6 @@ import com.bcm.messenger.utility.logger.ALog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.whispersystems.jobqueue.JobManager;
-import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException;
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
@@ -47,7 +46,7 @@ public class PushTextSendJob extends PushSendJob {
     }
 
     public PushTextSendJob(Context context, AccountContext accountContext, long messageId, Address destination, boolean sendSilently) {
-        super(context, accountContext, constructParameters(context, destination, "text"));
+        super(context, accountContext, constructParameters(context, accountContext, destination, "text"));
         this.messageId = messageId;
         this.sendSilently = sendSilently;
     }
@@ -116,13 +115,13 @@ public class PushTextSendJob extends PushSendJob {
             throws UntrustedIdentityException, InsecureFallbackApprovalException, RetryLaterException {
         try {
             SignalServiceAddress address = getPushAddress(message.getRecipient(accountContext).getAddress());
-            Optional<byte[]> profileKey = getProfileKey(message.getRecipient(accountContext));
+//            Optional<byte[]> profileKey = getProfileKey(message.getRecipient(accountContext));
             int expiresIn = (int) (message.getExpiresTime() / 1000);
             SignalServiceDataMessage textSecureMessage = SignalServiceDataMessage.newBuilder()
                     .withTimestamp(message.getDateSent())
                     .withBody(message.getBody())
                     .withExpiration(expiresIn)
-                    .withProfileKey(profileKey.orNull())
+//                    .withProfileKey(profileKey.orNull())
                     .asEndSessionMessage(message.isEndSession())
                     .asLocation(message.isLocation())
                     .build();

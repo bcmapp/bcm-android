@@ -15,6 +15,7 @@ import androidx.core.widget.TextViewCompat;
 
 import com.bcm.messenger.common.R;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.ui.emoji.EmojiProvider.EmojiDrawable;
 import com.bcm.messenger.common.ui.emoji.parsing.EmojiParser;
 import com.bcm.messenger.utility.logger.ALog;
@@ -132,7 +133,7 @@ public class EmojiTextView extends AppCompatTextView {
 
 
     private boolean useSystemEmoji() {
-        return TextSecurePreferences.isSystemEmojiPreferred(getContext());
+        return TextSecurePreferences.isSystemEmojiPreferred(AMELogin.INSTANCE.getMajorContext());
     }
 
     private void ellipsizeEmojiTextForMaxLines() {

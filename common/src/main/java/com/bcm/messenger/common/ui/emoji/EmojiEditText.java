@@ -2,15 +2,17 @@ package com.bcm.messenger.common.ui.emoji;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.text.Editable;
 import android.text.InputFilter;
 import android.util.AttributeSet;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
-import com.bcm.messenger.common.preferences.TextSecurePreferences;
+
 import com.bcm.messenger.common.R;
+import com.bcm.messenger.common.preferences.TextSecurePreferences;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.ui.emoji.EmojiProvider.EmojiDrawable;
 
 
@@ -27,7 +29,7 @@ public class EmojiEditText extends AppCompatEditText {
 
     public EmojiEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if (!TextSecurePreferences.isSystemEmojiPreferred(getContext())) {
+        if (!TextSecurePreferences.isSystemEmojiPreferred(AMELogin.INSTANCE.getMajorContext())) {
             setFilters(appendEmojiFilter(this.getFilters()));
         }
     }

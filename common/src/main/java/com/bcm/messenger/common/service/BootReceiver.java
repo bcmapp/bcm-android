@@ -18,7 +18,7 @@ public class BootReceiver extends BroadcastReceiver {
         try {
             ALog.i("BootReceiver", "MessageRetrievalService");
             if (AMELogin.INSTANCE.isLogin()){
-                AmeModuleCenter.INSTANCE.serverDaemon().checkConnection(false);
+                AmeModuleCenter.INSTANCE.serverDaemon(AMELogin.INSTANCE.getMajorContext()).checkConnection(false);
             }
         } catch (Exception ex) {
             ALog.e("BootReceiver", "start messageRetrievalService fail", ex);

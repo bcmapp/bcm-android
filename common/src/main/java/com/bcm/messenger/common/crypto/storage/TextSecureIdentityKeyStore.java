@@ -3,13 +3,13 @@ package com.bcm.messenger.common.crypto.storage;
 import android.content.Context;
 import android.util.Log;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.crypto.IdentityKeyUtil;
 import com.bcm.messenger.common.crypto.SessionUtil;
 import com.bcm.messenger.common.database.records.IdentityRecord;
 import com.bcm.messenger.common.database.repositories.IdentityRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
-import com.bcm.messenger.common.provider.AMELogin;
 
 import org.whispersystems.libsignal.IdentityKey;
 import org.whispersystems.libsignal.IdentityKeyPair;
@@ -24,25 +24,27 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
     private static final Object LOCK = new Object();
 
     private final Context context;
+    private final AccountContext accountContext;
 
-    public TextSecureIdentityKeyStore(Context context) {
+    public TextSecureIdentityKeyStore(Context context, AccountContext accountContext) {
         this.context = context;
+        this.accountContext = accountContext;
     }
 
     @Override
     public IdentityKeyPair getIdentityKeyPair() {
-        return IdentityKeyUtil.getIdentityKeyPair(context);
+        return IdentityKeyUtil.getIdentityKeyPair(accountContext);
     }
 
     @Override
     public int getLocalRegistrationId() {
-        return AMELogin.INSTANCE.getRegistrationId();
+        return accountContext.getRegistrationId();
     }
 
     public boolean saveIdentity(SignalProtocolAddress address, IdentityKey identityKey, boolean nonBlockingApproval) {
         synchronized (LOCK) {
-            IdentityRepo identityRepo = Repository.getIdentityRepo();
-            Address signalAddress = Address.from(context, address.getName());
+            IdentityRepo identityRepo = Repository.getIdentityRepo(accountContext);
+            Address signalAddress = Address.from(accountContext, address.getName());
             IdentityRecord identityRecord = identityRepo.getIdentityRecord(signalAddress.serialize());
 
             if (identityRecord == null) {
@@ -64,7 +66,7 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
 
                 identityRepo.saveIdentity(signalAddress.serialize(), identityKey, verifiedStatus, false, System.currentTimeMillis(), nonBlockingApproval);
 
-                SessionUtil.archiveSiblingSessions(context, address);
+                SessionUtil.archiveSiblingSessions(context, accountContext, address);
                 return true;
             }
 
@@ -87,12 +89,12 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
     @Override
     public boolean isTrustedIdentity(SignalProtocolAddress address, IdentityKey identityKey, Direction direction) {
         synchronized (LOCK) {
-            IdentityRepo identityRepo = Repository.getIdentityRepo();
-            String ourNumber = AMELogin.INSTANCE.getUid();
-            Address theirAddress = Address.from(context, address.getName());
+            IdentityRepo identityRepo = Repository.getIdentityRepo(accountContext);
+            String ourNumber = accountContext.getUid();
+            Address theirAddress = Address.from(accountContext, address.getName());
 
-            if (ourNumber.equals(address.getName()) || Address.fromSerialized(ourNumber).equals(theirAddress)) {
-                return identityKey.equals(IdentityKeyUtil.getIdentityKey(context));
+            if (ourNumber.equals(address.getName()) || Address.from(accountContext, ourNumber).equals(theirAddress)) {
+                return identityKey.equals(IdentityKeyUtil.getIdentityKey(accountContext));
             }
 
             switch (direction) {

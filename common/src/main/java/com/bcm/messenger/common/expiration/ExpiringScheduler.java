@@ -7,7 +7,6 @@ import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.database.records.MessageRecord;
 import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
-import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.utils.AppUtil;
 import com.bcm.messenger.utility.logger.ALog;
 
@@ -92,7 +91,7 @@ public class ExpiringScheduler implements IExpiringScheduler {
             long                     waitTime      = nextReference.expiresAtMillis - System.currentTimeMillis();
 
             if (waitTime > 0) {
-              ExpirationListener.setAlarm(context, waitTime);
+              ExpirationListener.setAlarm(context, accountContext, waitTime);
               expiringMessageReferences.wait(waitTime);
             } else {
               expiredMessage = nextReference;

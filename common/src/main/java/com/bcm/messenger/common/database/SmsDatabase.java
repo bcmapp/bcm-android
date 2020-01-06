@@ -30,6 +30,7 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 
 import com.annimon.stream.Stream;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.database.documents.IdentityKeyMismatch;
 import com.bcm.messenger.common.database.documents.IdentityKeyMismatchList;
@@ -134,6 +135,10 @@ public class SmsDatabase extends MessagingDatabase {
     @Override
     protected String getTableName() {
         return TABLE_NAME;
+    }
+
+    public AccountContext getAccountContext() {
+        return AMELogin.INSTANCE.getMajorContext();
     }
 
     private void updateTypeBitmask(long id, long maskOff, long maskOn) {
@@ -548,9 +553,9 @@ public class SmsDatabase extends MessagingDatabase {
     }
 
     private void trimThreadJob(long threadId) {
-        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr(AMELogin.INSTANCE.getMajorContext());
+        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr(getAccountContext());
         if (null != jobManager) {
-            jobManager.add(new TrimThreadJob(context, threadId));
+            jobManager.add(new TrimThreadJob(context, getAccountContext(), threadId));
         }
     }
 

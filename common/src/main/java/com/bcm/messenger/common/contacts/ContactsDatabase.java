@@ -28,16 +28,17 @@ import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.RawContacts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 
-import com.bcm.messenger.common.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import com.bcm.messenger.common.R;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.utility.Util;
+
 import org.whispersystems.libsignal.util.guava.Optional;
 
 import java.util.ArrayList;
@@ -362,7 +363,7 @@ public class ContactsDatabase {
       cursor = context.getContentResolver().query(currentContactsUri, projection, null, null, null);
 
       while (cursor != null && cursor.moveToNext()) {
-        Address currentAddress              = Address.from(context, cursor.getString(1));
+        Address currentAddress              = Address.from(cursor.getString(1));
         long    rawContactId                = cursor.getLong(0);
         long    contactId                   = cursor.getLong(3);
         String  supportsVoice               = cursor.getString(2);
@@ -401,7 +402,7 @@ public class ContactsDatabase {
 
       while (numberCursor != null && numberCursor.moveToNext()) {
         String  systemNumber  = numberCursor.getString(0);
-        Address systemAddress = Address.from(context, systemNumber);
+        Address systemAddress = Address.from(systemNumber);
 
         if (systemAddress.equals(address)) {
           idCursor = context.getContentResolver().query(RawContacts.CONTENT_URI,

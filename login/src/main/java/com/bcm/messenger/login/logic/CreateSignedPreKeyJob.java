@@ -30,7 +30,7 @@ public class CreateSignedPreKeyJob extends MasterSecretJob {
         super(context, accountContext, JobParameters.newBuilder()
                 .withPersistence()
                 .withRequirement(new NetworkRequirement(context))
-                .withRequirement(new MasterSecretRequirement(context))
+                .withRequirement(new MasterSecretRequirement(context, accountContext))
                 .withGroupId(CreateSignedPreKeyJob.class.getSimpleName())
                 .create());
     }
@@ -47,7 +47,7 @@ public class CreateSignedPreKeyJob extends MasterSecretJob {
         }
 
         IdentityKeyPair identityKeyPair = IdentityKeyUtil.getIdentityKeyPair(accountContext);
-        SignedPreKeyRecord signedPreKeyRecord = PreKeyUtil.generateSignedPreKey(context, identityKeyPair, true);
+        SignedPreKeyRecord signedPreKeyRecord = PreKeyUtil.generateSignedPreKey(context, accountContext, identityKeyPair, true);
 
 
         AmeLoginCore.INSTANCE.refreshSignedPreKey(accountContext, signedPreKeyRecord);

@@ -9,7 +9,7 @@ import com.bcm.messenger.utility.proguard.NotGuard;
 
 public class AmeGroupMemberInfo {
     private long gid = 0;
-    private Address uid = Address.fromSerialized("");
+    private Address uid = Address.from("");
     private long role = AmeGroupMemberInfo.VISITOR;
     private long createTime = 0;
     private String nickname;

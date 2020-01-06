@@ -34,7 +34,7 @@ public class RefreshPreKeysJob extends MasterSecretJob {
         super(context, accountContext, JobParameters.newBuilder()
                 .withGroupId(RefreshPreKeysJob.class.getSimpleName())
                 .withRequirement(new NetworkRequirement(context))
-                .withRequirement(new MasterSecretRequirement(context))
+                .withRequirement(new MasterSecretRequirement(context, accountContext))
                 .withRetryCount(5)
                 .create());
     }
@@ -57,9 +57,9 @@ public class RefreshPreKeysJob extends MasterSecretJob {
             return;
         }
 
-        List<PreKeyRecord> preKeyRecords = PreKeyUtil.generatePreKeys(context);
+        List<PreKeyRecord> preKeyRecords = PreKeyUtil.generatePreKeys(context, accountContext);
         IdentityKeyPair identityKey = IdentityKeyUtil.getIdentityKeyPair(accountContext);
-        SignedPreKeyRecord signedPreKeyRecord = PreKeyUtil.generateSignedPreKey(context, identityKey, false);
+        SignedPreKeyRecord signedPreKeyRecord = PreKeyUtil.generateSignedPreKey(context, accountContext,identityKey, false);
 
         Log.w(TAG, "Registering new prekeys...");
 
@@ -67,7 +67,7 @@ public class RefreshPreKeysJob extends MasterSecretJob {
             throw new IOException("upload prekey failed");
         }
 
-        PreKeyUtil.setActiveSignedPreKeyId(context, signedPreKeyRecord.getId());
+        PreKeyUtil.setActiveSignedPreKeyId(context, accountContext, signedPreKeyRecord.getId());
         accountContext.setSignedPreKeyRegistered(true);
 
         JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);

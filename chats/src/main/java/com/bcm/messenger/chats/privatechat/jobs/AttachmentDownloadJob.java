@@ -61,7 +61,7 @@ public class AttachmentDownloadJob extends MasterSecretJob {
     public AttachmentDownloadJob(Context context, AccountContext accountContext, long messageId, long attachmentId, long uniqueId, boolean manual) {
         super(context, accountContext, JobParameters.newBuilder()
                 .withGroupId(AttachmentDownloadJob.class.getCanonicalName())
-                .withRequirement(new MasterSecretRequirement(context))
+                .withRequirement(new MasterSecretRequirement(context, accountContext))
                 .withRequirement(new NetworkRequirement(context))
                 .withPersistence()
                 .create());

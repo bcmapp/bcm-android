@@ -384,7 +384,7 @@ public class PushDecryptJob extends ContextJob {
             threadId = 0L;
 
         if (threadId > 0L) {
-            SessionStore sessionStore = new TextSecureSessionStore(context);
+            SessionStore sessionStore = new TextSecureSessionStore(context, accountContext);
             sessionStore.deleteAllSessions(envelope.getSource());
 
             SecurityEvent.broadcastSecurityUpdateEvent(context);
@@ -401,7 +401,7 @@ public class PushDecryptJob extends ContextJob {
         long threadId = repository.getThreadRepo().getThreadIdFor(recipient);
 
         if (!recipient.isGroupRecipient()) {
-            SessionStore sessionStore = new TextSecureSessionStore(context);
+            SessionStore sessionStore = new TextSecureSessionStore(context, accountContext);
             sessionStore.deleteAllSessions(recipient.getAddress().serialize());
 
             SecurityEvent.broadcastSecurityUpdateEvent(context);
@@ -437,7 +437,7 @@ public class PushDecryptJob extends ContextJob {
     private void handleSynchronizeVerifiedMessage(@NonNull MasterSecretUnion masterSecret,
                                                   @NonNull VerifiedMessage verifiedMessage) {
         ALog.i(TAG, "handleSynchronizeVerifiedMessage");
-        IdentityUtil.processVerifiedMessage(context, masterSecret, verifiedMessage);
+        IdentityUtil.processVerifiedMessage(context, accountContext, masterSecret, verifiedMessage);
     }
 
     private void handleSynchronizeSentMessage(@NonNull MasterSecretUnion masterSecret,

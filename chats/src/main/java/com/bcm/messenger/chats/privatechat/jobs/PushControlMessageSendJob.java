@@ -19,7 +19,6 @@ import com.bcm.messenger.common.sms.OutgoingLocationMessage;
 import com.bcm.messenger.utility.logger.ALog;
 
 import org.greenrobot.eventbus.EventBus;
-import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException;
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
@@ -45,13 +44,13 @@ public class PushControlMessageSendJob extends PushSendJob {
     private boolean isMms;
 
     public PushControlMessageSendJob(Context context, AccountContext accountContext, long messageId, boolean isMms, Address destination) {
-        super(context, accountContext, constructParameters(context, destination));
+        super(context, accountContext, constructParameters(context, accountContext, destination));
         this.messageId = messageId;
         this.isMms = isMms;
     }
 
     public PushControlMessageSendJob(Context context, AccountContext accountContext, String outMessageBody, long messageId, Address destination, ControlType type) {
-        super(context, accountContext, constructParameters(context, destination));
+        super(context, accountContext, constructParameters(context, accountContext, destination));
         this.type = type;
         this.outMessageBody = outMessageBody;
         this.messageId = messageId;
@@ -73,7 +72,7 @@ public class PushControlMessageSendJob extends PushSendJob {
         try {
             SignalServiceAddress address = getPushAddress(Address.from(accountContext, getGroupId()));
             Recipient individualRecipient = Recipient.from(accountContext, getGroupId(), true);
-            Optional<byte[]> profileKey = getProfileKey(individualRecipient);
+//            Optional<byte[]> profileKey = getProfileKey(individualRecipient);
             int expiresIn = (int) (messageRecord.getExpiresTime() / 1000);
 
             String recallMessage = new AmeGroupMessage<>(AmeGroupMessage.CONTROL_MESSAGE, new AmeGroupMessage.ControlContent(AmeGroupMessage.ControlContent.ACTION_RECALL_MESSAGE,
@@ -84,7 +83,7 @@ public class PushControlMessageSendJob extends PushSendJob {
                     .withTimestamp(System.currentTimeMillis())
                     .withBody(recallInsertMessage.getMessageBody())
                     .withExpiration(expiresIn)
-                    .withProfileKey(profileKey.orNull())
+//                    .withProfileKey(profileKey.orNull())
                     .asEndSessionMessage(false)
                     .asLocation(true)
                     .build();

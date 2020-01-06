@@ -5,7 +5,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.bcm.messenger.common.crypto.MasterSecret;
-import com.bcm.messenger.common.crypto.ProfileKeyUtil;
 import com.bcm.messenger.common.jobs.MasterSecretJob;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
 import com.bcm.messenger.common.provider.AMELogin;
@@ -48,7 +47,6 @@ public class MultiDeviceProfileKeyUpdateJob extends MasterSecretJob {
             return;
         }
 
-        Optional<byte[]> profileKey = Optional.of(ProfileKeyUtil.getProfileKey(getContext()));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DeviceContactsOutputStream out = new DeviceContactsOutputStream(baos);
 
@@ -57,7 +55,7 @@ public class MultiDeviceProfileKeyUpdateJob extends MasterSecretJob {
                 Optional.<SignalServiceAttachmentStream>absent(),
                 Optional.<String>absent(),
                 Optional.<VerifiedMessage>absent(),
-                profileKey));
+                Optional.absent()));
 
         out.close();
 

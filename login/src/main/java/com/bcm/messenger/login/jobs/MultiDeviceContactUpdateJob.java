@@ -14,13 +14,11 @@ import com.bcm.messenger.common.contacts.ContactAccessor;
 import com.bcm.messenger.common.contacts.ContactAccessor.ContactData;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.crypto.MasterSecret;
-import com.bcm.messenger.common.crypto.ProfileKeyUtil;
 import com.bcm.messenger.common.database.records.IdentityRecord;
 import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.jobs.MasterSecretJob;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
-import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.recipients.Recipient;
 
 import org.whispersystems.jobqueue.JobParameters;
@@ -127,12 +125,6 @@ public class MultiDeviceContactUpdateJob extends MasterSecretJob {
                 out.write(new DeviceContact(address.toString(), name, getAvatar(contactUri), color, verified, profileKey));
             }
 
-            if (ProfileKeyUtil.hasProfileKey(context)) {
-                out.write(new DeviceContact(AMELogin.INSTANCE.getUid(),
-                        Optional.absent(), Optional.absent(),
-                        Optional.absent(), Optional.absent(),
-                        Optional.of(ProfileKeyUtil.getProfileKey(context))));
-            }
 
             out.close();
         } catch (InvalidNumberException e) {

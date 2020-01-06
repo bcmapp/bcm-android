@@ -4,13 +4,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bcm.messenger.common.core.Address;
-
 import com.bcm.messenger.common.attachments.Attachment;
 import com.bcm.messenger.common.attachments.DatabaseAttachment;
+import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.crypto.MasterSecret;
 
 import java.util.Locale;
@@ -90,7 +90,7 @@ public class MediaDatabase extends Database {
       Address            address            = null;
 
       if (serializedAddress != null) {
-        address = Address.fromSerialized(serializedAddress);
+        address = Address.from(serializedAddress);
       }
 
       long date;

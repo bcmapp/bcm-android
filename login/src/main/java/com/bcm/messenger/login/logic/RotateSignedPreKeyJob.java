@@ -29,7 +29,7 @@ public class RotateSignedPreKeyJob extends MasterSecretJob {
     public RotateSignedPreKeyJob(Context context, AccountContext accountContext) {
         super(context, accountContext, JobParameters.newBuilder()
                 .withRequirement(new NetworkRequirement(context))
-                .withRequirement(new MasterSecretRequirement(context))
+                .withRequirement(new MasterSecretRequirement(context, accountContext))
                 .withRetryCount(5)
                 .create());
     }
@@ -44,13 +44,13 @@ public class RotateSignedPreKeyJob extends MasterSecretJob {
         Log.w(TAG, "Rotating signed prekey...");
         if (AMELogin.INSTANCE.isLogin()) {
             IdentityKeyPair identityKey = IdentityKeyUtil.getIdentityKeyPair(accountContext);
-            SignedPreKeyRecord signedPreKeyRecord = PreKeyUtil.generateSignedPreKey(context, identityKey, false);
+            SignedPreKeyRecord signedPreKeyRecord = PreKeyUtil.generateSignedPreKey(context, accountContext, identityKey, false);
 
             if (!AmeLoginCore.INSTANCE.refreshSignedPreKey(accountContext, signedPreKeyRecord)) {
                 throw new Exception("refreshSignedPreKey failed");
             }
 
-            PreKeyUtil.setActiveSignedPreKeyId(context, signedPreKeyRecord.getId());
+            PreKeyUtil.setActiveSignedPreKeyId(context, accountContext, signedPreKeyRecord.getId());
             accountContext.setSignedPreKeyRegistered(true);
             accountContext.setSignedPreKeyFailureCount(0);
 

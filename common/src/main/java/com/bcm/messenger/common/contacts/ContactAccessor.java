@@ -31,6 +31,7 @@ import android.text.TextUtils;
 
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.database.DatabaseFactory;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.utility.proguard.NotGuard;
 
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class ContactAccessor {
     try (Cursor cursor = context.getContentResolver().query(Phone.CONTENT_URI, new String[] {Phone.NUMBER}, null ,null, null)) {
       while (cursor != null && cursor.moveToNext()) {
         if (!TextUtils.isEmpty(cursor.getString(0))) {
-          results.add(Address.from(context, cursor.getString(0)));
+          results.add(Address.from(AMELogin.INSTANCE.getMajorContext(), cursor.getString(0)));
         }
       }
     }

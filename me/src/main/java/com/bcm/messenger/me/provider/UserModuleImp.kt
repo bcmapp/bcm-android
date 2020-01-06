@@ -12,7 +12,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
-import com.bcm.messenger.common.crypto.ProfileKeyUtil
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.provider.AMELogin
@@ -404,9 +403,6 @@ class UserModuleImp : IUserModule
     override fun doForLogin(account: Address, profileKey: ByteArray?, profileName: String?, profileAvatar: String?) {
         val context = AppContextHolder.APP_CONTEXT
         Recipient.clearCache(context)
-        if (null != profileKey) {
-            ProfileKeyUtil.setProfileKey(context, Base64.encodeBytes(profileKey))
-        }
         val recipient = Recipient.from(account, false)
 
         var changed = false

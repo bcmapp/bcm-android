@@ -32,12 +32,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.annimon.stream.Stream;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.R;
 import com.bcm.messenger.common.attachments.Attachment;
 import com.bcm.messenger.common.attachments.DatabaseAttachment;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.crypto.MasterCipher;
 import com.bcm.messenger.common.crypto.MasterSecret;
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.common.database.MessagingDatabase.MarkedMessageInfo;
 import com.bcm.messenger.common.database.model.DisplayRecord;
 import com.bcm.messenger.common.database.model.MediaMmsMessageRecord;
@@ -53,11 +55,10 @@ import com.bcm.messenger.common.mms.PartAuthority;
 import com.bcm.messenger.common.mms.Slide;
 import com.bcm.messenger.common.mms.SlideDeck;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.utils.GroupUtil;
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.utility.AmeTimeUtil;
-import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.DelimiterUtil;
 import com.bcm.messenger.utility.StringAppearanceUtil;
 import com.bcm.messenger.utility.Util;
@@ -147,6 +148,10 @@ public class ThreadDatabase extends Database {
         initCache();
     }
 
+    public AccountContext getAccountContext() {
+        return AMELogin.INSTANCE.getMajorContext();
+    }
+
     private void initCache() {
         threadCache.clear();
 
@@ -156,7 +161,7 @@ public class ThreadDatabase extends Database {
             while (cursor != null && cursor.moveToNext()) {
                 String address = cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS));
                 long id = cursor.getLong(cursor.getColumnIndexOrThrow(ID));
-                threadCache.put(id, Address.from(AppContextHolder.APP_CONTEXT, address));
+                threadCache.put(id, Address.from(getAccountContext(), address));
             }
         } catch (Throwable e) {
             ALog.e(TAG, "thread cache init failed", e);
@@ -362,7 +367,7 @@ public class ThreadDatabase extends Database {
             db.update(TABLE_NAME, contentValues, ID_WHERE, new String[]{threadId + ""});
             if (threadRecord.isNewGroup()) {
                 long gid = threadRecord.getRecipient().getGroupId();
-                MessageDataManager.INSTANCE.setGroupMessageRead(gid);
+                MessageDataManager.INSTANCE.setGroupMessageRead(getAccountContext(), gid);
             } else {
                 final List<MarkedMessageInfo> smsRecords = DatabaseFactory.getSmsDatabase(context).setMessagesRead(threadId);
                 final List<MarkedMessageInfo> mmsRecords = DatabaseFactory.getMmsDatabase(context).setMessagesRead(threadId);
@@ -375,7 +380,7 @@ public class ThreadDatabase extends Database {
 
 
     public void setReadForNewGroup(long threadId, long gid, long lastSeen) {
-        MessageDataManager.INSTANCE.setGroupMessageRead(gid);
+        MessageDataManager.INSTANCE.setGroupMessageRead(getAccountContext(), gid);
         ContentValues contentValues = new ContentValues(3);
         contentValues.put(READ, 1);
         contentValues.put(UNREAD_COUNT, 0);
@@ -643,16 +648,16 @@ public class ThreadDatabase extends Database {
     public void deleteConversationContentForNewGroup(long gid, long threadId) {
         DatabaseFactory.getDraftDatabase(context).clearDrafts(threadId);
         deleteThread(threadId);
-        GroupLiveInfoManager.Companion.getInstance().deleteLiveInfoWhenLeaveGroup(gid);
-        MessageDataManager.INSTANCE.deleteMessagesByGid(gid);
+        GroupLiveInfoManager.INSTANCE.get(getAccountContext()).deleteLiveInfoWhenLeaveGroup(gid);
+        MessageDataManager.INSTANCE.deleteMessagesByGid(getAccountContext(), gid);
         notifyConversationListListeners();
     }
 
 
     public void deleteConversationForNewGroup(long gid, long threadId) {
         DatabaseFactory.getDraftDatabase(context).clearDrafts(threadId);
-        GroupLiveInfoManager.Companion.getInstance().deleteLiveInfoWhenLeaveGroup(gid);
-        MessageDataManager.INSTANCE.deleteMessagesByGid(gid);
+        GroupLiveInfoManager.INSTANCE.get(getAccountContext()).deleteLiveInfoWhenLeaveGroup(gid);
+        MessageDataManager.INSTANCE.deleteMessagesByGid(getAccountContext(), gid);
         notifyConversationListListeners();
     }
 
@@ -771,8 +776,8 @@ public class ThreadDatabase extends Database {
             cursor = db.query(TABLE_NAME, null, ID + " = ?", new String[]{threadId + ""}, null, null, null);
 
             if (cursor != null && cursor.moveToFirst()) {
-                Address address = Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
-                return Recipient.from(context, address, false);
+                Address address = Address.from(cursor.getString(cursor.getColumnIndexOrThrow(ADDRESS)));
+                return Recipient.from(address, false);
             }
         } finally {
             if (cursor != null) {
@@ -824,9 +829,9 @@ public class ThreadDatabase extends Database {
     public void updateLiveState(long gid, int liveState) {
         long threadId;
         if (liveState == GroupLiveInfo.LiveStatus.REMOVED.getValue() || liveState == GroupLiveInfo.LiveStatus.STOPED.getValue()||liveState == GroupLiveInfo.LiveStatus.EMPTY.getValue()) {
-            threadId = getThreadIdIfExistsFor(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid));
+            threadId = getThreadIdIfExistsFor(Recipient.recipientFromNewGroupId(getAccountContext(), gid));
         } else {
-            threadId = getThreadIdFor(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid));
+            threadId = getThreadIdFor(Recipient.recipientFromNewGroupId(getAccountContext(), gid));
         }
         if (threadId < 0) {
             return;
@@ -891,7 +896,7 @@ public class ThreadDatabase extends Database {
 
     private String getEncryptedBody(String body) {
         try {
-            MasterCipher bodyCipher = new MasterCipher(BCMEncryptUtils.INSTANCE.getMasterSecret(AppContextHolder.APP_CONTEXT));
+            MasterCipher bodyCipher = new MasterCipher(BCMEncryptUtils.INSTANCE.getMasterSecret(getAccountContext()));
             return bodyCipher.encryptBody(body);
         } catch (Exception ex) {
             return body;
@@ -900,27 +905,27 @@ public class ThreadDatabase extends Database {
 
 
     public void updateByNewGroup(long gid) {
-        AmeGroupMessageDetail message = GroupMessageTransform.INSTANCE.transformToModel(MessageDataManager.INSTANCE.fetchLastMessage(gid));
-        long threadId = getThreadIdIfExistsFor(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid));
+        AmeGroupMessageDetail message = GroupMessageTransform.INSTANCE.transformToModel(MessageDataManager.INSTANCE.fetchLastMessage(getAccountContext(), gid));
+        long threadId = getThreadIdIfExistsFor(Recipient.recipientFromNewGroupId(getAccountContext(), gid));
         if (threadId == -1L && (null == message || null == message.getMessage())) {
             ALog.i(TAG, "updateByNewGroup gid: " + gid + ", no thread, no message, return");
             return;
         } else if(threadId == -1L) {
-            threadId = getThreadIdFor(Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, gid));
+            threadId = getThreadIdFor(Recipient.recipientFromNewGroupId(getAccountContext(), gid));
         }
 
         if (null == message || null == message.getMessage()) {
             updateByNewGroup(threadId, 0, "", "", AmeGroupMessageDetail.SendState.SEND_SUCCESS, AmeTimeUtil.INSTANCE.serverTimeMillis());
         } else {
             //Pair<Long, Boolean> lastSeenPair = getLastSeenAndHasSent(threadId);
-            long count = MessageDataManager.INSTANCE.countMessageByGid(gid);
-            long unreadCount = MessageDataManager.INSTANCE.countUnreadCountFromLastSeen(gid, 0);
+            long count = MessageDataManager.INSTANCE.countMessageByGid(getAccountContext(), gid);
+            long unreadCount = MessageDataManager.INSTANCE.countUnreadCountFromLastSeen(getAccountContext(), gid, 0);
             updateReadStateForNewGroup(threadId, (int) unreadCount);
 
             String body = message.getMessage().toString();
             updateByNewGroup(threadId, count, body, message.getAttachmentUri() == null ? "" : message.getAttachmentUri(), message.getSendState(), message.getSendTime());
 
-            GroupInfoDataManager.INSTANCE.queryOneAmeGroupInfo(gid);
+            GroupInfoDataManager.INSTANCE.queryOneAmeGroupInfo(getAccountContext(), gid);
         }
     }
 
@@ -938,7 +943,7 @@ public class ThreadDatabase extends Database {
     }
 
     public Set<Address> getAllUnreadThread() {
-        MasterSecret ms = BCMEncryptUtils.INSTANCE.getMasterSecret(AppContextHolder.APP_CONTEXT);
+        MasterSecret ms = BCMEncryptUtils.INSTANCE.getMasterSecret(getAccountContext());
         Cursor cursor = getConversationListHasNull();
         Reader threadReader = readerFor(cursor, new MasterCipher(ms));
         HashSet<Address> list = new HashSet<>();
@@ -1095,13 +1100,13 @@ public class ThreadDatabase extends Database {
 
         public @NotNull
         Address getAddress() {
-            return Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(ThreadDatabase.ADDRESS)));
+            return Address.from(getAccountContext(), cursor.getString(cursor.getColumnIndexOrThrow(ThreadDatabase.ADDRESS)));
         }
 
         public ThreadRecord getCurrentForMigrate() {
             long threadId = cursor.getLong(cursor.getColumnIndexOrThrow(ThreadDatabase.ID));
             int distributionType = cursor.getInt(cursor.getColumnIndexOrThrow(ThreadDatabase.TYPE));
-            Address address = Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(ThreadDatabase.ADDRESS)));
+            Address address = Address.from(getAccountContext(), cursor.getString(cursor.getColumnIndexOrThrow(ThreadDatabase.ADDRESS)));
 
             DisplayRecord.Body body;
             if (distributionType == DistributionTypes.NEW_GROUP) {
@@ -1123,7 +1128,7 @@ public class ThreadDatabase extends Database {
             int live_state = cursor.getInt(cursor.getColumnIndexOrThrow(ThreadDatabase.LIVE_STATE));
             Uri snippetUri = getSnippetUri(cursor);
 
-            if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
+            if (!TextSecurePreferences.isReadReceiptsEnabled(getAccountContext())) {
                 readReceiptCount = 0;
             }
 
@@ -1137,9 +1142,9 @@ public class ThreadDatabase extends Database {
         public ThreadRecord getCurrent() {
             long threadId = cursor.getLong(cursor.getColumnIndexOrThrow(ThreadDatabase.ID));
             int distributionType = cursor.getInt(cursor.getColumnIndexOrThrow(ThreadDatabase.TYPE));
-            Address address = Address.fromSerialized(cursor.getString(cursor.getColumnIndexOrThrow(ThreadDatabase.ADDRESS)));
+            Address address = Address.from(getAccountContext(), cursor.getString(cursor.getColumnIndexOrThrow(ThreadDatabase.ADDRESS)));
 
-            Recipient recipient = Recipient.from(context, address, true);
+            Recipient recipient = Recipient.from(address, true);
 
             DisplayRecord.Body body;
             if (distributionType == DistributionTypes.NEW_GROUP) {
@@ -1161,7 +1166,7 @@ public class ThreadDatabase extends Database {
             int live_state = cursor.getInt(cursor.getColumnIndexOrThrow(ThreadDatabase.LIVE_STATE));
             Uri snippetUri = getSnippetUri(cursor);
 
-            if (!TextSecurePreferences.isReadReceiptsEnabled(context)) {
+            if (!TextSecurePreferences.isReadReceiptsEnabled(getAccountContext())) {
                 readReceiptCount = 0;
             }
 

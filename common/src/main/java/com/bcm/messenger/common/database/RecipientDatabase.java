@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.annimon.stream.Stream;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.BuildConfig;
 import com.bcm.messenger.common.color.MaterialColor;
 import com.bcm.messenger.common.config.BcmFeatureSupport;
@@ -212,6 +213,9 @@ public class RecipientDatabase extends Database {
         super(context, databaseHelper);
     }
 
+    public AccountContext getAccountContext() {
+        return AMELogin.INSTANCE.getMajorContext();
+    }
    
     public void setGroupNotification(@NonNull Cursor cursor) {
         cursor.setNotificationUri(context.getContentResolver(), Uri.parse(URI_GROUP));
@@ -533,7 +537,7 @@ public class RecipientDatabase extends Database {
             }
 
             Log.d(TAG, "identityKey save");
-            IdentityUtil.saveIdentity(context, address.serialize(), identityKey, true);
+            IdentityUtil.saveIdentity(context, getAccountContext(), address.serialize(), identityKey, true);
 
         } catch (Exception e) {
             Log.w(TAG, e);

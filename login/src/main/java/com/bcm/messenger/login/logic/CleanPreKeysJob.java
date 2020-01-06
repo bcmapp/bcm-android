@@ -40,7 +40,7 @@ public class CleanPreKeysJob extends MasterSecretJob {
     public CleanPreKeysJob(Context context, AccountContext accountContext) {
         super(context, accountContext, JobParameters.newBuilder()
                 .withGroupId(CleanPreKeysJob.class.getSimpleName())
-                .withRequirement(new MasterSecretRequirement(context))
+                .withRequirement(new MasterSecretRequirement(context, accountContext))
                 .withRetryCount(5)
                 .create());
         this.signedPreKeyStoreFactory = new SignedPreKeyStoreFactory() {
@@ -61,7 +61,7 @@ public class CleanPreKeysJob extends MasterSecretJob {
         try {
             Log.w(TAG, "Cleaning prekeys...");
 
-            int activeSignedPreKeyId = PreKeyUtil.getActiveSignedPreKeyId(context);
+            int activeSignedPreKeyId = PreKeyUtil.getActiveSignedPreKeyId(context, accountContext);
             SignedPreKeyStore signedPreKeyStore = signedPreKeyStoreFactory.create();
 
             if (activeSignedPreKeyId < 0) return;

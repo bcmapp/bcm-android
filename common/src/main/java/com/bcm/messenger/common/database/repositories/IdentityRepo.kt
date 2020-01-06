@@ -31,7 +31,7 @@ class IdentityRepo(
         val record = identityDao.queryIdentity(uid)
         if (record != null) {
             if (!record.isNonBlockingApproval()) {
-                IdentityUtil.saveIdentity(AppContextHolder.APP_CONTEXT, uid, record.identityKey, true)
+                IdentityUtil.saveIdentity(AppContextHolder.APP_CONTEXT, accountContext, uid, record.identityKey, true)
                 record.nonBlockingApproval = 1
             }
             return record

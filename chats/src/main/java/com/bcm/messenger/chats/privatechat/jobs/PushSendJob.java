@@ -3,19 +3,15 @@ package com.bcm.messenger.chats.privatechat.jobs;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.crypto.MasterSecret;
-import com.bcm.messenger.common.crypto.ProfileKeyUtil;
 import com.bcm.messenger.common.database.records.AttachmentRecord;
 import com.bcm.messenger.common.event.PartProgressEvent;
 import com.bcm.messenger.common.exception.TextSecureExpiredException;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
 import com.bcm.messenger.common.mms.PartAuthority;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
-import com.bcm.messenger.common.recipients.Recipient;
 
 import org.greenrobot.eventbus.EventBus;
 import org.whispersystems.jobqueue.JobParameters;
@@ -37,21 +33,21 @@ public abstract class PushSendJob extends SendJob {
     }
 
     @Deprecated
-    protected static JobParameters constructParameters(Context context, Address destination) {
+    protected static JobParameters constructParameters(Context context, AccountContext accountContext, Address destination) {
         JobParameters.Builder builder = JobParameters.newBuilder();
         builder.withPersistence();
         builder.withGroupId(destination.serialize());
-        builder.withRequirement(new MasterSecretRequirement(context));
+        builder.withRequirement(new MasterSecretRequirement(context, accountContext));
         //Shield out network conditions, otherwise sending will fail but the status is not updated
         builder.withRetryCount(5);
         return builder.create();
     }
 
-    protected static JobParameters constructParameters(Context context, Address destination, String type) {
+    protected static JobParameters constructParameters(Context context, AccountContext accountContext, Address destination, String type) {
         JobParameters.Builder builder = JobParameters.newBuilder();
         builder.withPersistence();
         builder.withGroupId(destination.serialize() + type);
-        builder.withRequirement(new MasterSecretRequirement(context));
+        builder.withRequirement(new MasterSecretRequirement(context, accountContext));
         builder.withRetryCount(3);
         return builder.create();
     }
@@ -67,9 +63,9 @@ public abstract class PushSendJob extends SendJob {
         onPushSend(masterSecret);
     }
 
-    protected Optional<byte[]> getProfileKey(@NonNull Recipient recipient) {
-        return Optional.of(ProfileKeyUtil.getProfileKey(context));
-    }
+//    protected Optional<byte[]> getProfileKey(@NonNull Recipient recipient) {
+//        return Optional.of(ProfileKeyUtil.getProfileKey(context));
+//    }
 
     protected SignalServiceAddress getPushAddress(Address address) {
         String relay = null;

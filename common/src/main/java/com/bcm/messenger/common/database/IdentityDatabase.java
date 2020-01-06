@@ -25,7 +25,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
+import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.utils.IdentityUtil;
 import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.Base64;
@@ -93,6 +95,10 @@ public class IdentityDatabase extends Database {
         super(context, databaseHelper);
     }
 
+    public AccountContext getAccountContext() {
+        return AMELogin.INSTANCE.getMajorContext();
+    }
+
     public Cursor getIdentities() {
         SQLiteDatabase database = databaseHelper.getReadableDatabase();
         return database.query(TABLE_NAME, null, null, null, null, null, null);
@@ -116,7 +122,7 @@ public class IdentityDatabase extends Database {
             if (cursor != null && cursor.moveToFirst()) {
                 IdentityRecord record = getIdentityRecord(cursor);
                 if (!record.isApprovedNonBlocking()) {
-                    IdentityUtil.saveIdentity(AppContextHolder.APP_CONTEXT, address.serialize(), record.identitykey, true);
+                    IdentityUtil.saveIdentity(AppContextHolder.APP_CONTEXT, getAccountContext(), address.serialize(), record.identitykey, true);
                     record = new IdentityRecord(address, record.identitykey, record.verifiedStatus, record.firstUse, record.timestamp, true);
                 }
                 return Optional.of(record);
@@ -205,7 +211,7 @@ public class IdentityDatabase extends Database {
         boolean firstUse = cursor.getInt(cursor.getColumnIndexOrThrow(FIRST_USE)) == 1;
         IdentityKey identity = new IdentityKey(Base64.decode(serializedIdentity), 0);
 
-        return new IdentityRecord(Address.fromSerialized(address), identity, VerifiedStatus.forState(verifiedStatus), firstUse, timestamp, nonblockingApproval);
+        return new IdentityRecord(Address.from(address), identity, VerifiedStatus.forState(verifiedStatus), firstUse, timestamp, nonblockingApproval);
     }
 
     public static class IdentityRecord {

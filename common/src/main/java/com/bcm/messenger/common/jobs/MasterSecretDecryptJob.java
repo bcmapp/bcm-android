@@ -3,16 +3,17 @@ package com.bcm.messenger.common.jobs;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
-import com.bcm.messenger.common.database.repositories.Repository;
-
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.crypto.AsymmetricMasterCipher;
 import com.bcm.messenger.common.crypto.AsymmetricMasterSecret;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.MasterSecretUtil;
 import com.bcm.messenger.common.database.model.MessageRecord;
 import com.bcm.messenger.common.database.model.SmsMessageRecord;
+import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
+import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
+
 import org.whispersystems.jobqueue.JobParameters;
 import org.whispersystems.libsignal.InvalidMessageException;
 
@@ -23,9 +24,9 @@ public class MasterSecretDecryptJob extends MasterSecretJob {
   private static final long   serialVersionUID = 1L;
   private static final String TAG              = MasterSecretDecryptJob.class.getSimpleName();
 
-  public MasterSecretDecryptJob(Context context) {
-    super(context, JobParameters.newBuilder()
-                                .withRequirement(new MasterSecretRequirement(context))
+  public MasterSecretDecryptJob(Context context, AccountContext accountContext) {
+    super(context, accountContext, JobParameters.newBuilder()
+                                .withRequirement(new MasterSecretRequirement(context, accountContext))
                                 .create());
   }
 
@@ -34,7 +35,7 @@ public class MasterSecretDecryptJob extends MasterSecretJob {
 //    EncryptingSmsDatabase smsDatabase = DatabaseFactory.getEncryptingSmsDatabase(context);
 //    SmsDatabase.Reader    smsReader   = smsDatabase.getDecryptInProgressMessages(masterSecret);
 
-    PrivateChatRepo chatRepo = Repository.getChatRepo();
+    PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
 
     SmsMessageRecord smsRecord;
 
@@ -84,7 +85,7 @@ public class MasterSecretDecryptJob extends MasterSecretJob {
       throws InvalidMessageException
   {
     try {
-      AsymmetricMasterSecret asymmetricMasterSecret = MasterSecretUtil.getAsymmetricMasterSecret(context, masterSecret);
+      AsymmetricMasterSecret asymmetricMasterSecret = MasterSecretUtil.getAsymmetricMasterSecret(accountContext, masterSecret);
       AsymmetricMasterCipher asymmetricMasterCipher = new AsymmetricMasterCipher(asymmetricMasterSecret);
 
       if (TextUtils.isEmpty(body)) return "";
