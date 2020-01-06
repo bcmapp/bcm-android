@@ -43,20 +43,22 @@ class GroupModuleImp : IGroupModule {
     }
 
     override fun initModule() {
-        GroupLogic.init()
-        AmeModuleCenter.serverDispatcher(context).addListener(groupMessageReceiver)
+        GroupLogic.get(accountContext).init()
+        AmeModuleCenter.serverDispatcher().addListener(groupMessageReceiver)
     }
 
     override fun uninitModule() {
-        GroupLogic.unInit()
-        AmeModuleCenter.serverDispatcher(context).removeListener(groupMessageReceiver)
+        GroupLogic.get(accountContext).unInit()
+        AmeModuleCenter.serverDispatcher().removeListener(groupMessageReceiver)
+
+        GroupLogic.remove(accountContext)
     }
 
     override fun doGroupJoin(context: Context, gid: Long, name: String?, icon: String?, code: String, signature: String, timestamp: Long, eKey:ByteArray?,callback: ((success: Boolean) -> Unit)?) {
         ALog.i(TAG, "doGroupJoin gid: $gid")
         AmeAppLifecycle.showLoading()
         val groupShareContent: AmeGroupMessage.GroupShareContent = AmeGroupMessage.GroupShareContent(gid, name, icon, code, signature, eKey?.base64Encode()?.format(), timestamp, null)
-        GroupLogic.queryGroupInfo(gid) { ameGroupInfo, _, _ ->
+        GroupLogic.get(accountContext).queryGroupInfo(gid) { ameGroupInfo, _, _ ->
             ALog.d(TAG, "doGroupJoin queryGroupInfo is null: ${ameGroupInfo == null}, role: ${ameGroupInfo?.role ?: 0}")
             if (ameGroupInfo != null && ameGroupInfo.role != AmeGroupMemberInfo.VISITOR) {
                 AmeAppLifecycle.hideLoading()
@@ -64,7 +66,7 @@ class GroupModuleImp : IGroupModule {
                         HomeTopEvent.ConversationEvent.fromGroupConversation(null, gid)))
                 callback?.invoke(true)
             }else {
-                GroupLogic.checkJoinGroupNeedConfirm(groupShareContent.groupId) {succeed, needConfirm ->
+                GroupLogic.get(accountContext).checkJoinGroupNeedConfirm(groupShareContent.groupId) {succeed, needConfirm ->
                     ALog.d(TAG, "doGroupJoin checkJoinGroupNeedConfirm success: $succeed, needConfirm: $needConfirm")
                     if (!succeed || needConfirm) {
                         AmeAppLifecycle.hideLoading()
@@ -72,12 +74,12 @@ class GroupModuleImp : IGroupModule {
                                 .putString(ARouterConstants.PARAM.GROUP_SHARE.GROUP_SHARE_CONTENT, groupShareContent.toString()).navigation(context)
                         callback?.invoke(true)
                     }else {
-                        GroupLogic.joinGroupByShareCode(groupShareContent.groupId, groupShareContent.shareCode, groupShareContent.shareSignature, eKey) {succeed, error ->
+                        GroupLogic.get(accountContext).joinGroupByShareCode(groupShareContent.groupId, groupShareContent.shareCode, groupShareContent.shareSignature, eKey) {succeed, error ->
                             ALog.d(TAG, "doGroupJoin success: $succeed, error: $error")
                             AmeAppLifecycle.hideLoading()
                             if (succeed) {
                                 // After sending the grouping request successfully without the grouping review, you need to query the group info, and you can jump if it is not empty
-                                GroupLogic.queryGroupInfo(groupShareContent.groupId) { ameGroupInfo, _, _ ->
+                                GroupLogic.get(accountContext).queryGroupInfo(groupShareContent.groupId) { ameGroupInfo, _, _ ->
                                     ALog.d(TAG, "after joinGroupByShareCode queryGroupInfo is null: ${ameGroupInfo == null}, role: ${ameGroupInfo?.role ?: 0}")
                                     if (ameGroupInfo != null && ameGroupInfo.role != AmeGroupMemberInfo.VISITOR) {
                                         AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
@@ -105,12 +107,12 @@ class GroupModuleImp : IGroupModule {
     }
 
     override fun getMember(groupId: Long, uid: String): AmeGroupMemberInfo? {
-        return GroupLogic.getModel(groupId)?.getGroupMember(uid)
+        return GroupLogic.get(accountContext).getModel(groupId)?.getGroupMember(uid)
     }
 
     @SuppressLint("CheckResult")
     override fun getMembers(groupId: Long, uidList: List<String>, result: (List<AmeGroupMemberInfo>) -> Unit) {
-        GroupLogic.getGroupMemberInfos(groupId, uidList)
+        GroupLogic.get(accountContext).getGroupMemberInfos(groupId, uidList)
                 .observeOn(AmeDispatcher.mainScheduler)
                 .doOnError {
                     result(listOf())
@@ -121,12 +123,12 @@ class GroupModuleImp : IGroupModule {
     }
 
     override fun getMembersFromCache(groupId: Long): List<String> {
-        val groupModel = GroupLogic.getModel(groupId)?:return listOf()
+        val groupModel = GroupLogic.get(accountContext).getModel(groupId)?:return listOf()
         return groupModel.getGroupMemberList().map { it.uid.serialize() }
     }
 
     override fun queryMember(groupId: Long, uid:String, result: (memberInfo: AmeGroupMemberInfo?) -> Unit) {
-        GroupLogic.getGroupMemberInfo(groupId, uid) {
+        GroupLogic.get(accountContext).getGroupMemberInfo(groupId, uid) {
             member, _ ->
             AmeDispatcher.mainThread.dispatch {
                 result(member)
@@ -135,29 +137,30 @@ class GroupModuleImp : IGroupModule {
     }
 
     override fun getJoinedList(): List<AmeGroupInfo> {
-        return GroupLogic.getGroupInfoList()
+        return GroupLogic.get(accountContext).getGroupInfoList()
     }
 
     override fun getJoinedListBySort(): List<AmeGroupInfo> {
-        return GroupLogic.getGroupFinder().getSourceList()
+        return GroupLogic.get(accountContext).getGroupFinder().getSourceList()
     }
 
     override fun getGroupInfo(groupId: Long): AmeGroupInfo? {
-        return GroupLogic.getGroupInfo(groupId)
+        return GroupLogic.get(accountContext).getGroupInfo(groupId)
     }
 
     override fun queryGroupInfo(groupId: Long, result: (groupInfo: AmeGroupInfo?) -> Unit) {
-        return GroupLogic.queryGroupInfo(groupId) { ameGroup, _, _ ->
+        return GroupLogic.get(accountContext).queryGroupInfo(groupId) { ameGroup, _, _ ->
             result(ameGroup)
         }
     }
 
     override fun doOnLogin() {
-        GroupLogic.doOnLogin()
+        GroupLogic.get(accountContext).doOnLogin()
     }
 
+    @SuppressLint("CheckResult")
     override fun getAvatarMemberList(groupId: Long, result: (gid: Long, list: List<AmeGroupMemberInfo>) -> Unit)  {
-        GroupLogic.queryTopMemberInfoList(groupId, 4)
+        GroupLogic.get(accountContext).queryTopMemberInfoList(groupId, 4)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError {
@@ -169,6 +172,6 @@ class GroupModuleImp : IGroupModule {
     }
 
     override fun refreshGroupNameAndAvatar(gid: Long) {
-        GroupLogic.refreshGroupAvatar(gid)
+        GroupLogic.get(accountContext).refreshGroupAvatar(gid)
     }
 }
