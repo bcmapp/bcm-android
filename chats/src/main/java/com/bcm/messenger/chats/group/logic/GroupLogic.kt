@@ -80,6 +80,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
         private val mGroupFinder = BcmGroupFinder()
 
         private val memberLoader = GroupMemberInfoNetLoader(accountContext)
+        private val groupInfoLoader = GroupInfoNetLoader(accountContext)
         private val groupAvatarLogic = GroupAutoGenerateLogic(accountContext)
 
         private var mGroupFinderDispose: Disposable? = null
@@ -232,7 +233,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         val stash = ParamStash(inviteList)
 
                         stash.validList = list.filter {
-                            val recipient = Recipient.from(accountContext, Address.fromSerialized(it.uid), true)
+                            val recipient = Recipient.from(accountContext, it.uid, true)
                             recipient.isFriend && it.getSupport()?.isSupportGroupSecureV3() == true
                         }
 
@@ -251,7 +252,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         stash
                     }.observeOn(AmeDispatcher.ioScheduler)
                     .flatMap { stash ->
-                        StrongKeyExchangeParam.getStrongKeysContent(stash.validList.map { it.uid }, stash.groupKeyPlainBytes, stash.groupInfo.groupPrivateKey)
+                        StrongKeyExchangeParam.getStrongKeysContent(accountContext, stash.validList.map { it.uid }, stash.groupKeyPlainBytes, stash.groupInfo.groupPrivateKey)
                                 .observeOn(AmeDispatcher.ioScheduler)
                                 .map {
                                     stash.keys = it
@@ -264,7 +265,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         val memberSecretStrings = BCMEncryptUtils.generateMembersEncryptKeys(stash.validList.map { it.identityKey }, stash.groupInfoSecretPlainBytes)
 
                         val channelKey = GroupMessageEncryptUtils.generateChannelKey(Base64.encodeBytes(stash.groupInfoSecretPlainBytes))
-                        val self = Recipient.from(accountContext, Address.fromSerialized(accountContext.uid), true)
+                        val self = Recipient.from(accountContext, accountContext.uid, true)
                         val myName = self.bcmName
                         val nickname = EncryptUtils.aes256EncryptAndBase64(myName, channelKey.toByteArray())
                         val keyConfig = AmeGroupMemberInfo.KeyConfig()
@@ -348,7 +349,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         groupCache.saveGroupInfo(dbGroupInfo)
                         GroupInfoDataManager.saveGroupKeyParam(accountContext, dbGroupInfo.gid, dbGroupInfo.currentKeyVersion, dbGroupInfo.currentKey)
 
-                        getThreadDB().getThreadIdFor(Recipient.recipientFromNewGroupId(accountContext, stash.groupInfo.gid))
+                        getThreadDB()?.getThreadIdFor(Recipient.recipientFromNewGroupId(accountContext, stash.groupInfo.gid))
 
                         if (stash.strangersList.isNotEmpty()) {
                             inviteStrangerNotify(stash.groupInfo.gid, stash.strangersList)
@@ -407,7 +408,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         unknownUserList.removeAll(list.map { it.uid })
 
                         val validUserList = list.filter {
-                            val recipient = Recipient.from(accountContext, Address.fromSerialized(it.uid), true)
+                            val recipient = Recipient.from(accountContext, it.uid, true)
                             recipient.isFriend
                         }
 
@@ -432,7 +433,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
                         val channel_key = GroupMessageEncryptUtils.generateChannelKey(Base64.encodeBytes(groupPassword))
 
-                        val self = Recipient.from(accountContext, Address.fromSerialized(accountContext.uid), true)
+                        val self = Recipient.from(accountContext, accountContext.uid, true)
                         val myName = self.bcmName
                         val nickname = EncryptUtils.aes256EncryptAndBase64(myName, channel_key.toByteArray())
                         val keyConfig = AmeGroupMemberInfo.KeyConfig()
@@ -496,7 +497,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
                             groupCache.saveGroupInfo(dbGroupInfo)
 
-                            getThreadDB().getThreadIdFor(Recipient.recipientFromNewGroupId(accountContext, it.data.gid))
+                            getThreadDB()?.getThreadIdFor(Recipient.recipientFromNewGroupId(accountContext, it.data.gid))
 
                             if (strangerList.isNotEmpty()) {
                                 inviteStrangerNotify(it.data.gid, strangerList)
@@ -622,7 +623,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
         }
 
         private fun queryGroupInfoImpl(groupId: Long): Observable<GroupInfoResult> {
-            return GroupInfoNetLoader.loadGroup(groupId)
+            return groupInfoLoader.loadGroup(groupId)
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .flatMap { groupEntity ->
                         if (groupEntity.isSuccess) {
@@ -742,7 +743,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         stashParam.groupInfo = dbGroupInfo
 
                         recipientList.addAll(list.map {
-                            val recipient = Recipient.from(accountContext, Address.fromSerialized(it.uid), true)
+                            val recipient = Recipient.from(accountContext, it.uid, true)
                             recipient.identityKey = it.identityKey
                             recipient.featureSupport = it.getSupport()
                             recipient
@@ -931,8 +932,11 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                 groupCache.removeGroupInfo(groupId)
                 groupCache.updateRole(groupId, AmeGroupMemberInfo.VISITOR)
 
-                Repository.getRecipientRepo(accountContext)?.leaveGroup(listOf(groupId))
-                Repository.getThreadRepo(accountContext).cleanConversationContentForGroup(getThreadId(Recipient.recipientFromNewGroupId(accountContext, groupId)), groupId)
+                val recipientRepo = Repository.getRecipientRepo(accountContext)?:return@dispatch
+                recipientRepo.leaveGroup(listOf(groupId))
+
+                val threadRepo = Repository.getThreadRepo(accountContext)?:return@dispatch
+                threadRepo.cleanConversationContentForGroup(threadRepo.getThreadIdIfExist(Recipient.recipientFromNewGroupId(accountContext, groupId)), groupId)
             }
         }
 
@@ -1134,12 +1138,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
         }
 
-        fun getThreadId(recipient: Recipient): Long {
-            return getThreadDB().getThreadIdFor(recipient)
-        }
-
-
-        private fun getThreadDB(): ThreadRepo {
+        private fun getThreadDB(): ThreadRepo? {
             return Repository.getThreadRepo(accountContext)
         }
 
@@ -1159,7 +1158,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             if (null != ameGroup && null != ackState) {
                                 getModel(change.groupId)?.checkSync()
                                 GroupMessageLogic.get(accountContext).syncOfflineMessage(ameGroup.gid, ackState.lastMid, ackState.lastAckMid)
-                                getThreadDB().getThreadIdFor(Recipient.recipientFromNewGroup(accountContext, ameGroup))
+                                getThreadDB()?.getThreadIdFor(Recipient.recipientFromNewGroup(accountContext, ameGroup))
                             } else {
                                 ALog.e(TAG, "join new group, query group info failed $error")
                             }
@@ -1517,7 +1516,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
         }
 
         private fun saveJoinRequestName(req: GroupJoinRequestInfo) {
-            val recipient = Recipient.from(accountContext, Address.fromSerialized(req.uid), false)
+            val recipient = Recipient.from(accountContext, req.uid, false)
             if (recipient.bcmName == null) {
                 try {
                     val comment = GsonUtils.fromJson(req.comment, JoinGroupReqComment::class.java)
@@ -1610,7 +1609,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     if (owner?.isNotEmpty() == true) {
                         val ownerMember = AmeGroupMemberInfo()
                         ownerMember.gid = gid
-                        ownerMember.uid = Address.fromSerialized(owner)
+                        ownerMember.uid = Address.from(owner)
                         ownerMember.role = AmeGroupMemberInfo.OWNER
                         ownerMember.createTime = 0
                         GroupMemberManager.insertGroupMember(accountContext, ownerMember)
@@ -1678,7 +1677,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     if (isCurrentModel(kicked)) {
                         getModel(kicked)?.checkSync()
                     }
-                    if (getThreadDB().getThreadIdIfExist(GroupUtil.addressFromGid(kicked).serialize()) > 0) {
+                    if (getThreadDB()?.getThreadIdIfExist(GroupUtil.addressFromGid(accountContext, kicked).serialize())?:0 > 0) {
                         MessageDataManager.systemNotice(accountContext, kicked, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_GROUP_ILLEGAL))
                     }
                 }
@@ -2076,7 +2075,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     val contentKey = keyContent.strongModeKey
                             ?: throw Exception("strong key is null")
 
-                    val key = StrongKeyExchangeParam.strongKeyContentToGroupKey(contentKey, groupInfo.groupPublicKey)
+                    val key = StrongKeyExchangeParam.strongKeyContentToGroupKey(accountContext, contentKey, groupInfo.groupPublicKey)
                     if (null != key) {
                         GroupInfoDataManager.saveGroupKeyParam(accountContext, gid, keyContent.version, key.base64Encode().format())
 
@@ -2160,7 +2159,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
                         when (GroupKeyMode.ofValue(mode)) {
                             GroupKeyMode.STRONG_MODE -> {
-                                Observable.just(StrongKeyExchangeParam.getStrongKeysContent(it, newGroupKey, groupInfo.groupPrivateKey))
+                                Observable.just(StrongKeyExchangeParam.getStrongKeysContent(accountContext, it, newGroupKey, groupInfo.groupPrivateKey))
                             }
                             GroupKeyMode.NORMAL_MODE -> {
                                 NormalKeyExchangeParam.getNormalKeysContent(newGroupKey, mid, groupInfo.infoSecret.base64Decode(), groupInfo.groupPrivateKey)

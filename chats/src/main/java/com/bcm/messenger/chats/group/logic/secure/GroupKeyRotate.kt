@@ -12,7 +12,10 @@ import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 
 class GroupKeyRotate(private val accountContext: AccountContext) {
-    private const val TAG = "GroupKeyRotate"
+    companion object {
+        private const val TAG = "GroupKeyRotate"
+    }
+
     @SuppressLint("UseSparseArrays")
     private val rotatingMap = HashMap<Long, Long>()
 
@@ -30,7 +33,7 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
 
     fun rotateGroup(gidList: List<Long>) {
         ALog.i(TAG, "rotateGroup list invoke")
-        val uid = AMELogin.uid
+
         AmeDispatcher.singleScheduler.scheduleDirect {
             val syncList = gidList.filter { !rotatingMap.containsKey(it) }
             val syncingLit = gidList.filter { rotatingMap.containsKey(it) }
@@ -48,30 +51,30 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
                 rotatingMap[i] = 0
             }
 
-            if (uid == AMELogin.uid) {
-                rotateGroupImpl(uid, syncList, 0)
+            if (accountContext.isLogin) {
+                rotateGroupImpl(syncList, 0)
             }
         }
     }
 
-    fun rotateGroup(gid: Long):Observable<RefreshKeyResEntity> {
+    fun rotateGroup(gid: Long): Observable<RefreshKeyResEntity> {
         ALog.i(TAG, "rotateGroup invoke")
         return Observable.create<RefreshKeyResEntity> {
             val result = RefreshKeyResEntity()
             result.succeed = listOf(gid)
-            if (rotatingMap.containsKey(gid)){
+            if (rotatingMap.containsKey(gid)) {
                 it.onNext(result)
             } else {
                 rotatingMap[gid] = 0
-                rotateGroupImpl(AMELogin.uid, listOf(gid), 0)
+                rotateGroupImpl(listOf(gid), 0)
                 it.onNext(result)
             }
             it.onComplete()
         }.subscribeOn(AmeDispatcher.singleScheduler)
     }
 
-    @SuppressLint("UseSparseArrays")
-    private fun rotateGroupImpl(uid:String, gidList: List<Long>, delay:Long) {
+    @SuppressLint("UseSparseArrays", "CheckResult")
+    private fun rotateGroupImpl(gidList: List<Long>, delay: Long) {
         ALog.i(TAG, "rotateGroupImpl invoke")
 
         val syncList = gidList.toMutableList()
@@ -81,13 +84,13 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AmeDispatcher.ioScheduler)
                     .flatMap { list ->
-                        GroupManagerCore.refreshGroupKeys(list)
+                        GroupManagerCore.refreshGroupKeys(accountContext, list)
                                 .subscribeOn(AmeDispatcher.ioScheduler)
                     }
                     .observeOn(AmeDispatcher.ioScheduler)
         }
 
-        val checkComplete:(syncList:List<Long>)->Unit = {
+        val checkComplete: (syncList: List<Long>) -> Unit = {
             if (syncList.isNotEmpty()) {
                 if (delay > 15000) {
                     ALog.e(TAG, "rotateGroup refresh group key failed ${syncList.size}")
@@ -95,8 +98,8 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
                         rotatingMap.remove(i)
                     }
                 } else {
-                    ALog.e(TAG, "rotateGroup refresh group key retry ${syncList.size}, delay:${delay+3000}")
-                    rotateGroupImpl(uid, syncList, delay + 3000)
+                    ALog.e(TAG, "rotateGroup refresh group key retry ${syncList.size}, delay:${delay + 3000}")
+                    rotateGroupImpl(syncList, delay + 3000)
                 }
             } else {
                 ALog.i(TAG, "rotateGroup refresh group key all succeed")
@@ -109,24 +112,24 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
                 .observeOn(AmeDispatcher.singleScheduler)
                 .doOnError {
                     ALog.e(TAG, "rotateGroup refresh group key failed", it)
-                    if (uid == AMELogin.uid) {
+                    if (accountContext.isLogin) {
                         checkComplete(syncList)
                     }
 
                 }
                 .doOnComplete {
-                    if (uid == AMELogin.uid) {
+                    if (accountContext.isLogin) {
                         checkComplete(syncList)
                     }
                 }
                 .subscribe {
-                    if (uid != AMELogin.uid) {
+                    if (!accountContext.isLogin) {
                         return@subscribe
                     }
 
                     ALog.i(TAG, "rotateGroup refresh group key succeed ${it.succeed?.size}, failed:${it.failed?.size}")
 
-                    syncList.removeAll(it.succeed?: listOf())
+                    syncList.removeAll(it.succeed ?: listOf())
 
                     val waitMap = HashMap<Long, Long>()
                     if (it.succeed?.isNotEmpty() == true) {
@@ -138,11 +141,12 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
                             }
                         }
                     }
-                    waitForRotateFinishedCall(uid, waitMap)
+                    waitForRotateFinishedCall(waitMap)
                 }
     }
 
-    private fun waitForRotateFinishedCall(uid:String, rotateMap:HashMap<Long, Long>) {
+    @SuppressLint("CheckResult")
+    private fun waitForRotateFinishedCall(rotateMap: HashMap<Long, Long>) {
         if (rotateMap.isEmpty()) {
             return
         }
@@ -156,7 +160,7 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
                     ALog.e(TAG, "waitForRotateFinishedCall", it)
                 }
                 .subscribe {
-                    if (uid != AMELogin.uid) {
+                    if (!accountContext.isLogin) {
                         return@subscribe
                     }
 

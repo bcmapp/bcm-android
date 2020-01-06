@@ -550,7 +550,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
 
                         val session = AdHocSessionLogic.getSession(m.sessionId)
                         if (session != null && session.isChat()) {
-                            val recipient = Recipient.from(AMELogin.majorContext, Address.fromSerialized(m.fromId), false)
+                            val recipient = Recipient.from(AMELogin.majorContext, m.fromId, false)
                             if (recipient.profileName != m.nickname) {
                                 Repository.getRecipientRepo(AMELogin.majorContext)?.setProfileName(recipient, m.nickname)
                             }
@@ -586,7 +586,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
                         updateSessionUnread(result.sessionId, 1)
 
                         val isAtMe = result.isAtMe
-                        AmePushProcess.processPush(AMELogin.majorContext, AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.ADHOC_NOTIFY, null, null, null, AmePushProcess.AdHocNotifyData(result.sessionId, isAtMe))))
+                        AmePushProcess.processPush(AMELogin.majorContext, AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.ADHOC_NOTIFY, 0,null, null, null, AmePushProcess.AdHocNotifyData(result.sessionId, isAtMe))))
 
                     }, {
                         ALog.e(TAG, "addStoreQueue fail", it)

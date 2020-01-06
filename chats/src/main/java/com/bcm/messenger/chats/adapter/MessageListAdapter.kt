@@ -15,6 +15,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.ui.CommonSearchBar
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
@@ -186,7 +187,7 @@ class MessageListAdapter(context: Context,
     override fun getItemId(position: Int): Long {
         val type = getItemViewType(position)
         val idText = if (type == ITEM_TYPE_DATA) {
-            getMainData(position).data?.getRecipient()?.address?.serialize() ?: return 0
+            getMainData(position).data?.getRecipient(AMELogin.majorContext)?.address?.serialize() ?: return 0
         } else {
             "id_individual_contact_extra_$type"
         }

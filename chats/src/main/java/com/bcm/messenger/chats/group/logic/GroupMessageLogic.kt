@@ -119,7 +119,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
             }
             val isAtMe = e.message.extContent?.isAtAll == true || e.message.extContent?.atList?.contains(e.accountContext.uid) == true
             if (e.message.type.toLong() != AmeGroupMessage.DECRYPT_FAIL) {
-                val bcmData = AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, null, AmePushProcess.GroupNotifyData(e.message.serverIndex, e.message.gid, isAtMe), null, null))
+                val bcmData = AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, 0,null, AmePushProcess.GroupNotifyData(e.message.serverIndex, e.message.gid, isAtMe), null, null))
                 AmePushProcess.processPush(e.accountContext, bcmData)
             } else {
                 ALog.e(TAG, "receive group message and DECRYPT_FAIL---gid " + e.message.gid)
@@ -280,7 +280,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
             GroupLogic.get(accountContext).refreshGroupAvatar(gid)
             GroupLogic.get(accountContext).getModel(gid)?.checkSync()
 
-            Repository.getThreadRepo(accountContext).updateByNewGroup(gid)
+            Repository.getThreadRepo(accountContext)?.updateByNewGroup(gid)
             GroupLogic.get(accountContext).checkGroupKeyValidState(listOf(gid))
 
             failCounter.finishCounter(gid)
@@ -301,7 +301,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
         private fun handleReceiveGroupMessage(message: AmeGroupMessageDetail) {
             val groupMessage = GroupMessageTransform.transformToEntity(message)
             doControlMessage(message.gid, message.message.content)
-            val result: MessageDataManager.InsertMessageResult = MessageDataManager.insertReceiveMessage(accountContext, groupMessage)
+            val result: MessageDataManager.InsertMessageResult = MessageDataManager.insertReceiveMessage(accountContext, groupMessage)?:return
             when (result.resultCode) {
                 MessageDataManager.InsertMessageResult.REPLAY_MESSAGE -> {
                     ALog.e(TAG, "message replay " + message.serverIndex)
@@ -370,7 +370,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                         for (member in memberChangeMessage.members!!) {
                             if (member.uid != null && member.role != null) {
                                 val info = AmeGroupMemberInfo()
-                                info.uid = Address.fromSerialized(member.uid!!)
+                                info.uid = Address.from(member.uid?:continue)
                                 info.role = member.role
                                 info.gid = gid
                                 if (changed.action == AmeGroupMemberChanged.LEAVE) {
@@ -603,7 +603,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
         fun readAllMessage(groupId: Long, threadId: Long, lastSeen: Long) {
             Observable.create(ObservableOnSubscribe<Void> {
                 ALog.d(TAG, "readAllMessage threadId: $threadId, groupId: $groupId")
-                Repository.getThreadRepo(accountContext).setGroupRead(threadId, groupId, lastSeen)
+                Repository.getThreadRepo(accountContext)?.setGroupRead(threadId, groupId, lastSeen)
                 val lastAckMid = MessageDataManager.queryMixMid(accountContext, groupId)
                 if (lastAckMid > 0) {
                     reportAckForGroup(groupId, MessageDataManager.queryMixMid(accountContext, groupId))

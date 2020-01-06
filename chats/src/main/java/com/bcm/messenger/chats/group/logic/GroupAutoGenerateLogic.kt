@@ -6,7 +6,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.getSelectedLocale
-import com.bcm.messenger.common.database.db.UserDatabase
+import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.GroupNameOrAvatarChanged
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.GroupMemberManager
@@ -40,7 +40,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
     fun autoGenAvatarOrName(gid: Long) {
         Observable.create<Void> {
             try {
-                val params = paramsDao().queryAvatarParams(gid)
+                val params = paramsDao()?.queryAvatarParams(gid)
                 val gInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid) ?: return@create
 
                 if (gInfo.name.isNotEmpty() && gInfo.iconUrl.isNotEmpty()) {
@@ -64,7 +64,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                         }
                     }
 
-                    if (!isHashChanged(mList, params)) {
+                    if (!isHashChanged(accountContext, mList, params)) {
                         ALog.i(TAG, "$gid hash state matched 2")
                         if (isAvatarAndNameReady(gInfo)) {
                             return@create
@@ -100,16 +100,16 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                             chnCombineName = combineGroupName(list, 1)
 
                             ALog.i(TAG, "name:$combineName cnName:$chnCombineName")
-                            newParams = memberList2Params(gid, list)
+                            newParams = memberList2Params(accountContext, gid, list)
                             if (gInfo.iconUrl.isEmpty()) {
-                                list.map {
-                                    val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, it.uid, false)
-                                    val name = BcmGroupNameUtil.getGroupMemberName(recipient, it)
+                                list.map { m ->
+                                    val recipient = Recipient.from(accountContext, m.uid.serialize(), false)
+                                    val name = BcmGroupNameUtil.getGroupMemberName(recipient, m)
                                     CombineBitmapUtil.RecipientBitmapUnit(recipient, name)
                                 }
                             } else {
                                 if (null != newParams) {
-                                    paramsDao().saveAvatarParams(listOf(newParams!!))
+                                    paramsDao()?.saveAvatarParams(listOf(newParams!!))
                                 }
                                 throw Exception("not need update group avatar")
                             }
@@ -147,7 +147,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
 
                             if (isAvatarAndNameReady(newInfo)) {
                                 if (null != newParams) {
-                                    paramsDao().saveAvatarParams(listOf(newParams!!))
+                                    paramsDao()?.saveAvatarParams(listOf(newParams!!))
                                 }
                             }
 
@@ -157,7 +157,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                             }
                         }.subscribe {
                             if (null != newParams) {
-                                paramsDao().saveAvatarParams(listOf(newParams!!))
+                                paramsDao()?.saveAvatarParams(listOf(newParams!!))
                             }
                             generatingSet.remove(gid)
                             AmeDispatcher.mainThread.dispatch {
@@ -174,33 +174,33 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                 .subscribe { }
     }
 
-    private fun memberList2Params(gid: Long, list: List<AmeGroupMemberInfo>): GroupAvatarParams {
+    private fun memberList2Params(accountContext: AccountContext, gid: Long, list: List<AmeGroupMemberInfo>): GroupAvatarParams {
         val params = GroupAvatarParams()
         params.gid = gid
 
         if (list.isNotEmpty()) {
             params.uid1 = list[0].uid.serialize()
-            params.user1Hash = hashOfUser(list[0])
+            params.user1Hash = hashOfUser(accountContext, list[0])
         }
 
         if (list.size > 1) {
             params.uid2 = list[1].uid.serialize()
-            params.user2Hash = hashOfUser(list[1])
+            params.user2Hash = hashOfUser(accountContext, list[1])
         }
 
         if (list.size > 2) {
             params.uid3 = list[2].uid.serialize()
-            params.user3Hash = hashOfUser(list[2])
+            params.user3Hash = hashOfUser(accountContext, list[2])
         }
 
         if (list.size > 3) {
             params.uid4 = list[3].uid.serialize()
-            params.user4Hash = hashOfUser(list[3])
+            params.user4Hash = hashOfUser(accountContext, list[3])
         }
         return params
     }
 
-    private fun isHashChanged(memberInfoList: List<AmeGroupMemberInfo>, params: GroupAvatarParams): Boolean {
+    private fun isHashChanged(accountContext: AccountContext, memberInfoList: List<AmeGroupMemberInfo>, params: GroupAvatarParams): Boolean {
         if (memberInfoList.isEmpty()) {
             return false
         }
@@ -209,7 +209,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
             return true
         }
 
-        if (!isHashInParams(hashOfUser(memberInfoList[0]), params)) {
+        if (!isHashInParams(hashOfUser(accountContext, memberInfoList[0]), params)) {
             return true
         }
 
@@ -217,7 +217,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
             return false
         }
 
-        if (!isHashInParams(hashOfUser(memberInfoList[1]), params)) {
+        if (!isHashInParams(hashOfUser(accountContext, memberInfoList[1]), params)) {
             return true
         }
 
@@ -225,7 +225,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
             return false
         }
 
-        if (!isHashInParams(hashOfUser(memberInfoList[2]), params)) {
+        if (!isHashInParams(hashOfUser(accountContext, memberInfoList[2]), params)) {
             return true
         }
 
@@ -233,7 +233,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
             return false
         }
 
-        if (!isHashInParams(hashOfUser(memberInfoList[3]), params)) {
+        if (!isHashInParams(hashOfUser(accountContext, memberInfoList[3]), params)) {
             return true
         }
 
@@ -259,8 +259,8 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
         return false
     }
 
-    private fun hashOfUser(memberInfo: AmeGroupMemberInfo): String {
-        val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, memberInfo.uid, true)
+    private fun hashOfUser(accountContext: AccountContext, memberInfo: AmeGroupMemberInfo): String {
+        val recipient = Recipient.from(accountContext, memberInfo.uid.serialize(), true)
         val name = BcmGroupNameUtil.getGroupMemberName(recipient, memberInfo)
         val avatar = recipient.avatar
         return EncryptUtils.encryptSHA1ToString("$name$avatar")
@@ -274,7 +274,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
         for (member in memberList) {
             val uid = member.uid.toString()
             if (uid.isNotBlank() && uid != accountContext.uid) {
-                val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, member.uid, true)
+                val recipient = Recipient.from(accountContext, member.uid.serialize(), true)
                 val name = BcmGroupNameUtil.getGroupMemberName(recipient, member)
                 spliceName += InputLengthFilter.filterSpliceName(name, 10)
                 spliceName += if (language == 1) "、" else ", "
@@ -318,7 +318,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
         return !TextUtils.isEmpty(groupName(gInfo)) && !TextUtils.isEmpty(groupAvatar(gInfo))
     }
 
-    private fun paramsDao(): GroupAvatarParamsDao {
-        return UserDatabase.getDatabase(accountContext).groupAvatarParamsDao()
+    private fun paramsDao(): GroupAvatarParamsDao? {
+        return Repository.getGroupAvatarParamsRepo(accountContext)
     }
 }

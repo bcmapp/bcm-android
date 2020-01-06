@@ -608,7 +608,7 @@ class BcmContactLogic(private val mAccountContext: AccountContext): AppForegroun
                             if (unreadCount != null) {
                                 RxBus.post(FriendRequestEvent(unreadCount))
                             }
-                            AmePushProcess.processPush(mAccountContext, AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.FRIEND_NOTIFY, null, null,
+                            AmePushProcess.processPush(mAccountContext, AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.FRIEND_NOTIFY, 0,null, null,
                                     AmePushProcess.FriendNotifyData(recipient.address.serialize()), null, null)))
                         }
                     }

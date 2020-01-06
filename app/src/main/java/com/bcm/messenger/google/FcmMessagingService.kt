@@ -68,6 +68,6 @@ class FcmMessagingService : FirebaseMessagingService() {
     }
 
     private fun handleReceivedBCMNotify(bcmdata: String) {
-        AmePushProcess.processPush(null, bcmdata)
+        AmePushProcess.processPush(bcmdata)
     }
 }

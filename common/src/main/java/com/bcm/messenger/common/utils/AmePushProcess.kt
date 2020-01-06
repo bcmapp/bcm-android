@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.utils
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
@@ -239,10 +240,11 @@ object AmePushProcess {
 
     class BcmData(val bcmdata: BcmNotify?): NotGuard
 
-    fun processPush(accountContext: AccountContext?, notify: BcmData?) {
+    @SuppressLint("CheckResult")
+    fun processPush(accountContext: AccountContext, notify: BcmData?) {
 
         if (AMELogin.isLogin && null != notify) {
-            if (accountContext != null && TextSecurePreferences.isNotificationsEnabled(accountContext) &&
+            if (TextSecurePreferences.isNotificationsEnabled(accountContext) &&
                     TextSecurePreferences.isDatabaseMigrated(accountContext)) {
                 Observable.create<Unit> {
                     if (needShowOffline()) {
@@ -320,8 +322,7 @@ object AmePushProcess {
             val lastMsg = TextSecurePreferences.getStringPreference(AMELogin.majorContext, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.majorUid + "_" + SystemNotifyData.TYPE_BANNER, "")
             val msg = GsonUtils.fromJson(lastMsg, SystemNotifyData::class.java)
             if (lastMsg.isNotEmpty() && msg.type == SystemNotifyData.TYPE_BANNER) {
-                val targetHash = BcmHash.hash(AMELogin.majorUid.toByteArray())
-                val data = BcmData(BcmNotify(SYSTEM_NOTIFY, targetHash, null, null, null, null, msg))
+                val data = BcmData(BcmNotify(SYSTEM_NOTIFY, 0, null, null, null, null, msg))
                 processPush(AMELogin.majorContext, data)
             }
         }
@@ -330,11 +331,7 @@ object AmePushProcess {
     /**
      *
      */
-    private fun incrementOfflineUnreadCount(accountContext: AccountContext?, data: BcmData) {
-        if (null == accountContext) {
-            return
-        }
-
+    private fun incrementOfflineUnreadCount(accountContext: AccountContext, data: BcmData) {
         if (!AppForeground.foreground()) {
             val privateChat = data.bcmdata?.contactChat
             val groupChat = data.bcmdata?.groupChat
@@ -408,8 +405,8 @@ object AmePushProcess {
         return start == -1L || start == 0L || current in start..end
     }
 
-    private fun handleNotify(accountContext: AccountContext?, notifyData: SystemNotifyData?) {
-        if(notifyData == null || accountContext == null) {
+    private fun handleNotify(accountContext: AccountContext, notifyData: SystemNotifyData?) {
+        if(notifyData == null) {
             return
         }
 
@@ -484,23 +481,19 @@ object AmePushProcess {
         }
     }
 
-    private fun handleNotify(accountContext: AccountContext?, notifyData: ChatNotifyData?) {
+    private fun handleNotify(accountContext: AccountContext, notifyData: ChatNotifyData?) {
         if (null != notifyData) {
             ALog.i(TAG, "receive push group data -- background!!!")
             notifyData.uid?.let {uid ->
                 val builder = AmeNotification.getDefaultNotificationBuilder(AppContextHolder.APP_CONTEXT)
-                val recipient = if(null != accountContext) {
-                    Recipient.from(accountContext, uid, false)
-                } else {
-                    null
-                }
+                val recipient = Recipient.from(accountContext, uid, false)
 
-                if (recipient?.isMuted == true) {
+                if (recipient.isMuted) {
                     return
                 }
 
-                if (accountContext != null && TextSecurePreferences.isNotificationsEnabled(accountContext)) {
-                    setAlarm(accountContext, builder, recipient?.ringtone, recipient?.vibrate?:RecipientDatabase.VibrateState.DEFAULT)
+                if (TextSecurePreferences.isNotificationsEnabled(accountContext)) {
+                    setAlarm(accountContext, builder, recipient.ringtone, recipient.vibrate ?:RecipientDatabase.VibrateState.DEFAULT)
                 }
 
                 notifyBar(accountContext, builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
@@ -512,8 +505,7 @@ object AmePushProcess {
     /**
      *
      */
-    private fun handleNotify(accountContext: AccountContext?, notifyData: GroupNotifyData?) {
-        if (accountContext == null) return
+    private fun handleNotify(accountContext: AccountContext, notifyData: GroupNotifyData?) {
         if (null != notifyData && notifyData.gid ?: 0 > 0) {
             val builder = AmeNotification.getDefaultNotificationBuilder(AppContextHolder.APP_CONTEXT)
 
@@ -530,7 +522,7 @@ object AmePushProcess {
         }
     }
 
-    private fun handleNotify(accountContext: AccountContext?, notifyData: FriendNotifyData?) {
+    private fun handleNotify(accountContext: AccountContext, notifyData: FriendNotifyData?) {
         if (notifyData == null) return
         ALog.i(TAG, "handle friend notify")
         val friendReqCount = getFriendRequestUnreadCount()
@@ -569,7 +561,7 @@ object AmePushProcess {
     /**
      *
      */
-    private fun handleNotify(accountContext: AccountContext?, notifyData: AdHocNotifyData?) {
+    private fun handleNotify(accountContext: AccountContext, notifyData: AdHocNotifyData?) {
         if (notifyData != null && accountContext != null) {
             val builder = AmeNotification.getAdHocNotificationBuilder(AppContextHolder.APP_CONTEXT)
             val enable = Repository.getAdHocSessionRepo(accountContext)?.querySession(notifyData.session)?.mute != true
@@ -586,7 +578,7 @@ object AmePushProcess {
     /**
      *
      */
-    private fun notifyBar(accountContext: AccountContext?, builder: NotificationCompat.Builder, msg: Parcelable, context: Context?, notificationId: Int, action: Int) {
+    private fun notifyBar(accountContext: AccountContext, builder: NotificationCompat.Builder, msg: Parcelable, context: Context?, notificationId: Int, action: Int) {
         try {
             if (null != context) {
                 val pendingIntent = AmeNotificationService.getIntent(accountContext, msg, action, notificationId)
@@ -641,7 +633,7 @@ object AmePushProcess {
         }
     }
 
-    private fun notifySystemMessageBar(accountContext: AccountContext?, builder: NotificationCompat.Builder, msg: Parcelable, context: Context?, notificationId: Int, action: Int) {
+    private fun notifySystemMessageBar(accountContext: AccountContext, builder: NotificationCompat.Builder, msg: Parcelable, context: Context?, notificationId: Int, action: Int) {
         try {
             if (null != context) {
                 val pendingIntent = AmeNotificationService.getIntent(accountContext, msg, action, notificationId)

@@ -6,6 +6,7 @@ import com.bcm.messenger.common.AccountJobManager
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.database.DatabaseFactory
 import com.bcm.messenger.common.database.db.UserDatabase
+import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.accountmodule.*
 import com.bcm.messenger.common.server.IServerConnectionDaemon
@@ -106,12 +107,12 @@ object AmeModuleCenter {
         AmeFileUploader.initDownloadPath(AppContextHolder.APP_CONTEXT)
         ReportUtils.setGUid(accountContext.uid)
 
-        if (DatabaseFactory.isDatabaseExist(AppContextHolder.APP_CONTEXT) && !TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT)) {
+        if (DatabaseFactory.isDatabaseExist(AppContextHolder.APP_CONTEXT) && !TextSecurePreferences.isDatabaseMigrated(accountContext)) {
             val factory = DatabaseFactory.getInstance(AppContextHolder.APP_CONTEXT)
             factory?.reset(AppContextHolder.APP_CONTEXT, accountContext.uid)
             return
         } else {
-            UserDatabase.resetDatabase(accountContext)
+            Repository.getInstance(accountContext)
         }
 
         this.init(accountContext)
@@ -137,6 +138,7 @@ object AmeModuleCenter {
         }
 
         unInit(accountContext)
+        Repository.accountLogOut(accountContext)
         serverConnDaemons.remove(accountContext)
         AccountJobManager.remove(accountContext)
     }

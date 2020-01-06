@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.LongSparseArray
 import com.bcm.messenger.chats.group.core.GroupManagerCore
 import com.bcm.messenger.chats.group.core.group.GroupInfoEntity
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.ServerResult
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -12,7 +13,7 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.schedulers.Schedulers
 
-object GroupInfoNetLoader {
+class GroupInfoNetLoader(private val accountContext: AccountContext) {
     private val loadMap = LongSparseArray<RequestState<ServerResult<GroupInfoEntity>>>()
 
     @SuppressLint("CheckResult")
@@ -41,7 +42,7 @@ object GroupInfoNetLoader {
                 .flatMap {
                     if (!it.requesting) {
                         it.requesting = true
-                        GroupManagerCore.getGroupInfo(gid)
+                        GroupManagerCore.getGroupInfo(accountContext, gid)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AmeDispatcher.singleScheduler)
                     } else {

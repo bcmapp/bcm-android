@@ -1,6 +1,7 @@
 package com.bcm.messenger.chats.group.logic.secure
 
 import com.bcm.messenger.chats.group.core.GroupMemberCore
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.crypto.storage.SignalProtocolStoreImpl
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -34,10 +35,10 @@ object StrongKeyExchangeParam {
         return discontinuity
     }
 
-    fun getStrongKeysContent(uidList: List<String>,
+    fun getStrongKeysContent(accountContext: AccountContext, uidList: List<String>,
                              groupKey: ByteArray,
                              groupInfoSecretPrivateKey: ByteArray): Observable<GroupKeysContent> {
-        return GroupMemberCore.getPreKeyBundles(uidList)
+        return GroupMemberCore.getPreKeyBundles(accountContext, uidList)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .map { bundleList ->
@@ -48,6 +49,7 @@ object StrongKeyExchangeParam {
                                 .withUid(BCMPrivateKeyUtils.provideUid(it.identityKey.serialize()))
                                 .withKey(groupKey)
                                 .withGroupInfoSecretPrivateKey(groupInfoSecretPrivateKey)
+                                .withAccountContext(accountContext)
                                 .aliceBuild()
 
                         if (null != param) {
@@ -77,7 +79,7 @@ object StrongKeyExchangeParam {
                 }
     }
 
-    fun getStrongKeysContent(keyBundleList:List<PreKeyBundle>,
+    fun getStrongKeysContent(accountContext: AccountContext, keyBundleList:List<PreKeyBundle>,
                              groupKey: ByteArray,
                              groupInfoSecretPrivateKey: ByteArray): GroupKeysContent {
         val map = HashMap<ParamIndex, GroupKeyExchange.StrongKeyParams>()
@@ -87,6 +89,7 @@ object StrongKeyExchangeParam {
                     .withUid(BCMPrivateKeyUtils.provideUid(it.identityKey.serialize()))
                     .withKey(groupKey)
                     .withGroupInfoSecretPrivateKey(groupInfoSecretPrivateKey)
+                    .withAccountContext(accountContext)
                     .aliceBuild()
 
             if (null != param) {
@@ -106,12 +109,12 @@ object StrongKeyExchangeParam {
         return GroupKeysContent(strongModeKeys = strongKeyList)
     }
 
-    fun strongKeyContentToGroupKey(content:GroupKeysContent.StrongKeyContent, infoSecretPublicKey:ByteArray):ByteArray? {
-        if(content.uid == AMELogin.uid && content.key?.isNotEmpty() == true ) {
+    fun strongKeyContentToGroupKey(accountContext: AccountContext, content:GroupKeysContent.StrongKeyContent, infoSecretPublicKey:ByteArray):ByteArray? {
+        if(content.uid == accountContext.uid && content.key?.isNotEmpty() == true ) {
             val params = GroupKeyExchange.StrongKeyParams.parseFrom(content.key.base64Decode())
-            val parser = Parser()
-            parser.withGroupInfoSecretPublicKey(infoSecretPublicKey)
-            parser.withParam(params)
+            val parser = Parser().withGroupInfoSecretPublicKey(infoSecretPublicKey)
+                    .withParam(params)
+                    .withAccountContext(accountContext)
 
             return parser.bobParse()
         }
@@ -123,6 +126,7 @@ object StrongKeyExchangeParam {
         private lateinit var groupKey: ByteArray
         private lateinit var uid: String
         private lateinit var groupInfoSecretPrivateKey: ByteArray
+        private lateinit var accountContext: AccountContext
 
         fun withBundle(preKeyBundle: PreKeyBundle): Builder {
             this.preKeyBundle = preKeyBundle
@@ -144,10 +148,15 @@ object StrongKeyExchangeParam {
             return this
         }
 
+        fun withAccountContext(accountContext: AccountContext): Builder {
+            this.accountContext = accountContext
+            return this
+        }
+
         fun aliceBuild(): GroupKeyExchange.StrongKeyParams? {
             val builder = GroupKeyExchange.StrongKeyParams.newBuilder()
             val baseKeyPair = Curve.generateKeyPair()
-            val myPrivateKey: ECPrivateKey = Curve.decodePrivatePoint(BCMEncryptUtils.getMyPrivateKey(AppContextHolder.APP_CONTEXT))
+            val myPrivateKey: ECPrivateKey = Curve.decodePrivatePoint(BCMEncryptUtils.getMyPrivateKey(accountContext))
 
             if (preKeyBundle.signedPreKey != null && !Curve.verifySignature(preKeyBundle.identityKey.publicKey,
                             preKeyBundle.signedPreKey.serialize(),
@@ -185,8 +194,8 @@ object StrongKeyExchangeParam {
             val key = kdf.deriveSecrets(secrets.toByteArray(), "group.key.exchange".toByteArray(), 64)
 
             builder.basePublicKey = ByteString.copyFrom(baseKeyPair.publicKey.serialize())
-            builder.alicePublickey = ByteString.copyFrom(BCMEncryptUtils.getMyIdentityKey(AppContextHolder.APP_CONTEXT))
-            builder.aliceUid = AMELogin.uid
+            builder.alicePublickey = ByteString.copyFrom(BCMEncryptUtils.getMyIdentityKey(accountContext))
+            builder.aliceUid = accountContext.uid
             builder.signedPrekeyId = preKeyBundle.signedPreKeyId
 
             val encryptedKey = EncryptUtils.aes256Encrypt(groupKey, key)
@@ -206,9 +215,15 @@ object StrongKeyExchangeParam {
     class Parser {
         private lateinit var params: GroupKeyExchange.StrongKeyParams
         private lateinit var groupInfoSecretPublicKey: ByteArray
+        private lateinit var accountContext: AccountContext
 
         fun withParam(params: GroupKeyExchange.StrongKeyParams): Parser {
             this.params = params
+            return this
+        }
+
+        fun withAccountContext(accountContext: AccountContext): Parser {
+            this.accountContext = accountContext
             return this
         }
 
@@ -223,7 +238,7 @@ object StrongKeyExchangeParam {
         fun bobParse(): ByteArray? {
 
             try {
-                val myPrivateKey = Curve.decodePrivatePoint(BCMEncryptUtils.getMyPrivateKey(AppContextHolder.APP_CONTEXT))
+                val myPrivateKey = Curve.decodePrivatePoint(BCMEncryptUtils.getMyPrivateKey(accountContext))
                 val theirIdentityKey = Curve.decodePoint(params.alicePublickey.toByteArray(), 0)
                 val basePublicKey = Curve.decodePoint(params.basePublicKey.toByteArray(), 0)
 
@@ -262,7 +277,7 @@ object StrongKeyExchangeParam {
 
                     keyStore.removePreKey(prekey.id)
 
-                    AmeModuleCenter.login().refreshPrekeys()
+                    AmeModuleCenter.login().refreshPrekeys(accountContext)
                 }
 
                 val kdf = HKDFv3()

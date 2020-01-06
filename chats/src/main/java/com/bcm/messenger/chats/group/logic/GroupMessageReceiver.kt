@@ -86,12 +86,12 @@ class GroupMessageReceiver : IServerDataListener {
                 }
                 GroupMessageProtos.GroupMsg.Type.TYPE_SWITCH_GROUP_KEYS -> {
                     val switchKey = GroupMessageProtos.GroupSwitchGroupKeys.parseFrom(proto.body)
-                    EventBus.getDefault().post(GroupKeyRefreshCompleteEvent(switchKey.gid,
+                    EventBus.getDefault().post(GroupKeyRefreshCompleteEvent(accountContext, switchKey.gid,
                             switchKey.mid, switchKey.fromUid, switchKey.version))
                 }
                 GroupMessageProtos.GroupMsg.Type.TYPE_UPDATE_GROUP_KEYS_REQUEST -> {
                     val updateKeyRequest = GroupMessageProtos.GroupUpdateGroupKeysRequest.parseFrom(proto.body)
-                    EventBus.getDefault().post(GroupKeyRefreshStartEvent(updateKeyRequest.gid,
+                    EventBus.getDefault().post(GroupKeyRefreshStartEvent(accountContext, updateKeyRequest.gid,
                             updateKeyRequest.mid, updateKeyRequest.fromUid, updateKeyRequest.keysMode))
                 }
                 else -> ALog.w(TAG, "unsupport group message type: ${proto.type}")
@@ -202,7 +202,7 @@ class GroupMessageReceiver : IServerDataListener {
             groupMessage.text = AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO, content).toString()
             MessageDataManager.insertReceiveMessage(accountContext, groupMessage)
 
-            GroupLogic.updateGroupNameAndIcon(message.gid, newName?:gInfo.name, newIcon?:gInfo.iconUrl)
+            GroupLogic.get(accountContext).updateGroupNameAndIcon(message.gid, newName?:gInfo.name, newIcon?:gInfo.iconUrl)
 
             val e = GroupInfoUpdateNotify()
             e.groupInfo = GroupInfoTransform.transformToModel(gInfo)
@@ -214,8 +214,8 @@ class GroupMessageReceiver : IServerDataListener {
         if (isMyQuitGroupEvent(accountContext, message)) {
             ALog.i(TAG, "leave group" + message.gid)
 
-            val db = Repository.getThreadRepo(accountContext)
-            val groupRecipient = Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, message.gid)
+            val db = Repository.getThreadRepo(accountContext)?:return
+            val groupRecipient = Recipient.recipientFromNewGroupId(accountContext, message.gid)
             val threadId = db.getThreadIdIfExist(groupRecipient)
             if (threadId > 0) {
                 db.cleanConversationContentForGroup(threadId, message.gid)
@@ -231,7 +231,7 @@ class GroupMessageReceiver : IServerDataListener {
         val list = ArrayList<AmeGroupMemberInfo>()
         for (member in message.membersList) {
             val info = AmeGroupMemberInfo()
-            info.uid = Address.fromSerialized(member.uid)
+            info.uid = Address.from(member.uid)
             info.role = member.role
             info.gid = message.gid
             if (message.action == AmeGroupMemberChanged.LEAVE) {
@@ -241,7 +241,7 @@ class GroupMessageReceiver : IServerDataListener {
         }
         memberChangedMessage.memberList = list
 
-        val bcmData = AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, null, AmePushProcess.GroupNotifyData(message.mid, message.gid, false), null, null, null))
+        val bcmData = AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, 0,null, AmePushProcess.GroupNotifyData(message.mid, message.gid, false), null, null, null))
         AmePushProcess.processPush(accountContext, bcmData)
 
         Logger.i("GroupMemberChangedNotify ${memberChangedMessage.groupId} event:${memberChangedMessage.action} count:${memberChangedMessage.memberList.size}")

@@ -545,7 +545,7 @@ public class PushDecryptJob extends ContextJob {
         }
 
         if (recipient.getAddress().isIndividual()) {
-            AmePushProcess.INSTANCE.processPush(accountContext, new AmePushProcess.BcmData(new AmePushProcess.BcmNotify(AmePushProcess.CHAT_NOTIFY, new AmePushProcess.ChatNotifyData(recipient.getAddress().serialize()), null, null, null, null)));
+            AmePushProcess.INSTANCE.processPush(accountContext, new AmePushProcess.BcmData(new AmePushProcess.BcmNotify(AmePushProcess.CHAT_NOTIFY, 0, new AmePushProcess.ChatNotifyData(recipient.getAddress().serialize()), null, null, null, null)));
         }
 
         kotlin.Pair<Long, Long> insertResult = chatRepo.insertIncomingMediaMessage(masterSecret.getMasterSecret().get(), mediaMessage);
@@ -772,7 +772,7 @@ public class PushDecryptJob extends ContextJob {
         }
 
         if (recipient.getAddress().isIndividual()) {
-            AmePushProcess.INSTANCE.processPush(accountContext, new AmePushProcess.BcmData(new AmePushProcess.BcmNotify(AmePushProcess.CHAT_NOTIFY, new AmePushProcess.ChatNotifyData(recipient.getAddress().serialize()), null, null, null, null)));
+            AmePushProcess.INSTANCE.processPush(accountContext, new AmePushProcess.BcmData(new AmePushProcess.BcmNotify(AmePushProcess.CHAT_NOTIFY, 0, new AmePushProcess.ChatNotifyData(recipient.getAddress().serialize()), null, null, null, null)));
         }
 
         long expiresIn = 0;
