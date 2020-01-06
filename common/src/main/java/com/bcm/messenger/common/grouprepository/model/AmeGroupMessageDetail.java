@@ -3,17 +3,17 @@ package com.bcm.messenger.common.grouprepository.model;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bcm.messenger.common.core.Address;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.AmeGroupMessage;
+import com.bcm.messenger.common.crypto.encrypt.FileInfo;
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager;
 import com.bcm.messenger.common.mms.PartAuthority;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.utils.BcmFileUtils;
 import com.bcm.messenger.common.utils.MediaUtil;
-import com.bcm.messenger.common.crypto.encrypt.FileInfo;
-import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.GsonUtils;
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher;
 import com.bcm.messenger.utility.logger.ALog;
@@ -249,11 +249,11 @@ public class AmeGroupMessageDetail {
     }
 
     public @Nullable
-    Recipient getSender() {
+    Recipient getSender(AccountContext accountContext) {
         if (TextUtils.isEmpty(senderId)) {
             return null;
         } else {
-            return Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(senderId), true);
+            return Recipient.from(accountContext, senderId, true);
         }
     }
 
@@ -283,7 +283,7 @@ public class AmeGroupMessageDetail {
         }
     }
 
-    public @Nullable Uri getThumbnailPartUri() {
+    public @Nullable Uri getThumbnailPartUri(AccountContext accountContext) {
         if (message.getContent() instanceof AmeGroupMessage.ThumbnailContent && MediaUtil.isGif(((AmeGroupMessage.ThumbnailContent) message.getContent()).getMimeType())) {
             return getFilePartUri();
         } else if (thumbnailUri == null) {
@@ -293,7 +293,7 @@ public class AmeGroupMessageDetail {
                 File file = new File(((AmeGroupMessage.ThumbnailContent) message.getContent()).getThumbnailPath().getSecond() + File.separator + ((AmeGroupMessage.ThumbnailContent) message.getContent()).getThumbnailExtension());
 
                 AmeDispatcher.INSTANCE.getIo().dispatch(() -> {
-                    MessageDataManager.INSTANCE.updateMessageThumbnailUri(gid, indexId, new FileInfo(file, file.length(), null, null));
+                    MessageDataManager.INSTANCE.updateMessageThumbnailUri(accountContext, gid, indexId, new FileInfo(file, file.length(), null, null));
                     return Unit.INSTANCE;
                 });
 
@@ -463,7 +463,7 @@ public class AmeGroupMessageDetail {
         this.identityIvString = identityIvString;
     }
 
-    public void setExtContentString(@Nullable String extContentString) {
+    public void setExtContentString(@NonNull AccountContext accountContext, @Nullable String extContentString) {
         if (TextUtils.equals(this.extContentString, extContentString)) {
             return;
         }
@@ -471,7 +471,7 @@ public class AmeGroupMessageDetail {
         ALog.d("AmeGroupMessageDetail", "setExtContentString: " + extContentString);
         try {
             ExtensionContent extContent = extContentString == null ? null : GsonUtils.INSTANCE.fromJson(extContentString, ExtensionContent.class);
-            setExtContent(extContent);
+            setExtContent(accountContext, extContent);
 
         } catch (Exception ex) {
             ALog.e("AmeGroupMessageDetail", "setExtContentString error", ex);
@@ -483,31 +483,31 @@ public class AmeGroupMessageDetail {
         return extContent;
     }
 
-    public void setExtContent(@Nullable ExtensionContent extContent) {
+    public void setExtContent(@NonNull AccountContext accountContext, @Nullable ExtensionContent extContent) {
         if (this.extContent == null && extContent == null || (this.extContent != null && this.extContent.equals(extContent))) {
             return;
         }
         this.extContent = extContent;
 
         try {
-            setExtContentString(extContent == null ? null : new Gson().toJson(extContent, new TypeToken<ExtensionContent>() {
+            setExtContentString(accountContext, extContent == null ? null : new Gson().toJson(extContent, new TypeToken<ExtensionContent>() {
             }.getType()));
 
         } catch (Exception ex) {
             ALog.e("AmeGroupMessageDetail", "setExtContent error", ex);
         }
-        checkAtRecipientList();
+        checkAtRecipientList(accountContext);
     }
 
     /**
-     * @recipient，profile
+     * get at list
      */
-    private void checkAtRecipientList() {
+    private void checkAtRecipientList(@NonNull AccountContext accountContext) {
         List<String> atList = this.extContent == null ? null : this.extContent.getAtList();
         if ((atList != null && !atList.isEmpty()) && (atRecipientList == null || atRecipientList.isEmpty())) {
             List<Recipient> result = new ArrayList<>(atList.size());
             for (String uid : atList) {
-                Recipient recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(uid), false);
+                Recipient recipient = Recipient.from(accountContext, uid, false);
                 result.add(recipient);
             }
             atRecipientList = result;

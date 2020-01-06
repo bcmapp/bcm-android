@@ -5,6 +5,7 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.crypto.GroupProfileDecryption
+import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.events.*
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
@@ -16,11 +17,10 @@ import com.bcm.messenger.common.grouprepository.modeltransform.GroupInfoTransfor
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.server.IServerDataListener
-import com.bcm.messenger.common.utils.AmePushProcess
-import com.bcm.messenger.common.utils.base64Decode
-import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
 import com.bcm.messenger.common.ui.grouprepository.events.GroupKeyRefreshCompleteEvent
 import com.bcm.messenger.common.ui.grouprepository.events.GroupKeyRefreshStartEvent
+import com.bcm.messenger.common.utils.AmePushProcess
+import com.bcm.messenger.common.utils.base64Decode
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AmeURLUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -115,7 +115,7 @@ class GroupMessageReceiver : IServerDataListener {
             val keyParam = GroupInfoDataManager.queryGroupKeyParam(accountContext, serverMessage.gid, decryptBean.keyVersion)
             val result = GroupMessageEncryptUtils.decryptMessageProcess(keyParam, decryptBean)
             if (result == null) {
-                GroupMessageLogic.syncOfflineMessage(serverMessage.gid, serverMessage.mid, Math.max(serverMessage.mid-1, 0))
+                GroupMessageLogic.get(accountContext).syncOfflineMessage(serverMessage.gid, serverMessage.mid, Math.max(serverMessage.mid-1, 0))
                 //Received a message that could not be decrypted and lost it directly, and subsequently pulled it down through the offline channel
                 ALog.i(TAG, "decrypt group message failed ${serverMessage.mid}")
             }
@@ -151,7 +151,7 @@ class GroupMessageReceiver : IServerDataListener {
             detail.sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
         }
 
-        detail.extContent = AmeGroupMessageDetail.ExtensionContent(serverMessage.content)
+        detail.setExtContent(accountContext, AmeGroupMessageDetail.ExtensionContent(serverMessage.content))
 
         EventBus.getDefault().post(GroupMessageEvent(accountContext, detail))
     }

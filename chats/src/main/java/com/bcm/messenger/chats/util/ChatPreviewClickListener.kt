@@ -17,15 +17,16 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.AmeGroupMessage
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
 import com.bcm.messenger.common.mms.PartAuthority
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.providers.PartProvider
 import com.bcm.messenger.common.ui.activity.ApkInstallRequestActivity
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Util
 import com.bcm.messenger.utility.logger.ALog
@@ -81,7 +82,7 @@ open class ChatPreviewClickListener : ChatComponentListener {
             AmeAppLifecycle.showLoading()
             Observable.create<Pair<Uri, String>> {
                 if (contentType == null || !contentType.startsWith("text/")) {
-                    val masterSecret = BCMEncryptUtils.getMasterSecret(context)
+                    val masterSecret = BCMEncryptUtils.getMasterSecret(AMELogin.majorContext)
                     val outFile = File(AmeFileUploader.DOCUMENT_DIRECTORY, name
                             ?: System.currentTimeMillis().toString())
                     if (!BcmFileUtils.isExist(outFile.absolutePath)) {
@@ -156,7 +157,7 @@ open class ChatPreviewClickListener : ChatComponentListener {
             if (messageRecord.isThumbnailDownloadFail) {
                 (v as? ChatThumbnailView)?.downloadGroupThumbnail(messageRecord)
                 return
-            } else if (messageRecord.isFileDeleted && messageRecord.thumbnailPartUri == null) {
+            } else if (messageRecord.isFileDeleted && messageRecord.getThumbnailPartUri(AMELogin.majorContext) == null) {
                 if (messageType == AmeGroupMessage.VIDEO) {
                     AmeAppLifecycle.failure(getString(R.string.chats_media_view_video_expire), true)
                 } else {

@@ -8,8 +8,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.R;
-import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.crypto.MasterSecretUnion;
 import com.bcm.messenger.common.crypto.storage.TextSecureIdentityKeyStore;
 import com.bcm.messenger.common.crypto.storage.TextSecureSessionStore;
@@ -18,7 +18,6 @@ import com.bcm.messenger.common.database.repositories.IdentityRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.sms.IncomingIdentityDefaultMessage;
-import com.bcm.messenger.common.sms.IncomingIdentityUpdateMessage;
 import com.bcm.messenger.common.sms.IncomingIdentityVerifiedMessage;
 import com.bcm.messenger.common.sms.IncomingTextMessage;
 import com.bcm.messenger.common.sms.OutgoingIdentityDefaultMessage;
@@ -58,7 +57,7 @@ public class IdentityUtil {
         Observable.create(new ObservableOnSubscribe<IdentityRecord>() {
             @Override
             public void subscribe(ObservableEmitter<IdentityRecord> emitter) throws Exception {
-                emitter.onNext(Repository.getIdentityRepo().getIdentityRecord(recipient.getAddress().serialize()));
+                emitter.onNext(Repository.getIdentityRepo(recipient.getAddress().context()).getIdentityRecord(recipient.getAddress().serialize()));
                 emitter.onComplete();
             }
         }).subscribeOn(Schedulers.io())
@@ -79,7 +78,7 @@ public class IdentityUtil {
             else
                 incoming = new IncomingIdentityDefaultMessage(incoming);
 
-            Repository.getChatRepo().insertIncomingTextMessage(incoming);
+            Repository.getChatRepo(recipient.getAddress().context()).insertIncomingTextMessage(incoming);
         } else {
             OutgoingTextMessage outgoing;
 
@@ -88,10 +87,10 @@ public class IdentityUtil {
             else
                 outgoing = new OutgoingIdentityDefaultMessage(recipient);
 
-            long threadId = Repository.getThreadRepo().getThreadIdFor(recipient);
+            long threadId = Repository.getThreadRepo(recipient.getAddress().context()).getThreadIdFor(recipient);
 
             Log.w(TAG, "Inserting verified outbox...");
-            Repository.getChatRepo().insertOutgoingTextMessage(threadId, outgoing, time, null);
+            Repository.getChatRepo(recipient.getAddress().context()).insertOutgoingTextMessage(threadId, outgoing, time, null);
         }
     }
 
@@ -129,10 +128,10 @@ public class IdentityUtil {
         }
     }
 
-    public static void processVerifiedMessage(Context context, MasterSecretUnion masterSecret, VerifiedMessage verifiedMessage) {
+    public static void processVerifiedMessage(Context context, AccountContext accountContext, MasterSecretUnion masterSecret, VerifiedMessage verifiedMessage) {
         synchronized (SESSION_LOCK) {
-            IdentityRepo identityRepo = Repository.getIdentityRepo();
-            Recipient recipient = Recipient.from(context, Address.from(context, verifiedMessage.getDestination()), true);
+            IdentityRepo identityRepo = Repository.getIdentityRepo(accountContext);
+            Recipient recipient = Recipient.from(accountContext, verifiedMessage.getDestination(), true);
             IdentityRecord identityRecord = identityRepo.getIdentityRecord(recipient.getAddress().serialize());
 
             if (identityRecord== null && verifiedMessage.getVerified() == VerifiedMessage.VerifiedState.DEFAULT) {
