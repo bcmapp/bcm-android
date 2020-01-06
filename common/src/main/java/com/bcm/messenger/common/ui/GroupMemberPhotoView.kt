@@ -4,15 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.R
+import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.utility.AppContextHolder
@@ -90,7 +87,7 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
 
         if (this.recipient?.address != address) {
             recipient?.removeListener(this)
-            this.recipient = Recipient.from(accountContext, address, true)
+            this.recipient = Recipient.from(accountContext, address.serialize(), true)
             recipient?.addListener(this)
         }
 

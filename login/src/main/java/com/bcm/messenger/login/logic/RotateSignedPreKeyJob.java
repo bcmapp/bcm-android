@@ -4,6 +4,7 @@ package com.bcm.messenger.login.logic;
 import android.content.Context;
 import android.util.Log;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.crypto.IdentityKeyUtil;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.PreKeyUtil;
@@ -25,8 +26,8 @@ public class RotateSignedPreKeyJob extends MasterSecretJob {
 
     private static final String TAG = RotateSignedPreKeyJob.class.getName();
 
-    public RotateSignedPreKeyJob(Context context) {
-        super(context, JobParameters.newBuilder()
+    public RotateSignedPreKeyJob(Context context, AccountContext accountContext) {
+        super(context, accountContext, JobParameters.newBuilder()
                 .withRequirement(new NetworkRequirement(context))
                 .withRequirement(new MasterSecretRequirement(context))
                 .withRetryCount(5)
@@ -42,20 +43,20 @@ public class RotateSignedPreKeyJob extends MasterSecretJob {
     public void onRun(MasterSecret masterSecret) throws Exception {
         Log.w(TAG, "Rotating signed prekey...");
         if (AMELogin.INSTANCE.isLogin()) {
-            IdentityKeyPair identityKey = IdentityKeyUtil.getIdentityKeyPair(context);
+            IdentityKeyPair identityKey = IdentityKeyUtil.getIdentityKeyPair(accountContext);
             SignedPreKeyRecord signedPreKeyRecord = PreKeyUtil.generateSignedPreKey(context, identityKey, false);
 
-            if (!AmeLoginCore.INSTANCE.refreshSignedPreKey(signedPreKeyRecord)) {
+            if (!AmeLoginCore.INSTANCE.refreshSignedPreKey(accountContext, signedPreKeyRecord)) {
                 throw new Exception("refreshSignedPreKey failed");
             }
 
             PreKeyUtil.setActiveSignedPreKeyId(context, signedPreKeyRecord.getId());
-            AMELogin.INSTANCE.setSignedPreKeyRegistered(true);
-            AMELogin.INSTANCE.setSignedPreKeyFailureCount(0);
+            accountContext.setSignedPreKeyRegistered(true);
+            accountContext.setSignedPreKeyFailureCount(0);
 
-            JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr();
+            JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
             if (manager != null) {
-                manager.add(new CleanPreKeysJob(context));
+                manager.add(new CleanPreKeysJob(context, accountContext));
             }
         } else {
             ALog.w(TAG, "please login first");
@@ -69,6 +70,6 @@ public class RotateSignedPreKeyJob extends MasterSecretJob {
 
     @Override
     public void onCanceled() {
-        AMELogin.INSTANCE.setSignedPreKeyFailureCount(AMELogin.INSTANCE.getSignedPreKeyFailureCount() + 1);
+        accountContext.setSignedPreKeyFailureCount(accountContext.getSignedPreKeyFailureCount() + 1);
     }
 }

@@ -180,9 +180,8 @@ class SchemeLaunchHelper(val context: Context) {
                                         .get(con.path)
                                         .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
                                         .putLong(ARouterConstants.PARAM.PARAM_THREAD, newThreadId)
-                                        .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, con.gid
-                                                ?: -1L)
-                                        .navigation(current)
+                                        .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, con.gid ?: -1L)
+                                        .startBcmActivity(address.context(), current)
                             }
                         } else {
                             BcmRouter.getInstance()

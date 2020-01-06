@@ -6,7 +6,7 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.CtrStreamUtil
 import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.database.db.UserDatabase
+import com.bcm.messenger.common.crypto.encrypt.FileInfo
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.events.GroupMessageMissedEvent
 import com.bcm.messenger.common.grouprepository.events.MessageEvent
@@ -17,12 +17,10 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTransform
 import com.bcm.messenger.common.grouprepository.room.dao.GroupMessageDao
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.bean.ConversationStorage
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.GroupUtil
-import com.bcm.messenger.common.crypto.encrypt.FileInfo
 import com.bcm.messenger.common.utils.split
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -111,7 +109,7 @@ object MessageDataManager {
             }
             getDao(accountContext).updateMessages(list)
 
-            if (Repository.getThreadRepo(accountContext).getThreadIdIfExist(Recipient.recipientFromNewGroupId(accountContext, gid)) > 0) {
+            if ((Repository.getThreadRepo(accountContext)?.getThreadIdIfExist(Recipient.recipientFromNewGroupId(accountContext, gid)) ?: 0) > 0) {
                 notifyThreadUpdate(accountContext, gid)
             }
         }
@@ -227,9 +225,9 @@ object MessageDataManager {
     fun fetchMessageByGidAndIndexId(accountContext: AccountContext, gid: Long, indexId: Long, count: Int): List<AmeGroupMessageDetail> {
         if (indexId == -1L) {//
             val lastId = getDao(accountContext).queryMaxIndexId(gid)
-            return GroupMessageTransform.transformToModelList(getDao(accountContext).loadMessagesByGidAndIndexId(gid, lastId + 1, count))
+            return GroupMessageTransform.transformToModelList(getDao(accountContext)?.loadMessagesByGidAndIndexId(gid, lastId + 1, count) ?: listOf())
         }
-        return GroupMessageTransform.transformToModelList(getDao(accountContext).loadMessagesByGidAndIndexId(gid, indexId, count))
+        return GroupMessageTransform.transformToModelList(getDao(accountContext)?.loadMessagesByGidAndIndexId(gid, indexId, count) ?: listOf())
     }
 
 
@@ -436,12 +434,9 @@ object MessageDataManager {
 
         if (message.is_confirm == GroupMessage.CONFIRM_MESSAGE) {
             // ThreadId
-            val groupRecipient = Recipient.from(accountContext,
-                    GroupUtil.addressFromGid(message.gid),
-                    false)
+            val groupRecipient = Recipient.from(accountContext, GroupUtil.uidFromGid(message.gid), false)
 
-            Repository.getThreadRepo(accountContext)
-                    .getThreadIdFor(groupRecipient)
+            Repository.getThreadRepo(accountContext)?.getThreadIdFor(groupRecipient)
 
         }
     }
@@ -569,8 +564,8 @@ object MessageDataManager {
             }
             return null
         } else {
-            val message = getDao(accountContext).queryOneMessageByIndex(gid, id)
-            if (message.gid == gid && message.id == id && message.is_confirm != GroupMessage.DELETED_MESSAGE) {
+            val message = getDao(accountContext)?.queryOneMessageByIndex(gid, id)
+            if (message?.gid == gid && message.id == id && message.is_confirm != GroupMessage.DELETED_MESSAGE) {
                 return message
             }
             return null
@@ -582,10 +577,13 @@ object MessageDataManager {
         return GroupMessageTransform.transformToModel(message)
     }
 
+    @Throws(Exception::class)
     private fun getDao(accountContext: AccountContext): GroupMessageDao {
-        return UserDatabase.getDatabase(accountContext).groupMessageDao()
+        return Repository.getGroupMessageRepo(accountContext)
+                ?: throw Exception("getGroupMessageDao error")
+    }
 
-    fun getExistMessageByMids(gid: Long, minMid:Long, maxMid:Long): List<Long> {
+    fun getExistMessageByMids(accountContext: AccountContext, gid: Long, minMid:Long, maxMid:Long): List<Long> {
         return getDao(accountContext).queryExistMessageByMids(gid, minMid, maxMid).toList()
     }
 
@@ -599,7 +597,7 @@ object MessageDataManager {
     }
 
     private fun notifyThreadUpdate(accountContext: AccountContext, gid: Long) {
-        Repository.getThreadRepo(accountContext).updateByNewGroup(gid)
+        Repository.getThreadRepo(accountContext)?.updateByNewGroup(gid)
     }
 
     fun recallMessage(accountContext: AccountContext, fromUid: String, gid: Long, recallMid: Long) {

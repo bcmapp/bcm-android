@@ -62,7 +62,7 @@ class SystemNoticeBanner : ConstraintLayout {
 
         mCloseView.setOnClickListener {
             this.visibility = View.GONE
-            TextSecurePreferences.setStringPreference(context, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.majorUid + "_" + AmePushProcess.SystemNotifyData.TYPE_BANNER, "")
+            TextSecurePreferences.setStringPreference(AMELogin.majorContext, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.majorUid + "_" + AmePushProcess.SystemNotifyData.TYPE_BANNER, "")
         }
     }
 

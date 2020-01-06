@@ -80,7 +80,7 @@ class NewChatActivity : SwipeBaseActivity() {
                     }
                     AmePopup.loading.show(this@NewChatActivity)
                     val weakThis = WeakReference(this@NewChatActivity)
-                    GroupLogic.createGroup("", "", false, "", targetSet) { groupInfo: AmeGroupInfo?, succeed: Boolean, error: String? ->
+                    GroupLogic.get(getAccountContext()).createGroup("", "", false, "", targetSet) { groupInfo: AmeGroupInfo?, succeed: Boolean, error: String? ->
                         AmePopup.loading.dismiss()
                         if (succeed && null != groupInfo && null != groupInfo.gid) {
                             val activity = weakThis.get()

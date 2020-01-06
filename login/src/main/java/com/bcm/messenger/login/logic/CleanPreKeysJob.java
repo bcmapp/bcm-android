@@ -3,6 +3,7 @@ package com.bcm.messenger.login.logic;
 import android.content.Context;
 import android.util.Log;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.PreKeyUtil;
 import com.bcm.messenger.common.crypto.storage.SignalProtocolStoreImpl;
@@ -36,8 +37,8 @@ public class CleanPreKeysJob extends MasterSecretJob {
 
     private transient SignedPreKeyStoreFactory signedPreKeyStoreFactory;
 
-    public CleanPreKeysJob(Context context) {
-        super(context, JobParameters.newBuilder()
+    public CleanPreKeysJob(Context context, AccountContext accountContext) {
+        super(context, accountContext, JobParameters.newBuilder()
                 .withGroupId(CleanPreKeysJob.class.getSimpleName())
                 .withRequirement(new MasterSecretRequirement(context))
                 .withRetryCount(5)

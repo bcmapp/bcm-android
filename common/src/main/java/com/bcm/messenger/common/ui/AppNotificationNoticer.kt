@@ -12,9 +12,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationManagerCompat
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import kotlinx.android.synthetic.main.common_system_notification_layout.view.*
-import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.utility.logger.ALog
+import kotlinx.android.synthetic.main.common_system_notification_layout.view.*
 
 
 class AppNotificationNoticer : ConstraintLayout {
@@ -40,7 +41,7 @@ class AppNotificationNoticer : ConstraintLayout {
 
     constructor(context: Context, attributeSet: AttributeSet?, defStyleAttr: Int) : super(context, attributeSet, defStyleAttr) {
         LayoutInflater.from(context).inflate(R.layout.common_system_notification_layout, this)
-        mShowSystemNotificationNotice = TextSecurePreferences.getBooleanPreference(context, TextSecurePreferences.SYS_NOTIFICATION_NOTICE, true)
+        mShowSystemNotificationNotice = TextSecurePreferences.getBooleanPreference(AMELogin.majorContext, TextSecurePreferences.SYS_NOTIFICATION_NOTICE, true)
         initView()
 
         if (background == null) {
@@ -80,7 +81,7 @@ class AppNotificationNoticer : ConstraintLayout {
         }
         system_notification_close.setOnClickListener {
             mShowSystemNotificationNotice = false
-            TextSecurePreferences.setBooleanPreference(context, TextSecurePreferences.SYS_NOTIFICATION_NOTICE, false)
+            TextSecurePreferences.setBooleanPreference(AMELogin.majorContext, TextSecurePreferences.SYS_NOTIFICATION_NOTICE, false)
             setNoticeClose()
         }
     }

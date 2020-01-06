@@ -243,7 +243,7 @@ class RecipientRepo(
     fun getRecipientsLiveData() = recipientDao.queryFriendFollowersLiveData(accountContext.uid)
 
     fun leaveGroup(groupIds: Collection<Long>) {
-        val groupList = groupIds.map { GroupUtil.addressFromGid(it).serialize() }
+        val groupList = groupIds.map { GroupUtil.uidFromGid(it) }
         recipientDao.deleteRecipients(groupList)
     }
 

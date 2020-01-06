@@ -610,7 +610,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         override fun setRecipientCallback(accountContext: AccountContext, callback: RecipientModifiedListener?) {
             if (senderRecipient == null) {
                 if (!TextUtils.isEmpty(sender)) {
-                    senderRecipient = Recipient.from(accountContext, Address.fromSerialized(sender), true)
+                    senderRecipient = Recipient.from(accountContext, sender, true)
                 }
             }
             if (mRecipientCallback != null) {
@@ -633,7 +633,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
             if (senderRecipient == null) {
                 if (!TextUtils.isEmpty(sender)) {
-                    senderRecipient = Recipient.from(accountContext, Address.fromSerialized(sender), true)
+                    senderRecipient = Recipient.from(accountContext, sender, true)
                     senderRecipient?.addListener(mRecipientCallback)
                 }
             }
@@ -645,7 +645,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             }
             if (ol.isEmpty()) {
                 for (theOperator in this.theOperator) {
-                    val tr = Recipient.from(accountContext, Address.fromSerialized(theOperator), true)
+                    val tr = Recipient.from(accountContext, theOperator, true)
                     tr.addListener(mRecipientCallback)
                     ol.add(tr)
                 }
@@ -689,7 +689,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     var tip = ""
                     if (operators.second.isNotEmpty()) {
                         for (recipient in ol) {
-                            if (recipient.isSelf) {
+                            if (recipient.isLogin()) {
                                 tip = context.getString(R.string.common_chats_group_kick_me, operators.first)
                             }
                         }
@@ -1079,7 +1079,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             if (uid.isNullOrEmpty()) {
                 return null
             }
-            return Recipient.from(accountContext, Address.fromSerialized(uid), true)
+            return Recipient.from(accountContext, uid, true)
         }
 
         /**
@@ -1169,7 +1169,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
         override fun setRecipientCallback(accountContext: AccountContext, callback: RecipientModifiedListener?) {
             if (r == null) {
-                r = Recipient.from(accountContext, Address.fromSerialized(otherUid), true)
+                r = Recipient.from(accountContext, otherUid, true)
             }
             if (mRecipientCallback != null) {
                 r?.removeListener(mRecipientCallback)
@@ -1183,7 +1183,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             val context = AppContextHolder.APP_CONTEXT
 
             if (r == null) {
-                r = Recipient.from(accountContext, Address.fromSerialized(otherUid), true)
+                r = Recipient.from(accountContext, otherUid, true)
                 r?.addListener(mRecipientCallback)
             }
             return if (type == DELETE) {

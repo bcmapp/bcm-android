@@ -18,8 +18,6 @@ import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.sdk.crashreport.ReportUtils
 import org.whispersystems.jobqueue.JobManager
-import org.whispersystems.jobqueue.dependencies.DependencyInjector
-import java.util.concurrent.ConcurrentHashMap
 
 object AmeModuleCenter {
     private val serverDataDispatcher: ServerDataDispatcher = ServerDataDispatcher()

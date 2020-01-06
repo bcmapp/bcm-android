@@ -3,7 +3,6 @@ package com.bcm.messenger.login.logic
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.IMHttp
 import com.bcm.messenger.common.bcmhttp.RxIMHttp
-import com.bcm.messenger.utility.bcmhttp.facade.SyncHttpWrapper
 import com.bcm.messenger.common.config.BcmFeatureSupport
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.database.repositories.Repository
@@ -11,9 +10,9 @@ import com.bcm.messenger.common.profiles.ProfilePrivacy
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.login.bean.AmeLoginParams
 import com.bcm.messenger.login.bean.AmeRegisterParams
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.bcmhttp.facade.AmeEmpty
+import com.bcm.messenger.utility.bcmhttp.facade.SyncHttpWrapper
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.proguard.NotGuard
@@ -43,24 +42,24 @@ object AmeLoginCore {
     private const val UPLOAD_MY_FEATURE = "/v1/accounts/features"
 
     fun register(accountContext: AccountContext, params: AmeRegisterParams): Observable<AmeEmpty> {
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(INTERFACE_REGISTER),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(INTERFACE_REGISTER),
                 null, Gson().toJson(params).toString(), object : TypeToken<AmeEmpty>() {
         }.type)
     }
 
     fun login(accountContext: AccountContext, params: AmeLoginParams):Observable<AmeEmpty> {
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(INTERFACE_LOGIN),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(INTERFACE_LOGIN),
                 null, Gson().toJson(params).toString(), object : TypeToken<AmeEmpty>() {
         }.type)
     }
 
     fun unregister(accountContext: AccountContext, sign: String): Observable<AmeEmpty> {
-        return RxIMHttp.getHttp(accountContext).delete(BcmHttpApiHelper.getApi(String.format(Locale.US, INTERFACE_UNREGISTER, accountContext.uid, sign)), null, null, object : TypeToken<AmeEmpty>() {}.type)
+        return RxIMHttp.get(accountContext).delete(BcmHttpApiHelper.getApi(String.format(Locale.US, INTERFACE_UNREGISTER, accountContext.uid, sign)), null, null, object : TypeToken<AmeEmpty>() {}.type)
     }
 
     fun uploadMyFunctionSupport(accountContext: AccountContext, support: BcmFeatureSupport): Observable<AmeEmpty> {
         val req = UploadMyFunctionReq(support.toString())
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(UPLOAD_MY_FEATURE),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(UPLOAD_MY_FEATURE),
                 null, Gson().toJson(req), AmeEmpty::class.java)
     }
 
@@ -81,7 +80,7 @@ object AmeLoginCore {
                 signedPreKey.signature)
 
         return try {
-            val wrapper = SyncHttpWrapper(IMHttp.getHttp(accountContext))
+            val wrapper = SyncHttpWrapper(IMHttp.get(accountContext))
             wrapper.put<AmeEmpty>(BcmHttpApiHelper.getApi(String.format(PREKEY_PATH, "")),
                     GsonUtils.toJson(PreKeyState(entities, signedPreKeyEntity, identityKey)),
                     AmeEmpty::class.java)
@@ -94,7 +93,7 @@ object AmeLoginCore {
 
     fun getAvailablePreKeys(accountContext: AccountContext): Int {
         return try {
-            val wrapper = SyncHttpWrapper(IMHttp.getHttp(accountContext))
+            val wrapper = SyncHttpWrapper(IMHttp.get(accountContext))
 
             wrapper.get<PreKeyStatus>(BcmHttpApiHelper.getApi(PREKEY_METADATA_PATH)
                     , null
@@ -108,7 +107,7 @@ object AmeLoginCore {
 
     fun refreshSignedPreKey(accountContext: AccountContext, signedPreKey: SignedPreKeyRecord): Boolean {
         return try {
-            val wrapper = SyncHttpWrapper(IMHttp.getHttp(accountContext))
+            val wrapper = SyncHttpWrapper(IMHttp.get(accountContext))
 
             val signedPreKeyEntity = SignedPreKeyEntity(signedPreKey.id,
                     signedPreKey.keyPair.publicKey,
@@ -129,13 +128,13 @@ object AmeLoginCore {
             allowStrangerMessage = allow
         }
 
-        return RxIMHttp.getHttp(accountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(String.format(PROFILE_PATH, "privacy"))
+        return RxIMHttp.get(accountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(String.format(PROFILE_PATH, "privacy"))
                 , privacy.toString()
                 , AmeEmpty::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .map {
-                    val recipient = Recipient.fromSelf(AppContextHolder.APP_CONTEXT, false)
+                    val recipient = Recipient.login(accountContext)
                     val privacyProfile = recipient.privacyProfile
                     privacyProfile.allowStranger = privacy.allowStrangerMessage
                     Repository.getRecipientRepo(accountContext)?.setPrivacyProfile(recipient, privacyProfile)

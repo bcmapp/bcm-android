@@ -10,7 +10,7 @@ import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
@@ -106,8 +106,7 @@ object ClipboardUtil {
                 val id = result.value
                 if (id.isNotBlank()) {
                     if (id != AMELogin.majorUid) {
-                        val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                        contactProvider.openContactDataActivity(activity, Address.fromSerialized(id))
+                        AmeModuleCenter.contact(AMELogin.majorContext)?.openContactDataActivity(activity, Address.from(AMELogin.majorContext, id))
                     }
                     return true
                 }
@@ -120,8 +119,7 @@ object ClipboardUtil {
                 val qrData = Recipient.RecipientQR.fromJson(json)
                 if (qrData != null) {
                     if (qrData.uid != AMELogin.majorUid) {
-                        val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                        contactProvider.openContactDataActivity(activity, Address.fromSerialized(qrData.uid), qrData.name)
+                        AmeModuleCenter.contact(AMELogin.majorContext)?.openContactDataActivity(activity, Address.from(AMELogin.majorContext, qrData.uid), qrData.name)
                     }
                     return true
                 }

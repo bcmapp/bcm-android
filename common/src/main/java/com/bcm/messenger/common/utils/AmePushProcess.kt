@@ -1,6 +1,5 @@
 package com.bcm.messenger.common.utils
 
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
@@ -240,12 +239,11 @@ object AmePushProcess {
 
     class BcmData(val bcmdata: BcmNotify?): NotGuard
 
-    @SuppressLint("CheckResult")
     fun processPush(accountContext: AccountContext?, notify: BcmData?) {
 
         if (AMELogin.isLogin && null != notify) {
-            if (TextSecurePreferences.isNotificationsEnabled(AppContextHolder.APP_CONTEXT) &&
-                    TextSecurePreferences.isDatabaseMigrated(AppContextHolder.APP_CONTEXT)) {
+            if (accountContext != null && TextSecurePreferences.isNotificationsEnabled(accountContext) &&
+                    TextSecurePreferences.isDatabaseMigrated(accountContext)) {
                 Observable.create<Unit> {
                     if (needShowOffline()) {
                         incrementOfflineUnreadCount(accountContext, notify)
@@ -319,7 +317,7 @@ object AmePushProcess {
      */
     fun checkSystemBannerNotice() {
         AmeDispatcher.io.dispatch {
-            val lastMsg = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.majorUid + "_" + SystemNotifyData.TYPE_BANNER, "")
+            val lastMsg = TextSecurePreferences.getStringPreference(AMELogin.majorContext, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + AMELogin.majorUid + "_" + SystemNotifyData.TYPE_BANNER, "")
             val msg = GsonUtils.fromJson(lastMsg, SystemNotifyData::class.java)
             if (lastMsg.isNotEmpty() && msg.type == SystemNotifyData.TYPE_BANNER) {
                 val targetHash = BcmHash.hash(AMELogin.majorUid.toByteArray())
@@ -411,18 +409,16 @@ object AmePushProcess {
     }
 
     private fun handleNotify(accountContext: AccountContext?, notifyData: SystemNotifyData?) {
-        if(notifyData == null) {
+        if(notifyData == null || accountContext == null) {
             return
         }
 
-        if (null != accountContext) {
-            val oldJsonData = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + accountContext.uid + "_" + notifyData.type, "")
-            if (!oldJsonData.isNullOrEmpty()) {
-                val oldData = GsonUtils.fromJson(oldJsonData, SystemNotifyData::class.java)
-                if (oldData.id >= notifyData.id) { //
-                    ALog.i(TAG, "oldData.id = ${oldData.id} ,newNotifyData.id = ${notifyData.id}")
-                    return
-                }
+        val oldJsonData = TextSecurePreferences.getStringPreference(accountContext, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + accountContext.uid + "_" + notifyData.type, "")
+        if (!oldJsonData.isNullOrEmpty()) {
+            val oldData = GsonUtils.fromJson(oldJsonData, SystemNotifyData::class.java)
+            if (oldData.id >= notifyData.id) { //
+                ALog.i(TAG, "oldData.id = ${oldData.id} ,newNotifyData.id = ${notifyData.id}")
+                return
             }
         }
 
@@ -451,42 +447,37 @@ object AmePushProcess {
             }
             if (!AppForeground.foreground()) { //Umeng，App，Umeng
                 val builder = AmeNotification.getDefaultNotificationBuilder(AppContextHolder.APP_CONTEXT)
-                setAlarm(builder, null, RecipientDatabase.VibrateState.ENABLED)
+                setAlarm(accountContext, builder, null, RecipientDatabase.VibrateState.ENABLED)
                 notifySystemMessageBar(accountContext, builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
                         AmeNotificationService.ACTION_HOME)
             }
-            if (null != accountContext) {
-                PushUtil.confirmSystemMessages(accountContext, notifyData.id).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({
-                            ALog.i(TAG, "confirm system message maxMid ${notifyData.id}")
-                        }, {
-                            ALog.e(TAG, it.localizedMessage)
-                        })
-            }
-
+            PushUtil.confirmSystemMessages(accountContext, notifyData.id).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        ALog.i(TAG, "confirm system message maxMid ${notifyData.id}")
+                    }, {
+                        ALog.e(TAG, it.localizedMessage)
+                    })
 
         }catch (ex: Exception) {
             ALog.e(TAG, "handleNotify for system chat fail", ex)
         }finally {
-            if (null != accountContext) {
-                TextSecurePreferences.setStringPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + accountContext.uid + "_" + notifyData.type, GsonUtils.toJson(notifyData))
-            }
+            TextSecurePreferences.setStringPreference(accountContext, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + accountContext.uid + "_" + notifyData.type, GsonUtils.toJson(notifyData))
         }
     }
 
-    private fun setAlarm(builder: NotificationCompat.Builder, ringtone: Uri?, vibrate: RecipientDatabase.VibrateState) {
+    private fun setAlarm(accountContext: AccountContext, builder: NotificationCompat.Builder, ringtone: Uri?, vibrate: RecipientDatabase.VibrateState) {
         if (System.currentTimeMillis() - lastNotifyTime > 6000) {
             lastNotifyTime = System.currentTimeMillis()
 
-            val defaultRingtone = TextSecurePreferences.getNotificationRingtone(AppContextHolder.APP_CONTEXT)
+            val defaultRingtone = TextSecurePreferences.getNotificationRingtone(accountContext)
             if (ringtone != null) {
                 builder.setSound(ringtone)
             } else if (!defaultRingtone.isNullOrEmpty()) {
                 builder.setSound(Uri.parse(defaultRingtone))
             }
 
-            val defaultVibrate = TextSecurePreferences.isNotificationVibrateEnabled(AppContextHolder.APP_CONTEXT)
+            val defaultVibrate = TextSecurePreferences.isNotificationVibrateEnabled(accountContext)
             if ((vibrate == RecipientDatabase.VibrateState.ENABLED || vibrate == RecipientDatabase.VibrateState.DEFAULT) && defaultVibrate) {
                 builder.setDefaults(Notification.DEFAULT_VIBRATE)
             }
@@ -508,8 +499,8 @@ object AmePushProcess {
                     return
                 }
 
-                if (TextSecurePreferences.isNotificationsEnabled(AppContextHolder.APP_CONTEXT)) {
-                    setAlarm(builder, recipient?.ringtone, recipient?.vibrate?:RecipientDatabase.VibrateState.DEFAULT)
+                if (accountContext != null && TextSecurePreferences.isNotificationsEnabled(accountContext)) {
+                    setAlarm(accountContext, builder, recipient?.ringtone, recipient?.vibrate?:RecipientDatabase.VibrateState.DEFAULT)
                 }
 
                 notifyBar(accountContext, builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
@@ -522,18 +513,17 @@ object AmePushProcess {
      *
      */
     private fun handleNotify(accountContext: AccountContext?, notifyData: GroupNotifyData?) {
+        if (accountContext == null) return
         if (null != notifyData && notifyData.gid ?: 0 > 0) {
             val builder = AmeNotification.getDefaultNotificationBuilder(AppContextHolder.APP_CONTEXT)
 
             var mute = false
-            if (accountContext != null) {
-                mute = GroupInfoDataManager.queryOneAmeGroupInfo(accountContext,notifyData.gid
-                        ?: throw Exception("group message id is null"))?.mute
-                        ?: true
-            }
+            mute = GroupInfoDataManager.queryOneAmeGroupInfo(accountContext,notifyData.gid
+                    ?: throw Exception("group message id is null"))?.mute
+                    ?: true
 
             if (notifyData.isAt == true || !mute) {
-                setAlarm(builder, null, RecipientDatabase.VibrateState.ENABLED)
+                setAlarm(accountContext, builder, null, RecipientDatabase.VibrateState.ENABLED)
                 notifyBar(accountContext, builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
                         AmeNotificationService.ACTION_GROUP)
             }
@@ -584,7 +574,7 @@ object AmePushProcess {
             val builder = AmeNotification.getAdHocNotificationBuilder(AppContextHolder.APP_CONTEXT)
             val enable = Repository.getAdHocSessionRepo(accountContext)?.querySession(notifyData.session)?.mute != true
             if (notifyData.isAt || enable) {
-                setAlarm(builder, null, RecipientDatabase.VibrateState.ENABLED)
+                setAlarm(accountContext, builder, null, RecipientDatabase.VibrateState.ENABLED)
                 notifyBar(accountContext, builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
                         AmeNotificationService.ACTION_ADHOC)
             }else {

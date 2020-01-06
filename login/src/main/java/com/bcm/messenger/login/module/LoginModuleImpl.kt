@@ -161,8 +161,8 @@ class LoginModuleImpl : ILoginModule
 
             for (i in loginContextList) {
                 AmeModuleCenter.onLoginSucceed(i)
-                if (!TextSecurePreferences.isSignedPreKeyRegistered(AppContextHolder.APP_CONTEXT)) {
-                    AmeModuleCenter.accountJobMgr(i)?.add(CreateSignedPreKeyJob(AppContextHolder.APP_CONTEXT))
+                if (!TextSecurePreferences.isSignedPreKeyRegistered(i)) {
+                    AmeModuleCenter.accountJobMgr(i)?.add(CreateSignedPreKeyJob(AppContextHolder.APP_CONTEXT, i))
                 }
             }
         } else {

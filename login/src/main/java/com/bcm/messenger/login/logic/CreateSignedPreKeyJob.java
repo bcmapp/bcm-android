@@ -3,12 +3,12 @@ package com.bcm.messenger.login.logic;
 import android.content.Context;
 import android.util.Log;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.crypto.IdentityKeyUtil;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.PreKeyUtil;
 import com.bcm.messenger.common.jobs.MasterSecretJob;
 import com.bcm.messenger.common.jobs.requirements.MasterSecretRequirement;
-import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 
 import org.whispersystems.jobqueue.JobParameters;
@@ -26,8 +26,8 @@ public class CreateSignedPreKeyJob extends MasterSecretJob {
 
     private static final String TAG = CreateSignedPreKeyJob.class.getSimpleName();
 
-    public CreateSignedPreKeyJob(Context context) {
-        super(context, JobParameters.newBuilder()
+    public CreateSignedPreKeyJob(Context context, AccountContext accountContext) {
+        super(context, accountContext, JobParameters.newBuilder()
                 .withPersistence()
                 .withRequirement(new NetworkRequirement(context))
                 .withRequirement(new MasterSecretRequirement(context))
@@ -41,22 +41,17 @@ public class CreateSignedPreKeyJob extends MasterSecretJob {
 
     @Override
     public void onRun(MasterSecret masterSecret) throws IOException {
-        if (AMELogin.INSTANCE.isSignedPreKeyRegistered()) {
+        if (accountContext.isSignedPreKeyRegistered()) {
             Log.w(TAG, "Signed prekey already registered...");
             return;
         }
 
-        if (!AMELogin.INSTANCE.isPushRegistered()) {
-            Log.w(TAG, "Not yet registered...");
-            return;
-        }
-
-        IdentityKeyPair identityKeyPair = IdentityKeyUtil.getIdentityKeyPair(context);
+        IdentityKeyPair identityKeyPair = IdentityKeyUtil.getIdentityKeyPair(accountContext);
         SignedPreKeyRecord signedPreKeyRecord = PreKeyUtil.generateSignedPreKey(context, identityKeyPair, true);
 
 
-        AmeLoginCore.INSTANCE.refreshSignedPreKey(signedPreKeyRecord);
-        AmeModuleCenter.INSTANCE.login().setSignedPreKeyRegistered(true);
+        AmeLoginCore.INSTANCE.refreshSignedPreKey(accountContext, signedPreKeyRecord);
+        AmeModuleCenter.INSTANCE.login().setSignedPreKeyRegistered(accountContext.getUid(), true);
     }
 
     @Override

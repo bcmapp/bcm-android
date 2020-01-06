@@ -63,11 +63,6 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
         this(in.readParcelable(AccountContext.class.getClassLoader()), in.readString());
     }
 
-//    public static @NonNull
-//    Address fromSerialized(@NonNull String serialized) {
-//        return new Address(serialized);
-//    }
-
     public static Address from(@NonNull String serialized) {
         return new Address(AMELogin.INSTANCE.getMajorContext(), serialized);
     }
