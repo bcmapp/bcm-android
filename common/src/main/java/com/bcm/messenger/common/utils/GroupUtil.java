@@ -42,6 +42,18 @@ public class GroupUtil {
         return 0L;
     }
 
+    public static Long gidFromUid(String uid) {
+        try {
+            ByteBuffer buffer = ByteBuffer.allocate(8);
+            buffer.put(decodeTTGroupId(uid));
+            buffer.flip();
+            return buffer.getLong();
+        } catch (AssertionError | IOException e) {
+            Logger.e(e, "groupIdFromRecipient");
+        }
+        return 0L;
+    }
+
     public static String getEncodedId(byte[] groupId, boolean mms) {
         return (mms ? ENCODED_MMS_GROUP_PREFIX : ENCODED_SIGNAL_GROUP_PREFIX) + HexUtil.toString(groupId);
     }

@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -60,7 +59,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recipient = Recipient.from(getAccountContext(), Address.fromSerialized(getAccountContext().uid), true)
+        recipient = Recipient.from(getAccountContext(), getAccountContext().uid, true)
         recipient.addListener(this)
         initView()
     }

@@ -12,7 +12,6 @@ import androidx.core.app.NotificationCompat
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.AmeNotification
 import com.bcm.messenger.common.R
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.RecipientDatabase
 import com.bcm.messenger.common.database.db.UserDatabase
@@ -346,7 +345,7 @@ object AmePushProcess {
                         null
                     }else {
                         if (r.isGroupRecipient) {
-                            GroupUtil.gidFromAddress(Address.fromSerialized(it.uid)).toString()
+                            GroupUtil.gidFromUid(it.uid).toString()
                         } else {
                             it.uid
                         }
