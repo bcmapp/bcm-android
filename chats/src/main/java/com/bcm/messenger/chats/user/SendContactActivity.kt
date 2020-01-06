@@ -39,7 +39,7 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
         setContentView(R.layout.chats_activity_send_contact)
 
         val address = intent.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
-        chatRecipient = Recipient.from(this, address, true)
+        chatRecipient = Recipient.from(getAccountContext(), address.serialize(), true)
 
         initView()
     }
@@ -49,7 +49,7 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
             override fun onClickLeft() {
                 if (!mMultiMode) {
                     finish()
-                }else {
+                } else {
                     mContactsAction?.setMultiMode(false)
                 }
             }
@@ -57,8 +57,7 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
             override fun onClickRight() {
                 if (mMultiMode) {
                     prepareSend()
-                }
-                else {
+                } else {
                     mContactsAction?.setMultiMode(true)
                 }
             }
@@ -77,9 +76,7 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
             fragment.setContactSelectCallback(this)
         }
 
-        supportFragmentManager.beginTransaction()
-                .add(R.id.container, fragment)
-                .commit()
+        initFragment(R.id.container, fragment, fragment.arguments)
 
         onModeChanged(false)
     }
@@ -87,7 +84,7 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
     override fun onBackPressed() {
         if (mMultiMode) {
             mContactsAction?.setMultiMode(false)
-        }else {
+        } else {
             super.onBackPressed()
         }
     }
@@ -97,7 +94,7 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
             selectSet.clear()
             selectSet.add(recipient)
             prepareSend()
-        }else {
+        } else {
             selectSet.add(recipient)
             val right = title_bar?.getRightView()?.second as? TextView
             right?.text = "${getString(R.string.chats_done)}(${selectSet.size})"
@@ -122,7 +119,7 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
             left?.text = ""
             left?.setDrawableLeft(R.drawable.common_back_arrow_black_icon)
             right?.text = getString(R.string.common_multi_select)
-        }else {
+        } else {
             left?.text = getString(R.string.chats_select_mode_cancel_btn)
             left?.setDrawableLeft(0)
             right?.text = "${getString(R.string.chats_done)}(${selectSet.size})"
@@ -138,7 +135,8 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
                 .setSendRecipient(selectSet.toList())
                 .setSendCallback { sendList, comment ->
                     val dataList = sendList.map {
-                        AmeGroupMessage.ContactContent(it.bcmName ?: it.address.format(), it.address.serialize(), "")
+                        AmeGroupMessage.ContactContent(it.bcmName
+                                ?: it.address.format(), it.address.serialize(), "")
                     }
                     if (sendList.isNotEmpty()) {
                         var groupId = 0L
@@ -150,12 +148,12 @@ class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
                             setResult(Activity.RESULT_OK, Intent().apply {
                                 putExtra(ARouterConstants.PARAM.PARAM_DATA, event.toString())
                             })
-                        }catch (ex: Exception) {
+                        } catch (ex: Exception) {
                             ALog.e(TAG, "prepareSend error", ex)
                             setResult(Activity.RESULT_CANCELED)
                         }
 
-                    }else {
+                    } else {
                         setResult(Activity.RESULT_CANCELED)
                     }
                     finish()

@@ -120,7 +120,7 @@ public class PushControlMessageSendJob extends PushSendJob {
     private void deliver(SignalServiceDataMessage message, SignalServiceAddress address)
             throws UntrustedIdentityException, InsecureFallbackApprovalException, RetryLaterException {
         try {
-            BcmChatCore.INSTANCE.sendSilentMessage(address, message);
+            BcmChatCore.INSTANCE.sendSilentMessage(accountContext, address, message);
         } catch (UnregisteredUserException e) {
             ALog.e(TAG, e);
             throw new InsecureFallbackApprovalException(e);

@@ -45,8 +45,9 @@ import java.util.*
  * private chat view model
  * Created by Kin on 2019/9/18
  */
-class AmeConversationViewModel : ViewModel() {
-
+class AmeConversationViewModel(
+        private val mAccountContext: AccountContext
+) : ViewModel() {
     class AmeConversationData(val type: ACType, val data: List<MessageRecord>, val unread: Long) {
         enum class ACType {
             RESET,
@@ -67,7 +68,7 @@ class AmeConversationViewModel : ViewModel() {
 
     }
 
-    private lateinit var mAccountContext: AccountContext
+    private lateinit var repository: Repository
 
     private var mRecipient: Recipient? = null
     private var mThreadId = 0L
@@ -101,17 +102,17 @@ class AmeConversationViewModel : ViewModel() {
         EventBus.getDefault().unregister(this)
         RxBus.unSubscribe(PrivateChatRepo.CHANGED_TAG + mThreadId)
         RxBus.unSubscribe(ARouterConstants.PARAM.PARAM_HAS_REQUEST)
-        mRecipient?.let {last ->
+        mRecipient?.let { last ->
             RxBus.unSubscribe(last.address.serialize())
         }
     }
 
-    fun init(accountContext: AccountContext, threadId: Long, recipient: Recipient) {
+    fun init(threadId: Long, recipient: Recipient) {
         ALog.logForSecret(TAG, "init threadId: $threadId, uid: ${recipient.address}")
-        this.mAccountContext = accountContext
+        this.repository = Repository.getInstance(mAccountContext)!!
         this.mRecipient = recipient
         if (this.mRecipient != recipient) {
-            mRecipient?.let {last ->
+            mRecipient?.let { last ->
                 RxBus.unSubscribe(last.address.serialize())
             }
             RxBus.subscribe<Long>(recipient.address.serialize()) { newThreadId ->
@@ -191,11 +192,11 @@ class AmeConversationViewModel : ViewModel() {
         callback?.invoke(mLoadingMore)
         val lastMid = if (mMessageList.isEmpty()) {
             0L
-        }else {
+        } else {
             mMessageList.last().id
         }
         Observable.create<AmeConversationData> {
-            val newMessages = Repository.getChatRepo(mAccountContext).queryMessagesByPage(mThreadId, lastMid, PAGE_COUNT)
+            val newMessages = repository.chatRepo.queryMessagesByPage(mThreadId, lastMid, PAGE_COUNT)
             synchronized(this) {
                 mMessageList.addAll(newMessages)
                 mHasMore = newMessages.size >= PAGE_COUNT
@@ -219,7 +220,7 @@ class AmeConversationViewModel : ViewModel() {
             return
         }
         Observable.create<AmeConversationData> {
-            val chatRepo = Repository.getChatRepo(mAccountContext)
+            val chatRepo = repository.chatRepo
             val newMessages = chatRepo.queryMessagesByPage(mThreadId, Long.MAX_VALUE, PAGE_COUNT)
             val resultList: List<MessageRecord>
             synchronized(this) {
@@ -245,8 +246,8 @@ class AmeConversationViewModel : ViewModel() {
     fun updateThreadSnippet(context: Context, recipient: Recipient, drafts: DraftRepo.Drafts) {
         Observable.create(ObservableOnSubscribe<Long> {
             ALog.d(TAG, "updateThreadSnippet thread: $mThreadId, snippet: ${drafts.getSnippet(context)}, size: ${drafts.size}")
-            val threadRepo = Repository.getThreadRepo(mAccountContext)
-            val draftRepo = Repository.getDraftRepo(mAccountContext)
+            val threadRepo = repository.threadRepo
+            val draftRepo = repository.draftRepo
 
             if (drafts.size > 0) {
                 if (mThreadId <= 0L) {
@@ -261,7 +262,6 @@ class AmeConversationViewModel : ViewModel() {
 
             it.onNext(mThreadId)
             it.onComplete()
-
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -276,34 +276,29 @@ class AmeConversationViewModel : ViewModel() {
         val threadId = mThreadId
         if (threadId > 0L) {
             Observable.create(ObservableOnSubscribe<Boolean> {
-                val messageIds = Repository.getThreadRepo(mAccountContext).setRead(threadId, lastSeen)
-                MarkReadReceiver.process(context, messageIds)
+                val messageIds = repository.threadRepo.setRead(threadId, lastSeen)
+                MarkReadReceiver.process(context, mAccountContext, messageIds)
                 it.onNext(true)
                 it.onComplete()
-
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-
                     }, {
                         ALog.e(TAG, "markThreadAsRead error", it)
                     })
-
         }
     }
-
 
     fun markLastSeen() {
         val threadId = mThreadId
         if (threadId > 0L) {
             Observable.create(ObservableOnSubscribe<Boolean> {
-                Repository.getThreadRepo(mAccountContext).setLastSeenTime(threadId)
+                repository.threadRepo.setLastSeenTime(threadId)
                 it.onNext(true)
                 it.onComplete()
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-
                     }, {
                         ALog.e(TAG, "markLastSeen error", it)
                     })
@@ -315,11 +310,9 @@ class AmeConversationViewModel : ViewModel() {
         ALog.i(TAG, "loadDraft begin threadId: $mThreadId")
         if (mThreadId > 0L) {
             Observable.create(ObservableOnSubscribe<DraftRepo.Drafts> {
-                val draftRepo = Repository.getDraftRepo(mAccountContext)
-                val results = draftRepo.getDrafts(mThreadId)
+                val results = repository.draftRepo.getDrafts(mThreadId)
                 it.onNext(results)
                 it.onComplete()
-
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ drafts ->
@@ -338,14 +331,11 @@ class AmeConversationViewModel : ViewModel() {
     fun sendTextMessage(context: Context, message: OutgoingTextMessage, callback: ((success: Boolean) -> Unit)? = null) {
         ALog.i(TAG, "sendTextMessage thread: $mThreadId")
         checkBeforeSendMessage(context) { doAfter ->
-
             Observable.create(ObservableOnSubscribe<Long> {
-
-                val result = MessageSender.send(context, message, mThreadId) {
+                val result = MessageSender.send(context, mAccountContext, message, mThreadId) {
                 }
                 it.onNext(result)
                 it.onComplete()
-
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -353,28 +343,20 @@ class AmeConversationViewModel : ViewModel() {
                         updateThread(it)
                         doAfter()
                         callback?.invoke(true)
-
                     }, {
                         ALog.logForSecret(TAG, "sendTextMessage error", it)
                         doAfter()
                         callback?.invoke(false)
-
                     })
-
         }
     }
 
 
     fun sendMediaMessage(context: Context, masterSecret: MasterSecret, message: OutgoingMediaMessage, callback: ((success: Boolean) -> Unit)? = null) {
-
         checkBeforeSendMessage(context) { doAfter ->
-
             Observable.create(ObservableOnSubscribe<Long> {
-
-                it.onNext(MessageSender.send(context, masterSecret, message, mThreadId) {
-                })
+                it.onNext(MessageSender.send(context, mAccountContext, masterSecret, message, mThreadId, null))
                 it.onComplete()
-
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -382,12 +364,10 @@ class AmeConversationViewModel : ViewModel() {
                         updateThread(it)
                         doAfter()
                         callback?.invoke(true)
-
                     }, {
                         ALog.logForSecret(TAG, "sendTextMessage error", it)
                         doAfter()
                         callback?.invoke(false)
-
                     })
         }
     }
@@ -395,7 +375,7 @@ class AmeConversationViewModel : ViewModel() {
 
     private fun sendHideMessage(context: Context, message: OutgoingLocationMessage, callback: ((success: Boolean) -> Unit)? = null) {
         Observable.create<Unit> {
-            it.onNext(MessageSender.sendHideMessage(context, message))
+            it.onNext(MessageSender.sendHideMessage(context, mAccountContext, message))
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -405,42 +385,37 @@ class AmeConversationViewModel : ViewModel() {
                     ALog.logForSecret(TAG, "sendHideMessage error", it)
                     callback?.invoke(false)
                 })
-
     }
 
 
     fun clearConversationHistory(context: Context) {
-        mRecipient?.let {recipient ->
+        mRecipient?.let { recipient ->
             Observable.create<Any> { emitter ->
-                val clearMessage = AmeGroupMessage(AmeGroupMessage.CONTROL_MESSAGE, AmeGroupMessage.ControlContent(AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE, Recipient.major().address.serialize(), "",0L)).toString()
+                val clearMessage = AmeGroupMessage(AmeGroupMessage.CONTROL_MESSAGE, AmeGroupMessage.ControlContent(AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE, Recipient.major().address.serialize(), "", 0L)).toString()
                 val message = OutgoingLocationMessage(recipient, clearMessage, (recipient.expireMessages * 1000).toLong())
-                MessageSender.send(context, message, mThreadId) { messageId -> clearMessageId = messageId }
+                MessageSender.send(context, mAccountContext, message, mThreadId) { messageId -> clearMessageId = messageId }
                 isClearHistory = true
                 emitter.onComplete()
-
             }.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-
                     }, {
                         isClearHistory = false
                     })
         }
-
     }
 
-    fun checkLastDecryptFailTime(activity: FragmentActivity, masterSecret: MasterSecret) {
+    fun checkLastDecryptFailTime(activity: FragmentActivity) {
 
         fun resendLastDecryptFailMessages(lastShowDialogTime: Long) {
             Observable.create<Unit> {
-                val messages = Repository.getChatRepo(mAccountContext).getDecryptFailedData(mThreadId, lastShowDialogTime)
+                val messages = repository.chatRepo.getDecryptFailedData(mThreadId, lastShowDialogTime)
                 messages.forEach { record ->
-                    MessageSender.resend(activity, masterSecret, record)
+                    MessageSender.resend(activity, mAccountContext, record)
                 }
                 it.onComplete()
             }.subscribeOn(Schedulers.io())
                     .subscribe({}, {})
-
         }
 
         fun setLastShowDialogTime(data: DecryptFailData) {
@@ -448,7 +423,7 @@ class AmeConversationViewModel : ViewModel() {
                 data.lastShowDialogTime = AmeTimeUtil.serverTimeMillis()
                 data.firstNotFoundMsgTime = 0L
                 data.resetFailCount()
-                Repository.getThreadRepo(mAccountContext).setDecryptFailData(mThreadId, data.toJson())
+                repository.threadRepo.setDecryptFailData(mThreadId, data.toJson())
                 it.onComplete()
             }.subscribeOn(Schedulers.io())
                     .subscribe({}, {})
@@ -456,8 +431,8 @@ class AmeConversationViewModel : ViewModel() {
 
         if (mThreadId > 0L) {
             Observable.create<Pair<DecryptFailData, Long>> {
-                val lastFailTime = Repository.getChatRepo(mAccountContext).getLastCannotDecryptMessage(mThreadId)
-                val dataJson = Repository.getThreadRepo(mAccountContext).getDecryptFailData(mThreadId)
+                val lastFailTime = repository.chatRepo.getLastCannotDecryptMessage(mThreadId)
+                val dataJson = repository.threadRepo.getDecryptFailData(mThreadId)
                 val data = if (!dataJson.isNullOrEmpty()) {
                     GsonUtils.fromJson(dataJson, DecryptFailData::class.java)
                 } else {
@@ -466,7 +441,6 @@ class AmeConversationViewModel : ViewModel() {
 
                 it.onNext(Pair(data, lastFailTime))
                 it.onComplete()
-
             }.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -511,18 +485,16 @@ class AmeConversationViewModel : ViewModel() {
     }
 
     fun checkProfileKeyUpdateToDate(context: Context) {
-
         mRecipient?.let { recipient ->
             Observable.create<Pair<Boolean, Boolean>> {
                 val hasRequest = if (mThreadId > 0L) {
-                    Repository.getThreadRepo(mAccountContext).hasProfileRequest(mThreadId)
+                    repository.threadRepo.hasProfileRequest(mThreadId)
                 } else {
                     false
                 }
                 val needProfileKey = recipient.resolve().checkNeedProfileKey()
                 it.onNext(Pair(hasRequest, needProfileKey))
                 it.onComplete()
-
             }.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -533,22 +505,20 @@ class AmeConversationViewModel : ViewModel() {
                         if (hasMessageHandling) {
                             checkExchangeProfileKey(context)
                         }
-
                     }, {
                         ALog.e(TAG, "checkProfileKeyUpdateToDate error", it)
                     })
         }
-
     }
 
 
     private fun checkBeforeSendMessage(context: Context, continueSend: (doAfterSend: () -> Unit) -> Unit) {
 
         fun doAfterSendIfNotFriend() {
-            mRecipient?.let {recipient ->
+            mRecipient?.let { recipient ->
                 Observable.create(ObservableOnSubscribe<Long> {
 
-                    val threadId = Repository.getThreadRepo(mAccountContext).getThreadIdFor(recipient)
+                    val threadId = repository.threadRepo.getThreadIdFor(recipient)
 
                     val restrictBody = AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO,
                             AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_CHAT_STRANGER_RESTRICTION, mAccountContext.uid, listOf(recipient.address.serialize()), ""))
@@ -557,13 +527,12 @@ class AmeConversationViewModel : ViewModel() {
                         expiresIn = (recipient.expireMessages * 1000).toLong()
                     }
                     val textMessage = OutgoingLocationMessage(recipient, restrictBody.toString(), expiresIn)
-                    val chatRepo = Repository.getChatRepo(mAccountContext)
+                    val chatRepo = repository.chatRepo
                     val messageId = chatRepo.insertOutgoingTextMessage(threadId, textMessage, AmeTimeUtil.getMessageSendTime(), null)
                     chatRepo.setMessageSendSuccess(messageId)
 
                     it.onNext(threadId)
                     it.onComplete()
-
                 }).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
@@ -573,7 +542,6 @@ class AmeConversationViewModel : ViewModel() {
                             ALog.e(TAG, "checkBeforeSendMessage error", it)
                         })
             }
-
         }
 
         mRecipient?.let { recipient ->
@@ -582,14 +550,12 @@ class AmeConversationViewModel : ViewModel() {
                 continueSend {
                     doAfterSendIfNotFriend()
                 }
-            }
-            else {
+            } else {
                 continueSend {
                     checkExchangeProfileKey(context)
                 }
             }
         }
-
     }
 
     private fun checkExchangeProfileKey(context: Context) {
@@ -599,7 +565,7 @@ class AmeConversationViewModel : ViewModel() {
             return
         }
         try {
-            mRecipient?.let {recipient ->
+            mRecipient?.let { recipient ->
                 ALog.i(TAG, "checkExchangeProfileKey begin")
                 val profileData = Recipient.major().privacyProfile
                 val hasRequest = hasProfileKeyRequest
@@ -627,47 +593,42 @@ class AmeConversationViewModel : ViewModel() {
                 val message = OutgoingLocationMessage(recipient, profileContent, (recipient.expireMessages * 1000).toLong())
                 sendHideMessage(context, message)
             }
-
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "checkExchangeProfileKey error", ex)
         }
     }
 
     private fun initializeIdentityRecords(context: Context) {
-        mRecipient?.let {recipient ->
+        mRecipient?.let { recipient ->
             Observable.create(ObservableOnSubscribe<Pair<IdentityRecordList, String>> {
-                val identityRepo = Repository.getIdentityRepo(mAccountContext)
                 val identityRecordList = IdentityRecordList()
                 val recipients = LinkedList<Recipient>()
 
-                if (recipient.isGroupRecipient) {
-                } else {
+                if (!recipient.isGroupRecipient) {
                     recipients.add(recipient)
                 }
 
                 for (r in recipients) {
-                    identityRecordList.add(identityRepo.getIdentityForNonBlockingApproval(r.address.serialize()))
+                    identityRecordList.add(repository.identityRepo.getIdentityForNonBlockingApproval(r.address.serialize()))
                 }
 
-                var message: String = ""
+                var message = ""
                 if (identityRecordList.isUnverified) {
-                    message = IdentityUtil.getUnverifiedBannerDescription(context, identityRecordList.getUnverifiedRecipients(context)) ?: ""
+                    message = IdentityUtil.getUnverifiedBannerDescription(context, identityRecordList.getUnverifiedRecipients(mAccountContext))
+                            ?: ""
                 }
 
-                it.onNext(Pair<IdentityRecordList, String>(identityRecordList, message))
+                it.onNext(Pair(identityRecordList, message))
                 it.onComplete()
 
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         identityRecords.replaceWith(it.first)
-
                     }, {
                         ALog.logForSecret(TAG, "initializeIdentityRecords error", it)
                     })
-
         }
-
     }
 
 
@@ -676,7 +637,7 @@ class AmeConversationViewModel : ViewModel() {
         Observable.create<AmeConversationData> {
             val data: AmeConversationData
             synchronized(this) {
-                val chatRepo = Repository.getChatRepo(mAccountContext)
+                val chatRepo = repository.chatRepo
                 if (record.dateSent < mLastMessageTime) {
                     for ((index, message) in mMessageList.withIndex()) {
                         if (message.dateSent < record.dateSent) {
@@ -700,7 +661,6 @@ class AmeConversationViewModel : ViewModel() {
                 }, {
                     ALog.e(TAG, "insertMessage error", it)
                 })
-
     }
 
     private fun deleteMessage(record: MessageRecord) {
@@ -716,7 +676,7 @@ class AmeConversationViewModel : ViewModel() {
                 }
                 if (mMessageList.isNotEmpty()) {
                     mLastMessageTime = mMessageList.first().dateSent
-                }else {
+                } else {
                     mLastMessageTime = -1
                 }
                 data = AmeConversationData(AmeConversationData.ACType.UPDATE, mMessageList.toList(), -1)
@@ -730,8 +690,6 @@ class AmeConversationViewModel : ViewModel() {
                 }, {
                     ALog.e(TAG, "deleteMessage error", it)
                 })
-
-
     }
 
     private fun deleteAll() {
@@ -750,7 +708,6 @@ class AmeConversationViewModel : ViewModel() {
                 }, {
                     ALog.e(TAG, "deleteAll error", it)
                 })
-
     }
 
     private fun deleteMessages(records: List<Long>) {
@@ -766,7 +723,7 @@ class AmeConversationViewModel : ViewModel() {
                 mMessageList.removeAll(willDeleteList)
                 if (mMessageList.isNotEmpty()) {
                     mLastMessageTime = mMessageList.first().dateSent
-                }else {
+                } else {
                     mLastMessageTime = -1
                 }
                 data = AmeConversationData(AmeConversationData.ACType.UPDATE, mMessageList.toList(), -1)
@@ -797,7 +754,7 @@ class AmeConversationViewModel : ViewModel() {
                 mMessageList.addAll(willRemainList)
                 if (mMessageList.isNotEmpty()) {
                     mLastMessageTime = mMessageList.first().dateSent
-                }else {
+                } else {
                     mLastMessageTime = -1
                 }
                 data = AmeConversationData(AmeConversationData.ACType.UPDATE, mMessageList.toList(), -1)
@@ -813,7 +770,6 @@ class AmeConversationViewModel : ViewModel() {
     }
 
     private fun updateMessage(record: MessageRecord) {
-
         Observable.create<AmeConversationData> {
             val data: AmeConversationData
             synchronized(this) {
@@ -827,14 +783,12 @@ class AmeConversationViewModel : ViewModel() {
             }
             it.onNext(data)
             it.onComplete()
-
         }.subscribeOn(Schedulers.io())
                 .subscribe({
                     messageLiveData.postValue(it)
                 }, {
                     ALog.e(TAG, "deleteExcept error", it)
                 })
-
     }
 
 
@@ -852,7 +806,7 @@ class AmeConversationViewModel : ViewModel() {
             if (sendEvent.success) {
                 Observable.create(ObservableOnSubscribe<Boolean> { emitter ->
                     try {
-                        Repository.getThreadRepo(mAccountContext).clearConversationExcept(mThreadId, listOf(sendEvent.messageId))
+                        repository.threadRepo.clearConversationExcept(mThreadId, listOf(sendEvent.messageId))
                         emitter.onNext(true)
 
                     } catch (t: Throwable) {

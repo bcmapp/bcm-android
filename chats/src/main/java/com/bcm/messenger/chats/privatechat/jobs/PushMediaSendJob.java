@@ -60,7 +60,7 @@ public class PushMediaSendJob extends PushSendJob {
 
     @Override
     public void onPushSend(MasterSecret masterSecret) throws NoSuchMessageException {
-        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
+        PrivateChatRepo chatRepo = repository.getChatRepo();
 
         MessageRecord record = chatRepo.getMessage(messageId);
         if (record == null) {
@@ -112,7 +112,7 @@ public class PushMediaSendJob extends PushSendJob {
     @Override
     public void onCanceled() {
         ALog.i(TAG, "onCanceled");
-        repository.getChatRepo(accountContext).setMessageSendFail(messageId);
+        repository.getChatRepo().setMessageSendFail(messageId);
         notifyMediaMessageDeliveryFailed(context, messageId);
     }
 
@@ -138,7 +138,7 @@ public class PushMediaSendJob extends PushSendJob {
 
             BcmFeatureSupport featureSupport = message.getRecipient(accountContext).getFeatureSupport();
             boolean isSupportAws = featureSupport != null && featureSupport.isSupportAws();
-            BcmChatCore.INSTANCE.sendMessage(address, mediaMessage, isSupportAws);
+            BcmChatCore.INSTANCE.sendMessage(accountContext, address, mediaMessage, isSupportAws);
 
             if (!attachmentStreams.isEmpty()) {
                 for (SignalServiceAttachment attachmentStream :

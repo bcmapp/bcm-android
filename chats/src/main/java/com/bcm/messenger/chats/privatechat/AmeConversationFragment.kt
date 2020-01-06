@@ -32,7 +32,7 @@ import kotlinx.android.synthetic.main.chats_conversation_fragment.*
 import java.util.*
 
 /**
- * 
+ *
  */
 class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
 
@@ -62,7 +62,8 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
 
     override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
-        this.mLocale = arguments?.getSerializable(ARouterConstants.PARAM.PARAM_LOCALE) as? Locale ?: Locale.getDefault()
+        this.mLocale = arguments?.getSerializable(ARouterConstants.PARAM.PARAM_LOCALE) as? Locale
+                ?: Locale.getDefault()
 
         activity?.let {
             mConversationViewModel = ViewModelProviders.of(it).get(AmeConversationViewModel::class.java)
@@ -192,7 +193,6 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
                     //dy>0:slide to down,dy<0:slide to up
                     isSlidingToLast = dy < 0
                     isSlidingToFirst = dy > 0
-
                 }
 
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -215,9 +215,7 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
                                 mBottomUnreadBubble?.visibility = View.GONE
                                 mChangeReadStateListener?.onOperateMarkThreadRead()
                             }
-
                         }
-
                     } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                         if (activity is AmeConversationActivity) {
                             activity.hideInput()
@@ -252,7 +250,6 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
                             .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, r.address)
                             .navigation(activity)
                 }
-
             })
 
             if (needReload) {
@@ -262,7 +259,6 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     private fun setBackground(expire: Int) {
-
         private_conversation_root?.post {
             if (expire > 0) {
                 private_conversation_root?.setBackgroundResource(R.drawable.chats_auto_delete_bg)
@@ -279,7 +275,7 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
         val lastPos = mLayoutManager?.findLastVisibleItemPosition() ?: 0
         for (i in firstPos..lastPos) {
             val view = mLayoutManager?.findViewByPosition(i)
-            if(view != null) {
+            if (view != null) {
                 val holder = private_conversation_list?.getChildViewHolder(view)
                 if (holder is AmeConversationAdapter.ViewHolder) {
                     val itemView = holder.getItem()
@@ -319,7 +315,7 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
                 } else {
                     private_conversation_list?.scrollToPosition(position)
                 }
-            }catch (ex: Exception) {
+            } catch (ex: Exception) {
                 ALog.e(TAG, "scrollToPosition error, pos: $position", ex)
             }
         }
@@ -330,19 +326,19 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
         Observable.create<Int> {
             val lastSeenPosition = if (mTopUnreadBubble?.visibility == View.VISIBLE && mTopUnreadBubble?.lastSeen != -1L) {
                 mAdapter?.findLastSeenPosition(mTopUnreadBubble?.lastSeen ?: -1L) ?: -1
-            }else if (lastSeen != -1L) {
+            } else if (lastSeen != -1L) {
                 mAdapter?.findLastSeenPosition(lastSeen) ?: -1
-            }else {
+            } else {
                 -1
             }
             it.onNext(lastSeenPosition)
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({lastSeenPosition ->
+                .subscribe({ lastSeenPosition ->
                     var toScroll = !ConversationItemPopWindow.isConversationPopShowing() && isListAtBottom()
                     try {
-                        when(data.type) {
+                        when (data.type) {
                             AmeConversationViewModel.AmeConversationData.ACType.RESET -> {
                                 ConversationItemPopWindow.dismissConversationPop()
                                 mAdapter?.initRecordList(data.data, true)
@@ -355,7 +351,11 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
                                         mTopUnreadBubble?.isEnabled = true
                                         mTopUnreadBubble?.setUnreadMessageCount((data.unread - showItemCount).toInt())
                                         mTopUnreadBubble?.lastSeen = lastSeen
-                                        mTopUnreadBubble?.lastSeenPosition = if (lastSeenPosition == -1) {data.unread.toInt()} else {lastSeenPosition}
+                                        mTopUnreadBubble?.lastSeenPosition = if (lastSeenPosition == -1) {
+                                            data.unread.toInt()
+                                        } else {
+                                            lastSeenPosition
+                                        }
                                         mTopUnreadBubble?.setOnClickListener { v ->
                                             v.visibility = View.GONE
                                             val lp = mTopUnreadBubble?.lastSeenPosition ?: -1
@@ -365,7 +365,6 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
                                             mTopUnreadBubble?.visibility = View.GONE
                                             mChangeReadStateListener?.onOperateMarkThreadRead()
                                         }
-
                                     }
                                 }
                             }
@@ -382,8 +381,7 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
                             AmeConversationViewModel.AmeConversationData.ACType.NEW -> {
                                 if (toScroll) {
                                     mAdapter?.loadRecord(0, data.data, true)
-
-                                }else {
+                                } else {
                                     mAdapter?.loadRecord(0, data.data, false)
                                     if (data.unread > 0) {
                                         mBottomUnreadBubble?.visibility = View.VISIBLE
@@ -392,11 +390,9 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
                                             it.visibility = View.GONE
                                             scrollToBottom()
                                             mChangeReadStateListener?.onOperateMarkThreadRead()
-
                                         }
                                     }
                                 }
-
                             }
                         }
 
@@ -404,14 +400,12 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
                             mChangeReadStateListener?.onOperateMarkThreadRead()
                             scrollToBottom(false)
                         }
-                    }
-                    catch (ex: Exception) {
+                    } catch (ex: Exception) {
                         ALog.e(TAG, "handleConversationMessageUpdate error", ex)
                     }
                 }, {
                     ALog.e(TAG, "handleConversationMessageUpdate error", it)
                 })
-
     }
 
     private fun isListAtBottom(): Boolean {

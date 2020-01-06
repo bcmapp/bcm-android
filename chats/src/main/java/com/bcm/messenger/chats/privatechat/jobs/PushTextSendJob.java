@@ -59,11 +59,7 @@ public class PushTextSendJob extends PushSendJob {
 
     @Override
     public void onPushSend(MasterSecret masterSecret) throws NoSuchMessageException, RetryLaterException {
-        PrivateChatRepo chatRepo = repository.getChatRepo(accountContext);
-        if (chatRepo == null) {
-            ALog.w(TAG, "User is not login");
-            return;
-        }
+        PrivateChatRepo chatRepo = repository.getChatRepo();
         MessageRecord record = chatRepo.getMessage(messageId);
         if (record == null) {
             throw new NoSuchMessageException("Message id " + messageId + " not found");
@@ -113,7 +109,7 @@ public class PushTextSendJob extends PushSendJob {
     @Override
     public void onCanceled() {
         ALog.i(TAG, "onCanceled");
-        repository.getChatRepo(accountContext).setMessageSendFail(messageId);
+        repository.getChatRepo().setMessageSendFail(messageId);
     }
 
     private void deliver(MessageRecord message)
@@ -133,9 +129,9 @@ public class PushTextSendJob extends PushSendJob {
 
 
             if (!sendSilently) {
-                BcmChatCore.INSTANCE.sendMessage(address, textSecureMessage, false);
+                BcmChatCore.INSTANCE.sendMessage(accountContext, address, textSecureMessage, false);
             } else {
-                BcmChatCore.INSTANCE.sendSilentMessage(address, textSecureMessage);
+                BcmChatCore.INSTANCE.sendSilentMessage(accountContext, address, textSecureMessage);
             }
 
         } catch (UnregisteredUserException e) {
@@ -156,7 +152,7 @@ public class PushTextSendJob extends PushSendJob {
         if (messageRecord.isLocation()) {
             AmeGroupMessage message = AmeGroupMessage.Companion.messageFromJson(messageRecord.getBody());
             if (message.getType() == AmeGroupMessage.EXCHANGE_PROFILE || message.getType() == AmeGroupMessage.RECEIPT) {
-                repository.getChatRepo(accountContext).deleteMessage(messageRecord.getThreadId(), messageRecord.getId());
+                repository.getChatRepo().deleteMessage(messageRecord.getThreadId(), messageRecord.getId());
             }
         }
     }

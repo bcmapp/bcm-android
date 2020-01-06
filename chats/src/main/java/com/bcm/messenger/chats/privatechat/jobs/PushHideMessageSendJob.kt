@@ -72,7 +72,7 @@ class PushHideMessageSendJob(
                     .asLocation(true)
                     .build()
 
-            BcmChatCore.sendSilentMessage(address, textSecureMessage)
+            BcmChatCore.sendSilentMessage(accountContext, address, textSecureMessage)
         } catch (e: UnregisteredUserException) {
             ALog.e(TAG, e)
             throw InsecureFallbackApprovalException(e)

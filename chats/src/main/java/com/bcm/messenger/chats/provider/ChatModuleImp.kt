@@ -18,7 +18,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.ReEditEvent
@@ -107,7 +106,7 @@ class ChatModuleImp : IChatModule {
 
     @SuppressLint("CheckResult")
     override fun deleteMessage(context: Context, isGroup: Boolean, conversationId: Long, messageSet: Set<Any>, callback: ((fail: Set<Any>) -> Unit)?) {
-        if(messageSet.isEmpty()) {
+        if (messageSet.isEmpty()) {
             callback?.invoke(emptySet())
             return
         }
@@ -256,8 +255,7 @@ class ChatModuleImp : IChatModule {
                         })
                     } else {
                         Observable.create(ObservableOnSubscribe<Boolean> { emiter ->
-                            val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
-                            MessageSender.recall(privateMessage, masterSecret, privateMessage?.isMediaMessage() == true)
+                            MessageSender.recall(accountContext, privateMessage, privateMessage?.isMediaMessage() == true)
                             emiter.onComplete()
                         }).subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -315,7 +313,8 @@ class ChatModuleImp : IChatModule {
                     }
                 }
             }
-            val activity = context as? FragmentActivity ?: AmeAppLifecycle.current() as FragmentActivity
+            val activity = context as? FragmentActivity
+                    ?: AmeAppLifecycle.current() as FragmentActivity
             if (hasCannotForwardType) {
                 AmePopup.center.newBuilder()
                         .withTitle(context.getString(R.string.chats_forward_multiple_notice))

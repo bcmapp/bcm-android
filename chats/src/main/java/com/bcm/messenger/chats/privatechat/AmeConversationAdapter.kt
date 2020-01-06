@@ -177,7 +177,7 @@ class AmeConversationAdapter(val context: Context, val masterSecret: MasterSecre
         if (hasStickyNotification()) {
             if (index == count) {
                 mRecordList.add(data)
-            }else {
+            } else {
                 mRecordList.add(index, data)
             }
             if (notify) {
@@ -185,10 +185,10 @@ class AmeConversationAdapter(val context: Context, val masterSecret: MasterSecre
             } else {
                 notifyItemInserted(index)
             }
-        }else {
+        } else {
             if (index == count) {
                 mRecordList.add(data)
-            }else {
+            } else {
                 mRecordList.add(index, data)
             }
             if (notify) {
@@ -204,7 +204,7 @@ class AmeConversationAdapter(val context: Context, val masterSecret: MasterSecre
         if (hasStickyNotification()) {
             if (index == count) {
                 mRecordList.addAll(dataList)
-            }else {
+            } else {
                 mRecordList.addAll(index, dataList)
             }
             if (notify) {
@@ -212,10 +212,10 @@ class AmeConversationAdapter(val context: Context, val masterSecret: MasterSecre
             } else {
                 notifyItemRangeInserted(index, dataList.size)
             }
-        }else {
+        } else {
             if (index == count) {
                 mRecordList.addAll(dataList)
-            }else {
+            } else {
                 mRecordList.addAll(index, dataList)
             }
             if (notify) {
@@ -259,8 +259,8 @@ class AmeConversationAdapter(val context: Context, val masterSecret: MasterSecre
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when(viewType) {
-            MESSAGE_TYPE_STICKY -> object : RecyclerView.ViewHolder(mStickyNotificationView ?: View(context)){}
+        return when (viewType) {
+            MESSAGE_TYPE_STICKY -> object : RecyclerView.ViewHolder(mStickyNotificationView ?: View(context)) {}
             MESSAGE_TYPE_INCOMING -> ViewHolder(inflater.inflate(R.layout.chats_conversation_item_received, parent, false))
             MESSAGE_TYPE_OUTGOING -> ViewHolder(inflater.inflate(R.layout.chats_conversation_item_sent, parent, false))
             else -> ViewHolder(inflater.inflate(R.layout.chats_conversation_item_status, parent, false))
@@ -292,10 +292,10 @@ class AmeConversationAdapter(val context: Context, val masterSecret: MasterSecre
         return if (hasStickyNotification()) {
             if (position == mRecordList.size) {
                 MESSAGE_TYPE_STICKY
-            }else {
+            } else {
                 getItemViewType(mRecordList[position])
             }
-        }else {
+        } else {
             getItemViewType(mRecordList[position])
         }
     }
@@ -322,13 +322,15 @@ class AmeConversationAdapter(val context: Context, val masterSecret: MasterSecre
             }
         }
         val record = mRecordList[position]
-        val fastPreflightId = record.getImageAttachment()?.fastPreflightId ?: record.getDocumentAttachment()?.fastPreflightId ?: record.getAudioAttachment()?.fastPreflightId
+        val fastPreflightId = record.getImageAttachment()?.fastPreflightId
+                ?: record.getDocumentAttachment()?.fastPreflightId
+                ?: record.getAudioAttachment()?.fastPreflightId
         if (fastPreflightId != null) {
             return fastPreflightId.toLong()
         }
         val uniqueId = if (record.isMediaMessage()) {
             "MMS::" + record.id + "::" + record.dateSent
-        }else {
+        } else {
             "SMS::" + record.id + "::" + record.dateSent
         }
         val bytes = digest.digest(uniqueId.toByteArray())
@@ -345,7 +347,7 @@ class AmeConversationAdapter(val context: Context, val masterSecret: MasterSecre
             val record = mRecordList[position]
             calendar.time = Date(record.dateSent)
             Util.hashCode(calendar.get(Calendar.YEAR), calendar.get(Calendar.DAY_OF_YEAR)).toLong()
-        }else {
+        } else {
             -1
         }
     }
@@ -358,10 +360,9 @@ class AmeConversationAdapter(val context: Context, val masterSecret: MasterSecre
         }
         return if (position in mRecordList.indices) {
             mRecordList[position].dateSent
-        }else {
+        } else {
             0
         }
-
     }
 
     override fun onCreateHeaderViewHolder(parent: ViewGroup): HeaderViewHolder {
@@ -373,7 +374,6 @@ class AmeConversationAdapter(val context: Context, val masterSecret: MasterSecre
     }
 
     internal class LastSeenHeader(private val adapter: AmeConversationAdapter) : StickyHeaderDecoration(adapter, false, false) {
-
         override fun hasHeader(parent: RecyclerView, stickyAdapter: StickyHeaderAdapter<*>, position: Int): Boolean {
 
             val currentRecordTimestamp = adapter.getSentTimestamp(position)

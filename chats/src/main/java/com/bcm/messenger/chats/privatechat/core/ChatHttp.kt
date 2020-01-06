@@ -10,7 +10,6 @@ import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptor
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptorHelper
 import com.bcm.messenger.common.bcmhttp.interceptor.error.IMServerErrorCodeInterceptor
 import com.bcm.messenger.common.bcmhttp.interceptor.metrics.AccountMetricsInterceptor
-import com.bcm.messenger.common.bcmhttp.interceptor.metrics.NormalMetricsInterceptor
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.utils.AccountContextMap
 import com.bcm.messenger.common.utils.AppUtil

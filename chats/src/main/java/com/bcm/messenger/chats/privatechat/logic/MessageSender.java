@@ -18,10 +18,14 @@ package com.bcm.messenger.chats.privatechat.logic;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bcm.messenger.chats.privatechat.jobs.PushControlMessageSendJob;
 import com.bcm.messenger.chats.privatechat.jobs.PushHideMessageSendJob;
 import com.bcm.messenger.chats.privatechat.jobs.PushMediaSendJob;
 import com.bcm.messenger.chats.privatechat.jobs.PushTextSendJob;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.database.records.MessageRecord;
 import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
@@ -31,7 +35,6 @@ import com.bcm.messenger.common.expiration.IExpiringScheduler;
 import com.bcm.messenger.common.grouprepository.room.dao.ChatHideMessageDao;
 import com.bcm.messenger.common.grouprepository.room.entity.ChatHideMessage;
 import com.bcm.messenger.common.mms.OutgoingMediaMessage;
-import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.sms.OutgoingLocationMessage;
@@ -50,24 +53,29 @@ public class MessageSender {
     private static final String TAG = MessageSender.class.getSimpleName();
 
     /**
-     * 
-     * @param context Context.
-     * @param message Message to sent.
-     * @param threadId Current thread id.
+     * @param context        Context.
+     * @param message        Message to sent.
+     * @param threadId       Current thread id.
      * @param insertListener Listener to be called after inserting to database.
      * @return Thread id if current thread id is larger than 0 or allocated a new one.
      */
-    public static long send(final Context context,
-                            final OutgoingTextMessage message,
+    public static long send(@NonNull final Context context,
+                            @NonNull final AccountContext accountContext,
+                            @NonNull final OutgoingTextMessage message,
                             final long threadId,
-                            final Function1<Long, Unit> insertListener) {
-        PrivateChatRepo chatRepo = Repository.getChatRepo();
+                            @Nullable final Function1<Long, Unit> insertListener) {
+        Repository repository = Repository.getInstance(accountContext);
+        if (repository == null) {
+            return -1L;
+        }
+
+        PrivateChatRepo chatRepo = repository.getChatRepo();
         Recipient recipient = message.getRecipient();
 
         long allocatedThreadId;
 
         if (threadId <= 0) {
-            allocatedThreadId = Repository.getThreadRepo().getThreadIdFor(recipient);
+            allocatedThreadId = repository.getThreadRepo().getThreadIdFor(recipient);
         } else {
             allocatedThreadId = threadId;
         }
@@ -79,25 +87,30 @@ public class MessageSender {
         // 
         if (!recipient.isFriend() && !recipient.isAllowStranger()) {
             chatRepo.setMessageSendFail(messageId);
-        }else {
-            sendTextMessage(context, recipient, messageId, message.getExpiresIn(), false);
+        } else {
+            sendTextMessage(context, accountContext, recipient, messageId, message.getExpiresIn(), false);
         }
 
         return allocatedThreadId;
     }
 
-    // 
-    public static long sendSilently(final Context context,
-                                    final OutgoingTextMessage message,
+    public static long sendSilently(@NonNull final Context context,
+                                    @NonNull final AccountContext accountContext,
+                                    @NonNull final OutgoingTextMessage message,
                                     final long threadId,
-                                    final Function1<Long, Unit> insertListener) {
-        PrivateChatRepo chatRepo = Repository.getChatRepo();
+                                    @Nullable final Function1<Long, Unit> insertListener) {
+        Repository repository = Repository.getInstance(accountContext);
+        if (repository == null) {
+            return -1L;
+        }
+
+        PrivateChatRepo chatRepo = repository.getChatRepo();
         Recipient recipient = message.getRecipient();
 
         long allocatedThreadId;
 
         if (threadId <= 0) {
-            allocatedThreadId = Repository.getThreadRepo().getThreadIdFor(recipient);
+            allocatedThreadId = repository.getThreadRepo().getThreadIdFor(recipient);
         } else {
             allocatedThreadId = threadId;
         }
@@ -106,55 +119,66 @@ public class MessageSender {
         long messageId = chatRepo.insertOutgoingTextMessage(allocatedThreadId,
                 message, AmeTimeUtil.INSTANCE.getMessageSendTime(), insertListener);
 
-        sendTextMessage(context, recipient, messageId, message.getExpiresIn(), true);
+        sendTextMessage(context, accountContext, recipient, messageId, message.getExpiresIn(), true);
 
         return allocatedThreadId;
     }
 
     /**
-     * 
      * @param context Context
-     * @param message 
+     * @param message
      */
-    public static void sendHideMessage(final Context context, final OutgoingLocationMessage message) {
+    public static void sendHideMessage(@NonNull final Context context,
+                                       @NonNull final AccountContext accountContext,
+                                       @NonNull final OutgoingLocationMessage message) {
         ALog.i(TAG, "Send hide message");
 
-        if (isSelfSend(context, message.getRecipient())) {
+        if (isSelfSend(message.getRecipient())) {
             // Do nothing if message send to major
             return;
         }
 
-        ChatHideMessageDao dao = UserDatabase.Companion.getDatabase().chatControlMessageDao();
+        ChatHideMessageDao dao = Repository.getChatHideMessageRepo(accountContext);
+        if (dao == null) {
+            return;
+        }
         ChatHideMessage controlMessage = new ChatHideMessage();
         controlMessage.setContent(message.getMessageBody());
         controlMessage.setDestinationAddress(message.getRecipient().getAddress().toString());
         controlMessage.setSendTime(AmeTimeUtil.INSTANCE.getMessageSendTime());
         long messageId = dao.saveHideMessage(controlMessage);
 
-        sendHideMessagePush(context, message.getRecipient(), messageId);
+        sendHideMessagePush(context, accountContext, message.getRecipient(), messageId);
     }
 
     /**
      * send message
-     * @param context Context.
-     * @param masterSecret Current user's master secret to encrypt attachments.
-     * @param message Message to send.
-     * @param threadId Current thread id.
+     *
+     * @param context        Context.
+     * @param masterSecret   Current user's master secret to encrypt attachments.
+     * @param message        Message to send.
+     * @param threadId       Current thread id.
      * @param insertListener Listener to be called after inserting to database.
      * @return Thread id if current thread id is larger than 0 or allocated a new one.
      */
-    public static long send(final Context context,
-                            final MasterSecret masterSecret,
-                            final OutgoingMediaMessage message,
+    public static long send(@NonNull final Context context,
+                            @NonNull final AccountContext accountContext,
+                            @NonNull final MasterSecret masterSecret,
+                            @NonNull final OutgoingMediaMessage message,
                             final long threadId,
-                            final Function1<Long, Unit> insertListener) {
+                            @Nullable final Function1<Long, Unit> insertListener) {
         try {
-            PrivateChatRepo chatRepo = Repository.getChatRepo();
+            Repository repository = Repository.getInstance(accountContext);
+            if (repository == null) {
+                return threadId;
+            }
+
+            PrivateChatRepo chatRepo = repository.getChatRepo();
 
             long allocatedThreadId;
 
             if (threadId <= 0) {
-                allocatedThreadId = Repository.getThreadRepo().getThreadIdFor(message.getRecipient());
+                allocatedThreadId = repository.getThreadRepo().getThreadIdFor(message.getRecipient());
             } else {
                 allocatedThreadId = threadId;
             }
@@ -162,11 +186,10 @@ public class MessageSender {
             Recipient recipient = message.getRecipient();
             long messageId = chatRepo.insertOutgoingMediaMessage(allocatedThreadId, masterSecret, message, insertListener);
 
-            
             if (!recipient.isFriend() && !recipient.isAllowStranger()) {
                 chatRepo.setMessageSendFail(messageId);
-            }else {
-                sendMediaMessage(context, recipient, messageId, message.getExpiresIn());
+            } else {
+                sendMediaMessage(context, accountContext, recipient, messageId, message.getExpiresIn());
             }
 
             return allocatedThreadId;
@@ -178,26 +201,30 @@ public class MessageSender {
 
     /**
      * resend message
-     * @param context Context.
-     * @param masterSecret Current user's master secret to encrypt or decrypt.
+     *
+     * @param context       Context.
      * @param messageRecord Message to resend.
      */
-    public static void resend(Context context, MasterSecret masterSecret, MessageRecord messageRecord) {
+    public static void resend(@NonNull Context context,
+                              @NonNull AccountContext accountContext,
+                              @NonNull MessageRecord messageRecord) {
         try {
             long messageId = messageRecord.getId();
             long expiresIn = messageRecord.getExpiresTime();
-            Recipient recipient = messageRecord.getRecipient();
+            Recipient recipient = messageRecord.getRecipient(accountContext);
 
-            // 
             if (recipient.isFriend() || recipient.isAllowStranger()) {
-                Repository.getChatRepo().updateDateSentForResending(messageRecord.getId(), AmeTimeUtil.INSTANCE.getMessageSendTime());
+                PrivateChatRepo repo = Repository.getChatRepo(accountContext);
+                if (repo == null) {
+                    return;
+                }
+                repo.updateDateSentForResending(messageRecord.getId(), AmeTimeUtil.INSTANCE.getMessageSendTime());
                 if (messageRecord.isMediaMessage()) {
-                    sendMediaMessage(context, recipient, messageId, expiresIn);
+                    sendMediaMessage(context, accountContext, recipient, messageId, expiresIn);
                 } else {
-                    sendTextMessage(context, recipient, messageId, expiresIn, false);
+                    sendTextMessage(context, accountContext, recipient, messageId, expiresIn, false);
                 }
             }
-
         } catch (Exception e) {
             ALog.e(TAG, "resend message error", e);
         }
@@ -205,109 +232,108 @@ public class MessageSender {
 
     /**
      * Real send media messages.
-     * @param context Context.
+     *
+     * @param context   Context.
      * @param recipient The User who message will be sent to.
      * @param messageId Message id.
      * @param expiresIn Expires time.
      */
-    private static void sendMediaMessage(Context context, Recipient recipient, long messageId, long expiresIn) {
-        if (isSelfSend(context, recipient)) {
-            sendMediaSelf(messageId, expiresIn);
-        } else if (isGroupPushSend(recipient)) {
-//            sendGroupPush(context, recipient, messageId, null);
+    private static void sendMediaMessage(Context context, AccountContext accountContext, Recipient recipient, long messageId, long expiresIn) {
+        if (isSelfSend(recipient)) {
+            sendMediaSelf(accountContext, messageId, expiresIn);
         } else {
-            sendMediaPush(context, recipient, messageId);
+            sendMediaPush(context, accountContext, recipient, messageId);
         }
     }
 
     /**
      * Real send text messages.
-     * @param context Context.
+     *
+     * @param context   Context.
      * @param recipient The User who message will be sent to.
      * @param messageId Message id.
      * @param expiresIn Expires time.
-     * @param isSilent True means the message does not need to push by FCM/APNS
+     * @param isSilent  True means the message does not need to push by FCM/APNS
      */
-    private static void sendTextMessage(Context context, Recipient recipient,
+    private static void sendTextMessage(Context context, AccountContext accountContext, Recipient recipient,
                                         long messageId, long expiresIn, boolean isSilent) {
-        if (isSelfSend(context, recipient)) {
-            sendTextSelf(messageId, expiresIn);
+        if (isSelfSend(recipient)) {
+            sendTextSelf(accountContext, messageId, expiresIn);
         } else {
-            sendTextPush(context, recipient, messageId, isSilent);
+            sendTextPush(context, accountContext, recipient, messageId, isSilent);
         }
     }
 
 
-    private static void sendTextSelf(long messageId, long expiresIn) {
-        PrivateChatRepo chatRepo = Repository.getChatRepo();
+    private static void sendTextSelf(AccountContext accountContext, long messageId, long expiresIn) {
+        PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+        if (chatRepo == null) {
+            return;
+        }
 
         chatRepo.setMessageSendSuccess(messageId);
 
         if (expiresIn > 0) {
-            IExpiringScheduler expiringScheduler = ExpirationManager.INSTANCE.scheduler();
+            IExpiringScheduler expiringScheduler = ExpirationManager.INSTANCE.scheduler(accountContext);
 
             chatRepo.setMessageExpiresStart(messageId);
             expiringScheduler.scheduleDeletion(messageId, false, expiresIn);
         }
     }
 
-    private static void sendMediaSelf(long messageId, long expiresIn) {
-        PrivateChatRepo chatRepo = Repository.getChatRepo();
+    private static void sendMediaSelf(AccountContext accountContext, long messageId, long expiresIn) {
+        Repository repository = Repository.getInstance(accountContext);
+        if (repository == null) {
+            return;
+        }
+
+        PrivateChatRepo chatRepo = repository.getChatRepo();
 
         chatRepo.setMessageSendSuccess(messageId);
         try {
             MessageRecord record = chatRepo.getMessage(messageId);
             if (record != null) {
-                Repository.getAttachmentRepo().setAttachmentUploaded(record.getAttachments());
+                repository.getAttachmentRepo().setAttachmentUploaded(record.getAttachments());
             }
         } catch (Exception e) {
             // Do nothing
         }
 
         if (expiresIn > 0) {
-            IExpiringScheduler expiringScheduler = ExpirationManager.INSTANCE.scheduler();
+            IExpiringScheduler expiringScheduler = ExpirationManager.INSTANCE.scheduler(accountContext);
 
             chatRepo.setMessageExpiresStart(messageId);
             expiringScheduler.scheduleDeletion(messageId, true, expiresIn);
         }
     }
 
-    private static void sendTextPush(Context context, Recipient recipient, long messageId, boolean isSilent) {
-        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr();
+    private static void sendTextPush(Context context, AccountContext accountContext, Recipient recipient, long messageId, boolean isSilent) {
+        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
         if (jobManager == null) {
             return;
         }
         if (isSilent) {
-            jobManager.add(new PushTextSendJob(context, messageId, recipient.getAddress(), true));
-        } else  {
-            jobManager.add(new PushTextSendJob(context, messageId, recipient.getAddress()));
+            jobManager.add(new PushTextSendJob(context, accountContext, messageId, recipient.getAddress(), true));
+        } else {
+            jobManager.add(new PushTextSendJob(context, accountContext, messageId, recipient.getAddress()));
         }
     }
 
-    private static void sendHideMessagePush(Context context, Recipient recipient, long messageId) {
-        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr();
+    private static void sendHideMessagePush(Context context, AccountContext accountContext, Recipient recipient, long messageId) {
+        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
         if (jobManager != null) {
-            jobManager.add(new PushHideMessageSendJob(context, messageId, recipient.getAddress()));
+            jobManager.add(new PushHideMessageSendJob(context, accountContext, messageId, recipient.getAddress()));
         }
     }
 
-    private static void sendMediaPush(Context context, Recipient recipient, long messageId) {
-        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr();
+    private static void sendMediaPush(Context context, AccountContext accountContext, Recipient recipient, long messageId) {
+        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
         if (jobManager != null) {
-            jobManager.add(new PushMediaSendJob(context, messageId, recipient.getAddress()));
+            jobManager.add(new PushMediaSendJob(context, accountContext, messageId, recipient.getAddress()));
         }
     }
 
-    private static boolean isGroupPushSend(Recipient recipient) {
-        return recipient.getAddress().isGroup() &&
-                !recipient.getAddress().isMmsGroup();
-    }
-
-    private static boolean isSelfSend(Context context, Recipient recipient) {
-        if (!AMELogin.INSTANCE.isPushRegistered()) {
-            return false;
-        }
-
+    private static boolean isSelfSend(Recipient recipient) {
         if (recipient.isGroupRecipient()) {
             return false;
         }
@@ -315,19 +341,22 @@ public class MessageSender {
         return recipient.isLogin();
     }
 
-    public static void recall(MessageRecord messageRecord, MasterSecret masterSecret, boolean isMMS) throws Exception {
+    public static void recall(@NonNull AccountContext accountContext,
+                              @Nullable MessageRecord messageRecord,
+                              boolean isMMS) {
         if (messageRecord == null) {
             return;
         }
 
-        if (messageRecord.getRecipient().getAddress().toString().equals(AMELogin.INSTANCE.getUid())) {
+        if (messageRecord.getRecipient(accountContext).getAddress().serialize().equals(accountContext.getUid())) {
             // Self message cannot recall
             return;
         }
 
-        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr();
+        JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
         if (jobManager != null) {
-            jobManager.add(new PushControlMessageSendJob(AppContextHolder.APP_CONTEXT, messageRecord.getId(), isMMS, messageRecord.getRecipient().getAddress()));
+            jobManager.add(new PushControlMessageSendJob(AppContextHolder.APP_CONTEXT,
+                    accountContext, messageRecord.getId(), isMMS, messageRecord.getRecipient(accountContext).getAddress()));
         }
     }
 

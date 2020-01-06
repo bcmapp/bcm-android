@@ -17,7 +17,6 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.getSelectedLocale
-import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.database.repositories.ThreadRepo
@@ -163,7 +162,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     private fun initData() {
-        viewModel = ViewModelProviders.of(this).get(ThreadListViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ThreadModelFactory(getAccountContext())).get(ThreadListViewModel::class.java)
         viewModel.threadLiveData.observe(this, Observer { data ->
             ALog.i(TAG, "updateThread, size: ${data.data.size}")
             RxBus.post(HomeTabEvent(HomeTabEvent.TAB_CHAT, false, data.unread, false))
@@ -193,7 +192,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
                 val source = context.getString(R.string.chats_no_conversation_description, key)
                 contentBuilder.append(StringAppearanceUtil.applyFilterAppearance(source, key, color = context.getColorCompat(R.color.common_app_primary_color)))
                 chats_shade?.showContent(contentBuilder)
-            }else {
+            } else {
                 chats_shade?.hide()
             }
         }
@@ -264,7 +263,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
             groupId = recipient.groupId
             val group = GroupLogic.getGroupInfo(groupId)
             if (null == group) {
-                GroupLogic.queryGroupInfo(groupId,null)
+                GroupLogic.queryGroupInfo(groupId, null)
                 return
             }
             url = ARouterConstants.Activity.CHAT_GROUP_CONVERSATION
@@ -342,12 +341,12 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
 
     private fun checkUnhandledRequest(unreadCount: Int = 0) {
         Observable.create<Pair<Int, Int>> {
-            val requestDao = UserDatabase.getDatabase(getAccountContext()).friendRequestDao()
+            val requestDao = Repository.getFriendRequestRepo(getAccountContext())
             var unread = unreadCount
             if (unread == 0) {
-                unread = requestDao.queryUnreadCount()
+                unread = requestDao?.queryUnreadCount() ?: 0
             }
-            it.onNext(Pair(requestDao.queryUnhandledCount(), unread))
+            it.onNext(Pair(requestDao?.queryUnhandledCount() ?: 0, unread))
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -57,6 +57,7 @@ import com.bcm.messenger.common.sms.OutgoingLocationMessage;
 import com.bcm.messenger.common.sms.OutgoingTextMessage;
 import com.bcm.messenger.common.utils.AmePushProcess;
 import com.bcm.messenger.common.utils.AppUtilKotlinKt;
+import com.bcm.messenger.common.utils.BcmHash;
 import com.bcm.messenger.common.utils.GroupUtil;
 import com.bcm.messenger.common.utils.IdentityUtil;
 import com.bcm.messenger.common.utils.RxBus;
@@ -495,7 +496,7 @@ public class PushDecryptJob extends ContextJob {
             }
 
             if (message.isConfigurationRequest()) {
-                manager.add(new MultiDeviceReadReceiptUpdateJob(getContext(), TextSecurePreferences.isReadReceiptsEnabled(getContext())));
+                manager.add(new MultiDeviceReadReceiptUpdateJob(getContext(), TextSecurePreferences.isReadReceiptsEnabled(accountContext)));
             }
         }
     }
@@ -971,7 +972,7 @@ public class PushDecryptJob extends ContextJob {
                                    @NonNull SignalServiceReceiptMessage message) {
         ALog.i(TAG, "handleReadReceipt");
 
-        if (TextSecurePreferences.isReadReceiptsEnabled(context)) {
+        if (TextSecurePreferences.isReadReceiptsEnabled(accountContext)) {
             for (long timestamp : message.getTimestamps()) {
                 Log.w(TAG, String.format("Received encrypted read receipt: (XXXXX, %d)", timestamp));
 

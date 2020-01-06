@@ -25,10 +25,7 @@ import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
-import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getColorCompat
-import com.bcm.messenger.common.utils.setStatusBarDarkMode
-import com.bcm.messenger.common.utils.setStatusBarLightMode
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.setDrawableRight
 import com.bcm.route.annotation.Route
@@ -86,13 +83,17 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            BcmRouter.getInstance().get(ARouterConstants.Activity.PROFILE_EDIT).putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address).navigation(this@ChatUserPageActivity)
+            BcmRouter.getInstance().get(ARouterConstants.Activity.PROFILE_EDIT)
+                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address)
+                    .startBcmActivity(getAccountContext(), this)
         }
         chat_user_img.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            BcmRouter.getInstance().get(ARouterConstants.Activity.PROFILE_EDIT).putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address).navigation(this@ChatUserPageActivity)
+            BcmRouter.getInstance().get(ARouterConstants.Activity.PROFILE_EDIT)
+                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address)
+                    .startBcmActivity(getAccountContext(), this)
         }
         chat_user_img.setCallback(object : IndividualAvatarView.RecipientPhotoCallback {
             override fun onLoaded(recipient: Recipient?, bitmap: Bitmap?, success: Boolean) {
@@ -128,12 +129,11 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
                 Observable.create(ObservableOnSubscribe<Boolean> {
                     try {
                         if (isMuted) {
-                            Repository.getRecipientRepo()?.setMuted(mRecipient, System.currentTimeMillis() + TimeUnit.DAYS.toMillis(3650))
+                            Repository.getRecipientRepo(getAccountContext())?.setMuted(mRecipient, System.currentTimeMillis() + TimeUnit.DAYS.toMillis(3650))
                         } else {
-                            Repository.getRecipientRepo()?.setMuted(mRecipient, 0)
+                            Repository.getRecipientRepo(getAccountContext())?.setMuted(mRecipient, 0)
                         }
                         it.onNext(isMuted)
-
                     } catch (ex: Exception) {
                         it.onError(ex)
                     } finally {
@@ -155,7 +155,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            MediaBrowserActivity.router(mRecipient.address)
+            MediaBrowserActivity.router(getAccountContext(), mRecipient.address)
         }
 
         chat_user_stick.setSwitchEnable(false)
@@ -199,12 +199,12 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
             val bothSide = mRecipient.isFriend
             val title = if (bothSide) {
                 getString(R.string.chats_delete_friend_second_confirm_title, mRecipient.name)
-            }else {
+            } else {
                 getString(R.string.chats_delete_from_contact_confirm_title, mRecipient.name)
             }
             val item = if (bothSide) {
                 getString(R.string.chats_user_delete_and_block_text)
-            }else {
+            } else {
                 getString(R.string.chats_user_delete_from_contact_text)
             }
 
@@ -212,25 +212,24 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     .withTitle(title)
                     .withPopItem(AmeBottomPopup.PopupItem(item, getColorCompat(R.color.common_content_warning_color)) {
                         mGoingFinish = true
-                            val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                            provider.deleteFriend(mRecipient.address.serialize()) {
-                                if (it) {
-                                    ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(mRecipient, threadId) {
-                                        AmePopup.result.succeed(this, getString(R.string.chats_user_delete_success)) {
-                                            AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true))
-                                        }
+                        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
+                        provider.deleteFriend(mRecipient.address.serialize()) {
+                            if (it) {
+                                ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(mRecipient, threadId) {
+                                    AmePopup.result.succeed(this, getString(R.string.chats_user_delete_success)) {
+                                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true))
                                     }
-
-                                } else {
-                                    mGoingFinish = false
-                                    AmePopup.result.failure(this, getString(R.string.chats_user_delete_fail))
                                 }
+
+                            } else {
+                                mGoingFinish = false
+                                AmePopup.result.failure(this, getString(R.string.chats_user_delete_fail))
                             }
+                        }
                     })
                     .withCancelable(true)
                     .withDoneTitle(getString(R.string.common_cancel))
                     .show(this)
-
         }
     }
 
@@ -244,7 +243,9 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
                 if (mRecipient.isFriend) {
 
                 } else {
-                    BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND).putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address).navigation(this@ChatUserPageActivity)
+                    BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND)
+                            .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address)
+                            .startBcmActivity(getAccountContext(), this@ChatUserPageActivity)
                 }
             }
         })
@@ -291,7 +292,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
         chat_user_main_layout.visibility = View.VISIBLE
         markMute(recipient.mutedUntil)
 
-        chat_user_img.setPhoto(recipient)
+        chat_user_img.setPhoto(getAccountContext(), recipient)
         chat_user_name.text = recipient.name
         if (!recipient.isLogin) {
             if (isBgLight) {
@@ -314,14 +315,11 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
             chat_user_delete.setName(getString(R.string.chats_user_delete_text))
             chat_user_delete.visibility = View.VISIBLE
             chat_user_title_bar.setRightText("")
-
-        }
-        else if (recipient.relationship == RecipientRepo.Relationship.FOLLOW || recipient.relationship == RecipientRepo.Relationship.FOLLOW_REQUEST || recipient.relationship == RecipientRepo.Relationship.BREAK) {
+        } else if (recipient.relationship == RecipientRepo.Relationship.FOLLOW || recipient.relationship == RecipientRepo.Relationship.FOLLOW_REQUEST || recipient.relationship == RecipientRepo.Relationship.BREAK) {
             chat_user_delete.setName(getString(R.string.chats_user_delete_from_contact_text))
             chat_user_delete.visibility = View.VISIBLE
             chat_user_title_bar.setRightIcon(R.drawable.chats_add_friend_icon)
-        }
-        else {
+        } else {
             chat_user_delete.visibility = View.GONE
             chat_user_title_bar.setRightIcon(R.drawable.chats_add_friend_icon)
         }
@@ -352,7 +350,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
         Observable.create(ObservableOnSubscribe<Boolean> {
             try {
                 // Delete chat history
-                Repository.getChatRepo().cleanChatMessages(threadId)
+                Repository.getChatRepo(getAccountContext())?.cleanChatMessages(threadId)
                 it.onNext(true)
             } catch (ex: Exception) {
                 it.onError(ex)
@@ -421,7 +419,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
             return
         }
         chat_user_top_bg.post {
-            if(mRecipient == recipient) {
+            if (mRecipient == recipient) {
                 initUserPage(recipient)
             }
         }

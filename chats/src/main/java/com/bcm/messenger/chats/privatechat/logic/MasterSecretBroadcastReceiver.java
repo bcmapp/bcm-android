@@ -8,12 +8,13 @@ import androidx.annotation.Nullable;
 
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
+import com.bcm.messenger.common.provider.AMELogin;
 
 public abstract class MasterSecretBroadcastReceiver extends BroadcastReceiver {
 
   @Override
   public final void onReceive(Context context, Intent intent) {
-    onReceive(context, intent, BCMEncryptUtils.INSTANCE.getMasterSecret(context));
+    onReceive(context, intent, BCMEncryptUtils.INSTANCE.getMasterSecret(AMELogin.INSTANCE.getMajorContext()));
   }
 
   protected abstract void onReceive(Context context, Intent intent, @Nullable MasterSecret masterSecret);

@@ -45,12 +45,12 @@ public class SendReadReceiptJob extends ContextJob {
 
     @Override
     public void onRun() throws Exception {
-        if (!TextSecurePreferences.isReadReceiptsEnabled(context)) return;
+        if (!TextSecurePreferences.isReadReceiptsEnabled(accountContext)) return;
 
         SignalServiceAddress remoteAddress = new SignalServiceAddress(address);
         SignalServiceReceiptMessage receiptMessage = new SignalServiceReceiptMessage(SignalServiceReceiptMessage.Type.READ, messageIds, timestamp);
 
-        BcmChatCore.INSTANCE.sendReceipt(remoteAddress, receiptMessage);
+        BcmChatCore.INSTANCE.sendReceipt(accountContext, remoteAddress, receiptMessage);
     }
 
     @Override

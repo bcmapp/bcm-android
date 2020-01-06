@@ -24,33 +24,33 @@ import java.util.List;
 public abstract class SendJob extends MasterSecretJob {
 
     private final static String TAG = SendJob.class.getSimpleName();
-  protected Repository repository;
+    protected Repository repository;
 
     public SendJob(Context context, AccountContext accountContext, JobParameters parameters) {
-    super(context, accountContext, parameters);
-    repository = Repository.getInstance(accountContext);
-  }
+        super(context, accountContext, parameters);
+        repository = Repository.getInstance(accountContext);
+    }
 
     @Override
     public final void onRun(MasterSecret masterSecret) throws Exception {
-    if (repository == null) {
-      ALog.logForSecret(TAG, "User " + accountContext.getUid() + " is not login");
-      return;
-    }
+        if (repository == null) {
+            ALog.logForSecret(TAG, "User " + accountContext.getUid() + " is not login");
+            return;
+        }
         onSend(masterSecret);
     }
 
     protected abstract void onSend(MasterSecret masterSecret) throws Exception;
 
     protected void markAttachmentsUploaded(@NonNull List<AttachmentRecord> attachments) {
-    repository.getAttachmentRepo(accountContext).setAttachmentUploaded(attachments);
+        repository.getAttachmentRepo().setAttachmentUploaded(attachments);
     }
 
     protected List<AttachmentRecord> scaleAttachments(@NonNull MasterSecret masterSecret,
                                                       @NonNull MediaConstraints constraints,
                                                       @NonNull List<AttachmentRecord> attachments)
             throws UndeliverableMessageException {
-        AttachmentRepo attachmentRepo = repository.getAttachmentRepo(accountContext);
+        AttachmentRepo attachmentRepo = repository.getAttachmentRepo();
         List<AttachmentRecord> results = new LinkedList<>();
 
         for (AttachmentRecord attachment : attachments) {

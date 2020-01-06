@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.provider.IContactModule
@@ -24,7 +25,9 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * Created by Kin on 2019/9/17
  */
-class ThreadListViewModel : ViewModel() {
+class ThreadListViewModel(
+        private val mAccountContext: AccountContext
+) : ViewModel() {
 
     class ThreadListData(val data: List<ThreadRecord>, val unread: Int)
 
@@ -64,12 +67,12 @@ class ThreadListViewModel : ViewModel() {
         /**
          * 读取会话ID，如果没有则生成
          */
-        fun getThreadId(recipient: Recipient, callback: (threadId: Long) -> Unit) {
+        fun getThreadId(accountContext: AccountContext, recipient: Recipient, callback: (threadId: Long) -> Unit) {
             Observable.create(ObservableOnSubscribe<Long> {
                 try {
-                    it.onNext(Repository.getThreadRepo().getThreadIdFor(recipient.address.serialize()))
-                }
-                finally {
+                    it.onNext(Repository.getThreadRepo(accountContext)?.getThreadIdFor(recipient.address.serialize())
+                            ?: 0L)
+                } finally {
                     it.onComplete()
                 }
             }).subscribeOn(AmeDispatcher.ioScheduler)
@@ -85,16 +88,14 @@ class ThreadListViewModel : ViewModel() {
         /**
          * 读取现有的会话ID
          */
-        fun getExistThreadId(recipient: Recipient, callback: (threadId: Long) -> Unit) {
+        fun getExistThreadId(accountContext: AccountContext, recipient: Recipient, callback: (threadId: Long) -> Unit) {
 
             Observable.create(ObservableOnSubscribe<Long> {
                 try {
-                    it.onNext(Repository.getThreadRepo().getThreadIdIfExist(recipient))
-                }
-                catch (ex: Exception) {
+                    it.onNext(Repository.getThreadRepo(accountContext)?.getThreadIdIfExist(recipient) ?: 0L)
+                } catch (ex: Exception) {
                     it.onError(ex)
-                }
-                finally {
+                } finally {
                     it.onComplete()
                 }
             }).subscribeOn(AmeDispatcher.ioScheduler)
@@ -113,7 +114,7 @@ class ThreadListViewModel : ViewModel() {
 
     private val TAG = "ThreadListViewModel"
 
-    private val threadRepo = Repository.getThreadRepo()
+    private val threadRepo = Repository.getThreadRepo(mAccountContext)!!
     private var localLiveData: LiveData<List<ThreadRecord>>? = null
 
     val threadLiveData = MutableLiveData<ThreadListData>()
@@ -134,17 +135,17 @@ class ThreadListViewModel : ViewModel() {
             val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
             val tl = threadRepo.getAllThreadsWithRecipientReady()
             provider.updateThreadRecipientSource(tl.mapNotNull { record ->
-                val r = record.getRecipient()
+                val r = record.getRecipient(mAccountContext)
                 if (r.isGroupRecipient) {
                     null
-                }else {
+                } else {
                     r
                 }
             })
             var unreadCount = 0
-            tl.forEach {r ->
+            tl.forEach { r ->
                 //ALog.d(TAG, "uid: ${r.uid}, mute: ${r.getRecipient().mutedUntil}, unread: ${r.unreadCount}")
-                if (!r.getRecipient().isMuted && r.unreadCount > 0) {
+                if (!r.getRecipient(mAccountContext).isMuted && r.unreadCount > 0) {
                     unreadCount++
                 }
             }
@@ -189,11 +190,10 @@ class ThreadListViewModel : ViewModel() {
             try {
                 if (threadId <= 0L) {
                     it.onNext(false)
-                }else {
+                } else {
                     it.onNext(threadRepo.getPinTime(threadId) > 0L)
                 }
-            }
-            finally {
+            } finally {
                 it.onComplete()
             }
         }).subscribeOn(AmeDispatcher.ioScheduler)
@@ -214,7 +214,7 @@ class ThreadListViewModel : ViewModel() {
             try {
                 if (threadId <= 0L) {
                     it.onNext(false)
-                }else {
+                } else {
                     if (toPin) {
                         threadRepo.setPinTime(threadId)
                     } else {
@@ -222,8 +222,7 @@ class ThreadListViewModel : ViewModel() {
                     }
                     it.onNext(true)
                 }
-            }
-            finally {
+            } finally {
                 it.onComplete()
             }
         }).subscribeOn(AmeDispatcher.ioScheduler)
@@ -245,7 +244,7 @@ class ThreadListViewModel : ViewModel() {
                 val threadId = threadRepo.getThreadIdFor(recipient.address.serialize())
                 if (threadId <= 0L) {
                     it.onNext(false)
-                }else {
+                } else {
                     if (toPin) {
                         threadRepo.setPinTime(threadId)
                     } else {
@@ -253,8 +252,7 @@ class ThreadListViewModel : ViewModel() {
                     }
                     it.onNext(true)
                 }
-            }
-            finally {
+            } finally {
                 it.onComplete()
             }
         }).subscribeOn(AmeDispatcher.ioScheduler)
@@ -276,7 +274,7 @@ class ThreadListViewModel : ViewModel() {
             try {
                 val actualThreadId = if (threadId <= 0L) {
                     threadRepo.getThreadIdIfExist(recipient?.address?.serialize().orEmpty())
-                }else {
+                } else {
                     threadId
                 }
                 if (recipient?.isGroupRecipient == true) {
@@ -285,16 +283,14 @@ class ThreadListViewModel : ViewModel() {
                     threadRepo.deleteConversationContent(actualThreadId)
                 }
                 it.onNext(true)
-            }
-            catch (ex: Exception) {
+            } catch (ex: Exception) {
                 it.onError(ex)
-            }
-            finally {
+            } finally {
                 it.onComplete()
             }
         }).subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ _ ->
+                .subscribe({
                     callback?.invoke(true)
                 }, {
                     ALog.e(TAG, "deleteConversation error", it)
@@ -306,8 +302,8 @@ class ThreadListViewModel : ViewModel() {
         Observable.create(ObservableOnSubscribe<Boolean> {
             try {
                 val actualThreadId = if (threadId <= 0L) {
-                    threadRepo.getThreadIdIfExist(GroupUtil.addressFromGid(groupId).serialize())
-                }else {
+                    threadRepo.getThreadIdIfExist(GroupUtil.addressFromGid(mAccountContext, groupId).serialize())
+                } else {
                     threadId
                 }
                 threadRepo.deleteConversationForGroup(groupId, actualThreadId)

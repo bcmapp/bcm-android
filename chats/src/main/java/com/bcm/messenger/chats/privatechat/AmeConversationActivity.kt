@@ -144,7 +144,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
         if (address != null) {
             mRecipient = Recipient.from(address, true)
             mRecipient.addListener(this)
-
         } else {
             finish()
             return
@@ -176,9 +175,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                 mRecipient.removeListener(this)
                 mRecipient = recipient
                 recipient.addListener(this)
-                mConversationModel?.init(getAccountContext(), mConversationModel?.getThreadId() ?: 0L, recipient)
             }
-
         } else {
             return
         }
@@ -239,13 +236,11 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
 
         } else if (requestCode == PICK_DOCUMENT && data != null) {
-
             checkRecipientBlock {
                 if (it) {
                     handleSendDocument(listOf(data.data))
                 }
             }
-
         } else if (requestCode == BcmPickPhotoConstants.CAPTURE_REQUEST && resultCode == Activity.RESULT_OK) {
             val path = data?.getStringExtra(BcmPickPhotoConstants.EXTRA_CAPTURE_PATH)
             if (path != null) {
@@ -269,11 +264,9 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                 checkRecipientBlock {
                     if (it) {
                         sendLocationMessage(AmeGroupMessage(AmeGroupMessage.LOCATION, AmeGroupMessage.LocationContent(latitude, longitude, mapType, title, address)).toString())
-
                     }
                 }
             }
-
         } else if (requestCode == SEND_CONTACT && data != null) {
             try {
                 val event = GsonUtils.fromJson<SendContactEvent>(data.getStringExtra(ARouterConstants.PARAM.PARAM_DATA), object : TypeToken<SendContactEvent>(){}.type)
@@ -286,9 +279,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                             sendMessage(event.comment)
                         }
                     }, 1000)
-
                 }
-
             }catch (ex: Exception) {
                 ALog.e(TAG, "onActivityResult send_contact", ex)
             }
@@ -356,7 +347,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
         mScreenshotManager?.setScreenshotListener {
             sendScreenshotMessage()
         }
-
     }
 
     override fun onActivityReenter(resultCode: Int, data: Intent?) {
@@ -409,7 +399,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
         })
 
         chat_title_bar.setOnChatTitleCallback(object : ChatTitleBar.OnChatTitleCallback {
-
             override fun onRight(multiSelect: Boolean) {
                 handleConversationSettings()
             }
@@ -428,12 +417,10 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     else -> finish()
                 }
             }
-
         })
 
 
         layout_container.addOnKeyboardShownListener(object : KeyboardAwareLinearLayout.OnKeyboardShownListener {
-
             override fun onKeyboardShown() {
                 mFragment.scrollToBottom(false)
             }
@@ -472,10 +459,8 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
             override fun onAudioStateChanged(state: Int, recordUri: Uri?, byteSize:Long, playTime:Long) {
                 when (state) {
                     ConversationInputPanel.OnConversationInputListener.AUDIO_START -> {
-
                     }
                     ConversationInputPanel.OnConversationInputListener.AUDIO_COMPLETE -> {
-
                         mConversationModel?.sendMediaMessage(this@AmeConversationActivity, getMasterSecret(),
                                 createOutgoingMessage("", SlideDeck().apply { addSlide(AudioSlide(this@AmeConversationActivity, recordUri, byteSize, playTime, MediaUtil.AUDIO_AAC, true)) },
                                 (mRecipient.expireMessages * 1000).toLong(), -1, (mConversationModel?.getThreadId() ?: 0L) <= 0L)) {
@@ -488,18 +473,11 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                                         ALog.logForSecret(TAG, "delete audio record fail", ex)
                                     }
                                 }
-
                             }
-
                         }
-
-                    }
-                    else -> {
-
                     }
                 }
             }
-
         })
 
         bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_camera), R.drawable.chats_icon_camera, object : BottomPanelClickListener {
@@ -520,7 +498,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                         }
                     }
                 }
-
             }
         }),
                 BottomPanelItem(getString(R.string.chats_more_option_album), R.drawable.chats_icon_picture, object : BottomPanelClickListener {
@@ -541,7 +518,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                                 }
                             }
                         }
-
                     }
                 }),
                 BottomPanelItem(getString(R.string.chats_more_option_file), R.drawable.chats_icon_file, object : BottomPanelClickListener {
@@ -555,7 +531,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                                 }
                             }
                         }
-
                     }
 
                     private fun selectMediaType(activity: Activity, type: String, extraMimeType: Array<String>?, requestCode: Int) {
@@ -569,9 +544,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                         } catch (anfe: ActivityNotFoundException) {
                             Log.w(TAG, "couldn't complete ACTION_OPEN_DOCUMENT, no activity found. falling back.")
                         }
-
                     }
-
                 }))
 
         if (!mRecipient.isGroupRecipient && !mRecipient.isLogin) {
@@ -582,13 +555,12 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                                 if (it) {
                                     if (mRecipient.isFriend || mRecipient.isAllowStranger) {
                                         val chatProvider = ChatModuleImp()
-                                        chatProvider.startRtcCallService(this@AmeConversationActivity, mRecipient.address.serialize(), CameraState.Direction.NONE.ordinal)
+                                        chatProvider.startRtcCallService(this@AmeConversationActivity, mRecipient.address, CameraState.Direction.NONE.ordinal)
                                     } else {
                                         ToastUtil.show(this@AmeConversationActivity, getString(R.string.common_chats_stranger_disturb_notice, mRecipient.name), Toast.LENGTH_LONG)
                                     }
                                 }
                             }
-
                         }
                     }))
         }
@@ -605,7 +577,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                                 }
                             }
                         }
-
                     }
                 }),
                 BottomPanelItem(getString(R.string.chats_more_option_namecard), R.drawable.chats_icon_contact, object : BottomPanelClickListener {
@@ -617,9 +588,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                                 startActivityForResult(intent, SEND_CONTACT)
                             }
                         }
-
                     }
-
                 }))
         if (!mRecipient.isLogin) {
             bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_shredder), R.drawable.chats_72_recall, object : BottomPanelClickListener {
@@ -630,12 +599,9 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                             provider.showClearHistoryConfirm(this@AmeConversationActivity, {
                                 mConversationModel?.clearConversationHistory(this@AmeConversationActivity)
                             }, {
-
                             })
-
                         }
                     }
-
                 }
             }))
         }
@@ -648,7 +614,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
             }
         }
 
-        swipeBackLayout?.addSwipeListener(object : SwipeBackLayout.SwipeListener {
+        swipeBackLayout.addSwipeListener(object : SwipeBackLayout.SwipeListener {
             override fun onScrollStateChange(state: Int, scrollPercent: Float) {
             }
 
@@ -667,12 +633,14 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun initData() {
-        if (mConversationModel == null) {
-            mConversationModel = ViewModelProviders.of(this).get(AmeConversationViewModel::class.java)
-        }
+        mConversationModel = ViewModelProviders.of(this, AmeConversationModelFactory(getAccountContext())).get(AmeConversationViewModel::class.java)
 
+        if (!getAccountContext().isLogin) {
+            finish()
+            return
+        }
         val threadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, 0L)
-        mConversationModel?.init(getAccountContext(), threadId, mRecipient)
+        mConversationModel?.init(threadId, mRecipient)
 
         glideRequests = GlideApp.with(this)
 
@@ -683,7 +651,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
         initializeProfiles()
         initializeDraft()
 
-        mConversationModel?.checkLastDecryptFailTime(this, getMasterSecret())
+        mConversationModel?.checkLastDecryptFailTime(this)
         mConversationModel?.checkProfileKeyUpdateToDate(this)
 
     }
@@ -705,7 +673,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                             val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
                             contactProvider.blockContact(mRecipient.address, !mRecipient.isBlocked)
                             callback.invoke(false)
-
                         } catch (ex: Exception) {
                             ALog.logForSecret(TAG, "checkRecipient block recipient fail", ex)
                             callback.invoke(false)
@@ -725,20 +692,16 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
         }
         ALog.i(TAG, "handleSendImage size: ${selectPaths.size}")
         Observable.fromIterable(selectPaths).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).map { path ->
-
             val uri = if (takenPhoto) Uri.fromFile(File(path)) else AppUtil.getImageContentUri(this@AmeConversationActivity, path)
             val slide = AttachmentUtils.getImageSlide(this@AmeConversationActivity, uri) ?: throw Exception("ImageSlide is null")
             createOutgoingMessage("", SlideDeck().apply { addSlide(slide) }, (mRecipient.expireMessages * 1000).toLong(), -1, (mConversationModel?.getThreadId() ?: 0L) <= 0L)
-
         }.delay(1500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     mConversationModel?.sendMediaMessage(this, getMasterSecret(), it)
-
                 }, {
                     ALog.logForSecret(TAG, "handleSendImage error", it)
                 })
-
     }
 
     private fun handleSendDocument(selectUris: List<Uri>?) {
@@ -747,25 +710,19 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
         }
         ALog.i(TAG, "handleSendDocument size: ${selectUris.size}")
         Observable.fromIterable(selectUris).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).map { uri ->
-
             val slide = AttachmentUtils.getDocumentSlide(AppContextHolder.APP_CONTEXT, uri) ?: throw Exception("DocumentSlide is null")
             createOutgoingMessage("", SlideDeck().apply { addSlide(slide) }, (mRecipient.expireMessages * 1000).toLong(), -1, (mConversationModel?.getThreadId() ?: 0L) <= 0L)
-
         }.delay(1500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-
                     mConversationModel?.sendMediaMessage(this, getMasterSecret(), it)
                 }, {
                     ALog.logForSecret(TAG, "handleSendDocument error", it)
                 })
-
     }
 
     private fun handleConversationSettings() {
-        if (isActiveGroup) {
-            // ignore
-        } else {
+        if (!isActiveGroup) {
             hideInput()
 
             layout_container?.postDelayed({
@@ -775,7 +732,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                         .putLong(ARouterConstants.PARAM.PARAM_THREAD, mConversationModel?.getThreadId() ?: 0L)
                         .navigation(this, DELETE_REQUEST_CODE)
             }, 200)
-
         }
     }
 
@@ -798,7 +754,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
         val enabled = true
         bottom_panel.panel_countdown_send_button.isEnabled = enabled
         bottom_panel.panel_audio_toggle.isEnabled = enabled
-
     }
 
     private fun initializeDraftFromDatabase(callback: (draft: String) -> Unit) {
@@ -859,7 +814,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
             } else {
                 OutgoingEncryptedMessage(mRecipient, body, (mRecipient.expireMessages * 1000).toLong())
             }
-
     }
 
     private fun sendMessage(messageText: CharSequence) {
@@ -874,7 +828,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
             return
         }
         mConversationModel?.sendTextMessage(this, createOutgoingMessage(messageText.toString()))
-
     }
 
     private fun sendLocationMessage(locationData: String) {
@@ -893,21 +846,17 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
         } else {
             val message = OutgoingLocationMessage(mRecipient, locationData, expireIn)
             mConversationModel?.sendTextMessage(this, message)
-
         }
     }
 
     private fun sendScreenshotMessage() {
         val screenshotMessage = AmeGroupMessage(AmeGroupMessage.SCREEN_SHOT_MESSAGE, AmeGroupMessage.ScreenshotContent("")).toString()
         mConversationModel?.sendTextMessage(this, OutgoingLocationMessage(mRecipient, screenshotMessage, (mRecipient.expireMessages * 1000).toLong()))
-
     }
 
     private fun sendContactMessage(contactContent: AmeGroupMessage.ContactContent) {
-
         mConversationModel?.sendTextMessage(this, OutgoingLocationMessage(mRecipient,
                 AmeGroupMessage(AmeGroupMessage.CONTACT, contactContent).toString(), (mRecipient.expireMessages * 1000).toLong()))
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -927,7 +876,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
         bottom_panel.postDelayed({
             hideInput()
         }, 100)
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -958,5 +906,4 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
             ToastUtil.show(this, getString(R.string.common_too_low_version_notice), Toast.LENGTH_LONG)
         }
     }
-
 }
