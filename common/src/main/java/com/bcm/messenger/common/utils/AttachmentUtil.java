@@ -11,6 +11,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.database.records.AttachmentRecord;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
 import com.bcm.messenger.utility.foreground.AppForeground;
@@ -22,13 +23,13 @@ public class AttachmentUtil {
 
   private static final String TAG = AttachmentUtil.class.getSimpleName();
 
-  public static boolean isAutoDownloadPermitted(@NonNull Context context, @Nullable AttachmentRecord attachment) {
+  public static boolean isAutoDownloadPermitted(@NonNull Context context, @NonNull AccountContext accountContext, @Nullable AttachmentRecord attachment) {
     if (attachment == null) {
       Log.w(TAG, "attachment was null, returning vacuous true");
       return true;
     }
 
-    Set<String> allowedTypes = getAllowedAutoDownloadTypes(context);
+    Set<String> allowedTypes = getAllowedAutoDownloadTypes(context, accountContext);
     String      contentType  = attachment.getContentType();
 
     if (attachment.isVoiceNote() || attachment.isAudio() && TextUtils.isEmpty(attachment.getName())) {
@@ -47,11 +48,11 @@ public class AttachmentUtil {
         MediaUtil.isAudioType(contentType);
   }
 
-  private static @NonNull Set<String> getAllowedAutoDownloadTypes(@NonNull Context context) {
+  private static @NonNull Set<String> getAllowedAutoDownloadTypes(@NonNull Context context, @NonNull AccountContext accountContext) {
     if(!AppForeground.INSTANCE.foreground()) return Collections.emptySet();//，
-    else if (isConnectedWifi(context))    return TextSecurePreferences.getWifiMediaDownloadAllowed(context);
-    else if (isConnectedRoaming(context)) return TextSecurePreferences.getRoamingMediaDownloadAllowed(context);
-    else if (isConnectedMobile(context))  return TextSecurePreferences.getMobileMediaDownloadAllowed(context);
+    else if (isConnectedWifi(context))    return TextSecurePreferences.getWifiMediaDownloadAllowed(accountContext);
+    else if (isConnectedRoaming(context)) return TextSecurePreferences.getRoamingMediaDownloadAllowed(accountContext);
+    else if (isConnectedMobile(context))  return TextSecurePreferences.getMobileMediaDownloadAllowed(accountContext);
     else                                  return Collections.emptySet();
   }
 

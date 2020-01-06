@@ -98,7 +98,7 @@ public class AttachmentDownloadJob extends MasterSecretJob {
             return;
         }
 
-        if (!manual && !AttachmentUtil.isAutoDownloadPermitted(context, record)) {
+        if (!manual && !AttachmentUtil.isAutoDownloadPermitted(context, accountContext, record)) {
             ALog.w(TAG, "Attachment can't be auto downloaded...");
             return;
         }
