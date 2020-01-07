@@ -11,9 +11,9 @@ import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
-import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -107,8 +107,7 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
     }
 
     private fun newChat(recipient: Recipient) {
-        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-        provider.openContactDataActivity(context, recipient.address, mContactContent?.nickName, mGroupId)
+        AmeModuleCenter.contact(recipient.address.context())?.openContactDataActivity(context, recipient.address, mContactContent?.nickName, mGroupId)
     }
 
     override fun onModified(recipient: Recipient) {

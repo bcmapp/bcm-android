@@ -6,13 +6,12 @@ import android.os.Bundle
 import android.view.KeyEvent
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.RxBus
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
-import com.bcm.route.api.BcmRouter
 import com.google.zxing.Result
 
 /**
@@ -94,8 +93,7 @@ class NewScanActivity : SwipeBaseActivity() {
     private fun handleScanResult(scanResult: Result) {
         try {
             if (mScanResultHandleDelegate) {
-                val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                provider.discernScanData(this, scanResult.text) { discern ->
+                AmeModuleCenter.contact(accountContext)?.discernScanData(this, scanResult.text) { discern ->
                     if (discern) {
                         AmeDispatcher.mainThread.dispatch({
                             finish()

@@ -18,7 +18,7 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.CustomDataSearcher
@@ -28,9 +28,7 @@ import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.common.utils.startBcmActivity
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
-import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_group_member_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -266,8 +264,7 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
                 } else {
                     val uid = data?.uid
                     if (uid != null && uid.isNotEmpty()) {
-                        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                        provider.openContactDataActivity(viewHolder.itemView.context, Address.from(accountContext, data.uid), data.gid)
+                        AmeModuleCenter.contact(accountContext)?.openContactDataActivity(viewHolder.itemView.context, Address.from(accountContext, data.uid), data.gid)
                     }
                 }
             }

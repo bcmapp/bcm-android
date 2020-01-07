@@ -40,7 +40,6 @@ import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
 import com.bcm.messenger.common.imagepicker.bean.SelectedModel
 import com.bcm.messenger.common.mms.*
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.providers.PersistentBlobProvider
 import com.bcm.messenger.common.recipients.Recipient
@@ -673,8 +672,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                         callback.invoke(false)
                     }.withOkTitle(getString(R.string.chats_blocked_next_confirm_unblock)).withOkListener {
                         try {
-                            val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                            contactProvider.blockContact(mRecipient.address, !mRecipient.isBlocked)
+                            AmeModuleCenter.contact(accountContext)?.blockContact(mRecipient.address, !mRecipient.isBlocked)
                             callback.invoke(false)
                         } catch (ex: Exception) {
                             ALog.logForSecret(TAG, "checkRecipient block recipient fail", ex)

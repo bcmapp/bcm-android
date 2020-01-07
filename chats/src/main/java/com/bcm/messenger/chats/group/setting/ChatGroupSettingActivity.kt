@@ -23,7 +23,7 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.corebean.BcmReviewGroupJoinRequest
 import com.bcm.messenger.common.event.GroupNameOrAvatarChanged
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
 import com.bcm.messenger.common.ui.adapter.ListDataSource
@@ -644,8 +644,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
             else -> {
                 val data = viewHolder.getData()
                 if (data != null && data.uid != null) {
-                    val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                    provider.openContactDataActivity(this, Address.from(accountContext, data.uid), data.gid)
+                    AmeModuleCenter.contact(accountContext)?.openContactDataActivity(this, Address.from(accountContext, data.uid), data.gid)
                 }
             }
         }

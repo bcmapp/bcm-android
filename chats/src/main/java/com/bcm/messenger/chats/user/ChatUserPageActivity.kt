@@ -14,9 +14,9 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.HomeTopEvent
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
-import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonSettingItem
@@ -52,8 +52,6 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
     private var isBgLight = true
 
     private var mCurrentPinStatus: Boolean = false
-
-    private var contactModule: IContactModule? = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast()
 
     private lateinit var mRecipient: Recipient
 
@@ -212,8 +210,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     .withTitle(title)
                     .withPopItem(AmeBottomPopup.PopupItem(item, getColorCompat(R.color.common_content_warning_color)) {
                         mGoingFinish = true
-                        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                        provider.deleteFriend(mRecipient.address.serialize()) {
+                        AmeModuleCenter.contact(accountContext)?.deleteFriend(mRecipient.address.serialize()) {
                             if (it) {
                                 ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(mRecipient, threadId) {
                                     AmePopup.result.succeed(this, getString(R.string.chats_user_delete_success)) {
@@ -397,7 +394,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
         if (recipient.isBlocked) {
             blockHandling = true
-            contactModule?.blockContact(recipient.address, false) {
+            AmeModuleCenter.contact(accountContext)?.blockContact(recipient.address, false) {
                 notify(it)
             }
         } else {
@@ -405,7 +402,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     .withTitle(getString(R.string.chats_block_confirm_title, recipient.name))
                     .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_block_confirm_action), getColorCompat(R.color.common_color_ff3737)) {
                         blockHandling = true
-                        contactModule?.blockContact(recipient.address, true) {
+                        AmeModuleCenter.contact(accountContext)?.blockContact(recipient.address, true) {
                             notify(it)
                         }
                     })

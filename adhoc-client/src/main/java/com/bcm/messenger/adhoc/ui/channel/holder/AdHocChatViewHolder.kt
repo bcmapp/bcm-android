@@ -21,13 +21,12 @@ import com.bcm.messenger.chats.components.AlertView
 import com.bcm.messenger.chats.components.ConversationItemPopWindow
 import com.bcm.messenger.chats.util.LinkUrlSpan
 import com.bcm.messenger.chats.util.TelUrlSpan
-import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.api.IConversationContentAction
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.mms.GlideRequests
-import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.ConversationContentViewHolder
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -38,7 +37,6 @@ import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.AppUtil.getString
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -48,7 +46,7 @@ import io.reactivex.schedulers.Schedulers
  *
  * Created by wjh on 2019/7/27
  */
-class AdHocChatViewHolder(layout: View) : ConversationContentViewHolder<AdHocMessageDetail>(layout), View.OnLongClickListener {
+class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : ConversationContentViewHolder<AdHocMessageDetail>(accountContext, layout), View.OnLongClickListener {
 
     companion object {
 
@@ -125,7 +123,7 @@ class AdHocChatViewHolder(layout: View) : ConversationContentViewHolder<AdHocMes
             if (!messageRecord.success) {
                 AmePopup.bottom.newBuilder()
                         .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_resend)) {
-                            mAction?.resend(, messageRecord)
+                            mAction?.resend(messageRecord)
                         })
                         .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_delete)) {
                             Observable.create(ObservableOnSubscribe<Boolean> { emitter ->
@@ -157,8 +155,7 @@ class AdHocChatViewHolder(layout: View) : ConversationContentViewHolder<AdHocMes
                 return@setOnClickListener
             }
             val message = mMessageSubject ?: return@setOnClickListener
-            val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigation() as IContactModule
-            provider.openContactDataActivity(it.context, Address.fromSerialized(message.fromId), message.nickname)
+            AmeModuleCenter.contact(accountContext)?.openContactDataActivity(it.context, Address.from(accountContext, message.fromId), message.nickname)
 
         }
         mBodyContainer = itemView.findViewById(R.id.conversation_container)
@@ -243,7 +240,7 @@ class AdHocChatViewHolder(layout: View) : ConversationContentViewHolder<AdHocMes
         v?.setOnLongClickListener(this)
         mActionArray.put(type, action)
         if (v != null) {
-            action.bind(, message, v, glideRequests, batchSelected)
+            action.bind(message, v, glideRequests, batchSelected)
         }
         v?.visibility = View.VISIBLE
         return action
@@ -259,7 +256,7 @@ class AdHocChatViewHolder(layout: View) : ConversationContentViewHolder<AdHocMes
                 mPhotoView?.visibility = View.VISIBLE
                 mNickView?.visibility = View.VISIBLE
                 mNickView?.text = message.nickname
-                mPhotoView?.setPhoto(AMELogin.majorContext, Recipient.from(AMELogin.majorContext, Address.fromSerialized(message.fromId), true), message.nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+                mPhotoView?.setPhoto(Recipient.from(Address.from(accountContext, message.fromId), true), message.nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
             }else {
                 mPhotoView?.visibility = View.GONE
                 mNickView?.visibility = View.GONE
@@ -338,8 +335,8 @@ class AdHocChatViewHolder(layout: View) : ConversationContentViewHolder<AdHocMes
                 .withClickListener(object : ConversationItemPopWindow.PopWindowClickListener {
                     override fun onCopy() {
                         when {
-                            messageDetail.getMessageBody()?.isText() == true -> AppUtil.saveCodeToBoard(view.context, messageDetail.getMessageBody()?.content?.getDescribe(0, ).toString())
-                            messageDetail.getMessageBody()?.isLink() == true-> AppUtil.saveCodeToBoard(view.context, messageDetail.getMessageBody()?.content?.getDescribe(0, ).toString())
+                            messageDetail.getMessageBody()?.isText() == true -> AppUtil.saveCodeToBoard(view.context, messageDetail.getMessageBody()?.content?.getDescribe(0, accountContext).toString())
+                            messageDetail.getMessageBody()?.isLink() == true-> AppUtil.saveCodeToBoard(view.context, messageDetail.getMessageBody()?.content?.getDescribe(0, accountContext).toString())
                             else -> return
                         }
                         AmeAppLifecycle.succeed(getString(R.string.common_copied), true)

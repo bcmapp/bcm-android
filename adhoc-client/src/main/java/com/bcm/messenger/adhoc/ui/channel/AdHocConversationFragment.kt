@@ -316,7 +316,7 @@ class AdHocConversationFragment : BaseFragment() {
                             }
                         }
                     }else {
-                        val holder = AdHocChatViewHolder(inflater.inflate(viewType, parent, false))
+                        val holder = AdHocChatViewHolder(accountContext, inflater.inflate(viewType, parent, false))
                         holder.itemView.setOnClickListener {
                             if (activity is AdHocConversationActivity) {
                                 activity.hideInput()

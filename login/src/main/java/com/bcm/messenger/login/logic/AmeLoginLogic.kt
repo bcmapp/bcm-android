@@ -21,7 +21,6 @@ import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IUmengModule
-import com.bcm.messenger.common.provider.accountmodule.IWalletModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
@@ -181,7 +180,7 @@ object AmeLoginLogic {
 
         AmePushProcess.clearNotificationCenter()
         AmePushProcess.updateAppBadge(AppContextHolder.APP_CONTEXT, 0)
-        AmeProvider.get<IWalletModule>(ARouterConstants.Provider.PROVIDER_WALLET_BASE)?.logoutWallet()
+        AmeModuleCenter.wallet(accountContext)?.logoutWallet()
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onAccountLogout(AppContextHolder.APP_CONTEXT, "")
 
         AmeModuleCenter.onLogOutSucceed(accountContext)

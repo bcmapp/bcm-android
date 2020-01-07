@@ -14,6 +14,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.event.GroupInfoCacheReadyEvent
 import com.bcm.messenger.common.event.HomeTopEvent
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -26,7 +27,6 @@ import com.bcm.messenger.common.ui.adapter.IListDataSource
 import com.bcm.messenger.common.ui.adapter.ListDataSource
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getColorCompat
-import com.bcm.messenger.contacts.provider.ContactModuleImp
 import com.bcm.messenger.contacts.viewmodel.GroupContactViewModel
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
@@ -234,7 +234,7 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
                     setMode(CommonSearchBar.MODE_DISPLAY)
                     setOnSearchActionListener(object : CommonSearchBar.OnSearchActionListener{
                         override fun onJump() {
-                            ContactModuleImp().openSearch(context)
+                            AmeModuleCenter.contact(accountContext)?.openSearch(context)
                         }
 
                         override fun onSearch(keyword: String) {

@@ -13,14 +13,13 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.bcm.messenger.chats.R
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.mms.DecryptableStreamUriLoader.DecryptableUri
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.mms.PartAuthority
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.subsampling.AttachmentBitmapDecoder
 import com.bcm.messenger.common.ui.subsampling.AttachmentRegionDecoder
 import com.bcm.messenger.common.utils.MediaUtil
@@ -28,7 +27,6 @@ import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.BitmapUtils
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.route.api.BcmRouter
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -588,8 +586,7 @@ class ZoomingImageView @JvmOverloads constructor(context: Context, attrs: Attrib
 
     private fun doQrDiscern(context: Context, result: Result) {
         ALog.d(TAG, "doQrDiscern result: ${result.text}")
-        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-        provider.discernScanData(context, result.text)
+        AmeModuleCenter.contact(AMELogin.majorContext)?.discernScanData(context, result.text)
     }
 
     fun isZooming(): Boolean {

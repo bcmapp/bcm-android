@@ -11,7 +11,6 @@ import com.bcm.messenger.common.database.migrate.DatabaseMigration
 import com.bcm.messenger.common.database.migrate.IDatabaseMigration
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -130,9 +129,9 @@ class DatabaseMigrateActivity : AppCompatActivity() {
                 .setMessage(R.string.common_database_migrate_failed_content)
                 .setPositiveButton(R.string.common_confirm_ok_text) { _, _ ->
                     AmeDispatcher.io.dispatch {
-                        val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                        contactProvider.doForLogOut()
-                        contactProvider.doForLogin()
+                        val contactProvider = AmeModuleCenter.contact(accountContext)
+                        contactProvider?.doForLogOut()
+                        contactProvider?.doForLogin()
 
                         AmeDispatcher.mainThread.dispatch {
                             migrateFinish(accountContext,true)

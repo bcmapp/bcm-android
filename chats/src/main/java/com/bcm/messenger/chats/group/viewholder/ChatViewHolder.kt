@@ -28,7 +28,6 @@ import com.bcm.messenger.chats.provider.ChatModuleImp
 import com.bcm.messenger.chats.util.ClickSpanTouchHandler
 import com.bcm.messenger.chats.util.LinkUrlSpan
 import com.bcm.messenger.chats.util.TelUrlSpan
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.api.IConversationContentAction
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -41,7 +40,6 @@ import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.ConversationContentViewHolder
@@ -56,7 +54,6 @@ import com.bcm.messenger.common.utils.getString
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -200,8 +197,7 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
 
         mPhotoView?.setOnClickListener {
             mMessageSubject?.let {
-                val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                provider.openContactDataActivity(itemView.context, recipient.address, it.gid)
+                AmeModuleCenter.contact(recipient.address.context())?.openContactDataActivity(itemView.context, recipient.address, it.gid)
             }
 
         }

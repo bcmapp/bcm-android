@@ -10,17 +10,15 @@ import com.bcm.messenger.chats.mediabrowser.MediaBrowseData
 import com.bcm.messenger.chats.mediabrowser.MediaHandleViewModel
 import com.bcm.messenger.chats.mediabrowser.bean.FileBrowserData
 import com.bcm.messenger.chats.util.ChatPreviewClickListener
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.DateUtils
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.utility.AmeURLUtil
 import com.bcm.messenger.utility.permission.PermissionUtil
-import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_file_browser_view.view.*
 
 /**
@@ -113,8 +111,7 @@ class FileBrowserViewHolder(private val accountContext: AccountContext, itemView
         if (content is AmeGroupMessage.FileContent) {
             ChatPreviewClickListener(accountContext).onClick(v, messageDetailRecord)
         } else if (content is AmeGroupMessage.LinkContent) {
-            val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-            contactProvider.discernLink(v.context, AmeURLUtil.getHttpUrl(content.url))
+            AmeModuleCenter.contact(accountContext)?.discernLink(v.context, AmeURLUtil.getHttpUrl(content.url))
         }
     }
 
@@ -122,8 +119,7 @@ class FileBrowserViewHolder(private val accountContext: AccountContext, itemView
         if (messageRecord.isMediaMessage()) {
             ChatPreviewClickListener(accountContext).onClick(v, messageRecord)
         } else {
-            val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-            contactProvider.discernLink(v.context, AmeURLUtil.getHttpUrl(messageRecord.body))
+            AmeModuleCenter.contact()?.discernLink(v.context, AmeURLUtil.getHttpUrl(messageRecord.body))
         }
     }
 

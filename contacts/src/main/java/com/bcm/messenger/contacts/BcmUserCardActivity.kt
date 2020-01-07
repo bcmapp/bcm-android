@@ -11,7 +11,6 @@ import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
-import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -105,8 +104,8 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
                 })
                 if (!recipient.isLogin) {
                     builder.withPopItem(AmeBottomPopup.PopupItem(if (recipient.isBlocked) getString(R.string.contacts_user_card_unblock_title) else getString(R.string.contacts_user_card_block_title), AmeBottomPopup.PopupItem.CLR_RED) {
-                        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigation() as IContactModule
-                        provider.blockContact(recipient.address, !recipient.isBlocked) { success ->
+                        val provider = AmeModuleCenter.contact(accountContext)
+                        provider?.blockContact(recipient.address, !recipient.isBlocked) { success ->
                             if (success) {
                                 if (recipient.isBlocked) {
                                     AmePopup.result.succeed(this@BcmUserCardActivity, getString(R.string.contacts_user_block_success))

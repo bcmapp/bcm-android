@@ -18,12 +18,13 @@ import com.bcm.messenger.common.contacts.avatars.ContactPhoto;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.BcmHttpApiHelper;
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo;
-import com.bcm.messenger.common.deprecated.RecipientDatabase.RegisteredState;
-import com.bcm.messenger.common.deprecated.RecipientDatabase.VibrateState;
 import com.bcm.messenger.common.database.records.PrivacyProfile;
 import com.bcm.messenger.common.database.records.RecipientSettings;
 import com.bcm.messenger.common.database.repositories.RecipientRepo;
+import com.bcm.messenger.common.deprecated.RecipientDatabase.RegisteredState;
+import com.bcm.messenger.common.deprecated.RecipientDatabase.VibrateState;
 import com.bcm.messenger.common.provider.AMELogin;
+import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.provider.IContactModule;
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule;
 import com.bcm.messenger.common.recipients.RecipientProvider.RecipientDetails;
@@ -492,9 +493,10 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
         RecipientProvider.Companion.updateCache(this);
 
         //check FOLLOW relationship
-        IContactModule provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast();
-        provider.checkNeedRequestAddFriend(AppContextHolder.APP_CONTEXT, Recipient.this);
-
+        IContactModule module = AmeModuleCenter.INSTANCE.contact(address.context());
+        if (module != null) {
+            module.checkNeedRequestAddFriend(AppContextHolder.APP_CONTEXT, Recipient.this);
+        }
     }
 
     /**

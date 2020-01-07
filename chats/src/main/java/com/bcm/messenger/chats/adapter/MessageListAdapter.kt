@@ -16,7 +16,7 @@ import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonSearchBar
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
 import com.bcm.messenger.common.ui.popup.BcmPopupMenu
@@ -133,8 +133,7 @@ class MessageListAdapter(context: Context,
                     setMode(CommonSearchBar.MODE_DISPLAY)
                     setOnSearchActionListener(object : CommonSearchBar.OnSearchActionListener {
                         override fun onJump() {
-                            val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                            provider.openSearch(context)
+                            AmeModuleCenter.contact(AMELogin.majorContext)?.openSearch(context)
                         }
 
                         override fun onSearch(keyword: String) {

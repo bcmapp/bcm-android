@@ -7,12 +7,11 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.BcmGroupJoinRequest
 import com.bcm.messenger.common.core.corebean.BcmGroupJoinStatus
 import com.bcm.messenger.common.core.corebean.BcmReviewGroupJoinRequest
 import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.AmeAppLifecycle
@@ -74,8 +73,8 @@ class GroupJoiningReviewItem @JvmOverloads constructor(context: Context, attrs: 
         }
         join_member_comment_tv.setOnClickListener {
             if (mInviter != null) {
-                val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                provider.openContactDataActivity(context, mInviter?.address ?: return@setOnClickListener, mRequestData?.gid ?: 0)
+                val address = mInviter?.address ?: return@setOnClickListener
+                AmeModuleCenter.contact(address.context())?.openContactDataActivity(context, address, mRequestData?.gid ?: 0)
             }
         }
         join_member_all_item.setOnClickListener {

@@ -23,7 +23,6 @@ import com.bcm.messenger.common.jobs.ContextJob
 import com.bcm.messenger.common.profiles.PlaintextServiceProfile
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
@@ -1098,9 +1097,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                 }
             }
 
-            val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-            provider.checkNeedRequestAddFriend(AppContextHolder.APP_CONTEXT, recipient)
-
+            AmeModuleCenter.contact(mAccountContext)?.checkNeedRequestAddFriend(AppContextHolder.APP_CONTEXT, recipient)
         }
     }
 

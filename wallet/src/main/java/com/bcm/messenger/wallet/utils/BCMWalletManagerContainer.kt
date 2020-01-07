@@ -8,6 +8,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.preferences.SuperPreferences
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AccountContextMap
@@ -20,7 +21,6 @@ import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.model.*
 import com.bcm.messenger.wallet.presenter.ImportantLiveData
 import com.bcm.messenger.wallet.presenter.WalletViewModel
-import com.bcm.messenger.wallet.provider.WalletModuleImp
 import com.bcm.messenger.wallet.ui.WalletConfirmDialog
 import com.bcm.route.api.BcmRouter
 import com.google.gson.Gson
@@ -687,7 +687,7 @@ object BCMWalletManagerContainer : AccountContextMap<BCMWalletManagerContainer.B
             var privateKeyArray: ByteArray? = null
             WalletConfirmDialog.showForPassword(activity, activity?.getString(R.string.wallet_confirm_password_title), notice,
                     confirmListener = { password ->
-                        WalletModuleImp().initWallet(privateKeyArray
+                        AmeModuleCenter.wallet(mAccountContext)?.initWallet(privateKeyArray
                                 ?: return@showForPassword, password)
                         confirmCallback?.invoke()
 

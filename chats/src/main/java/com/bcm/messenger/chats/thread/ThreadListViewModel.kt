@@ -4,16 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.database.repositories.Repository
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -132,9 +130,8 @@ class ThreadListViewModel(
         }
         threadDisposable = Observable.create<ThreadListData> {
             ALog.d(TAG, "threadDisposable run")
-            val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
             val tl = threadRepo.getAllThreadsWithRecipientReady()
-            provider.updateThreadRecipientSource(tl.mapNotNull { record ->
+            AmeModuleCenter.contact(mAccountContext)?.updateThreadRecipientSource(tl.mapNotNull { record ->
                 val r = record.getRecipient(mAccountContext)
                 if (r.isGroupRecipient) {
                     null

@@ -6,11 +6,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.contacts.provider.ContactModuleImp
 import com.bcm.messenger.utility.InputLengthFilter
 import com.bcm.route.annotation.Route
 import kotlinx.android.synthetic.main.contacts_activity_request_friend.*
@@ -107,7 +107,7 @@ class RequestAddFriendActivity : SwipeBaseActivity(), RecipientModifiedListener 
         val recipient = mRecipient ?: return
         mIsHandling = true
         AmePopup.loading.show(this)
-        ContactModuleImp().addFriend(recipient.address.serialize(), request_memo_input.text.toString(), false) { success ->
+        AmeModuleCenter.contact(accountContext)?.addFriend(recipient.address.serialize(), request_memo_input.text.toString(), false) { success ->
             mIsHandling = false
             AmePopup.loading.dismiss()
             if (success) {
