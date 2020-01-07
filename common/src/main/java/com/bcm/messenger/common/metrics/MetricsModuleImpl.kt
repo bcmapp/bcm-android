@@ -29,9 +29,6 @@ class MetricsModuleImpl : IMetricsModule, ReportConfigure.IReportTickerListener 
         private var appLaunchEndTime = 0L
     }
 
-    private val METRICS_URL = "https://39.108.124.60:6666"
-    private val reportPath = "${METRICS_URL}/v1/metrics/reports"
-
     private var loginStartTime = 0L
     private var loginEndTime = 0L
 
@@ -420,7 +417,7 @@ class MetricsModuleImpl : IMetricsModule, ReportConfigure.IReportTickerListener 
         var configs: MetricsConfigs? = null
 
         try {
-            configs = reportHttp.put<MetricsConfigs>(reportPath, reportData.toJson(), MetricsConfigs::class.java)
+            configs = reportHttp.put<MetricsConfigs>(ReportConfigure.REPORT_URL, reportData.toJson(), MetricsConfigs::class.java)
         } catch (e: NoContentException) {
             throw e
         } catch (e: Throwable) {

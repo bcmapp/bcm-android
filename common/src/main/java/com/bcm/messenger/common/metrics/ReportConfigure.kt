@@ -11,10 +11,8 @@ import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.GsonUtils
-import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.listener.IWeakListeners
 import com.bcm.messenger.utility.listener.SafeWeakListeners
-import com.bcm.messenger.utility.listener.WeakListeners
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import io.reactivex.Scheduler
@@ -28,7 +26,8 @@ import java.util.concurrent.TimeUnit
 object ReportConfigure : LBSFetcher.ILBSFetchResult {
     private const val TAG = "ReportConfigure"
     private val METRICS_URL = "https://39.108.124.60:6666"
-    private val configPath = "${METRICS_URL}/v1/metrics/config"
+    private val CONFIGURE_URL = "${METRICS_URL}/v1/metrics/config"
+    val REPORT_URL = "${METRICS_URL}/v1/metrics/reports"
 
     private var initConfig = false
     private val histogramConfigMap = mutableMapOf<String, String>()
@@ -93,6 +92,8 @@ object ReportConfigure : LBSFetcher.ILBSFetchResult {
         }.subscribeOn(reportExecutor)
                 .observeOn(reportExecutor)
                 .subscribe({}, {})
+
+        tryRunTicker()
     }
 
 
@@ -133,10 +134,13 @@ object ReportConfigure : LBSFetcher.ILBSFetchResult {
 
     @Subscribe
     fun onEvent(loginStateChangedEvent: AccountLoginStateChangedEvent) {
+        tryRunTicker()
+    }
+
+    private fun tryRunTicker() {
         if (AMELogin.isLogin) {
             if (timeDisposable?.isDisposed != true) {
                 startTicker()
-
                 reportExecutor.scheduleDirect {
                     syncConfig()
                 }
@@ -185,7 +189,7 @@ object ReportConfigure : LBSFetcher.ILBSFetchResult {
         var configs: MetricsConfigs? = null
 
         try {
-            configs = ReportHttp(accountContext).post<MetricsConfigs>(configPath, configReq.toJson(), MetricsConfigs::class.java)
+            configs = ReportHttp(accountContext).post<MetricsConfigs>(CONFIGURE_URL, configReq.toJson(), MetricsConfigs::class.java)
         } catch (e: Throwable) {
             ALog.e(TAG, e)
         }
