@@ -1,9 +1,7 @@
 package com.bcm.messenger.chats.mediapreview
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -21,7 +19,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.FullTransSwipeBaseActivity
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -68,23 +65,11 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSwipeBackEnable(false)
         setContentView(R.layout.chats_activity_media_view)
 
         enterFullScreen()
         initView()
-    }
-
-    override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(setLocale(newBase))
-    }
-
-    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
-        if (overrideConfiguration != null) {
-            val uiMode = overrideConfiguration.uiMode
-            overrideConfiguration.setTo(baseContext.resources.configuration)
-            overrideConfiguration.uiMode = uiMode
-        }
-        super.applyOverrideConfiguration(overrideConfiguration)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -283,9 +268,9 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
         ALog.i(TAG, "Init MediaViewActivity data, type = $type, threadId = $threadId, indexId = $indexId")
 
         viewModel = when (type) {
-            TYPE_PRIVATE, TYPE_PRIVATE_BROWSER -> ViewModelProviders.of(this, MediaViewModelFactory(getAccountContext())).get(MediaViewPrivateViewModel::class.java)
-            TYPE_GROUP, TYPE_GROUP_BROWSER -> ViewModelProviders.of(this, MediaViewModelFactory(getAccountContext())).get(MediaViewGroupViewModel2::class.java)
-            else -> ViewModelProviders.of(this, MediaViewModelFactory(getAccountContext())).get(MediaViewHistoryViewModel::class.java)
+            TYPE_PRIVATE, TYPE_PRIVATE_BROWSER -> ViewModelProviders.of(this, MediaViewModelFactory(accountContext)).get(MediaViewPrivateViewModel::class.java)
+            TYPE_GROUP, TYPE_GROUP_BROWSER -> ViewModelProviders.of(this, MediaViewModelFactory(accountContext)).get(MediaViewGroupViewModel2::class.java)
+            else -> ViewModelProviders.of(this, MediaViewModelFactory(accountContext)).get(MediaViewHistoryViewModel::class.java)
         }
 
         if (type == TYPE_HISTORY) {
