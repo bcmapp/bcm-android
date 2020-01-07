@@ -10,13 +10,13 @@ import com.bcm.messenger.common.mms.GlideRequests
 /**
  * bcm.social.01 2018/10/23.
  */
-class ChatContactHolderAction() : BaseChatHolderAction<ContactCardView>() {
+class ChatContactHolderAction(accountContext: AccountContext) : BaseChatHolderAction<ContactCardView>(accountContext) {
 
-    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: ContactCardView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(message: AmeGroupMessageDetail, body: ContactCardView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
         body.setContact(message.gid, message.message.content as AmeGroupMessage.ContactContent, message.isSendByMe)
     }
 
-    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+    override fun resend(messageRecord: AmeGroupMessageDetail) {
         GroupMessageLogic.get(accountContext).messageSender.resendContactMessage(messageRecord)
     }
 }

@@ -4,7 +4,6 @@ import com.bcm.messenger.adhoc.component.AdHocDocumentView
 import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
 import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
 import com.bcm.messenger.adhoc.util.AdHocPreviewClickListener
-import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.mms.GlideRequests
 
 /**
@@ -20,7 +19,7 @@ class AdHocDocumentHolderAction() : BaseHolderAction<AdHocDocumentView>() {
         body.setDocument(message)
     }
 
-    override fun resend(accountContext: AccountContext, message: AdHocMessageDetail) {
+    override fun resend(message: AdHocMessageDetail) {
         AdHocMessageLogic.resend(message)
 
     }

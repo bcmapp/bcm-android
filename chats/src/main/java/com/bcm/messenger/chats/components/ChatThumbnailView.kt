@@ -275,11 +275,11 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
     private fun setEncryptedThumbnail(masterSecret: MasterSecret, glideRequests: GlideRequests, messageDetailRecord: AmeGroupMessageDetail) {
         when (messageDetailRecord.sendState) {
             AmeGroupMessageDetail.SendState.FILE_NOT_FOUND -> {
-                if (messageDetailRecord.thumbnailPartUri != null) {
+                if (messageDetailRecord.getThumbnailPartUri(masterSecret.accountContext) != null) {
                     buildNotFoundHolderThumbnail(show = true, hasThumbnail = true)
 
                     val content = messageDetailRecord.message.content as AmeGroupMessage.ThumbnailContent
-                    buildThumbnailRequest(glideRequests, DecryptableUri(masterSecret, messageDetailRecord.thumbnailPartUri!!), content.mimeType)
+                    buildThumbnailRequest(glideRequests, DecryptableUri(masterSecret, messageDetailRecord.getThumbnailPartUri(masterSecret.accountContext)!!), content.mimeType)
                 } else {
                     buildNotFoundHolderThumbnail(show = true, hasThumbnail = false)
                 }
@@ -292,9 +292,9 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
                 val content = messageDetailRecord.message.content as AmeGroupMessage.ThumbnailContent
                 //如果资源已经下载好，则直接设置当前image，而无需先展示站位图
                 val resultUri = if (messageDetailRecord.message.isVideo()) {
-                    messageDetailRecord.thumbnailPartUri
+                    messageDetailRecord.getThumbnailPartUri(masterSecret.accountContext)
                 } else {
-                    messageDetailRecord.thumbnailPartUri ?: messageDetailRecord.filePartUri
+                    messageDetailRecord.getThumbnailPartUri(masterSecret.accountContext) ?: messageDetailRecord.filePartUri
                 }
 
                 buildNotFoundHolderThumbnail(false)

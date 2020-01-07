@@ -12,7 +12,7 @@ import com.bcm.messenger.utility.logger.ALog
  
  * Created by wjh on 2019/7/27
  */
-abstract class ConversationContentViewHolder<T>(layout: View) : RecyclerView.ViewHolder(layout) {
+abstract class ConversationContentViewHolder<T>(accountContext: AccountContext, layout: View) : BaseAccountHolder(accountContext, layout) {
 
     protected var mMessageSubject: T? = null
     private var mCanLongClick = true 
@@ -28,10 +28,6 @@ abstract class ConversationContentViewHolder<T>(layout: View) : RecyclerView.Vie
 
     fun canLongClick(): Boolean {
         return mCanLongClick
-    }
-
-    fun getAccountContext(): AccountContext {
-        return AMELogin.majorContext
     }
 
     /**
@@ -54,12 +50,7 @@ abstract class ConversationContentViewHolder<T>(layout: View) : RecyclerView.Vie
         }
         updateBackground(message, action)
 
-        //
-        if (mCanLongClick && action?.hasPop() == true && batchSelected == null) {
-            action?.getDisplayView()?.isLongClickable = true
-        } else {
-            action?.getDisplayView()?.isLongClickable = false
-        }
+        action?.getDisplayView()?.isLongClickable = mCanLongClick && action?.hasPop() == true && batchSelected == null
         mAction = action
     }
 

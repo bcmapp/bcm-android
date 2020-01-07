@@ -7,14 +7,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.BcmGroupJoinStatus
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTransform
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
+import com.bcm.messenger.common.ui.BaseAccountHolder
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
@@ -28,7 +29,7 @@ import org.json.JSONObject
  * 
  * Created by zjl on 2018/4/3.
  */
-class SystemTipsViewHolder(containerView: View) : RecyclerView.ViewHolder(containerView), RecipientModifiedListener {
+class SystemTipsViewHolder(accountContext: AccountContext, containerView: View) : BaseAccountHolder(accountContext, containerView), RecipientModifiedListener {
 
     private val TAG = "SystemTipsViewHolder"
     private var messageRecord: AmeGroupMessageDetail? = null
@@ -40,14 +41,14 @@ class SystemTipsViewHolder(containerView: View) : RecyclerView.ViewHolder(contai
 
     fun unBindData() {
         if(::data.isInitialized) {
-            data.setRecipientCallback(AMELogin.majorContext, null)
+            data.setRecipientCallback(accountContext, null)
         }
     }
 
     fun bindData(messageRecord: AmeGroupMessageDetail) {
         this.messageRecord = messageRecord
         this.data = messageRecord.message.content as AmeGroupMessage.SystemContent
-        this.data.setRecipientCallback(AMELogin.majorContext, this)
+        this.data.setRecipientCallback(accountContext, this)
         refreshTip(itemView.context)
     }
 
@@ -59,7 +60,7 @@ class SystemTipsViewHolder(containerView: View) : RecyclerView.ViewHolder(contai
 
     private fun refreshTip(context: Context) {
         val messageRecord = this.messageRecord ?: return
-        val text = data.getDescribe(messageRecord.gid,AMELogin.majorContext)
+        val text = data.getDescribe(messageRecord.gid, accountContext)
         ALog.d(TAG, "bindData describe: $text, extra: ${data.extra}")
         if (data.tipType == AmeGroupMessage.SystemContent.TIP_JOIN_GROUP_REQUEST) {
             var isHandled = if (data.extra == null) {
@@ -73,7 +74,7 @@ class SystemTipsViewHolder(containerView: View) : RecyclerView.ViewHolder(contai
                 }
             }
             if (!isHandled) {
-                val groupModel = GroupLogic.get(AMELogin.majorContext).getModel(messageRecord.gid)
+                val groupModel = GroupLogic.get(accountContext).getModel(messageRecord.gid)
                 val list = groupModel?.getJoinRequest(messageRecord.indexId)?: listOf()
                 var have = false
                 if (list.isEmpty()) {
@@ -125,7 +126,7 @@ class SystemTipsViewHolder(containerView: View) : RecyclerView.ViewHolder(contai
                 extra.put("handled", isHandled)
                 val content = AmeGroupMessage.SystemContent(systemContent.tipType, systemContent.sender, systemContent.theOperator, extra.toString())
                 messageRecord.message = AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO, content)
-                MessageDataManager.insertReceiveMessage(AMELogin.majorContext, GroupMessageTransform.transformToEntity(messageRecord))
+                MessageDataManager.insertReceiveMessage(accountContext, GroupMessageTransform.transformToEntity(messageRecord))
             }
         }catch (ex: Exception) {
             ALog.e(TAG, "handleGroupJoinRequestTip error", ex)

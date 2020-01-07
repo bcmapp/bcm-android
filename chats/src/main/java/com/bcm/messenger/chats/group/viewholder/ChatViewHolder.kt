@@ -29,6 +29,7 @@ import com.bcm.messenger.chats.util.ClickSpanTouchHandler
 import com.bcm.messenger.chats.util.LinkUrlSpan
 import com.bcm.messenger.chats.util.TelUrlSpan
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.api.IConversationContentAction
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
@@ -67,7 +68,7 @@ import java.lang.ref.WeakReference
  * group chat view holder
  * Created by wjh on 2018/10/22
  */
-open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<AmeGroupMessageDetail>(containerView),
+open class ChatViewHolder(accountContext: AccountContext, containerView: View) : ConversationContentViewHolder<AmeGroupMessageDetail>(accountContext, containerView),
         RecipientModifiedListener, View.OnLongClickListener {
 
     companion object {
@@ -173,11 +174,11 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
             if (messageRecord.sendState == AmeGroupMessageDetail.SendState.SEND_FAILED) {
                 AmePopup.bottom.newBuilder()
                         .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_resend)) {
-                            mAction?.resend(getAccountContext(), messageRecord)
+                            mAction?.resend(messageRecord)
                         })
                         .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_delete)) {
                             Observable.create(ObservableOnSubscribe<Boolean> { emitter ->
-                                MessageDataManager.deleteOneMessageByIndexId(getAccountContext(), messageRecord.gid, messageRecord.indexId)
+                                MessageDataManager.deleteOneMessageByIndexId(accountContext, messageRecord.gid, messageRecord.indexId)
                                 emitter.onNext(true)
                                 emitter.onComplete()
                             }).subscribeOn(Schedulers.io())
@@ -217,7 +218,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
         if (!message.isSendByMe) {
             mNameView?.visibility = View.VISIBLE
             mPhotoView?.visibility = View.VISIBLE
-            recipient = Recipient.from(getAccountContext(), message.senderId ?: return, true)
+            recipient = Recipient.from(accountContext, message.senderId ?: return, true)
             recipient.addListener(this)
             val sender = getGroupMemberInfo(message)
             updateUserInfo(recipient, sender)
@@ -287,70 +288,70 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
             AmeGroupMessage.TEXT -> {
                 val v = getInflateView<EmojiTextView>(R.id.conversation_message)
                 if (action == null) {
-                    action = ChatMessageHolderAction()
+                    action = ChatMessageHolderAction(accountContext)
                 }
                 v
             }
             AmeGroupMessage.LINK -> {
                 val v = getInflateView<EmojiTextView>(R.id.conversation_link)
                 if (action == null) {
-                    action = ChatMessageHolderAction()
+                    action = ChatMessageHolderAction(accountContext)
                 }
                 v
             }
             AmeGroupMessage.NONSUPPORT -> {
                 val v = getInflateView<EmojiTextView>(R.id.conversation_not_support)
                 if (action == null) {
-                    action = ChatNotSupportHolderAction()
+                    action = ChatNotSupportHolderAction(accountContext)
                 }
                 v
             }
             AmeGroupMessage.AUDIO -> {
                 val v = getInflateView<ChatAudioView>(R.id.conversation_audio)
                 if (action == null) {
-                    action = ChatAudioHolderAction()
+                    action = ChatAudioHolderAction(accountContext)
                 }
                 v
             }
             AmeGroupMessage.IMAGE -> {
                 val v = getInflateView<ChatThumbnailView>(R.id.conversation_thumbnail)
                 if (action == null) {
-                    action = ChatThumbnailHolderAction()
+                    action = ChatThumbnailHolderAction(accountContext)
                 }
                 v
             }
             AmeGroupMessage.FILE -> {
                 val v = getInflateView<ChatDocumentView>(R.id.conversation_document)
                 if (action == null) {
-                    action = ChatDocumentHolderAction()
+                    action = ChatDocumentHolderAction(accountContext)
                 }
                 v
             }
             AmeGroupMessage.NEWSHARE_CHANNEL -> {
                 val v = getInflateView<ShareChannelView>(R.id.conversation_channel)
                 if (action == null) {
-                    action = ChatNewChannelHolderAction()
+                    action = ChatNewChannelHolderAction(accountContext)
                 }
                 v
             }
             AmeGroupMessage.VIDEO -> {
                 val v = getInflateView<ChatThumbnailView>(R.id.conversation_video)
                 if (action == null) {
-                    action = ChatVideoHolderAction()
+                    action = ChatVideoHolderAction(accountContext)
                 }
                 v
             }
             AmeGroupMessage.LOCATION -> {
                 val v = getInflateView<MapShareView>(R.id.conversation_location)
                 if (action == null) {
-                    action = ChatLocationHolderAction()
+                    action = ChatLocationHolderAction(accountContext)
                 }
                 v
             }
             AmeGroupMessage.CONTACT -> {
                 val v = getInflateView<ContactCardView>(R.id.conversation_contact)
                 if (action == null) {
-                    action = ChatContactHolderAction()
+                    action = ChatContactHolderAction(accountContext)
                 }
                 v
 
@@ -358,7 +359,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
             AmeGroupMessage.CHAT_HISTORY -> {
                 val v = getInflateView<HistoryView>(R.id.conversation_history)
                 if (action == null) {
-                    action = ChatHistoryHolderAction()
+                    action = ChatHistoryHolderAction(accountContext)
                 }
                 v
 
@@ -366,7 +367,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
             AmeGroupMessage.CHAT_REPLY -> {
                 val v = getInflateView<ChatReplyView>(R.id.conversation_reply)
                 if (action == null) {
-                    action = ChatReplyHolderAction()
+                    action = ChatReplyHolderAction(accountContext)
                 }
                 v
 
@@ -374,7 +375,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
             AmeGroupMessage.GROUP_SHARE_CARD -> {
                 val v = getInflateView<GroupShareCardView>(R.id.conversation_group_share)
                 if (action == null) {
-                    action = GroupShareHolderAction()
+                    action = GroupShareHolderAction(accountContext)
                 }
                 v
             }
@@ -386,15 +387,15 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
             v.setOnTouchListener(ClickSpanTouchHandler.getInstance(v.context))
         }
         if (v != null) {
-            action?.bind(getAccountContext(), messageRecord, v, glideRequests, batchSelected)
+            action?.bind(messageRecord, v, glideRequests, batchSelected)
         }
         v?.visibility = View.VISIBLE
         return action
     }
 
     private fun getGroupMemberInfo(messageRecord: AmeGroupMessageDetail): AmeGroupMemberInfo? {
-        if (messageRecord.gid > 0 && GroupLogic.get(getAccountContext()).isCurrentModel(messageRecord.gid)) {
-            val model = GroupLogic.get(getAccountContext()).getModel(messageRecord.gid)
+        if (messageRecord.gid > 0 && GroupLogic.get(accountContext).isCurrentModel(messageRecord.gid)) {
+            val model = GroupLogic.get(accountContext).getModel(messageRecord.gid)
             val sender = model?.getGroupMember(messageRecord.senderId)
             if (model != null && sender == null) {
                 val weakThis = WeakReference(this)
@@ -418,9 +419,9 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
 
         val profileKey = ProfileKeyModel.fromKeyConfig(member?.keyConfig)
         if (null != profileKey) {
-            AmeModuleCenter.contact(getAccountContext())?.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient, profileKey)
+            AmeModuleCenter.contact(accountContext)?.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient, profileKey)
         }
-        mPhotoView?.setPhoto(getAccountContext(), recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+        mPhotoView?.setPhoto(accountContext, recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
     }
 
     open fun unBindData() {
@@ -450,7 +451,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
         itemView.post {
             val messageRecord = mMessageSubject
             if (this.recipient == recipient && messageRecord != null) {
-                val sender = GroupLogic.get(getAccountContext()).getModel(messageRecord.gid)?.getGroupMember(messageRecord.senderId)
+                val sender = GroupLogic.get(accountContext).getModel(messageRecord.gid)?.getGroupMember(messageRecord.senderId)
                 updateUserInfo(recipient, sender)
             }
         }
@@ -465,7 +466,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
     }
 
     private fun showItemPopWindow(context: Context, anchorView: View, messageRecord: AmeGroupMessageDetail) {
-        val groupModel = GroupLogic.get(getAccountContext()).getModel(messageRecord.gid) ?: return
+        val groupModel = GroupLogic.get(accountContext).getModel(messageRecord.gid) ?: return
         if (groupModel.myRole() == AmeGroupMemberInfo.VISITOR) {
             ALog.i(TAG, "visitor can't showItemPopWindow")
             return
@@ -486,8 +487,8 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
                 .withClickListener(object : ConversationItemPopWindow.PopWindowClickListener {
                     override fun onCopy() {
                         when {
-                            messageRecord.message.isText() -> AppUtil.saveCodeToBoard(context, messageRecord.message.content.getDescribe(messageRecord.gid, getAccountContext()).toString())
-                            messageRecord.message.isLink() -> AppUtil.saveCodeToBoard(context, messageRecord.message.content.getDescribe(messageRecord.gid, getAccountContext()).toString())
+                            messageRecord.message.isText() -> AppUtil.saveCodeToBoard(context, messageRecord.message.content.getDescribe(messageRecord.gid, accountContext).toString())
+                            messageRecord.message.isLink() -> AppUtil.saveCodeToBoard(context, messageRecord.message.content.getDescribe(messageRecord.gid, accountContext).toString())
                             messageRecord.message.isGroupShare() -> {
                                 val groupShareContent = messageRecord.message.content as AmeGroupMessage.GroupShareContent
                                 AppUtil.saveCodeToBoard(context, groupShareContent.shareLink ?: "")
@@ -529,7 +530,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
                                 .withTitle(title)
                                 .withPopItem(AmeBottomPopup.PopupItem(option, AmeBottomPopup.PopupItem.CLR_RED) {
                                     AmeDispatcher.io.dispatch {
-                                        GroupMessageLogic.get(getAccountContext()).messageSender.sendPinMessage(messageRecord.gid, if (hasPin) -1 else messageRecord.serverIndex, object : MessageSender.SenderCallback {
+                                        GroupMessageLogic.get(accountContext).messageSender.sendPinMessage(messageRecord.gid, if (hasPin) -1 else messageRecord.serverIndex, object : MessageSender.SenderCallback {
                                             override fun call(ameMessageDetail: AmeGroupMessageDetail?, index: Long, isSuccess: Boolean) {
 
                                             }

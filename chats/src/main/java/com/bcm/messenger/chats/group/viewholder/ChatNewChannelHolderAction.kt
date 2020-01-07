@@ -22,12 +22,12 @@ import com.bcm.route.api.BcmRouter
  *
  * Created by wjh on 2018/10/23
  */
-class ChatNewChannelHolderAction() : BaseChatHolderAction<ShareChannelView>(), ShareChannelView.ChannelOnClickListener {
+class ChatNewChannelHolderAction(accountContext: AccountContext) : BaseChatHolderAction<ShareChannelView>(accountContext), ShareChannelView.ChannelOnClickListener {
 
     override fun onClick(v: View) {
     }
 
-    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, bodyView: ShareChannelView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(message: AmeGroupMessageDetail, bodyView: ShareChannelView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
 
         bodyView.setChannelClickListener(this)
         val data = message.message.content as AmeGroupMessage.NewShareChannelContent
@@ -60,7 +60,7 @@ class ChatNewChannelHolderAction() : BaseChatHolderAction<ShareChannelView>(), S
         },250)
     }
 
-    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+    override fun resend(messageRecord: AmeGroupMessageDetail) {
         messageRecord.message.type = AmeGroupMessage.TEXT
         GroupMessageLogic.get(accountContext).messageSender.resendTextMessage(messageRecord)
     }

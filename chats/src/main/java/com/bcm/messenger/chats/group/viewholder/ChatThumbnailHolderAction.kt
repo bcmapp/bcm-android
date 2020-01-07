@@ -5,19 +5,20 @@ import com.bcm.messenger.chats.components.ChatThumbnailView
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.util.ChatPreviewClickListener
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
+import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 
 /**
  *
  * Created by wjh on 2018/10/23
  */
-class ChatThumbnailHolderAction() : BaseChatHolderAction<ChatThumbnailView>() {
+class ChatThumbnailHolderAction(accountContext: AccountContext) : BaseChatHolderAction<ChatThumbnailView>(accountContext) {
 
     private var mPreviewClickListener = ChatPreviewClickListener()
 
-    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: ChatThumbnailView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(message: AmeGroupMessageDetail, body: ChatThumbnailView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
 
         mBaseView?.setThumbnailAppearance(R.drawable.common_image_place_img, R.drawable.common_image_broken_img, body.resources.getDimensionPixelSize(R.dimen.chats_conversation_item_radius))
         // MARK: Temporary set mastersecret
@@ -29,7 +30,7 @@ class ChatThumbnailHolderAction() : BaseChatHolderAction<ChatThumbnailView>() {
 
     }
 
-    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+    override fun resend(messageRecord: AmeGroupMessageDetail) {
         if(!messageRecord.attachmentUri.isNullOrEmpty()) {
             GroupMessageLogic.get(accountContext).messageSender.resendMediaMessage(messageRecord)
         }

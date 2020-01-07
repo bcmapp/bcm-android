@@ -19,7 +19,7 @@ import com.bcm.route.api.BcmRouter
  *
  * Created by wjh on 2018/10/23
  */
-class ChatLocationHolderAction() : BaseChatHolderAction<MapShareView>(), View.OnClickListener {
+class ChatLocationHolderAction(accountContext: AccountContext) : BaseChatHolderAction<MapShareView>(accountContext), View.OnClickListener {
 
     override fun onClick(v: View) {
         val data = mMessageDetail?.message?.content as? AmeGroupMessage.LocationContent ?: return
@@ -35,7 +35,7 @@ class ChatLocationHolderAction() : BaseChatHolderAction<MapShareView>(), View.On
                 .navigation(v.context)
     }
 
-    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: MapShareView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(message: AmeGroupMessageDetail, body: MapShareView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
 
         body.setOnClickListener(this)
         val data = message.message?.content as AmeGroupMessage.LocationContent
@@ -47,7 +47,7 @@ class ChatLocationHolderAction() : BaseChatHolderAction<MapShareView>(), View.On
         body.setMap(glideRequests, data)
     }
 
-    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+    override fun resend(messageRecord: AmeGroupMessageDetail) {
         GroupMessageLogic.get(accountContext).messageSender.resendLocationMessage(messageRecord)
     }
 }

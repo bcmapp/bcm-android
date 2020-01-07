@@ -9,19 +9,20 @@ import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.util.ChatComponentListener
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.utility.AppContextHolder
 
 /**
  * Created by wjh on 2018/10/23
  */
-class ChatAudioHolderAction : BaseChatHolderAction<ChatAudioView>() {
+class ChatAudioHolderAction(accountContext: AccountContext) : BaseChatHolderAction<ChatAudioView>(accountContext) {
 
     private var mDownloadClickListener = AttachmentDownloadClickListener()
 
-    override fun bindData(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail, bodyView: ChatAudioView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(messageRecord: AmeGroupMessageDetail, bodyView: ChatAudioView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
 
         bodyView.setDownloadClickListener(mDownloadClickListener)
 
@@ -50,7 +51,7 @@ class ChatAudioHolderAction : BaseChatHolderAction<ChatAudioView>() {
         mBaseView?.cleanup()
     }
 
-    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+    override fun resend(messageRecord: AmeGroupMessageDetail) {
         if (!messageRecord.attachmentUri.isNullOrEmpty()) {
             GroupMessageLogic.get(accountContext).messageSender.resendMediaMessage(messageRecord)
         }
@@ -81,7 +82,6 @@ class ChatAudioHolderAction : BaseChatHolderAction<ChatAudioView>() {
         private fun updateAudioMessage(v: View, messageRecord: AmeGroupMessageDetail) {
 
             if(mBaseView == v) {
-                val accountContext = mAccountContext ?: return
                 mBaseView?.setAudio(BCMEncryptUtils.getMasterSecret(accountContext) ?: return, messageRecord)
             }
 

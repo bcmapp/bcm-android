@@ -24,7 +24,7 @@ import com.bcm.messenger.utility.MultiClickObserver
  *
  * Created by wjh on 2018/10/23
  */
-open class ChatMessageHolderAction() : BaseChatHolderAction<EmojiTextView>() {
+open class ChatMessageHolderAction(accountContext: AccountContext) : BaseChatHolderAction<EmojiTextView>(accountContext) {
 
     companion object {
 
@@ -49,7 +49,7 @@ open class ChatMessageHolderAction() : BaseChatHolderAction<EmojiTextView>() {
         }
     })
 
-    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: EmojiTextView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(message: AmeGroupMessageDetail, body: EmojiTextView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
         val text = textFromMessage(message)
         if (!message.isSendByMe) {
             if (message.message.type == AmeGroupMessage.NONSUPPORT){
@@ -88,7 +88,7 @@ open class ChatMessageHolderAction() : BaseChatHolderAction<EmojiTextView>() {
     override fun unBind() {
     }
 
-    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+    override fun resend(messageRecord: AmeGroupMessageDetail) {
         GroupMessageLogic.get(accountContext).messageSender.resendTextMessage(messageRecord)
     }
 

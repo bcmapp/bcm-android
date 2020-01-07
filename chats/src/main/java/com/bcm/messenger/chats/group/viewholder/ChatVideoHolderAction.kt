@@ -18,12 +18,12 @@ import com.bcm.messenger.utility.logger.ALog
  *
  * Created by wjh on 2018/10/23
  */
-class ChatVideoHolderAction() : BaseChatHolderAction<ChatThumbnailView>() {
+class ChatVideoHolderAction(accountContext: AccountContext) : BaseChatHolderAction<ChatThumbnailView>(accountContext) {
 
     private var mPreviewClickListener = ChatPreviewClickListener()
     private var mDownloadClickListener = AttachmentDownloadClickListener()
 
-    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: ChatThumbnailView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(message: AmeGroupMessageDetail, body: ChatThumbnailView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
         ALog.d("ChatVideoHolderAction", "bind")
         body.setThumbnailClickListener(mPreviewClickListener)
         body.setDownloadClickListener(mDownloadClickListener)
@@ -32,7 +32,7 @@ class ChatVideoHolderAction() : BaseChatHolderAction<ChatThumbnailView>() {
         body.setImage(BCMEncryptUtils.getMasterSecret(accountContext) ?: return, glideRequests, message)
     }
 
-    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+    override fun resend(messageRecord: AmeGroupMessageDetail) {
         if (!messageRecord.attachmentUri.isNullOrEmpty()) {
             GroupMessageLogic.get(accountContext).messageSender.resendMediaMessage(messageRecord)
         }

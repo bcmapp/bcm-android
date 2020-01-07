@@ -12,9 +12,9 @@ import com.bcm.messenger.common.utils.getColorCompat
  * 
  * Created by wjh on 2018/10/23
  */
-open class ChatNotSupportHolderAction : BaseChatHolderAction<EmojiTextView>() {
+open class ChatNotSupportHolderAction(accountContext: AccountContext) : BaseChatHolderAction<EmojiTextView>(accountContext) {
 
-    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: EmojiTextView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(message: AmeGroupMessageDetail, body: EmojiTextView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
 
         val text = textFromMessage(message)
         if (text.isEmpty()) {
@@ -44,7 +44,7 @@ open class ChatNotSupportHolderAction : BaseChatHolderAction<EmojiTextView>() {
         }
     }
 
-    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+    override fun resend(messageRecord: AmeGroupMessageDetail) {
 
     }
 

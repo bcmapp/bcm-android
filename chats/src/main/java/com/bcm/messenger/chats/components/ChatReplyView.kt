@@ -13,6 +13,7 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.group.viewholder.ChatViewHolder
 import com.bcm.messenger.chats.util.ChatComponentListener
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
@@ -81,16 +82,16 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
         mReplyClickListener = listener
     }
 
-    fun setReply(messageRecord: AmeGroupMessageDetail) {
+    fun setReply(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
         ALog.d(TAG, "setReply messageRecord gid: ${messageRecord.gid}, mid: ${messageRecord.serverIndex}")
         mGroupMessage = messageRecord
         val content = messageRecord.message.content as? AmeGroupMessage.ReplyContent ?: return
-        val recipient = content.getReplyRecipient()
+        val recipient = content.getReplyRecipient(accountContext)
         mReplyRecipient = recipient
         recipient?.addListener(this)
 
         setAppearance(messageRecord.isSendByMe)
-        val groupModel = GroupLogic.getModel(messageRecord.gid)
+        val groupModel = GroupLogic.get(accountContext).getModel(messageRecord.gid)
         reply_to.text = if (recipient == null) {
             null
         }else {
@@ -110,10 +111,10 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
             else -> {
                 reply_source_text.visibility = View.GONE
                 reply_source_content.visibility = View.VISIBLE
-                reply_source_content.text = content.getReplyDescribe(messageRecord.gid, messageRecord.isSendByMe)
+                reply_source_content.text = content.getReplyDescribe(messageRecord.gid, accountContext, messageRecord.isSendByMe)
             }
         }
-        setReplaySnapshot(messageRecord)
+        setReplaySnapshot(accountContext, messageRecord)
         ChatViewHolder.interceptMessageText(reply_text, messageRecord, content.text)
     }
 
@@ -137,7 +138,7 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
         }
     }
 
-    private fun setReplaySnapshot(messageRecord: AmeGroupMessageDetail) {
+    private fun setReplaySnapshot(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
         val content = messageRecord.message.content as? AmeGroupMessage.ReplyContent
         val replyContent = content?.getReplyMessage()?.content ?: return
         when {
@@ -181,11 +182,11 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                         }
                         if (mGroupMessage == messageRecord) {
                             if (success) {
-                                val masterSecret = BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) ?: return
+                                val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext) ?: return
                                 buildThumbnailRequest(masterSecret, uri) {
                                     ALog.d(TAG, "buildThumbnailRequest uri: $uri fail, try again")
                                     Observable.create(ObservableOnSubscribe<AmeGroupMessage<*>> {
-                                        val lastMsg = MessageDataManager.fetchOneMessageByGidAndMid(messageRecord.gid, content.mid)
+                                        val lastMsg = MessageDataManager.fetchOneMessageByGidAndMid(accountContext, messageRecord.gid, content.mid)
                                         if (lastMsg != null) {
                                             val newMessage = AmeGroupMessage(AmeGroupMessage.CHAT_REPLY, AmeGroupMessage.ReplyContent(content.mid, content.uid, lastMsg.message.toString(), content.text))
                                             it.onNext(newMessage)
@@ -197,7 +198,7 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                                                 if (mGroupMessage == messageRecord) {
                                                     messageRecord.message = it
                                                     try {
-                                                        setReplaySnapshot(messageRecord)
+                                                        setReplaySnapshot(accountContext, messageRecord)
                                                     } catch (ex: Exception) {
                                                         ALog.e(TAG, "buildThumbnailRequest failback error", ex)
                                                     }

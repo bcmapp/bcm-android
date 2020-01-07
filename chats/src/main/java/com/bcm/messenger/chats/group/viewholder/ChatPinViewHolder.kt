@@ -3,7 +3,6 @@ package com.bcm.messenger.chats.group.viewholder
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.AccountContext
@@ -11,9 +10,9 @@ import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
+import com.bcm.messenger.common.ui.BaseAccountHolder
 import com.bcm.messenger.common.utils.AppUtil
 import kotlinx.android.synthetic.main.chats_conversation_item_pin.view.*
 
@@ -21,7 +20,7 @@ import kotlinx.android.synthetic.main.chats_conversation_item_pin.view.*
  * 
  * Created by zjl on 2018/4/3.
  */
-class ChatPinViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), RecipientModifiedListener {
+class ChatPinViewHolder(accountContext: AccountContext, itemView: View) : BaseAccountHolder(accountContext, itemView), RecipientModifiedListener {
 
     private val TAG = "ChatPinViewHolder"
     private lateinit var data: AmeGroupMessage.PinContent
@@ -34,10 +33,6 @@ class ChatPinViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Rec
                 showReceivePin(recipient.name, message.message.type, message)
             }
         }
-    }
-
-    private fun getAccountContext(): AccountContext {
-        return AMELogin.majorContext
     }
 
     fun unBindData() {
@@ -55,11 +50,11 @@ class ChatPinViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Rec
 
     @SuppressLint("CheckResult")
     fun setPin(context: Context, messageRecord: AmeGroupMessageDetail) {
-        showPinMessage(GroupLogic.get(getAccountContext()).getGroupInfo(messageRecord.gid))
-        GroupLogic.get(getAccountContext()).getModel(messageRecord.gid)?.getMessageDetailByMid(data.mid) { result ->
+        showPinMessage(GroupLogic.get(accountContext).getGroupInfo(messageRecord.gid))
+        GroupLogic.get(accountContext).getModel(messageRecord.gid)?.getMessageDetailByMid(data.mid) { result ->
             if (result != null) {
                 this.pinMessage = result
-                val groupInfo = GroupLogic.get(getAccountContext()).getGroupInfo(messageRecord.gid)
+                val groupInfo = GroupLogic.get(accountContext).getGroupInfo(messageRecord.gid)
                 if (messageRecord.message.content != data)
                     return@getMessageDetailByMid
                 val pinType = result.message.type
@@ -90,7 +85,7 @@ class ChatPinViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Rec
 
                     val senderName =
                             groupInfo?.let {
-                                pinRecipient = Recipient.from(getAccountContext(), it.owner, true)
+                                pinRecipient = Recipient.from(accountContext, it.owner, true)
                                 pinRecipient?.addListener(this)
                                 pinRecipient?.name
                             }
@@ -105,7 +100,7 @@ class ChatPinViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Rec
     private fun showPinMessage(groupInfo: AmeGroupInfo?) {
         val senderName =
                 groupInfo?.let {
-                    pinRecipient = Recipient.from(getAccountContext(), it.owner, true)
+                    pinRecipient = Recipient.from(accountContext, it.owner, true)
                     pinRecipient?.addListener(this)
                     pinRecipient?.name
                 }
@@ -135,12 +130,12 @@ class ChatPinViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Rec
     }
 
     private fun cancelPin(context: Context, messageRecord: AmeGroupMessageDetail) {
-        val groupInfo = GroupLogic.get(getAccountContext()).getGroupInfo(messageRecord.gid)
+        val groupInfo = GroupLogic.get(accountContext).getGroupInfo(messageRecord.gid)
         if (groupInfo?.role == AmeGroupMemberInfo.OWNER) {
             itemView.pin_text?.text = AppUtil.getString(context, R.string.chats_send_unpin_message)
         } else {
             val senderName = groupInfo?.let {
-                Recipient.from(getAccountContext(), groupInfo.owner, true).name
+                Recipient.from(accountContext, groupInfo.owner, true).name
             }
             itemView.pin_text?.text = context.resources.getString(R.string.chats_receive_unpin_message, senderName)
         }

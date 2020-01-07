@@ -16,19 +16,19 @@ import com.bcm.messenger.common.mms.GlideRequests
  *
  * Created by wjh on 2018/10/23
  */
-class ChatDocumentHolderAction() : BaseChatHolderAction<ChatDocumentView>() {
+class ChatDocumentHolderAction(accountContext: AccountContext) : BaseChatHolderAction<ChatDocumentView>(accountContext) {
 
 
     private var mPreviewClickListener = ChatPreviewClickListener()
     private var mDownloadClickListener = AttachmentDownloadClickListener()
 
-    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: ChatDocumentView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(message: AmeGroupMessageDetail, body: ChatDocumentView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
         body.setDocumentClickListener(mPreviewClickListener)
         body.setDownloadClickListener(mDownloadClickListener)
         body.setDocument(message)
     }
 
-    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+    override fun resend(messageRecord: AmeGroupMessageDetail) {
         if (!messageRecord.attachmentUri.isNullOrEmpty()) {
             GroupMessageLogic.get(accountContext).messageSender.resendMediaMessage(messageRecord)
         }

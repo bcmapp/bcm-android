@@ -14,7 +14,7 @@ import org.greenrobot.eventbus.EventBus
  *
  * Created by wjh on 2018/11/27
  */
-class ChatReplyHolderAction() : BaseChatHolderAction<ChatReplyView>(), ChatComponentListener {
+class ChatReplyHolderAction(accountContext: AccountContext) : BaseChatHolderAction<ChatReplyView>(accountContext), ChatComponentListener {
 
     override fun onClick(v: View, data: Any) {
         if(data is AmeGroupMessageDetail) {
@@ -22,12 +22,12 @@ class ChatReplyHolderAction() : BaseChatHolderAction<ChatReplyView>(), ChatCompo
         }
     }
 
-    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: ChatReplyView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(message: AmeGroupMessageDetail, body: ChatReplyView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
         body.setReplyClickListener(this)
-        body.setReply(message)
+        body.setReply(accountContext, message)
     }
 
-    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+    override fun resend(messageRecord: AmeGroupMessageDetail) {
         GroupMessageLogic.get(accountContext).messageSender.resendTextMessage(messageRecord)
     }
 

@@ -4,7 +4,6 @@ import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.component.AdHocAudioView
 import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
 import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
-import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.utils.AppUtil
 
@@ -35,7 +34,7 @@ class AdHocAudioHolderAction() : BaseHolderAction<AdHocAudioView>() {
     }
 
 
-    override fun resend(accountContext: AccountContext, message: AdHocMessageDetail) {
+    override fun resend(message: AdHocMessageDetail) {
         AdHocMessageLogic.resend(message)
 
     }

@@ -250,22 +250,22 @@ class ChatGroupConversationFragment : BaseFragment() {
                 override fun createViewHolder(adapter: CommonConversationAdapter<AmeGroupMessageDetail>, inflater: LayoutInflater, parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
                     val holder = when (viewType) {
                         R.layout.chats_stick_notification_item -> {
-                            StickNotificationViewHolder(inflater.inflate(viewType, parent, false))
+                            StickNotificationViewHolder(accountContext, inflater.inflate(viewType, parent, false))
                         }
                         R.layout.chats_tip_message_item -> {
-                            SystemTipsViewHolder(inflater.inflate(viewType, parent, false))
+                            SystemTipsViewHolder(accountContext, inflater.inflate(viewType, parent, false))
                         }
                         R.layout.chats_conversation_item_pin -> {
-                            ChatPinViewHolder(inflater.inflate(viewType, parent, false))
+                            ChatPinViewHolder(accountContext, inflater.inflate(viewType, parent, false))
                         }
                         R.layout.chats_conversation_item_live -> {
-                            ChatLiveViewHolder(inflater.inflate(viewType, parent, false))
+                            ChatLiveViewHolder(accountContext, inflater.inflate(viewType, parent, false))
                         }
                         R.layout.chats_group_conversation_sent_item -> {
-                            OutgoingChatViewHolder(inflater.inflate(viewType, parent, false))
+                            OutgoingChatViewHolder(accountContext, inflater.inflate(viewType, parent, false))
                         }
                         else -> {
-                            IncomeChatViewHolder(inflater.inflate(viewType, parent, false))
+                            IncomeChatViewHolder(accountContext, inflater.inflate(viewType, parent, false))
                         }
                     }
                     holder.itemView.setOnClickListener {
