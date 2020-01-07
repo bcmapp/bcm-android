@@ -60,7 +60,7 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
     fun setRecipient(accountContext: AccountContext, recipient: Recipient?, nickname: String? = null) {
         this.recipient = recipient
         this.accountContext = accountContext
-        this.avatarView?.setPhoto(accountContext, recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+        this.avatarView?.setPhoto(recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
         setBorderVisible(View.GONE)
     }
 

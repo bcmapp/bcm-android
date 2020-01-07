@@ -181,11 +181,11 @@ class MediaBrowserAdapter(viewModel: BaseMediaBrowserViewModel, private val medi
             if (data != null){
                 val size = 120.dp2Px()
                 if (MediaUtil.isVideo(data.mediaType)){
-                    data.setThumbnail(null, imageView, size, size, R.drawable.common_video_place_square_img)
+                    data.setThumbnail(null,null, imageView, size, size, R.drawable.common_video_place_square_img)
                     videoDurationLayout.visibility = View.VISIBLE
                     videoDurationView.text = DateUtils.convertMinuteAndSecond(data.getVideoDuration() * 1000)
                 } else {
-                    data.setThumbnail(null, imageView, size, size, R.drawable.common_image_place_square_img)
+                    data.setThumbnail(null,null, imageView, size, size, R.drawable.common_image_place_square_img)
                     videoDurationLayout.visibility = View.GONE
                 }
                 selectionView.visibility = if(canShowSelection()) { View.VISIBLE } else { View.GONE }

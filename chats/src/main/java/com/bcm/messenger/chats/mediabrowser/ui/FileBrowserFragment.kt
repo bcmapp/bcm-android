@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -120,7 +119,7 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
                 gid = GroupUtil.gidFromAddress(address)
                 initGroupResource(activity, gid)
             } else {
-                ThreadListViewModel.getThreadId(accountContext, recipient) {
+                ThreadListViewModel.getThreadId(recipient) {
                     threadId = it
                     initPrivateResource(activity, threadId, getMasterSecret())
                 }

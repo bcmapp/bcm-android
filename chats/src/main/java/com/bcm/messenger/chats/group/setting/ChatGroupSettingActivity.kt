@@ -644,7 +644,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
                 val data = viewHolder.getData()
                 if (data != null && data.uid != null) {
                     val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                    provider.openContactDataActivity(this, data.uid, data.gid)
+                    provider.openContactDataActivity(this, Address.from(accountContext, data.uid), data.gid)
                 }
             }
         }

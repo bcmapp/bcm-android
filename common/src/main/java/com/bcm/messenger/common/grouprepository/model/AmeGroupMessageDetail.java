@@ -283,7 +283,7 @@ public class AmeGroupMessageDetail {
         }
     }
 
-    public @Nullable Uri getThumbnailPartUri(AccountContext accountContext) {
+    public @Nullable Uri getThumbnailPartUri(@Nullable AccountContext accountContext) {
         if (message.getContent() instanceof AmeGroupMessage.ThumbnailContent && MediaUtil.isGif(((AmeGroupMessage.ThumbnailContent) message.getContent()).getMimeType())) {
             return getFilePartUri();
         } else if (thumbnailUri == null) {
@@ -293,7 +293,9 @@ public class AmeGroupMessageDetail {
                 File file = new File(((AmeGroupMessage.ThumbnailContent) message.getContent()).getThumbnailPath().getSecond() + File.separator + ((AmeGroupMessage.ThumbnailContent) message.getContent()).getThumbnailExtension());
 
                 AmeDispatcher.INSTANCE.getIo().dispatch(() -> {
-                    MessageDataManager.INSTANCE.updateMessageThumbnailUri(accountContext, gid, indexId, new FileInfo(file, file.length(), null, null));
+                    if (accountContext != null) {
+                        MessageDataManager.INSTANCE.updateMessageThumbnailUri(accountContext, gid, indexId, new FileInfo(file, file.length(), null, null));
+                    }
                     return Unit.INSTANCE;
                 });
 

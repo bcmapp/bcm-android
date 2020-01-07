@@ -15,6 +15,7 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -26,7 +27,6 @@ import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.common.utils.startBcmActivity
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_group_member_list.*
@@ -262,17 +262,17 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
                         member_list_delete_count.text = "${memberDataSource.selectList().size}"
                     }
                 } else {
-                    val uid = data?.uid?.serialize()
+                    val uid = data?.uid
                     if (uid != null && uid.isNotEmpty()) {
                         val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
-                        provider.openContactDataActivity(viewHolder.itemView.context, data.uid, data.gid)
+                        provider.openContactDataActivity(viewHolder.itemView.context, Address.from(accountContext, data.uid), data.gid)
                     }
                 }
             }
         }
     }
 
-    class SearchHolder(val searchBar: GroupSearchBar, val activity: ChatGroupMemberListActivity)
+    inner class SearchHolder(val searchBar: GroupSearchBar, val activity: ChatGroupMemberListActivity)
         : AmeRecycleViewAdapter.ViewHolder<AmeGroupMemberInfo>(searchBar) {
 
         init {
@@ -287,7 +287,7 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
 
                 override fun onMatch(data: AmeGroupMemberInfo, compare: String): Boolean {
                     if (data.uid?.isNotEmpty() == true) {
-                        val recipient = Recipient.from(data.uid, true)
+                        val recipient = Recipient.from(accountContext, data.uid, true)
                         val name = BcmGroupNameUtil.getGroupMemberName(recipient, data)
                         return StringAppearanceUtil.containIgnore(name, compare)
                     }

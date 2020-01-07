@@ -187,7 +187,7 @@ class PrivateMediaBrowseModel(accountContext: AccountContext) : BaseMediaBrowser
                             chatRepo?.deleteMessage(record.id)
                         } else {
                             chatRepo?.deleteMessage(record.id)
-                            CleanConversationStorageLogic.messageDeletedForConversation(data.getUserAddress(), data.getStorageType(), data.fileSize())
+                            CleanConversationStorageLogic.messageDeletedForConversation(data.getUserAddress(accountContext), data.getStorageType(), data.fileSize())
                         }
                         fail.remove(data)
                         val key = formatMapKey(data)
@@ -296,7 +296,7 @@ class PrivateMediaBrowseModel(accountContext: AccountContext) : BaseMediaBrowser
             for (data in subList) {
                 if ((data.msgSource as? MessageRecord)?.id == event.indexId) {
                     subList.remove(data)
-                    CleanConversationStorageLogic.messageDeletedForConversation(data.getUserAddress(), data.getStorageType(), data.fileSize())
+                    CleanConversationStorageLogic.messageDeletedForConversation(data.getUserAddress(accountContext), data.getStorageType(), data.fileSize())
                     mediaListLiveData.postValue(mCurrentLoaded.mediaMap)
                     return
                 }

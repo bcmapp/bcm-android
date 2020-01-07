@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,13 +20,13 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.AppContextHolder
 import kotlinx.android.synthetic.main.chats_media_image_browser.*
 import java.lang.ref.WeakReference
@@ -69,7 +68,7 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
             val model = ViewModelProviders.of(act, MediaBrowserModelFactory(accountContext)).get(PrivateMediaBrowseModel::class.java)
             val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
             val recipient = Recipient.from(accountContext, address.serialize(), true)
-            ThreadListViewModel.getThreadId(accountContext, recipient) {
+            ThreadListViewModel.getThreadId(recipient) {
                 threadId = it
                 if (null != masterSecret && threadId >= 0){
                     model.init(threadId, masterSecret)

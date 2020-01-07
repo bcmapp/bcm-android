@@ -231,7 +231,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
             override fun onViewClicked(adapter: MessageListAdapter, viewHolder: RecyclerView.ViewHolder) {
                 if (viewHolder is MessageListAdapter.ThreadViewHolder) {
                     val item = viewHolder.getItem()
-                    item.clearUnreadCount()
+                    item.clearUnreadCount(accountContext)
                     handleCreateConversation(item, item.threadId, item.recipient
                             ?: return, item.distributionType, item.lastSeen)
                 }

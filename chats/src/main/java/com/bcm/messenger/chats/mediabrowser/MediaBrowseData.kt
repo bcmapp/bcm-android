@@ -8,6 +8,7 @@ import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.DecryptableStreamUriLoader
@@ -16,9 +17,7 @@ import com.bcm.messenger.common.provider.bean.ConversationStorage
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.common.utils.MediaUtil
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.AmeURLUtil
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import java.lang.ref.WeakReference
@@ -56,7 +55,7 @@ data class MediaBrowseData(val name: String,
         view.setImageResource(0)
     }
 
-    fun setThumbnail(accountContext: AccountContext, background: View?, view: ImageView, overrideWidth: Int, overrideHeight: Int, placeHolderResource: Int) {
+    fun setThumbnail(accountContext: AccountContext?, background: View?, view: ImageView, overrideWidth: Int, overrideHeight: Int, placeHolderResource: Int) {
         if (viewRef?.get() == view && backgroundRef?.get() == background) {
             return
         }
@@ -73,8 +72,8 @@ data class MediaBrowseData(val name: String,
                 val msg = msgSource as? AmeGroupMessageDetail
                 view.setImageResource(placeHolderResource)
                 if (msg != null) {
-                    if (msg.thumbnailPartUri != null) {
-                        showThumbnail(accountContext, view, msg.thumbnailPartUri!!)
+                    if (msg.getThumbnailPartUri(accountContext) != null) {
+                        showThumbnail(accountContext, view, msg.getThumbnailPartUri(accountContext)!!)
                     } else {
                         MessageFileHandler.downloadThumbnail(msg, object : MessageFileHandler.MessageFileCallback {
                             override fun onResult(success: Boolean, uri: Uri?) {
@@ -143,8 +142,8 @@ data class MediaBrowseData(val name: String,
                 .into(view)
     }
 
-    private fun showThumbnail(accountContext: AccountContext, view: ImageView?, uri: Uri) {
-        if (null == view || AppUtil.activityFinished(view)) {
+    private fun showThumbnail(accountContext: AccountContext?, view: ImageView?, uri: Uri) {
+        if (null == view || AppUtil.activityFinished(view) || accountContext == null) {
             return
         }
 

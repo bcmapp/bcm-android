@@ -15,11 +15,10 @@ import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.provider.IContactModule
-import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.utility.permission.PermissionUtil
 import com.bcm.messenger.common.utils.DateUtils
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.utility.AmeURLUtil
+import com.bcm.messenger.utility.permission.PermissionUtil
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_file_browser_view.view.*
 
@@ -38,7 +37,7 @@ class FileBrowserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
         mData = data
         mediaBrowseData = data.data
         mediaBrowseData?.let {
-            it.setThumbnail( itemView.browser_file_img_background, itemView.browser_file_img, 40.dp2Px(), 20.dp2Px(), R.drawable.chats_message_file_icon_grey)
+            it.setThumbnail(null, itemView.browser_file_img_background, itemView.browser_file_img, 40.dp2Px(), 20.dp2Px(), R.drawable.chats_message_file_icon_grey)
             itemView.browser_file_name.text = it.name
             itemView.browser_file_sub_content.text = DateUtils.formatFileTime(it.time)
         }

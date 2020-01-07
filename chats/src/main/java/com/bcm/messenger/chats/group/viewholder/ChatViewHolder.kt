@@ -400,7 +400,7 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
             if (model != null && sender == null) {
                 val weakThis = WeakReference(this)
                 model.queryGroupMember(messageRecord.senderId) { member ->
-                    if (null != member && weakThis.get()?.recipient?.address == member.uid) {
+                    if (null != member && weakThis.get()?.recipient?.address?.serialize() == member.uid) {
                         updateUserInfo(recipient, sender)
                     }
                 }
@@ -421,7 +421,7 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
         if (null != profileKey) {
             AmeModuleCenter.contact(accountContext)?.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient, profileKey)
         }
-        mPhotoView?.setPhoto(accountContext, recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+        mPhotoView?.setPhoto(recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
     }
 
     open fun unBindData() {

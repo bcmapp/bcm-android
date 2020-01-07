@@ -24,7 +24,6 @@ import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
 import com.bcm.messenger.common.mms.GlideApp
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.CommonConversationAdapter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.dp2Px
@@ -85,12 +84,12 @@ class ChatHistoryActivity : SwipeBaseActivity() {
 
             override fun createViewHolder(adapter: CommonConversationAdapter<AmeGroupMessageDetail>, inflater: LayoutInflater, parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
                 return when (viewType) {
-                    R.layout.chats_tip_message_item -> SystemTipsViewHolder(inflater.inflate(viewType, parent, false))
-                    R.layout.chats_group_conversation_sent_item -> OutgoingHistoryViewHolder(inflater.inflate(viewType, parent, false)).apply {
-                        setCanLongClick(true)
+                    R.layout.chats_tip_message_item -> SystemTipsViewHolder(accountContext, inflater.inflate(viewType, parent, false))
+                    R.layout.chats_group_conversation_sent_item -> OutgoingHistoryViewHolder(accountContext, inflater.inflate(viewType, parent, false)).apply {
+                        setCanLongClick(false)
                     }
-                    else -> IncomeHistoryViewHolder(inflater.inflate(viewType, parent, false)).apply {
-                        setCanLongClick(true)
+                    else -> IncomeHistoryViewHolder(accountContext, inflater.inflate(viewType, parent, false)).apply {
+                        setCanLongClick(false)
                     }
                 }
 

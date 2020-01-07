@@ -53,7 +53,7 @@ class AmeHistoryMessageDetail : AmeGroupMessageDetail() {
         return null
     }
 
-    override fun getThumbnailPartUri(accoutContext: AccountContext): Uri? {
+    override fun getThumbnailPartUri(accoutContext: AccountContext?): Uri? {
         if (message.isWithThumbnail()) {
             val content = message.content as AmeGroupMessage.ThumbnailContent
 
