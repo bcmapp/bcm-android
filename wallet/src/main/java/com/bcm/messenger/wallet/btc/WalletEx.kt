@@ -11,7 +11,7 @@ import com.bcm.messenger.wallet.btc.response.GetTransactionsResponse
 import com.bcm.messenger.wallet.btc.response.QueryUnspentOutputsResponse
 import com.bcm.messenger.wallet.btc.util.ByteReader
 import com.bcm.messenger.wallet.btc.util.ByteWriter
-import com.bcm.messenger.wallet.utils.BCMWalletManager
+import com.bcm.messenger.wallet.utils.BCMWalletManagerContainer
 import com.bcm.messenger.wallet.utils.WalletSettings
 import com.google.common.base.Predicate
 import com.google.common.collect.ImmutableList
@@ -31,7 +31,7 @@ import kotlin.collections.LinkedHashSet
 /**
  * Created by wjh on 2019/3/22
  */
-class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, private val mManager: BCMWalletManager, private val mApi: Wapi?) : Wallet(params, keyChainGroup) {
+class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, private val mManager: BCMWalletManagerContainer.BCMWalletManager, private val mApi: Wapi?) : Wallet(params, keyChainGroup) {
 
     companion object {
         private const val TAG = "WalletEx"
@@ -123,7 +123,7 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, private 
     fun removeDiscoveryFlag() {
         val account = activeKeyChain.accountPath.get(2).num()
         ALog.i(TAG, "removeDiscoveryFlag account: $account")
-        mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).edit().remove("${BCMWalletManager.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account").apply()
+        mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).edit().remove("${BCMWalletManagerContainer.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account").apply()
     }
 
     private fun needDiscoverHistory(): Boolean {
@@ -135,14 +135,14 @@ class WalletEx(params: NetworkParameters, keyChainGroup: KeyChainGroup, private 
     private fun getLastDiscoveryTime(): Long {
         val account = activeKeyChain.accountPath.get(2).num()
         ALog.i(TAG, "getLastDiscoveryTime account: $account")
-        return mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).getLong("${BCMWalletManager.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account", 0)
+        return mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).getLong("${BCMWalletManagerContainer.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account", 0)
     }
 
     private fun setLastDiscoveryTime() {
         val account = activeKeyChain.accountPath.get(2).num()
         ALog.i(TAG, "setLastDiscoveryTime account: $account")
         mManager.getAccountPreferences(AppContextHolder.APP_CONTEXT).edit()
-                .putLong("${BCMWalletManager.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account", System.currentTimeMillis()).apply()
+                .putLong("${BCMWalletManagerContainer.PREF_LAST_DISCOVERY}${WalletSettings.BTC}_$account", System.currentTimeMillis()).apply()
     }
 
     private fun doUnspentDiscovery(hasDiscoverHistory: Boolean): Boolean {

@@ -1,16 +1,11 @@
 package com.bcm.messenger.wallet.network
 
 import com.bcm.messenger.common.utils.AppUtil
-import com.orhanobut.logger.Logger
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.wallet.utils.BCMWalletManager
+import com.bcm.messenger.wallet.utils.BCMWalletManagerContainer
+import com.orhanobut.logger.Logger
+import okhttp3.*
 import java.io.IOException
-import okhttp3.Callback
-import okhttp3.MediaType
-import okhttp3.Protocol
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.ResponseBody
 
 /**
  * ETH 平台接口api类
@@ -274,7 +269,7 @@ class EtherscanAPI private constructor() {
         val request = Request.Builder()
                 .url(fullUrl)
                 .build()
-        val call = BCMWalletManager.provideHttpClient().newCall(request)
+        val call = BCMWalletManagerContainer.provideHttpClient().newCall(request)
         if (!cacheString.isNullOrEmpty()) {
             Logger.d("EtherscanAPI直接从缓存获取数据")
             b.onResponse(call, Response.Builder().code(200).message("").request(Request.Builder()
@@ -291,7 +286,7 @@ class EtherscanAPI private constructor() {
                 .url(fullUrl)
                 .build()
         ALog.d(TAG, "request url: $fullUrl")
-        val client = BCMWalletManager.provideHttpClient()
+        val client = BCMWalletManagerContainer.provideHttpClient()
         return client.newCall(request).execute()
     }
 

@@ -84,7 +84,7 @@ class MyQRFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     private fun setSelfData() {
-        qr_code_avatar.showPrivateAvatar(mAccountContext, recipient)
+        qr_code_avatar.showPrivateAvatar(recipient)
         qr_code_name.text = recipient.name
         initQrCode(recipient)
     }

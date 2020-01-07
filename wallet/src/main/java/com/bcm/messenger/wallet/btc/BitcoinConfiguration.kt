@@ -1,20 +1,20 @@
 package com.bcm.messenger.wallet.btc
 
 import android.content.SharedPreferences
-import com.bcm.messenger.utility.proguard.NotGuard
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.utility.proguard.NotGuard
 import com.bcm.messenger.wallet.btc.jsonrpc.TcpEndpoint
 import com.bcm.messenger.wallet.btc.net.HttpsEndpoint
 import com.bcm.messenger.wallet.btc.net.ServerEndpoints
 import com.bcm.messenger.wallet.btc.net.TorHttpsEndpoint
+import com.bcm.messenger.wallet.utils.BCMWalletManagerContainer
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.wallet.utils.BCMWalletManager
 import okhttp3.Request
 
 // A set of classes for parsing nodes.json file
@@ -107,7 +107,7 @@ class BitcoinConfiguration(private val prefs: SharedPreferences) {
     fun updateConfig() {
         GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
             try {
-                val client = BCMWalletManager.provideHttpClient()
+                val client = BCMWalletManagerContainer.provideHttpClient()
                 val request = Request.Builder().url("$AMAZON_S3_STORAGE_ADDRESS/nodes-b.json").build()
                 val response = client.newCall(request).execute()
                 if (response.isSuccessful) {
