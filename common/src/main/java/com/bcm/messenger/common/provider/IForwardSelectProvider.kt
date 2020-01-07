@@ -14,7 +14,6 @@ interface IForwardSelectProvider : IRouteProvider {
     }
 
     fun setCallback(callback: ForwardSelectCallback)
-    fun setMasterSecret(masterSecret: MasterSecret)
     fun setContactSelectContainer(layoutId: Int)
     fun setGroupSelectContainer(layoutId: Int)
 }

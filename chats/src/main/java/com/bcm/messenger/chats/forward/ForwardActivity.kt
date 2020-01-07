@@ -71,12 +71,9 @@ class ForwardActivity : SwipeBaseActivity() {
                 clickContact(recipient)
             }
         })
-        fragment.setMasterSecret(getMasterSecret())
         fragment.setContactSelectContainer(R.id.activity_forward_root)
         fragment.setGroupSelectContainer(R.id.activity_forward_root)
-        supportFragmentManager.beginTransaction()
-                .add(R.id.activity_forward_root, fragment)
-                .commit()
+        initFragment(R.id.activity_forward_root, fragment, null)
     }
 
     private fun initResources() {

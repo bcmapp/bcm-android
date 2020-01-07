@@ -143,7 +143,7 @@ data class MediaViewData(val indexId: Long,
                 if (messageRecord.getThumbnailPartUri(accountContext) != null) {
                     videoPlayer.setVideoThumbnail(DecryptableStreamUriLoader.DecryptableUri(masterSecret, messageRecord.getThumbnailPartUri(accountContext)!!), glide)
                 } else {
-                    MessageFileHandler.downloadThumbnail(messageRecord, object : MessageFileHandler.MessageFileCallback {
+                    MessageFileHandler.downloadThumbnail(accountContext, messageRecord, object : MessageFileHandler.MessageFileCallback {
                         override fun onResult(success: Boolean, uri: Uri?) {
                             val view = videoViewRef?.get()
                             if (view == videoPlayer) {
@@ -202,7 +202,7 @@ data class MediaViewData(val indexId: Long,
 
     private fun downloadGroupVideo(videoPlayer: VideoPlayer, message: AmeGroupMessageDetail, masterSecret: MasterSecret, callback: () -> Unit) {
 
-        MessageFileHandler.downloadAttachment(message, object : MessageFileHandler.MessageFileCallback {
+        MessageFileHandler.downloadAttachment(masterSecret.accountContext, message, object : MessageFileHandler.MessageFileCallback {
             override fun onResult(success: Boolean, uri: Uri?) {
                 if (success) {
                     if (videoPlayer == videoViewRef?.get()) {
@@ -220,7 +220,7 @@ data class MediaViewData(val indexId: Long,
         if (messageDetail.isFileDeleted) {
             return
         }
-        MessageFileHandler.downloadThumbnail(messageDetail, object : MessageFileHandler.MessageFileCallback {
+        MessageFileHandler.downloadThumbnail(masterSecret.accountContext, messageDetail, object : MessageFileHandler.MessageFileCallback {
             override fun onResult(thumbSuccess: Boolean, thumbUri: Uri?) {
                 val content = messageDetail.message.content as AmeGroupMessage.AttachmentContent
 
@@ -245,7 +245,7 @@ data class MediaViewData(val indexId: Long,
         if (messageDetail.isFileDeleted) {
             return
         }
-        MessageFileHandler.downloadAttachment(messageDetail, object : MessageFileHandler.MessageFileCallback {
+        MessageFileHandler.downloadAttachment(masterSecret.accountContext, messageDetail, object : MessageFileHandler.MessageFileCallback {
             override fun onResult(success: Boolean, uri: Uri?) {
                 val content = messageDetail.message.content as AmeGroupMessage.AttachmentContent
 
@@ -261,7 +261,7 @@ data class MediaViewData(val indexId: Long,
     }
 
 
-    fun saveAttachment(masterSecret: MasterSecret?, callback: (success: Boolean, uri: String) -> Unit) {
+    fun saveAttachment(accountContext: AccountContext, masterSecret: MasterSecret?, callback: (success: Boolean, uri: String) -> Unit) {
         if (sourceMsg is AmeGroupMessageDetail) {
 
             fun doSaveAction(finalUri: Uri) {
@@ -296,7 +296,7 @@ data class MediaViewData(val indexId: Long,
             if (mediaUri != null) {
                 doSaveAction(mediaUri ?: return)
             } else {
-                MessageFileHandler.downloadAttachment(sourceMsg, object : MessageFileHandler.MessageFileCallback {
+                MessageFileHandler.downloadAttachment(accountContext, sourceMsg, object : MessageFileHandler.MessageFileCallback {
                     override fun onResult(success: Boolean, uri: Uri?) {
                         if (success) {
                             doSaveAction(uri ?: return)

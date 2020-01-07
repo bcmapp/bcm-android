@@ -38,15 +38,12 @@ class ChatVideoHolderAction(accountContext: AccountContext) : BaseChatHolderActi
         }
     }
 
-    private inner class AttachmentDownloadClickListener() : ChatComponentListener {
+    private inner class AttachmentDownloadClickListener : ChatComponentListener {
 
         override fun onClick(v: View, data: Any) {
-
-            if(data is AmeGroupMessageDetail) {
+            if (data is AmeGroupMessageDetail) {
                 val content = data.message.content as AmeGroupMessage.AttachmentContent
-                if(content.isExist()) {
-
-                }else {
+                if (!content.isExist()) {
                     MessageFileHandler.downloadAttachment(accountContext, data, null)
                 }
             }

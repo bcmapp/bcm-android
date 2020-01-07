@@ -226,8 +226,7 @@ class ChatHistoryActivity : SwipeBaseActivity() {
                         thumbPsw = msg.thumbPsw
                         attachmentPsw = msg.attachmentPsw
 
-                        val content = this.message.content
-                        when (content) {
+                        when (val content = this.message.content) {
                             is AmeGroupMessage.FileContent -> {
                                 if (content.isExist()) {
                                     attachmentUri = Uri.fromFile(File(content.getPath().second + File.separator + content.getExtension())).toString()

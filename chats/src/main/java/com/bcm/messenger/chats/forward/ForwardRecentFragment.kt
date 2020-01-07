@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.crypto.MasterSecret
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.IForwardSelectProvider
@@ -26,7 +25,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.chats_fragment_forward_recent.*
 
 @Route(routePath = ARouterConstants.Fragment.FORWARD_FRAGMENT)
-class ForwardRecentFragment : Fragment(), IForwardSelectProvider {
+class ForwardRecentFragment : BaseFragment(), IForwardSelectProvider {
     private val TAG = "ForwardRecentFragment"
 
     private lateinit var headerView: ForwardHeaderView
@@ -34,7 +33,6 @@ class ForwardRecentFragment : Fragment(), IForwardSelectProvider {
     private var callback: IForwardSelectProvider.ForwardSelectCallback? = null
     private var groupContainerId: Int = 0
     private var privateContainerId: Int = 0
-    private var masterSecret: MasterSecret? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.chats_fragment_forward_recent, container, false)
@@ -77,10 +75,6 @@ class ForwardRecentFragment : Fragment(), IForwardSelectProvider {
 
     override fun setCallback(callback: IForwardSelectProvider.ForwardSelectCallback) {
         this.callback = callback
-    }
-
-    override fun setMasterSecret(masterSecret: MasterSecret) {
-        this.masterSecret = masterSecret
     }
 
     override fun setContactSelectContainer(layoutId: Int) {
@@ -126,9 +120,7 @@ class ForwardRecentFragment : Fragment(), IForwardSelectProvider {
 
     private fun initThreadList() {
         Observable.create<List<Recipient>> {
-            if (masterSecret != null) {
-                it.onNext(Repository.getThreadRepo(AMELogin.majorContext)?.getAllThreads()?.map { it.getRecipient(AMELogin.majorContext) }?: listOf())
-            }
+            it.onNext(Repository.getThreadRepo(AMELogin.majorContext)?.getAllThreads()?.map { it.getRecipient(AMELogin.majorContext) }?: listOf())
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

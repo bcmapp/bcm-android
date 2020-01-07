@@ -110,16 +110,16 @@ class FileBrowserViewHolder(private val accountContext: AccountContext, itemView
 
     private fun groupItemClick(accountContext: AccountContext, v: View, messageDetailRecord: AmeGroupMessageDetail) {
         val content = messageDetailRecord.message.content
-        if (content is AmeGroupMessage.FileContent){
+        if (content is AmeGroupMessage.FileContent) {
             ChatPreviewClickListener(accountContext).onClick(v, messageDetailRecord)
-        } else if(content is AmeGroupMessage.LinkContent){
+        } else if (content is AmeGroupMessage.LinkContent) {
             val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
             contactProvider.discernLink(v.context, AmeURLUtil.getHttpUrl(content.url))
         }
     }
 
     private fun privateItemClick(accountContext: AccountContext, v: View, messageRecord: MessageRecord) {
-        if (messageRecord.isMediaMessage()){
+        if (messageRecord.isMediaMessage()) {
             ChatPreviewClickListener(accountContext).onClick(v, messageRecord)
         } else {
             val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()

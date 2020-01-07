@@ -68,7 +68,7 @@ class ChatModuleImp : IChatModule {
     private val TAG = "IConversationProvider"
     override fun checkHasRtcCall() {
         ALog.i(TAG, "checkHasRtcCall")
-        WebRtcCallService.checkHasWebRtcCall()
+        WebRtcCallService.checkHasWebRtcCall(accountContext)
     }
 
     override fun startRtcCallService(context: Context, address: Address, callType: Int) {

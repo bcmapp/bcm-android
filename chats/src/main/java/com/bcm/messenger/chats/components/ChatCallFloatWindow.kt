@@ -12,8 +12,8 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.privatechat.webrtc.CameraState
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcViewModel
-import com.bcm.messenger.chats.provider.ChatModuleImp
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -155,11 +155,9 @@ object ChatCallFloatWindow {
                             override fun onComplete() {
                                 mHandler.post {
                                     ALog.i(TAG, "ChatCallFloatWindow got click")
-                                    ChatModuleImp().startRtcCallActivity(AppContextHolder.APP_CONTEXT, currentCallState.localCameraState.activeDirection.ordinal)
+                                    AmeModuleCenter.chat(accountContext)?.startRtcCallActivity(AppContextHolder.APP_CONTEXT, currentCallState.localCameraState.activeDirection.ordinal)
                                 }
-
                             }
-
                         })
                     }
                 }

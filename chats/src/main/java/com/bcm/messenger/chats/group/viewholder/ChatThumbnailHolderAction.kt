@@ -31,7 +31,7 @@ class ChatThumbnailHolderAction(accountContext: AccountContext) : BaseChatHolder
     }
 
     override fun resend(messageRecord: AmeGroupMessageDetail) {
-        if(!messageRecord.attachmentUri.isNullOrEmpty()) {
+        if (!messageRecord.attachmentUri.isNullOrEmpty()) {
             GroupMessageLogic.get(accountContext).messageSender.resendMediaMessage(messageRecord)
         }
     }

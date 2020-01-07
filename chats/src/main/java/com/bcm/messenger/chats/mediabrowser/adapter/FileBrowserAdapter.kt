@@ -8,11 +8,12 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.mediabrowser.bean.FileBrowserData
 import com.bcm.messenger.chats.mediabrowser.ui.BrowserTitleViewHolder
 import com.bcm.messenger.chats.mediabrowser.ui.FileBrowserViewHolder
+import com.bcm.messenger.common.AccountContext
 
 /**
  * Created by zjl on 2018/10/16.
  */
-class FileBrowserAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
+class FileBrowserAdapter(context: Context, private val accountContext: AccountContext) : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
 
     private var mInflater = LayoutInflater.from(context)
     private var mDataList: MutableList<FileBrowserData> = mutableListOf()
@@ -61,7 +62,7 @@ class FileBrowserAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.V
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType) {
             R.layout.chats_file_browser_view -> {
-                FileBrowserViewHolder(mInflater.inflate(viewType, parent, false))
+                FileBrowserViewHolder(accountContext, mInflater.inflate(viewType, parent, false))
             }
             else -> {
                 BrowserTitleViewHolder(mInflater.inflate(viewType, parent, false))

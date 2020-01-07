@@ -133,7 +133,7 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
 
         val layoutManager = LinearLayoutManager(context)
         file_browser_list.layoutManager = layoutManager
-        adapter = FileBrowserAdapter(context)
+        adapter = FileBrowserAdapter(context, accountContext)
         file_browser_list.adapter = adapter
 
     }

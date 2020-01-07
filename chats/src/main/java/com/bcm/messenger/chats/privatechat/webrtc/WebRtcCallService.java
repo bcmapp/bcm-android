@@ -49,7 +49,6 @@ import com.bcm.messenger.utility.concurrent.ListenableFutureTask;
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher;
 import com.bcm.messenger.utility.logger.ALog;
 import com.bcm.messenger.utility.permission.PermissionUtil;
-import com.bcm.route.api.BcmRouter;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
@@ -162,9 +161,9 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
     static final int NOTIFICATION_IMPORTANT = 2;
     private static int sCurrentCallType = -1;
-    public static void checkHasWebRtcCall() {
+    public static void checkHasWebRtcCall(AccountContext accountContext) {
         if (sCurrentCallType != -1) {
-            startCallActivity(sCurrentCallType);
+            startCallActivity(accountContext, sCurrentCallType);
         }
     }
 
@@ -172,12 +171,14 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         sCurrentCallType = -1;
     }
 
-    private static void startCallActivity(int callType) {
+    private static void startCallActivity(AccountContext accountContext, int callType) {
         sCurrentCallType = callType;
         ALog.i(TAG, "start call activity:" + callType);
 
-        IChatModule provider = (IChatModule) BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONVERSATION_BASE).navigation();
-        provider.startRtcCallActivity(AppContextHolder.APP_CONTEXT, callType);
+        IChatModule provider = AmeModuleCenter.INSTANCE.chat(accountContext);
+        if (provider != null) {
+            provider.startRtcCallActivity(AppContextHolder.APP_CONTEXT, callType);
+        }
     }
 
     private AtomicReference<CallState> callState = new AtomicReference<>(CallState.STATE_IDLE);
@@ -578,7 +579,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         this.pendingOutgoingIceUpdates = new LinkedList<>();
 
         setCallInProgressNotification(TYPE_OUTGOING_RINGING, recipient);
-        startCallActivity(intent.getIntExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, CameraState.Direction.NONE.ordinal()));
+        startCallActivity(this.accountContext, intent.getIntExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, CameraState.Direction.NONE.ordinal()));
 
         ALog.d(TAG, "handleOutgoingCall:" + recipient.getAddress());
 
@@ -817,7 +818,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                 this.lockManager.updatePhoneState(LockManager.PhoneState.INTERACTIVE);
 
                 sendMessage(WebRtcViewModel.State.CALL_INCOMING, recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
-                startCallActivity(CameraState.Direction.NONE.ordinal());
+                startCallActivity(this.accountContext, CameraState.Direction.NONE.ordinal());
                 audioManager.initializeAudioForCall();
                 audioManager.startIncomingRinger();
 
@@ -863,7 +864,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             return;
         }
 
-        startCallActivity(CameraState.Direction.NONE.ordinal());
+        startCallActivity(this.accountContext, CameraState.Direction.NONE.ordinal());
         setCallInProgressNotification(TYPE_ESTABLISHED, recipient);
 
         audioManager.startCommunication(currentState == CallState.STATE_REMOTE_RINGING);

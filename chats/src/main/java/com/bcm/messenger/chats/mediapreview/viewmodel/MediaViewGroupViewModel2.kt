@@ -78,7 +78,7 @@ class MediaViewGroupViewModel2(accountContext: AccountContext) : BaseMediaViewMo
 
     override fun saveData(data: MediaViewData?, result: ((success: Boolean) -> Unit)?) {
 
-        data?.saveAttachment(masterSecret) { success, uri ->
+        data?.saveAttachment(accountContext, masterSecret) { success, _ ->
             result?.invoke(success)
         }
     }
@@ -87,16 +87,16 @@ class MediaViewGroupViewModel2(accountContext: AccountContext) : BaseMediaViewMo
         var mediaType: Int = MEDIA_TYPE_IMAGE
         val mediaUri = message.filePartUri
         var mimeType = ""
-        when {
-            message.message.type == AmeGroupMessage.IMAGE -> {
+        when (message.message.type) {
+             AmeGroupMessage.IMAGE -> {
                 mediaType = MEDIA_TYPE_IMAGE
                 mimeType = (message.message.content as AmeGroupMessage.ImageContent).mimeType
             }
-            message.message.type == AmeGroupMessage.VIDEO -> {
+            AmeGroupMessage.VIDEO -> {
                 mediaType = MEDIA_TYPE_VIDEO
                 mimeType = (message.message.content as AmeGroupMessage.VideoContent).mimeType
             }
-            message.message.type == AmeGroupMessage.FILE -> {
+            AmeGroupMessage.FILE -> {
                 mimeType = (message.message.content as AmeGroupMessage.FileContent).mimeType
                 if (MediaUtil.isImageType(mimeType)) {
                     mediaType = MEDIA_TYPE_IMAGE
