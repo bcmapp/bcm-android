@@ -84,9 +84,7 @@ internal abstract class UserDatabase : RoomDatabase() {
                             db.close()
                         } catch (tr2: Throwable) {
                         }
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db").delete()
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-shm").delete()
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-wal").delete()
+                        deleteDatabase(accountContext)
 
                         return openDatabase(accountContext,false)
                     }
@@ -94,6 +92,13 @@ internal abstract class UserDatabase : RoomDatabase() {
             }
 
             return db
+        }
+
+        @JvmStatic
+        fun deleteDatabase(accountContext: AccountContext) {
+            File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db").delete()
+            File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-shm").delete()
+            File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-wal").delete()
         }
     }
 

@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.bcm.messenger.common.AccountContext;
+import com.bcm.messenger.utility.logger.ALog;
 
 import java.io.File;
 import java.util.Locale;
@@ -86,6 +87,14 @@ public class DatabaseFactory {
 
     public static boolean isDatabaseExist(AccountContext accountContext, Context context) {
         return new File(context.getFilesDir().getParent() + "/databases/messages" + accountContext.getUid() + ".db").exists();
+    }
+
+    public static void deleteDatabase(AccountContext accountContext, Context context) {
+        try {
+            new File(context.getFilesDir().getParent() + "/databases/messages" + accountContext.getUid() + ".db").delete();
+        } catch (Throwable tr) {
+            ALog.e(TAG, "Delete database failed!", tr);
+        }
     }
 
     public SmsDatabase getSms() {

@@ -8,6 +8,7 @@ import com.bcm.messenger.common.attachments.DatabaseAttachment
 import com.bcm.messenger.common.database.model.*
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.AttachmentRepo
+import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.deprecated.*
 import com.bcm.messenger.common.grouprepository.room.entity.*
 import com.bcm.messenger.utility.AppContextHolder
@@ -73,9 +74,7 @@ class MigrateDatabase(private val accountContext: AccountContext) {
 
     fun deleteDatabase() {
         helper.close()
-        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db").delete()
-        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-shm").delete()
-        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-wal").delete()
+        Repository.clearDatabase(accountContext)
     }
 
     fun insertThread(record: ThreadRecord, threadDatabase: ThreadDatabase): Long {

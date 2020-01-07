@@ -224,12 +224,9 @@ object AmeLoginLogic {
                     ALog.i(TAG, "clear history")
                     try {
                         if (DatabaseFactory.isDatabaseExist(accountContext, AppContextHolder.APP_CONTEXT)) {
-                            val deprecatedDatabase = DatabaseFactory(accountContext, AppContextHolder.APP_CONTEXT)
-                            deprecatedDatabase.deleteAllDatabase()
+                            DatabaseFactory.deleteDatabase(accountContext, AppContextHolder.APP_CONTEXT)
                         }
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db").delete()
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-shm").delete()
-                        File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-wal").delete()
+                        Repository.clearDatabase(accountContext)
 
                         TextSecurePreferences.clear(accountContext)
                         MasterSecretUtil.clearMasterSecretPassphrase(accountContext)
