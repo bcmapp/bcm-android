@@ -8,6 +8,7 @@ import android.widget.TextView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -20,7 +21,7 @@ import com.bcm.messenger.utility.logger.ALog
 /**
  * Created by wjh on 2018/8/23
  */
-class ChatAtListAdapter(context: Context, private val listener: AtActionListener? = null) : LinearBaseAdapter<Recipient>() {
+class ChatAtListAdapter(private val accountContext: AccountContext, context: Context, private val listener: AtActionListener? = null) : LinearBaseAdapter<Recipient>() {
 
 
     private var mKeyWord: String? = null
@@ -36,7 +37,7 @@ class ChatAtListAdapter(context: Context, private val listener: AtActionListener
     }
 
     fun setGroupId(groupId: Long) {
-        mGroupModel = GroupLogic.getModel(groupId)
+        mGroupModel = GroupLogic.get(accountContext).getModel(groupId)
     }
 
     override fun onBindContentHolder(holder: ViewHolder<Recipient>, trueData: Recipient?) {
@@ -81,7 +82,7 @@ class ChatAtListAdapter(context: Context, private val listener: AtActionListener
         fun bind(recipient: Recipient) {
             this.recipient = recipient
             this.recipient.addListener(this)
-            this.photoView.setPhoto(recipient)
+            this.photoView.setPhoto(accountContext, recipient)
             val name = BcmGroupNameUtil.getGroupMemberName(recipient, mGroupModel?.getGroupMember(recipient.address.serialize()))
             this.nameView.text =
                     if (mKeyWord.isNullOrEmpty()) {

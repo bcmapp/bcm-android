@@ -74,7 +74,7 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
             }
         })
 
-        CleanConversationStorageLogic.collectionAllConversationStorageSize()
+        CleanConversationStorageLogic.collectionAllConversationStorageSize(accountContext)
     }
 
     override fun onResume() {
@@ -133,7 +133,7 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
 
     private fun clearAll(type: Int) {
         AmePopup.loading.show(this@CleanStorageActivity)
-        CleanConversationStorageLogic.clearAllConversationMediaMessage(type)
+        CleanConversationStorageLogic.clearAllConversationMediaMessage(accountContext, type)
     }
 
 
@@ -188,7 +188,7 @@ class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHol
         val itemData = viewHolder.getData()
         if (null != itemData && itemData != CleanConversationStorageLogic.ADDRESS_ALL) {
             if (CleanConversationStorageLogic.isCollectedFinished(itemData)) {
-                MediaBrowserActivity.router(itemData, true)
+                MediaBrowserActivity.router(accountContext, itemData, true)
             } else {
                 ToastUtil.show(this@CleanStorageActivity, getString(R.string.chats_collecting_wait_text))
             }

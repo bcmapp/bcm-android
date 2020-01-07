@@ -61,39 +61,12 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
     }
 
     public Address(Parcel in) {
-        this(in.readParcelable(AccountContext.class.getClassLoader()), in.readString());
-    }
-
-    public static Address from(@NonNull String serialized) {
-        return new Address(AMELogin.INSTANCE.getMajorContext(), serialized);
+        this.context = in.readParcelable(AccountContext.class.getClassLoader());
+        this.address = in.readString();
     }
 
     public static Address from(@NonNull AccountContext context, @NonNull String serialized) {
         return new Address(context, serialized);
-    }
-
-    public static @NonNull
-    List<Address> fromSerializedList(@NonNull String serialized, char delimiter) {
-        String[] escapedAddresses = DelimiterUtil.split(serialized, delimiter);
-        List<Address> addresses = new LinkedList<>();
-
-        for (String escapedAddress : escapedAddresses) {
-            addresses.add(Address.from(DelimiterUtil.unescape(escapedAddress, delimiter)));
-        }
-
-        return addresses;
-    }
-
-    public static @NonNull String toSerializedList(@NonNull List<Address> addresses, char delimiter) {
-        Collections.sort(addresses);
-
-        List<String> escapedAddresses = new LinkedList<>();
-
-        for (Address address : addresses) {
-            escapedAddresses.add(DelimiterUtil.escape(address.serialize(), delimiter));
-        }
-
-        return StringAppearanceUtil.INSTANCE.join(escapedAddresses, delimiter + "");
     }
 
     public boolean isUnknown() {
@@ -223,6 +196,4 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
         }
         return result;
     }
-
-
 }

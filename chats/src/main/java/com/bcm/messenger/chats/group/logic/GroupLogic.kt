@@ -1530,11 +1530,6 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             }
         }
 
-        fun createNewJoinRequestDescription(): CharSequence {
-            return StringAppearanceUtil.applyAppearance(getString(R.string.chats_group_new_join_request_description),
-                    color = getColor(R.color.common_content_warning_color))
-        }
-
         /**
          * Update encrypted group notice.
          *

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.MessageRecord
@@ -51,7 +52,7 @@ class ChatForwardDialog : DialogFragment() {
 
     private var dialogType: Int = -1
     private val recipients = mutableListOf<Recipient>()
-    private var masterSecret: MasterSecret? = null
+    private lateinit var masterSecret: MasterSecret
     private var isGroup = false
     private var isShare = false
     private var forwardHistory = false
@@ -66,6 +67,8 @@ class ChatForwardDialog : DialogFragment() {
     private var locationContent = ""
     private val privateMessageList = mutableListOf<MessageRecord>()
     private val groupMessageList = mutableListOf<AmeGroupMessageDetail>()
+
+    private lateinit var accountContext:AccountContext
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return Dialog(context, R.style.ForwardDialogStyle)
@@ -167,7 +170,7 @@ class ChatForwardDialog : DialogFragment() {
             FORWARD_PRIVATE_MULTIPLE -> {
                 forward_history_layout.setParentWidth(265.dp2Px())
                 forward_history_layout.visibility = View.VISIBLE
-                forward_history_layout.setHistoryData(privateMessageList)
+                forward_history_layout.setHistoryData(masterSecret.accountContext, privateMessageList)
                 forward_mode_text.visibility = View.VISIBLE
                 forward_mode_text.setOnClickListener {
                     switchForwardHistoryMode()
@@ -176,7 +179,7 @@ class ChatForwardDialog : DialogFragment() {
             FORWARD_GROUP_MULTIPLE -> {
                 forward_history_layout.setParentWidth(265.dp2Px())
                 forward_history_layout.visibility = View.VISIBLE
-                forward_history_layout.setHistoryData(groupMessageList)
+                forward_history_layout.setHistoryData(masterSecret.accountContext, groupMessageList)
                 forward_mode_text.visibility = View.VISIBLE
                 forward_mode_text.setOnClickListener {
                     switchForwardHistoryMode()
@@ -188,11 +191,11 @@ class ChatForwardDialog : DialogFragment() {
             1 -> {
                 if (recipients[0].isGroupRecipient) {
                     val gid = recipients[0].groupId
-                    forward_single_avatar.showGroupAvatar(gid)
-                    val groupInfo = GroupLogic.getGroupInfo(gid)
+                    forward_single_avatar.showGroupAvatar(masterSecret.accountContext, gid)
+                    val groupInfo = GroupLogic.get(accountContext).getGroupInfo(gid)
                     forward_single_name.text = groupInfo?.displayName ?: ""
                 } else {
-                    forward_single_avatar.showPrivateAvatar(recipients[0])
+                    forward_single_avatar.showPrivateAvatar(masterSecret.accountContext, recipients[0])
                     forward_single_name.text = recipients[0].name
                 }
             }
@@ -240,18 +243,18 @@ class ChatForwardDialog : DialogFragment() {
             forwardHistory = true
             forward_mode_text.isActivated = true
             if (dialogType == FORWARD_GROUP_MULTIPLE) {
-                forward_history_layout.setHistoryData(groupMessageList, true)
+                forward_history_layout.setHistoryData(masterSecret.accountContext, groupMessageList, true)
             } else {
-                forward_history_layout.setHistoryData(privateMessageList, true)
+                forward_history_layout.setHistoryData(masterSecret.accountContext, privateMessageList, true)
             }
         } else {
             forward_mode_text.setDrawableLeft(R.drawable.chats_forward_unchecked)
             forwardHistory = false
             forward_mode_text.isActivated = false
             if (dialogType == FORWARD_GROUP_MULTIPLE) {
-                forward_history_layout.setHistoryData(groupMessageList, false)
+                forward_history_layout.setHistoryData(masterSecret.accountContext, groupMessageList, false)
             } else {
-                forward_history_layout.setHistoryData(privateMessageList, false)
+                forward_history_layout.setHistoryData(masterSecret.accountContext, privateMessageList, false)
             }
         }
     }
@@ -276,7 +279,7 @@ class ChatForwardDialog : DialogFragment() {
     private inner class AvatarAdapter : RecyclerView.Adapter<MultiAvatarViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MultiAvatarViewHolder {
             val view = layoutInflater.inflate(R.layout.chats_forward_multi_avatar, parent, false)
-            return MultiAvatarViewHolder(view)
+            return MultiAvatarViewHolder(masterSecret.accountContext, view)
         }
 
         override fun getItemCount() = recipients.size
@@ -286,11 +289,11 @@ class ChatForwardDialog : DialogFragment() {
         }
     }
 
-    private inner class MultiAvatarViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private inner class MultiAvatarViewHolder(private val accountContext: AccountContext, itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val avatar = itemView.findViewById<IndividualAvatarView>(R.id.forward_multi_avatar)
 
         fun setAvatar(recipient: Recipient) {
-            avatar.setPhoto(recipient)
+            avatar.setPhoto(accountContext, recipient)
         }
     }
 

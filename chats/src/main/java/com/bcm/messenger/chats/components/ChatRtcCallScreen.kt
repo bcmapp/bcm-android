@@ -21,6 +21,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.privatechat.webrtc.CameraState
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcViewModel
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
@@ -523,9 +524,9 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                 .append(StringAppearanceUtil.applyAppearance(timeString, 14.dp2Px()))
     }
 
-    private fun doUpdateCallCard(recipient: Recipient, status: String?) {
+    private fun doUpdateCallCard(accountContext: AccountContext, recipient: Recipient, status: String?) {
         try {
-            mPhotoView.setPhoto(recipient)
+            mPhotoView.setPhoto(accountContext, recipient)
             val request = GlideApp.with(context.applicationContext).asBitmap()
             val w = context.getScreenWidth()
             val h = context.getScreenHeight()
@@ -577,7 +578,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     }
 
 
-    private fun setCard(recipient: Recipient?, status: String? = null) {
+    private fun setCard(accountContext: AccountContext, recipient: Recipient?, status: String? = null) {
         this.mStatus = status
         if (recipient == null) {
             return
@@ -586,17 +587,17 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             mRecipient?.removeListener(this)
             mRecipient = recipient
             mRecipient?.addListener(this)
-            doUpdateCallCard(recipient, status)
+            doUpdateCallCard(accountContext, recipient, status)
 
             if (recipient.getPrivacyAvatar(true).isNullOrEmpty()) {
-                AmeModuleCenter.contact().checkNeedDownloadAvatar(true, recipient)
+                AmeModuleCenter.contact(accountContext)?.checkNeedDownloadAvatar(true, recipient)
             }
         }
     }
 
     override fun onModified(recipient: Recipient) {
         if (mRecipient == recipient) {
-            doUpdateCallCard(recipient, mStatus)
+            doUpdateCallCard(recipient.address.context(), recipient, mStatus)
         }
     }
 

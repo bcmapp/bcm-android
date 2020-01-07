@@ -58,7 +58,7 @@ object GroupMemberCore {
         } else {
             GroupCoreConstants.INVITE_MEMBER_TO_GROUP_URL
         }
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(uri), null, obj.toString(), object : TypeToken<ControlMemberResult>() {
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(uri), null, obj.toString(), object : TypeToken<ControlMemberResult>() {
 
         }.type)
     }
@@ -67,7 +67,7 @@ object GroupMemberCore {
     private data class GroupMembersRes(val members:List<GroupMemberListItemEntity>):NotGuard
     fun getGroupMembers(accountContext: AccountContext, gid: Long, uidList:List<String>): Observable<List<GroupMemberListItemEntity>> {
         val req = GroupMembersReq(gid, uidList)
-        return RxIMHttp.getHttp(accountContext).post<GroupMembersRes>(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_MEMBERS_URL), GsonUtils.toJson(req), GroupMembersRes::class.java)
+        return RxIMHttp.get(accountContext).post<GroupMembersRes>(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_MEMBERS_URL), GsonUtils.toJson(req), GroupMembersRes::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .map {

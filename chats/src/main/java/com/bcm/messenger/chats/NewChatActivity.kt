@@ -148,7 +148,7 @@ class NewChatActivity : SwipeBaseActivity() {
 
             }else {
                 AmePopup.loading.show(this@NewChatActivity)
-                ThreadListViewModel.getExistThreadId(recipient) {
+                ThreadListViewModel.getExistThreadId(accountContext, recipient) {
                     AmePopup.loading.dismiss()
 
                     finish()

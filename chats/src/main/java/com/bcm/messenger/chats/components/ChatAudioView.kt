@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.FrameLayout
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.util.ChatComponentListener
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.model.AttachmentDbModel
 import com.bcm.messenger.common.database.records.MessageRecord
@@ -55,6 +56,8 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
 
     private var mShowPending = false
     private var mCurrentControlView: View? = null
+
+    private var accountContext:AccountContext? = null
 
 
     private val progress: Double
@@ -103,7 +106,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
 
 
     fun setAudio(masterSecret: MasterSecret, messageRecord: AmeGroupMessageDetail) {
-
+        accountContext = masterSecret.accountContext
         mGroupMessage = messageRecord
         mPrivateMessage = null
 
@@ -127,7 +130,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
 
         this.audioSlidePlayer = AudioSlidePlayer.createFor(context, masterSecret, slide, this)
         audio_progress.progress = 0
-        updateMediaDuration(audioSlidePlayer, slide.duration)
+        updateMediaDuration(masterSecret.accountContext, audioSlidePlayer, slide.duration)
         if (slide.duration <= 0) {
             audioSlidePlayer?.prepareDuration()
         }
@@ -146,6 +149,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
 
     fun setAudio(masterSecret: MasterSecret, messageRecord: MessageRecord) {
 
+        accountContext = masterSecret.accountContext
         mPrivateMessage = messageRecord
         mGroupMessage = null
 
@@ -164,7 +168,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
 
         this.audioSlidePlayer = AudioSlidePlayer.createFor(context, masterSecret, slide, this)
         audio_progress.progress = 0
-        updateMediaDuration(audioSlidePlayer, slide.duration)
+        updateMediaDuration(masterSecret.accountContext, audioSlidePlayer, slide.duration)
         if (slide.duration <= 0) {
             audioSlidePlayer?.prepareDuration()
         }
@@ -210,11 +214,14 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
     }
 
     override fun onPrepare(player: AudioSlidePlayer?, totalMills: Long) {
-        updateMediaDuration(player, totalMills)
+        val accountContext = this.accountContext?:return
+        updateMediaDuration(accountContext, player, totalMills)
     }
 
     override fun onStart(player: AudioSlidePlayer?, totalMills: Long) {
-        updateMediaDuration(player, totalMills)
+        val accountContext = this.accountContext?:return
+
+        updateMediaDuration(accountContext, player, totalMills)
         if (this.audioSlidePlayer?.audioSlide == player?.audioSlide) {
             if (audio_pause.visibility != View.VISIBLE) {
                 togglePlayToPause()
@@ -263,7 +270,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         post { displayControl(audio_play) }
     }
 
-    private fun updateMediaDuration(player: AudioSlidePlayer?, duration: Long) {
+    private fun updateMediaDuration(accountContext: AccountContext, player: AudioSlidePlayer?, duration: Long) {
 
         ALog.d(TAG, "updateMediaDuration: $duration")
         val audioSlide = player?.audioSlide
@@ -273,8 +280,9 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
                 Observable.create<Boolean> {
                     mPrivateMessage?.let { record ->
                         val attachment = record.getAudioAttachment()
-                        if (attachment != null) {
-                            Repository.getAttachmentRepo().updateDuration(attachment.id, attachment.uniqueId, duration)
+                        val accountContext = this.accountContext
+                        if (attachment != null && accountContext != null) {
+                            Repository.getAttachmentRepo(accountContext)?.updateDuration(attachment.id, attachment.uniqueId, duration)
                         } else {
                             ALog.w(TAG, "Current audio is not a DatabaseAttachment")
                         }

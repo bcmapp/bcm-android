@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.ImageView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.imagepicker.widget.CropRoundCornerTransform
@@ -197,7 +198,9 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
     }
 
     override fun onModified(recipient: Recipient) {
-        chat_pin_recipient_photo.setPhoto(recipient)
+        if (recipient == messageDetailRecord?.getSender(recipient.address.context())) {
+            chat_pin_recipient_photo.setPhoto(recipient.address.context(), recipient)
+        }
     }
 
 
