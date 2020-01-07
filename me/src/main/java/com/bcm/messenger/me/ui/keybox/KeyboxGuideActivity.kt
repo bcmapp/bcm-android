@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.me_activity_keybox_guide.*
  * Created by zjl on 2018/8/15.
  */
 @Route(routePath = ARouterConstants.Activity.ME_KEYBOX_GUIDE)
+@Deprecated("Will be removed")
 class KeyboxGuideActivity : SwipeBaseActivity() {
 
     private val REQUEST_VERIFICATION_SCAN = 1001

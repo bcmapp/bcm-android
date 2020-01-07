@@ -25,6 +25,7 @@ import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.BcmFileUtils
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
@@ -355,19 +356,13 @@ class UserModuleImp : IUserModule
         throw Exception("login state failed")
     }
 
-    override fun gotoDataNote(context: Context) {
+    override fun gotoDataNote(context: Context, accountContext: AccountContext) {
         if (AmeNoteLogic.getInstance().isLocked()) {
             val intent = Intent(context, AmeNoteUnlockActivity::class.java)
-            if (context !is Activity) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            context.startActivity(intent)
+            context.startBcmActivity(accountContext, intent)
         } else {
             val intent = Intent(context, AmeNoteActivity::class.java)
-            if (context !is Activity) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            context.startActivity(intent)
+            context.startBcmActivity(accountContext, intent)
         }
     }
 

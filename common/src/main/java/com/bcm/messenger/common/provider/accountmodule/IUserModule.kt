@@ -3,6 +3,7 @@ package com.bcm.messenger.common.provider.accountmodule
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.recipients.Recipient
@@ -31,7 +32,7 @@ interface IUserModule : IAmeAccountModule {
 
     fun doForLogout()
 
-    fun gotoDataNote(context: Context)
+    fun gotoDataNote(context: Context, accountContext: AccountContext)
 
     fun gotoBackupTutorial()
 

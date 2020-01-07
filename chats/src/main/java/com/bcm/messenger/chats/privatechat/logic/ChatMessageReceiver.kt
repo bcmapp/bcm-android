@@ -154,7 +154,7 @@ class ChatMessageReceiver : IServerDataListener {
         }
 
         val context = AppContextHolder.APP_CONTEXT
-        val store = SignalProtocolStoreImpl(context)
+        val store = SignalProtocolStoreImpl(context, accountContext)
         try {
             for (device in deviceList) {
                 store.deleteSession(SignalProtocolAddress(device.number, SignalServiceAddress.DEFAULT_DEVICE_ID))

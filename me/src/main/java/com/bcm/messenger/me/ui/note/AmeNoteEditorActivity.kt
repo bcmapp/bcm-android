@@ -23,15 +23,15 @@ import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.me_note_editor_activity.*
 import java.lang.ref.WeakReference
 
-class AmeNoteEditorActivity: SwipeBaseActivity() {
+class AmeNoteEditorActivity : SwipeBaseActivity() {
     companion object {
         const val TOPIC_ID = "note_topic_id"
     }
 
-    private var topicId:String = ""
+    private var topicId: String = ""
     private var initContentHash = ""
     private val noteLogic = AmeNoteLogic.getInstance()
-    private var saveEvent:Disposable? = null
+    private var saveEvent: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,11 +66,11 @@ class AmeNoteEditorActivity: SwipeBaseActivity() {
         }
 
 
-        note_edit.setOnTouchListener (object : View.OnTouchListener{
+        note_edit.setOnTouchListener(object : View.OnTouchListener {
             private val movePoint = PointF(-1f, -1f)
             private var hideKeyboardOnUp = false
-            override fun onTouch(v: View?,  event: MotionEvent?): Boolean {
-                when(event?.action) {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                when (event?.action) {
                     MotionEvent.ACTION_DOWN -> {
                         movePoint.set(event.x, event.y)
                     }
@@ -87,8 +87,8 @@ class AmeNoteEditorActivity: SwipeBaseActivity() {
                         ALog.i("AmeNoteEditorActivity", "dis:${event.y - movePoint.y}")
 
                         if (movePoint.y >= 0 && event.y - movePoint.y > 300) {
-                          hideKeyboardOnUp = true
-                        } else if(hideKeyboardOnUp) {
+                            hideKeyboardOnUp = true
+                        } else if (hideKeyboardOnUp) {
                             hideKeyboardOnUp = false
                             movePoint.set(-1f, -1f)
                         }
@@ -132,9 +132,9 @@ class AmeNoteEditorActivity: SwipeBaseActivity() {
         }
     }
 
-    private fun initEditText(topicContent:String) {
-        if(isFinishing) {
-           return
+    private fun initEditText(topicContent: String) {
+        if (isFinishing) {
+            return
         }
 
         note_edit.setText(topicContent)
@@ -167,24 +167,21 @@ class AmeNoteEditorActivity: SwipeBaseActivity() {
         if (newNote.isNotBlank() && initContentHash != EncryptUtils.encryptSHA1ToString(newNote)) {
             val weakThis = WeakReference(this)
             if (topicId.isBlank()) {
-                noteLogic.addNote("", newNote, note_edit.selectionStart){
-                    succeed, topicId, error ->
+                noteLogic.addNote("", newNote, note_edit.selectionStart) { succeed, topicId, error ->
                     weakThis.get()?.updateTopic(topicId)
                 }
             } else {
-                noteLogic.updateNote(topicId, newNote, note_edit.selectionStart) {
-                    succeed, error ->
-                    weakThis.get()?.updateTopic(weakThis.get()?.topicId?:"")
+                noteLogic.updateNote(topicId, newNote, note_edit.selectionStart) { succeed, error ->
+                    weakThis.get()?.updateTopic(weakThis.get()?.topicId ?: "")
                 }
             }
-        } else if(newNote.isBlank() && topicId.isNotEmpty()) {
-            noteLogic.deleteNote(topicId){
-                _,_ ->
+        } else if (newNote.isBlank() && topicId.isNotEmpty()) {
+            noteLogic.deleteNote(topicId) { _, _ ->
             }
         }
     }
 
-    private fun updateTopic(topicId:String) {
+    private fun updateTopic(topicId: String) {
         if (isFinishing) {
             return
         }
@@ -204,10 +201,10 @@ class AmeNoteEditorActivity: SwipeBaseActivity() {
     private fun showPopMenu() {
         hideKeyboard()
         AmePopup.bottom.newBuilder()
-                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_note_forward)){
+                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_note_forward)) {
                     forward()
                 })
-                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_note_delete)){
+                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_note_delete)) {
                     showDeleteMenu()
                 })
                 .withDoneTitle(getString(R.string.common_cancel))
@@ -218,9 +215,8 @@ class AmeNoteEditorActivity: SwipeBaseActivity() {
         val wself = WeakReference(this)
         AmePopup.bottom.newBuilder()
                 .withTitle(getString(R.string.me_note_delete_note_title))
-                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_note_delete)){
-                    noteLogic.deleteNote(topicId) {
-                        succeed, error ->
+                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_note_delete)) {
+                    noteLogic.deleteNote(topicId) { succeed, error ->
                         if (succeed) {
                             wself.get()?.deleteNote()
                         }
@@ -238,7 +234,7 @@ class AmeNoteEditorActivity: SwipeBaseActivity() {
         finish()
     }
 
-    private fun forward(){
+    private fun forward() {
         val provider = AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)
         if (null != provider) {
             val newNote = note_edit.text.toString()

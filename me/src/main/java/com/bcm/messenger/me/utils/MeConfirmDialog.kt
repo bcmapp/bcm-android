@@ -3,7 +3,6 @@ package com.bcm.messenger.me.utils
 import android.app.Dialog
 import android.content.Context
 import android.os.Build
-import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.Window

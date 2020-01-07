@@ -141,7 +141,7 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
 
 
     private fun initGroupResource(activity: FragmentActivity, gid: Long) {
-        groupViewModel = ViewModelProviders.of(activity).get(GroupMediaBrowserViewModel::class.java)
+        groupViewModel = ViewModelProviders.of(activity, MediaBrowserModelFactory(accountContext)).get(GroupMediaBrowserViewModel::class.java)
         groupViewModel?.init(gid)
         groupViewModel?.loadMedia(browserType) {
             mediaData = it
@@ -150,7 +150,7 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
     }
 
     private fun initPrivateResource(activity: FragmentActivity, threadId: Long, masterSecret: MasterSecret) {
-        privateViewModel = ViewModelProviders.of(activity).get(PrivateMediaBrowseModel::class.java)
+        privateViewModel = ViewModelProviders.of(activity, MediaBrowserModelFactory(accountContext)).get(PrivateMediaBrowseModel::class.java)
         privateViewModel?.init(threadId, masterSecret)
         privateViewModel?.loadMedia(browserType) {
             mediaData = it

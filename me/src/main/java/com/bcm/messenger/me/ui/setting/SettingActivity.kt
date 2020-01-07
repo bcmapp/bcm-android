@@ -96,7 +96,7 @@ class SettingActivity : SwipeBaseActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && (!RomUtil.isMiui() || RomUtil.getMIUIVersionCode() >= 8)) {
                 gotoNotificationChannelSetting(AmeNotification.getDefaultChannel(baseContext))
             } else {
-                startBcmActivity(accountContext, Intent(this, NotificationSettingActivity::class.java))
+                startBcmActivity(Intent(this, NotificationSettingActivity::class.java))
             }
         }
 
@@ -104,7 +104,7 @@ class SettingActivity : SwipeBaseActivity() {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            startBcmActivityForResult(accountContext, Intent(this, LanguageSelectActivity::class.java), REQUEST_SETTING)
+            startBcmActivityForResult(Intent(this, LanguageSelectActivity::class.java), REQUEST_SETTING)
         }
 
         setting_tts.setOnClickListener {
@@ -153,14 +153,14 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
             val intent = Intent(it.context, ProxySettingActivity::class.java)
-            startBcmActivity(accountContext, intent)
+            startBcmActivity(intent)
         }
 
         setting_blocked_user.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            startBcmActivity(accountContext, Intent(this, BlockUsersActivity::class.java))
+            startBcmActivity(Intent(this, BlockUsersActivity::class.java))
         }
 
         setting_block_stranger.setSwitchEnable(false)
@@ -188,9 +188,9 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
             if (AmePinLogic.hasPin()) {
-                startBcmActivityForResult(accountContext, Intent(this, PinLockSettingActivity::class.java), REQUEST_SETTING)
+                startBcmActivityForResult(Intent(this, PinLockSettingActivity::class.java), REQUEST_SETTING)
             } else {
-                startBcmActivityForResult(accountContext, Intent(this, PinLockInitActivity::class.java), REQUEST_SETTING)
+                startBcmActivityForResult(Intent(this, PinLockInitActivity::class.java), REQUEST_SETTING)
             }
         }
 
@@ -200,8 +200,8 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
 
-            val newSecureEnable = !TextSecurePreferences.isScreenSecurityEnabled(this)
-            TextSecurePreferences.setScreenSecurityEnabled(this, newSecureEnable)
+            val newSecureEnable = !TextSecurePreferences.isScreenSecurityEnabled(accountContext)
+            TextSecurePreferences.setScreenSecurityEnabled(accountContext, newSecureEnable)
             setting_screen_secure.setSwitchStatus(newSecureEnable)
             updateScreenshotSecurity()
             if (newSecureEnable) {
@@ -218,8 +218,8 @@ class SettingActivity : SwipeBaseActivity() {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            val turnOnly = !TextSecurePreferences.isTurnOnly(it.context)
-            TextSecurePreferences.setTurnOnly(it.context, turnOnly)
+            val turnOnly = !TextSecurePreferences.isTurnOnly(accountContext)
+            TextSecurePreferences.setTurnOnly(accountContext, turnOnly)
             setting_rtc_p2p.setSwitchStatus(turnOnly)
         }
 
@@ -236,9 +236,13 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
             if (Locale.getDefault() == Locale.SIMPLIFIED_CHINESE) {
-                BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, BuildConfig.BCM_FAQ_ZH_ADDRESS).navigation(this)
+                BcmRouter.getInstance().get(ARouterConstants.Activity.WEB)
+                        .putString(ARouterConstants.PARAM.WEB_URL, BuildConfig.BCM_FAQ_ZH_ADDRESS)
+                        .startBcmActivity(accountContext, this)
             } else {
-                BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, BuildConfig.BCM_FAQ_EN_ADDRESS).navigation(this)
+                BcmRouter.getInstance().get(ARouterConstants.Activity.WEB)
+                        .putString(ARouterConstants.PARAM.WEB_URL, BuildConfig.BCM_FAQ_EN_ADDRESS)
+                        .startBcmActivity(accountContext, this)
             }
         }
 
@@ -247,7 +251,7 @@ class SettingActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
             val intent = Intent(this, AboutActivity::class.java)
-            startBcmActivity(accountContext, intent)
+            startBcmActivity(intent)
         }
     }
 
@@ -262,9 +266,9 @@ class SettingActivity : SwipeBaseActivity() {
             setting_storage?.setTip(StringAppearanceUtil.formatByteSizeString(it.storageUsed()), contentColor = tipColor)
         }
         setting_pin_lock.setTip(if (AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip), contentColor = tipColor)
-        setting_rtc_p2p.setSwitchStatus(TextSecurePreferences.isTurnOnly(this))
+        setting_rtc_p2p.setSwitchStatus(TextSecurePreferences.isTurnOnly(accountContext))
 
-        setting_screen_secure.setSwitchStatus(TextSecurePreferences.isScreenSecurityEnabled(this))
+        setting_screen_secure.setSwitchStatus(TextSecurePreferences.isScreenSecurityEnabled(accountContext))
 
         val weakThis = WeakReference(this)
         BcmUpdateUtil.checkUpdate { hasUpdate, _, _ ->

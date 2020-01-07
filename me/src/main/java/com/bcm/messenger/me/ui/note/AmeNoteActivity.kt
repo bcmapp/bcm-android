@@ -20,6 +20,7 @@ import com.bcm.messenger.common.ui.popup.BcmPopupMenu
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.DateUtils
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.bean.BcmNote
 import com.bcm.messenger.me.logic.AmeNoteLogic
@@ -48,8 +49,6 @@ class AmeNoteActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDe
     public override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
         this.setContentView(R.layout.me_note_activity)
-
-
 
         EventBus.getDefault().register(this)
 
@@ -89,7 +88,7 @@ class AmeNoteActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDe
     private fun toEdit(topicId: String) {
         val intent = Intent(this, AmeNoteEditorActivity::class.java)
         intent.putExtra(AmeNoteEditorActivity.TOPIC_ID, topicId)
-        startActivity(intent)
+        startBcmActivity(intent)
     }
 
     override fun onDestroy() {

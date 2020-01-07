@@ -44,7 +44,7 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
             activity?.finish()
             return
         }
-        recipient = Recipient.from(accountContext, address, true)
+        recipient = Recipient.from(address, true)
         recipient.addListener(this)
         initView()
     }

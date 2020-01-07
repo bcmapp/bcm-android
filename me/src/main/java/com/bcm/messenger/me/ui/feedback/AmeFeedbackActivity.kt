@@ -110,7 +110,6 @@ class AmeFeedbackActivity : SwipeBaseActivity() {
                         .setItemSpanCount(3)
                         .setPickPhotoLimit(selectSize)
                         .build().start()
-
             }
         }
     }

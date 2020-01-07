@@ -10,8 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -23,7 +21,6 @@ import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
 import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
 import com.bcm.messenger.me.ui.pinlock.PinInputActivity
 import com.bcm.messenger.me.ui.qrcode.ShowQRCodeActivity
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.ViewUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -153,10 +150,10 @@ class VerifyPasswordFragment : AbsRegistrationFragment() {
                             DELETE_BACKUP -> {
                                 AmeAppLifecycle.failure(getString(R.string.me_str_delete_account_key_success), true) {
                                     //删除备份
-                                    AmeLoginLogic.accountHistory.resetBackupState(AMELogin.uid)
+                                    AmeLoginLogic.accountHistory.resetBackupState(accountContext.uid)
                                     BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                            .navigation(activity)
+                                            .startBcmActivity(accountContext, activity)
                                 }
                             }
                             DELETE_PROFILE -> {
@@ -169,12 +166,12 @@ class VerifyPasswordFragment : AbsRegistrationFragment() {
                                 AmeAppLifecycle.failure(getString(R.string.me_str_delete_account_key_success), true) {
                                     //删除备份
                                     if (needFinish) {
-                                        if (AmeLoginLogic.isLogin()) {
+                                        if (AmeLoginLogic.isLogin(accountContext.uid)) {
                                             activity?.finish()
                                         } else {
                                             BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                                                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                                    .navigation(activity)
+                                                    .startBcmActivity(accountContext, activity)
                                         }
                                     }
                                 }
@@ -212,9 +209,7 @@ class VerifyPasswordFragment : AbsRegistrationFragment() {
             verify_pin_input_text?.setSelection(0)
             verify_pin_input_text?.isFocusable = true
             verify_pin_input_text?.requestFocus()
-            verify_pin_input_text?.let {
-                it.showKeyboard()
-            }
+            verify_pin_input_text?.showKeyboard()
         }, 250)
 
         activity?.window?.setStatusBarLightMode()
@@ -268,7 +263,7 @@ class VerifyPasswordFragment : AbsRegistrationFragment() {
                 val weakThis = WeakReference(this)
                 Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
                     try {
-                        val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(realUid), false)
+                        val recipient = Recipient.from(accountContext, realUid, false)
                         val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
                             avatar
                         } else {
@@ -283,7 +278,7 @@ class VerifyPasswordFragment : AbsRegistrationFragment() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ recipient ->
                             weakThis.get()?.verify_pin_name?.text = recipient.name
-                            weakThis.get()?.verify_pin_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                            weakThis.get()?.verify_pin_avatar?.setPhoto(accountContext, recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
                         }, {})
             }
         } else {

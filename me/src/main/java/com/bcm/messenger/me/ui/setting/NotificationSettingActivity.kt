@@ -2,7 +2,6 @@ package com.bcm.messenger.me.ui.setting
 
 import android.os.Bundle
 import android.provider.Settings
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.me.R
@@ -31,31 +30,31 @@ class NotificationSettingActivity : SwipeBaseActivity() {
         })
 
         setting_notification.setSwitchEnable(false)
-        setting_notification.setSwitchStatus(TextSecurePreferences.isNotificationsEnabled(AppContextHolder.APP_CONTEXT))
+        setting_notification.setSwitchStatus(TextSecurePreferences.isNotificationsEnabled(accountContext))
         setting_notification.setOnClickListener {
             val currentStatus = setting_notification.getSwitchStatus()
             setting_notification.setSwitchStatus(!currentStatus)
-            TextSecurePreferences.setNotificationsEnabled(AppContextHolder.APP_CONTEXT, !currentStatus)
+            TextSecurePreferences.setNotificationsEnabled(accountContext, !currentStatus)
         }
 
         setting_sound.setSwitchEnable(false)
-        setting_sound.setSwitchStatus(!TextSecurePreferences.getNotificationRingtone(AppContextHolder.APP_CONTEXT).isNullOrEmpty())
+        setting_sound.setSwitchStatus(!TextSecurePreferences.getNotificationRingtone(accountContext).isNullOrEmpty())
         setting_sound.setOnClickListener {
             val currentStatus = setting_sound.getSwitchStatus()
             setting_sound.setSwitchStatus(!currentStatus)
             if (currentStatus) {
-                TextSecurePreferences.setNotificationRingtone(this, "")
+                TextSecurePreferences.setNotificationRingtone(accountContext, "")
             } else {
-                TextSecurePreferences.setNotificationRingtone(this, Settings.System.DEFAULT_NOTIFICATION_URI.toString())
+                TextSecurePreferences.setNotificationRingtone(accountContext, Settings.System.DEFAULT_NOTIFICATION_URI.toString())
             }
         }
 
         setting_vibration.setSwitchEnable(false)
-        setting_vibration.setSwitchStatus(TextSecurePreferences.isNotificationVibrateEnabled(AppContextHolder.APP_CONTEXT))
+        setting_vibration.setSwitchStatus(TextSecurePreferences.isNotificationVibrateEnabled(accountContext))
         setting_vibration.setOnClickListener {
             val currentStatus = setting_vibration.getSwitchStatus()
             setting_vibration.setSwitchStatus(!currentStatus)
-            TextSecurePreferences.setNotificationVibrateEnabled(AppContextHolder.APP_CONTEXT, !currentStatus)
+            TextSecurePreferences.setNotificationVibrateEnabled(accountContext, !currentStatus)
         }
     }
 }

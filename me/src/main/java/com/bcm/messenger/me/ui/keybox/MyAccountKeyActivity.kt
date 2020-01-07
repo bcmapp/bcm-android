@@ -14,7 +14,6 @@ import android.view.View
 import androidx.core.content.FileProvider
 import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -145,7 +144,7 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
             val weakThis = WeakReference(this)
             Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
                 try {
-                    val recipient = Recipient.from(accountContext, Address.fromSerialized(realUid), false)
+                    val recipient = Recipient.from(accountContext, realUid, false)
                     val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
                         avatar
                     } else {
@@ -273,7 +272,6 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
 
     private fun handleBackupKey() {
         MeConfirmDialog.showBackupComplete(this, {}, {
-
             AmeLoginLogic.saveCurrentBackup(AmeTimeUtil.localTimeSecond())
             initData()
         })

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -20,7 +21,7 @@ import kotlinx.android.synthetic.main.me_fragment_forced_logout.*
 /**
  * Created by Kin on 2018/9/18
  */
-class ForcedLogOutFragment : Fragment() {
+class ForcedLogOutFragment : BaseFragment() {
 
     private val TAG = "ForcedLogOutFragment"
 
@@ -77,7 +78,7 @@ class ForcedLogOutFragment : Fragment() {
             return
         }
 
-        AmeModuleCenter.onLoginSucceed("")
+        AmeModuleCenter.onLoginSucceed(accountContext)
 
         BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

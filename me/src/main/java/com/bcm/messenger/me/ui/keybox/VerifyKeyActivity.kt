@@ -6,6 +6,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.hideKeyboard
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.login.LoginVerifyPinFragment
 import com.bcm.messenger.me.ui.login.RegistrationActivity
@@ -61,7 +62,7 @@ class VerifyKeyActivity : SwipeBaseActivity() {
                 hideKeyboard()
                 val intent = Intent(this, RegistrationActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-                this.startActivity(intent)
+                this.startBcmActivity(intent)
                 this.finish()
             } else {
                 super.onBackPressed()

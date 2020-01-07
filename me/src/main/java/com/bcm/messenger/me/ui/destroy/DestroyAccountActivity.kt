@@ -26,6 +26,7 @@ class DestroyAccountActivity : AppCompatActivity() {
         arg.putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ADDRESS))
         arg.putString(ARouterConstants.PARAM.PARAM_CLIENT_INFO, intent.getStringExtra(ARouterConstants.PARAM.PARAM_CLIENT_INFO))
         arg.putString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID, intent.getStringExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_ID))
+        arg.putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT))
         fragment.arguments = arg
         supportFragmentManager.beginTransaction()
                 .replace(R.id.destroy_container, fragment)

@@ -10,6 +10,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.audio.GlobalRinger
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmeNoteLogic
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -17,10 +18,10 @@ import kotlinx.android.synthetic.main.me_note_unlock_activity.*
 import java.lang.ref.WeakReference
 
 class AmeNoteUnlockActivity : SwipeBaseActivity() {
-    private lateinit var  unlockAnim:Animator
-    private lateinit var  globalRinger: GlobalRinger
+    private lateinit var unlockAnim: Animator
+    private lateinit var globalRinger: GlobalRinger
     private val scrollViewLayoutChanged = View.OnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-        if(note_unlock_scroll_view.getChildAt(0).height > (bottom-top)) {
+        if (note_unlock_scroll_view.getChildAt(0).height > (bottom - top)) {
             note_unlock_scroll_view.post {
                 note_unlock_scroll_view.fullScroll(View.FOCUS_DOWN)
             }
@@ -96,8 +97,8 @@ class AmeNoteUnlockActivity : SwipeBaseActivity() {
         globalRinger.stop()
     }
 
-    private fun showError(error:String) {
-        if(isFinishing) {
+    private fun showError(error: String) {
+        if (isFinishing) {
             return
         }
 
@@ -107,7 +108,7 @@ class AmeNoteUnlockActivity : SwipeBaseActivity() {
         me_note_unlock_password_edit?.error = error
     }
 
-    private fun pwdSucceed(duration:Long) {
+    private fun pwdSucceed(duration: Long) {
         if (isFinishing) {
             return
         }
@@ -128,18 +129,18 @@ class AmeNoteUnlockActivity : SwipeBaseActivity() {
         me_note_lock_background.setBackgroundResource(R.drawable.me_note_unlock_pwd_background)
 
 
-        AmeDispatcher.mainThread.dispatch ({
+        AmeDispatcher.mainThread.dispatch({
             wself.get()?.toNoteActivity()
-        },300)
+        }, 300)
     }
 
     private fun toNoteActivity() {
-        if(isFinishing) {
+        if (isFinishing) {
             return
         }
 
         val intent = Intent(this, AmeNoteActivity::class.java)
-        startActivity(intent)
+        startBcmActivity(intent)
 
         finish()
     }

@@ -14,7 +14,6 @@ import com.bcm.messenger.R
 import com.bcm.messenger.adapter.HomeAccountItem
 import com.bcm.messenger.adapter.TYPE_ADD
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
@@ -66,7 +65,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         set(value) {
             field = value
             accountContext = AMELogin.accountContext(field.account.uid)
-            recipient = Recipient.from(accountContext, Address.fromSerialized(field.account.uid), true)
+            recipient = Recipient.from(accountContext, field.account.uid, true)
         }
 
     private var recipient = Recipient.major()
@@ -199,7 +198,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
                 return@setOnClickListener
             }
             val meProvider = AmeProvider.get<IUserModule>(ARouterConstants.Provider.PROVIDER_USER_BASE)
-            meProvider?.gotoDataNote(context)
+            meProvider?.gotoDataNote(context, accountContext)
         }
         home_profile_air_chat_icon.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {

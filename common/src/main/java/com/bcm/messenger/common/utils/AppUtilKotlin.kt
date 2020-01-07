@@ -165,7 +165,7 @@ fun BcmRouterIntent.startBcmActivity(accountContext: AccountContext) {
     navigation()
 }
 
-fun BcmRouterIntent.startBcmActivity(accountContext: AccountContext, context: Context) {
+fun BcmRouterIntent.startBcmActivity(accountContext: AccountContext, context: Context?) {
     putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
     navigation(context)
 }

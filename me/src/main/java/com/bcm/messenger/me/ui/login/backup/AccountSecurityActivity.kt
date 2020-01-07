@@ -11,9 +11,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.DateUtils
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.bean.AmeAccountData
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
@@ -66,7 +64,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
             }
 
             val intent = Intent(this, ChangePasswordActivity::class.java)
-            startActivity(intent)
+            startBcmActivity(intent)
         }
 
         me_keybox.setOnClickListener {
@@ -177,7 +175,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
     private fun showQrCode() {
         val intent = Intent(this, MyAccountKeyActivity::class.java)
         intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, getAccountRecipient().address.serialize())
-        startActivity(intent)
+        startBcmActivity(intent)
     }
 
     private fun showAccountKeyDetails() {
@@ -194,6 +192,6 @@ class AccountSecurityActivity : SwipeBaseActivity() {
     }
 
     private fun showSafetyVerifyActivity() {
-        startActivityForResult(Intent(this, VerifyFingerprintActivity::class.java), SAFETY_VERIFY_CODE)
+        startBcmActivityForResult(Intent(this, VerifyFingerprintActivity::class.java), SAFETY_VERIFY_CODE)
     }
 }

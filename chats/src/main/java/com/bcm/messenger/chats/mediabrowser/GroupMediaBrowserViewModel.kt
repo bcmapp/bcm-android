@@ -16,7 +16,6 @@ import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.common.utils.MediaUtil
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -32,7 +31,7 @@ import kotlin.collections.ArrayList
 /**
  * Created by Kin on 2018/10/15
  */
-class GroupMediaBrowserViewModel(private val accountContext: AccountContext) : BaseMediaBrowserViewModel() {
+class GroupMediaBrowserViewModel(accountContext: AccountContext) : BaseMediaBrowserViewModel(accountContext) {
     private val TAG = "GroupMediaBrowserViewModel"
 
     private var gid = -1L // MUST set before invoking any functions.
@@ -284,7 +283,7 @@ class GroupMediaBrowserViewModel(private val accountContext: AccountContext) : B
             for (subList in dataList.values) {
                 for (data in subList) {
                     if ((data.msgSource as? AmeGroupMessageDetail)?.indexId == event.indexId) {
-                        CleanConversationStorageLogic.messageDeletedForConversation(data.getUserAddress(), data.getStorageType(), data.fileSize())
+                        CleanConversationStorageLogic.messageDeletedForConversation(data.getUserAddress(accountContext), data.getStorageType(), data.fileSize())
                         subList.remove(data)
                         mediaListLiveData.postValue(dataList)
                         return
