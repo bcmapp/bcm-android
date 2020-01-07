@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.bcmhttp.RxIMHttp
 import com.bcm.messenger.common.config.BcmFeatureSupport
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
@@ -334,7 +335,8 @@ object AmeLoginLogic {
                 AmeLoginCore.login(accountContext, loginParams)
                         .subscribeOn(AmeDispatcher.singleScheduler)
                         .observeOn(AmeDispatcher.singleScheduler)
-                        .doOnNext {
+                        .map {
+                            RxIMHttp.remove(accountContext)
                             loginSucceed(data.getAccountID(), registrationId, data.uid, keyPair, signalingKey, signalPassword, password, "")
                         }
                         .observeOn(AndroidSchedulers.mainThread())
@@ -344,6 +346,7 @@ object AmeLoginLogic {
                             ALog.e(TAG, "login error", it)
                             setTmpToken("", "")
 
+                            RxIMHttp.remove(accountContext)
                             AmeModuleCenter.metric(accountContext)?.loginEnd(false)
 
                             when (ServerCodeUtil.getNetStatusCode(it)) {
@@ -476,10 +479,12 @@ object AmeLoginLogic {
                     "", org.whispersystems.signalservice.internal.util.Base64.encodeBytes(getDeviceName().toByteArray()), true, true)
             val regParams = AmeRegisterParams(sign, nonce, accountParams)
 
-            AmeLoginCore.register(getAccountContext(uid), regParams)
+            val accountContext = getAccountContext(uid)
+            AmeLoginCore.register(accountContext, regParams)
                     .subscribeOn(AmeDispatcher.singleScheduler)
                     .observeOn(AmeDispatcher.singleScheduler)
-                    .doOnNext {
+                    .map {
+                        RxIMHttp.remove(accountContext)
                         registerSucceed(registrationId, uid, keyPair, signalingKey, signalPassword, password, passwordHint)
                     }
                     .doOnError {
@@ -489,6 +494,7 @@ object AmeLoginLogic {
                     .subscribe({
                         result(true)
                     }, {
+                        RxIMHttp.remove(accountContext)
                         ALog.logForSecret(TAG, "register error", it)
                         setTmpToken("", "")
                         result(false)
@@ -755,7 +761,7 @@ object AmeLoginLogic {
      * query nonce
      */
     private fun requestChallenge(uid: String): Observable<Pair<String, ChallengeResult>> {
-        return ProxyRetryChallenge.get(tmpAccountContext).request(uid)
+        return ProxyRetryChallenge.request(uid)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .map {
