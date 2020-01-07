@@ -336,7 +336,7 @@ class SchemeLaunchHelper(val context: Context) {
         val uid = data?.uid
         if (uid != null) {
             val address = Address.from(accountContext, uid)
-            ThreadListViewModel.getThreadId(Recipient.from(address, true)) {
+            ThreadListViewModel.getThreadId(accountContext, Recipient.from(address, true)) {
                 BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_CONVERSATION_PATH)
                         .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
                         .putLong(ARouterConstants.PARAM.PARAM_THREAD, it)

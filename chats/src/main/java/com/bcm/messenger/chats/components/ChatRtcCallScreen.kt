@@ -22,6 +22,7 @@ import com.bcm.messenger.chats.privatechat.webrtc.CameraState
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcViewModel
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
@@ -108,11 +109,18 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
     private val audioManager = AppContextHolder.APP_CONTEXT.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
+    private val accountContext: AccountContext
+
+    constructor(context: Context, accountContext: AccountContext) : super(context, null, 0) {
+        this.accountContext = accountContext
+    }
+
     constructor(context: Context) : this(context, null)
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {
+        this.accountContext = (context as SwipeBaseActivity).accountContext
         initialize()
     }
 
@@ -230,7 +238,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                         }
                     }
 
-                }else {
+                } else {
                     handleVideoAction(isChecked)
                 }
                 return granted
@@ -252,7 +260,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                             mActionLeftView.setChecked(isChecked)
                         }
                     }
-                }else {
+                } else {
                     handleLeftButtonAction(type, isChecked)
                 }
 
@@ -267,7 +275,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
                 val granted = if (type == ChatRtcCallItem.TYPE_SPEAKER) {
                     PermissionUtil.checkAudio(context)
-                }else {
+                } else {
                     PermissionUtil.checkCamera(context)
                 }
 
@@ -278,7 +286,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                                 mActionRightView.setChecked(isChecked)
                             }
                         }
-                    }else {
+                    } else {
                         PermissionUtil.checkCamera(context) {
                             if (it) {
                                 mActionRightView.setChecked(isChecked)
@@ -286,7 +294,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                         }
                     }
 
-                }else {
+                } else {
                     handleRightButtonAction(type, isChecked)
                 }
 
@@ -459,7 +467,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
         if (mActionRightView.getType() == ChatRtcCallItem.TYPE_SPEAKER) {
             mActionRightView.isEnabled = !checkPluginHeadsets()
             ALog.i(TAG, "updateSpeakerState, isEnable: ${mActionRightView.isEnabled}")
-        }else {
+        } else {
             mActionRightView.isEnabled = true
         }
     }
@@ -508,7 +516,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             this.mPhotoView.visibility = View.INVISIBLE
             this.mCallNameView.visibility = View.INVISIBLE
 
-        }else {
+        } else {
             this.mPhotoView.visibility = View.VISIBLE
             this.mCallNameView.visibility = View.VISIBLE
         }
@@ -526,17 +534,15 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
     private fun doUpdateCallCard(recipient: Recipient, status: String?) {
         try {
-            mPhotoView.setPhoto(recipient)
+            mPhotoView.setPhoto(accountContext, recipient)
             val request = GlideApp.with(context.applicationContext).asBitmap()
             val w = context.getScreenWidth()
             val h = context.getScreenHeight()
             val loadObj = if (!recipient.localAvatar.isNullOrEmpty()) {
                 recipient.localAvatar
-            }
-            else if (!recipient.bcmAvatar.isNullOrEmpty()) {
+            } else if (!recipient.bcmAvatar.isNullOrEmpty()) {
                 recipient.bcmAvatar
-            }
-            else {
+            } else {
                 IndividualAvatarView.getDefaultPortraitUrl(recipient)
             }
             request.load(loadObj)
@@ -560,11 +566,11 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                         val newBitmap = bitmap.copy(bitmap.config, true)
                         if (newBitmap == null) {
                             mPhotoBackground.setImageDrawable(null)
-                        }else {
+                        } else {
                             mPhotoBackground.setImageBitmap(newBitmap.blurBitmap(context, 25f))
                             mPhotoBackground.setColorFilter(context.getColorCompat(R.color.chats_rct_call_background_filter), PorterDuff.Mode.SRC_OVER)
                         }
-                    }catch (ex: Exception) {
+                    } catch (ex: Exception) {
                         ALog.e(TAG, "doUpdateCallCard error", ex)
                     }
                 }
@@ -590,7 +596,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             doUpdateCallCard(recipient, status)
 
             if (recipient.getPrivacyAvatar(true).isNullOrEmpty()) {
-                AmeModuleCenter.contact(recipient.address.context())?.checkNeedDownloadAvatar(true, recipient)
+                AmeModuleCenter.contact(accountContext)?.checkNeedDownloadAvatar(true, recipient)
             }
         }
     }
@@ -683,7 +689,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             intent.action = WebRtcCallService.ACTION_ANSWER_CALL
             context.startForegroundServiceCompat(intent)
 
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "handleAcceptCall error", ex)
         }
     }
@@ -707,7 +713,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                 context.startForegroundServiceCompat(intent)
             }
 
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "handleEndCall error", ex)
         }
     }
@@ -780,7 +786,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
         ALog.d(TAG, "handleCallConnected")
         if (mMiniMode) {
             mVideoView.visibility = View.GONE
-        }else {
+        } else {
             mVideoView.visibility = View.VISIBLE
         }
         mActionLeftView.visibility = View.VISIBLE
@@ -895,7 +901,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
         ALog.d(TAG, "handleRightButtonAction switch: $switchStatus")
         if (type == ChatRtcCallItem.TYPE_SPEAKER) {
             handleSpeaker(switchStatus)
-        } else if(type == ChatRtcCallItem.TYPE_SWITCH) {
+        } else if (type == ChatRtcCallItem.TYPE_SWITCH) {
             handleCameraSwitch(switchStatus)
         }
     }

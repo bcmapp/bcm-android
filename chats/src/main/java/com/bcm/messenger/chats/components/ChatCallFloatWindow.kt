@@ -13,6 +13,7 @@ import com.bcm.messenger.chats.privatechat.webrtc.CameraState
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcViewModel
 import com.bcm.messenger.chats.provider.ChatModuleImp
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -66,7 +67,7 @@ object ChatCallFloatWindow {
             return mParams
         }
 
-        internal fun show(event: WebRtcViewModel?, delay: Int, callback: ActionCallback? = null) {
+        internal fun show(accountContext: AccountContext, event: WebRtcViewModel?, delay: Int, callback: ActionCallback? = null) {
             if (mShowing) {
                 return
             }
@@ -76,7 +77,7 @@ object ChatCallFloatWindow {
                 delay
             }
             mHandler.postDelayed({
-                handleShow(event)
+                handleShow(accountContext, event)
 
                 callback?.onComplete()
 
@@ -100,7 +101,7 @@ object ChatCallFloatWindow {
             }, d.toLong())
         }
 
-        private fun handleShow(event: WebRtcViewModel?) {
+        private fun handleShow(accountContext: AccountContext, event: WebRtcViewModel?) {
             try {
                 val context = mContextReference?.get() ?: return
                 val wmParams = getWindowParams(context)
@@ -111,7 +112,7 @@ object ChatCallFloatWindow {
                 wmParams.y = context.resources.getDimensionPixelSize(R.dimen.chats_webrtc_call_mini_y)
 
                 mWM = windowManager
-                val screen = ChatRtcCallScreen(context)
+                val screen = ChatRtcCallScreen(context, accountContext)
                 mScreen = screen
                 screen.setCallState(event, true)
 
@@ -199,12 +200,12 @@ object ChatCallFloatWindow {
         fun onComplete()
     }
 
-    fun show(event: WebRtcViewModel?) {
+    fun show(accountContext: AccountContext, event: WebRtcViewModel?) {
         if (mController == null) {
             mController = FloatController(AppContextHolder.APP_CONTEXT)
         }
         if (mController?.isShowing() == false) {
-            mController?.show(event, SHOW_DELAY)
+            mController?.show(accountContext, event, SHOW_DELAY)
         }
     }
 

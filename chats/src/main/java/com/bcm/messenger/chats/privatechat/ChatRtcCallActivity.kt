@@ -118,7 +118,7 @@ class ChatRtcCallActivity : SwipeBaseActivity() {
         if (checkOverlaysPermission()) {
             if (isFinish) {
                 if (!isEnd) {
-                    ChatCallFloatWindow.show(chats_rtc_screen.getCurrentCallEvent())
+                    ChatCallFloatWindow.show(accountContext, chats_rtc_screen.getCurrentCallEvent())
                 }
                 finish()
             }

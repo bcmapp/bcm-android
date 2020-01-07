@@ -261,7 +261,7 @@ class SettingActivity : SwipeBaseActivity() {
 
         updateStrangerState()
         setting_storage.setTip(getString(R.string.me_setting_data_stoarge_calulating_tip), contentColor = tipColor)
-        mChatModule?.queryAllConversationStorageSize {
+        mChatModule?.queryAllConversationStorageSize(accountContext) {
             ALog.i(TAG, "queryAllConversationStorageSize  callback")
             setting_storage?.setTip(StringAppearanceUtil.formatByteSizeString(it.storageUsed()), contentColor = tipColor)
         }

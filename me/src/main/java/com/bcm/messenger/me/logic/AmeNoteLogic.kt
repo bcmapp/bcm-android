@@ -1,8 +1,9 @@
 package com.bcm.messenger.me.logic
 
 import android.annotation.SuppressLint
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
-import com.bcm.messenger.common.database.db.UserDatabase
+import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.room.dao.NoteRecordDao
 import com.bcm.messenger.common.grouprepository.room.entity.NoteRecord
 import com.bcm.messenger.common.provider.AMELogin
@@ -10,7 +11,6 @@ import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.bean.BcmNote
 import com.bcm.messenger.utility.AmeTimeUtil
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -447,21 +447,21 @@ class AmeNoteLogic : AppForeground.IForegroundEvent {
         }
     }
 
-    private fun noteStorePath(): String {
-        return AMELogin.accountDir + NOTE_LOCAL_DIR
+    private fun noteStorePath(accountContext: AccountContext): String {
+        return accountContext.accountDir + NOTE_LOCAL_DIR
     }
 
-    private fun getDao(): NoteRecordDao {
-        return UserDatabase.getDatabase().noteRecordDao()
+    private fun getDao(accountContext: AccountContext): NoteRecordDao? {
+        return Repository.getNoteRecordRepo(accountContext)
     }
 
-    private fun encodeTopic(topic: String): String {
+    private fun encodeTopic(accountContext: AccountContext, topic: String): String {
         if (topic.isEmpty()) {
             return ""
         }
 
         try {
-            val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(AppContextHolder.APP_CONTEXT)
+            val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(accountContext)
 
             val bytes = EncryptUtils.aes256EncryptAndBase64(topic, myKeyPair.privateKey.serialize())
 
@@ -476,13 +476,13 @@ class AmeNoteLogic : AppForeground.IForegroundEvent {
         return ""
     }
 
-    private fun decodeTopic(encryptedTopic: String): String {
+    private fun decodeTopic(accountContext: AccountContext, encryptedTopic: String): String {
         if (encryptedTopic.isEmpty()) {
             return ""
         }
 
         try {
-            val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(AppContextHolder.APP_CONTEXT)
+            val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(accountContext)
             val bytes = EncryptUtils.base64Decode(encryptedTopic.toByteArray())
 
             if (bytes.size <= HASH_LEN) {

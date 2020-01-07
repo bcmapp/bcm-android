@@ -43,9 +43,9 @@ class SwitchAccountAdapter {
         override fun onCreateView(parent: ViewGroup): View? {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.me_layout_logout_selection_view, parent, true)
 
-            photoView = view.findViewById<IndividualAvatarView>(R.id.user_icon)
-            nickNameView = view.findViewById<TextView>(R.id.user_nick_name)
-            titleView = view.findViewById<TextView>(R.id.logout_option_title)
+            photoView = view.findViewById(R.id.user_icon)
+            nickNameView = view.findViewById(R.id.user_nick_name)
+            titleView = view.findViewById(R.id.logout_option_title)
 
             val checkBox = view.findViewById<CheckBox>(R.id.logout_option_check)
             checkBox.setOnCheckedChangeListener { _, isChecked ->

@@ -1,6 +1,7 @@
 package com.bcm.messenger.common.provider.accountmodule
 
 import android.content.Context
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.bean.ConversationStorage
 
@@ -46,7 +47,7 @@ interface IChatModule : IAmeAccountModule {
     /**
      * collection media storage size
      */
-    fun queryAllConversationStorageSize(callback: ((result: ConversationStorage) -> Unit)?)
+    fun queryAllConversationStorageSize(accountContext: AccountContext, callback: ((result: ConversationStorage) -> Unit)?)
 
     /**
      * finish collection storage state

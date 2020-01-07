@@ -81,6 +81,7 @@ class ChatModuleImp : IChatModule {
             intent.action = WebRtcCallService.ACTION_OUTGOING_CALL
             intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, address)
             intent.putExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, callType)
+            intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
             context.startForegroundServiceCompat(intent)
         } catch (ex: Exception) {
             ALog.e(TAG, "startRtcCallService fail", ex)
@@ -346,7 +347,7 @@ class ChatModuleImp : IChatModule {
         MediaBrowserActivity.router(accountContext, address, deleteMode)
     }
 
-    override fun queryAllConversationStorageSize(callback: ((result: ConversationStorage) -> Unit)?) {
+    override fun queryAllConversationStorageSize(accountContext: AccountContext, callback: ((result: ConversationStorage) -> Unit)?) {
         CleanConversationStorageLogic.addCallback(callback = object : CleanConversationStorageLogic.ConversationStorageCallback {
             override fun onCollect(finishedConversation: Address?, allFinished: Boolean) {
                 if (finishedConversation == null && allFinished) {

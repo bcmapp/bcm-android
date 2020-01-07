@@ -27,15 +27,18 @@ import com.bcm.messenger.chats.privatechat.webrtc.audio.OutgoingRinger;
 import com.bcm.messenger.chats.privatechat.webrtc.audio.SignalAudioManager;
 import com.bcm.messenger.chats.privatechat.webrtc.locks.LockManager;
 import com.bcm.messenger.common.ARouterConstants;
+import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.AmeLanguageUtilsKt;
 import com.bcm.messenger.common.database.model.PrivateChatDbModel;
+import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.event.MessageReceiveNotifyEvent;
 import com.bcm.messenger.common.metrics.MetricsConstKt;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
-import com.bcm.messenger.common.provider.AMELogin;
+import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.provider.accountmodule.IChatModule;
+import com.bcm.messenger.common.provider.accountmodule.IMetricsModule;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.utils.AppUtil;
 import com.bcm.messenger.common.utils.AppUtilKotlinKt;
@@ -156,7 +159,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     public static final long FINISH_BUSY_DELAY = 5000L;
     static final int NOTIFICATION_NONE = 0;
     static final int NOTIFICATION_SIMPLY = 1;
-   
+
     static final int NOTIFICATION_IMPORTANT = 2;
     private static int sCurrentCallType = -1;
     public static void checkHasWebRtcCall() {
@@ -169,17 +172,16 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         sCurrentCallType = -1;
     }
 
-    
     private static void startCallActivity(int callType) {
         sCurrentCallType = callType;
         ALog.i(TAG, "start call activity:" + callType);
-        
+
         IChatModule provider = (IChatModule) BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONVERSATION_BASE).navigation();
         provider.startRtcCallActivity(AppContextHolder.APP_CONTEXT, callType);
     }
 
-    private AtomicReference<CallState> callState = new AtomicReference<>(CallState.STATE_IDLE); 
-   
+    private AtomicReference<CallState> callState = new AtomicReference<>(CallState.STATE_IDLE);
+
     private AtomicBoolean mIncoming = new AtomicBoolean(false);
 
     private CameraState localCameraState = CameraState.UNKNOWN;
@@ -226,11 +228,11 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     private ScheduledExecutorService timeoutExecutor = Executors.newScheduledThreadPool(1);
 
     /**
-     * 
+     *
      */
     private ScheduledFuture timeoutFuture;
     /**
-     * 
+     *
      */
     private long mBeginTimestamp = 0;
 
@@ -238,7 +240,8 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
     private String currentMetric = "";
 
-    private AtomicBoolean mMsgInserted = new AtomicBoolean(false); //
+    private AtomicBoolean mMsgInserted = new AtomicBoolean(false);
+    private AccountContext accountContext;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -442,11 +445,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         }
     }
 
-    /**
-     * 
-     *
-     * @param intent
-     */
     private void handleExpiredIncoming(final Intent intent) throws Exception {
         if (!callState.compareAndSet(CallState.STATE_IDLE, CallState.STATE_ANSWERING)) {
             ALog.w(TAG, "handleExpiredIncoming fail, current state is not idle");
@@ -454,7 +452,8 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         }
         this.mIncoming.set(true);
         this.recipient = getRemoteRecipient(intent);
-        insertMissedCall(this.recipient, NOTIFICATION_IMPORTANT);
+
+        insertMissedCall(getAccountContextFromIntent(intent), this.recipient, NOTIFICATION_IMPORTANT);
         terminate();
     }
 
@@ -464,7 +463,11 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             ALog.w(TAG, "handleIncomingCall fail, current state is not idle");
             throw new IllegalStateException("Incoming on non-idle");
         }
+        if (this.accountContext != null && !this.accountContext.equals(getAccountContextFromIntent(intent))) {
+            return;
+        }
         // Set current metric step is callee get turn server
+        this.accountContext = getAccountContextFromIntent(intent);
         this.currentMetric = MetricsConstKt.COUNTER_CALLEE_GET_TURN_SERVER;
         this.mIncoming.set(true);
         final String offer = intent.getStringExtra(EXTRA_REMOTE_DESCRIPTION);
@@ -483,6 +486,8 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         retrieveTurnServers().addListener(new SuccessOnlyListener<List<PeerConnection.IceServer>>(CallState.STATE_ANSWERING, this.callId) {
             @Override
             public void onSuccessContinue(List<PeerConnection.IceServer> result) {
+                final IMetricsModule metricsModule = AmeModuleCenter.INSTANCE.metric(WebRtcCallService.this.accountContext);
+
                 try {
                     ALog.logForSecret(TAG, "handleIncomingCall " + formatter.toJson(result));
 
@@ -491,13 +496,16 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                     }
 
                     // Callee get turn server success, report success, set next step
-                    ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, false);
-                    ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, true);
+                    if (metricsModule != null) {
+                        metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, false);
+                        metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, true);
+                    }
                     currentMetric = MetricsConstKt.COUNTER_CALLEE_SEND_ANSWER;
 
-                    boolean isAlwaysTurn = TextSecurePreferences.isTurnOnly(WebRtcCallService.this);
+                    boolean isAlwaysTurn = TextSecurePreferences.isTurnOnly(WebRtcCallService.this.accountContext);
 
-                    WebRtcCallService.this.peerConnection = new PeerConnectionWrapper(WebRtcCallService.this, peerConnectionFactory, WebRtcCallService.this, localRenderer, result, WebRtcCallService.this, eglBase, isAlwaysTurn);
+                    WebRtcCallService.this.peerConnection = new PeerConnectionWrapper(WebRtcCallService.this, peerConnectionFactory,
+                            WebRtcCallService.this, localRenderer, result, WebRtcCallService.this, eglBase, isAlwaysTurn);
                     WebRtcCallService.this.peerConnection.setRemoteDescription(new SessionDescription(SessionDescription.Type.OFFER, offer));
                     WebRtcCallService.this.lockManager.updatePhoneState(LockManager.PhoneState.PROCESSING);
 
@@ -505,7 +513,8 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                     ALog.logForSecret(TAG, "Answer SDP: " + sdp.description);
                     WebRtcCallService.this.peerConnection.setLocalDescription(sdp);
 
-                    ListenableFutureTask<Boolean> listenableFutureTask = sendMessage(recipient, SignalServiceCallMessage.forAnswer(new AnswerMessage(WebRtcCallService.this.callId, sdp.description)));
+                    ListenableFutureTask<Boolean> listenableFutureTask = sendMessage(WebRtcCallService.this.accountContext, recipient,
+                            SignalServiceCallMessage.forAnswer(new AnswerMessage(WebRtcCallService.this.callId, sdp.description)));
 
                     for (IceCandidate candidate : pendingIncomingIceUpdates) {
                         WebRtcCallService.this.peerConnection.addIceCandidate(candidate);
@@ -516,17 +525,21 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                         listenableFutureTask.addListener(new FailureListener<Boolean>(CallState.STATE_ANSWERING, callId) {
                             @Override
                             public void onSuccessContinue(Boolean result) {
-                                ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, false);
-                                ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, true);
+                                if (metricsModule != null) {
+                                    metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, false);
+                                    metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, true);
+                                }
                                 currentMetric = MetricsConstKt.COUNTER_CALLEE_ICE_UPDATE;
                             }
 
                             @Override
                             public void onFailureContinue(Throwable throwable) {
-                                insertMissedCall(recipient, NOTIFICATION_IMPORTANT);
+                                insertMissedCall(WebRtcCallService.this.accountContext, recipient, NOTIFICATION_IMPORTANT);
 
-                                ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
-                                ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                                if (metricsModule != null) {
+                                    metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
+                                    metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                                }
 
                                 sendMessage(WebRtcViewModel.State.NETWORK_FAILURE, recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
                                 terminate();
@@ -537,8 +550,10 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                 } catch (Exception e) {
                     ALog.logForSecret(TAG, "handleIncomingCall error", e);
 
-                    ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
-                    ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                    if (metricsModule != null) {
+                        metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
+                        metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                    }
 
                     sendMessage(WebRtcViewModel.State.NETWORK_FAILURE, recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
                     terminate();
@@ -554,6 +569,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             ALog.w(TAG, "handleOutgoingCall fail, current call state is not idle");
             throw new IllegalStateException("Dialing from non-idle");
         }
+        this.accountContext = getAccountContextFromIntent(intent);
         // Set current metric step is caller get turn server
         this.currentMetric = MetricsConstKt.COUNTER_CALLER_GET_TURN_SERVER;
         this.mIncoming.set(false);
@@ -584,6 +600,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         retrieveTurnServers().addListener(new SuccessOnlyListener<List<PeerConnection.IceServer>>(CallState.STATE_DIALING, this.callId) {
             @Override
             public void onSuccessContinue(List<PeerConnection.IceServer> result) {
+                final IMetricsModule metricsModule = AmeModuleCenter.INSTANCE.metric(WebRtcCallService.this.accountContext);
                 try {
                     ALog.logForSecret(TAG, "handleOutgoingCall " + formatter.toJson(result));
 
@@ -592,13 +609,16 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                     }
 
                     // Caller get turn server success
-                    ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, false);
-                    ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, true);
+                    if (metricsModule != null) {
+                        metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, false);
+                        metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, true);
+                    }
                     currentMetric = MetricsConstKt.COUNTER_CALLER_SEND_OFFER;
 
-                    boolean isAlwaysTurn = TextSecurePreferences.isTurnOnly(WebRtcCallService.this);
+                    boolean isAlwaysTurn = TextSecurePreferences.isTurnOnly(WebRtcCallService.this.accountContext);
 
-                    WebRtcCallService.this.peerConnection = new PeerConnectionWrapper(WebRtcCallService.this, peerConnectionFactory, WebRtcCallService.this, localRenderer, result, WebRtcCallService.this, eglBase, isAlwaysTurn);
+                    WebRtcCallService.this.peerConnection = new PeerConnectionWrapper(WebRtcCallService.this, peerConnectionFactory,
+                            WebRtcCallService.this, localRenderer, result, WebRtcCallService.this, eglBase, isAlwaysTurn);
                     WebRtcCallService.this.dataChannel = WebRtcCallService.this.peerConnection.createDataChannel(DATA_CHANNEL_NAME);
                     WebRtcCallService.this.dataChannel.registerObserver(WebRtcCallService.this);
 
@@ -607,14 +627,17 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
                     ALog.logForSecret(TAG, "Sending offer: " + sdp.description);
 
-                    ListenableFutureTask<Boolean> listenableFutureTask = sendMessage(recipient, SignalServiceCallMessage.forOffer(new OfferMessage(WebRtcCallService.this.callId, sdp.description)));
+                    ListenableFutureTask<Boolean> listenableFutureTask = sendMessage(WebRtcCallService.this.accountContext, recipient,
+                            SignalServiceCallMessage.forOffer(new OfferMessage(WebRtcCallService.this.callId, sdp.description)));
                     if (listenableFutureTask != null) {
                         listenableFutureTask.addListener(new FailureListener<Boolean>(CallState.STATE_DIALING, callId) {
                             @Override
                             public void onSuccessContinue(Boolean result) {
                                 ALog.i(TAG, "Send offer success");
-                                ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, false);
-                                ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, true);
+                                if (metricsModule != null) {
+                                    metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, false);
+                                    metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, true);
+                                }
                                 currentMetric = MetricsConstKt.COUNTER_CALLER_RECEIVED_ANSWER;
                             }
 
@@ -630,8 +653,10 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                                     sendMessage(WebRtcViewModel.State.NETWORK_FAILURE, recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
                                 }
 
-                                ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
-                                ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                                if (metricsModule != null) {
+                                    metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
+                                    metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                                }
 
                                 terminate();
                             }
@@ -641,8 +666,10 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                 } catch (Exception e) {
                     ALog.logForSecret(TAG, "handleOutgoingCall error", e);
 
-                    ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
-                    ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                    if (metricsModule != null) {
+                        metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
+                        metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                    }
 
                     sendMessage(WebRtcViewModel.State.NETWORK_FAILURE, recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
                     terminate();
@@ -653,17 +680,23 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     }
 
     private void handleResponseMessage(Intent intent) {
-
         try {
             ALog.logForSecret(TAG, "Got response: " + intent.getStringExtra(EXTRA_REMOTE_DESCRIPTION));
             CallState currentState = this.callState.get();
-            if (currentState != CallState.STATE_DIALING || !getRemoteRecipient(intent).equals(recipient) || !Util.isEquals(this.callId, getCallId(intent))) {
+            AccountContext currentAccount = getAccountContextFromIntent(intent);
+            if (currentState != CallState.STATE_DIALING ||
+                    !getRemoteRecipient(intent).equals(recipient) ||
+                    !Util.isEquals(this.callId, getCallId(intent)) ||
+                    !this.accountContext.equals(currentAccount)) {
                 ALog.logForSecret(TAG, "Got answer for recipient and call id we're not currently dialing: " + getCallId(intent) + ", " + getRemoteRecipient(intent));
                 return;
             }
 
-            ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, false);
-            ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, true);
+            final IMetricsModule metricsModule = AmeModuleCenter.INSTANCE.metric(this.accountContext);
+            if (metricsModule != null) {
+                metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, false);
+                metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, true);
+            }
             currentMetric = MetricsConstKt.COUNTER_CALLER_ICE_UPDATE;
 
             if (peerConnection == null || pendingOutgoingIceUpdates == null) {
@@ -671,7 +704,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             }
 
             if (!pendingOutgoingIceUpdates.isEmpty()) {
-                ListenableFutureTask<Boolean> listenableFutureTask = sendMessage(recipient, SignalServiceCallMessage.forIceUpdates(pendingOutgoingIceUpdates));
+                ListenableFutureTask<Boolean> listenableFutureTask = sendMessage(this.accountContext, recipient, SignalServiceCallMessage.forIceUpdates(pendingOutgoingIceUpdates));
                 if (listenableFutureTask != null) {
                     listenableFutureTask.addListener(new FailureListener<Boolean>(currentState, callId) {
                         @Override
@@ -679,8 +712,10 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                             ALog.e(TAG, "sendMessage", error);
                             sendMessage(WebRtcViewModel.State.NETWORK_FAILURE, recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
 
-                            ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
-                            ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                            if (metricsModule != null) {
+                                metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
+                                metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                            }
 
                             terminate();
                         }
@@ -703,6 +738,9 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
     private void handleRemoteIceCandidate(Intent intent) {
         ALog.w(TAG, "remoteIce candidate...");
+        if (!this.accountContext.equals(getAccountContextFromIntent(intent))) {
+            return;
+        }
 
         if (Util.isEquals(this.callId, getCallId(intent))) {
             IceCandidate candidate = new IceCandidate(intent.getStringExtra(EXTRA_ICE_SDP_MID),
@@ -744,7 +782,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             return;
         }
 
-        ListenableFutureTask<Boolean> listenableFutureTask = sendMessage(recipient, SignalServiceCallMessage.forIceUpdate(iceUpdateMessage));
+        ListenableFutureTask<Boolean> listenableFutureTask = sendMessage(this.accountContext, recipient, SignalServiceCallMessage.forIceUpdate(iceUpdateMessage));
         if (listenableFutureTask != null) {
             listenableFutureTask.addListener(new FailureListener<Boolean>(currentState, callId) {
                 @Override
@@ -752,8 +790,11 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                     ALog.e(TAG, "sendMessage", error);
                     sendMessage(WebRtcViewModel.State.NETWORK_FAILURE, recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
 
-                    ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
-                    ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                    IMetricsModule metricsModule = AmeModuleCenter.INSTANCE.metric(WebRtcCallService.this.accountContext);
+                    if (metricsModule != null) {
+                        metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
+                        metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                    }
 
                     terminate();
                 }
@@ -822,7 +863,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             return;
         }
 
-        
         startCallActivity(CameraState.Direction.NONE.ordinal());
         setCallInProgressNotification(TYPE_ESTABLISHED, recipient);
 
@@ -863,11 +903,12 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         this.mIncoming.set(true);
         Recipient recipient = getRemoteRecipient(intent);
         long callId = getCallId(intent);
-        sendMessage(recipient, SignalServiceCallMessage.forBusy(new BusyMessage(callId)));
+        AccountContext accountContext = getAccountContextFromIntent(intent);
+        sendMessage(accountContext, recipient, SignalServiceCallMessage.forBusy(new BusyMessage(callId)));
     }
 
     /**
-     * 
+     *
      *
      * @param intent
      */
@@ -882,8 +923,13 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             return;
         }
 
+        if (this.accountContext == null || !this.accountContext.equals(getAccountContextFromIntent(intent))) {
+            ALog.w(TAG, "Not current major user.");
+            return;
+        }
+
         sendMessage(WebRtcViewModel.State.CALL_BUSY, recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
-        insertMissedCall(recipient, NOTIFICATION_IMPORTANT);
+        insertMissedCall(this.accountContext, recipient, NOTIFICATION_IMPORTANT);
 
         audioManager.startOutgoingRinger(OutgoingRinger.Type.BUSY);
 
@@ -892,6 +938,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             intent1.setAction(ACTION_LOCAL_HANGUP);
             intent1.putExtra(EXTRA_CALL_ID, callId);
             intent1.putExtra(EXTRA_REMOTE_ADDRESS, recipient.getAddress());
+            intent1.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, this.accountContext);
             AppUtilKotlinKt.startForegroundServiceCompat(WebRtcCallService.this, intent1);
             return null;
         }, FINISH_BUSY_DELAY);
@@ -904,17 +951,24 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         if (this.callId != -1L && this.callId == intent.getLongExtra(EXTRA_CALL_ID, -1) && currentState != CallState.STATE_CONNECTED) {
             ALog.w(TAG, "Timing out call: " + this.callId);
 
+            if (this.accountContext == null || !this.accountContext.equals(getAccountContextFromIntent(intent))) {
+                return;
+            }
+
             if (this.recipient != null) {
                 sendMessage(WebRtcViewModel.State.CALL_DISCONNECTED, this.recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
 
                 if (currentState == CallState.STATE_ANSWERING || currentState == CallState.STATE_LOCAL_RINGING || currentState == CallState.STATE_REMOTE_RINGING) {
-                    insertMissedCall(this.recipient, NOTIFICATION_IMPORTANT);
+                    insertMissedCall(this.accountContext, this.recipient, NOTIFICATION_IMPORTANT);
                 }
             }
 
             if (!currentMetric.equals(MetricsConstKt.COUNTER_CALLER_ICE_CONNECTED) && !currentMetric.equals(MetricsConstKt.COUNTER_CALLEE_ICE_CONNECTED)) {
-                ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
-                ReportUtil.INSTANCE.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                IMetricsModule metricsModule = AmeModuleCenter.INSTANCE.metric(WebRtcCallService.this.accountContext);
+                if (metricsModule != null) {
+                    metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_FAILED, true);
+                    metricsModule.addCustomCounterReportData(currentMetric, MetricsConstKt.CALL_SUCCESS, false);
+                }
             }
 
             terminate();
@@ -929,38 +983,43 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         }
     }
 
-    private void insertMissedCall(@NonNull Recipient recipient, int notifyType) {
+    private void insertMissedCall(@NonNull AccountContext accountContext, @NonNull Recipient recipient, int notifyType) {
         if (!mMsgInserted.getAndSet(true)) {
             ALog.logForSecret(TAG, "insertMissedCall address: " + recipient.getAddress() + ", incoming: " + mIncoming);
 
-            Pair<Long, Long> result = null;
-            if (mIncoming.get()) {
-                result = Repository.getChatRepo().insertIncomingMissedCall(recipient.getAddress().serialize());
-            } else {
-                result = Repository.getChatRepo().insertOutgoingMissedCall(recipient.getAddress().serialize());
+            PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+            if (chatRepo != null) {
+                Pair<Long, Long> result;
+                if (mIncoming.get()) {
+                    result = chatRepo.insertIncomingMissedCall(recipient.getAddress().serialize());
+                } else {
+                    result = chatRepo.insertOutgoingMissedCall(recipient.getAddress().serialize());
+                }
+                if (result.getSecond() > 0L) {
+                    EventBus.getDefault().post(new MessageReceiveNotifyEvent(recipient.getAddress().serialize(), result.getSecond()));
+                }
             }
-            if (result.getSecond() > 0L) {
-                EventBus.getDefault().post(new MessageReceiveNotifyEvent(recipient.getAddress().serialize(), result.getSecond()));
-            }
-
         }else {
             ALog.logForSecret(TAG, "insertMissedCall fail, has inserted, address: " + recipient.getAddress() + ", incoming: " + mIncoming);
 
         }
     }
 
-    private void insertMissedCallFromHangup(@NonNull Recipient recipient, boolean remoteHangup) {
+    private void insertMissedCallFromHangup(@NonNull AccountContext accountContext, @NonNull Recipient recipient, boolean remoteHangup) {
         if (!mMsgInserted.getAndSet(true)) {
             ALog.logForSecret(TAG, "insertMissedCallFromHangup address: " + recipient.getAddress() + ", incoming: " + mIncoming + ", remoteHangup: " + remoteHangup);
-            
-            Pair<Long, Long> result = null;
-            if (mIncoming.get()) {
-                result = Repository.getChatRepo().insertIncomingMissedCall(recipient.getAddress().serialize());
-            } else {
-                result = Repository.getChatRepo().insertOutgoingMissedCall(recipient.getAddress().serialize());
-            }
-            if (result.getSecond() > 0L) {
-                EventBus.getDefault().post(new MessageReceiveNotifyEvent(recipient.getAddress().serialize(), result.getSecond()));
+
+            PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
+            if (chatRepo != null) {
+                Pair<Long, Long> result;
+                if (mIncoming.get()) {
+                    result = chatRepo.insertIncomingMissedCall(recipient.getAddress().serialize());
+                } else {
+                    result = chatRepo.insertOutgoingMissedCall(recipient.getAddress().serialize());
+                }
+                if (result.getSecond() > 0L) {
+                    EventBus.getDefault().post(new MessageReceiveNotifyEvent(recipient.getAddress().serialize(), result.getSecond()));
+                }
             }
         }else {
             ALog.logForSecret(TAG, "insertMissedCallFromHangup fail, has inserted, address: " + recipient.getAddress() + ", incoming: " + mIncoming + ", remoteHangup: " + remoteHangup);
@@ -974,11 +1033,16 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             return;
         }
 
-        if (peerConnection == null || dataChannel == null || recipient == null || callId == -1L) {
+        if (peerConnection == null || dataChannel == null || recipient == null || this.accountContext == null || callId == -1L) {
             ALog.i(TAG, "handleAnswerCall fail, peerConnection or dataChannel or recipient callId is null");
             terminate();
             return;
         }
+        if (!this.accountContext.equals(getAccountContextFromIntent(intent))) {
+            ALog.w(TAG, "Not current major user.");
+            return;
+        }
+
         setCallInProgressNotification(TYPE_ESTABLISHED, recipient);
 
         this.peerConnection.setAudioEnabled(true);
@@ -991,7 +1055,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     }
 
     private void handleDenyCall(Intent intent) {
-
         try {
             CallState currentState = this.callState.get();
             if (currentState != CallState.STATE_LOCAL_RINGING) {
@@ -999,16 +1062,21 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                 return;
             }
 
-            if (recipient == null || callId == -1L || dataChannel == null) {
+            if (recipient == null || callId == -1L || dataChannel == null || this.accountContext == null) {
                 ALog.i(TAG, "handleDenyCall fail, recipient or callId or dataChannel is null");
+                return;
+            }
 
-            } else {
-                this.dataChannel.send(new DataChannel.Buffer(ByteBuffer.wrap(Data.newBuilder().setHangup(Hangup.newBuilder().setId(this.callId)).build().toByteArray()), false));
-                sendMessage(recipient, SignalServiceCallMessage.forHangup(new HangupMessage(this.callId)));
+            if (!this.accountContext.equals(getAccountContextFromIntent(intent))) {
+                ALog.w(TAG, "Not current major user.");
+                return;
+            }
 
-                if (currentState != CallState.STATE_IDLE && currentState != CallState.STATE_CONNECTED) {
-                    insertMissedCallFromHangup(this.recipient, true);
-                }
+            this.dataChannel.send(new DataChannel.Buffer(ByteBuffer.wrap(Data.newBuilder().setHangup(Hangup.newBuilder().setId(this.callId)).build().toByteArray()), false));
+            sendMessage(this.accountContext, recipient, SignalServiceCallMessage.forHangup(new HangupMessage(this.callId)));
+
+            if (currentState != CallState.STATE_IDLE && currentState != CallState.STATE_CONNECTED) {
+                insertMissedCallFromHangup(this.accountContext, this.recipient, true);
             }
         } finally {
             this.terminate();
@@ -1019,17 +1087,22 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
         CallState currentState = this.callState.get();
         ALog.i(TAG, "handleLocalHangup: " + currentState);
+
+        if (!this.accountContext.equals(getAccountContextFromIntent(intent))) {
+            return;
+        }
+
         if (this.dataChannel != null && this.recipient != null && this.callId != -1L) {
 
             this.dataChannel.send(new DataChannel.Buffer(ByteBuffer.wrap(Data.newBuilder().setHangup(Hangup.newBuilder().setId(this.callId)).build().toByteArray()), false));
-            sendMessage(this.recipient, SignalServiceCallMessage.forHangup(new HangupMessage(this.callId)));
+            sendMessage(this.accountContext, this.recipient, SignalServiceCallMessage.forHangup(new HangupMessage(this.callId)));
 
         }
         if (recipient != null) {
             sendMessage(WebRtcViewModel.State.CALL_DISCONNECTED, this.recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
 
             if (currentState != CallState.STATE_IDLE && currentState != CallState.STATE_CONNECTED) {
-                insertMissedCallFromHangup(this.recipient, false);
+                insertMissedCallFromHangup(this.accountContext, this.recipient, false);
             }
         }
         terminate();
@@ -1049,13 +1122,18 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             return;
         }
 
+        if (this.accountContext == null || !this.accountContext.equals(getAccountContextFromIntent(intent))) {
+            ALog.w(TAG, "Not current major user.");
+            return;
+        }
+
         try {
             if (this.recipient == null) {
                 ALog.i(TAG, "handleRemoteHangup fail, recipient is null");
             } else {
                 if (currentState == CallState.STATE_ANSWERING || currentState == CallState.STATE_LOCAL_RINGING || currentState == CallState.STATE_REMOTE_RINGING) {
                     sendMessage(WebRtcViewModel.State.RECIPIENT_UNAVAILABLE, this.recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
-                    insertMissedCallFromHangup(this.recipient, true);
+                    insertMissedCallFromHangup(this.accountContext, this.recipient, true);
                 } else {
                     sendMessage(WebRtcViewModel.State.CALL_DISCONNECTED, this.recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
                 }
@@ -1066,7 +1144,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     }
 
     private void handleSetMuteAudio(Intent intent) {
-        
+
         if (!PermissionUtil.INSTANCE.checkAudio(this)) {
             return;
         }
@@ -1121,7 +1199,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
     private void handleSetCameraFlip(Intent intent) {
         ALog.i(TAG, "handleSetCameraFlip...");
-        
+
         if (!PermissionUtil.INSTANCE.checkCamera(this)) {
             return;
         }
@@ -1196,7 +1274,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         }
     }
 
-    
+
     private boolean isBusy() {
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         return callState.get() != CallState.STATE_IDLE || (telephonyManager != null && telephonyManager.getCallState() != TelephonyManager.CALL_STATE_IDLE);
@@ -1231,13 +1309,13 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
     }
 
-   
+
     private void setCallNotification(int type) {
         ALog.d(TAG, "setCallNotification type: " + type);
         startForeground(CallNotificationBuilder.WEBRTC_NOTIFICATION, CallNotificationBuilder.getCallDefaultNotification(this));
     }
 
-   
+
     private void setCallInProgressNotification(int type, @Nullable Recipient recipient) {
         if (mCurrentNotificationType != TYPE_CALL_DEFAULT && type == TYPE_CALL_DEFAULT) {
             return;
@@ -1287,6 +1365,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                 timeoutFuture = null;
             }
 
+            this.accountContext = null;
             this.callState.set(CallState.STATE_IDLE);
             this.recipient = null;
             this.callId = -1L;
@@ -1331,41 +1410,46 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         EventBus.getDefault().postSticky(new WebRtcViewModel(state, recipient, identityKey, localCameraState, localRenderer, remoteRenderer, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled));
     }
 
-  
+
     private void handleForCallTime(@NonNull WebRtcViewModel.State state, @NonNull Recipient recipient) {
-        
+
         if (state == WebRtcViewModel.State.CALL_CONNECTED && mBeginTimestamp == 0) {
             mBeginTimestamp = System.currentTimeMillis();
         } else if (state == WebRtcViewModel.State.CALL_DISCONNECTED && mBeginTimestamp > 0) {
             long duration = System.currentTimeMillis() - mBeginTimestamp;
-            if (mIncoming.get()) {
-                Repository.getChatRepo().insertReceivedCall(recipient.getAddress().serialize(), duration,
-                        localCameraState.isEnabled() ? PrivateChatDbModel.CallType.VIDEO : PrivateChatDbModel.CallType.AUDIO);
-            } else {
-                Repository.getChatRepo().insertOutgoingCall(recipient.getAddress().serialize(), duration,
-                        localCameraState.isEnabled() ? PrivateChatDbModel.CallType.VIDEO : PrivateChatDbModel.CallType.AUDIO);
+
+            PrivateChatRepo chatRepo = Repository.getChatRepo(this.accountContext);
+            if (chatRepo != null) {
+                if (mIncoming.get()) {
+                    chatRepo.insertReceivedCall(recipient.getAddress().serialize(), duration,
+                            localCameraState.isEnabled() ? PrivateChatDbModel.CallType.VIDEO : PrivateChatDbModel.CallType.AUDIO);
+                } else {
+                    chatRepo.insertOutgoingCall(recipient.getAddress().serialize(), duration,
+                            localCameraState.isEnabled() ? PrivateChatDbModel.CallType.VIDEO : PrivateChatDbModel.CallType.AUDIO);
+                }
             }
             mBeginTimestamp = 0;
         }
     }
 
 
-    private ListenableFutureTask<Boolean> sendMessage(@NonNull final Recipient recipient,
+    private ListenableFutureTask<Boolean> sendMessage(@NonNull AccountContext accountContext,
+                                                      @NonNull final Recipient recipient,
                                                       @NonNull final SignalServiceCallMessage callMessage) {
 
-        if (recipient.getAddress().toString().equals(AMELogin.INSTANCE.getUid())) {
+        if (recipient.getAddress().toString().equals(accountContext.getUid())) {
             // Don't send call message to major
             return null;
         }
 
         ListenableFutureTask<Boolean> listenableFutureTask = new ListenableFutureTask<>(() -> {
-            BcmChatCore.INSTANCE.sendCallMessage(new SignalServiceAddress(recipient.getAddress().serialize()), callMessage);
+            BcmChatCore.INSTANCE.sendCallMessage(accountContext, new SignalServiceAddress(recipient.getAddress().serialize()), callMessage);
             return true;
         }, null, serviceExecutor);
 
         Optional<BusyMessage> busyMessageOptional = callMessage.getBusyMessage();
         if (busyMessageOptional.isPresent()) {
-            insertMissedCall(recipient, NOTIFICATION_SIMPLY);
+            insertMissedCall(accountContext, recipient, NOTIFICATION_SIMPLY);
         }
 
         Optional<HangupMessage> hangupMessageOptional = callMessage.getHangupMessage();
@@ -1384,7 +1468,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         if (remoteAddress == null) {
             throw new Exception("No recipient in intent!");
         }
-        return Recipient.from(this, remoteAddress, true);
+        return Recipient.from(getAccountContextFromIntent(intent), remoteAddress.serialize(), true);
     }
 
     private long getCallId(Intent intent) {
@@ -1397,25 +1481,33 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             return;
         }
 
+        IMetricsModule metricsModule = AmeModuleCenter.INSTANCE.metric(accountContext);
         if (mIncoming.get()) {
             currentMetric = MetricsConstKt.COUNTER_CALLEE_ICE_CONNECTED;
 
-            ReportUtil.INSTANCE.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLEE_ICE_UPDATE, MetricsConstKt.CALL_FAILED, false);
-            ReportUtil.INSTANCE.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLEE_ICE_UPDATE, MetricsConstKt.CALL_SUCCESS, true);
+            if (metricsModule != null) {
+                metricsModule.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLEE_ICE_UPDATE, MetricsConstKt.CALL_FAILED, false);
+                metricsModule.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLEE_ICE_UPDATE, MetricsConstKt.CALL_SUCCESS, true);
 
-            ReportUtil.INSTANCE.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLEE_ICE_CONNECTED, MetricsConstKt.CALL_FAILED, !isSuccess);
-            ReportUtil.INSTANCE.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLEE_ICE_CONNECTED, MetricsConstKt.CALL_SUCCESS, isSuccess);
+                metricsModule.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLEE_ICE_CONNECTED, MetricsConstKt.CALL_FAILED, !isSuccess);
+                metricsModule.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLEE_ICE_CONNECTED, MetricsConstKt.CALL_SUCCESS, isSuccess);
+            }
         } else {
             currentMetric = MetricsConstKt.COUNTER_CALLER_ICE_CONNECTED;
 
-            ReportUtil.INSTANCE.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLER_ICE_UPDATE, MetricsConstKt.CALL_FAILED, false);
-            ReportUtil.INSTANCE.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLER_ICE_UPDATE, MetricsConstKt.CALL_SUCCESS, true);
+            if (metricsModule != null) {
+                metricsModule.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLER_ICE_UPDATE, MetricsConstKt.CALL_FAILED, false);
+                metricsModule.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLER_ICE_UPDATE, MetricsConstKt.CALL_SUCCESS, true);
 
-            ReportUtil.INSTANCE.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLER_ICE_CONNECTED, MetricsConstKt.CALL_FAILED, !isSuccess);
-            ReportUtil.INSTANCE.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLER_ICE_CONNECTED, MetricsConstKt.CALL_SUCCESS, isSuccess);
+                metricsModule.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLER_ICE_CONNECTED, MetricsConstKt.CALL_FAILED, !isSuccess);
+                metricsModule.addCustomCounterReportData(MetricsConstKt.COUNTER_CALLER_ICE_CONNECTED, MetricsConstKt.CALL_SUCCESS, isSuccess);
+            }
         }
     }
 
+    private AccountContext getAccountContextFromIntent(Intent intent) {
+        return intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT);
+    }
 
     @Nullable
     @Override
@@ -1575,7 +1667,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             LinkedList<PeerConnection.IceServer> results = new LinkedList<>();
 
             try {
-                TurnServerInfo turnServerInfo = ChatHttp.INSTANCE.getTurnServerInfo();
+                TurnServerInfo turnServerInfo = ChatHttp.INSTANCE.get(this.accountContext).getTurnServerInfo();
 
                 for (String url : turnServerInfo.getUrls()) {
                     if (url.startsWith("turn")) {
@@ -1662,6 +1754,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                 Intent intent = new Intent(WebRtcCallService.this, WebRtcCallService.class);
                 intent.setAction(WebRtcCallService.ACTION_CHECK_TIMEOUT);
                 intent.putExtra(EXTRA_CALL_ID, callId);
+                intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, WebRtcCallService.this.accountContext);
                 AppUtilKotlinKt.startForegroundServiceCompat(WebRtcCallService.this, intent);
             } catch (Exception ex) {
                 ALog.e(TAG, "TimeoutRunnable run error", ex);

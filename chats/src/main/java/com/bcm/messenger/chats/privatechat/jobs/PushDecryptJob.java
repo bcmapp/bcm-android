@@ -291,6 +291,7 @@ public class PushDecryptJob extends ContextJob {
             intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, Address.from(accountContext, envelope.getSource()));
             intent.putExtra(WebRtcCallService.EXTRA_REMOTE_DESCRIPTION, message.getDescription());
             intent.putExtra(WebRtcCallService.EXTRA_TIMESTAMP, envelope.getTimestamp());
+            intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext);
             AppUtilKotlinKt.startForegroundServiceCompat(context, intent);
         } catch (Exception ex) {
             ALog.e(TAG, "handleCallOfferMessage error", ex);
@@ -306,6 +307,7 @@ public class PushDecryptJob extends ContextJob {
             intent.putExtra(WebRtcCallService.EXTRA_CALL_ID, message.getId());
             intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, Address.from(accountContext, envelope.getSource()));
             intent.putExtra(WebRtcCallService.EXTRA_REMOTE_DESCRIPTION, message.getDescription());
+            intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext);
             AppUtilKotlinKt.startForegroundServiceCompat(context, intent);
         } catch (Exception ex) {
             ALog.e(TAG, "handleCallAnswerMessage error", ex);
@@ -324,6 +326,7 @@ public class PushDecryptJob extends ContextJob {
                 intent.putExtra(WebRtcCallService.EXTRA_ICE_SDP, message.getSdp());
                 intent.putExtra(WebRtcCallService.EXTRA_ICE_SDP_MID, message.getSdpMid());
                 intent.putExtra(WebRtcCallService.EXTRA_ICE_SDP_LINE_INDEX, message.getSdpMLineIndex());
+                intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext);
                 AppUtilKotlinKt.startForegroundServiceCompat(context, intent);
             } catch (Exception ex) {
                 ALog.e(TAG, "handleCallIceUpdateMessage error", ex);
@@ -339,6 +342,7 @@ public class PushDecryptJob extends ContextJob {
             intent.setAction(WebRtcCallService.ACTION_REMOTE_HANGUP);
             intent.putExtra(WebRtcCallService.EXTRA_CALL_ID, message.getId());
             intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, Address.from(accountContext, envelope.getSource()));
+            intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext);
             AppUtilKotlinKt.startForegroundServiceCompat(context, intent);
         } catch (Exception ex) {
             ALog.e(TAG, "handleCallHangupMessage error", ex);
@@ -353,6 +357,7 @@ public class PushDecryptJob extends ContextJob {
             intent.setAction(WebRtcCallService.ACTION_REMOTE_BUSY);
             intent.putExtra(WebRtcCallService.EXTRA_CALL_ID, message.getId());
             intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, Address.from(accountContext, envelope.getSource()));
+            intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext);
             AppUtilKotlinKt.startForegroundServiceCompat(context, intent);
         } catch (Exception ex) {
             ALog.e(TAG, "handleCallBusyMessage error", ex);
