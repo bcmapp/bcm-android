@@ -62,7 +62,6 @@ class ContactCardShareForwardActivity : SwipeBaseActivity() {
                     }
                 }
             })
-            forwardProvider.setMasterSecret(getMasterSecret())
             forwardProvider.setContactSelectContainer(R.id.activity_forward_root)
             forwardProvider.setGroupSelectContainer(R.id.activity_forward_root)
         }

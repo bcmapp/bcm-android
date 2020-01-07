@@ -52,7 +52,16 @@ import java.util.*
  */
 object BcmChatCore {
     private val TAG = "AmeChatCore"
-    private val store = SignalProtocolStoreImpl(AppContextHolder.APP_CONTEXT)
+    private val storeMap = mutableMapOf<AccountContext, SignalProtocolStoreImpl>()
+
+    private fun getStore(accountContext: AccountContext): SignalProtocolStoreImpl {
+        var store = storeMap[accountContext]
+        if (store == null) {
+            store = SignalProtocolStoreImpl(AppContextHolder.APP_CONTEXT, accountContext)
+            storeMap[accountContext] = store
+        }
+        return store
+    }
 
     /**
      * Send a read receipt for a received message.
@@ -109,7 +118,7 @@ object BcmChatCore {
         }
 
         if (message.isEndSession) {
-            store.deleteAllSessions(recipient.number)
+            getStore(accountContext).deleteAllSessions(recipient.number)
             SecurityEvent.broadcastSecurityUpdateEvent(AppContextHolder.APP_CONTEXT)
         }
     }
@@ -137,7 +146,7 @@ object BcmChatCore {
         }
 
         if (message.isEndSession) {
-            store.deleteAllSessions(recipient.number)
+            getStore(accountContext).deleteAllSessions(recipient.number)
             SecurityEvent.broadcastSecurityUpdateEvent(AppContextHolder.APP_CONTEXT)
         }
     }
@@ -516,7 +525,7 @@ object BcmChatCore {
                 handleMismatchedDevices(accountContext, recipient, mde.mismatchedDevices)
             } catch (ste: StaleDevicesException) {
                 Log.w(TAG, ste)
-                handleStaleDevices(recipient, ste.staleDevices)
+                handleStaleDevices(accountContext, recipient, ste.staleDevices)
             }
 
         }
@@ -635,6 +644,7 @@ object BcmChatCore {
             messages.add(getEncryptedMessage(accountContext, recipient, SignalServiceAddress.DEFAULT_DEVICE_ID, plaintext, pushPurpose))
         }
 
+        val store = getStore(accountContext)
         for (deviceId in store.getSubDeviceSessions(recipient.number)) {
             if (store.containsSession(SignalProtocolAddress(recipient.number, deviceId))) {
                 messages.add(getEncryptedMessage(accountContext, recipient, deviceId, plaintext, pushPurpose))
@@ -651,6 +661,7 @@ object BcmChatCore {
                                     deviceId: Int,
                                     plaintext: ByteArray,
                                     pushPurpose: PushPurpose): OutgoingPushMessage {
+        val store = getStore(accountContext)
 
         val signalProtocolAddress = SignalProtocolAddress(recipient.number, deviceId)
         val cipher = SignalServiceCipher(mySignalAddress(accountContext), store)
@@ -704,6 +715,8 @@ object BcmChatCore {
                                         recipient: SignalServiceAddress,
                                         mismatchedDevices: MismatchedDevices) {
         try {
+            val store = getStore(accountContext)
+
             for (extraDeviceId in mismatchedDevices.extraDevices) {
                 store.deleteSession(SignalProtocolAddress(recipient.number, extraDeviceId))
             }
@@ -724,7 +737,8 @@ object BcmChatCore {
         }
     }
 
-    private fun handleStaleDevices(recipient: SignalServiceAddress, staleDevices: StaleDevices) {
+    private fun handleStaleDevices(accountContext: AccountContext, recipient: SignalServiceAddress, staleDevices: StaleDevices) {
+        val store = getStore(accountContext)
         for (staleDeviceId in staleDevices.staleDevices) {
             store.deleteSession(SignalProtocolAddress(recipient.number, staleDeviceId))
         }
