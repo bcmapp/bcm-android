@@ -16,7 +16,7 @@ import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
  */
 class ChatThumbnailHolderAction(accountContext: AccountContext) : BaseChatHolderAction<ChatThumbnailView>(accountContext) {
 
-    private var mPreviewClickListener = ChatPreviewClickListener()
+    private var mPreviewClickListener = ChatPreviewClickListener(accountContext)
 
     override fun bindData(message: AmeGroupMessageDetail, body: ChatThumbnailView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
 

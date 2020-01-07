@@ -98,7 +98,7 @@ class ChatGroupMemberSelectionActivity : SwipeBaseActivity(), AmeRecycleViewAdap
     override fun bindViewHolder(adapter: AmeRecycleViewAdapter<AmeGroupMemberInfo>, viewHolder: AmeRecycleViewAdapter.ViewHolder<AmeGroupMemberInfo>) {
         val data = viewHolder.getData()
         if (null != data){
-            (viewHolder as MemberHolder).memberView.bind(data, true, memberDataSource.isSelected(data))
+            (viewHolder as MemberHolder).memberView.bind(accountContext, data, true, memberDataSource.isSelected(data))
         }
     }
 

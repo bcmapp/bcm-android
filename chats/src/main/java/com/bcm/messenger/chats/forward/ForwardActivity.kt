@@ -275,7 +275,7 @@ class ForwardActivity : SwipeBaseActivity() {
                                 showForwardDialog(this)
                             }
                 } else {
-                    viewModel.downloadAndDecryptThumbnail { uri ->
+                    viewModel.downloadAndDecryptThumbnail(accountContext) { uri ->
                         dialog.setForwardImageDialog(uri, content.size, glide)
                                 .setMasterSecret(getMasterSecret())
                                 .apply {
@@ -293,7 +293,7 @@ class ForwardActivity : SwipeBaseActivity() {
                                 showForwardDialog(this)
                             }
                 } else {
-                    viewModel.downloadAndDecryptThumbnail { uri ->
+                    viewModel.downloadAndDecryptThumbnail(accountContext) { uri ->
                         dialog.setForwardVideoDialog(uri, content.size, content.duration, glide)
                                 .setMasterSecret(getMasterSecret())
                                 .apply {

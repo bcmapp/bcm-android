@@ -19,7 +19,7 @@ import com.bcm.messenger.common.mms.GlideRequests
 class ChatDocumentHolderAction(accountContext: AccountContext) : BaseChatHolderAction<ChatDocumentView>(accountContext) {
 
 
-    private var mPreviewClickListener = ChatPreviewClickListener()
+    private var mPreviewClickListener = ChatPreviewClickListener(accountContext)
     private var mDownloadClickListener = AttachmentDownloadClickListener()
 
     override fun bindData(message: AmeGroupMessageDetail, body: ChatDocumentView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
@@ -42,7 +42,7 @@ class ChatDocumentHolderAction(accountContext: AccountContext) : BaseChatHolderA
                 if (content.isExist()) {
                     updateDocumentShow(v, data)
                 } else {
-                    MessageFileHandler.downloadAttachment(data, object : MessageFileHandler.MessageFileCallback {
+                    MessageFileHandler.downloadAttachment(accountContext, data, object : MessageFileHandler.MessageFileCallback {
                         override fun onResult(success: Boolean, uri: Uri?) {
                             updateDocumentShow(v, data)
 

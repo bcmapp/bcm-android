@@ -191,7 +191,7 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
                         .withDoneTitle(getString(R.string.chats_cancel))
                         .show(it.context as? FragmentActivity)
             } else if (messageRecord.sendState == AmeGroupMessageDetail.SendState.THUMB_DOWNLOAD_FAIL) {
-                (mAction?.getDisplayView() as? ChatThumbnailView)?.downloadGroupThumbnail(messageRecord)
+                (mAction?.getDisplayView() as? ChatThumbnailView)?.downloadGroupThumbnail(accountContext, messageRecord)
             }
         }
 

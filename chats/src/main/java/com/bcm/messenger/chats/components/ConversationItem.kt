@@ -129,7 +129,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         }
     }
 
-    private val previewClickListener = object : ChatPreviewClickListener() {
+    private val previewClickListener = object : ChatPreviewClickListener(AMELogin.majorContext) {
         override fun onClick(v: View, data: Any) {
             when {
                 messageRecord.isMediaFailed() -> {

@@ -39,7 +39,7 @@ class ChatHistoryHolderAction(accountContext: AccountContext) : BaseChatHolderAc
         }
         val content = message.message.content as AmeGroupMessage.HistoryContent
         ALog.i(TAG, "bindData index: ${message.indexId}, gid: ${message.gid}, messageList: ${content.messageList.size}")
-        body.bindData(content.messageList)
+        body.bindData(accountContext, content.messageList)
     }
 
     override fun resend(messageRecord: AmeGroupMessageDetail) {

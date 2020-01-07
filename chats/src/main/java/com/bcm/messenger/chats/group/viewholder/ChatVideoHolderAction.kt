@@ -20,7 +20,7 @@ import com.bcm.messenger.utility.logger.ALog
  */
 class ChatVideoHolderAction(accountContext: AccountContext) : BaseChatHolderAction<ChatThumbnailView>(accountContext) {
 
-    private var mPreviewClickListener = ChatPreviewClickListener()
+    private var mPreviewClickListener = ChatPreviewClickListener(accountContext)
     private var mDownloadClickListener = AttachmentDownloadClickListener()
 
     override fun bindData(message: AmeGroupMessageDetail, body: ChatThumbnailView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
@@ -47,7 +47,7 @@ class ChatVideoHolderAction(accountContext: AccountContext) : BaseChatHolderActi
                 if(content.isExist()) {
 
                 }else {
-                    MessageFileHandler.downloadAttachment(data, null)
+                    MessageFileHandler.downloadAttachment(accountContext, data, null)
                 }
             }
         }

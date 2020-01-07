@@ -59,6 +59,9 @@ data class MediaBrowseData(val name: String,
         if (viewRef?.get() == view && backgroundRef?.get() == background) {
             return
         }
+
+        accountContext?:return
+
         ALog.d("MediaBrowseData", "setThumbnail")
         viewRef = WeakReference(view)
         backgroundRef = WeakReference(background)
@@ -75,7 +78,7 @@ data class MediaBrowseData(val name: String,
                     if (msg.getThumbnailPartUri(accountContext) != null) {
                         showThumbnail(accountContext, view, msg.getThumbnailPartUri(accountContext)!!)
                     } else {
-                        MessageFileHandler.downloadThumbnail(msg, object : MessageFileHandler.MessageFileCallback {
+                        MessageFileHandler.downloadThumbnail(accountContext, msg, object : MessageFileHandler.MessageFileCallback {
                             override fun onResult(success: Boolean, uri: Uri?) {
                                 val current = viewRef?.get()
                                 if (current == view) {

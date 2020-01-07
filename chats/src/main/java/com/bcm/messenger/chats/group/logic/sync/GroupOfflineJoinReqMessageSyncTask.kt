@@ -17,7 +17,7 @@ class GroupOfflineJoinReqMessageSyncTask(val gid:Long, private var delay:Long = 
     }
 
     private fun syncPage(accountContext: AccountContext, start:String, count:Long, result: (finished:Boolean, succeed: Boolean) -> Unit) {
-        GroupLogic.fetchJoinRequestList(gid, delay, start, count) { succeed, list ->
+        GroupLogic.get(accountContext).fetchJoinRequestList(gid, delay, start, count) { succeed, list ->
             ALog.i("GroupOfflineJoinReqMessageSyncTask","syncPage join req $gid result:$succeed size:${list.size}")
 
             if (!accountContext.isLogin) {
@@ -26,7 +26,7 @@ class GroupOfflineJoinReqMessageSyncTask(val gid:Long, private var delay:Long = 
 
             if (succeed && !needConfirm) {
                 if (succeed && list.isNotEmpty()) {
-                    GroupLogic.autoReviewJoinRequest(gid, list) { ok, error ->
+                    GroupLogic.get(accountContext).autoReviewJoinRequest(gid, list) { ok, error ->
                         ALog.i("GroupOfflineJoinReqMessageSyncTask", "syncPage autoReviewJoinRequest by offline message succeed:$ok, error:$error")
                     }
                 }

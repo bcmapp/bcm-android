@@ -142,7 +142,7 @@ class GroupMediaBrowserViewModel(accountContext: AccountContext) : BaseMediaBrow
                     }
                 }
                 if (msg.attachmentUri.isNullOrBlank()) {
-                    MessageFileHandler.downloadAttachment(msg, object : MessageFileHandler.MessageFileCallback {
+                    MessageFileHandler.downloadAttachment(accountContext, msg, object : MessageFileHandler.MessageFileCallback {
                         override fun onResult(success: Boolean, uri: Uri?) {
                             if (success) {
                                 ALog.d(TAG, "download file, uri is $uri")

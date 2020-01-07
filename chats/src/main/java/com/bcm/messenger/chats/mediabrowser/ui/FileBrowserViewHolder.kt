@@ -11,6 +11,7 @@ import com.bcm.messenger.chats.mediabrowser.MediaHandleViewModel
 import com.bcm.messenger.chats.mediabrowser.bean.FileBrowserData
 import com.bcm.messenger.chats.util.ChatPreviewClickListener
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
@@ -25,7 +26,7 @@ import kotlinx.android.synthetic.main.chats_file_browser_view.view.*
 /**
  * Created by zjl on 2018/10/16.
  */
-class FileBrowserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class FileBrowserViewHolder(private val accountContext: AccountContext, itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private val TAG = "FileBrowserViewHolder"
 
@@ -98,28 +99,28 @@ class FileBrowserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
             if (it) {
                 mediaBrowseData?.let {
                     if (it.msgSource is AmeGroupMessageDetail) {  //
-                        groupItemClick(v, it.msgSource)
+                        groupItemClick(accountContext, v, it.msgSource)
                     } else if (it.msgSource is MessageRecord) {  //
-                        privateItemClick(v, it.msgSource)
+                        privateItemClick(accountContext, v, it.msgSource)
                     }
                 }
             }
         }
     }
 
-    private fun groupItemClick(v: View, messageDetailRecord: AmeGroupMessageDetail) {
+    private fun groupItemClick(accountContext: AccountContext, v: View, messageDetailRecord: AmeGroupMessageDetail) {
         val content = messageDetailRecord.message.content
         if (content is AmeGroupMessage.FileContent){
-            ChatPreviewClickListener().onClick(v, messageDetailRecord)
+            ChatPreviewClickListener(accountContext).onClick(v, messageDetailRecord)
         } else if(content is AmeGroupMessage.LinkContent){
             val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
             contactProvider.discernLink(v.context, AmeURLUtil.getHttpUrl(content.url))
         }
     }
 
-    private fun privateItemClick(v: View, messageRecord: MessageRecord) {
+    private fun privateItemClick(accountContext: AccountContext, v: View, messageRecord: MessageRecord) {
         if (messageRecord.isMediaMessage()){
-            ChatPreviewClickListener().onClick(v, messageRecord)
+            ChatPreviewClickListener(accountContext).onClick(v, messageRecord)
         } else {
             val contactProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_CONTACTS_BASE).navigationWithCast<IContactModule>()
             contactProvider.discernLink(v.context, AmeURLUtil.getHttpUrl(messageRecord.body))

@@ -534,7 +534,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
     private fun doUpdateCallCard(recipient: Recipient, status: String?) {
         try {
-            mPhotoView.setPhoto(accountContext, recipient)
+            mPhotoView.setPhoto(recipient)
             val request = GlideApp.with(context.applicationContext).asBitmap()
             val w = context.getScreenWidth()
             val h = context.getScreenHeight()

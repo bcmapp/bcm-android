@@ -14,6 +14,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.components.ChatThumbnailView
 import com.bcm.messenger.chats.mediapreview.MediaViewActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -40,7 +41,7 @@ import java.io.OutputStream
 /**
  * Created by wjh on 2018/11/20
  */
-open class ChatPreviewClickListener : ChatComponentListener {
+open class ChatPreviewClickListener(private val accountContext: AccountContext) : ChatComponentListener {
 
     companion object {
 
@@ -111,7 +112,7 @@ open class ChatPreviewClickListener : ChatComponentListener {
 
         }
 
-        private fun doForPrivate(v: View, messageRecord: MessageRecord) {
+        private fun doForPrivate(accountContext: AccountContext, v: View, messageRecord: MessageRecord) {
 
             fun hasThumbnail(messageRecord: MessageRecord): Boolean {
                 return messageRecord.isMediaMessage() && messageRecord.getMediaAttachment() != null
@@ -147,7 +148,7 @@ open class ChatPreviewClickListener : ChatComponentListener {
             }
         }
 
-        private fun doForGroup(v: View, messageRecord: AmeGroupMessageDetail) {
+        private fun doForGroup(accountContext: AccountContext, v: View, messageRecord: AmeGroupMessageDetail) {
 
             val attachmentContent = messageRecord.message.content as AmeGroupMessage.AttachmentContent
             var contentType: String? = attachmentContent.mimeType
@@ -155,7 +156,7 @@ open class ChatPreviewClickListener : ChatComponentListener {
 
             // retry download thumbnail
             if (messageRecord.isThumbnailDownloadFail) {
-                (v as? ChatThumbnailView)?.downloadGroupThumbnail(AMELogin.majorContext, messageRecord)
+                (v as? ChatThumbnailView)?.downloadGroupThumbnail(accountContext, messageRecord)
                 return
             } else if (messageRecord.isFileDeleted && messageRecord.getThumbnailPartUri(AMELogin.majorContext) == null) {
                 if (messageType == AmeGroupMessage.VIDEO) {
@@ -250,9 +251,9 @@ open class ChatPreviewClickListener : ChatComponentListener {
     override fun onClick(v: View, data: Any) {
         try {
             if (data is MessageRecord) {
-                doForPrivate(v, data)
+                doForPrivate(accountContext, v, data)
             } else if (data is AmeGroupMessageDetail) {
-                doForGroup(v, data)
+                doForGroup(accountContext, v, data)
             }
         } catch (ex: Exception) {
             ALog.e(TAG, "onClick error", ex)

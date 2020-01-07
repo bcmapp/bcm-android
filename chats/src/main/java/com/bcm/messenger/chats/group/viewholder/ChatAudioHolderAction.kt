@@ -67,7 +67,7 @@ class ChatAudioHolderAction(accountContext: AccountContext) : BaseChatHolderActi
                     updateAudioMessage(v, data)
                 }else {
 
-                    MessageFileHandler.downloadAttachment(data, object : MessageFileHandler.MessageFileCallback {
+                    MessageFileHandler.downloadAttachment(accountContext, data, object : MessageFileHandler.MessageFileCallback {
                         override fun onResult(success: Boolean, uri: Uri?) {
                             if (mMessageDetail == data) {
                                 updateAudioMessage(v, data)

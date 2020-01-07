@@ -8,6 +8,7 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
+import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -18,6 +19,7 @@ import org.whispersystems.signalservice.internal.websocket.GroupMessageProtos
 import java.io.Serializable
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 /**　
  * bcm.social.01 2019/3/19.
@@ -34,7 +36,7 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
         executing = true
         
         var stash:List<GroupMessageEntity> = listOf()
-        GroupMessageCore.getMessagesWithRange(gid, fromMid, toMid)
+        GroupMessageCore.getMessagesWithRange(accountContext, gid, fromMid, toMid)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .delaySubscription(getCompatibleDelay(), TimeUnit.MILLISECONDS, AmeDispatcher.ioScheduler)
@@ -60,7 +62,7 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
                             val versionsFromMessage = keyVersionsFromKeySwitchMessage(serverResult.data.messages)
                             keyVersions.addAll(versionsFromMessage)
 
-                            refreshGroupKeyIfNeed(serverResult.data.messages, keyVersions.toList())
+                            refreshGroupKeyIfNeed(accountContext, serverResult.data.messages, keyVersions.toList())
 
                             val localVersions = GroupInfoDataManager.queryGroupKeyList(accountContext, gid, keyVersions.toList()).map { it.version }
                             keyVersions.removeAll(localVersions)
@@ -92,17 +94,22 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
                 .subscribe()
     }
 
-    private fun refreshGroupKeyIfNeed(messages: List<GroupMessageEntity>, keyVersionsGot:List<Long>) {
+    private fun refreshGroupKeyIfNeed(accountContext: AccountContext, messages: List<GroupMessageEntity>, keyVersionsGot:List<Long>) {
         val keyUpdateRequest = keyUpdateRequestFromMessageList(messages)
         if (null != keyUpdateRequest && !keyVersionsGot.contains(keyUpdateRequest.mid)) {
+            if (abs(keyUpdateRequest.time - AmeTimeUtil.serverTimeMillis()) < 30000) {
+                ALog.i("GroupOfflineMessageSyncTask", "sync got a update key message, generate in 30s")
+                return
+            }
+
             if (keyVersionsGot.isNotEmpty()) {
                 if (keyUpdateRequest.mid > Collections.max(keyVersionsGot)) {
-                    GroupLogic.uploadGroupKeys(gid, keyUpdateRequest.mid, keyUpdateRequest.mode)
+                    GroupLogic.get(accountContext).uploadGroupKeys(gid, keyUpdateRequest.mid, keyUpdateRequest.mode)
                 } else {
                     ALog.i("GroupOfflineMessageSyncTask", "key update message expired")
                 }
             } else {
-                GroupLogic.uploadGroupKeys(gid, keyUpdateRequest.mid, keyUpdateRequest.mode)
+                GroupLogic.get(accountContext).uploadGroupKeys(gid, keyUpdateRequest.mid, keyUpdateRequest.mode)
             }
         } else if (null != keyUpdateRequest) {
             ALog.i("GroupOfflineMessageSyncTask", "key update message ignore ${keyUpdateRequest.mid}")
@@ -111,7 +118,7 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
 
     private fun syncGroupKeyVersions(accountContext: AccountContext, versionList: List<Long>): Observable<Boolean> {
         val keyVersions = versionList.toMutableList()
-        return GroupLogic.syncGroupKeyList(gid, keyVersions)
+        return GroupLogic.get(accountContext).syncGroupKeyList(gid, keyVersions)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .flatMap {
@@ -122,7 +129,7 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
                         //The encrypted version of the message is larger than the password version I can get, which means I can't solve it with the password.
                         if (newVersionList.isNotEmpty() && Collections.max(keyVersions) > Collections.max(newVersionList)
                                 || newVersionList.isEmpty()) {
-                            return@flatMap GroupKeyRotate.rotateGroup(gid)
+                            return@flatMap GroupLogic.get(accountContext).getKeyRotate().rotateGroup(gid)
                                     .observeOn(AmeDispatcher.ioScheduler)
                                     .map { refreshResult ->
                                         if (refreshResult.succeed?.contains(gid) != true) {
@@ -156,7 +163,8 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
     data class KeyUpdateMessage(
             @SerializedName("group_keys_mode")
             val mode: Int = -1,
-            var mid: Long = 0):NotGuard
+            var mid: Long = 0,
+            var time:Long = 0):NotGuard
 
     private fun keyUpdateRequestFromMessageList(msgs: List<GroupMessageEntity>): KeyUpdateMessage? {
         return msgs.filter { it.type == GroupMessageProtos.GroupMsg.Type.TYPE_UPDATE_GROUP_KEYS_REQUEST_VALUE }
@@ -164,6 +172,7 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
                     try {
                         val update = GsonUtils.fromJson<KeyUpdateMessage>(it.text, KeyUpdateMessage::class.java)
                         update.mid = it.mid
+                        update.time = it.createTime
                         if (update.mode >= 0) {
                             update
                         } else {

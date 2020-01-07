@@ -243,7 +243,7 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
         if (messageSyncTaskList.isNotEmpty() && canSync()) {
             for (i in messageSyncTaskList) {
                 if (!i.executing && !i.isDead()) {
-                    i.execute { task, messageList ->
+                    i.execute(accountContext) { task, messageList ->
                         finishTask(task, messageList)
                     }
                     return true
@@ -354,7 +354,7 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
             if (!groupInfo.newGroup || groupInfo.owner == accountContext.uid) {
                 val needConfirm = groupInfo.role == AmeGroupMemberInfo.OWNER && groupInfo.needConfirm == true
                 if (needConfirm) {
-                    GroupOfflineJoinReqMessageSyncTask(gid, 300, needConfirm).execute {
+                    GroupOfflineJoinReqMessageSyncTask(gid, 300, needConfirm).execute(accountContext) {
                         ALog.i(TAG, "syncJoinReq  owner $gid finished")
 
                         if (it) {
@@ -362,7 +362,7 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
                         }
                     }
                 } else {
-                    GroupOfflineJoinReqMessageSyncTask(gid, 3000, needConfirm).execute {
+                    GroupOfflineJoinReqMessageSyncTask(gid, 3000, needConfirm).execute(accountContext) {
                         ALog.i(TAG, "syncJoinReq member $gid finished")
 
                         if (it) {
@@ -375,7 +375,7 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
     }
 
     private fun syncOwnerJoinReqTask(task: GroupOfflineJoinReqMessageSyncTask) {
-        task.execute {
+        task.execute(accountContext) {
             syncOwnerJoinReqTaskFinish(task)
         }
     }
@@ -397,7 +397,7 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
     }
 
     private fun syncMemberJoinReqTask(task: GroupOfflineJoinReqMessageSyncTask) {
-        task.execute {
+        task.execute(accountContext) {
             syncMemberJoinReqTaskFinish(task)
         }
     }
