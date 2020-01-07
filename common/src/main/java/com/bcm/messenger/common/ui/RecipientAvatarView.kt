@@ -110,7 +110,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         this.privateRecipient?.addListener(this)
         this.accountContext = accountContext
 
-        setRecipientAvatar(accountContext)
+        setRecipientAvatar()
     }
 
     private fun showGroupAvatar(accountContext: AccountContext, recipient: Recipient) {
@@ -119,7 +119,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         this.groupRecipient?.addListener(this)
         this.accountContext = accountContext
 
-        setGroupRecipientAvatar(accountContext)
+        setGroupRecipientAvatar()
     }
 
     fun setBitmap(bitmap: Bitmap) {
@@ -182,12 +182,12 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         loadCallback?.invoke((drawable as? BitmapDrawable)?.bitmap)
     }
 
-    private fun setRecipientAvatar(accountContext: AccountContext) {
+    private fun setRecipientAvatar() {
         group_splice_avatar.visibility = View.GONE
         member_single_avatar.visibility = View.VISIBLE
         background = null
 
-        member_single_avatar.setPhoto(accountContext, privateRecipient)
+        member_single_avatar.setPhoto(privateRecipient)
         member_single_avatar.setOval(true)
     }
 
@@ -195,12 +195,12 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         member_single_avatar.radius = width / 2f
     }
 
-    private fun setGroupRecipientAvatar(accountContext: AccountContext) {
+    private fun setGroupRecipientAvatar() {
         group_splice_avatar.visibility = View.GONE
         member_single_avatar.visibility = View.VISIBLE
         background = null
 
-        member_single_avatar.setPhoto(accountContext, groupRecipient)
+        member_single_avatar.setPhoto(groupRecipient)
         member_single_avatar.post {
             member_single_avatar.radius = width / 4f
         }
@@ -221,9 +221,9 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         val accountContext = this.accountContext
         if (null != accountContext) {
             if (this.privateRecipient == recipient) {
-                setRecipientAvatar(accountContext)
+                setRecipientAvatar()
             } else if (this.groupRecipient == recipient) {
-                setGroupRecipientAvatar(accountContext)
+                setGroupRecipientAvatar()
             }
         }
     }

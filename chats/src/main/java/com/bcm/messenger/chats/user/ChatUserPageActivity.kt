@@ -292,7 +292,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
         chat_user_main_layout.visibility = View.VISIBLE
         markMute(recipient.mutedUntil)
 
-        chat_user_img.setPhoto(accountContext, recipient)
+        chat_user_img.setPhoto(recipient)
         chat_user_name.text = recipient.name
         if (!recipient.isLogin) {
             if (isBgLight) {

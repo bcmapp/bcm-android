@@ -199,7 +199,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
      * 初始化profile
      */
     private fun initProfile(recipient: Recipient) {
-        profile_icon?.setPhoto(accountContext, recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
+        profile_icon?.setPhoto(recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
         profile_name_item?.setTip(recipient.bcmName ?: recipient.address.format())
     }
 }

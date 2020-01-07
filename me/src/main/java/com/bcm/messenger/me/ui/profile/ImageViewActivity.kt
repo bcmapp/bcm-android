@@ -239,7 +239,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
             lp.height = target
             avatar_container.layoutParams = lp
         }
-        avatar_container.setPhoto(accountContext, recipient, photoType)
+        avatar_container.setPhoto(recipient, photoType)
     }
 
     override fun onModified(recipient: Recipient) {

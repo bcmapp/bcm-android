@@ -524,9 +524,9 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                 .append(StringAppearanceUtil.applyAppearance(timeString, 14.dp2Px()))
     }
 
-    private fun doUpdateCallCard(accountContext: AccountContext, recipient: Recipient, status: String?) {
+    private fun doUpdateCallCard(recipient: Recipient, status: String?) {
         try {
-            mPhotoView.setPhoto(accountContext, recipient)
+            mPhotoView.setPhoto(recipient)
             val request = GlideApp.with(context.applicationContext).asBitmap()
             val w = context.getScreenWidth()
             val h = context.getScreenHeight()
@@ -578,7 +578,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     }
 
 
-    private fun setCard(accountContext: AccountContext, recipient: Recipient?, status: String? = null) {
+    private fun setCard(recipient: Recipient?, status: String? = null) {
         this.mStatus = status
         if (recipient == null) {
             return
@@ -587,17 +587,17 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             mRecipient?.removeListener(this)
             mRecipient = recipient
             mRecipient?.addListener(this)
-            doUpdateCallCard(accountContext, recipient, status)
+            doUpdateCallCard(recipient, status)
 
             if (recipient.getPrivacyAvatar(true).isNullOrEmpty()) {
-                AmeModuleCenter.contact(accountContext)?.checkNeedDownloadAvatar(true, recipient)
+                AmeModuleCenter.contact(recipient.address.context())?.checkNeedDownloadAvatar(true, recipient)
             }
         }
     }
 
     override fun onModified(recipient: Recipient) {
         if (mRecipient == recipient) {
-            doUpdateCallCard(recipient.address.context(), recipient, mStatus)
+            doUpdateCallCard(recipient, mStatus)
         }
     }
 

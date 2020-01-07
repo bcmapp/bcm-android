@@ -103,7 +103,7 @@ class FriendRequestsListActivity : SwipeBaseActivity() {
             recipient = Recipient.from(accountContext, Address.fromSerialized(data.proposer), true)
             recipient?.addListener(this)
 
-            itemView.friend_req_avatar.setPhoto(accountContext, recipient)
+            itemView.friend_req_avatar.setPhoto(recipient)
             itemView.friend_req_name.text = recipient?.name
 
             if (data.memo.isNotEmpty()) {
@@ -130,9 +130,7 @@ class FriendRequestsListActivity : SwipeBaseActivity() {
 
         override fun onModified(recipient: Recipient) {
             if (this.recipient == recipient) {
-                this.recipient = recipient
-
-                itemView.friend_req_avatar.setPhoto(accountContext, recipient)
+                itemView.friend_req_avatar.setPhoto(recipient)
                 itemView.friend_req_name.text = recipient.name
             }
         }

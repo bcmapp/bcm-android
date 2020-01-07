@@ -3,8 +3,7 @@ package com.bcm.messenger.contacts
 import android.os.Bundle
 import android.view.View
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.database.db.UserDatabase
+import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
@@ -19,6 +18,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.contacts_activity_handle_friend_request.*
+import java.lang.Exception
 
 /**
  * Created by Kin on 2019/5/17
@@ -89,10 +89,10 @@ class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListen
     }
 
     private fun initData() {
-        recipient = Recipient.from(accountContext, Address.fromSerialized(request.proposer), true)
+        recipient = Recipient.from(accountContext, request.proposer, true)
         recipient.addListener(this)
 
-        handle_req_avatar.setPhoto(accountContext, recipient)
+        handle_req_avatar.setPhoto(recipient)
         handle_req_name.text = recipient.name
 
         if (request.memo.isNotEmpty()) {
@@ -107,7 +107,8 @@ class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListen
         Observable.create<BcmFriendRequest> {
             val id = intent.getLongExtra("id", -1L)
             if (id != -1L) {
-                it.onNext(UserDatabase.getDatabase(accountContext).friendRequestDao().query(id))
+                val request = Repository.getFriendRequestRepo(accountContext)?.query(id)?:throw Exception("not found")
+                it.onNext(request)
                 ALog.logForSecret(TAG, "Get id = $id request")
             }
             it.onComplete()
@@ -123,8 +124,7 @@ class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListen
 
     override fun onModified(recipient: Recipient) {
         this.recipient = recipient
-
-        handle_req_avatar.setPhoto(accountContext, recipient)
+        handle_req_avatar.setPhoto(recipient)
         handle_req_name.text = recipient.name
     }
 }

@@ -159,7 +159,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
                 dateBuilder.setSpan(foregroundColor, dateBuilder.length - extra.length - 1, dateBuilder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
             account_backup_date.text = dateBuilder
-            me_account_img.setPhoto(accountContext, getAccountRecipient())
+            me_account_img.setPhoto(getAccountRecipient())
         }
     }
 

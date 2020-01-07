@@ -77,7 +77,7 @@ class ChatSendContactDialog : DialogFragment() {
 
     private fun initView() {
         mChatRecipient?.let {
-            send_contact_portrait.setPhoto(it.address.context(), it)
+            send_contact_portrait.setPhoto(it)
         }
         send_contact_to_name.text = mChatRecipient?.name
         send_contact_cancel.setOnClickListener {

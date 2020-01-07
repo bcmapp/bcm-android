@@ -16,6 +16,7 @@ import android.widget.Toast
 import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.activity.DatabaseMigrateActivity
@@ -93,8 +94,9 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
                         login_success_layout?.visibility = View.VISIBLE
                         showAnimatorForView(login_success_done_button)
                         AmeDispatcher.mainThread.dispatch({
+                            val accountContext = AmeModuleCenter.login().getAccountContext(reLoginUid)
                             val context = AppContextHolder.APP_CONTEXT
-                            if (DatabaseFactory.isDatabaseExist(context) && !TextSecurePreferences.isDatabaseMigrated(context)) {
+                            if (DatabaseFactory.isDatabaseExist(accountContext, context) && !TextSecurePreferences.isDatabaseMigrated(accountContext)) {
                                 startActivity(Intent(this, DatabaseMigrateActivity::class.java).apply {
                                     putExtra(DatabaseMigrateActivity.IS_LOGIN_PROGRESS, true)
                                 })
@@ -202,7 +204,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ recipient ->
                             weakThis.get()?.relogin_input_pin_nikename?.text = recipient.name
-                            weakThis.get()?.relogin_input_pin_avatar?.setPhoto(accountContext, recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                            weakThis.get()?.relogin_input_pin_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
                         }, {
                         })
 

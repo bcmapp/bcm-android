@@ -91,7 +91,7 @@ class DestroyCheckPasswordFragment : BaseFragment() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ recipient ->
                         weakThis.get()?.destroy_name?.text = recipient.name
-                        weakThis.get()?.destroy_avatar?.setPhoto(AMELogin.majorContext, recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                        weakThis.get()?.destroy_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
                     }, {
                     })
         }

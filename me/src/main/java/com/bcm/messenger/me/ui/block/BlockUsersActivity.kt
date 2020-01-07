@@ -221,7 +221,7 @@ class BlockUsersActivity : SwipeBaseActivity() {
             } else {
                 selectItem.visibility = View.GONE
             }
-            recipientImg.setPhoto(accountContext, recipient)
+            recipientImg.setPhoto(recipient)
             recipientName.text = recipient.name
         }
     }

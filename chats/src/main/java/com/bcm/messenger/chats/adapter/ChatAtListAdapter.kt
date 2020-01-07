@@ -82,7 +82,7 @@ class ChatAtListAdapter(private val accountContext: AccountContext, context: Con
         fun bind(recipient: Recipient) {
             this.recipient = recipient
             this.recipient.addListener(this)
-            this.photoView.setPhoto(accountContext, recipient)
+            this.photoView.setPhoto(recipient)
             val name = BcmGroupNameUtil.getGroupMemberName(recipient, mGroupModel?.getGroupMember(recipient.address.serialize()))
             this.nameView.text =
                     if (mKeyWord.isNullOrEmpty()) {

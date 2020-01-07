@@ -125,9 +125,8 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
 
     override fun onModified(recipient: Recipient) {
         post {
-            val context = accountContext
             if (recipient == this.recipient && context != null) {
-                avatarView?.setPhoto(context, recipient)
+                avatarView?.setPhoto(recipient)
                 mUpdateCallback?.invoke(recipient)
             }
         }

@@ -278,7 +278,7 @@ class VerifyPasswordFragment : AbsRegistrationFragment() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ recipient ->
                             weakThis.get()?.verify_pin_name?.text = recipient.name
-                            weakThis.get()?.verify_pin_avatar?.setPhoto(accountContext, recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                            weakThis.get()?.verify_pin_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
                         }, {})
             }
         } else {

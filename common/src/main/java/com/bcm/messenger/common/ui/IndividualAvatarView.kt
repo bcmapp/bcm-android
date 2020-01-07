@@ -363,12 +363,12 @@ class IndividualAvatarView : CardView {
     /**
      * 
      */
-    fun setPhoto(accountContext: AccountContext, recipient: Recipient?, alterName: String?, photoType: Int) {
+    fun setPhoto(recipient: Recipient?, alterName: String?, photoType: Int) {
         try {
             if (mRequestManager == null) {
                 mRequestManager = GlideApp.with(AppContextHolder.APP_CONTEXT)
             }
-            requestPhoto(accountContext,mRequestManager ?: return, recipient, alterName, photoType)
+            requestPhoto(recipient?.address?.context(),mRequestManager ?: return, recipient, alterName, photoType)
 
         } catch (ex: Exception) {
             ALog.e(TAG, "setPhoto error", ex)
@@ -379,12 +379,12 @@ class IndividualAvatarView : CardView {
      * 
      * @param recipient
      */
-    fun setPhoto(accountContext: AccountContext, recipient: Recipient?) {
+    fun setPhoto(recipient: Recipient?) {
         try {
             if (mRequestManager == null) {
                 mRequestManager = GlideApp.with(AppContextHolder.APP_CONTEXT)
             }
-            requestPhoto(accountContext,mRequestManager ?: return, recipient, null)
+            requestPhoto(recipient?.address?.context(),mRequestManager ?: return, recipient, null)
 
         } catch (ex: Exception) {
             ALog.e(TAG, "setPhoto error", ex)
@@ -396,21 +396,18 @@ class IndividualAvatarView : CardView {
      * @param recipient
      * @param photoType
      */
-    fun setPhoto(accountContext: AccountContext, recipient: Recipient?, photoType: Int) {
+    fun setPhoto(recipient: Recipient?, photoType: Int) {
         try {
             if (mRequestManager == null) {
                 mRequestManager = GlideApp.with(AppContextHolder.APP_CONTEXT)
             }
-            requestPhoto(accountContext, mRequestManager ?: return, recipient, null, photoType)
+            requestPhoto(recipient?.address?.context(), mRequestManager ?: return, recipient, null, photoType)
 
         } catch (ex: Exception) {
             ALog.e(TAG, "setPhoto error", ex)
         }
     }
 
-    /**
-     * 
-     */
     fun requestPhoto(photoObj: Any?, placeHolderResource: Int, errorHolderResource: Int) {
         if (mCurrentRequestObj == photoObj) {
             return
@@ -505,7 +502,7 @@ class IndividualAvatarView : CardView {
     /**
      * 
      */
-    private fun requestPhoto(accountContext: AccountContext, requestManager: GlideRequests, recipient: Recipient?, alterName: String?, photoType: Int = DEFAULT_PHOTO_TYPE) {
+    private fun requestPhoto(accountContext: AccountContext?, requestManager: GlideRequests, recipient: Recipient?, alterName: String?, photoType: Int = DEFAULT_PHOTO_TYPE) {
         val size = getCurrentSize()
         //
         if (size <= 0) {
@@ -638,6 +635,7 @@ class IndividualAvatarView : CardView {
                     .into(it)
         }
 
+        accountContext?:return
         val contactModule = AmeModuleCenter.contact(accountContext)
         if (recipient?.needRefreshProfile() == true) {
             contactModule?.checkNeedFetchProfile(recipient, callback = object : IContactModule.IProfileCallback {

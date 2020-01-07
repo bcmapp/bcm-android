@@ -174,7 +174,7 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
             content?.uid?.let {
                 val recipient = Recipient.from(AMELogin.majorContext, it, true)
                 recipient.addListener(this)
-                chat_pin_recipient_photo.setPhoto(AMELogin.majorContext, recipient)
+                chat_pin_recipient_photo.setPhoto(recipient)
             }
 
         }
@@ -199,7 +199,7 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
 
     override fun onModified(recipient: Recipient) {
         if (recipient == messageDetailRecord?.getSender(recipient.address.context())) {
-            chat_pin_recipient_photo.setPhoto(recipient.address.context(), recipient)
+            chat_pin_recipient_photo.setPhoto(recipient)
         }
     }
 

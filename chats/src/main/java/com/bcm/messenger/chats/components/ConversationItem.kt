@@ -788,7 +788,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         when {
             messageRecord.isOutgoing() -> contactPhoto?.visibility = View.GONE
             conversationRecipient.isGroupRecipient -> {
-                contactPhoto?.setPhoto(getAccountContext(), recipient)
+                contactPhoto?.setPhoto(recipient)
                 contactPhoto?.visibility = View.VISIBLE
             }
             else -> contactPhoto?.visibility = View.GONE
@@ -1041,7 +1041,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                                     Observable.create<Unit> {
                                         if (messageRecipient.isPushGroupRecipient) {
                                         } else {
-                                            MessageSender.resend(context, masterSecret, messageRecord)
+                                            MessageSender.resend(context, masterSecret.accountContext, messageRecord)
                                         }
                                         it.onComplete()
 

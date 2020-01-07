@@ -62,7 +62,7 @@ class FlowChatLayout @JvmOverloads constructor(context: Context, attrs: Attribut
             recipient1 = Recipient.from(AMELogin.majorContext, message.senderId
                     ?: return, true)
             recipient1?.addListener(this)
-            recipientImg1.setPhoto(AMELogin.majorContext,  recipient1)
+            recipientImg1.setPhoto(recipient1)
             flowText1.text = message.message.content.getDescribe(message.gid, AMELogin.majorContext)
             enter(flowChatLayout1)
             if (text2ShowFlag) {
@@ -72,7 +72,7 @@ class FlowChatLayout @JvmOverloads constructor(context: Context, attrs: Attribut
             recipient2 = Recipient.from(AMELogin.majorContext, message.senderId
                     ?: return, true)
             recipient2?.addListener(this)
-            recipientImg2.setPhoto(AMELogin.majorContext, recipient2)
+            recipientImg2.setPhoto(recipient2)
             flowText2.text = message.message.content.getDescribe(message.gid, AMELogin.majorContext)
             enter(flowChatLayout2)
             if (text1ShowFlag) {

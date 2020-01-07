@@ -293,7 +293,7 @@ class ChatForwardDialog : DialogFragment() {
         private val avatar = itemView.findViewById<IndividualAvatarView>(R.id.forward_multi_avatar)
 
         fun setAvatar(recipient: Recipient) {
-            avatar.setPhoto(accountContext, recipient)
+            avatar.setPhoto(recipient)
         }
     }
 

@@ -167,7 +167,7 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                 reply_image.visibility = View.GONE
                 reply_photo.visibility = View.VISIBLE
                 val r = Recipient.from(AMELogin.majorContext, replyContent.uid, true)
-                reply_photo.setPhoto(AMELogin.majorContext, r)
+                reply_photo.setPhoto(r)
             }
             replyContent is AmeGroupMessage.ThumbnailContent -> {
                 reply_file.visibility = View.GONE

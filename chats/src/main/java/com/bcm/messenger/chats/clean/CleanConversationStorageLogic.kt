@@ -22,7 +22,7 @@ object CleanConversationStorageLogic {
 
     private const val TAG = "ConversationStorage"
 
-    val ADDRESS_ALL = Address.from("clean_all")
+    val ADDRESS_ALL: Address = Address.from(AccountContext("","",""), "clean_all")
 
     private val storageMap = ConcurrentHashMap<Address, ConversationStorage>()
     private var threadList: List<Address>? = null
@@ -173,7 +173,7 @@ object CleanConversationStorageLogic {
                 val timestamp = System.currentTimeMillis()
                 val list = Repository.getThreadRepo(accountContext)?.getAllThreads()?: listOf()
                 for (record in list) {
-                    val address = Address.from(record.uid)
+                    val address = Address.from(accountContext, record.uid)
                     if (address.isIndividual){
                         val threadId = record.id
                         if (threadId > 0) {

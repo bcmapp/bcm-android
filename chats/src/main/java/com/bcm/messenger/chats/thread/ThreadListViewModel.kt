@@ -67,10 +67,10 @@ class ThreadListViewModel(
         /**
          * 读取会话ID，如果没有则生成
          */
-        fun getThreadId(accountContext: AccountContext, recipient: Recipient, callback: (threadId: Long) -> Unit) {
+        fun getThreadId(recipient: Recipient, callback: (threadId: Long) -> Unit) {
             Observable.create(ObservableOnSubscribe<Long> {
                 try {
-                    it.onNext(Repository.getThreadRepo(accountContext)?.getThreadIdFor(recipient.address.serialize())
+                    it.onNext(Repository.getThreadRepo(recipient.address.context())?.getThreadIdFor(recipient.address.serialize())
                             ?: 0L)
                 } finally {
                     it.onComplete()

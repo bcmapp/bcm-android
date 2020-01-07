@@ -160,7 +160,7 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
                     .subscribe({ recipient ->
                         weakThis.get()?.keybox_account_openid?.text = "${getString(R.string.me_id_title)}: $realUid"
                         weakThis.get()?.keybox_account_name?.text = recipient.name
-                        weakThis.get()?.keybox_account_img?.setPhoto(accountContext, recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                        weakThis.get()?.keybox_account_img?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
                     }, {
                     })
         }

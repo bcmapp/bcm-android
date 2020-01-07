@@ -167,7 +167,7 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
      * 初始化profile
      */
     private fun initProfile(recipient: Recipient) {
-        profile_icon?.setPhoto(accountContext, recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
+        profile_icon?.setPhoto(recipient, IndividualAvatarView.PROFILE_PHOTO_TYPE)
         profile_name_item?.setTip(recipient.bcmName ?: recipient.address.format())
 
         if (recipient.relationship != RecipientRepo.Relationship.STRANGER && recipient.relationship != RecipientRepo.Relationship.REQUEST) {
@@ -177,7 +177,7 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
             } else {
                 profile_display_icon_notice?.visibility = View.GONE
                 profile_display_icon?.visibility = View.VISIBLE
-                profile_display_icon?.setPhoto(accountContext, recipient, IndividualAvatarView.LOCAL_PHOTO_TYPE)
+                profile_display_icon?.setPhoto(recipient, IndividualAvatarView.LOCAL_PHOTO_TYPE)
             }
             if (recipient.localName.isNullOrEmpty()) {
                 profile_display_alias_item?.setTip(getString(R.string.me_other_local_empty_action))
