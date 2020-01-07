@@ -1,8 +1,6 @@
 package com.bcm.messenger.adhoc.logic
 
 import com.bcm.messenger.adhoc.search.BcmAdHocFinder
-import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.database.db.UserDatabase
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.grouprepository.room.dao.AdHocChannelDao
@@ -34,7 +32,7 @@ class AdHocSessionCache(ready:(list:List<AdHocSession>)->Unit) {
             val settings = repo?.getRecipients(uidMap.keys)
             settings?.forEach {
                 ALog.i("AdHocSessionCache", "initPrivateChatUser uid: ${it.uid}")
-                uidMap[it.uid]?.updateRecipient(Recipient.fromSnapshot(AMELogin.majorContext, Address.fromSerialized(it.uid), it))
+                uidMap[it.uid]?.updateRecipient(Recipient.fromSnapshot(AMELogin.majorContext, it.uid, it))
             }
         }
 
@@ -73,7 +71,7 @@ class AdHocSessionCache(ready:(list:List<AdHocSession>)->Unit) {
             val session = AdHocSession(sessionId, "", uid, timestamp = AmeTimeUtil.localTimeMillis())
             sessionList[sessionId] = session
             AmeDispatcher.io.dispatch {
-                session.updateRecipient(Recipient.from(AMELogin.majorContext, Address.fromSerialized(uid), false))
+                session.updateRecipient(Recipient.from(AMELogin.majorContext, uid, false))
                 sessionFinder.updateSource(sessionList.values.toList())
                 val dbSession = AdHocSessionInfo(sessionId, session.cid, session.uid, timestamp = session.timestamp)
                 getDao().saveSession(dbSession)
@@ -174,16 +172,19 @@ class AdHocSessionCache(ready:(list:List<AdHocSession>)->Unit) {
         return null
     }
 
+    @Throws(Exception::class)
     private fun messageDao(): AdHocMessageDao {
-        return UserDatabase.getDatabase(AMELogin.majorContext).adHocMessageDao()
+        return Repository.getAdHocMessageRepo(AMELogin.majorContext) ?: throw Exception("getMessageDao fail")
     }
 
+    @Throws(Exception::class)
     private fun getDao(): AdHocSessionDao {
-        return UserDatabase.getDatabase(AMELogin.majorContext).adHocSessionDao()
+        return Repository.getAdHocSessionRepo(AMELogin.majorContext) ?: throw Exception("getSessionDao fail")
     }
 
+    @Throws(Exception::class)
     private fun channelDao(): AdHocChannelDao {
-        return UserDatabase.getDatabase(AMELogin.majorContext).adHocChannelDao()
+        return Repository.getAdHocChannelRepo(AMELogin.majorContext)?: throw Exception("getChannelDao fail")
     }
 
     fun updatePin(sessionId: String, pin: Boolean): Boolean {

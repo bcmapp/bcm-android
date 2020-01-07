@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.fragment.ITransferAction
 import com.bcm.messenger.wallet.fragment.SendBitcoinFragment
@@ -76,8 +76,8 @@ class SendTransactionActivity : SwipeBaseActivity() {
         })
 
         //查询是否有备份账号，没有的话就提示备份
-        val userProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigationWithCast<IUserModule>()
-        val noticeBackup = !userProvider.hasBackupAccount()
+        val userProvider = AmeModuleCenter.user(accountContext)
+        val noticeBackup = userProvider?.hasBackupAccount() == false
 
         if (noticeBackup) {
             //提示账号备份

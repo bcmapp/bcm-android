@@ -8,6 +8,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.FullTransSwipeBaseActivity
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
 import com.bcm.messenger.common.imagepicker.CropResultCallback
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -19,7 +20,6 @@ import com.bcm.messenger.common.utils.MediaUtil
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.common.utils.getScreenPixelSize
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.provider.UserModuleImp
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.BitmapUtils
 import com.bcm.messenger.utility.StorageUtil
@@ -259,7 +259,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
         val newBitmap = futureBitmap
         AmePopup.loading.show(this)
         isSaving = true
-        UserModuleImp().updateAvatarProfile(recipient, newBitmap) { success ->
+        AmeModuleCenter.user(accountContext)?.updateAvatarProfile(recipient, newBitmap) { success ->
             isSaving = false
             AmePopup.loading.dismiss()
             if (success) {

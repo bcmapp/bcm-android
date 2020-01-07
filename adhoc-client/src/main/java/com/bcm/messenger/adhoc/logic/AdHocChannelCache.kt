@@ -1,10 +1,11 @@
 package com.bcm.messenger.adhoc.logic
 
-import com.bcm.messenger.common.database.db.UserDatabase
+import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.room.dao.AdHocChannelDao
 import com.bcm.messenger.common.grouprepository.room.entity.AdHocChannelInfo
-import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 
 class AdHocChannelCache(ready:()->Unit) {
@@ -60,7 +61,8 @@ class AdHocChannelCache(ready:()->Unit) {
         return channelList.values.toList()
     }
 
+    @Throws(Exception::class)
     private fun getDao(): AdHocChannelDao {
-        return UserDatabase.getDatabase().adHocChannelDao()
+        return Repository.getAdHocChannelRepo(AMELogin.majorContext) ?: throw Exception("getDao fail")
     }
 }

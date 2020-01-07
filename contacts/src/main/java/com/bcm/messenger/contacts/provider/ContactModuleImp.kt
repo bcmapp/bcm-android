@@ -22,7 +22,6 @@ import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.provider.IContactModule.Companion.TAG
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.activity.SearchActivity
 import com.bcm.messenger.common.utils.AmeAppLifecycle
@@ -118,10 +117,10 @@ class ContactModuleImp : IContactModule {
             discernLink(context, qrCode, callback)
         } else {
 
-            val userProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigationWithCast<IUserModule>()
+            val userProvider = AmeModuleCenter.user(accountContext)
             Observable.create<Pair<String?, String?>> {
                 try {
-                    val accountDiscernPair = userProvider.checkBackupAccountValid(qrCode)
+                    val accountDiscernPair = userProvider?.checkBackupAccountValid(qrCode) ?: throw Exception("userModule is null")
                     it.onNext(accountDiscernPair)
                 }catch (ex: Exception) {
                     it.onNext(Pair(null, ex.message))
@@ -131,7 +130,7 @@ class ContactModuleImp : IContactModule {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         if (!it.first.isNullOrEmpty()) {
-                            userProvider.showImportAccountWarning(context) {
+                            userProvider?.showImportAccountWarning(context) {
                                 callback?.invoke(false)
                             }
                         }else {

@@ -9,6 +9,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.repositories.RecipientRepo
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonSettingItem
@@ -19,7 +20,6 @@ import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.provider.UserModuleImp
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.me_fragment_other_profile.*
@@ -153,9 +153,8 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
         AmePopup.bottom.newBuilder()
                 .withTitle(getString(R.string.me_local_profile_all_reset_notice, recipient.name))
                 .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_local_profile_reset_button), AmeBottomPopup.PopupItem.CLR_RED) {
-                    val provider = UserModuleImp()
-                    provider.updateNameProfile(recipient, "") {
-                        provider.updateAvatarProfile(recipient, null) {
+                    AmeModuleCenter.user(accountContext)?.updateNameProfile(recipient, "") {
+                        AmeModuleCenter.user(accountContext)?.updateAvatarProfile(recipient, null) {
                         }
                     }
                 })

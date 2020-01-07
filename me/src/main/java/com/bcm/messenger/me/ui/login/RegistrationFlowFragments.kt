@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.preferences.SuperPreferences
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -22,7 +23,6 @@ import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.provider.UserModuleImp
 import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.HexUtil
@@ -730,7 +730,7 @@ class GenerateKeyFragment2 : AbsRegistrationFragment() {
 
         }.addToList(animatorSetList).start()
         account_info_btn?.setOnClickListener {
-            UserModuleImp().gotoBackupTutorial()
+            AmeModuleCenter.user(accountContext)?.gotoBackupTutorial()
         }
         startup_back_btn?.setOnClickListener {
             activity?.onBackPressed()

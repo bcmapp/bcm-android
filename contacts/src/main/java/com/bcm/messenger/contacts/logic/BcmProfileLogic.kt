@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.text.TextUtils
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.IMHttp
 import com.bcm.messenger.common.bcmhttp.RxIMHttp
@@ -23,7 +22,6 @@ import com.bcm.messenger.common.jobs.ContextJob
 import com.bcm.messenger.common.profiles.PlaintextServiceProfile
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.BcmFileUtils
@@ -40,7 +38,6 @@ import com.bcm.messenger.utility.bcmhttp.facade.SyncHttpWrapper
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.proguard.NotGuard
-import com.bcm.route.api.BcmRouter
 import com.example.bleserver.Base62
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -1278,8 +1275,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
 
             if (privacyChanged) {
                 if (recipient.isLogin) {
-                    val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigationWithCast<IUserModule>()
-                    provider.saveAccount(recipient, privacyProfile)
+                    AmeModuleCenter.user(recipient.address.context())?.saveAccount(recipient, privacyProfile)
 
                     updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
                         ALog.i(TAG, "privacyChanged, updateShareLink")

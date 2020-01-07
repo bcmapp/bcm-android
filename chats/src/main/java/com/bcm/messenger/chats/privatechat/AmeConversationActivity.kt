@@ -40,7 +40,6 @@ import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
 import com.bcm.messenger.common.imagepicker.bean.SelectedModel
 import com.bcm.messenger.common.mms.*
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.providers.PersistentBlobProvider
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -597,8 +596,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                 override fun onClick(name: String, view: View) {
                     checkRecipientBlock {
                         if (it) {
-                            val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigationWithCast<IUserModule>()
-                            provider.showClearHistoryConfirm(this@AmeConversationActivity, {
+                            AmeModuleCenter.user(accountContext)?.showClearHistoryConfirm(this@AmeConversationActivity, {
                                 mConversationModel?.clearConversationHistory(this@AmeConversationActivity)
                             }, {
                             })

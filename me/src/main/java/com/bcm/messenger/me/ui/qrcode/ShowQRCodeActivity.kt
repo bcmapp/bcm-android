@@ -2,11 +2,10 @@ package com.bcm.messenger.me.ui.qrcode
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
-import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.DateUtils
 import com.bcm.messenger.common.utils.dp2Px
@@ -16,7 +15,6 @@ import com.bcm.messenger.login.logic.QRExport
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
 import com.bcm.messenger.utility.QREncoder
-import com.bcm.route.api.BcmRouter
 import com.orhanobut.logger.Logger
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -38,8 +36,7 @@ class ShowQRCodeActivity : SwipeBaseActivity()  {
             }
 
             override fun onClickRight() {
-                val userProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigationWithCast<IUserModule>()
-                userProvider.gotoBackupTutorial()
+                AmeModuleCenter.user(accountContext)?.gotoBackupTutorial()
             }
         })
 

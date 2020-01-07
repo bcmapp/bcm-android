@@ -9,7 +9,7 @@ import android.provider.MediaStore
 import androidx.lifecycle.Observer
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.dp2Px
@@ -85,8 +85,8 @@ class AssetsReceiveActivity : SwipeBaseActivity() {
                 if (mWalletDisplay.baseWallet == transaction?.wallet) {
 
                     //查询是否有备份账号，没有的话就提示备份
-                    val userProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigationWithCast<IUserModule>()
-                    val noticeBackup = !userProvider.hasBackupAccount()
+                    val userProvider = AmeModuleCenter.user(accountContext)
+                    val noticeBackup = userProvider?.hasBackupAccount() == false
 
                     if (noticeBackup) {
                         //提示账号备份

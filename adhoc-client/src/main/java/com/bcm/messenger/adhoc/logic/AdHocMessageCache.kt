@@ -3,9 +3,10 @@ package com.bcm.messenger.adhoc.logic
 import android.net.Uri
 import android.util.ArrayMap
 import com.bcm.messenger.adhoc.util.AdHocUtil
-import com.bcm.messenger.common.database.db.UserDatabase
+import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.room.dao.AdHocMessageDao
 import com.bcm.messenger.common.grouprepository.room.entity.AdHocMessageDBEntity
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -22,8 +23,9 @@ class AdHocMessageCache {
         private var mFinishMap = ArrayMap<String, Uri?>()
     }
 
+    @Throws(Exception::class)
     private fun getDao(): AdHocMessageDao {
-        return UserDatabase.getDatabase().adHocMessageDao()
+        return Repository.getAdHocMessageRepo(AMELogin.majorContext) ?: throw Exception("getDao fail")
     }
 
     private fun getKey(sessionId: String, mid: String): String {
@@ -199,13 +201,13 @@ class AdHocMessageCache {
             returnMessage.atList = message.atList
             returnMessage.isAttachmentDownloading = message.isAttachmentDownloading
             returnMessage.attachmentDigest = message.attachmentDigest
-            AdHocSessionLogic.updateLastMessage(message.sessionId, returnMessage.getMessageBody()?.content?.getDescribe().toString(), returnMessage.getLastSessionState())
+            AdHocSessionLogic.updateLastMessage(message.sessionId, returnMessage.getMessageBody()?.content?.getDescribe(0L, AMELogin.majorContext).toString(), returnMessage.getLastSessionState())
 
         } else {
             val maxIndex = getDao().queryMaxIndexId(message.sessionId)
             ALog.i(TAG, "updateMessage maxIndex: $maxIndex")
             if (maxIndex == indexId) {
-                AdHocSessionLogic.updateLastMessage(message.sessionId, returnMessage.getMessageBody()?.content?.getDescribe().toString(), returnMessage.getLastSessionState())
+                AdHocSessionLogic.updateLastMessage(message.sessionId, returnMessage.getMessageBody()?.content?.getDescribe(0L, AMELogin.majorContext).toString(), returnMessage.getLastSessionState())
 
             }
         }
@@ -230,7 +232,7 @@ class AdHocMessageCache {
         getDao().deleteMessage(message.map { transform(it) })
         getDao().findLastMessage(sessionId)?.let {
             transform(it).let {
-                AdHocSessionLogic.updateLastMessage(sessionId, it.getMessageBody()?.content?.getDescribe().toString(), it.getLastSessionState())
+                AdHocSessionLogic.updateLastMessage(sessionId, it.getMessageBody()?.content?.getDescribe(0L, AMELogin.majorContext).toString(), it.getLastSessionState())
             }
         }
     }

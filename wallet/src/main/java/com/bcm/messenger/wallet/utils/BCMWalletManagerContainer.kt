@@ -4,12 +4,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AccountContextMap
 import com.bcm.messenger.common.utils.AppUtil
@@ -22,7 +20,6 @@ import com.bcm.messenger.wallet.model.*
 import com.bcm.messenger.wallet.presenter.ImportantLiveData
 import com.bcm.messenger.wallet.presenter.WalletViewModel
 import com.bcm.messenger.wallet.ui.WalletConfirmDialog
-import com.bcm.route.api.BcmRouter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.orhanobut.logger.Logger
@@ -331,8 +328,7 @@ object BCMWalletManagerContainer : AccountContextMap<BCMWalletManagerContainer.B
 
         fun verifyPassword(password: String): Boolean {
             return try {
-                val userProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigation() as IUserModule
-                userProvider.getUserPrivateKey(password) != null
+                AmeModuleCenter.user(mAccountContext)?.getUserPrivateKey(password) != null
             } catch (ex: Exception) {
                 false
             }
@@ -674,8 +670,7 @@ object BCMWalletManagerContainer : AccountContextMap<BCMWalletManagerContainer.B
                     }, passwordChecker = { password ->
 
                 try {
-                    val userProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigationWithCast<IUserModule>()
-                    privateKeyArray = userProvider.getUserPrivateKey(password)
+                    privateKeyArray = AmeModuleCenter.user(mAccountContext)?.getUserPrivateKey(password)
                     privateKeyArray != null
                 } catch (ex: Exception) {
                     false
@@ -694,8 +689,7 @@ object BCMWalletManagerContainer : AccountContextMap<BCMWalletManagerContainer.B
                     }, passwordChecker = { password ->
 
                 try {
-                    val userProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigation() as IUserModule
-                    privateKeyArray = userProvider.getUserPrivateKey(password)
+                    privateKeyArray = AmeModuleCenter.user(mAccountContext)?.getUserPrivateKey(password)
                     privateKeyArray != null
                 } catch (ex: Exception) {
                     false

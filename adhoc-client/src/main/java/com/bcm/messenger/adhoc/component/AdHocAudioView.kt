@@ -5,19 +5,19 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
-import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
 import com.bcm.messenger.adhoc.R
-import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.database.repositories.Repository
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.DateUtils
-import com.bcm.messenger.utility.permission.PermissionUtil
-import com.orhanobut.logger.Logger
+import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
 import com.bcm.messenger.common.attachments.DatabaseAttachment
 import com.bcm.messenger.common.audio.AudioSlidePlayer
+import com.bcm.messenger.common.core.AmeGroupMessage
+import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.mms.AudioSlide
-import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.DateUtils
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.utility.permission.PermissionUtil
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -188,7 +188,7 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
                     if (audioSlide.asAttachment() is DatabaseAttachment) {
                         val databaseAttachment = audioSlide.asAttachment() as DatabaseAttachment
                         databaseAttachment.duration = duration
-                        Repository.getAttachmentRepo().updateDuration(databaseAttachment.attachmentId.rowId, databaseAttachment.attachmentId.uniqueId, duration)
+                        Repository.getAttachmentRepo(AMELogin.majorContext)?.updateDuration(databaseAttachment.attachmentId.rowId, databaseAttachment.attachmentId.uniqueId, duration)
                     } else {
                         ALog.w(TAG, "current audio slide type is not DatabaseAttachment")
                     }

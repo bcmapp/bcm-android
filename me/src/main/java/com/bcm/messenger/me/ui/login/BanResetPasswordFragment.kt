@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.provider.UserModuleImp
 import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
 import com.bcm.messenger.utility.QuickOpCheck
 import kotlinx.android.synthetic.main.me_fragment_ban_reset_password.*
@@ -34,7 +34,7 @@ class BanResetPasswordFragment : AbsRegistrationFragment() {
 
             }
             override fun onClickRight() {
-                UserModuleImp().gotoBackupTutorial()
+                AmeModuleCenter.user(accountContext)?.gotoBackupTutorial()
             }
         })
 

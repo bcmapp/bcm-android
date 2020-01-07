@@ -8,7 +8,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -19,7 +19,6 @@ import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.InputLengthFilter
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.route.annotation.Route
-import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_fragment_edit_name.*
 
 /**
@@ -115,8 +114,7 @@ class EditNameActivity : SwipeBaseActivity(), RecipientModifiedListener {
         edit_name_input.clearFocus()
         edit_name_input.hideKeyboard()
         AmePopup.loading.show(this)
-        val userProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigationWithCast<IUserModule>()
-        userProvider.updateNameProfile(recipient, name) {
+        AmeModuleCenter.user(accountContext)?.updateNameProfile(recipient, name) {
             AmePopup.loading.dismiss()
             if (it) {
                 AmePopup.result.succeed(this, getString(R.string.me_profile_alias_save_success), true)

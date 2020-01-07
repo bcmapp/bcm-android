@@ -76,7 +76,7 @@ class AdHocChannelMemberListActivity: SwipeBaseActivity(), AmeRecycleViewAdapter
         private val name = view.findViewById<EmojiTextView>(R.id.adhoc_member_item_name)
         override fun setData(data: ChannelUserInfo) {
             super.setData(data)
-            avatar.setPhoto(AMELogin.majorContext, Recipient.from(AMELogin.majorContext, data.uid, true), data.name, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+            avatar.setPhoto(Recipient.from(AMELogin.majorContext, data.uid, true), data.name, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
             name.text = data.name
         }
     }

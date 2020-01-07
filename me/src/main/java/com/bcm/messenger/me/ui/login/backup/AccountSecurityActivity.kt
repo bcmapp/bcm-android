@@ -10,12 +10,12 @@ import android.view.View
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.preferences.SuperPreferences
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.bean.AmeAccountData
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.provider.UserModuleImp
 import com.bcm.messenger.me.ui.keybox.MyAccountKeyActivity
 import com.bcm.messenger.me.ui.keybox.SwitchAccountAdapter
 import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
@@ -98,7 +98,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
     }
 
     override fun onLoginRecipientRefresh() {
-        me_account_img?.setPhoto(accountContext, getAccountRecipient())
+        me_account_img?.setPhoto(getAccountRecipient())
     }
 
     private fun initCard() {
@@ -179,7 +179,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
     }
 
     private fun showAccountKeyDetails() {
-        UserModuleImp().gotoBackupTutorial()
+        AmeModuleCenter.user(accountContext)?.gotoBackupTutorial()
     }
 
     private fun handleLogout() {

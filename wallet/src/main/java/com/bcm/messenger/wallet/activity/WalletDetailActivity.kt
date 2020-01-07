@@ -8,7 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
@@ -250,10 +250,10 @@ class WalletDetailActivity : SwipeBaseActivity() {
      */
     @SuppressLint("CheckResult")
     private fun checkPasswordBeforeHandle(callback: (pass: Boolean) -> Unit) {
-        val userProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigationWithCast<IUserModule>()
+        val userProvider = AmeModuleCenter.user(accountContext)
 
         //回调结果表示是否需要修改密码
-        userProvider.checkUseDefaultPin { useDefault, defaultPin ->
+        userProvider?.checkUseDefaultPin { useDefault, defaultPin ->
             if (useDefault) {
                 WalletConfirmDialog.showForPasswordChange(this, getString(R.string.wallet_change_password_title),
                         getString(R.string.wallet_change_password_notice), cancel = getString(R.string.wallet_change_password_cancel),

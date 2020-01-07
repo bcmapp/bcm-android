@@ -22,7 +22,7 @@ import androidx.core.content.ContextCompat
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.scan.CameraManager
@@ -429,8 +429,7 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
      * 
      */
     private fun openBackupInfo() {
-        val userProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigationWithCast<IUserModule>()
-        userProvider.gotoBackupTutorial()
+        AmeModuleCenter.user(accountContext)?.gotoBackupTutorial()
     }
 
     /**

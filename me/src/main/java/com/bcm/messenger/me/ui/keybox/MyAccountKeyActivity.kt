@@ -14,6 +14,7 @@ import android.view.View
 import androidx.core.content.FileProvider
 import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -23,9 +24,11 @@ import com.bcm.messenger.login.bean.AmeAccountData
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.login.logic.QRExport
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.provider.UserModuleImp
 import com.bcm.messenger.me.utils.MeConfirmDialog
-import com.bcm.messenger.utility.*
+import com.bcm.messenger.utility.AmeTimeUtil
+import com.bcm.messenger.utility.QREncoder
+import com.bcm.messenger.utility.QuickOpCheck
+import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
 import com.orhanobut.logger.Logger
 import io.reactivex.Observable
@@ -73,7 +76,7 @@ class MyAccountKeyActivity : SwipeBaseActivity() {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            UserModuleImp().gotoBackupTutorial()
+            AmeModuleCenter.user(accountContext)?.gotoBackupTutorial()
         }
 
         fetchProfile()

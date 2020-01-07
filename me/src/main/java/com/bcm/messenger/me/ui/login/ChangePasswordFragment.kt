@@ -10,12 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.provider.UserModuleImp
 import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
 import com.bcm.messenger.me.ui.keybox.MyAccountKeyActivity
 import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
@@ -150,8 +150,7 @@ class ChangePasswordFragment : AbsRegistrationFragment() {
             AmePopup.result.failure(activity, getString(R.string.me_change_password_same_origin_warning), true)
         } else {
             AmePopup.loading.show(activity)
-            val userProvider = UserModuleImp()
-            userProvider.changePinPasswordAsync(activity as? AppCompatActivity, origin_pwd_edit.text.toString(), confirm_pwd_edit.text.toString()) { result, _ ->
+            AmeModuleCenter.user(accountContext)?.changePinPasswordAsync(activity as? AppCompatActivity, origin_pwd_edit.text.toString(), confirm_pwd_edit.text.toString()) { result, _ ->
                 if (result) {
                     AmePopup.loading.dismiss()
                     AmeLoginLogic.accountHistory.resetBackupState(accountContext.uid)

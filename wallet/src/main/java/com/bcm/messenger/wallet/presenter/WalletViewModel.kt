@@ -3,10 +3,8 @@ package com.bcm.messenger.wallet.presenter
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.server.ConnectState
 import com.bcm.messenger.common.server.IServerConnectStateListener
 import com.bcm.messenger.common.utils.AmeAppLifecycle
@@ -15,7 +13,6 @@ import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.model.*
 import com.bcm.messenger.wallet.utils.*
-import com.bcm.route.api.BcmRouter
 import com.orhanobut.logger.Logger
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -436,8 +433,8 @@ class WalletViewModel(private val mAccountContext: AccountContext) : ViewModel()
             AmeAppLifecycle.succeed(result.message ?: "", true)
             eventData.notice(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_TRANSACTION_RESULT, result))
 
-            val userProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_USER_BASE).navigationWithCast<IUserModule>()
-            val noticeBackup = !userProvider.hasBackupAccount()
+            val userProvider = AmeModuleCenter.user(mAccountContext)
+            val noticeBackup = userProvider?.hasBackupAccount() == false
             eventData.notice(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_ACCOUNT_BACKUP, noticeBackup))
 
 

@@ -22,7 +22,6 @@ import com.bcm.imcore.im.util.secure.DHUtil
 import com.bcm.imcore.im.util.secure.IDHHelper
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.common.AmeNotification
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -180,7 +179,7 @@ object AdHocSDK {
             }
 
             override fun getName(): String {
-                return Recipient.from(AMELogin.majorContext, Address.fromSerialized(AMELogin.majorUid), true).name
+                return Recipient.from(AMELogin.majorContext, AMELogin.majorUid, true).name
             }
 
             override fun getAccountDir(): String {

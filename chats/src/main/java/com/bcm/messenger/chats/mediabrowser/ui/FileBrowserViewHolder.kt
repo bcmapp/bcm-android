@@ -119,7 +119,7 @@ class FileBrowserViewHolder(private val accountContext: AccountContext, itemView
         if (messageRecord.isMediaMessage()) {
             ChatPreviewClickListener(accountContext).onClick(v, messageRecord)
         } else {
-            AmeModuleCenter.contact()?.discernLink(v.context, AmeURLUtil.getHttpUrl(messageRecord.body))
+            AmeModuleCenter.contact(accountContext)?.discernLink(v.context, AmeURLUtil.getHttpUrl(messageRecord.body))
         }
     }
 

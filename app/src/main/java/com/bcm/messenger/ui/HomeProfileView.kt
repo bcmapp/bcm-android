@@ -15,9 +15,9 @@ import com.bcm.messenger.adapter.HomeAccountItem
 import com.bcm.messenger.adapter.TYPE_ADD
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
-import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.AmePushProcess
@@ -197,8 +197,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            val meProvider = AmeProvider.get<IUserModule>(ARouterConstants.Provider.PROVIDER_USER_BASE)
-            meProvider?.gotoDataNote(context, accountContext)
+            AmeModuleCenter.user(accountContext)?.gotoDataNote(context, accountContext)
         }
         home_profile_air_chat_icon.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
@@ -266,7 +265,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     private fun logoutShowViews() {
-        home_profile_avatar.showPrivateAvatar(accountContext, recipient)
+        home_profile_avatar.showPrivateAvatar(recipient)
 
         home_profile_avatar.visibility = View.VISIBLE
         home_profile_delete.visibility = View.VISIBLE
@@ -282,7 +281,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
 
     private fun inactiveShowViews() {
         setViewsAlpha(0f)
-        home_profile_avatar.showPrivateAvatar(accountContext, recipient)
+        home_profile_avatar.showPrivateAvatar(recipient)
 
         home_profile_avatar.visibility = View.VISIBLE
         home_profile_delete.visibility = View.GONE
@@ -297,7 +296,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     private fun activeShowViews() {
-        home_profile_avatar.showPrivateAvatar(accountContext, recipient)
+        home_profile_avatar.showPrivateAvatar(recipient)
 
         home_profile_avatar.visibility = View.INVISIBLE
         home_profile_delete.visibility = View.GONE
