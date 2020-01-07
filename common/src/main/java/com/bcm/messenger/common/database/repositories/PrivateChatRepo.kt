@@ -340,7 +340,7 @@ class PrivateChatRepo(
         val result = LinkedList<MessagingDatabase.MarkedMessageInfo>()
 
         messages.forEach {
-            val syncMessageId = MessagingDatabase.SyncMessageId(Address.from(it.uid), it.dateSent)
+            val syncMessageId = MessagingDatabase.SyncMessageId(Address.from(accountContext, it.uid), it.dateSent)
             val expirationInfo = MessagingDatabase.ExpirationInfo(it.id, it.expiresTime, it.expiresStartTime, it.isMediaMessage())
             result.add(MessagingDatabase.MarkedMessageInfo(syncMessageId, expirationInfo))
 

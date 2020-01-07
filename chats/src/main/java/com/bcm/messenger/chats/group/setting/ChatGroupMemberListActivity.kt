@@ -286,7 +286,7 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
                 }
 
                 override fun onMatch(data: AmeGroupMemberInfo, compare: String): Boolean {
-                    if (data.uid.serialize()?.isNotEmpty() == true) {
+                    if (data.uid?.isNotEmpty() == true) {
                         val recipient = Recipient.from(data.uid, true)
                         val name = BcmGroupNameUtil.getGroupMemberName(recipient, data)
                         return StringAppearanceUtil.containIgnore(name, compare)

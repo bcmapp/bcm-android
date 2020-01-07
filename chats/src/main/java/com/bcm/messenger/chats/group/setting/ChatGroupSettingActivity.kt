@@ -494,7 +494,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
             if (null != newOwner) {
                 ChatGroupChangeOwnerPopWindow.show(accountContext,this@ChatGroupSettingActivity, mGroupModel.groupId(), newOwner) {
                     AmePopup.loading.show(this@ChatGroupSettingActivity)
-                    mGroupModel.leaveGroup(it.uid.serialize(), result)
+                    mGroupModel.leaveGroup(it.uid, result)
                 }
                 return
             }

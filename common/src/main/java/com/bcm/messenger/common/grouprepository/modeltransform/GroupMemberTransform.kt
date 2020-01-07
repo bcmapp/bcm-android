@@ -1,6 +1,7 @@
 package com.bcm.messenger.common.grouprepository.modeltransform
 
 import android.text.TextUtils
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMember
@@ -13,7 +14,7 @@ object GroupMemberTransform {
         member.createTime = dbUser.joinTime
         member.gid = dbUser.gid
         member.role = dbUser.role
-        member.uid = Address.from(dbUser.uid)
+        member.uid = dbUser.uid
 
         member.customNickname = dbUser.customNickname
         member.nickname = dbUser.nickname
@@ -34,7 +35,7 @@ object GroupMemberTransform {
         dbUser.joinTime = member.createTime
         dbUser.gid = member.gid
         dbUser.role = member.role
-        dbUser.uid = member.uid.serialize()
+        dbUser.uid = member.uid
         dbUser.customNickname = member.customNickname?:""
         dbUser.nickname = member.nickname?:""
         dbUser.profileKeyConfig = member.keyConfig?.toString()?:""

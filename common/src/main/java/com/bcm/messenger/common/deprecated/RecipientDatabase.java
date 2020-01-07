@@ -395,7 +395,7 @@ public class RecipientDatabase extends Database {
             }
 
             try {
-                IdentityDatabase.IdentityRecord record = identityDatabase.getIdentity(Address.from(uid)).orNull();
+                IdentityDatabase.IdentityRecord record = identityDatabase.getIdentity(uid).orNull();
                 if (record != null) {
                     this.identityKey = Base64.encodeBytes(record.getIdentityKey().serialize());
                 }

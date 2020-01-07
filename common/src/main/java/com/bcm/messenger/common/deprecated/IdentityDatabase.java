@@ -106,13 +106,13 @@ public class IdentityDatabase extends Database {
         return new IdentityReader(cursor);
     }
 
-    public Optional<IdentityRecord> getIdentity(Address address) {
+    public Optional<IdentityRecord> getIdentity(String uid) {
         SQLiteDatabase database = databaseHelper.getReadableDatabase();
         Cursor cursor = null;
 
         try {
             cursor = database.query(TABLE_NAME, null, ADDRESS + " = ?",
-                    new String[]{address.serialize()}, null, null, null);
+                    new String[]{uid}, null, null, null);
 
             if (cursor != null && cursor.moveToFirst()) {
                 return Optional.of(getIdentityRecord(cursor));

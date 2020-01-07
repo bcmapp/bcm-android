@@ -37,12 +37,12 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
             val owner = GroupMemberManager.queryGroupMemberByRole(info.gid, AmeGroupMemberInfo.OWNER.toInt())
 
             if (owner.isNotEmpty()){
-                mlist[owner[0].uid.serialize()] = owner[0]
+                mlist[owner[0].uid] = owner[0]
             }
 
             val memberList = GroupMemberManager.queryGroupMemberByRole(info.gid, AmeGroupMemberInfo.MEMBER.toInt())
             for (u in memberList){
-                mlist[u.uid.serialize()] = u
+                mlist[u.uid] = u
             }
 
             val joinList = GroupJoinRequestTransform.bcmJoinGroupRequestListFromDb(BcmGroupJoinManager.queryJoinRequestByGid(info.gid))
@@ -79,12 +79,12 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
             val owner = GroupMemberManager.queryGroupMemberByRole(info.gid, AmeGroupMemberInfo.OWNER.toInt())
 
             if (owner.isNotEmpty()) {
-                mlist[owner[0].uid.serialize()] = owner[0]
+                mlist[owner[0].uid] = owner[0]
             }
 
             val memberList = GroupMemberManager.queryGroupMemberByRole(info.gid, AmeGroupMemberInfo.MEMBER.toInt())
             for (u in memberList) {
-                mlist[u.uid.serialize()] = u
+                mlist[u.uid] = u
             }
 
             it.onNext(mlist)
@@ -156,7 +156,7 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
                 }
 
                 if (null != remove){
-                    if (remove.uid.serialize() == AMELogin.uid){
+                    if (remove.uid == AMELogin.uid){
                         info.role = AmeGroupMemberInfo.VISITOR
                         AmeDispatcher.io.dispatch{
                             GroupInfoDataManager.updateGroupRole(info.gid, AmeGroupMemberInfo.VISITOR)
@@ -171,9 +171,9 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
     fun addMember(list:List<AmeGroupMemberInfo>?){
         if (list != null){
             for (u in list){
-                memberList?.put(u.uid.serialize(), u)
+                memberList?.put(u.uid, u)
 
-                if (u.uid.serialize() == AMELogin.uid){
+                if (u.uid == AMELogin.uid){
                     info.role = u.role
                     AmeDispatcher.io.dispatch {
                         GroupInfoDataManager.updateGroupRole(info.gid, u.role)
@@ -181,7 +181,7 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
                 }
 
                 if (u.role == AmeGroupMemberInfo.OWNER){
-                    info.owner = u.uid.serialize()
+                    info.owner = u.uid
                 }
             }
         }
@@ -214,7 +214,7 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
 
     fun updateMemberInfoList(members: List<AmeGroupMemberInfo>) {
         for (i in members) {
-            memberList?.set(i.uid.serialize(), i)
+            memberList?.set(i.uid, i)
         }
 
         AmeDispatcher.io.dispatch {

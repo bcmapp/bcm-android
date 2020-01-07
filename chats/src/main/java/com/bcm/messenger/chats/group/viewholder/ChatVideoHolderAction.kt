@@ -32,9 +32,9 @@ class ChatVideoHolderAction(accountContext: AccountContext) : BaseChatHolderActi
         body.setImage(BCMEncryptUtils.getMasterSecret(accountContext) ?: return, glideRequests, message)
     }
 
-    override fun resend(messageRecord: AmeGroupMessageDetail) {
-        if (!messageRecord.attachmentUri.isNullOrEmpty()) {
-            GroupMessageLogic.get(accountContext).messageSender.resendMediaMessage(messageRecord)
+    override fun resend(message: AmeGroupMessageDetail) {
+        if (!message.attachmentUri.isNullOrEmpty()) {
+            GroupMessageLogic.get(accountContext).messageSender.resendMediaMessage(message)
         }
     }
 

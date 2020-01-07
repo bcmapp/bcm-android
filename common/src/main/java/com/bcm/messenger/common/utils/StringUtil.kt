@@ -47,3 +47,10 @@ fun String.base64URLEncode(): String {
 fun String.base64URLDecode(): String {
     return toByteArray().base64Decode().format()
 }
+
+fun String.front(len: Int = 9): String {
+    if (this.length > len) {
+        return substring(0, len)
+    }
+    return this
+}

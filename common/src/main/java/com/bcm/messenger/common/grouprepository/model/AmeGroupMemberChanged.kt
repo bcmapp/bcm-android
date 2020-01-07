@@ -28,7 +28,7 @@ data class AmeGroupMemberChanged(val accountContext: AccountContext, val groupId
     fun isMyJoin(): Boolean {
         if (action == JOIN){
             for (i in memberList){
-                if (i.uid.serialize() == accountContext.uid){
+                if (i.uid == accountContext.uid){
                     return true
                 }
             }
@@ -42,7 +42,7 @@ data class AmeGroupMemberChanged(val accountContext: AccountContext, val groupId
     fun isMyLeave(): Boolean {
         if (action == LEAVE){
             for (i in memberList){
-                if (i.uid.serialize() == accountContext.uid){
+                if (i.uid == accountContext.uid){
                     return true
                 }
             }
@@ -57,7 +57,7 @@ data class AmeGroupMemberChanged(val accountContext: AccountContext, val groupId
         detail.senderId = fromUid
         detail.serverIndex = messageId
         detail.sendTime = createTime ?: AmeTimeUtil.serverTimeMillis()
-        val theOperators: List<String> = memberList.map { it -> it.uid.serialize() }
+        val theOperators: List<String> = memberList.map { it -> it.uid }
 
         when (action) {
             JOIN -> {

@@ -189,7 +189,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
         GroupLogic.getGroupMemberInfo(groupId, AMELogin.uid) { member, error ->
             if (member != null) {
                 try {
-                    if (member.uid.serialize() == AMELogin.uid) {
+                    if (member.uid == AMELogin.uid) {
                         val selfProfile = Recipient.major().privacyProfile
                         val myName = Recipient.major().name
                         var newName: String? = null
@@ -693,7 +693,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
         if (gid == groupId && memberList.isNotEmpty()) {
             modelCache.addMember(memberList)
             modelCache.info.memberCount += memberList.count()
-            val selfJoin = memberList.filter { it.uid.serialize() == AMELogin.uid }
+            val selfJoin = memberList.filter { it.uid == AMELogin.uid }
                     .takeIf {
                         it.isNotEmpty()
                     }?.first()
@@ -725,12 +725,12 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
 
     override fun onMemberLeave(gid: Long, memberList: List<AmeGroupMemberInfo>) {
         if (gid == groupId && memberList.isNotEmpty()) {
-            modelCache.removeMember(memberList.map { it.uid.serialize() })
+            modelCache.removeMember(memberList.map { it.uid })
             modelCache.info.memberCount = max(1, modelCache.info.memberCount + memberList.count())
 
             post(MemberListChangedEvent())
 
-            if (memberList.any { it.uid.serialize() == AMELogin.uid }) {
+            if (memberList.any { it.uid == AMELogin.uid }) {
                 AmeDispatcher.mainThread.dispatch {
                     post(MyRoleChangedEvent(AmeGroupMemberInfo.VISITOR))
                 }

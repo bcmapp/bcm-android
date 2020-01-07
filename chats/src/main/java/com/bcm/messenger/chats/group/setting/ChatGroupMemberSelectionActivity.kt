@@ -81,7 +81,7 @@ class ChatGroupMemberSelectionActivity : SwipeBaseActivity(), AmeRecycleViewAdap
     private fun updateMemberList() {
         val list = groupModel.getGroupMemberList()
         val listExcludeSelf = ArrayList<AmeGroupMemberInfo>()
-        list.filterTo(listExcludeSelf) { it.uid.serialize() != accountContext.uid }
+        list.filterTo(listExcludeSelf) { it.uid != accountContext.uid }
         memberDataSource.updateDataSource(listExcludeSelf)
     }
 

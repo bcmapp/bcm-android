@@ -5,6 +5,7 @@ import com.bcm.messenger.common.core.corebean.BcmGroupJoinRequest
 import com.bcm.messenger.common.core.corebean.BcmGroupJoinStatus
 import com.bcm.messenger.common.grouprepository.room.entity.GroupJoinRequestInfo
 import com.bcm.messenger.common.grouprepository.room.entity.JoinGroupReqComment
+import com.bcm.messenger.common.utils.front
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.GsonUtils
 
@@ -19,7 +20,7 @@ object GroupJoinRequestTransform {
 
         return BcmGroupJoinRequest(dbRequest.gid,
                 dbRequest.uid,
-                comment?.name?:Address.from(dbRequest.uid).format(),
+                comment?.name?:dbRequest.uid.front(),
                 dbRequest.reqId,
                 dbRequest.mid,
                 dbRequest.inviter,

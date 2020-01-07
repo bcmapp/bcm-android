@@ -987,7 +987,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .observeOn(AmeDispatcher.ioScheduler)
                     .flatMap { queryList ->
                         val localList = GroupMemberManager.queryGroupMemberList(accountContext, groupId, uidList)
-                        queryList.removeAll(localList.map { it.uid.serialize() })
+                        queryList.removeAll(localList.map { it.uid })
                         if (queryList.isEmpty()) {
                             Observable.just(localList)
                                     .subscribeOn(AmeDispatcher.ioScheduler)
@@ -1187,7 +1187,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                 when (change.action) {
                     AmeGroupMemberChanged.JOIN -> {
                         getGroupMemberInfos(change.groupId, change.memberList.map {
-                            it.uid.serialize()
+                            it.uid
                         }).delaySubscription(1, TimeUnit.SECONDS)
                                 .subscribeOn(AmeDispatcher.ioScheduler)
                                 .observeOn(AmeDispatcher.ioScheduler)
@@ -2135,7 +2135,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             getGroupMemberInfos(gid, res.list?.map { e -> e.uid } ?: listOf())
                                     .observeOn(AmeDispatcher.ioScheduler)
                                     .map { mlist ->
-                                        val members = mlist.map { it.uid.serialize() }.toSet()
+                                        val members = mlist.map { it.uid }.toSet()
                                         res.getPreKeyBundleList(members)
                                     }
                         } else {

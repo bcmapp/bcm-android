@@ -15,7 +15,7 @@ object GroupMemberManager {
         if (uid.isNotEmpty()) {
             val member = AmeGroupMemberInfo()
             member.gid = gid
-            member.uid = Address.from(uid)
+            member.uid = uid
             deleteMember(accountContext, member)
         }
     }

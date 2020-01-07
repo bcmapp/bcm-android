@@ -55,7 +55,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                     val list = params.toUserList()
                     val mList = GroupMemberManager.queryGroupMemberList(accountContext, gid, list).filter { member -> member.role != AmeGroupMemberInfo.VISITOR }.toMutableList()
                     if (mList.size < 4) {
-                        val existList = mList.map { m -> m.uid.serialize() }
+                        val existList = mList.map { m -> m.uid }
                         val dbTop4List = GroupMemberManager.queryTopNGroupMember(accountContext, gid, 4).filter { m -> !existList.contains(m.uid.serialize()) }
                         mList.addAll(dbTop4List.subList(0, min(dbTop4List.size, 4 - mList.size)))
                         if (mList.isEmpty()) {
@@ -71,7 +71,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                         }
                         ALog.i(TAG, "$gid hash state matched but info not ready")
                     }
-                    mList.map { m -> m.uid.serialize() }.toMutableList()
+                    mList.map { m -> m.uid }.toMutableList()
                 } else {
                     ALog.i(TAG, "$gid params is null")
                     mutableListOf<String>()
@@ -103,7 +103,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                             newParams = memberList2Params(accountContext, gid, list)
                             if (gInfo.iconUrl.isEmpty()) {
                                 list.map { m ->
-                                    val recipient = Recipient.from(accountContext, m.uid.serialize(), false)
+                                    val recipient = Recipient.from(accountContext, m.uid, false)
                                     val name = BcmGroupNameUtil.getGroupMemberName(recipient, m)
                                     CombineBitmapUtil.RecipientBitmapUnit(recipient, name)
                                 }
@@ -179,22 +179,22 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
         params.gid = gid
 
         if (list.isNotEmpty()) {
-            params.uid1 = list[0].uid.serialize()
+            params.uid1 = list[0].uid
             params.user1Hash = hashOfUser(accountContext, list[0])
         }
 
         if (list.size > 1) {
-            params.uid2 = list[1].uid.serialize()
+            params.uid2 = list[1].uid
             params.user2Hash = hashOfUser(accountContext, list[1])
         }
 
         if (list.size > 2) {
-            params.uid3 = list[2].uid.serialize()
+            params.uid3 = list[2].uid
             params.user3Hash = hashOfUser(accountContext, list[2])
         }
 
         if (list.size > 3) {
-            params.uid4 = list[3].uid.serialize()
+            params.uid4 = list[3].uid
             params.user4Hash = hashOfUser(accountContext, list[3])
         }
         return params
@@ -260,7 +260,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
     }
 
     private fun hashOfUser(accountContext: AccountContext, memberInfo: AmeGroupMemberInfo): String {
-        val recipient = Recipient.from(accountContext, memberInfo.uid.serialize(), true)
+        val recipient = Recipient.from(accountContext, memberInfo.uid, true)
         val name = BcmGroupNameUtil.getGroupMemberName(recipient, memberInfo)
         val avatar = recipient.avatar
         return EncryptUtils.encryptSHA1ToString("$name$avatar")
@@ -274,7 +274,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
         for (member in memberList) {
             val uid = member.uid.toString()
             if (uid.isNotBlank() && uid != accountContext.uid) {
-                val recipient = Recipient.from(accountContext, member.uid.serialize(), true)
+                val recipient = Recipient.from(accountContext, member.uid, true)
                 val name = BcmGroupNameUtil.getGroupMemberName(recipient, member)
                 spliceName += InputLengthFilter.filterSpliceName(name, 10)
                 spliceName += if (language == 1) "、" else ", "

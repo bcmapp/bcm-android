@@ -124,7 +124,7 @@ class GroupModuleImp : IGroupModule {
 
     override fun getMembersFromCache(groupId: Long): List<String> {
         val groupModel = GroupLogic.get(accountContext).getModel(groupId)?:return listOf()
-        return groupModel.getGroupMemberList().map { it.uid.serialize() }
+        return groupModel.getGroupMemberList().map { it.uid }
     }
 
     override fun queryMember(groupId: Long, uid:String, result: (memberInfo: AmeGroupMemberInfo?) -> Unit) {

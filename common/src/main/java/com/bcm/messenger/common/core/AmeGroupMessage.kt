@@ -846,7 +846,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                 ALog.d("SystemContent", "syncMemberInfo ready: $ready")
                 val map = HashMap<String, AmeGroupMemberInfo>()
                 for (i in it) {
-                    map[i.uid.serialize()] = i
+                    map[i.uid] = i
                 }
                 this.groupMembers = map
 

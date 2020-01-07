@@ -65,9 +65,7 @@ public class IncomingMediaMessage {
     this.subscriptionId   = subscriptionId;
     this.expiresIn        = expiresIn;
     this.expirationUpdate = expirationUpdate;
-
-    if (group.isPresent()) this.groupId = Address.from(GroupUtil.getEncodedId(group.get().getGroupId(), false));
-    else                   this.groupId = null;
+    this.groupId = null;
 
     this.attachments.addAll(PointerAttachment.forPointers(masterSecret, attachments));
   }
