@@ -5,6 +5,7 @@ import com.bcm.messenger.chats.group.core.group.*
 import com.bcm.messenger.chats.group.logic.bean.BcmGroupReviewAccept
 import com.bcm.messenger.chats.group.logic.secure.GroupKeysContent
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.bcmhttp.RxIMHttp
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.core.ServerResult
 import com.bcm.messenger.common.core.corebean.GroupKeyMode
@@ -13,11 +14,9 @@ import com.bcm.messenger.common.core.corebean.ProfilesResult
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.grouprepository.room.entity.JoinGroupReqComment
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.bcmhttp.facade.AmeEmpty
-import com.bcm.messenger.common.bcmhttp.RxIMHttp
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.proguard.NotGuard
@@ -39,7 +38,7 @@ object GroupManagerCore {
 
 
     fun offlineMessageState(accountContext: AccountContext): Observable<ServerResult<GroupLastMidEntity>> {
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.QUERY_OFFLINE_MSG_STATE),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.QUERY_OFFLINE_MSG_STATE),
                 null, "{}", object : TypeToken<ServerResult<GroupLastMidEntity>>() {
         }.type)
     }
@@ -47,7 +46,7 @@ object GroupManagerCore {
 
     fun createGroupV3(accountContext: AccountContext, req: CreateGroupRequest): Observable<CreateGroupResult> {
         req.groupKeyMode = GroupKeyMode.STRONG_MODE.m
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.CREATE_GROUP_URL_V3),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.CREATE_GROUP_URL_V3),
                 null, GsonUtils.toJson(req), CreateGroupResult::class.java)
     }
 
@@ -106,7 +105,7 @@ object GroupManagerCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.CREATE_GROUP_URL_V2),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.CREATE_GROUP_URL_V2),
                 null, obj.toString(), object : TypeToken<ServerResult<CreateGroupResult>>() {
 
         }.type)
@@ -126,7 +125,7 @@ object GroupManagerCore {
         req.versions = keyVersions
         val reqJson = GsonUtils.toJson(req)
 
-        return RxIMHttp.getHttp(accountContext).post<GroupKeyResEntity>(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_KEYS),
+        return RxIMHttp.get(accountContext).post<GroupKeyResEntity>(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_KEYS),
                 reqJson, GroupKeyResEntity::class.java)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
@@ -149,7 +148,7 @@ object GroupManagerCore {
     fun getGroupLatestKeys(accountContext: AccountContext, gidList: List<Long>): Observable<LatestGroupKeyResEntity> {
         val req = LatestGroupKeysReq(gidList)
         val reqJson = GsonUtils.toJson(req)
-        return RxIMHttp.getHttp(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.GROUP_LATEST_GROUP_KEY),
+        return RxIMHttp.get(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.GROUP_LATEST_GROUP_KEY),
                 reqJson, LatestGroupKeyResEntity::class.java)
     }
 
@@ -162,7 +161,7 @@ object GroupManagerCore {
     fun refreshGroupKeys(accountContext: AccountContext, gidList: List<Long>): Observable<RefreshKeyResEntity> {
         val req = RefreshGroupKeysReq()
         req.gidList = gidList
-        return RxIMHttp.getHttp(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.REFRESH_GROUP_KES),
+        return RxIMHttp.get(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.REFRESH_GROUP_KES),
                 GsonUtils.toJson(req), RefreshKeyResEntity::class.java)
 
     }
@@ -184,7 +183,7 @@ object GroupManagerCore {
         req.version = version
         req.keys = keys
         req.keyMode = keyMode.m
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.UPLOAD_GROUP_KES), null,
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.UPLOAD_GROUP_KES), null,
                 GsonUtils.toJson(req), AmeEmpty::class.java)
 
     }
@@ -203,7 +202,7 @@ object GroupManagerCore {
         req.gid = gid
         req.version = version
         req.mode = mode
-        return RxIMHttp.getHttp(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.PREPARE_UPLOAD_GROUP_KES),
+        return RxIMHttp.get(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.PREPARE_UPLOAD_GROUP_KES),
                 GsonUtils.toJson(req), PreKeyBundleListEntity::class.java)
 
     }
@@ -216,7 +215,7 @@ object GroupManagerCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put<ProfilesResult>(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_MEMBER_PROFILE_URL),
+        return RxIMHttp.get(accountContext).put<ProfilesResult>(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_MEMBER_PROFILE_URL),
                 null, obj.toString(), ProfilesResult::class.java)
                 .map { inviteList ->
                     val list = ArrayList<IdentityKeyInfo>()
@@ -251,7 +250,7 @@ object GroupManagerCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.UPDATE_GROUP_URL_V3),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.UPDATE_GROUP_URL_V3),
                 null, obj.toString(), object : TypeToken<ServerResult<AmeEmpty>>() {
 
         }.type)
@@ -271,7 +270,7 @@ object GroupManagerCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.UPDATE_GROUP_URL_V3),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.UPDATE_GROUP_URL_V3),
                 null, obj.toString(), object : TypeToken<ServerResult<AmeEmpty>>() {
 
         }.type)
@@ -285,7 +284,7 @@ object GroupManagerCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_INFO_URL),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_INFO_URL),
                 null, obj.toString(), object : TypeToken<ServerResult<GroupInfoEntity>>() {
         }.type)
     }
@@ -293,7 +292,7 @@ object GroupManagerCore {
     fun getGroupInfoByGids(accountContext: AccountContext, gids: List<Long>): Observable<ServerResult<GroupInfoListEntity>> {
         val req = QueryInfoBatchReq()
         req.gids = gids
-        return RxIMHttp.getHttp(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.QUERY_GROUP_INFO_BATCH),
+        return RxIMHttp.get(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.QUERY_GROUP_INFO_BATCH),
                 Gson().toJson(req), object : TypeToken<ServerResult<GroupInfoListEntity>>() {}.type)
     }
 
@@ -315,7 +314,7 @@ object GroupManagerCore {
             GroupCoreConstants.LEAVE_GROUP_URL
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(uri),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(uri),
                 null, obj.toString(), object : TypeToken<AmeEmpty>() {}.type)
     }
 
@@ -344,7 +343,7 @@ object GroupManagerCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.SEND_GROUP_UPDATE_USER),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.SEND_GROUP_UPDATE_USER),
                 null, obj.toString(), object : TypeToken<ServerResult<Void>>() {}.type)
     }
 
@@ -359,7 +358,7 @@ object GroupManagerCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).post<ServerResult<GroupJoinPendingListRes>>(BcmHttpApiHelper.getApi(GroupCoreConstants.QUERY_GROUP_PENDING_LIST),
+        return RxIMHttp.get(accountContext).post<ServerResult<GroupJoinPendingListRes>>(BcmHttpApiHelper.getApi(GroupCoreConstants.QUERY_GROUP_PENDING_LIST),
                 obj.toString(), object : TypeToken<ServerResult<GroupJoinPendingListRes>>() {
         }.type).subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
@@ -384,7 +383,7 @@ object GroupManagerCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.UPDATE_GROUP_URL_V3)
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.UPDATE_GROUP_URL_V3)
                 ,obj.toString(),AmeEmpty::class.java)
     }
 
@@ -400,7 +399,7 @@ object GroupManagerCore {
             GroupCoreConstants.JOIN_GROUP_REVIEW
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(uri), null, GsonUtils.toJson(req), object : TypeToken<AmeEmpty>() {
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(uri), null, GsonUtils.toJson(req), object : TypeToken<AmeEmpty>() {
 
         }.type)
     }
@@ -411,7 +410,7 @@ object GroupManagerCore {
         req.list = reviewList
         req.sig = ""
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.JOIN_GROUP_UPLOAD_PSW),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.JOIN_GROUP_UPLOAD_PSW),
                 null, GsonUtils.toJson(req), object : TypeToken<AmeEmpty>() {
 
         }.type)
@@ -439,7 +438,7 @@ object GroupManagerCore {
             val format = ByteArrayOutputStream()
             format.write(EncryptUtils.base64Decode(shareCode.toByteArray()))
             format.write(EncryptUtils.base64Decode(shareSign.toByteArray()))
-            val signData = BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, format.toByteArray())
+            val signData = BCMEncryptUtils.signWithMe(accountContext, format.toByteArray())
 
             req.signature = String(EncryptUtils.base64Encode(signData))
         } catch (e: Throwable) {
@@ -447,7 +446,7 @@ object GroupManagerCore {
         }
 
         if (newGroup) {
-            return RxIMHttp.getHttp(accountContext).put<JoinGroupByCodeRes>(BcmHttpApiHelper.getApi(GroupCoreConstants.JOIN_GROUP_BY_CODE_V3),
+            return RxIMHttp.get(accountContext).put<JoinGroupByCodeRes>(BcmHttpApiHelper.getApi(GroupCoreConstants.JOIN_GROUP_BY_CODE_V3),
                     null, GsonUtils.toJson(req), JoinGroupByCodeRes::class.java)
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AmeDispatcher.ioScheduler)
@@ -463,7 +462,7 @@ object GroupManagerCore {
                         }
                     }
         } else {
-            return RxIMHttp.getHttp(accountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(GroupCoreConstants.JOIN_GROUP_BY_CODE),
+            return RxIMHttp.get(accountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(GroupCoreConstants.JOIN_GROUP_BY_CODE),
                     null, GsonUtils.toJson(req), AmeEmpty::class.java)
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AmeDispatcher.ioScheduler)
@@ -487,7 +486,7 @@ object GroupManagerCore {
         req.infoSecret = infoSecret
         req.proof = proof
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.GROUP_ADD_ME),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.GROUP_ADD_ME),
                 null, GsonUtils.toJson(req), AmeEmpty::class.java)
     }
 
@@ -501,7 +500,7 @@ object GroupManagerCore {
         }
 
 
-        return RxIMHttp.getHttp(accountContext).post<ServerResult<CheckQrCodeValidRes>>(BcmHttpApiHelper.getApi(GroupCoreConstants.CHECK_QR_CODE_VALID),
+        return RxIMHttp.get(accountContext).post<ServerResult<CheckQrCodeValidRes>>(BcmHttpApiHelper.getApi(GroupCoreConstants.CHECK_QR_CODE_VALID),
                 GsonUtils.toJson(req), object : TypeToken<ServerResult<CheckQrCodeValidRes>>() {
 
         }.type).map { result -> result.isSuccess && result.data.valid }
@@ -518,7 +517,7 @@ object GroupManagerCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.UPDATE_GROUP_URL_V3),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.UPDATE_GROUP_URL_V3),
                 null, obj.toString(), object : TypeToken<AmeEmpty>() {}.type)
     }
 
@@ -551,7 +550,7 @@ object GroupManagerCore {
         } else {
             GroupCoreConstants.UPDATE_GROUP_URL_V2
         }
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(uri), null, obj.toString(), object : TypeToken<AmeEmpty>() {
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(uri), null, obj.toString(), object : TypeToken<AmeEmpty>() {
 
         }.type)
     }
@@ -565,7 +564,7 @@ object GroupManagerCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).post<ServerResult<CheckJoinGroupNeedConfirmRes>>(BcmHttpApiHelper.getApi(GroupCoreConstants.CHECK_OWNER_CONFIRM_STATE),
+        return RxIMHttp.get(accountContext).post<ServerResult<CheckJoinGroupNeedConfirmRes>>(BcmHttpApiHelper.getApi(GroupCoreConstants.CHECK_OWNER_CONFIRM_STATE),
                 obj.toString(), object : TypeToken<ServerResult<CheckJoinGroupNeedConfirmRes>>() {
         }.type).subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
@@ -582,7 +581,7 @@ object GroupManagerCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put<GroupShortShareIndex>(BcmHttpApiHelper.getApi(GroupCoreConstants.GROUP_SHORT_SHARE),
+        return RxIMHttp.get(accountContext).put<GroupShortShareIndex>(BcmHttpApiHelper.getApi(GroupCoreConstants.GROUP_SHORT_SHARE),
                 obj.toString(), object : TypeToken<GroupShortShareIndex>() {
 
         }.type).map { result -> result.index ?: "" }

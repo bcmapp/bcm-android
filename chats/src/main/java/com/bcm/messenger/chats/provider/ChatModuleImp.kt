@@ -358,7 +358,7 @@ class ChatModuleImp : IChatModule {
             }
 
         })
-        CleanConversationStorageLogic.collectionAllConversationStorageSize()
+        CleanConversationStorageLogic.collectionAllConversationStorageSize(accountContext)
     }
 
     override fun finishAllConversationStorageQuery() {

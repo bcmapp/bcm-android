@@ -3,9 +3,9 @@ package com.bcm.messenger.push
 import android.content.Intent
 import android.os.Parcelable
 import android.text.TextUtils
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.push.AmeNotificationService
 import com.bcm.messenger.common.utils.AmePushProcess
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.logger.ALog
 import com.google.gson.Gson
 import com.umeng.message.UmengNotifyClickActivity
@@ -26,18 +26,22 @@ class MiPushActivity: UmengNotifyClickActivity() {
                 if (msg.extra != null) {
                     ALog.d(TAG, "recv push ${msg.text}")
                     val bcmData = String.format("{\"bcmdata\":%s}", msg.extra["bcmdata"])
-                    val notify = Gson().fromJson(bcmData, AmePushProcess.BcmData::class.java)
-
-                    if (notify?.bcmdata?.contactChat != null || notify?.bcmdata?.groupChat != null || notify?.bcmdata?.friendMsg != null) {
+                    val notify = Gson().fromJson(bcmData, AmePushProcess.BcmData::class.java)?.bcmdata
+                    if (notify != null && (notify.contactChat != null || notify.groupChat != null || notify.friendMsg != null)) {
+                        val accountContext = AmePushProcess.findAccountContext(notify.targetHash)
+                        if (accountContext == null) {
+                            ALog.w(TAG, "find account context fail, onMesssage return")
+                            return
+                        }
                         var action: Int = AmeNotificationService.ACTION_HOME
                         var parcelable: Parcelable? = null
 
                         when {
-                            notify.bcmdata?.contactChat != null -> {
-                                notify.bcmdata?.contactChat?.uid?.let {
+                            notify.contactChat != null -> {
+                                notify.contactChat?.uid?.let {
                                     try {
-                                        val decryptSource = BCMEncryptUtils.decryptSource(it.toByteArray())
-                                        notify.bcmdata?.contactChat?.uid = decryptSource
+                                        val decryptSource = BCMEncryptUtils.decryptSource(accountContext, it.toByteArray())
+                                        notify.contactChat?.uid = decryptSource
                                     } catch (e: Exception) {
                                         ALog.e(TAG, "Uid decrypted failed!")
                                         return
@@ -45,22 +49,22 @@ class MiPushActivity: UmengNotifyClickActivity() {
                                 }
 
                                 action = AmeNotificationService.ACTION_CHAT
-                                parcelable = notify.bcmdata?.contactChat
+                                parcelable = notify.contactChat
                             }
-                            notify.bcmdata?.groupChat != null -> {
+                            notify.groupChat != null -> {
                                 action = AmeNotificationService.ACTION_GROUP
-                                parcelable = notify.bcmdata?.groupChat
+                                parcelable = notify.groupChat
                             }
-                            notify.bcmdata?.friendMsg != null -> {
+                            notify.friendMsg != null -> {
                                 action = AmeNotificationService.ACTION_FRIEND_REQ
-                                parcelable = notify.bcmdata?.friendMsg
+                                parcelable = notify.friendMsg
                             }
                         }
 
                         val intent = Intent(this@MiPushActivity, AmeNotificationService::class.java)
                         intent.putExtra(AmeNotificationService.ACTION, action)
                         intent.putExtra(AmeNotificationService.ACTION_DATA, parcelable)
-
+                        intent.putExtra(AmeNotificationService.ACTION_CONTEXT, accountContext)
                         startService(intent)
                         runOnUiThread { finish() }
                         return

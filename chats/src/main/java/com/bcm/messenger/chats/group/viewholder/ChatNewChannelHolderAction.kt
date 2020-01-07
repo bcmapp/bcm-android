@@ -62,6 +62,6 @@ class ChatNewChannelHolderAction() : BaseChatHolderAction<ShareChannelView>(), S
 
     override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
         messageRecord.message.type = AmeGroupMessage.TEXT
-        GroupMessageLogic.messageSender.resendTextMessage(messageRecord)
+        GroupMessageLogic.get(accountContext).messageSender.resendTextMessage(messageRecord)
     }
 }
