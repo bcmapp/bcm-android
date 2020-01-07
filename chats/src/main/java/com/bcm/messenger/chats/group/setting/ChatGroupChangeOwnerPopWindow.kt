@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.chats.group.logic.GroupLogic
+import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
@@ -17,6 +19,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
 import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.utility.AppContextHolder
 import org.greenrobot.eventbus.EventBus
 import java.lang.ref.WeakReference
 
@@ -78,10 +81,13 @@ object ChatGroupChangeOwnerPopWindow {
                     val uid = owner.uid
 
                     val recipient = Recipient.from(accountContext, uid, true)
-                    val name = BcmGroupNameUtil.getGroupMemberName(recipient, owner)
+                   val name = BcmGroupNameUtil.getGroupMemberName(recipient, owner)
 
                     nickView?.text = name
-                    avatarView?.setAvatar(accountContext, AmeGroupMemberInfo.MEMBER, Address.from(accountContext, uid), newOwner?.keyConfig)
+                    val owner = newOwner
+                    if (owner != null) {
+                        avatarView?.setAvatar(AmeGroupMemberInfo.MEMBER, Address.from(accountContext, owner.uid), newOwner?.keyConfig)
+                    }
                     avatarView?.setUpdateListener {
                         if (it == recipient){
                             nickView?.text = recipient.name

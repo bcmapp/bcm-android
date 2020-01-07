@@ -26,7 +26,7 @@ class GroupOfflineDecryptFailCounter(private val accountContext: AccountContext)
     }
 
     private fun initFailMessage(gid:Long): Long {
-        return GroupMessageLogic.systemNotice(gid, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_DECRYPT_FAIL), visible = false)
+        return GroupMessageLogic.get(accountContext).systemNotice(gid, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_DECRYPT_FAIL), visible = false)
     }
 
     private fun updateFailMessage(gid:Long, state: FailState?) {

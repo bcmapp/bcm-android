@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Looper
 import com.bcm.messenger.chats.util.GroupAttachmentProgressEvent
 import com.bcm.messenger.chats.util.HistoryGroupAttachmentProgressEvent
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
@@ -62,9 +63,9 @@ object MessageFileHandler {
 
 
     @SuppressLint("CheckResult")
-    fun downloadThumbnail(messageDetail: AmeGroupMessageDetail, callback: MessageFileCallback? = null) {
+    fun downloadThumbnail(accountContext: AccountContext, messageDetail: AmeGroupMessageDetail, callback: MessageFileCallback? = null) {
         if (messageDetail.message.content !is AmeGroupMessage.ThumbnailContent) {
-            return downloadAttachment(messageDetail, callback)
+            return downloadAttachment(accountContext, messageDetail, callback)
         }
 
         addCallback(mThumbnailCallbackMap, messageDetail, callback)
@@ -156,21 +157,21 @@ object MessageFileHandler {
                             ALog.e(TAG, "downloadThumbnail error", e)
                             localResponse(false, null)
                             if (e is BaseHttp.HttpErrorException && (e.code == 403 || e.code == 404)) {
-                                MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_NOT_FOUND)
+                                MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_NOT_FOUND)
                             } else {
-                                MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.THUMB_DOWNLOAD_FAIL)
+                                MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId, GroupMessage.THUMB_DOWNLOAD_FAIL)
                             }
                         }
 
                         override fun onResponse(response: File?, id: Long) {
                             if (response == null) {
-                                MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_DOWNLOAD_FAIL)
+                                MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_DOWNLOAD_FAIL)
                                 localResponse(false, null)
                             } else {
 
                                 try {
-                                    val fileInfo = ChatFileEncryptDecryptUtil.decryptAndSaveFile(
-                                            BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT),
+                                    val fileInfo = ChatFileEncryptDecryptUtil.decryptAndSaveFile(accountContext,
+                                            BCMEncryptUtils.getMasterSecret(accountContext),
                                             response,
                                             messageDetail,
                                             if (useThumbnail) ChatFileEncryptDecryptUtil.FileType.GROUP_THUMB else ChatFileEncryptDecryptUtil.FileType.GROUP)
@@ -179,17 +180,17 @@ object MessageFileHandler {
                                     // Author: Kin
                                     if (!useThumbnail) {
                                         if (messageDetail !is AmeHistoryMessageDetail) {
-                                            MessageDataManager.updateMessageAttachmentUri(messageDetail.gid, messageDetail.indexId, fileInfo)
+                                            MessageDataManager.updateMessageAttachmentUri(accountContext, messageDetail.gid, messageDetail.indexId, fileInfo)
                                             localResponse(true, PartAuthority.getGroupAttachmentUri(messageDetail.gid, messageDetail.indexId))
                                         } else {
                                             localResponse(true, Uri.fromFile(fileInfo.file))
                                         }
 
-                                        MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId,
+                                        MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId,
                                                 if (messageDetail.isSendByMe) GroupMessage.SEND_SUCCESS else GroupMessage.RECEIVE_SUCCESS)
                                     } else {
                                         if (messageDetail !is AmeHistoryMessageDetail) {
-                                            MessageDataManager.updateMessageThumbnailUri(messageDetail.gid, messageDetail.indexId, fileInfo)
+                                            MessageDataManager.updateMessageThumbnailUri(accountContext, messageDetail.gid, messageDetail.indexId, fileInfo)
                                             localResponse(true, PartAuthority.getGroupThumbnailUri(messageDetail.gid, messageDetail.indexId))
                                         } else {
                                             localResponse(true, Uri.fromFile(fileInfo.file))
@@ -211,7 +212,7 @@ object MessageFileHandler {
 
 
     @SuppressLint("CheckResult")
-    fun downloadThumbnail(gid: Long, indexId: Long, content: AmeGroupMessage.ThumbnailContent, keyVersion: Long, callback: MessageFileCallback? = null) {
+    fun downloadThumbnail(accountContext: AccountContext, gid: Long, indexId: Long, content: AmeGroupMessage.ThumbnailContent, keyVersion: Long, callback: MessageFileCallback? = null) {
         fun localResponse(success: Boolean, uri: Uri?) {
             if (Looper.myLooper() == Looper.getMainLooper()) {
                 callback?.onResult(success, uri)
@@ -262,20 +263,20 @@ object MessageFileHandler {
                             ALog.e(TAG, "downloadThumbnail error", e)
                             localResponse(false, null)
                             if (e is BaseHttp.HttpErrorException && (e.code == 403 || e.code == 404)) {
-                                MessageDataManager.updateMessageSendStateByIndex(gid, indexId, GroupMessage.FILE_NOT_FOUND)
+                                MessageDataManager.updateMessageSendStateByIndex(accountContext, gid, indexId, GroupMessage.FILE_NOT_FOUND)
                             } else {
-                                MessageDataManager.updateMessageSendStateByIndex(gid, indexId, GroupMessage.THUMB_DOWNLOAD_FAIL)
+                                MessageDataManager.updateMessageSendStateByIndex(accountContext, gid, indexId, GroupMessage.THUMB_DOWNLOAD_FAIL)
                             }
                         }
 
                         override fun onResponse(response: File?, id: Long) {
                             if (response == null) {
-                                MessageDataManager.updateMessageSendStateByIndex(gid, indexId, GroupMessage.FILE_DOWNLOAD_FAIL)
+                                MessageDataManager.updateMessageSendStateByIndex(accountContext, gid, indexId, GroupMessage.FILE_DOWNLOAD_FAIL)
                                 localResponse(false, null)
                             } else {
                                 try {
-                                    val fileInfo = ChatFileEncryptDecryptUtil.decryptAndSaveFile(
-                                            BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT),
+                                    val fileInfo = ChatFileEncryptDecryptUtil.decryptAndSaveFile(accountContext,
+                                            BCMEncryptUtils.getMasterSecret(accountContext),
                                             response,
                                             AmeGroupMessageDetail().apply {
                                                 this.gid = gid
@@ -288,10 +289,10 @@ object MessageFileHandler {
                                     )
 
                                     if (!useThumbnail) {
-                                        MessageDataManager.updateMessageAttachmentUri(gid, indexId, fileInfo)
+                                        MessageDataManager.updateMessageAttachmentUri(accountContext, gid, indexId, fileInfo)
                                         localResponse(true, PartAuthority.getGroupAttachmentUri(gid, indexId))
                                     } else {
-                                        MessageDataManager.updateMessageThumbnailUri(gid, indexId, fileInfo)
+                                        MessageDataManager.updateMessageThumbnailUri(accountContext, gid, indexId, fileInfo)
                                         localResponse(true, PartAuthority.getGroupThumbnailUri(gid, indexId))
                                     }
 
@@ -311,7 +312,7 @@ object MessageFileHandler {
 
 
     @SuppressLint("CheckResult")
-    fun downloadAttachment(messageDetail: AmeGroupMessageDetail, callback: MessageFileCallback?) {
+    fun downloadAttachment(accountContext: AccountContext, messageDetail: AmeGroupMessageDetail, callback: MessageFileCallback?) {
 
         addCallback(mAttachmentCallbackMap, messageDetail, callback)
         if (messageDetail.isAttachmentDownloading) {
@@ -383,20 +384,20 @@ object MessageFileHandler {
                     ALog.e(TAG, "downloadAttachment error", e)
                     localResponse(false, null)
                     if (e is BaseHttp.HttpErrorException && (e.code == 403 || e.code == 404)) {
-                        MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_NOT_FOUND)
+                        MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_NOT_FOUND)
                     } else {
-                        MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.THUMB_DOWNLOAD_FAIL)
+                        MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId, GroupMessage.THUMB_DOWNLOAD_FAIL)
                     }
                 }
 
                 override fun onResponse(response: File?, id: Long) {
                     if (response == null) {
-                        MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_DOWNLOAD_FAIL)
+                        MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_DOWNLOAD_FAIL)
                         return localResponse(false, null)
                     }
                     try {
-                        val fileInfo = ChatFileEncryptDecryptUtil.decryptAndSaveFile(
-                                BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT),
+                        val fileInfo = ChatFileEncryptDecryptUtil.decryptAndSaveFile(accountContext,
+                                BCMEncryptUtils.getMasterSecret(accountContext),
                                 response,
                                 messageDetail,
                                 ChatFileEncryptDecryptUtil.FileType.GROUP
@@ -405,10 +406,10 @@ object MessageFileHandler {
                         // Notice: Remove check whether message is history message after GroupMessage entity updated.
                         // Author: Kin
                         if (messageDetail !is AmeHistoryMessageDetail) {
-                            MessageDataManager.updateMessageAttachmentUri(messageDetail.gid, messageDetail.indexId, fileInfo)
+                            MessageDataManager.updateMessageAttachmentUri(accountContext, messageDetail.gid, messageDetail.indexId, fileInfo)
                             localResponse(true, PartAuthority.getGroupAttachmentUri(messageDetail.gid, messageDetail.indexId))
 
-                            MessageDataManager.updateMessageSendStateByIndex(messageDetail.gid, messageDetail.indexId,
+                            MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId,
                                     if (messageDetail.isSendByMe) GroupMessage.SEND_SUCCESS else GroupMessage.RECEIVE_SUCCESS)
                         } else {
                             localResponse(true, Uri.fromFile(fileInfo.file))
@@ -446,7 +447,7 @@ object MessageFileHandler {
 //            val videoUploadResult = UploadResult("", videoResult.localFileInfo!!, videoResult.groupStreamInfo!!.sign, videoResult.width, videoResult.height)
 //            val thumbUploadResult = UploadResult("", thumbResult.localFileInfo!!, thumbResult.groupStreamInfo!!.sign, thumbResult.width, thumbResult.height)
 
-            AmeFileUploader.uploadMultiStreamToAws(AmeFileUploader.AttachmentType.GROUP_MESSAGE, filePaths, object : AmeFileUploader.MultiStreamUploadCallback {
+            AmeFileUploader.uploadMultiStreamToAws(masterSecret.accountContext, AmeFileUploader.AttachmentType.GROUP_MESSAGE, filePaths, object : AmeFileUploader.MultiStreamUploadCallback {
                 override fun onFailed(resultMap: MutableMap<StreamUploadData, AmeFileUploader.FileUploadResult>?) {
                     videoResult.localFileInfo?.file?.delete()
                     thumbResult.localFileInfo?.file?.delete()
@@ -496,7 +497,7 @@ object MessageFileHandler {
                 val imageUploadResult = UploadResult("", imageResult.localFileInfo!!, groupFileInfo.sign, imageResult.width, imageResult.height)
                 val thumbUploadResult = UploadResult("", thumbResult.localFileInfo!!, thumbGroupFileInfo.sign, thumbResult.width, thumbResult.height)
 
-                AmeFileUploader.uploadMultiStreamToAws(AmeFileUploader.AttachmentType.GROUP_MESSAGE, filePaths, object : AmeFileUploader.MultiStreamUploadCallback {
+                AmeFileUploader.uploadMultiStreamToAws(masterSecret.accountContext, AmeFileUploader.AttachmentType.GROUP_MESSAGE, filePaths, object : AmeFileUploader.MultiStreamUploadCallback {
                     override fun onFailed(resultMap: MutableMap<StreamUploadData, AmeFileUploader.FileUploadResult>?) {
                         imageResult.localFileInfo?.file?.delete()
                         thumbResult.localFileInfo?.file?.delete()
@@ -540,7 +541,7 @@ object MessageFileHandler {
 //            val uploadData = StreamUploadData(groupFileInfo.inputStream, groupFileInfo.name, groupFileInfo.mimeType, groupFileInfo.size)
             val uploadData = StreamUploadData(FileInputStream(groupFileInfo.file), groupFileInfo.name, groupFileInfo.mimeType, groupFileInfo.size)
 
-            AmeFileUploader.uploadStreamToAws(AmeFileUploader.AttachmentType.GROUP_MESSAGE, uploadData, object : AmeFileUploader.StreamUploadCallback() {
+            AmeFileUploader.uploadStreamToAws(masterSecret.accountContext, AmeFileUploader.AttachmentType.GROUP_MESSAGE, uploadData, object : AmeFileUploader.StreamUploadCallback() {
                 override fun onUploadSuccess(url: String?, id: String?) {
                     fileResult.groupFileInfo?.file?.delete()
 

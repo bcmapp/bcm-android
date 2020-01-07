@@ -698,7 +698,7 @@ class ChatGroupConversationFragment : BaseFragment() {
     private fun showPinLayout(targetScrollMessage: AmeGroupMessageDetail) {
         group_pin_layout?.visibility = View.VISIBLE
         group_pin_layout?.post {
-            group_pin_layout?.setGroupMessage(targetScrollMessage, glideRequests, object : ChatPinView.OnChatPinActionListener {
+            group_pin_layout?.setGroupMessage(accountContext, targetScrollMessage, glideRequests, object : ChatPinView.OnChatPinActionListener {
 
                 override fun onContentClick() {
                     fetchAndScrollTo(targetScrollMessage.serverIndex, AmeGroupMessageDetail.LABEL_PIN)
@@ -850,7 +850,7 @@ class ChatGroupConversationFragment : BaseFragment() {
             val c = activity
             if (c is ChatGroupConversationActivity) {
                 if (replyEvent.action == ReplyMessageEvent.ACTION_REPLY) {
-                    c.bottom_panel.setReply(replyEvent.messageDetail) {
+                    c.bottom_panel.setReply(accountContext, replyEvent.messageDetail) {
                         ALog.d(TAG, "onReplyLocate mid: ${replyEvent.messageDetail.serverIndex}")
                         fetchAndScrollTo(replyEvent.messageDetail.serverIndex, AmeGroupMessageDetail.LABEL_REPLY)
                     }

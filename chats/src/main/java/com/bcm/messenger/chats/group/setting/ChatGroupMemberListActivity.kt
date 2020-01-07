@@ -14,6 +14,7 @@ import com.bcm.messenger.chats.group.ChatGroupCreateActivity
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
@@ -27,6 +28,7 @@ import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_group_member_list.*
@@ -34,12 +36,12 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
 /**
- 
+
  * Created by bcm.social.01 on 2018/5/25.
  */
 class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<AmeGroupMemberInfo> {
     private var editMode = false
-    private var memberList:ArrayList<AmeGroupMemberInfo> = ArrayList()
+    private var memberList: ArrayList<AmeGroupMemberInfo> = ArrayList()
     private lateinit var memberDataSource: SelectionDataSource<AmeGroupMemberInfo>
     private lateinit var groupModel: GroupViewModel
 
@@ -66,7 +68,7 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
 
         changEditingState(editMode)
 
-        if (editMode){
+        if (editMode) {
             showRightMenuByRole(AmeGroupMemberInfo.MEMBER)
         } else {
             showRightMenuByRole(groupModel.myRole())
@@ -135,10 +137,10 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
     }
 
     private fun deleteMember(list: ArrayList<AmeGroupMemberInfo>) {
-        if(!AppUtil.checkNetwork()) {
+        if (!AppUtil.checkNetwork()) {
             return
         }
-        
+
         member_list_delete_member.isEnabled = false
         AmePopup.loading.show(this)
 
@@ -165,7 +167,7 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
         memberDataSource.updateDataSource(list)
     }
 
-    private fun changEditingState(editMode:Boolean) {
+    private fun changEditingState(editMode: Boolean) {
         this.editMode = editMode
         member_list_delete_count.text = "0"
 
@@ -191,7 +193,7 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
         updateMemberList()
     }
 
-    private fun showRightMenuByRole(role:Long){
+    private fun showRightMenuByRole(role: Long) {
         if (role == AmeGroupMemberInfo.OWNER) {
             title_view.setRightVisible()
         } else {
@@ -199,8 +201,8 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
         }
     }
 
-    private fun dataType2ResId(data:AmeGroupMemberInfo): Int{
-        return when(data){
+    private fun dataType2ResId(data: AmeGroupMemberInfo): Int {
+        return when (data) {
             AmeGroupMemberInfo.MEMBER_SEARCH -> R.layout.chats_group_search_bar
             else -> R.layout.chats_group_member_cell
         }
@@ -211,14 +213,14 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
     }
 
     override fun bindViewHolder(adapter: AmeRecycleViewAdapter<AmeGroupMemberInfo>, viewHolder: AmeRecycleViewAdapter.ViewHolder<AmeGroupMemberInfo>) {
-        when(viewHolder){
+        when (viewHolder) {
             is SearchHolder -> {
                 viewHolder.searchBar.setSourceList(memberList)
             }
             is MemberHolder -> {
                 val data = viewHolder.getData()
-                if (data != null){
-                    viewHolder.memberView.bind(viewHolder.getData(),
+                if (data != null) {
+                    viewHolder.memberView.bind(accountContext, viewHolder.getData(),
                             editMode,
                             memberDataSource.isSelected(data))
                 }
@@ -227,15 +229,15 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
     }
 
     override fun unbindViewHolder(adapter: AmeRecycleViewAdapter<AmeGroupMemberInfo>, viewHolder: AmeRecycleViewAdapter.ViewHolder<AmeGroupMemberInfo>) {
-        if (viewHolder is MemberHolder){
+        if (viewHolder is MemberHolder) {
             viewHolder.memberView.unbind()
         }
     }
 
     override fun createViewHolder(adapter: AmeRecycleViewAdapter<AmeGroupMemberInfo>, inflater: LayoutInflater, parent: ViewGroup, viewType: Int): AmeRecycleViewAdapter.ViewHolder<AmeGroupMemberInfo> {
-        return when(viewType) {
+        return when (viewType) {
             R.layout.chats_group_search_bar -> {
-                SearchHolder(inflater.inflate(viewType, parent, false) as GroupSearchBar, this)
+                SearchHolder(accountContext, inflater.inflate(viewType, parent, false) as GroupSearchBar, this)
             }
             else -> MemberHolder(inflater.inflate(viewType, parent, false) as GroupMemberListCell)
         }
@@ -254,7 +256,7 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
                 val data = viewHolder.getData()
                 if (editMode) {
                     if (null != data && data.role != AmeGroupMemberInfo.OWNER) {
-                        if (memberDataSource.isSelected(data)){
+                        if (memberDataSource.isSelected(data)) {
                             memberDataSource.unSelect(data)
                         } else {
                             memberDataSource.select(data)
@@ -272,7 +274,7 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
         }
     }
 
-    inner class SearchHolder(val searchBar: GroupSearchBar, val activity: ChatGroupMemberListActivity)
+    class SearchHolder(val accountContext: AccountContext, val searchBar: GroupSearchBar, val activity: ChatGroupMemberListActivity)
         : AmeRecycleViewAdapter.ViewHolder<AmeGroupMemberInfo>(searchBar) {
 
         init {
@@ -300,5 +302,5 @@ class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.I
 
     }
 
-    class MemberHolder(val memberView: GroupMemberListCell): AmeRecycleViewAdapter.ViewHolder<AmeGroupMemberInfo>(memberView)
+    class MemberHolder(val memberView: GroupMemberListCell) : AmeRecycleViewAdapter.ViewHolder<AmeGroupMemberInfo>(memberView)
 }

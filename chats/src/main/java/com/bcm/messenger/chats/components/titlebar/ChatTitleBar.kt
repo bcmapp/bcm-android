@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.utils.getStatusBarHeight
 import com.bcm.messenger.utility.setDrawableLeft
 import com.bcm.messenger.utility.setDrawableRight
@@ -15,7 +16,7 @@ import com.bcm.messenger.common.recipients.Recipient
 /**
  * Created by bcm.social.01 on 2019/1/27.
  */
-class ChatTitleBar: androidx.constraintlayout.widget.ConstraintLayout {
+class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
 
     interface OnChatTitleCallback {
         fun onLeft(multiSelect: Boolean)
@@ -83,12 +84,12 @@ class ChatTitleBar: androidx.constraintlayout.widget.ConstraintLayout {
         setMultiSelectionMode(mMultiSelect)
     }
 
-    fun setGroupChat(gid: Long, name: String, memberCount: Int) {
+    fun setGroupChat(accountContext: AccountContext, gid: Long, name: String, memberCount: Int) {
         mInPrivateChat = false
         bar_title_layout.visibility = View.GONE
         bar_title_whole.visibility = View.VISIBLE
         bar_title_whole.text = "$name($memberCount)"
-        bar_recipient_photo.showGroupAvatar(gid)
+        bar_recipient_photo.showGroupAvatar(accountContext, gid)
         setMultiSelectionMode(mMultiSelect)
     }
 
@@ -96,8 +97,8 @@ class ChatTitleBar: androidx.constraintlayout.widget.ConstraintLayout {
         bar_title_whole.text = "$name($memberCount)"
     }
 
-    fun updateGroupAvatar(gid: Long, path: String) {
-        bar_recipient_photo.showGroupAvatar(gid, path = path)
+    fun updateGroupAvatar(accountContext: AccountContext, gid: Long, path: String) {
+        bar_recipient_photo.showGroupAvatar(accountContext, gid, path = path)
     }
 
     fun setMultiSelectionMode(multiSelect: Boolean) {
@@ -130,8 +131,8 @@ class ChatTitleBar: androidx.constraintlayout.widget.ConstraintLayout {
         }
     }
 
-    fun addCustomView(view:View, marginLeft:Int = 0, marginTop:Int = 0, marginRight:Int = 0, marginBottom:Int = 0){
-        if (view.parent != null){
+    fun addCustomView(view: View, marginLeft: Int = 0, marginTop: Int = 0, marginRight: Int = 0, marginBottom: Int = 0) {
+        if (view.parent != null) {
             val p = view.parent as ViewGroup
             p.removeView(view)
         }
@@ -143,8 +144,8 @@ class ChatTitleBar: androidx.constraintlayout.widget.ConstraintLayout {
         custom_view.addView(view)
     }
 
-    fun removeCustomView(view:View){
-        if (view.parent == custom_view){
+    fun removeCustomView(view: View) {
+        if (view.parent == custom_view) {
             custom_view.removeView(view)
         }
     }

@@ -62,7 +62,7 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
         }
     }
 
-    fun setGroupMessage(messageRecord: AmeGroupMessageDetail, glideRequests: GlideRequests, listener: OnChatPinActionListener) {
+    fun setGroupMessage(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail, glideRequests: GlideRequests, listener: OnChatPinActionListener) {
         this.messageDetailRecord = messageRecord
         this.glideRequests = glideRequests
         this.mListener = listener
@@ -70,8 +70,8 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
         when (messageRecord.message.type) {
             AmeGroupMessage.TEXT -> setText()
             AmeGroupMessage.AUDIO -> setAudio()
-            AmeGroupMessage.IMAGE -> setImage()
-            AmeGroupMessage.VIDEO -> setVideo()
+            AmeGroupMessage.IMAGE -> setImage(accountContext)
+            AmeGroupMessage.VIDEO -> setVideo(accountContext)
             AmeGroupMessage.LINK -> setLink()
             AmeGroupMessage.FILE -> setFile()
             AmeGroupMessage.NEWSHARE_CHANNEL -> setNewShareChannel()
@@ -105,14 +105,14 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
         chat_pin_content.text = resources.getString(R.string.chats_pin_audio)
     }
 
-    private fun setImage() {
+    private fun setImage(accountContext: AccountContext) {
         chat_pin_recipient_photo.visibility = View.INVISIBLE
         chats_pin_image.visibility = View.VISIBLE
         chat_pin_content.text = resources.getString(R.string.chats_pin_image)
 
         messageDetailRecord?.let {
             val content = it.message.content as? AmeGroupMessage.ThumbnailContent
-            MessageFileHandler.downloadThumbnail(it, object : MessageFileHandler.MessageFileCallback {
+            MessageFileHandler.downloadThumbnail(accountContext, it, object : MessageFileHandler.MessageFileCallback {
                 override fun onResult(success: Boolean, uri: Uri?) {
                     it.isThumbnailDownloading = false
                     if (success && glideRequests != null && content != null)
@@ -122,14 +122,14 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
         }
     }
 
-    private fun setVideo() {
+    private fun setVideo(accountContext: AccountContext) {
         chat_pin_recipient_photo.visibility = View.INVISIBLE
         chats_pin_image.visibility = View.VISIBLE
         chats_pin_video_icon.visibility = View.VISIBLE
         chat_pin_content.text = resources.getString(R.string.chats_pin_video)
         messageDetailRecord?.let {
             val content = it.message.content as? AmeGroupMessage.VideoContent
-            MessageFileHandler.downloadThumbnail(it, object : MessageFileHandler.MessageFileCallback {
+            MessageFileHandler.downloadThumbnail(accountContext, it, object : MessageFileHandler.MessageFileCallback {
                 override fun onResult(success: Boolean, uri: Uri?) {
                     it.isThumbnailDownloading = false
                     if (success && glideRequests != null && content != null)

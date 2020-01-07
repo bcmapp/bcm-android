@@ -2,6 +2,7 @@ package com.bcm.messenger.chats.group.logic.cache
 
 import android.annotation.SuppressLint
 import com.bcm.messenger.chats.group.logic.GroupLogic
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.corebean.GroupMemberSyncState
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit
 /**
  * bcm.social.01 2018/11/13.
  */
-class GroupCache(val cacheReady: () -> Unit) {
+class GroupCache(private val accountContext: AccountContext, val cacheReady: () -> Unit) {
 
     private val TAG = "GroupCache"
 
@@ -38,11 +39,11 @@ class GroupCache(val cacheReady: () -> Unit) {
 
         //load from cache
         Observable.create(ObservableOnSubscribe<List<AmeGroupInfo>> {
-            val list = GroupInfoDataManager.loadAll()
+            val list = GroupInfoDataManager.loadAll(accountContext)
             for (info in list) {
                 info.member_sync_state = GroupMemberSyncState.DIRTY.toString()
             }
-            GroupInfoDataManager.saveGroupInfos(list)
+            GroupInfoDataManager.saveGroupInfos(accountContext, list)
             it.onNext(list.map { GroupInfoTransform.transformToModel(it) })
             it.onComplete()
         }).subscribeOn(Schedulers.io())
@@ -73,7 +74,7 @@ class GroupCache(val cacheReady: () -> Unit) {
         myGroupList.clear()
         isCachedReady = false
 
-        GroupLogic.updateGroupFinderSource()
+        GroupLogic.get(accountContext).updateGroupFinderSource()
     }
 
     fun saveGroupInfo(groupInfo: GroupInfo) {
@@ -84,17 +85,17 @@ class GroupCache(val cacheReady: () -> Unit) {
                 otherGroupList.remove(group.gid)
             }
             else -> {
-                GroupInfoDataManager.clearShareSetting(groupInfo.gid)
+                GroupInfoDataManager.clearShareSetting(accountContext, groupInfo.gid)
 
                 otherGroupList[group.gid] = group
                 myGroupList.remove(group.gid)
             }
         }
-        val recipient = Recipient.recipientFromNewGroup(AppContextHolder.APP_CONTEXT, group)
-        Repository.getRecipientRepo()?.setProfile(recipient, null, group.name, group.iconUrl)
+        val recipient = Recipient.recipientFromNewGroup(accountContext, group)
+        Repository.getRecipientRepo(accountContext)?.setProfile(recipient, null, group.name, group.iconUrl)
 
-        GroupInfoDataManager.insertGroupInfo(groupInfo)
-        GroupLogic.updateGroupFinderSource()
+        GroupInfoDataManager.insertGroupInfo(accountContext, groupInfo)
+        GroupLogic.get(accountContext).updateGroupFinderSource()
     }
 
     fun saveGroupInfos(groupList: List<GroupInfo>) {
@@ -123,12 +124,12 @@ class GroupCache(val cacheReady: () -> Unit) {
                 }
             }
 
-            val recipient = Recipient.recipientFromNewGroup(AppContextHolder.APP_CONTEXT, group)
-            Repository.getRecipientRepo()?.setProfile(recipient, null, group.name, group.iconUrl)
+            val recipient = Recipient.recipientFromNewGroup(accountContext, group)
+            Repository.getRecipientRepo(accountContext)?.setProfile(recipient, null, group.name, group.iconUrl)
         }
 
-        GroupInfoDataManager.saveGroupInfos(groupList)
-        GroupLogic.updateGroupFinderSource()
+        GroupInfoDataManager.saveGroupInfos(accountContext, groupList)
+        GroupLogic.get(accountContext).updateGroupFinderSource()
     }
 
     fun updateRole(gid: Long, role: Long) {
@@ -137,10 +138,10 @@ class GroupCache(val cacheReady: () -> Unit) {
             group.role = role
             if (role == AmeGroupMemberInfo.VISITOR) {
             
-                GroupLiveInfoManager.getInstance().deleteLiveInfoWhenLeaveGroup(gid)
-                GroupInfoDataManager.clearShareSetting(group.gid)
+                GroupLiveInfoManager.get(accountContext).deleteLiveInfoWhenLeaveGroup(gid)
+                GroupInfoDataManager.clearShareSetting(accountContext, group.gid)
             }
-            GroupInfoDataManager.updateGroupRole(gid, role)
+            GroupInfoDataManager.updateGroupRole(accountContext, gid, role)
         }
     }
 
@@ -159,8 +160,8 @@ class GroupCache(val cacheReady: () -> Unit) {
     fun removeGroupInfo(gid: Long) {
         myGroupList.remove(gid)
         otherGroupList.remove(gid)
-        GroupInfoDataManager.removeGroupInfo(gid)
-        GroupLogic.updateGroupFinderSource()
+        GroupInfoDataManager.removeGroupInfo(accountContext, gid)
+        GroupLogic.get(accountContext).updateGroupFinderSource()
     }
 
 
@@ -168,32 +169,32 @@ class GroupCache(val cacheReady: () -> Unit) {
         val group = getGroupInfo(groupId)?:return
         group.mute = !b
 
-        val recipient = Recipient.recipientFromNewGroupId(AppContextHolder.APP_CONTEXT, groupId)
+        val recipient = Recipient.recipientFromNewGroupId(accountContext, groupId)
         if (!b) {
-            Repository.getRecipientRepo()?.setMuted(recipient, System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365 * 10))
+            Repository.getRecipientRepo(accountContext)?.setMuted(recipient, System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365 * 10))
         } else {
-            Repository.getRecipientRepo()?.setMuted(recipient, 0)
+            Repository.getRecipientRepo(accountContext)?.setMuted(recipient, 0)
         }
-        GroupInfoDataManager.updateGroupNotificationEnable(groupId, b)
+        GroupInfoDataManager.updateGroupNotificationEnable(accountContext, groupId, b)
     }
 
     fun updateNotice(groupId: Long, noticeContent: String, timestamp: Long) {
         val group = getGroupInfo(groupId)?:return
         group.noticeContent = noticeContent
         group.noticeUpdateTime = timestamp
-        GroupInfoDataManager.updateGroupNotice(groupId, noticeContent, timestamp)
+        GroupInfoDataManager.updateGroupNotice(accountContext, groupId, noticeContent, timestamp)
     }
 
     fun updateNoticeShowState(groupId: Long, noticeShowState: Boolean) {
         val groupInfo = getGroupInfo(groupId)?:return
         groupInfo.isShowNotice = noticeShowState
-        GroupInfoDataManager.updateNoticeShowState(groupId, noticeShowState)
+        GroupInfoDataManager.updateNoticeShowState(accountContext, groupId, noticeShowState)
     }
 
     fun updatePinState(groupId: Long, mid: Long) {
-        GroupInfoDataManager.updateGroupPinMid(groupId, mid)
+        GroupInfoDataManager.updateGroupPinMid(accountContext, groupId, mid)
         val pinVisible = mid > 0
-        GroupInfoDataManager.updateGroupPinVisible(groupId, pinVisible)
+        GroupInfoDataManager.updateGroupPinVisible(accountContext, groupId, pinVisible)
 
         val groupInfo = getGroupInfo(groupId)?:return
         groupInfo.hasPin = pinVisible
@@ -203,14 +204,14 @@ class GroupCache(val cacheReady: () -> Unit) {
     fun setGroupMemberState(gid: Long, syncState: GroupMemberSyncState) {
         val group = getGroupInfo(gid)?:return
         group.memberSyncState = syncState
-        GroupInfoDataManager.updateMemberSyncState(gid, syncState)
+        GroupInfoDataManager.updateMemberSyncState(accountContext, gid, syncState)
     }
 
     fun updateKey(gid: Long, version: Long, groupKey: String) {
         val groupInfo = getGroupInfo(gid)
         if (null != groupInfo) {
             groupInfo.key = groupKey
-            GroupInfoDataManager.updateGroupKey(gid, version, groupKey)
+            GroupInfoDataManager.updateGroupKey(accountContext, gid, version, groupKey)
         }
     }
 
@@ -218,17 +219,17 @@ class GroupCache(val cacheReady: () -> Unit) {
         val groupInfo = getGroupInfo(gid)
         if (null != groupInfo) {
             groupInfo.infoSecret = groupInfoSecret
-            GroupInfoDataManager.updateGroupInfoSecret(gid, groupInfoSecret)
+            GroupInfoDataManager.updateGroupInfoSecret(accountContext, gid, groupInfoSecret)
         }
     }
 
     fun updateNeedConfirm(gid: Long, confirm: Int, shareConfirmSign: String) {
-        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(gid)
+        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
         if (null != groupInfo) {
             getGroupInfo(gid)?.needConfirm = confirm == 1
             groupInfo.needOwnerConfirm = confirm
             groupInfo.shareSettingAndConfirmSign = shareConfirmSign
-            GroupInfoDataManager.insertGroupInfo(groupInfo)
+            GroupInfoDataManager.insertGroupInfo(accountContext, groupInfo)
         }
     }
 
@@ -240,7 +241,7 @@ class GroupCache(val cacheReady: () -> Unit) {
                            shareSettingSign: String,
                            shareConfirmSign: String,
                            ephemeralKey: String) {
-        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(gid)
+        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
         if (null != groupInfo) {
             getGroupInfo(gid)?.shareEnable = shareEnable == 1
             getGroupInfo(gid)?.shareCode = shareCode
@@ -255,7 +256,7 @@ class GroupCache(val cacheReady: () -> Unit) {
             groupInfo.ephemeralKey = ephemeralKey
             groupInfo.shareLink = ""
 
-            GroupInfoDataManager.insertGroupInfo(groupInfo)
+            GroupInfoDataManager.insertGroupInfo(accountContext, groupInfo)
         }
     }
 
@@ -274,38 +275,38 @@ class GroupCache(val cacheReady: () -> Unit) {
                 groupInfo.chnSpliceName = chnCombineName
             }
 
-            GroupInfoDataManager.updateGroupAutoGenNameAndAvatar(gid, combineName, chnCombineName, path)
+            GroupInfoDataManager.updateGroupAutoGenNameAndAvatar(accountContext, gid, combineName, chnCombineName, path)
         }
     }
 
     fun saveMember(dbMember: List<GroupMember>) {
-        GroupMemberManager.insertGroupDbMembers(dbMember)
+        GroupMemberManager.insertGroupDbMembers(accountContext, dbMember)
     }
 
     fun deleteMembers(groupId: Long, mlist: MutableList<String>) {
-        GroupMemberManager.deleteMember(groupId, mlist)
+        GroupMemberManager.deleteMember(accountContext, groupId, mlist)
     }
 
     fun setBroadcastSharingData(gid: Long, doing: Boolean) {
-        val gInfo = GroupInfoDataManager.queryOneGroupInfo(gid) ?: return
+        val gInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid) ?: return
         if (doing) {
             if (gInfo.status.and(GroupInfo.GroupStatus.BROADCAST_SHARE_DATA_ING.status) == 0) {
                 gInfo.status = gInfo.status.or(GroupInfo.GroupStatus.BROADCAST_SHARE_DATA_ING.status)
-                GroupInfoDataManager.insertGroupInfo(gInfo)
+                GroupInfoDataManager.insertGroupInfo(accountContext, gInfo)
             }
         } else if (gInfo.status.and(GroupInfo.GroupStatus.BROADCAST_SHARE_DATA_ING.status) != 0) {
             gInfo.status = gInfo.status.and(GroupInfo.GroupStatus.BROADCAST_SHARE_DATA_ING.status.inv())
-            GroupInfoDataManager.insertGroupInfo(gInfo)
+            GroupInfoDataManager.insertGroupInfo(accountContext, gInfo)
         }
     }
 
     fun isBroadcastSharingData(gid: Long): Boolean {
-        val gInfo = GroupInfoDataManager.queryOneGroupInfo(gid) ?: return false
+        val gInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid) ?: return false
         return gInfo.status.and(GroupInfo.GroupStatus.BROADCAST_SHARE_DATA_ING.status) != 0
     }
 
     fun setProfileEncrypted(gid: Long, isEncrypted: Boolean) {
-        GroupInfoDataManager.setProfileEncrypted(gid, isEncrypted)
+        GroupInfoDataManager.setProfileEncrypted(accountContext, gid, isEncrypted)
     }
 
     fun updateGroupName(gid: Long, newName: String) {
@@ -313,9 +314,9 @@ class GroupCache(val cacheReady: () -> Unit) {
         if (newName.isNotEmpty()) {
             groupInfo.name = newName
 
-            val recipient = Recipient.recipientFromNewGroup(AppContextHolder.APP_CONTEXT, groupInfo)
-            Repository.getRecipientRepo()?.setProfile(recipient, null, groupInfo.name, groupInfo.iconUrl)
-            GroupInfoDataManager.updateGroupName(gid, newName)
+            val recipient = Recipient.recipientFromNewGroup(accountContext, groupInfo)
+            Repository.getRecipientRepo(accountContext)?.setProfile(recipient, null, groupInfo.name, groupInfo.iconUrl)
+            GroupInfoDataManager.updateGroupName(accountContext, gid, newName)
         }
     }
 
@@ -324,9 +325,9 @@ class GroupCache(val cacheReady: () -> Unit) {
         if (newIcon.isNotEmpty()) {
             groupInfo.iconUrl = newIcon
 
-            val recipient = Recipient.recipientFromNewGroup(AppContextHolder.APP_CONTEXT, groupInfo)
-            Repository.getRecipientRepo()?.setProfile(recipient, null, groupInfo.name, groupInfo.iconUrl)
-            GroupInfoDataManager.updateGroupAvatar(gid, newIcon)
+            val recipient = Recipient.recipientFromNewGroup(accountContext, groupInfo)
+            Repository.getRecipientRepo(accountContext)?.setProfile(recipient, null, groupInfo.name, groupInfo.iconUrl)
+            GroupInfoDataManager.updateGroupAvatar(accountContext, gid, newIcon)
         }
     }
 }

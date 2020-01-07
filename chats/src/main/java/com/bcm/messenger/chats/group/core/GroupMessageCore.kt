@@ -30,7 +30,7 @@ object GroupMessageCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.RECALL_MESSAGE),
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.RECALL_MESSAGE),
                 null, obj.toString(), object : TypeToken<ServerResult<Void>>() {
 
         }.type)
@@ -52,7 +52,7 @@ object GroupMessageCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.SEND_GROUP_MESSAGE_URL), null, obj.toString(), object : TypeToken<ServerResult<GroupSendMessageResult>>() {
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.SEND_GROUP_MESSAGE_URL), null, obj.toString(), object : TypeToken<ServerResult<GroupSendMessageResult>>() {
 
         }.type)
     }
@@ -68,7 +68,7 @@ object GroupMessageCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_MESSAGE_WITH_RANGE_URL), null, obj.toString(), object : TypeToken<ServerResult<GetMessageListEntity>>() {
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_MESSAGE_WITH_RANGE_URL), null, obj.toString(), object : TypeToken<ServerResult<GetMessageListEntity>>() {
 
         }.type)
     }
@@ -83,7 +83,7 @@ object GroupMessageCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.ACK_GROUP_MESSAGE__URL), null, obj.toString(), object : TypeToken<ServerResult<Void>>() {
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.ACK_GROUP_MESSAGE__URL), null, obj.toString(), object : TypeToken<ServerResult<Void>>() {
 
         }.type)
     }

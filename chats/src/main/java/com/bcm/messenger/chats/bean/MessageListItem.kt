@@ -333,7 +333,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         this.fromView.text = recipient?.name ?: ""
         this.fromView.setCompoundDrawables(null, null, null, null)
         this.recipient?.let {
-            this.contactPhotoImage.showPrivateAvatar(accountContext, it)
+            this.contactPhotoImage.showPrivateAvatar(it)
         }
         ALog.logForSecret(TAG, "setPrivate thread: ${threadRecord.id}, address: ${this.recipient?.address}")
         if (threadRecord.isOutgoing()) {

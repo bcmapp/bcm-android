@@ -87,7 +87,7 @@ object GroupMemberCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.QUERY_GROUP_MEMBER_PAGE),
+        return RxIMHttp.get(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.QUERY_GROUP_MEMBER_PAGE),
                 obj.toString(), object : TypeToken<ServerResult<GetGroupMemberListEntity>>() {
 
         }.type)
@@ -102,7 +102,7 @@ object GroupMemberCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).put<ServerResult<GroupMemberEntity>>(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_MEMBER_URL), null, obj.toString(), object : TypeToken<ServerResult<GroupMemberEntity>>() {
+        return RxIMHttp.get(accountContext).put<ServerResult<GroupMemberEntity>>(BcmHttpApiHelper.getApi(GroupCoreConstants.GET_GROUP_MEMBER_URL), null, obj.toString(), object : TypeToken<ServerResult<GroupMemberEntity>>() {
 
         }.type).subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
@@ -130,7 +130,7 @@ object GroupMemberCore {
         } else {
             uri = GroupCoreConstants.KICK_GROUP_MEMBER_URL
         }
-        return RxIMHttp.getHttp(accountContext).put(BcmHttpApiHelper.getApi(uri), null, obj.toString(), object : TypeToken<AmeEmpty>() {
+        return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(uri), null, obj.toString(), object : TypeToken<AmeEmpty>() {
 
         }.type)
     }
@@ -144,7 +144,7 @@ object GroupMemberCore {
             e.printStackTrace()
         }
 
-        return RxIMHttp.getHttp(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.GROUP_GET_PREKEY),
+        return RxIMHttp.get(accountContext).post(BcmHttpApiHelper.getApi(GroupCoreConstants.GROUP_GET_PREKEY),
                 obj.toString(), PreKeyBundleListEntity::class.java)
     }
 }

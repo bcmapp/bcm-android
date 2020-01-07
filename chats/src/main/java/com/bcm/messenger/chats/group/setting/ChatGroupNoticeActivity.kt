@@ -101,7 +101,7 @@ class ChatGroupNoticeActivity : SwipeBaseActivity(), RecipientModifiedListener {
             notice_container.visibility = View.VISIBLE
             no_notice_layout.visibility = View.GONE
             notice_content_text.text = groupModel.getGroupInfo().noticeContent
-            group_owner_avatar.setAvatar(accountContext, AmeGroupMemberInfo.OWNER, recipient.address, groupModel.getGroupMember(recipient.address.serialize())?.keyConfig)
+            group_owner_avatar.setAvatar(AmeGroupMemberInfo.OWNER, recipient.address, groupModel.getGroupMember(recipient.address.serialize())?.keyConfig)
             group_owner_name_text.text = recipient.name
             notice_update_time_text.text = DateUtils.formatDayTimeForMillisecond(groupModel.getGroupInfo()!!.noticeUpdateTime)
         } else {

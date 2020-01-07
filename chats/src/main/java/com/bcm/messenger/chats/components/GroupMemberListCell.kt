@@ -7,6 +7,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.GroupMemberPhotoView
@@ -35,7 +37,7 @@ class GroupMemberListCell : LinearLayout {
         this.nameView = findViewById(R.id.member_name_text)
 
         avatarView.setUpdateListener {
-            if (isInited() && it.address == member.uid) {
+            if (isInited() && it.address.serialize() == member.uid) {
                 updateNickname(it)
             }
         }
@@ -47,7 +49,7 @@ class GroupMemberListCell : LinearLayout {
         }
     }
 
-    fun bind(member: AmeGroupMemberInfo?, editing: Boolean, checked: Boolean) {
+    fun bind(accountContext: AccountContext, member: AmeGroupMemberInfo?, editing: Boolean, checked: Boolean) {
         unbind()
         if (null == member) {
             return
@@ -58,7 +60,7 @@ class GroupMemberListCell : LinearLayout {
             return
         }
 
-        val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, member.uid, true)
+        val recipient = Recipient.from(accountContext, member.uid, true)
         updateNickname(recipient)
         changedEditState(editing, checked)
     }
@@ -84,7 +86,7 @@ class GroupMemberListCell : LinearLayout {
             nameView.text = nickname
         }
 
-        avatarView.setAvatar(member.role, member.uid, member.keyConfig, nickname)
+        avatarView.setAvatar(member.role, recipient.address, member.keyConfig, nickname)
     }
 
     private fun changedEditState(editing: Boolean, checked: Boolean) {

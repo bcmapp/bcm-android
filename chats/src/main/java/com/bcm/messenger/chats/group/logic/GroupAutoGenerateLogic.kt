@@ -56,7 +56,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                     val mList = GroupMemberManager.queryGroupMemberList(accountContext, gid, list).filter { member -> member.role != AmeGroupMemberInfo.VISITOR }.toMutableList()
                     if (mList.size < 4) {
                         val existList = mList.map { m -> m.uid }
-                        val dbTop4List = GroupMemberManager.queryTopNGroupMember(accountContext, gid, 4).filter { m -> !existList.contains(m.uid.serialize()) }
+                        val dbTop4List = GroupMemberManager.queryTopNGroupMember(accountContext, gid, 4).filter { m -> !existList.contains(m.uid) }
                         mList.addAll(dbTop4List.subList(0, min(dbTop4List.size, 4 - mList.size)))
                         if (mList.isEmpty()) {
                             ALog.i(TAG, "$gid member list is empty")

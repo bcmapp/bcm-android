@@ -1,6 +1,7 @@
 package com.bcm.messenger.chats.group.core.group
 
 import android.text.TextUtils
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.corebean.GroupMemberSyncState
 import com.bcm.messenger.common.crypto.GroupProfileDecryption
@@ -55,7 +56,7 @@ class GroupInfoEntity : NotGuard {
     var encrypted_ephemeral_key: String? = null
     var version:Int = 0
 
-    fun toDbGroup(dbGroupInfo:GroupInfo, ownerIdentityKey:String?, parseCount:Boolean): GroupInfo {
+    fun toDbGroup(accountContext: AccountContext, dbGroupInfo:GroupInfo, ownerIdentityKey:String?, parseCount:Boolean): GroupInfo {
         if (parseCount) {
             dbGroupInfo.member_count = member_cn
             dbGroupInfo.subscriber_count = subscriber_cn
@@ -81,7 +82,7 @@ class GroupInfoEntity : NotGuard {
         }
 
         if (!TextUtils.isEmpty(encrypted_key)) {
-            val result: Pair<String, Int> = BCMEncryptUtils.decryptGroupPassword(encrypted_key)
+            val result: Pair<String, Int> = BCMEncryptUtils.decryptGroupPassword(accountContext, encrypted_key)
             if (result.second == GroupInfo.LEGITIMATE_GROUP) {
                 dbGroupInfo.illegal = GroupInfo.LEGITIMATE_GROUP
                 val key = when (dbGroupInfo.role) {
@@ -106,7 +107,7 @@ class GroupInfoEntity : NotGuard {
         val shareSetting = this.share_qr_code_setting
         val ownerConfirm = this.owner_confirm
         try {
-            val infoSecret = BCMEncryptUtils.decryptGroupPassword(this.group_info_secret).first
+            val infoSecret = BCMEncryptUtils.decryptGroupPassword(accountContext, this.group_info_secret).first
 
             if (TextUtils.isEmpty(dbGroupInfo.shareCodeSetting)) {
                 if(GroupShareSettingUtil.parseIntoGroupInfo(ownerIdentityKey,

@@ -32,9 +32,9 @@ object EncryptMediaUtils {
         fun isValid() = groupStreamInfo != null && localFileInfo != null
     }
 
-    fun encryptVideo(accountContext: AccountContext, masterSecret: MasterSecret, gid: Long, videoPath: String): Pair<EncryptResult?, EncryptResult?> {
+    fun encryptVideo(masterSecret: MasterSecret, gid: Long, videoPath: String): Pair<EncryptResult?, EncryptResult?> {
         val triple = BcmFileUtils.getVideoFrameInfo(videoPath)
-        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid) ?: return Pair(null, null)
+        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(masterSecret.accountContext, gid) ?: return Pair(null, null)
         val keyParam = GroupKeyParam(groupInfo.currentKey.base64Decode(), groupInfo.currentKeyVersion)
         try {
             if (triple.first != null) {
@@ -95,8 +95,8 @@ object EncryptMediaUtils {
 //        return Pair(null, null)
 //    }
 
-    fun encryptImage(accountContext: AccountContext, masterSecret: MasterSecret, gid: Long, path: String): Pair<EncryptResult?, EncryptResult?> {
-        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid) ?: return Pair(null, null)
+    fun encryptImage(masterSecret: MasterSecret, gid: Long, path: String): Pair<EncryptResult?, EncryptResult?> {
+        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(masterSecret.accountContext, gid) ?: return Pair(null, null)
         val keyParam = GroupKeyParam(groupInfo.currentKey.base64Decode(), groupInfo.currentKeyVersion)
 
         val options = BitmapFactory.Options()
@@ -154,8 +154,8 @@ object EncryptMediaUtils {
 //        return Pair(null, null)
 //    }
 
-    fun encryptFile(accountContext: AccountContext, masterSecret: MasterSecret, gid: Long, filePath: String): EncryptResult? {
-        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid) ?: return null
+    fun encryptFile(masterSecret: MasterSecret, gid: Long, filePath: String): EncryptResult? {
+        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(masterSecret.accountContext, gid) ?: return null
         val keyParam = GroupKeyParam(groupInfo.currentKey.base64Decode(), groupInfo.currentKeyVersion)
 
         try {

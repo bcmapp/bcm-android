@@ -175,7 +175,7 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                 reply_photo.visibility = View.GONE
                 val weakActivity = WeakReference(context as Activity)
 
-                MessageFileHandler.downloadThumbnail(messageRecord.gid, messageRecord.indexId, replyContent, messageRecord.keyVersion, object : MessageFileHandler.MessageFileCallback {
+                MessageFileHandler.downloadThumbnail(accountContext, messageRecord.gid, messageRecord.indexId, replyContent, messageRecord.keyVersion, object : MessageFileHandler.MessageFileCallback {
                     override fun onResult(success: Boolean, uri: Uri?) {
                         if (weakActivity.get()?.isFinishing == true || weakActivity.get()?.isDestroyed == true) {
                             return

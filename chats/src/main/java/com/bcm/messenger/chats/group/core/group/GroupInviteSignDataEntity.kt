@@ -1,5 +1,6 @@
 package com.bcm.messenger.chats.group.core.group
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.AppContextHolder
@@ -10,10 +11,10 @@ import com.bcm.messenger.utility.proguard.NotGuard
 
 class GroupInviteSignDataEntity(val data:String, val sig:String): NotGuard {
     companion object {
-        fun inviteData2SignData(inviteDataEntity: GroupInviteDataEntity, infoSecret:String): String {
+        fun inviteData2SignData(accountContext: AccountContext, inviteDataEntity: GroupInviteDataEntity, infoSecret:String): String {
             val inviteData = GsonUtils.toJson(inviteDataEntity)
             val data = EncryptUtils.aes256EncryptAndBase64(inviteData, EncryptUtils.base64Decode(infoSecret.toByteArray()))
-            val signByteArray = BCMEncryptUtils.signWithMe(AppContextHolder.APP_CONTEXT, EncryptUtils.base64Decode(data.toByteArray()))
+            val signByteArray = BCMEncryptUtils.signWithMe(accountContext, EncryptUtils.base64Decode(data.toByteArray()))
             val signData = GroupInviteSignDataEntity(data, String(EncryptUtils.base64Encode(signByteArray)))
             return String(EncryptUtils.base64Encode(GsonUtils.toJson(signData).toByteArray()))
         }

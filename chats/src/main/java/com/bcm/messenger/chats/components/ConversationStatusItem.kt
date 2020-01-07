@@ -66,7 +66,7 @@ class ConversationStatusItem : LinearLayout, RecipientModifiedListener, Bindable
         this.masterSecret = masterSecret
         this.batchSelected = batchSelected
         this.messageRecord = messageRecord
-        this.targetRecipient = messageRecord.getRecipient()
+        this.targetRecipient = messageRecord.getRecipient(masterSecret.accountContext)
         isSelected = batchSelected?.contains(messageRecord) == true
 
         setBody(messageRecord)
@@ -120,7 +120,8 @@ class ConversationStatusItem : LinearLayout, RecipientModifiedListener, Bindable
             resources.getString(R.string.chats_read_burn_detail_by_you,
                     ExpirationUtil.getExpirationDisplayValue(context, (messageRecord.expiresTime / 1000).toInt()))
         } else {
-            resources.getString(R.string.chats_read_burn_detail, messageRecord.getRecipient().name,
+            val accountContext = targetRecipient?.address?.context()?:return
+            resources.getString(R.string.chats_read_burn_detail, messageRecord.getRecipient(accountContext).name,
                     ExpirationUtil.getExpirationDisplayValue(context, (messageRecord.expiresTime / 1000).toInt()))
 
         }
@@ -132,7 +133,10 @@ class ConversationStatusItem : LinearLayout, RecipientModifiedListener, Bindable
         setShowed(true)
         icon?.visibility = View.VISIBLE
         icon?.setImageResource(R.drawable.ic_security_white_24dp)
-        body?.text = resources.getString(R.string.chats_message_verification_change_description, messageRecord.getRecipient().name)
+
+        val accountContext = targetRecipient?.address?.context()?:return
+        body?.text = resources.getString(R.string.chats_message_verification_change_description
+                , messageRecord.getRecipient(accountContext).name)
 
     }
 

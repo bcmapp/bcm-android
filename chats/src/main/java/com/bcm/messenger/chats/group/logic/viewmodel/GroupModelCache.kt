@@ -1,6 +1,7 @@
 package com.bcm.messenger.chats.group.logic.viewmodel
 
 import android.annotation.SuppressLint
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.corebean.BcmGroupJoinRequest
@@ -20,7 +21,7 @@ import io.reactivex.schedulers.Schedulers
  * Created by bcm.social.01 on 2018/6/26.
  */
 @SuppressLint("CheckResult")
-class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
+class GroupModelCache(private val accountContext: AccountContext, group: AmeGroupInfo, private val cacheReady: () -> Unit) {
     var info:AmeGroupInfo = group
         private set
     val myRole:Long get() = info.role
@@ -34,18 +35,18 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
                 LinkedHashMap<String, AmeGroupMemberInfo>>> {
 
             val mlist = LinkedHashMap<String, AmeGroupMemberInfo>()
-            val owner = GroupMemberManager.queryGroupMemberByRole(info.gid, AmeGroupMemberInfo.OWNER.toInt())
+            val owner = GroupMemberManager.queryGroupMemberByRole(accountContext, info.gid, AmeGroupMemberInfo.OWNER.toInt())
 
             if (owner.isNotEmpty()){
                 mlist[owner[0].uid] = owner[0]
             }
 
-            val memberList = GroupMemberManager.queryGroupMemberByRole(info.gid, AmeGroupMemberInfo.MEMBER.toInt())
+            val memberList = GroupMemberManager.queryGroupMemberByRole(accountContext, info.gid, AmeGroupMemberInfo.MEMBER.toInt())
             for (u in memberList){
                 mlist[u.uid] = u
             }
 
-            val joinList = GroupJoinRequestTransform.bcmJoinGroupRequestListFromDb(BcmGroupJoinManager.queryJoinRequestByGid(info.gid))
+            val joinList = GroupJoinRequestTransform.bcmJoinGroupRequestListFromDb(BcmGroupJoinManager.queryJoinRequestByGid(accountContext, info.gid))
 
             it.onNext(Pair(joinList, mlist))
             it.onComplete()
@@ -76,13 +77,13 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
         Observable.create(ObservableOnSubscribe<LinkedHashMap<String, AmeGroupMemberInfo>> {
             val mlist = LinkedHashMap<String, AmeGroupMemberInfo>()
 
-            val owner = GroupMemberManager.queryGroupMemberByRole(info.gid, AmeGroupMemberInfo.OWNER.toInt())
+            val owner = GroupMemberManager.queryGroupMemberByRole(accountContext, info.gid, AmeGroupMemberInfo.OWNER.toInt())
 
             if (owner.isNotEmpty()) {
                 mlist[owner[0].uid] = owner[0]
             }
 
-            val memberList = GroupMemberManager.queryGroupMemberByRole(info.gid, AmeGroupMemberInfo.MEMBER.toInt())
+            val memberList = GroupMemberManager.queryGroupMemberByRole(accountContext, info.gid, AmeGroupMemberInfo.MEMBER.toInt())
             for (u in memberList) {
                 mlist[u.uid] = u
             }
@@ -131,7 +132,7 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
         val keys = memberList?.keys
         if (null != keys){
             for (uuid in keys){
-                if (uuid != AMELogin.uid){
+                if (uuid != accountContext.uid){
                     return memberList?.get(uuid)
                 }
             }
@@ -156,10 +157,10 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
                 }
 
                 if (null != remove){
-                    if (remove.uid == AMELogin.uid){
+                    if (remove.uid == accountContext.uid){
                         info.role = AmeGroupMemberInfo.VISITOR
                         AmeDispatcher.io.dispatch{
-                            GroupInfoDataManager.updateGroupRole(info.gid, AmeGroupMemberInfo.VISITOR)
+                            GroupInfoDataManager.updateGroupRole(accountContext, info.gid, AmeGroupMemberInfo.VISITOR)
                         }
                     }
                 }
@@ -173,10 +174,10 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
             for (u in list){
                 memberList?.put(u.uid, u)
 
-                if (u.uid == AMELogin.uid){
+                if (u.uid == accountContext.uid){
                     info.role = u.role
                     AmeDispatcher.io.dispatch {
-                        GroupInfoDataManager.updateGroupRole(info.gid, u.role)
+                        GroupInfoDataManager.updateGroupRole(accountContext, info.gid, u.role)
                     }
                 }
 
@@ -188,8 +189,8 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
     }
 
     fun updateMyInfo(newName: String?, newGroupName:String?, newKeyConfig: AmeGroupMemberInfo.KeyConfig?) {
-        val member = GroupMemberManager.queryGroupMember(info.gid, AMELogin.uid)
-        val memoryMember = getMember(AMELogin.uid)
+        val member = GroupMemberManager.queryGroupMember(accountContext, info.gid, accountContext.uid)
+        val memoryMember = getMember(accountContext.uid)
         if (null != newName) {
             member?.nickname = newName
             memoryMember?.nickname = newName
@@ -207,7 +208,7 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
 
         if (null != member) {
             AmeDispatcher.io.dispatch {
-                GroupMemberManager.updateGroupMember(member)
+                GroupMemberManager.updateGroupMember(accountContext, member)
             }
         }
     }
@@ -218,7 +219,7 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
         }
 
         AmeDispatcher.io.dispatch {
-            GroupMemberManager.insertGroupMembers(members)
+            GroupMemberManager.insertGroupMembers(accountContext, members)
         }
     }
 
@@ -258,7 +259,7 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
 
         AmeDispatcher.io.dispatch {
             val reqIdList = list.map { it.reqId }
-            BcmGroupJoinManager.readAllJoinRequest(reqIdList)
+            BcmGroupJoinManager.readAllJoinRequest(accountContext, reqIdList)
         }
     }
 
@@ -269,13 +270,13 @@ class GroupModelCache(group: AmeGroupInfo, private val cacheReady: () -> Unit) {
 
         AmeDispatcher.io.dispatch {
             val reqIdList = reqList.map { it.reqId }
-            BcmGroupJoinManager.readAllJoinRequest(reqIdList)
+            BcmGroupJoinManager.readAllJoinRequest(accountContext, reqIdList)
         }
     }
 
     fun refreshJoinRequestList(finish:()->Unit) {
         Observable.create<List<BcmGroupJoinRequest>> {
-            val joinList = GroupJoinRequestTransform.bcmJoinGroupRequestListFromDb(BcmGroupJoinManager.queryJoinRequestByGid(info.gid)).sortedByDescending {
+            val joinList = GroupJoinRequestTransform.bcmJoinGroupRequestListFromDb(BcmGroupJoinManager.queryJoinRequestByGid(accountContext, info.gid)).sortedByDescending {
                 it.timestamp
             }
             it.onNext(joinList)

@@ -31,6 +31,7 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.privatechat.AmeConversationViewModel
 import com.bcm.messenger.chats.provider.ChatModuleImp
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.audio.AudioRecorder
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
@@ -39,6 +40,7 @@ import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.MultiSelectEvent
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.OutgoingExpirationUpdateMessage
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.InputAwareLayout
 import com.bcm.messenger.common.ui.KeyboardAwareLinearLayout
@@ -374,7 +376,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                     val replyContent = panel_reply_content_tv.tag as? AmeGroupMessage.ReplyContent
                     mListener?.onMessageSend(panel_compose_text.text.toString(), replyContent, getTargetExtensionContent())
                     panel_compose_text.text?.clear()
-                    setReply(null, null)
+                    setReply(null, null, null)
                     panel_countdown_send_button.startCountDown()
                 }
             }
@@ -501,7 +503,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                         Observable.create(ObservableOnSubscribe<Boolean> {
                             val goon = if (recipient.expireMessages != expire) {
 
-                                Repository.getRecipientRepo()?.setExpireTime(recipient, expire.toLong())
+                                Repository.getRecipientRepo(recipient.address.context())?.setExpireTime(recipient, expire.toLong())
 
                                 true
 
@@ -605,14 +607,14 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
     }
 
     @SuppressLint("CheckResult")
-    fun setAllAtList(allAtList: List<AmeGroupMemberInfo>) {
+    fun setAllAtList(accountContext: AccountContext, allAtList: List<AmeGroupMemberInfo>) {
         ALog.d(TAG, "setAllAtList size: ${allAtList.size}")
         Observable.create(ObservableOnSubscribe<List<Recipient>> {
             try {
                 val self = Recipient.major()
                 val resultList = mutableListOf<Recipient>()
                 allAtList.forEach {
-                    val r = Recipient.from(context, it.uid, true)
+                    val r = Recipient.from(accountContext, it.uid, true)
                     if (r.address != self.address) {
                         resultList.add(r)
                     }
@@ -773,17 +775,17 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
     }
 
-    fun setReply(messageDetail: AmeGroupMessageDetail?, locateCallback: ((v: View) -> Unit)?) {
+    fun setReply(accountContext: AccountContext?, messageDetail: AmeGroupMessageDetail?, locateCallback: ((v: View) -> Unit)?) {
 
-        if(messageDetail != null) {
+        if(messageDetail != null && accountContext != null) {
 
             postDelayed({
                 panel_compose_text.requestFocus()
                 mInputAwareLayout?.showSoftkey(panel_compose_text)
 
                 panel_reply_layout.visibility = View.VISIBLE
-                val recipient = messageDetail.sender
-                val groupModel = GroupLogic.getModel(messageDetail.gid)
+                val recipient = messageDetail.getSender(accountContext)
+                val groupModel = GroupLogic.get(accountContext).getModel(messageDetail.gid)
                 panel_reply_to_tv.text = if (recipient == null) {
                     null
                 }else {
@@ -800,11 +802,11 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
                 panel_reply_content_tv.tag = replyContent
                 panel_reply_content_tv.visibility = View.VISIBLE
-                panel_reply_content_tv.text = replyContent.getReplyDescribe(messageDetail.gid, false)
+                panel_reply_content_tv.text = replyContent.getReplyDescribe(messageDetail.gid, accountContext, false)
                 panel_reply_text_tv.visibility = View.GONE
 
                 panel_reply_close_iv.setOnClickListener {
-                    setReply(null, null)
+                    setReply(accountContext, null, null)
                 }
                 panel_reply_layout.setOnClickListener {
                     locateCallback?.invoke(it)
@@ -878,7 +880,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
     private fun initAtList() {
         ALog.d(TAG, "initAtList")
-        mChatAtAdapter = ChatAtListAdapter(context, object : ChatAtListAdapter.AtActionListener {
+        mChatAtAdapter = ChatAtListAdapter(AMELogin.majorContext, context, object : ChatAtListAdapter.AtActionListener {
             override fun onSelect(recipient: Recipient) {
 
                 val lastIndex = getAtingIndex()
@@ -1035,7 +1037,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                         if (search.isNullOrEmpty()) {
                             it.onNext(mAllAtList)
                         } else {
-                            val model = GroupLogic.getModel(mCurrentConversationId)
+                            val model = GroupLogic.get(AMELogin.majorContext).getModel(mCurrentConversationId)
                             it.onNext(mAllAtList.filter {
                                 val name = BcmGroupNameUtil.getGroupMemberName(it, model?.getGroupMember(it.address.serialize()))
                                 StringAppearanceUtil.containIgnore(name, search)
@@ -1112,7 +1114,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
     }
 
     private fun createAtPart(recipient: Recipient, groupId: Long): CharSequence {
-        val model = GroupLogic.getModel(groupId)
+        val model = GroupLogic.get(recipient.address.context()).getModel(groupId)
         return ARouterConstants.CHAT_AT_CHAR + BcmGroupNameUtil.getGroupMemberAtName(recipient, model?.getGroupMember(recipient.address.serialize()))
     }
 

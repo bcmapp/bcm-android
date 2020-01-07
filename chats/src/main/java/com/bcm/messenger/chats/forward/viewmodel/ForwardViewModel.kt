@@ -11,6 +11,7 @@ import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.privatechat.logic.MessageSender
 import com.bcm.messenger.chats.thread.ThreadListViewModel
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
 import com.bcm.messenger.common.crypto.MasterSecret
@@ -90,7 +91,7 @@ class ForwardViewModel : ViewModel() {
     fun getPrivateMessage(masterSecret: MasterSecret, indexId: Long) {
         ALog.d(TAG, "Get private message for forward")
         Observable.create<MessageRecord> {
-            val message = Repository.getChatRepo().getMessage(indexId)
+            val message = Repository.getChatRepo(masterSecret.accountContext)?.getMessage(indexId)
             if (message != null) {
                 ALog.d(TAG, "Get private message success")
                 it.onNext(message)
@@ -109,10 +110,10 @@ class ForwardViewModel : ViewModel() {
 
 
     @SuppressLint("CheckResult")
-    fun getGroupMessage(indexId: Long, gid: Long) {
+    fun getGroupMessage(accountContext: AccountContext, indexId: Long, gid: Long) {
         ALog.d(TAG, "Get group message for forward")
         Observable.create<AmeGroupMessageDetail> {
-            val message = MessageDataManager.fetchOneMessageByGidAndIndexId(gid, indexId)
+            val message = MessageDataManager.fetchOneMessageByGidAndIndexId(accountContext, gid, indexId)
             if (message != null) {
                 it.onNext(message)
             }
@@ -134,7 +135,7 @@ class ForwardViewModel : ViewModel() {
     fun getMultiplePrivateMessages(masterSecret: MasterSecret, indexIdList: LongArray) {
         ALog.d(TAG, "Get multiple private messages for forward")
         Observable.create<List<MessageRecord>> {
-            val messages = Repository.getChatRepo().getMessages(indexIdList.toList())
+            val messages = Repository.getChatRepo(masterSecret.accountContext)?.getMessages(indexIdList.toList())?: listOf()
             it.onNext(messages)
             it.onComplete()
         }.subscribeOn(Schedulers.io())
@@ -151,12 +152,12 @@ class ForwardViewModel : ViewModel() {
     }
 
     @SuppressLint("CheckResult")
-    fun getMultipleGroupMessages(gid: Long, indexIdList: LongArray) {
+    fun getMultipleGroupMessages(accountContext: AccountContext, gid: Long, indexIdList: LongArray) {
         ALog.d(TAG, "Get multiple group messages for forward")
         Observable.create<List<AmeGroupMessageDetail>> {
             val list = mutableListOf<AmeGroupMessageDetail>()
             indexIdList.forEach { indexId ->
-                val message = MessageDataManager.fetchOneMessageByGidAndIndexId(gid, indexId)
+                val message = MessageDataManager.fetchOneMessageByGidAndIndexId(accountContext, gid, indexId)
                 if (message != null) {
                     list.add(message)
                 } else {
@@ -221,7 +222,7 @@ class ForwardViewModel : ViewModel() {
                             val content = AmeGroupMessage.HistoryContent(it)
                             if (recipient.isGroupRecipient) {
                                 val groupId = GroupUtil.gidFromAddress(selectRecipients[0].address)
-                                GroupMessageLogic.messageSender.sendHistoryMessage(groupId, content, null)
+                                GroupMessageLogic.get(masterSecret.accountContext).messageSender.sendHistoryMessage(groupId, content, null)
                                 ForwardController.sendGroupCommentMessage(commentText, groupId)
                             } else {
                                 ThreadListViewModel.getThreadId(recipient) { threadId ->
@@ -230,7 +231,7 @@ class ForwardViewModel : ViewModel() {
                                             recipient.expireMessages * 1000L)
                                     Observable.create<Long> { emitter ->
 
-                                        val id = MessageSender.send(AppContextHolder.APP_CONTEXT,
+                                        val id = MessageSender.send(AppContextHolder.APP_CONTEXT, masterSecret.accountContext,
                                                 locationMessage, threadId, null)
                                         ForwardController.sendPrivateCommentMessage(commentText, recipient, masterSecret, threadId)
 
@@ -268,7 +269,7 @@ class ForwardViewModel : ViewModel() {
     }
 
     @SuppressLint("CheckResult")
-    fun downloadAndDecryptThumbnail(callback: (uri: Uri) -> Unit) {
+    fun downloadAndDecryptThumbnail(accountContext: AccountContext, callback: (uri: Uri) -> Unit) {
         if (groupMessageList.isEmpty()) {
             callback(Uri.EMPTY)
             return
@@ -276,7 +277,7 @@ class ForwardViewModel : ViewModel() {
 
         val groupMessage = groupMessageList[0]
 
-        MessageFileHandler.downloadThumbnail(groupMessage, object : MessageFileHandler.MessageFileCallback {
+        MessageFileHandler.downloadThumbnail(accountContext, groupMessage, object : MessageFileHandler.MessageFileCallback {
             override fun onResult(success: Boolean, uri: Uri?) {
                 if (success) {
                     callback(uri ?: Uri.EMPTY)

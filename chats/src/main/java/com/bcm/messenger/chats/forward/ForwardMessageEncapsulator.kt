@@ -53,7 +53,7 @@ object ForwardMessageEncapsulator {
             val historyMessage = HistoryMessageDetail()
 
             val content = message.message.content
-            val keyParam: GroupKeyParam = GroupInfoDataManager.queryGroupKeyParam(gid, message.keyVersion)?:return listOf()
+            val keyParam: GroupKeyParam = GroupInfoDataManager.queryGroupKeyParam(AMELogin.majorContext, gid, message.keyVersion)?:return listOf()
             val groupKey = keyParam.key.base64Encode().format()
             when (content) {
                 is AmeGroupMessage.LinkContent -> historyMessage.messagePayload = AmeGroupMessage(AmeGroupMessage.TEXT, AmeGroupMessage.TextContent(content.url)).toString()
@@ -121,7 +121,7 @@ object ForwardMessageEncapsulator {
                                         content.thumbnail_url = thumbResult.url
                                         content.sign_thumbnail = thumbResult.sign
 
-                                        MessageDataManager.updateMessageContent(message.gid, message.indexId, message.message.toString())
+                                        MessageDataManager.updateMessageContent(AMELogin.majorContext, message.gid, message.indexId, message.message.toString())
                                         it.onNext(Pair(urlResult, thumbResult))
                                     } else {
                                         it.onError(Exception("upload failed $path"))
@@ -143,7 +143,7 @@ object ForwardMessageEncapsulator {
                                         content.thumbnail_width = thumbResult.width
                                         content.thumbnail_height = thumbResult.height
 
-                                        MessageDataManager.updateMessageContent(message.gid, message.indexId, message.message.toString())
+                                        MessageDataManager.updateMessageContent(AMELogin.majorContext, message.gid, message.indexId, message.message.toString())
                                         it.onNext(Pair(urlResult, thumbResult))
                                     } else {
                                         it.onError(Exception("upload failed $path"))
@@ -161,7 +161,7 @@ object ForwardMessageEncapsulator {
                                         content.url = urlResult.url
                                         content.sign = urlResult.sign
 
-                                        MessageDataManager.updateMessageContent(message.gid, message.indexId, message.message.toString())
+                                        MessageDataManager.updateMessageContent(AMELogin.majorContext, message.gid, message.indexId, message.message.toString())
                                         it.onNext(Pair(urlResult, null))
                                     } else {
                                         it.onError(Exception("upload failed $path"))
@@ -312,7 +312,7 @@ object ForwardMessageEncapsulator {
 
                 BCMEncryptUtils.encryptFile(File(localPath), Base64.decode(psw), destFile)
 
-                AmeFileUploader.uploadAttachmentToAws(AppContextHolder.APP_CONTEXT, AmeFileUploader.AttachmentType.GROUP_MESSAGE, destFile, object : AmeFileUploader.FileUploadCallback() {
+                AmeFileUploader.uploadAttachmentToAws(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, AmeFileUploader.AttachmentType.GROUP_MESSAGE, destFile, object : AmeFileUploader.FileUploadCallback() {
                     override fun onUploadSuccess(url: String?, id: String?) {
                         result(url ?: "")
                         it.onNext(url ?: "")
@@ -366,14 +366,14 @@ object ForwardMessageEncapsulator {
 
     private fun prepareOneMessage(masterSecret: MasterSecret, prepareMessage: PrepareMessage) {
         val messageRecord = prepareMessage.message
-        val attachmentRepo = Repository.getAttachmentRepo()
+        val attachmentRepo = Repository.getAttachmentRepo(AMELogin.majorContext)?:return
         val attachment = attachmentRepo.getAttachments(messageRecord.id)[0]
         prepareMessage.historyMessage.sendTime = messageRecord.dateSent
 
         if (messageRecord.isOutgoing()) {
-            prepareMessage.historyMessage.sender = AMELogin.uid
+            prepareMessage.historyMessage.sender = AMELogin.majorUid
         } else {
-            prepareMessage.historyMessage.sender = messageRecord.getRecipient().address.serialize()
+            prepareMessage.historyMessage.sender = messageRecord.getRecipient(AMELogin.majorContext).address.serialize()
         }
 
         prepareMessage.historyMessage.attachmentPsw = HistoryMessageDetail.PswBean()
@@ -382,10 +382,10 @@ object ForwardMessageEncapsulator {
         prepareMessage.historyMessage.thumbPsw?.psw = EncryptUtils.getSecret(64)
         if (attachment.contentLocation.isNotEmpty()) {
             prepareMessage.historyMessage.attachmentPsw?.type = PRIVATE_ENCRYPT_TYPE
-            prepareMessage.historyMessage.attachmentPsw?.psw = Base64.encodeBytes(MediaKey.getDecrypted(masterSecret, MasterSecretUtil.getAsymmetricMasterSecret(AppContextHolder.APP_CONTEXT, masterSecret), attachment.contentKey))
+            prepareMessage.historyMessage.attachmentPsw?.psw = Base64.encodeBytes(MediaKey.getDecrypted(masterSecret, MasterSecretUtil.getAsymmetricMasterSecret(AMELogin.majorContext, masterSecret), attachment.contentKey))
             if (MediaUtil.isGif(attachment.contentType)) {
                 prepareMessage.historyMessage.thumbPsw?.type = PRIVATE_ENCRYPT_TYPE
-                prepareMessage.historyMessage.thumbPsw?.psw = Base64.encodeBytes(MediaKey.getDecrypted(masterSecret, MasterSecretUtil.getAsymmetricMasterSecret(AppContextHolder.APP_CONTEXT, masterSecret), attachment.contentKey))
+                prepareMessage.historyMessage.thumbPsw?.psw = Base64.encodeBytes(MediaKey.getDecrypted(masterSecret, MasterSecretUtil.getAsymmetricMasterSecret(AMELogin.majorContext, masterSecret), attachment.contentKey))
             }
         } else {
             prepareMessage.historyMessage.attachmentPsw?.type = GROUPEN_ENCRYPT_TYPE
@@ -497,9 +497,9 @@ object ForwardMessageEncapsulator {
     private fun smsMessage2HistoryMessage(message: MessageRecord): HistoryMessageDetail {
         val historyMessage = HistoryMessageDetail()
         if (message.isOutgoing()) {
-            historyMessage.sender = AMELogin.uid
+            historyMessage.sender = AMELogin.majorUid
         } else {
-            historyMessage.sender = message.getRecipient().address.serialize()
+            historyMessage.sender = message.getRecipient(AMELogin.majorContext).address.serialize()
         }
 
         historyMessage.sendTime = message.dateSent

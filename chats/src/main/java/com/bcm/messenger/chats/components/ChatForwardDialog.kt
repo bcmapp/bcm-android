@@ -195,7 +195,7 @@ class ChatForwardDialog : DialogFragment() {
                     val groupInfo = GroupLogic.get(accountContext).getGroupInfo(gid)
                     forward_single_name.text = groupInfo?.displayName ?: ""
                 } else {
-                    forward_single_avatar.showPrivateAvatar(masterSecret.accountContext, recipients[0])
+                    forward_single_avatar.showPrivateAvatar(recipients[0])
                     forward_single_name.text = recipients[0].name
                 }
             }

@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -49,9 +50,9 @@ class GroupMemberView : LinearLayout, RecipientModifiedListener {
         }
     }
 
-    fun bind(member: AmeGroupMemberInfo?) {
+    fun bind(accountContext: AccountContext, member: AmeGroupMemberInfo?) {
         this.member = member ?: return
-        this.recipient = Recipient.from(context, member.uid, true)
+        this.recipient = Recipient.from(accountContext, member.uid, true)
         this.recipient.addListener(this)
 
         if (isInited()) {

@@ -162,13 +162,12 @@ public class MessageSender {
      * @return Thread id if current thread id is larger than 0 or allocated a new one.
      */
     public static long send(@NonNull final Context context,
-                            @NonNull final AccountContext accountContext,
                             @NonNull final MasterSecret masterSecret,
                             @NonNull final OutgoingMediaMessage message,
                             final long threadId,
                             @Nullable final Function1<Long, Unit> insertListener) {
         try {
-            Repository repository = Repository.getInstance(accountContext);
+            Repository repository = Repository.getInstance(masterSecret.getAccountContext());
             if (repository == null) {
                 return threadId;
             }
@@ -189,7 +188,7 @@ public class MessageSender {
             if (!recipient.isFriend() && !recipient.isAllowStranger()) {
                 chatRepo.setMessageSendFail(messageId);
             } else {
-                sendMediaMessage(context, accountContext, recipient, messageId, message.getExpiresIn());
+                sendMediaMessage(context, masterSecret.getAccountContext(), recipient, messageId, message.getExpiresIn());
             }
 
             return allocatedThreadId;

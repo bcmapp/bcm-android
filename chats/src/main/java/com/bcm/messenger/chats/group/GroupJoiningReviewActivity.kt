@@ -179,7 +179,7 @@ class GroupJoiningReviewActivity : SwipeBaseActivity() {
                 }
 
             }
-            joiningReviewItem.bind(mJoiningRequestList[position], unHandleCount, unReadCount)
+            joiningReviewItem.bind(accountContext, mJoiningRequestList[position], unHandleCount, unReadCount)
         }
 
         fun unbind() {

@@ -10,6 +10,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.repositories.Repository
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.IForwardSelectProvider
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -126,7 +127,7 @@ class ForwardRecentFragment : Fragment(), IForwardSelectProvider {
     private fun initThreadList() {
         Observable.create<List<Recipient>> {
             if (masterSecret != null) {
-                it.onNext(Repository.getThreadRepo().getAllThreads().map { it.getRecipient() })
+                it.onNext(Repository.getThreadRepo(AMELogin.majorContext)?.getAllThreads()?.map { it.getRecipient(AMELogin.majorContext) }?: listOf())
             }
             it.onComplete()
         }.subscribeOn(Schedulers.io())

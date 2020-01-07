@@ -710,7 +710,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         } else {
             historyView.setStyle(IN_VIEW_CHAT_RECEIVE)
         }
-        historyView.bindData(content.messageList)
+        historyView.bindData(getAccountContext(), content.messageList)
         historyView.setOnClickListener {
             val intent = Intent(context, ChatHistoryActivity::class.java)
             intent.putExtra(ChatHistoryActivity.CHAT_HISTORY_GID, ARouterConstants.PRIVATE_TEXT_CHAT)

@@ -70,7 +70,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
     private const val TAG = "GroupLogic"
 
     class GroupLogicImpl(private val accountContext: AccountContext) {
-        private val groupCache = GroupCache {
+        private val groupCache = GroupCache(accountContext) {
             updateGroupFinderSource()
             EventBus.getDefault().post(GroupInfoCacheReadyEvent())
         }
@@ -145,7 +145,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             if (model != null && model.groupId() == gid) {
                 return model
             }
-            val newModel = GroupViewModel(gid)
+            val newModel = GroupViewModel(accountContext, gid)
             setGroupListener(newModel)
             this.modelRef = WeakReference(newModel)
             return newModel
@@ -690,7 +690,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             val dbGroupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, info.gid) ?: GroupInfo()
 
             val oldSecretKey = dbGroupInfo.infoSecret
-            info.toDbGroup(dbGroupInfo, ownerIdentityKey, parseCount)
+            info.toDbGroup(accountContext, dbGroupInfo, ownerIdentityKey, parseCount)
 
             if (dbGroupInfo.role == AmeGroupMemberInfo.OWNER) {
                 if ((oldSecretKey != dbGroupInfo.infoSecret || TextUtils.isEmpty(dbGroupInfo.shareCodeSetting))) {
@@ -787,7 +787,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             for (i in stash.friendList) {
                                 val inviteData = GroupInviteDataEntity(groupId, i.address.serialize(), timestamp, i.bcmName
                                         ?: i.address.format())
-                                val inviteSignData = GroupInviteSignDataEntity.inviteData2SignData(inviteData, dbGroupInfo.infoSecret)
+                                val inviteSignData = GroupInviteSignDataEntity.inviteData2SignData(accountContext, inviteData, dbGroupInfo.infoSecret)
                                 signatures.add(inviteSignData)
                             }
 
@@ -820,7 +820,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                                 }
 
                                 val member = AmeGroupMemberInfo()
-                                member.uid = u.address
+                                member.uid = u.address.serialize()
                                 member.role = AmeGroupMemberInfo.MEMBER
                                 member.gid = groupId
                                 member.nickname = u.bcmName
@@ -1102,8 +1102,8 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
         fun deleteMember(groupId: Long, list: ArrayList<AmeGroupMemberInfo>, result: (succeed: Boolean, succeedList: ArrayList<AmeGroupMemberInfo>?, error: String?) -> Unit) {
             val uidList = ArrayList<String>()
             for (u in list) {
-                if (null != u.uid.serialize()) {
-                    uidList.add(u.uid.serialize())
+                if (null != u.uid) {
+                    uidList.add(u.uid)
                 }
             }
 
@@ -1119,7 +1119,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         ALog.i(TAG, "deleteMember result:succeed")
                         val deletedList = ArrayList<AmeGroupMemberInfo>()
                         for (u in list) {
-                            if (uidList.contains(u.uid.serialize())) {
+                            if (uidList.contains(u.uid)) {
                                 deletedList.add(u)
                             }
                         }
@@ -1604,7 +1604,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     if (owner?.isNotEmpty() == true) {
                         val ownerMember = AmeGroupMemberInfo()
                         ownerMember.gid = gid
-                        ownerMember.uid = Address.from(owner)
+                        ownerMember.uid = owner
                         ownerMember.role = AmeGroupMemberInfo.OWNER
                         ownerMember.createTime = 0
                         GroupMemberManager.insertGroupMember(accountContext, ownerMember)

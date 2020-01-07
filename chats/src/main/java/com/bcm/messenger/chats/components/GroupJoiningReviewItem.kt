@@ -6,10 +6,12 @@ import android.view.View
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.BcmGroupJoinRequest
 import com.bcm.messenger.common.core.corebean.BcmGroupJoinStatus
 import com.bcm.messenger.common.core.corebean.BcmReviewGroupJoinRequest
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -41,7 +43,7 @@ class GroupJoiningReviewItem @JvmOverloads constructor(context: Context, attrs: 
 
         join_action_accept_iv.setOnClickListener {
             val data = mRequestData ?: return@setOnClickListener
-            val groupModel = GroupLogic.getModel(data.gid)?:return@setOnClickListener
+            val groupModel = GroupLogic.get(AMELogin.majorContext).getModel(data.gid)?:return@setOnClickListener
             AmeAppLifecycle.showLoading()
             
             val reviewRequest = BcmReviewGroupJoinRequest(data.uid, data.reqId,true)
@@ -57,7 +59,7 @@ class GroupJoiningReviewItem @JvmOverloads constructor(context: Context, attrs: 
         }
         join_action_deny_iv.setOnClickListener {
             val data = mRequestData ?: return@setOnClickListener
-            val groupModel = GroupLogic.getModel(data.gid)?:return@setOnClickListener
+            val groupModel = GroupLogic.get(AMELogin.majorContext).getModel(data.gid)?:return@setOnClickListener
             AmeAppLifecycle.showLoading()
             val reviewRequest = BcmReviewGroupJoinRequest(data.uid, data.reqId, false)
             groupModel.reviewJoinRequests(listOf(reviewRequest)) { succeed, error ->
@@ -83,16 +85,16 @@ class GroupJoiningReviewItem @JvmOverloads constructor(context: Context, attrs: 
 
     override fun onModified(recipient: Recipient) {
         if (mJoiner == recipient || mInviter == recipient) {
-            bind(mRequestData ?: return, mUnHandleCount, mUnReadCount)
+            bind(recipient.address.context(), mRequestData ?: return, mUnHandleCount, mUnReadCount)
         }
     }
 
-    fun bind(data: BcmGroupJoinRequest, unHandleCount: Int, unReadCount: Int) {
+    fun bind(accountContext: AccountContext, data: BcmGroupJoinRequest, unHandleCount: Int, unReadCount: Int) {
         unbind()
         mRequestData = data
         mUnHandleCount = unHandleCount
         mUnReadCount = unReadCount
-        mJoiner = Recipient.from(context, Address.fromSerialized(data.uid), true)
+        mJoiner = Recipient.from(accountContext, data.uid, true)
         mJoiner?.addListener(this)
         if (data.inviter.isNullOrEmpty()) {
             mInviter = null
@@ -105,7 +107,7 @@ class GroupJoiningReviewItem @JvmOverloads constructor(context: Context, attrs: 
             }
 
         }else {
-            mInviter = Recipient.from(context, Address.fromSerialized(data.inviter!!), true)
+            mInviter = Recipient.from(accountContext, data.inviter!!, true)
             mInviter?.addListener(this)
 
             join_member_comment_tv.visibility = View.VISIBLE

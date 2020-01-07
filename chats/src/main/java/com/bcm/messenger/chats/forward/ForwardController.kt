@@ -8,6 +8,7 @@ import com.bcm.messenger.chats.privatechat.logic.MessageSender
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.chats.util.AttachmentSaver
 import com.bcm.messenger.chats.util.AttachmentUtils
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.CtrStreamUtil
@@ -15,6 +16,7 @@ import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.repositories.ThreadRepo
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.*
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.sms.OutgoingEncryptedMessage
 import com.bcm.messenger.common.sms.OutgoingLocationMessage
@@ -82,9 +84,9 @@ object ForwardController {
             }
         } else if (ForwardType.getType(message) == ForwardType.HAS_PUBLIC) {
             if (message.recipient.address.isGroup) {
-                groupForwardGroupMessage(message)
+                groupForwardGroupMessage(AMELogin.majorContext, message)
             } else {
-                groupForwardPrivateMessage(message)
+                groupForwardPrivateMessage(AMELogin.majorContext, message)
             }
         }
     }
@@ -99,7 +101,8 @@ object ForwardController {
                     when {
                         privateMessage.isMediaMessage() && privateMessage.getDocumentAttachment() != null -> {
                             ALog.d(TAG, "PrivateMessage is a file")
-                            val attachment = privateMessage.getDocumentAttachment() ?: return@getThreadId
+                            val attachment = privateMessage.getDocumentAttachment()
+                                    ?: return@getThreadId
                             val slide = DocumentSlide(AppContextHolder.APP_CONTEXT, attachment.getPartUri(), attachment.contentType, attachment.dataSize, attachment.fileName)
                             val deck = SlideDeck()
                             deck.addSlide(slide)
@@ -124,7 +127,8 @@ object ForwardController {
                         }
                         privateMessage.isMediaMessage() && privateMessage.getImageAttachment() != null -> {
                             ALog.d(TAG, "PrivateMessage is an image")
-                            val attachment = privateMessage.getImageAttachment() ?: return@getThreadId
+                            val attachment = privateMessage.getImageAttachment()
+                                    ?: return@getThreadId
                             val slide = ImageSlide(AppContextHolder.APP_CONTEXT, attachment.getPartUri(), attachment.contentType, attachment.dataSize, attachment.transferState)
                             val deck = SlideDeck()
                             deck.addSlide(slide)
@@ -149,7 +153,8 @@ object ForwardController {
                         }
                         privateMessage.isMediaMessage() && privateMessage.getVideoAttachment() != null -> {
                             ALog.d(TAG, "PrivateMessage is an video")
-                            val attachment = privateMessage.getVideoAttachment() ?: return@getThreadId
+                            val attachment = privateMessage.getVideoAttachment()
+                                    ?: return@getThreadId
                             val slide = DocumentSlide(AppContextHolder.APP_CONTEXT, attachment.getPartUri(), attachment.contentType, attachment.dataSize, attachment.fileName)
                             val deck = SlideDeck()
                             deck.addSlide(slide)
@@ -180,7 +185,7 @@ object ForwardController {
 
                             Observable.create<Long> {
 
-                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT,
+                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT, AMELogin.majorContext,
                                         locationMessage, threadId, null))
                                 it.onComplete()
 
@@ -200,7 +205,7 @@ object ForwardController {
 
                             Observable.create<Long> {
 
-                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT,
+                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT, AMELogin.majorContext,
                                         textMessage, threadId, null))
                                 it.onComplete()
 
@@ -251,7 +256,7 @@ object ForwardController {
                                         val content = AmeGroupMessage.ImageContent("", bitmap.width, bitmap.height, slide.contentType,
                                                 "", BcmFileUtils.saveBitmap2File(bitmap)
                                                 ?: "", "", it.length())
-                                        GroupMessageLogic.messageSender.sendImageMessage(masterSecret, groupId, content, Uri.fromFile(it), it.path, privateToGroupCallback)
+                                        GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendImageMessage(masterSecret, groupId, content, Uri.fromFile(it), it.path, privateToGroupCallback)
                                     }
                                     emitter.onComplete()
                                 }
@@ -275,7 +280,7 @@ object ForwardController {
                                     BcmFileUtils.getVideoFrameInfo(AppContextHolder.APP_CONTEXT, f.absolutePath) { _, width, height ->
                                         val content = AmeGroupMessage.VideoContent("", slide.contentType, f.length(), slide.asAttachment().duration,
                                                 "", Uri.fromFile(f).toString(), width, height, "")
-                                        GroupMessageLogic.messageSender.sendVideoMessage(masterSecret, groupId, Uri.fromFile(f), content, f.path, privateToGroupCallback)
+                                        GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendVideoMessage(masterSecret, groupId, Uri.fromFile(f), content, f.path, privateToGroupCallback)
                                     }
                                 }
                                 it.onComplete()
@@ -294,7 +299,7 @@ object ForwardController {
                                 val file = AttachmentSaver.saveTempAttachment(AppContextHolder.APP_CONTEXT, masterSecret, slideUri, slide.contentType, slide.fileNameString)
                                 file?.let { f ->
                                     val content = AmeGroupMessage.FileContent("", slide.fileNameString, f.length(), slide.contentType, "")
-                                    GroupMessageLogic.messageSender.sendDocumentMessage(masterSecret, groupId, content, f.absolutePath, privateToGroupCallback)
+                                    GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendDocumentMessage(masterSecret, groupId, content, f.absolutePath, privateToGroupCallback)
                                 }
                                 it.onComplete()
 
@@ -308,25 +313,25 @@ object ForwardController {
                             AmeGroupMessage.LOCATION -> {
                                 ALog.d(TAG, "PrivateMessage is a location")
                                 val content = m.content as AmeGroupMessage.LocationContent
-                                GroupMessageLogic.messageSender.sendLocationMessage(groupId, content.latitude, content.longtitude, content.mapType, content.title, content.address, groupMessageCallback)
+                                GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendLocationMessage(groupId, content.latitude, content.longtitude, content.mapType, content.title, content.address, groupMessageCallback)
                             }
                             AmeGroupMessage.NEWSHARE_CHANNEL -> {
                                 ALog.d(TAG, "PrivateMessage is a newsharechannel")
                                 val content = m.content as AmeGroupMessage.NewShareChannelContent
-                                val groupInfo = GroupLogic.getGroupInfo(content.gid)
+                                val groupInfo = GroupLogic.get(AMELogin.majorContext).getGroupInfo(content.gid)
                                 if (null != groupInfo) {
-                                    GroupMessageLogic.messageSender.sendShareChannelMessage(groupId, groupInfo, groupMessageCallback)
+                                    GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendShareChannelMessage(groupId, groupInfo, groupMessageCallback)
                                 }
                             }
                             AmeGroupMessage.CONTACT -> {
                                 ALog.d(TAG, "PrivateMessage is a contact")
                                 val content = m.content as AmeGroupMessage.ContactContent
-                                GroupMessageLogic.messageSender.sendContactMessage(groupId, content, groupMessageCallback)
+                                GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendContactMessage(groupId, content, groupMessageCallback)
                             }
                             AmeGroupMessage.GROUP_SHARE_CARD -> {
                                 ALog.d(TAG, "PrivateMessage is a group share card")
                                 val content = m.content as AmeGroupMessage.GroupShareContent
-                                GroupMessageLogic.messageSender.sendGroupShareMessage(groupId, content, groupMessageCallback)
+                                GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendGroupShareMessage(groupId, content, groupMessageCallback)
                             }
                             else -> groupMessageCallback.call(null, 0, false)
                         }
@@ -334,7 +339,7 @@ object ForwardController {
                     else -> {
                         ALog.d(TAG, "PrivateMessage is a text or unknown message")
                         val body = privateMessage.body
-                        GroupMessageLogic.messageSender.sendTextMessage(groupId, body, groupMessageCallback)
+                        GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendTextMessage(groupId, body, groupMessageCallback)
                     }
                 }
                 sendGroupCommentMessage(message.commentText, groupId)
@@ -348,7 +353,7 @@ object ForwardController {
     /**
      * group forward to private
      */
-    private fun groupForwardPrivateMessage(message: ForwardOnceMessage) {
+    private fun groupForwardPrivateMessage(accountContext: AccountContext, message: ForwardOnceMessage) {
         ALog.d(TAG, "Group forward to private")
         ThreadListViewModel.getThreadId(message.recipient) { threadId ->
 
@@ -363,7 +368,7 @@ object ForwardController {
                             val textMessage = OutgoingEncryptedMessage(message.recipient, body, message.recipient.expireMessages * 1000L)
                             Observable.create<Long> {
 
-                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT,
+                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT, AMELogin.majorContext,
                                         textMessage, threadId, null))
                                 it.onComplete()
 
@@ -383,7 +388,7 @@ object ForwardController {
                             val textMessage = OutgoingEncryptedMessage(message.recipient, body, message.recipient.expireMessages * 1000L)
                             Observable.create<Long> {
 
-                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT,
+                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT, AMELogin.majorContext,
                                         textMessage, threadId, null))
                                 it.onComplete()
 
@@ -399,7 +404,7 @@ object ForwardController {
                         AmeGroupMessage.IMAGE -> {
                             ALog.d(TAG, "GroupMessage is an image")
                             Observable.create<OutgoingSecureMediaMessage> {
-                                downloadGroupFile(groupMessage) { uri ->
+                                downloadGroupFile(accountContext, groupMessage) { uri ->
                                     val path = getGroupFilePath(message.masterSecret, message.groupMessage, uri)
                                     val slide = AttachmentUtils.getImageSlide(AppContextHolder.APP_CONTEXT, Uri.fromFile(File(path)))
                                     val deck = SlideDeck()
@@ -427,10 +432,11 @@ object ForwardController {
                         AmeGroupMessage.FILE -> {
                             ALog.d(TAG, "GroupMessage is a file")
                             Observable.create<OutgoingSecureMediaMessage> {
-                                downloadGroupFile(groupMessage) { uri ->
+                                downloadGroupFile(accountContext, groupMessage) { uri ->
                                     val path = getGroupFilePath(message.masterSecret, message.groupMessage, uri)
                                     val content = groupMessage.message.content as AmeGroupMessage.FileContent
-                                    val slide = AttachmentUtils.getDocumentSlide(AppContextHolder.APP_CONTEXT, Uri.fromFile(File(path)), content.fileName ?: "", content.mimeType)
+                                    val slide = AttachmentUtils.getDocumentSlide(AppContextHolder.APP_CONTEXT, Uri.fromFile(File(path)), content.fileName
+                                            ?: "", content.mimeType)
                                     val deck = SlideDeck()
                                     deck.addSlide(slide ?: return@downloadGroupFile)
 
@@ -456,7 +462,7 @@ object ForwardController {
                         AmeGroupMessage.VIDEO -> {
                             ALog.d(TAG, "GroupMessage is a video")
                             Observable.create<OutgoingSecureMediaMessage> {
-                                downloadGroupFile(groupMessage) { uri ->
+                                downloadGroupFile(accountContext, groupMessage) { uri ->
                                     val path = getGroupFilePath(message.masterSecret, message.groupMessage, uri)
                                     val content = groupMessage.message.content as AmeGroupMessage.VideoContent
                                     val slide = AttachmentUtils.getDocumentSlide(AppContextHolder.APP_CONTEXT, Uri.fromFile(File(path)), "", content.mimeType)
@@ -490,7 +496,7 @@ object ForwardController {
                                     message.recipient.expireMessages * 1000L)
                             Observable.create<Long> {
 
-                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT,
+                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT, AMELogin.majorContext,
                                         locationMessage, threadId, null))
                                 it.onComplete()
 
@@ -511,7 +517,7 @@ object ForwardController {
                                     message.recipient.expireMessages * 1000L)
                             Observable.create<Long> {
 
-                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT,
+                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT, AMELogin.majorContext,
                                         contactMessage, threadId, null))
                                 it.onComplete()
 
@@ -534,7 +540,7 @@ object ForwardController {
 
                             Observable.create<Long> {
 
-                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT,
+                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT, AMELogin.majorContext,
                                         contactMessage, threadId, null))
                                 it.onComplete()
 
@@ -555,7 +561,7 @@ object ForwardController {
 
                             Observable.create<Long> {
 
-                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT,
+                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT, AMELogin.majorContext,
                                         textMessage, threadId, null))
                                 it.onComplete()
 
@@ -576,7 +582,7 @@ object ForwardController {
 
                             Observable.create<Long> {
 
-                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT,
+                                it.onNext(MessageSender.send(AppContextHolder.APP_CONTEXT, AMELogin.majorContext,
                                         textMessage, threadId, null))
                                 it.onComplete()
 
@@ -602,7 +608,7 @@ object ForwardController {
     /**
      * group forward to group
      */
-    private fun groupForwardGroupMessage(message: ForwardOnceMessage) {
+    private fun groupForwardGroupMessage(accountContext: AccountContext, message: ForwardOnceMessage) {
         ALog.d(TAG, "Group forward to group")
         try {
             if (message.groupMessage != null && message.masterSecret != null) {
@@ -613,19 +619,19 @@ object ForwardController {
                     AmeGroupMessage.TEXT -> {
                         ALog.d(TAG, "GroupMessage is a text")
                         val m = groupMessage.message.content as AmeGroupMessage.TextContent
-                        GroupMessageLogic.messageSender.sendTextMessage(groupId, m.text, groupMessageCallback)
+                        GroupMessageLogic.get(accountContext).messageSender.sendTextMessage(groupId, m.text, groupMessageCallback)
                     }
                     AmeGroupMessage.LINK -> {
                         ALog.d(TAG, "GroupMessage is a link")
                         val m = groupMessage.message.content as AmeGroupMessage.LinkContent
-                        GroupMessageLogic.messageSender.sendTextMessage(groupId, m.url, groupMessageCallback)
+                        GroupMessageLogic.get(accountContext).messageSender.sendTextMessage(groupId, m.url, groupMessageCallback)
                     }
                     AmeGroupMessage.AUDIO -> {
                     }
                     AmeGroupMessage.IMAGE -> {
                         ALog.d(TAG, "GroupMessage is an image")
                         Observable.create<Unit> {
-                            downloadGroupFile(groupMessage) { uri ->
+                            downloadGroupFile(accountContext, groupMessage) { uri ->
                                 val content = groupMessage.message.content as AmeGroupMessage.ImageContent
                                 val newContent = AmeGroupMessage.ImageContent(
                                         width = content.width,
@@ -634,7 +640,8 @@ object ForwardController {
                                         size = content.size
                                 )
                                 val path = getGroupFilePath(masterSecret, groupMessage, uri)
-                                GroupMessageLogic.messageSender.sendImageMessage(masterSecret, groupId, newContent, uri, path ?: "", groupMessageCallback)
+                                GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendImageMessage(masterSecret, groupId, newContent, uri, path
+                                        ?: "", groupMessageCallback)
                                 it.onComplete()
                             }
                         }.subscribeOn(Schedulers.io())
@@ -643,7 +650,7 @@ object ForwardController {
                     AmeGroupMessage.FILE -> {
                         ALog.d(TAG, "GroupMessage is a file")
                         Observable.create<Unit> {
-                            downloadGroupFile(groupMessage) { uri ->
+                            downloadGroupFile(accountContext, groupMessage) { uri ->
                                 val content = groupMessage.message.content as AmeGroupMessage.FileContent
                                 val newContent = AmeGroupMessage.FileContent(
                                         url = "",
@@ -652,7 +659,8 @@ object ForwardController {
                                         mimeType = content.mimeType
                                 )
                                 val path = getGroupFilePath(masterSecret, groupMessage, uri)
-                                GroupMessageLogic.messageSender.sendDocumentMessage(masterSecret, groupId, newContent, path ?: "", groupMessageCallback)
+                                GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendDocumentMessage(masterSecret, groupId, newContent, path
+                                        ?: "", groupMessageCallback)
                                 it.onComplete()
                             }
                         }.subscribeOn(Schedulers.io())
@@ -661,7 +669,7 @@ object ForwardController {
                     AmeGroupMessage.VIDEO -> {
                         ALog.d(TAG, "GroupMessage is a video")
                         Observable.create<Unit> {
-                            downloadGroupFile(groupMessage) { uri ->
+                            downloadGroupFile(accountContext, groupMessage) { uri ->
                                 val content = groupMessage.message.content as AmeGroupMessage.VideoContent
                                 val newContent = AmeGroupMessage.VideoContent(
                                         mimeType = content.mimeType,
@@ -669,7 +677,7 @@ object ForwardController {
                                         duration = content.duration
                                 )
                                 val path = getGroupFilePath(masterSecret, groupMessage, uri)
-                                GroupMessageLogic.messageSender.sendVideoMessage(masterSecret, groupId, uri, newContent, path, groupMessageCallback)
+                                GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendVideoMessage(masterSecret, groupId, uri, newContent, path, groupMessageCallback)
                                 it.onComplete()
                             }
                         }.subscribeOn(Schedulers.io())
@@ -678,27 +686,27 @@ object ForwardController {
                     AmeGroupMessage.LOCATION -> {
                         ALog.d(TAG, "GroupMessage is a location")
                         val m = groupMessage.message.content as AmeGroupMessage.LocationContent
-                        GroupMessageLogic.messageSender.sendLocationMessage(groupId, m.latitude, m.longtitude, m.mapType, m.title, m.address, groupMessageCallback)
+                        GroupMessageLogic.get(accountContext).messageSender.sendLocationMessage(groupId, m.latitude, m.longtitude, m.mapType, m.title, m.address, groupMessageCallback)
                     }
                     AmeGroupMessage.CONTACT -> {
                         ALog.d(TAG, "GroupMessage is a contact")
                         val m = groupMessage.message.content as AmeGroupMessage.ContactContent
-                        GroupMessageLogic.messageSender.sendContactMessage(groupId, m, groupMessageCallback)
+                        GroupMessageLogic.get(accountContext).messageSender.sendContactMessage(groupId, m, groupMessageCallback)
                     }
                     AmeGroupMessage.NEWSHARE_CHANNEL -> {
                         ALog.d(TAG, "GroupMessage is a contact")
                         val m = groupMessage.message.content as AmeGroupMessage.NewShareChannelContent
-                        GroupMessageLogic.messageSender.sendShareChannelMessage(groupId, m, groupMessageCallback)
+                        GroupMessageLogic.get(accountContext).messageSender.sendShareChannelMessage(groupId, m, groupMessageCallback)
                     }
                     AmeGroupMessage.CHAT_REPLY -> {
                         ALog.d(TAG, "GroupMessage is a reply")
                         val m = groupMessage.message.content as AmeGroupMessage.ReplyContent
-                        GroupMessageLogic.messageSender.sendTextMessage(groupId, m.text, groupMessageCallback, groupMessage.extContent)
+                        GroupMessageLogic.get(accountContext).messageSender.sendTextMessage(groupId, m.text, groupMessageCallback, groupMessage.extContent)
                     }
                     AmeGroupMessage.GROUP_SHARE_CARD -> {
                         ALog.d(TAG, "GroupMessage is a group share card")
                         val m = groupMessage.message.content as AmeGroupMessage.GroupShareContent
-                        GroupMessageLogic.messageSender.sendGroupShareMessage(groupId, m, groupMessageCallback)
+                        GroupMessageLogic.get(accountContext).messageSender.sendGroupShareMessage(groupId, m, groupMessageCallback)
                     }
                 }
                 sendGroupCommentMessage(message.commentText, groupId)
@@ -744,9 +752,9 @@ object ForwardController {
         }
     }
 
-    private fun downloadGroupFile(msg: AmeGroupMessageDetail, callback: (uri: Uri) -> Unit) {
+    private fun downloadGroupFile(accountContext: AccountContext, msg: AmeGroupMessageDetail, callback: (uri: Uri) -> Unit) {
 
-        MessageFileHandler.downloadAttachment(msg, object : MessageFileHandler.MessageFileCallback {
+        MessageFileHandler.downloadAttachment(accountContext, msg, object : MessageFileHandler.MessageFileCallback {
             override fun onResult(success: Boolean, uri: Uri?) {
                 callback(uri ?: Uri.EMPTY)
             }
@@ -756,7 +764,7 @@ object ForwardController {
     fun sendGroupCommentMessage(commentText: String?, groudId: Long) {
         if (!commentText.isNullOrEmpty()) {
             AmeDispatcher.io.dispatch({
-                GroupMessageLogic.messageSender.sendTextMessage(groudId, commentText, null)
+                GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendTextMessage(groudId, commentText, null)
             }, 200)
         }
     }
@@ -765,7 +773,7 @@ object ForwardController {
         if (commentText?.isEmpty() == false) {
             AmeDispatcher.io.dispatch({
                 val commentMessage = OutgoingEncryptedMessage(recipient, commentText, recipient.expireMessages * 1000L)
-                MessageSender.send(AppContextHolder.APP_CONTEXT, commentMessage, threadId, null)
+                MessageSender.send(AppContextHolder.APP_CONTEXT, AMELogin.majorContext, commentMessage, threadId, null)
             }, 200)
         }
     }

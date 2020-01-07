@@ -6,6 +6,7 @@ import android.text.TextUtils
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.group.logic.IGroupListener
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.*
 import com.bcm.messenger.common.database.repositories.DraftRepo
@@ -33,31 +34,31 @@ import kotlin.math.max
  * Created by bcm.social.01 on 2018/5/30.
  */
 @SuppressLint("CheckResult")
-class GroupViewModel(private val groupId: Long) : IGroupListener {
+class GroupViewModel(private val accountContext: AccountContext, private val groupId: Long) : IGroupListener {
     private val TAG = "GroupViewModel"
     private var threadId = -1L
     private var modelCache: GroupModelCache
 
     init {
-        var info = GroupLogic.getGroupInfo(groupId)
+        var info = GroupLogic.get(accountContext).getGroupInfo(groupId)
         if (null == info) {
             info = AmeGroupInfo(groupId)
             info.memberSyncState = GroupMemberSyncState.DIRTY
         }
 
-        modelCache = GroupModelCache(info) {
+        modelCache = GroupModelCache(accountContext, info) {
             ALog.i(TAG, "init $groupId")
             post(GroupInfoChangedEvent(groupId))
             checkSync()
 
             if (info.memberSyncState == GroupMemberSyncState.DIRTY || info.memberCount == 0) {
-                GroupLogic.queryGroupInfo(groupId, null)
+                GroupLogic.get(accountContext).queryGroupInfo(groupId, null)
             }
         }
     }
 
     fun destroy() {
-        GroupLogic.cancelSyncGroupMemberList(groupId)
+        GroupLogic.get(accountContext).cancelSyncGroupMemberList(groupId)
     }
 
     fun groupId(): Long {
@@ -75,7 +76,8 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     fun setThreadId(threadId: Long) {
         this.threadId = threadId
         if (threadId <= 0L) {
-            this.threadId = GroupLogic.getThreadId(Recipient.recipientFromNewGroupIdAsync(AppContextHolder.APP_CONTEXT, groupId))
+            this.threadId = Repository.getThreadRepo(accountContext)
+                    ?.getThreadIdFor(Recipient.recipientFromNewGroup(accountContext, modelCache.info))?:0
         }
     }
 
@@ -109,7 +111,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
         }
 
         val weakThis = WeakReference(this)
-        GroupLogic.checkAndSyncGroupMemberList(groupId) { isFirstPage, allFinished ->
+        GroupLogic.get(accountContext).checkAndSyncGroupMemberList(groupId) { isFirstPage, allFinished ->
             if (isFirstPage || allFinished) {
                 modelCache.reloadMemberList {
                     weakThis.get()?.post(MemberListChangedEvent())
@@ -117,11 +119,11 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
             }
         }
 
-        GroupMessageLogic.syncJoinReqMessage(groupId)
+        GroupMessageLogic.get(accountContext).syncJoinReqMessage(groupId)
     }
 
     private fun uploadEncryptedNameAndNotice() {
-        GroupLogic.uploadEncryptedNameAndNotice(groupId) {
+        GroupLogic.get(accountContext).uploadEncryptedNameAndNotice(groupId) {
             if (it) {
                 modelCache.info.isProfileEncrypted = true
             }
@@ -129,7 +131,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     }
 
     fun refreshGroupAvatar() {
-        GroupLogic.refreshGroupAvatar(groupId)
+        GroupLogic.get(accountContext).refreshGroupAvatar(groupId)
     }
 
     fun getGroupInfo(): AmeGroupInfo {
@@ -138,7 +140,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
 
     private fun queryGroupInfo(forceUpdate: Boolean, callback: (groupInfo: AmeGroupInfo?) -> Unit) {
         if (!forceUpdate) {
-            val groupInfo = GroupLogic.getGroupInfo(groupId)
+            val groupInfo = GroupLogic.get(accountContext).getGroupInfo(groupId)
             if (null != groupInfo) {
                 callback(groupInfo)
                 return
@@ -146,7 +148,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
         }
 
         val weakThis = WeakReference(this)
-        GroupLogic.queryGroupInfo(groupId) { groupInfo, _, _ ->
+        GroupLogic.get(accountContext).queryGroupInfo(groupId) { groupInfo, _, _ ->
             callback(groupInfo)
             weakThis.get()?.post(GroupInfoChangedEvent(groupId))
         }
@@ -156,7 +158,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
         if (modelCache.info.shareEnable == true && myRole() == AmeGroupMemberInfo.OWNER) {
             disableShareGroup { succeed, error ->
                 if (succeed) {
-                    GroupLogic.leaveGroup(groupId, newOwner) { succeed, error ->
+                    GroupLogic.get(accountContext).leaveGroup(groupId, newOwner) { succeed, error ->
                         callback(succeed, error)
                     }
                 } else {
@@ -164,7 +166,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
                 }
             }
         } else {
-            GroupLogic.leaveGroup(groupId, newOwner) { succeed, error ->
+            GroupLogic.get(accountContext).leaveGroup(groupId, newOwner) { succeed, error ->
                 callback(succeed, error)
             }
         }
@@ -172,7 +174,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
 
     fun updateGroupPinMid(mid: Long, callback: (succeed: Boolean) -> Unit) {
         Observable.create<Boolean> {
-            GroupLogic.updateGroupInfoPinMid(groupId, mid)
+            GroupLogic.get(accountContext).updateGroupInfoPinMid(groupId, mid)
             it.onNext(true)
             it.onComplete()
         }.subscribeOn(Schedulers.io())
@@ -186,10 +188,10 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     }
 
     private fun syncMyMemberInfo() {
-        GroupLogic.getGroupMemberInfo(groupId, AMELogin.uid) { member, error ->
+        GroupLogic.get(accountContext).getGroupMemberInfo(groupId, accountContext.uid) { member, error ->
             if (member != null) {
                 try {
-                    if (member.uid == AMELogin.uid) {
+                    if (member.uid == accountContext.uid) {
                         val selfProfile = Recipient.major().privacyProfile
                         val myName = Recipient.major().name
                         var newName: String? = null
@@ -211,7 +213,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
                             return@getGroupMemberInfo
                         }
 
-                        GroupLogic.updateMyMemberInfo(groupId, newName, null, newKeyConfig) { succeed, _ ->
+                        GroupLogic.get(accountContext).updateMyMemberInfo(groupId, newName, null, newKeyConfig) { succeed, _ ->
                             if (succeed) {
                                 modelCache.updateMyInfo(newName, null, newKeyConfig)
                                 AmeDispatcher.mainThread.dispatch {
@@ -236,7 +238,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
                     if (it.uid == null) {
                         null
                     } else {
-                        Recipient.from(AppContextHolder.APP_CONTEXT, it.uid, false)
+                        Recipient.from(accountContext, it.uid, false)
                     }
                 }.filterNotNull())
 
@@ -289,7 +291,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
 
     fun updateGroupAvatar(avatar: String, result: (succeed: Boolean, error: String?) -> Unit): Boolean {
         val weakThis = WeakReference(this)
-        return GroupLogic.updateGroupAvatar(groupId, avatar) { success, error ->
+        return GroupLogic.get(accountContext).updateGroupAvatar(groupId, avatar) { success, error ->
             weakThis.get()?.modelCache?.info?.iconUrl = avatar
 
 
@@ -300,7 +302,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
 
     fun updateGroupName(name: String, result: (succeed: Boolean, error: String?) -> Unit) {
         val weakThis = WeakReference(this)
-        return GroupLogic.updateGroupName(groupId, name) { succeed, error ->
+        return GroupLogic.get(accountContext).updateGroupName(groupId, name) { succeed, error ->
             weakThis.get()?.modelCache?.info?.name = name
 
             result(succeed, error)
@@ -346,7 +348,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     fun inviteMember(recipients: ArrayList<Recipient>, result: (succeed: Boolean, resultMessage: String?) -> Unit) {
         val weakThis = WeakReference(this)
         val memberList = recipients.map { it.address.serialize() }
-        GroupLogic.inviteMember(groupId, memberList) { succeed, succeedList, resultMessage ->
+        GroupLogic.get(accountContext).inviteMember(groupId, memberList) { succeed, succeedList, resultMessage ->
             if (succeed) {
                 val groupInfo = modelCache.info
                 if (!groupInfo.needConfirm || myRole() == AmeGroupMemberInfo.OWNER) {
@@ -369,7 +371,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     }
 
     fun queryGroupMember(uid: String, result: (member: AmeGroupMemberInfo?) -> Unit) {
-        GroupLogic.getGroupMemberInfo(groupId, uid) { member, _ ->
+        GroupLogic.get(accountContext).getGroupMemberInfo(groupId, uid) { member, _ ->
             AmeDispatcher.mainThread.dispatch {
                 result(member)
             }
@@ -388,7 +390,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     }
 
     fun mute(mute: Boolean, callback: (succeed: Boolean, error: String?) -> Unit) {
-        GroupLogic.muteGroup(groupId, mute) { success, msg ->
+        GroupLogic.get(accountContext).muteGroup(groupId, mute) { success, msg ->
             if (success) {
                 modelCache.info.mute = mute
                 post(GroupMuteEnableEvent(mute))
@@ -404,7 +406,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
 
     fun upLoadNoticeContent(notice: String, timestamp: Long, result: (succeed: Boolean, error: String?) -> Unit) {
         val weakThis = WeakReference(this)
-        GroupLogic.updateGroupNotice(groupId, notice, timestamp) { succeed, error ->
+        GroupLogic.get(accountContext).updateGroupNotice(groupId, notice, timestamp) { succeed, error ->
             AmeDispatcher.mainThread.dispatch {
                 modelCache.info.noticeContent = notice
 
@@ -417,7 +419,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     fun deleteMember(list: ArrayList<AmeGroupMemberInfo>, result: (succeed: Boolean, error: String?) -> Unit) {
         if (list.size > 0) {
             val weakThis = WeakReference(this)
-            GroupLogic.deleteMember(groupId, list) { succeed, succeedList, error ->
+            GroupLogic.get(accountContext).deleteMember(groupId, list) { succeed, succeedList, error ->
                 if (succeed) {
                     weakThis.get()?.onMemberLeave(groupId, succeedList ?: listOf())
                 }
@@ -428,15 +430,15 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
 
     fun saveDrafts(context: Context, drafts: DraftRepo.Drafts, callback: (success: Boolean) -> Unit) {
         Observable.create(ObservableOnSubscribe<Boolean> {
-            val threadRepo = Repository.getThreadRepo()
-            val draftRepo = Repository.getDraftRepo()
+            val threadRepo = Repository.getThreadRepo(accountContext)
+            val draftRepo = Repository.getDraftRepo(accountContext)
             if (drafts.size > 0) {
-                draftRepo.insertDrafts(this.threadId, drafts)
-                threadRepo.updateByNewGroup(groupId, System.currentTimeMillis())
+                draftRepo?.insertDrafts(this.threadId, drafts)
+                threadRepo?.updateByNewGroup(groupId, System.currentTimeMillis())
 
             } else {
-                draftRepo.clearDrafts(this.threadId)
-                threadRepo.updateByNewGroup(groupId)
+                draftRepo?.clearDrafts(this.threadId)
+                threadRepo?.updateByNewGroup(groupId)
             }
 
             it.onNext(true)
@@ -453,14 +455,14 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
 
     fun readAllMessage() {
         if (myRole() != AmeGroupMemberInfo.VISITOR) {
-            GroupMessageLogic.readAllMessage(groupId, threadId, System.currentTimeMillis())
+            GroupMessageLogic.get(accountContext).readAllMessage(groupId, threadId, System.currentTimeMillis())
         }
     }
 
     fun fetchMessage(fromMid: Long, toMid: Long, callback: (result: List<AmeGroupMessageDetail>) -> Unit) {
         Observable.create(ObservableOnSubscribe<List<AmeGroupMessageDetail>> {
             try {
-                val list = MessageDataManager.fetchMessageFromToMid(groupId, fromMid, toMid)
+                val list = MessageDataManager.fetchMessageFromToMid(accountContext, groupId, fromMid, toMid)
                 it.onNext(list)
             } finally {
                 it.onComplete()
@@ -479,9 +481,9 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
         Observable.create(ObservableOnSubscribe<Pair<List<AmeGroupMessageDetail>, Long>> {
             try {
                 var unread = 0L
-                val list = MessageDataManager.fetchMessageByGidAndIndexId(groupId, index, count)
+                val list = MessageDataManager.fetchMessageByGidAndIndexId(accountContext, groupId, index, count)
                 if (withUnread) {
-                    unread = MessageDataManager.countUnreadCountFromLastSeen(groupId, 0)
+                    unread = MessageDataManager.countUnreadCountFromLastSeen(accountContext, groupId, 0)
                 }
                 it.onNext(Pair(list, unread))
             } finally {
@@ -500,7 +502,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     fun getMessageDetailByMid(mid: Long, callback: (result: AmeGroupMessageDetail?) -> Unit) {
         Observable.create(ObservableOnSubscribe<AmeGroupMessageDetail> {
             try {
-                val detail = MessageDataManager.getMessageByMid(groupId, mid)
+                val detail = MessageDataManager.getMessageByMid(accountContext, groupId, mid)
                 if (detail == null) {
                     it.onError(Exception("AmeGroupMessageDetail is null"))
                 } else {
@@ -520,7 +522,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     }
 
     fun enableShareGroup(result: (succeed: Boolean, error: String?) -> Unit) {
-        GroupLogic.updateShareSetting(groupId, true) { succeed, shareCode, error ->
+        GroupLogic.get(accountContext).updateShareSetting(groupId, true) { succeed, shareCode, error ->
             if (succeed) {
                 modelCache.updateShareSetting(true, shareCode)
             }
@@ -535,7 +537,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
      * @param result succeed true , false failed, error failed reason
      */
     fun disableShareGroup(result: (succeed: Boolean, error: String?) -> Unit) {
-        GroupLogic.updateShareSetting(groupId, false) { succeed, shareCode, error ->
+        GroupLogic.get(accountContext).updateShareSetting(groupId, false) { succeed, shareCode, error ->
             if (succeed) {
                 modelCache.updateShareSetting(false, shareCode)
             }
@@ -559,7 +561,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     @SuppressLint("CheckResult")
     fun getGroupShareData(groupId: Long, callback: (shareContent: AmeGroupMessage.GroupShareContent?) -> Unit) {
         Observable.create<GroupInfo> {
-            val groupInfo = GroupInfoDataManager.queryOneGroupInfo(groupId)
+            val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, groupId)
                     ?: throw Exception("getGroupInfo null")
             it.onNext(groupInfo)
             it.onComplete()
@@ -569,7 +571,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
                 .subscribe({ groupInfo ->
                     if (groupInfo.shareLink.isNullOrEmpty()) {
                         ALog.d(TAG, "getGroupShareData group share link not exist, to create new")
-                        GroupLogic.createGroupShareShortUrl(groupId) { shareContent ->
+                        GroupLogic.get(accountContext).createGroupShareShortUrl(groupId) { shareContent ->
                             val link = shareContent?.shareLink
                             callback.invoke(shareContent)
                         }
@@ -594,7 +596,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     }
 
     fun setNeedOwnerJoinConfirm(needConfirm: Boolean, result: (succeed: Boolean, error: String?) -> Unit) {
-        GroupLogic.updateNeedConfirm(groupId, needConfirm) { succeed, error ->
+        GroupLogic.get(accountContext).updateNeedConfirm(groupId, needConfirm) { succeed, error ->
             if (succeed) {
                 modelCache.updateNeedConfirmSetting(needConfirm)
             }
@@ -617,7 +619,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     }
 
     fun reviewJoinRequests(reviewList: List<BcmReviewGroupJoinRequest>, result: (succeed: Boolean, error: String?) -> Unit) {
-        GroupLogic.reviewJoinRequest(groupId, reviewList) { succeed, error ->
+        GroupLogic.get(accountContext).reviewJoinRequest(groupId, reviewList) { succeed, error ->
             AmeDispatcher.mainThread.dispatch {
                 refreshJoinRequestCache()
                 result(succeed, error)
@@ -645,7 +647,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
 
     fun updateNoticeShowState(noticeShowState: Boolean) {
         modelCache.info.isShowNotice = noticeShowState
-        GroupLogic.updateNoticeShowState(groupId, noticeShowState)
+        GroupLogic.get(accountContext).updateNoticeShowState(groupId, noticeShowState)
     }
 
     fun refreshJoinRequestCache() {
@@ -659,7 +661,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
             modelCache.updateGroupInfo(newGroupInfo)
 
             checkSync()
-            GroupLogic.refreshGroupAvatar(groupId)
+            GroupLogic.get(accountContext).refreshGroupAvatar(groupId)
 
             AmeDispatcher.mainThread.dispatch {
                 post(GroupInfoChangedEvent(groupId))
@@ -693,7 +695,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
         if (gid == groupId && memberList.isNotEmpty()) {
             modelCache.addMember(memberList)
             modelCache.info.memberCount += memberList.count()
-            val selfJoin = memberList.filter { it.uid == AMELogin.uid }
+            val selfJoin = memberList.filter { it.uid == accountContext.uid }
                     .takeIf {
                         it.isNotEmpty()
                     }?.first()
@@ -710,7 +712,7 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
     override fun onMemberUpdate(gid: Long, memberList: List<AmeGroupMemberInfo>) {
         if (gid == groupId && memberList.isNotEmpty()) {
             memberList.forEach {
-                val member = modelCache.getMember(it.uid.serialize())
+                val member = modelCache.getMember(it.uid)
                 member?.role = it.role
                 if (it.nickname?.isNotEmpty() == true) {
                     member?.nickname = it.nickname
@@ -730,13 +732,13 @@ class GroupViewModel(private val groupId: Long) : IGroupListener {
 
             post(MemberListChangedEvent())
 
-            if (memberList.any { it.uid == AMELogin.uid }) {
+            if (memberList.any { it.uid == accountContext.uid }) {
                 AmeDispatcher.mainThread.dispatch {
                     post(MyRoleChangedEvent(AmeGroupMemberInfo.VISITOR))
                 }
             } else {
                 queryGroupInfo(true) {
-                    GroupLogic.refreshGroupAvatar(groupId)
+                    GroupLogic.get(accountContext).refreshGroupAvatar(groupId)
                 }
             }
         }

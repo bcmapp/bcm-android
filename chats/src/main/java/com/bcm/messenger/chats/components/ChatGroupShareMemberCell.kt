@@ -55,7 +55,7 @@ class ChatGroupShareMemberCell : LinearLayout {
             }
 
             nameView.text = recipient?.name?:""
-            avatarView.setAvatar(member?.context() ?: AMELogin.majorContext, member)
+            avatarView.setAvatar( member)
         }
         changeSelectView(checked)
     }

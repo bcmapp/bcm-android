@@ -3,6 +3,7 @@ package com.bcm.messenger.chats.components
 import android.content.Context
 import android.util.AttributeSet
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
 import com.bcm.messenger.common.utils.AppUtil
 import kotlinx.android.synthetic.main.chats_history_view.view.*
@@ -30,13 +31,13 @@ class HistoryView @JvmOverloads constructor(context: Context, attrs: AttributeSe
         }
     }
 
-    fun bindData(messageList: List<HistoryMessageDetail>) {
+    fun bindData(accountContext: AccountContext, messageList: List<HistoryMessageDetail>) {
         if (inView == 2) {
             chats_history_inner_view.setViewStyle(IN_VIEW_CHAT_SEND)
         } else {
             chats_history_inner_view.setViewStyle(IN_VIEW_CHAT_RECEIVE)
         }
-        chats_history_inner_view.setHistoryData(messageList, true)
+        chats_history_inner_view.setHistoryData(accountContext, messageList, true)
     }
 
 }

@@ -62,7 +62,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chats_group_setting_activity)
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
-        val model =  GroupLogic.get(accountContext).getModel(groupId)
+        val model = GroupLogic.get(accountContext).getModel(groupId)
 
         if (model == null) {
             finish()
@@ -115,7 +115,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            MediaBrowserActivity.router(accountContext, GroupUtil.addressFromGid(accountContext,mGroupModel.groupId()))
+            MediaBrowserActivity.router(accountContext, GroupUtil.addressFromGid(accountContext, mGroupModel.groupId()))
         }
 
         chats_group_notice_item.setOnClickListener {
@@ -144,7 +144,8 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
                     chats_group_notification_switch.setSwitchStatus(!enable)
                     AmePopup.result.succeed(this, getString(R.string.chats_group_setting_notification_success))
                 } else {
-                    AmePopup.result.failure(this, error ?: getString(R.string.chats_group_setting_notification_fail))
+                    AmePopup.result.failure(this, error
+                            ?: getString(R.string.chats_group_setting_notification_fail))
                 }
             }
         }
@@ -307,7 +308,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
         if (isBgLight) {
             group_control_name.setTextColor(getColorCompat(R.color.common_color_black))
             group_control_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
-        }else {
+        } else {
             group_control_name.setTextColor(getColorCompat(R.color.common_color_white))
             group_control_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
         }
@@ -492,7 +493,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
         if (mGroupModel.myRole() == AmeGroupMemberInfo.OWNER) {
             val newOwner: AmeGroupMemberInfo? = mGroupModel.randomGetGroupMember()
             if (null != newOwner) {
-                ChatGroupChangeOwnerPopWindow.show(accountContext,this@ChatGroupSettingActivity, mGroupModel.groupId(), newOwner) {
+                ChatGroupChangeOwnerPopWindow.show(accountContext, this@ChatGroupSettingActivity, mGroupModel.groupId(), newOwner) {
                     AmePopup.loading.show(this@ChatGroupSettingActivity)
                     mGroupModel.leaveGroup(it.uid, result)
                 }
@@ -604,7 +605,7 @@ class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IVie
             else -> {
                 val data = viewHolder.getData()
                 if (null != data) {
-                    (viewHolder as? MemberHolder)?.memberView?.bind(data)
+                    (viewHolder as? MemberHolder)?.memberView?.bind(accountContext, data)
                 }
             }
         }

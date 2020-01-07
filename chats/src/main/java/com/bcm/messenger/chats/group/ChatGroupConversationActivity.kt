@@ -327,7 +327,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
         illegal_leave_group.setOnClickListener {
             var newOwner: String? = null
             if (groupModel?.myRole() == AmeGroupMemberInfo.OWNER) {
-                newOwner = groupModel?.randomGetGroupMember()?.uid?.serialize()
+                newOwner = groupModel?.randomGetGroupMember()?.uid
             }
 
             AmePopup.loading.show(this)
@@ -392,7 +392,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
         groupRecipient = Recipient.recipientFromNewGroup(accountContext, groupInfo)
         val newThreadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, -1L)
         if (newThreadId <= 0) {
-            ThreadListViewModel.getThreadId(accountContext, groupRecipient ?: return) {
+            ThreadListViewModel.getThreadId(groupRecipient ?: return) {
                 intent.putExtra(ARouterConstants.PARAM.PARAM_THREAD, it)
                 initConversation(it)
             }
@@ -595,7 +595,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
 
             return
         }
-        bottom_panel.setAllAtList(memberList)
+        bottom_panel.setAllAtList(accountContext, memberList)
     }
 
     fun hideInput() {
@@ -845,7 +845,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
                 chat_title_bar.updateGroupName(event.name, memberCount)
             }
             if (event.avatarPath.isNotBlank()) {
-                chat_title_bar.updateGroupAvatar(groupId, event.avatarPath)
+                chat_title_bar.updateGroupAvatar(accountContext, groupId, event.avatarPath)
             }
         }
     }
@@ -854,7 +854,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
         val title = groupModel?.getGroupInfo()?.displayName ?: groupId.toString()
         val memberCount = max((groupModel?.memberCount()
                 ?: 0), (groupModel?.getGroupInfo()?.memberCount ?: 0))
-        chat_title_bar.setGroupChat(groupId, title, memberCount)
+        chat_title_bar.setGroupChat(accountContext, groupId, title, memberCount)
         chat_title_bar.showDot(groupModel?.getJoinRequestUnreadCount() ?: 0 > 0)
 
         if (groupModel?.getGroupInfo()?.legitimateState == AmeGroupInfo.LegitimateState.ILLEGAL) {
@@ -920,7 +920,7 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
     }
 
     private fun initLiveFlowController() {
-        liveController = LiveFlowController(this, groupId, groupModel?.myRole() == AmeGroupMemberInfo.OWNER)
+        liveController = LiveFlowController(this, accountContext, groupId, groupModel?.myRole() == AmeGroupMemberInfo.OWNER)
         fragment?.setFlowWindowController(liveController)
     }
 

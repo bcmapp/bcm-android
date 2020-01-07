@@ -65,11 +65,11 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     
-    fun showRecipientAvatar(accountContext: AccountContext, recipient: Recipient) {
+    fun showRecipientAvatar(recipient: Recipient) {
         if (recipient.isGroupRecipient) {
-            showGroupAvatar(accountContext, recipient.groupId)
+            showGroupAvatar(recipient)
         } else {
-            showPrivateAvatar(accountContext, recipient)
+            showPrivateAvatar(recipient)
         }
     }
 
@@ -82,7 +82,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         when {
             !groupInfo?.iconUrl.isNullOrBlank() -> {
                 ALog.i(TAG, "Group icon url is not empty")
-                showGroupAvatar(accountContext, Recipient.recipientFromNewGroupIdAsync(accountContext, gid))
+                showGroupAvatar(Recipient.recipientFromNewGroupIdAsync(accountContext, gid))
             }
             showSplice -> {
                 ALog.i(TAG, "Have temp splice avatar")
@@ -104,7 +104,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
-    fun showPrivateAvatar(accountContext: AccountContext, recipient: Recipient) {
+    fun showPrivateAvatar(recipient: Recipient) {
         this.privateRecipient?.removeListener(this)
         this.privateRecipient = recipient
         this.privateRecipient?.addListener(this)
@@ -113,7 +113,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         setRecipientAvatar()
     }
 
-    private fun showGroupAvatar(accountContext: AccountContext, recipient: Recipient) {
+    private fun showGroupAvatar(recipient: Recipient) {
         this.groupRecipient?.removeListener(this)
         this.groupRecipient = recipient
         this.groupRecipient?.addListener(this)

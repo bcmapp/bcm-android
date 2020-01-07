@@ -105,7 +105,7 @@ class ForwardActivity : SwipeBaseActivity() {
             })
             when (gid) {
                 ARouterConstants.PRIVATE_TEXT_CHAT, ARouterConstants.PRIVATE_MEDIA_CHAT -> viewModel.getMultiplePrivateMessages(getMasterSecret(), indexIdList)
-                else -> viewModel.getMultipleGroupMessages(gid, indexIdList)
+                else -> viewModel.getMultipleGroupMessages(accountContext, gid, indexIdList)
             }
         } else {
             when (gid) {
@@ -123,7 +123,7 @@ class ForwardActivity : SwipeBaseActivity() {
                     }
                 }
                 -1001L -> viewModel.getPrivateMessage(getMasterSecret(), indexId)
-                else -> viewModel.getGroupMessage(indexId, gid)
+                else -> viewModel.getGroupMessage(accountContext, indexId, gid)
             }
         }
     }
@@ -268,8 +268,8 @@ class ForwardActivity : SwipeBaseActivity() {
             }
             is AmeGroupMessage.ImageContent -> {
                 ALog.d(TAG, "GroupMessage is an image.")
-                if (message.thumbnailPartUri != null) {
-                    dialog.setForwardImageDialog(message.thumbnailPartUri!!, content.size, glide)
+                if (message.getThumbnailPartUri(accountContext) != null) {
+                    dialog.setForwardImageDialog(message.getThumbnailPartUri(accountContext)!!, content.size, glide)
                             .setMasterSecret(getMasterSecret())
                             .apply {
                                 showForwardDialog(this)
@@ -286,8 +286,8 @@ class ForwardActivity : SwipeBaseActivity() {
             }
             is AmeGroupMessage.VideoContent -> {
                 ALog.d(TAG, "GroupMessage is a video.")
-                if (message.thumbnailPartUri != null) {
-                    dialog.setForwardVideoDialog(message.thumbnailPartUri!!, content.size, content.duration, glide)
+                if (message.getThumbnailPartUri(accountContext) != null) {
+                    dialog.setForwardVideoDialog(message.getThumbnailPartUri(accountContext)!!, content.size, content.duration, glide)
                             .setMasterSecret(getMasterSecret())
                             .apply {
                                 showForwardDialog(this)
@@ -360,7 +360,7 @@ class ForwardActivity : SwipeBaseActivity() {
                 val uri = Uri.fromFile(File(path))
                 val imageContent = AttachmentUtils.getAttachmentContent(this, uri, path) as? AmeGroupMessage.ImageContent
                         ?: throw Exception("ImageContent is null")
-                GroupMessageLogic.messageSender.sendImageMessage(getMasterSecret(), GroupUtil.gidFromAddress(recipient.address), imageContent, uri, path, null)
+                GroupMessageLogic.get(accountContext).messageSender.sendImageMessage(getMasterSecret(), GroupUtil.gidFromAddress(recipient.address), imageContent, uri, path, null)
                 it.onComplete()
 
             }.subscribeOn(Schedulers.io())

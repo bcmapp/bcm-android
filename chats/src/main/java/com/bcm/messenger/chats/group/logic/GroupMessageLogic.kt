@@ -373,7 +373,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                         for (member in memberChangeMessage.members!!) {
                             if (member.uid != null && member.role != null) {
                                 val info = AmeGroupMemberInfo()
-                                info.uid = Address.from(member.uid?:continue)
+                                info.uid = member.uid?:continue
                                 info.role = member.role
                                 info.gid = gid
                                 if (changed.action == AmeGroupMemberChanged.LEAVE) {

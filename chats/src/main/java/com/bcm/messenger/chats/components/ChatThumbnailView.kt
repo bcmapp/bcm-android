@@ -12,6 +12,7 @@ import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.util.ChatComponentListener
 import com.bcm.messenger.chats.util.GroupAttachmentProgressEvent
 import com.bcm.messenger.chats.util.HistoryGroupAttachmentProgressEvent
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.model.AttachmentDbModel
@@ -300,7 +301,7 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
                 buildNotFoundHolderThumbnail(false)
                 buildPlaceHolderThumbnail(resultUri == null)
                 if (resultUri == null) {
-                    downloadGroupThumbnail(messageDetailRecord)
+                    downloadGroupThumbnail(masterSecret.accountContext, messageDetailRecord)
                 } else {
                     buildThumbnailRequest(glideRequests, DecryptableUri(masterSecret, resultUri), content.mimeType)
                 }
@@ -308,8 +309,8 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    fun downloadGroupThumbnail(messageDetailRecord: AmeGroupMessageDetail) {
-        MessageFileHandler.downloadThumbnail(messageDetailRecord, object : MessageFileHandler.MessageFileCallback {
+    fun downloadGroupThumbnail(accountContext: AccountContext, messageDetailRecord: AmeGroupMessageDetail) {
+        MessageFileHandler.downloadThumbnail(accountContext, messageDetailRecord, object : MessageFileHandler.MessageFileCallback {
             override fun onResult(success: Boolean, uri: Uri?) {
                 if (mGroupMessage == messageDetailRecord) {
                     updateState(messageDetailRecord)

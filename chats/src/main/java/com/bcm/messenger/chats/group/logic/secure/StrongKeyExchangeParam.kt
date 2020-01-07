@@ -27,7 +27,7 @@ import kotlin.collections.HashMap
 object StrongKeyExchangeParam {
     private const val TAG = "GroupKeyExchangeParam"
 
-    data class ParamIndex (val uid:String, val deviceId:Int)
+    data class ParamIndex(val uid: String, val deviceId: Int)
 
     private fun getDiscontinuityBytes(): ByteArray {
         val discontinuity = ByteArray(32)
@@ -66,7 +66,7 @@ object StrongKeyExchangeParam {
                     uidList.forEach { uid ->
                         val params = map.filterKeys { it.uid == uid }
                         if (params.isNotEmpty()) {
-                            for ((index,param) in params) {
+                            for ((index, param) in params) {
                                 val strongKey = EncryptUtils.base64Encode(param.toByteString().toByteArray())
                                 strongKeyList.add(GroupKeysContent.StrongKeyContent(uid, String(strongKey), index.deviceId))
                             }
@@ -75,11 +75,11 @@ object StrongKeyExchangeParam {
                         }
                     }
 
-                   GroupKeysContent(strongModeKeys = strongKeyList)
+                    GroupKeysContent(strongModeKeys = strongKeyList)
                 }
     }
 
-    fun getStrongKeysContent(accountContext: AccountContext, keyBundleList:List<PreKeyBundle>,
+    fun getStrongKeysContent(accountContext: AccountContext, keyBundleList: List<PreKeyBundle>,
                              groupKey: ByteArray,
                              groupInfoSecretPrivateKey: ByteArray): GroupKeysContent {
         val map = HashMap<ParamIndex, GroupKeyExchange.StrongKeyParams>()
@@ -101,7 +101,7 @@ object StrongKeyExchangeParam {
 
         val strongKeyList = mutableListOf<GroupKeysContent.StrongKeyContent>()
 
-        for ((index,param) in map) {
+        for ((index, param) in map) {
             val strongKey = EncryptUtils.base64Encode(param.toByteString().toByteArray())
             strongKeyList.add(GroupKeysContent.StrongKeyContent(index.uid, String(strongKey), index.deviceId))
         }
@@ -109,8 +109,8 @@ object StrongKeyExchangeParam {
         return GroupKeysContent(strongModeKeys = strongKeyList)
     }
 
-    fun strongKeyContentToGroupKey(accountContext: AccountContext, content:GroupKeysContent.StrongKeyContent, infoSecretPublicKey:ByteArray):ByteArray? {
-        if(content.uid == accountContext.uid && content.key?.isNotEmpty() == true ) {
+    fun strongKeyContentToGroupKey(accountContext: AccountContext, content: GroupKeysContent.StrongKeyContent, infoSecretPublicKey: ByteArray): ByteArray? {
+        if (content.uid == accountContext.uid && content.key?.isNotEmpty() == true) {
             val params = GroupKeyExchange.StrongKeyParams.parseFrom(content.key.base64Decode())
             val parser = Parser().withGroupInfoSecretPublicKey(infoSecretPublicKey)
                     .withParam(params)
@@ -242,7 +242,7 @@ object StrongKeyExchangeParam {
                 val theirIdentityKey = Curve.decodePoint(params.alicePublickey.toByteArray(), 0)
                 val basePublicKey = Curve.decodePoint(params.basePublicKey.toByteArray(), 0)
 
-                val keyStore = SignalProtocolStoreImpl(AppContextHolder.APP_CONTEXT)
+                val keyStore = SignalProtocolStoreImpl(AppContextHolder.APP_CONTEXT, accountContext)
 
                 val prekey = if (params.prekeyId > 0) {
                     val k = keyStore.loadPreKey(params.prekeyId)
@@ -295,7 +295,7 @@ object StrongKeyExchangeParam {
                 } else {
                     ALog.e(TAG, "bobParse failed, decrypted failed")
                 }
-            } catch (e:Throwable) {
+            } catch (e: Throwable) {
                 ALog.e(TAG, "Parse group key failed", e)
                 return null
             }

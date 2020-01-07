@@ -24,7 +24,6 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
     private var innerBorder: View? = null
 
     private var recipient: Recipient? = null
-    private var accountContext: AccountContext? = null
     private var mUpdateCallback: ((recipient: Recipient) -> Unit)? = null
 
     constructor(context: Context) : this(context, null) {}
@@ -57,9 +56,8 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
     /**
      *
      */
-    fun setRecipient(accountContext: AccountContext, recipient: Recipient?, nickname: String? = null) {
+    private fun setRecipient(recipient: Recipient?, nickname: String? = null) {
         this.recipient = recipient
-        this.accountContext = accountContext
         this.avatarView?.setPhoto(recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
         setBorderVisible(View.GONE)
     }
@@ -68,8 +66,8 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
     /**
      *
      */
-    fun setAvatar(accountContext: AccountContext, role: Long?, address: Address?, keyConfig: AmeGroupMemberInfo.KeyConfig? = null, nickname: String? = null) {
-        setAvatar(accountContext, address, keyConfig, nickname)
+    fun setAvatar(role: Long?, address: Address?, keyConfig: AmeGroupMemberInfo.KeyConfig? = null, nickname: String? = null) {
+        setAvatar(address, keyConfig, nickname)
         if (role == AmeGroupMemberInfo.OWNER) {
             setBorderVisible(View.VISIBLE)
         } else {
@@ -80,33 +78,31 @@ class GroupMemberPhotoView : ConstraintLayout, RecipientModifiedListener {
     /**
      *
      */
-    fun setAvatar(accountContext: AccountContext, address: Address?, keyConfig: AmeGroupMemberInfo.KeyConfig? = null, nickname: String? = null) {
+    private fun setAvatar(address: Address?, keyConfig: AmeGroupMemberInfo.KeyConfig? = null, nickname: String? = null) {
         if (address == null) {
             return
         }
 
         if (this.recipient?.address != address) {
             recipient?.removeListener(this)
-            this.recipient = Recipient.from(accountContext, address.serialize(), true)
+            this.recipient = Recipient.from(address.context(), address.serialize(), true)
             recipient?.addListener(this)
         }
-
-        this.accountContext = accountContext
 
         val recipient = this.recipient
         val profileKeyModel = ProfileKeyModel.fromKeyConfig(keyConfig)
         if (null != recipient && null != profileKeyModel) {
-            AmeModuleCenter.contact(accountContext)?.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient, profileKeyModel)
+            AmeModuleCenter.contact(address.context())?.updateProfileKey(AppContextHolder.APP_CONTEXT, recipient, profileKeyModel)
         }
 
-        setRecipient(accountContext, recipient, nickname)
+        setRecipient(recipient, nickname)
     }
 
     /**
      *
      */
-    fun setAvatar(accountContext: AccountContext, address: Address?) {
-        setAvatar(accountContext, address, null, null)
+    fun setAvatar(address: Address?) {
+        setAvatar(address, null, null)
     }
 
     /**

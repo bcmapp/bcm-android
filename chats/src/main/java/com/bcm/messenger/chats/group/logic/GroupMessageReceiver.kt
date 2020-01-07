@@ -230,7 +230,7 @@ class GroupMessageReceiver : IServerDataListener {
         val list = ArrayList<AmeGroupMemberInfo>()
         for (member in message.membersList) {
             val info = AmeGroupMemberInfo()
-            info.uid = Address.from(member.uid)
+            info.uid = member.uid
             info.role = member.role
             info.gid = message.gid
             if (message.action == AmeGroupMemberChanged.LEAVE) {

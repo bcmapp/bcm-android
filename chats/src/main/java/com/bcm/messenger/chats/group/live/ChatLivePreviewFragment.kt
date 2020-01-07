@@ -13,6 +13,7 @@ import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.manager.GroupLiveInfoManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.room.entity.GroupLiveInfo
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
@@ -101,7 +102,7 @@ class ChatLivePreviewFragment : Fragment() {
             val isYouTubeLink = uri.host == "www.youtube.com" || uri.host == "m.youtube.com" || uri.host == "youtu.be"
             Observable.create(ObservableOnSubscribe<Long> { emitter ->
                 try {
-                    val liveIndexId = GroupLiveInfoManager.getInstance().stashLiveInfo(gid, serviceTime,
+                    val liveIndexId = GroupLiveInfoManager.get(AMELogin.majorContext).stashLiveInfo(gid, serviceTime,
                             if (isYouTubeLink) GroupLiveInfo.LiveSourceType.Youtube else GroupLiveInfo.LiveSourceType.Original, url, serviceTime, duration)
                     emitter.onNext(liveIndexId)
                 } finally {
@@ -111,13 +112,13 @@ class ChatLivePreviewFragment : Fragment() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ liveIndexId ->
                         if (liveIndexId >= 0L) {
-                            GroupMessageLogic.messageSender.sendStartLiveMessage(gid, serviceTime, playUrl,
+                            GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendStartLiveMessage(gid, serviceTime, playUrl,
                                     AmeGroupMessage.LiveContent.PlaySource(if (isYouTubeLink) GroupLiveInfo.LiveSourceType.Youtube.value else GroupLiveInfo.LiveSourceType.Original.value, url),
                                     duration, object : MessageSender.SenderCallback {
                                 override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                                     AmeDispatcher.io.dispatch {
                                         if (messageDetail != null && messageDetail.message.isLiveMessage()) {
-                                            GroupLiveInfoManager.getInstance().updateWhenSendLiveMessage(liveIndexId, messageDetail.message.content as AmeGroupMessage.LiveContent)
+                                            GroupLiveInfoManager.get(AMELogin.majorContext).updateWhenSendLiveMessage(liveIndexId, messageDetail.message.content as AmeGroupMessage.LiveContent)
                                             AmeDispatcher.mainThread.dispatch {
                                                 if (isSuccess) {
                                                     val format = chats_live_preview_view.videoFormat
@@ -126,7 +127,7 @@ class ChatLivePreviewFragment : Fragment() {
                                                     }
                                                     activity?.finish()
                                                 } else {
-                                                    GroupLiveInfoManager.getInstance().clearStashLiveInfo(liveIndexId)
+                                                    GroupLiveInfoManager.get(AMELogin.majorContext).clearStashLiveInfo(liveIndexId)
                                                     ToastUtil.show(it, "send error")
                                                     ALog.e(TAG, "publish messageSender error,url= $url,duration =$duration")
                                                 }

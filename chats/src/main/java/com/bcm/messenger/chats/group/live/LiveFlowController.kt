@@ -13,6 +13,7 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.group.logic.MessageSender
 import com.bcm.messenger.chats.util.analyseYoutubeUrl
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.grouprepository.manager.GroupLiveInfoManager
@@ -38,7 +39,7 @@ import java.lang.ref.WeakReference
  *
  * Created by Kin on 2018/12/19
  */
-class LiveFlowController(activity: Activity, private val gid: Long, private val isGroupOwner: Boolean) {
+class LiveFlowController(activity: Activity, private val accountContext: AccountContext, private val gid: Long, private val isGroupOwner: Boolean) {
     private val TAG = "LiveFlowController"
 
     private val activityRef = WeakReference(activity)
@@ -51,7 +52,7 @@ class LiveFlowController(activity: Activity, private val gid: Long, private val 
     private val countdownRunnable = Runnable {
         ALog.i(TAG, "Countdown runnable run")
         AmeDispatcher.io.dispatch {
-            GroupMessageLogic.systemNotice(gid, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_LIVE_END))
+            GroupMessageLogic.get(accountContext).systemNotice(gid, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_LIVE_END))
         }
         videoFlowWindow?.hide(false)
         iconFlowWindow?.setReplayMode()
@@ -75,7 +76,7 @@ class LiveFlowController(activity: Activity, private val gid: Long, private val 
 
     init {
         EventBus.getDefault().register(this)
-        GroupLiveInfoManager.getInstance().registerCurrentPlayingGid(gid)
+        GroupLiveInfoManager.get(accountContext).registerCurrentPlayingGid(gid)
     }
 
     /**
@@ -164,7 +165,7 @@ class LiveFlowController(activity: Activity, private val gid: Long, private val 
             if (ended) {
                 liveStatus = GroupLiveInfo.LiveStatus.STOPED.value
                 AmeDispatcher.io.dispatch {
-                    GroupMessageLogic.systemNotice(gid, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_LIVE_END))
+                    GroupMessageLogic.get(accountContext).systemNotice(gid, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_LIVE_END))
                 }
             }
             showIconFlowWindow()
@@ -175,11 +176,11 @@ class LiveFlowController(activity: Activity, private val gid: Long, private val 
             seekTime = timeMillis
             lastActionTime = AmeTimeUtil.serverTimeMillis()
             liveStatus = GroupLiveInfo.LiveStatus.PAUSE.value
-            GroupMessageLogic.messageSender.sendPauseLiveMessage(gid, playUrl, AmeGroupMessage.LiveContent.PlaySource(liveInfo.source_type, liveInfo.source_url), liveInfo.liveId, liveInfo.duration, timeMillis, object : MessageSender.SenderCallback {
+            GroupMessageLogic.get(accountContext).messageSender.sendPauseLiveMessage(gid, playUrl, AmeGroupMessage.LiveContent.PlaySource(liveInfo.source_type, liveInfo.source_url), liveInfo.liveId, liveInfo.duration, timeMillis, object : MessageSender.SenderCallback {
                 override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                     if (messageDetail != null && messageDetail.message.isLiveMessage()) {
                         AmeDispatcher.io.dispatch {
-                            GroupLiveInfoManager.getInstance().updateWhenSendLiveMessage(liveInfo.id, messageDetail.message.content as AmeGroupMessage.LiveContent)
+                            GroupLiveInfoManager.get(accountContext).updateWhenSendLiveMessage(liveInfo.id, messageDetail.message.content as AmeGroupMessage.LiveContent)
                         }
                     }
                 }
@@ -190,11 +191,11 @@ class LiveFlowController(activity: Activity, private val gid: Long, private val 
             ALog.i(TAG, "Video floating window callback on resume")
             lastActionTime = AmeTimeUtil.serverTimeMillis()
             liveStatus = GroupLiveInfo.LiveStatus.LIVING.value
-            GroupMessageLogic.messageSender.sendRestartLiveMessage(gid, playUrl, AmeGroupMessage.LiveContent.PlaySource(liveInfo.source_type, liveInfo.source_url), liveInfo.liveId, liveInfo.duration, seekTime, object : MessageSender.SenderCallback {
+            GroupMessageLogic.get(accountContext).messageSender.sendRestartLiveMessage(gid, playUrl, AmeGroupMessage.LiveContent.PlaySource(liveInfo.source_type, liveInfo.source_url), liveInfo.liveId, liveInfo.duration, seekTime, object : MessageSender.SenderCallback {
                 override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                     if (messageDetail != null && messageDetail.message.isLiveMessage()) {
                         AmeDispatcher.io.dispatch {
-                            GroupLiveInfoManager.getInstance().updateWhenSendLiveMessage(liveInfo.id, messageDetail.message.content as AmeGroupMessage.LiveContent)
+                            GroupLiveInfoManager.get(accountContext).updateWhenSendLiveMessage(liveInfo.id, messageDetail.message.content as AmeGroupMessage.LiveContent)
                         }
                     }
                 }
@@ -206,12 +207,12 @@ class LiveFlowController(activity: Activity, private val gid: Long, private val 
             iconDeleteWindow?.dismiss(false)
             iconFlowWindow?.hide(false)
             stopCountdown()
-            GroupMessageLogic.messageSender.sendEndLiveMessage(true, gid, playUrl, AmeGroupMessage.LiveContent.PlaySource(liveInfo.source_type, liveInfo.source_url), liveInfo.liveId, liveInfo.duration, object : MessageSender.SenderCallback {
+            GroupMessageLogic.get(accountContext).messageSender.sendEndLiveMessage(true, gid, playUrl, AmeGroupMessage.LiveContent.PlaySource(liveInfo.source_type, liveInfo.source_url), liveInfo.liveId, liveInfo.duration, object : MessageSender.SenderCallback {
                 override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                     if (isSuccess) {
                         AmeDispatcher.io.dispatch {
                             if (messageDetail != null && messageDetail.message.isLiveMessage()) {
-                                GroupLiveInfoManager.getInstance().updateWhenSendLiveMessage(liveInfo.id, messageDetail.message.content as AmeGroupMessage.LiveContent)
+                                GroupLiveInfoManager.get(accountContext).updateWhenSendLiveMessage(liveInfo.id, messageDetail.message.content as AmeGroupMessage.LiveContent)
                             }
                         }
                     }
@@ -255,12 +256,12 @@ class LiveFlowController(activity: Activity, private val gid: Long, private val 
             iconDeleteWindow?.dismiss(false)
             videoFlowWindow?.hide(false)
             stopCountdown()
-            GroupMessageLogic.messageSender.sendEndLiveMessage(!isReplay, gid, playUrl, AmeGroupMessage.LiveContent.PlaySource(liveInfo.source_type, liveInfo.source_url), liveInfo.liveId, liveInfo.duration, object : MessageSender.SenderCallback {
+            GroupMessageLogic.get(accountContext).messageSender.sendEndLiveMessage(!isReplay, gid, playUrl, AmeGroupMessage.LiveContent.PlaySource(liveInfo.source_type, liveInfo.source_url), liveInfo.liveId, liveInfo.duration, object : MessageSender.SenderCallback {
                 override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                     if (isSuccess) {
                         AmeDispatcher.io.dispatch {
                             if (messageDetail != null && messageDetail.message.isLiveMessage()) {
-                                GroupLiveInfoManager.getInstance().updateWhenSendLiveMessage(liveInfo.id, messageDetail.message.content as AmeGroupMessage.LiveContent)
+                                GroupLiveInfoManager.get(accountContext).updateWhenSendLiveMessage(liveInfo.id, messageDetail.message.content as AmeGroupMessage.LiveContent)
                             }
                         }
                     }
@@ -278,12 +279,12 @@ class LiveFlowController(activity: Activity, private val gid: Long, private val 
 
         override fun onRemove() {
             ALog.i(TAG, "Replay window callback on remove")
-            GroupMessageLogic.messageSender.sendEndLiveMessage(false, gid, playUrl, AmeGroupMessage.LiveContent.PlaySource(liveInfo.source_type, liveInfo.source_url), liveInfo.liveId, liveInfo.duration, object : MessageSender.SenderCallback {
+            GroupMessageLogic.get(accountContext).messageSender.sendEndLiveMessage(false, gid, playUrl, AmeGroupMessage.LiveContent.PlaySource(liveInfo.source_type, liveInfo.source_url), liveInfo.liveId, liveInfo.duration, object : MessageSender.SenderCallback {
                 override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                     if (isSuccess) {
                         AmeDispatcher.io.dispatch {
                             if (messageDetail != null && messageDetail.message.isLiveMessage()) {
-                                GroupLiveInfoManager.getInstance().updateWhenSendLiveMessage(liveInfo.id, messageDetail.message.content as AmeGroupMessage.LiveContent)
+                                GroupLiveInfoManager.get(accountContext).updateWhenSendLiveMessage(liveInfo.id, messageDetail.message.content as AmeGroupMessage.LiveContent)
                             }
                         }
                     }
@@ -298,7 +299,7 @@ class LiveFlowController(activity: Activity, private val gid: Long, private val 
      */
     private fun handleEventChanged(info: GroupLiveInfo) {
         if (info.gid == gid) {
-            if (GroupLogic.getGroupInfo(gid)?.role == AmeGroupMemberInfo.VISITOR) {
+            if (GroupLogic.get(accountContext).getGroupInfo(gid)?.role == AmeGroupMemberInfo.VISITOR) {
                 return
             }
             if (info.liveId != liveInfo.liveId) {
@@ -426,11 +427,11 @@ class LiveFlowController(activity: Activity, private val gid: Long, private val 
 
     private fun loadLiveInfo() {
         Observable.create<GroupLiveInfo> {
-            var liveInfo = GroupLiveInfoManager.getInstance().getCurrentPlaybackInfo(gid)
+            var liveInfo = GroupLiveInfoManager.get(accountContext).getCurrentPlaybackInfo(gid)
             if (liveInfo != null) {
                 it.onNext(liveInfo)
             } else {
-                liveInfo = GroupLiveInfoManager.getInstance().getCurrentLiveInfo(gid)
+                liveInfo = GroupLiveInfoManager.get(accountContext).getCurrentLiveInfo(gid)
                 if (liveInfo != null) {
                     it.onNext(liveInfo)
                 }
@@ -513,12 +514,12 @@ class LiveFlowController(activity: Activity, private val gid: Long, private val 
     fun onDestroy() {
         ALog.i(TAG, "Controller on clear")
         EventBus.getDefault().unregister(this)
-        GroupLiveInfoManager.getInstance().unRegisterCurrentPlayingGid(gid)
+        GroupLiveInfoManager.get(accountContext).unRegisterCurrentPlayingGid(gid)
         if (liveStatus == GroupLiveInfo.LiveStatus.LIVING.value) {
             AmeDispatcher.io.dispatch {
-                val info = GroupLiveInfoManager.getInstance().getCurrentLiveInfo(gid)
+                val info = GroupLiveInfoManager.get(accountContext).getCurrentLiveInfo(gid)
                 if (info?.liveStatus == GroupLiveInfo.LiveStatus.STOPED.value) {
-                    GroupMessageLogic.systemNotice(gid, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_LIVE_END))
+                    GroupMessageLogic.get(accountContext).systemNotice(gid, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_LIVE_END))
                 }
             }
         }
