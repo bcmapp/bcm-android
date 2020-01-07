@@ -11,7 +11,6 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.contacts.net.BcmContactCore
 import com.bcm.messenger.contacts.net.BcmContactCore.Companion.CONTACT_SYNC_VERSION
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.logger.ALog
 import com.google.gson.reflect.TypeToken
@@ -65,9 +64,9 @@ class BcmContactCache(private val mAccountContext: AccountContext) {
             fun initPreference() {
                 var lastHandlingList: List<BcmContactCore.ContactItem>? = null
                 try {
-                    mLastSyncResult.set(TextSecurePreferences.getIntegerPreference(AppContextHolder.APP_CONTEXT, KEY_LAST_SYNC_RESULT, SYNC_FAIL))
+                    mLastSyncResult.set(TextSecurePreferences.getIntegerPreference(mAccountContext, KEY_LAST_SYNC_RESULT, SYNC_FAIL))
 
-                    val handlingListString = TextSecurePreferences.getStringPreference(AppContextHolder.APP_CONTEXT, KEY_HANDLING_LIST, "")
+                    val handlingListString = TextSecurePreferences.getStringPreference(mAccountContext, KEY_HANDLING_LIST, "")
                     if (!handlingListString.isNullOrEmpty()) {
                         lastHandlingList = GsonUtils.fromJson<List<BcmContactCore.ContactItem>>(handlingListString, object : TypeToken<List<BcmContactCore.ContactItem>>(){}.type)
                     }
@@ -99,13 +98,13 @@ class BcmContactCache(private val mAccountContext: AccountContext) {
 
             @Synchronized
             fun fixUpgradeSituation() {
-                val lastVersion = TextSecurePreferences.getIntegerPreference(AppContextHolder.APP_CONTEXT, TextSecurePreferences.CONTACT_SYNC_VERSION, 0)
+                val lastVersion = TextSecurePreferences.getIntegerPreference(mAccountContext, TextSecurePreferences.CONTACT_SYNC_VERSION, 0)
                 if (lastVersion < CONTACT_SYNC_VERSION) {
                     ALog.i(TAG, "fixUpgradeSituation")
                     for ((k, v) in mMyContactMap) {
                         mHandlingMap[k] = v
                     }
-                    TextSecurePreferences.setIntegerPrefrence(AppContextHolder.APP_CONTEXT, TextSecurePreferences.CONTACT_SYNC_VERSION, CONTACT_SYNC_VERSION)
+                    TextSecurePreferences.setIntegerPrefrence(mAccountContext, TextSecurePreferences.CONTACT_SYNC_VERSION, CONTACT_SYNC_VERSION)
                 }
             }
 
@@ -141,8 +140,8 @@ class BcmContactCache(private val mAccountContext: AccountContext) {
         mHandlingMap.clear()
         mMyContactMap.clear()
 
-        TextSecurePreferences.setIntegerPrefrence(AppContextHolder.APP_CONTEXT, KEY_LAST_SYNC_RESULT, SYNC_FAIL)
-        TextSecurePreferences.setStringPreference(AppContextHolder.APP_CONTEXT, KEY_HANDLING_LIST, "")
+        TextSecurePreferences.setIntegerPrefrence(mAccountContext, KEY_LAST_SYNC_RESULT, SYNC_FAIL)
+        TextSecurePreferences.setStringPreference(mAccountContext, KEY_HANDLING_LIST, "")
     }
 
     private fun isCacheReady(): Boolean {
@@ -161,10 +160,10 @@ class BcmContactCache(private val mAccountContext: AccountContext) {
 
     fun setSyncResult(result: Int) {
         mLastSyncResult.set(result)
-        TextSecurePreferences.setIntegerPrefrence(AppContextHolder.APP_CONTEXT, KEY_LAST_SYNC_RESULT , result)
+        TextSecurePreferences.setIntegerPrefrence(mAccountContext, KEY_LAST_SYNC_RESULT , result)
         try {
             val handlingListString = GsonUtils.toJson(getHandlingList())
-            TextSecurePreferences.setStringPreference(AppContextHolder.APP_CONTEXT, KEY_HANDLING_LIST, handlingListString)
+            TextSecurePreferences.setStringPreference(mAccountContext, KEY_HANDLING_LIST, handlingListString)
 
         }catch (ex: Exception) {}
     }

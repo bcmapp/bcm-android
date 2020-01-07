@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.finder.BcmFinderType
 import com.bcm.messenger.common.finder.SearchItemData
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.RecipientAvatarView
@@ -118,7 +119,7 @@ class SearchResultListAdapter(context: Context, val mListener: SearchActionListe
                 BcmFinderType.GROUP -> {
                     actionView.visibility = View.GONE
                     val g = sd.tag as AmeGroupInfo
-                    contentLogo.showGroupAvatar(g.gid)
+                    contentLogo.showRecipientAvatar(Recipient.recipientFromNewGroupId(AMELogin.majorContext, g.gid))
                     contentName.text = applyContentName(g.displayName)
                 }
                 else -> {

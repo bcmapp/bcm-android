@@ -6,9 +6,9 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.api.ISearchAction
 import com.bcm.messenger.common.api.ISearchCallback
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.contacts_fragment_current_search.*
  * Created by wjh on 2019/4/3
  */
 @SuppressLint("ValidFragment")
-class CurrentSearchFragment() : Fragment(), ISearchAction {
+class CurrentSearchFragment() : BaseFragment(), ISearchAction {
 
     private val TAG = "CurrentSearchFragment"
 
@@ -86,7 +86,7 @@ class CurrentSearchFragment() : Fragment(), ISearchAction {
                 if (a is ISearchCallback) {
                     a.onMore(data.type, mKeyword)
                 }
-                SearchActivity.callSearchActivity(a ?: return, mKeyword, true, true, CurrentSearchFragment::class.java.name, null, SearchActivity.REQUEST_SEARCH_MORE)
+                SearchActivity.callSearchActivity(a ?: return, accountContext, mKeyword, true, true, CurrentSearchFragment::class.java.name, null, SearchActivity.REQUEST_SEARCH_MORE)
             }
 
             override fun onAction(data: SearchItemData) {
@@ -128,9 +128,9 @@ class CurrentSearchFragment() : Fragment(), ISearchAction {
         }
         showLoading()
         if (searchLimit) {
-            BcmFinderManager.get().querySearchResultLimit(keyword, types, callback)
+            BcmFinderManager.get(accountContext).querySearchResultLimit(keyword, types, callback)
         }else {
-            BcmFinderManager.get().querySearchResult(keyword, types, callback)
+            BcmFinderManager.get(accountContext).querySearchResult(keyword, types, callback)
         }
     }
 

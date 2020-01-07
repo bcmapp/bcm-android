@@ -121,11 +121,11 @@ class BcmContactFilter(private val mAccountContext: AccountContext, private val 
         contactCore.uploadContactFilters(bloomDataBase64, mAlgoEntity.id) {result ->
             ALog.d(TAG, "uploadAllFilter result: ${result != null}")
             if (result == null) {
-                TextSecurePreferences.setBooleanPreference(context, LAST_UPLOAD_RESULT, false)
+                TextSecurePreferences.setBooleanPreference(mAccountContext, LAST_UPLOAD_RESULT, false)
             }else {
-                TextSecurePreferences.setBooleanPreference(context, LAST_UPLOAD_RESULT, true)
-                TextSecurePreferences.setStringPreference(context, LAST_CONTACT_FILTER, bloomDataBase64)
-                TextSecurePreferences.setStringPreference(context, LAST_FILTER_VERSION, result.version)
+                TextSecurePreferences.setBooleanPreference(mAccountContext, LAST_UPLOAD_RESULT, true)
+                TextSecurePreferences.setStringPreference(mAccountContext, LAST_CONTACT_FILTER, bloomDataBase64)
+                TextSecurePreferences.setStringPreference(mAccountContext, LAST_FILTER_VERSION, result.version)
                 ALog.d(TAG, "uploadAllFilter response success, bloomData: $bloomDataBase64, version: ${result.version}")
             }
             emitter.onNext(result != null)
@@ -140,19 +140,19 @@ class BcmContactFilter(private val mAccountContext: AccountContext, private val 
             emitter.onComplete()
             return
         }
-        val version = TextSecurePreferences.getStringPreference(context, LAST_FILTER_VERSION, "")
+        val version = TextSecurePreferences.getStringPreference(mAccountContext, LAST_FILTER_VERSION, "")
         contactCore.patchContactFilters(version, patchList) {result ->
             ALog.d(TAG, "uploadPatchFilter result: ${result != null}")
             if (result == null) {
-                TextSecurePreferences.setBooleanPreference(context, LAST_UPLOAD_RESULT, false)
+                TextSecurePreferences.setBooleanPreference(mAccountContext, LAST_UPLOAD_RESULT, false)
                 emitter.onNext(false)
                 emitter.onComplete()
             }else if (result.uploadAll){
                 uploadAllFilter(context, contactCore, bloomDataBase64, emitter)
             }else {
-                TextSecurePreferences.setBooleanPreference(context, LAST_UPLOAD_RESULT, true)
-                TextSecurePreferences.setStringPreference(context, LAST_CONTACT_FILTER, bloomDataBase64)
-                TextSecurePreferences.setStringPreference(context, LAST_FILTER_VERSION, result.version)
+                TextSecurePreferences.setBooleanPreference(mAccountContext, LAST_UPLOAD_RESULT, true)
+                TextSecurePreferences.setStringPreference(mAccountContext, LAST_CONTACT_FILTER, bloomDataBase64)
+                TextSecurePreferences.setStringPreference(mAccountContext, LAST_FILTER_VERSION, result.version)
                 ALog.d(TAG, "uploadPatchFilter response success, bloomData: $bloomDataBase64")
 
                 emitter.onNext(true)
@@ -169,13 +169,13 @@ class BcmContactFilter(private val mAccountContext: AccountContext, private val 
             keyPair = BCMPrivateKeyUtils.generateKeyPair()
             newVirtualList.add(BCMPrivateKeyUtils.provideUid(keyPair.publicKey.serialize()))
         }
-        TextSecurePreferences.setStringSetPreference(context, LAST_VIRTUAL_FRIEND, newVirtualList)
+        TextSecurePreferences.setStringSetPreference(mAccountContext, LAST_VIRTUAL_FRIEND, newVirtualList)
         return newVirtualList
     }
 
     private fun findLastBloomData(context: Context): ByteArray {
         try {
-            val contentString = TextSecurePreferences.getStringPreference(context, LAST_CONTACT_FILTER, "")
+            val contentString = TextSecurePreferences.getStringPreference(mAccountContext, LAST_CONTACT_FILTER, "")
             if (!contentString.isEmpty()) {
                 return Base64.decode(contentString)
             }
@@ -187,7 +187,7 @@ class BcmContactFilter(private val mAccountContext: AccountContext, private val 
 
     private fun findLastVirtualFriend(context: Context): Set<String> {
         try {
-            return TextSecurePreferences.getStringSetPreference(context, LAST_VIRTUAL_FRIEND) ?: setOf()
+            return TextSecurePreferences.getStringSetPreference(mAccountContext, LAST_VIRTUAL_FRIEND) ?: setOf()
         }catch (ex: Exception) {
             ALog.e(TAG, "findLastVirtualFriend error", ex)
         }

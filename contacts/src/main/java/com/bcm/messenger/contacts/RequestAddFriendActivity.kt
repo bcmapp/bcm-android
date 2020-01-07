@@ -6,7 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -61,7 +60,7 @@ class RequestAddFriendActivity : SwipeBaseActivity(), RecipientModifiedListener 
         request_memo_input.filters = arrayOf(InputLengthFilter(60))
 
         try {
-            mRecipient = Recipient.from(AMELogin.majorContext, intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ADDRESS), true)
+            mRecipient = Recipient.from(intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ADDRESS), true)
             mRecipient?.addListener(this)
 
         } catch (ex: Exception) {

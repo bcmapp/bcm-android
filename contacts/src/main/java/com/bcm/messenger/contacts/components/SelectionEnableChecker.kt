@@ -3,10 +3,7 @@ package com.bcm.messenger.contacts.components
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.utility.AppContextHolder
 import io.reactivex.Observable
 import java.lang.ref.WeakReference
 
@@ -45,7 +42,7 @@ object SelectionEnableChecker {
     class GroupInviteChecker: IChecker {
         private val checkedList = mutableMapOf<Address, Boolean>()
         override fun checkState(address: Address): STATE {
-            val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, address, true)
+            val recipient = Recipient.from(address, true)
             return when(checkedList[address]) {
                 true -> {
                     if(recipient.featureSupport?.isSupportGroupSecureV3() == true) {
@@ -64,7 +61,7 @@ object SelectionEnableChecker {
         }
 
         override fun canEnable(address: Address, syncFromNet: Boolean): Observable<STATE> {
-            val recipient = Recipient.from(AppContextHolder.APP_CONTEXT, address, true)
+            val recipient = Recipient.from(address, true)
             if(true == recipient.featureSupport?.isSupportGroupSecureV3()) {
                 return Observable.just(STATE.ENABLE)
             } else if(checkedList[address] == true) {
@@ -78,7 +75,7 @@ object SelectionEnableChecker {
                 val weakThis = WeakReference<GroupInviteChecker>(this)
                 return Observable.create<STATE> {
                     it.onNext(STATE.CHECKING)
-                    AmeModuleCenter.contact().fetchProfile(recipient) { _ ->
+                    AmeModuleCenter.contact(address.context())?.fetchProfile(recipient) { _ ->
                         weakThis.get()?.checkedList?.put(address, true)
                         val state = if(true == recipient.featureSupport?.isSupportGroupSecureV3()) {
                             STATE.ENABLE

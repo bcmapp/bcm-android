@@ -70,21 +70,21 @@ class PrivacyProfileUpgrader(val logic: BcmProfileLogic) {
     }
 
     private fun isNickUpgradeDone(): Boolean {
-        return TextSecurePreferences.getBooleanPreference(AppContextHolder.APP_CONTEXT, PREF_NICK_UPGRADE, false)
+        return TextSecurePreferences.getBooleanPreference(logic.mAccountContext, PREF_NICK_UPGRADE, false)
     }
 
     private fun setNickUpgradeState(done: Boolean) {
         ALog.i(TAG, "setNickUpgradeState: $done")
-        TextSecurePreferences.setBooleanPreference(AppContextHolder.APP_CONTEXT, PREF_NICK_UPGRADE, done)
+        TextSecurePreferences.setBooleanPreference(logic.mAccountContext, PREF_NICK_UPGRADE, done)
     }
 
     private fun isAvatarUpgradeDone(): Boolean {
-        return TextSecurePreferences.getBooleanPreference(AppContextHolder.APP_CONTEXT, PREF_AVATAR_UPGRADE, false)
+        return TextSecurePreferences.getBooleanPreference(logic.mAccountContext, PREF_AVATAR_UPGRADE, false)
     }
 
     private fun setAvatarUpgradeState(done: Boolean) {
         ALog.i(TAG, "setAvatarUpgradeState: $done")
-        TextSecurePreferences.setBooleanPreference(AppContextHolder.APP_CONTEXT, PREF_AVATAR_UPGRADE, done)
+        TextSecurePreferences.setBooleanPreference(logic.mAccountContext, PREF_AVATAR_UPGRADE, done)
     }
 
 

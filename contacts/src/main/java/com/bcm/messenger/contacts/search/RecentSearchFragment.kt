@@ -7,12 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.api.ISearchCallback
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.finder.BcmFinderManager
@@ -25,7 +24,6 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.RecipientAvatarView
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
 import com.bcm.messenger.contacts.R
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.contacts_fragment_recent_search.*
 
@@ -33,7 +31,7 @@ import kotlinx.android.synthetic.main.contacts_fragment_recent_search.*
  * Created by wjh on 2019/4/3
  */
 @SuppressLint("ValidFragment")
-class RecentSearchFragment() : Fragment() {
+class RecentSearchFragment() : BaseFragment() {
 
     private var mGroupProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_GROUP_BASE).navigationWithCast<IGroupModule>()
     private var mChecker = object : BcmFinderManager.SearchRecordChecker {
@@ -62,7 +60,7 @@ class RecentSearchFragment() : Fragment() {
         val adapter = RecentAdapter(context ?: return)
         recent_list.adapter = adapter
 
-        BcmFinderManager.get().querySearchRecord(mChecker) {
+        BcmFinderManager.get(accountContext).querySearchRecord(mChecker) {
             recent_title_tv?.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
             adapter.setDataList(it)
         }
@@ -132,7 +130,7 @@ class RecentSearchFragment() : Fragment() {
             val d = this.data ?: return
             when(d.type) {
                 BcmFinderType.ADDRESS_BOOK -> {
-                    val r = Recipient.from(AppContextHolder.APP_CONTEXT, Address.fromSerialized(d.tag as String), true)
+                    val r = Recipient.from(accountContext, d.tag as String, true)
                     photoView.showPrivateAvatar(r)
                     nameView.text = r.name
                     mActualData = r
@@ -140,7 +138,7 @@ class RecentSearchFragment() : Fragment() {
                 BcmFinderType.GROUP -> {
                     val groupId = (d.tag as String).toLong()
                     val g = mGroupProvider.getGroupInfo(groupId) ?: return
-                    photoView.showGroupAvatar(g.gid)
+                    photoView.showRecipientAvatar(Recipient.recipientFromNewGroupId(accountContext, g.gid))
                     nameView.text = g.displayName
                     mActualData = g
                 }

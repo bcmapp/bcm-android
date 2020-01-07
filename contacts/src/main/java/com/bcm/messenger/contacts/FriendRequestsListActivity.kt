@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -100,7 +99,7 @@ class FriendRequestsListActivity : SwipeBaseActivity() {
 
         fun bind(data: BcmFriendRequest) {
             recipient?.removeListener(this)
-            recipient = Recipient.from(accountContext, Address.fromSerialized(data.proposer), true)
+            recipient = Recipient.from(accountContext, data.proposer, true)
             recipient?.addListener(this)
 
             itemView.friend_req_avatar.setPhoto(recipient)

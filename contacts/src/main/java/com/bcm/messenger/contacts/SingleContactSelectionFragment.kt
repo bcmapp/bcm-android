@@ -12,7 +12,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.api.IContactsAction
 import com.bcm.messenger.common.api.IContactsCallback
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.ContentShadeView
@@ -235,7 +234,7 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
             dispose = Observable.create(ObservableOnSubscribe<List<Recipient>> {
 
                 it.onNext(memberList.map { address ->
-                    Recipient.from(accountContext, Address.fromSerialized(address), true)
+                    Recipient.from(accountContext, address, true)
                 })
                 it.onComplete()
 

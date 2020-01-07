@@ -11,7 +11,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.IMHttp
 import com.bcm.messenger.common.bcmhttp.RxIMHttp
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AddressUtil
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.BcmHttpApiHelper
@@ -461,7 +460,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                         uploadFileList.add(prepareData.ldEncryptPath.absolutePath)
                     }
 
-                    AmeFileUploader.uploadMultiFileToAws(context, AmeFileUploader.AttachmentType.PROFILE, uploadFileList, object : AmeFileUploader.MultiFileUploadCallback {
+                    AmeFileUploader.uploadMultiFileToAws(mAccountContext, context, AmeFileUploader.AttachmentType.PROFILE, uploadFileList, object : AmeFileUploader.MultiFileUploadCallback {
 
                         override fun onFailed(resultMap: MutableMap<String, AmeFileUploader.FileUploadResult>?) {
                             doAfterUploadAvatarBitmap(recipient, prepareData, null, null)
@@ -596,7 +595,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                     val targetContent = String(BCMEncryptUtils.decryptByAES256(Base64.decode(it.content), Base62.decode(hashString).toString().toByteArray()))
                     val recipientQR = Recipient.RecipientQR.fromJson(targetContent)
                             ?: throw Exception("get content from shortLink error")
-                    Recipient.from(mAccountContext, Address.fromSerialized(recipientQR.uid), false)
+                    Recipient.from(mAccountContext, recipientQR.uid, false)
                     recipientQR
                 }
                 .observeOn(AmeDispatcher.mainScheduler)
@@ -848,7 +847,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             if (forName) {
                 if (privacyProfile.nameKey.isNullOrEmpty()) {
                     val oneTimeKeyPair = BCMPrivateKeyUtils.generateKeyPair()
-                    val nameKey = Base64.encodeBytes(BCMEncryptUtils.calculateMySelfAgreementKey(context, oneTimeKeyPair.privateKey.serialize()))
+                    val nameKey = Base64.encodeBytes(BCMEncryptUtils.calculateMySelfAgreementKey(mAccountContext, oneTimeKeyPair.privateKey.serialize()))
                     privacyProfile.nameKey = nameKey
                     privacyProfile.namePubKey = Base64.encodeBytes((oneTimeKeyPair.publicKey as DjbECPublicKey).publicKey)
                     ALog.d(TAG, "checkProfileKeyCompleteOrUpload nameKey: ${privacyProfile.nameKey}")
@@ -858,7 +857,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             else {
                 if (privacyProfile.avatarKey.isNullOrEmpty()) {
                     val oneTimeKeyPair = BCMPrivateKeyUtils.generateKeyPair()
-                    val avatarKey = Base64.encodeBytes(BCMEncryptUtils.calculateMySelfAgreementKey(context, oneTimeKeyPair.privateKey.serialize()))
+                    val avatarKey = Base64.encodeBytes(BCMEncryptUtils.calculateMySelfAgreementKey(mAccountContext, oneTimeKeyPair.privateKey.serialize()))
                     privacyProfile.avatarKey = avatarKey
                     privacyProfile.avatarPubKey = Base64.encodeBytes((oneTimeKeyPair.publicKey as DjbECPublicKey).publicKey)
                     ALog.d(TAG, "checkProfileKeyCompleteOrUpload avatarKey: ${privacyProfile.avatarKey}")
@@ -926,7 +925,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                             System.arraycopy(otherPubKeyBytes, 1, pb, 0, pb.size)
                             otherPubKeyBytes = pb
                         }
-                        Base64.encodeBytes(BCMEncryptUtils.calculateAgreementKeyWithMe(context, otherPubKeyBytes))
+                        Base64.encodeBytes(BCMEncryptUtils.calculateAgreementKeyWithMe(mAccountContext, otherPubKeyBytes))
                     }
                     privacyProfile.namePubKey = namePubKeyString
 
@@ -956,7 +955,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                             System.arraycopy(otherPubKeyBytes, 1, pb, 0, pb.size)
                             otherPubKeyBytes = pb
                         }
-                        Base64.encodeBytes(BCMEncryptUtils.calculateAgreementKeyWithMe(context, otherPubKeyBytes))
+                        Base64.encodeBytes(BCMEncryptUtils.calculateAgreementKeyWithMe(mAccountContext, otherPubKeyBytes))
                     }
                     privacyProfile.avatarPubKey = avatarPubKeyString
 
@@ -1056,7 +1055,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             val accountJobManager = AmeModuleCenter.accountJobMgr(mAccountContext)
             if (accountJobManager != null) {
                 ALog.i(TAG, "handleDownloadAvatar")
-                val job = AvatarDownloadJob(AppContextHolder.APP_CONTEXT, this)
+                val job = AvatarDownloadJob(AppContextHolder.APP_CONTEXT, mAccountContext,this)
                 mAvatarJob = WeakReference(job)
                 accountJobManager.add(job)
             }
@@ -1072,7 +1071,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             val accountJobManager = AmeModuleCenter.accountJobMgr(mAccountContext)
             if (accountJobManager != null) {
                 ALog.i(TAG, "handleFetchProfile")
-                val job = ProfileFetchJob(AppContextHolder.APP_CONTEXT, this)
+                val job = ProfileFetchJob(AppContextHolder.APP_CONTEXT, mAccountContext,this)
                 mProfileJob = WeakReference(job)
                 accountJobManager.add(job)
             }
@@ -1235,7 +1234,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                     }
                     if (force) {
                         try {
-                            IdentityUtil.saveIdentity(context, recipient.address.serialize(), IdentityKey(Base64.decode(identityKey), 0), true)
+                            IdentityUtil.saveIdentity(context, mAccountContext, recipient.address.serialize(), IdentityKey(Base64.decode(identityKey), 0), true)
                         } catch (ex: Exception) {
                             ALog.e("RetrieveRecipientProfile", "post identityKey fail")
                         }

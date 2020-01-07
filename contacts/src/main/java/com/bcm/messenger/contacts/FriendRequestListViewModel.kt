@@ -3,7 +3,7 @@ package com.bcm.messenger.contacts
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.database.db.UserDatabase
+import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.FriendRequestEvent
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
 import com.bcm.messenger.common.utils.AmePushProcess
@@ -64,7 +64,7 @@ class FriendRequestsListViewModel : ViewModel() {
     fun queryData() {
         AmePushProcess.clearFriendRequestNotification()
         Observable.create<List<BcmFriendRequest>> {
-            it.onNext(UserDatabase.getDatabase(mAccountContext).friendRequestDao().queryAll())
+            it.onNext(Repository.getFriendRequestRepo(mAccountContext)?.queryAll() ?: listOf())
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -88,7 +88,7 @@ class FriendRequestsListViewModel : ViewModel() {
                 }
             }
             ALog.i(TAG, "Mark read, size = ${modifyList.size}")
-            UserDatabase.getDatabase(mAccountContext).friendRequestDao().update(modifyList)
+            Repository.getFriendRequestRepo(mAccountContext)?.update(modifyList)
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .subscribe({
@@ -106,7 +106,7 @@ class FriendRequestsListViewModel : ViewModel() {
                 request.reject()
             }
             request.setRead()
-            UserDatabase.getDatabase(mAccountContext).friendRequestDao().update(request)
+            Repository.getFriendRequestRepo(mAccountContext)?.update(request)
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .subscribe({

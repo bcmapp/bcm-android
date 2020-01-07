@@ -57,7 +57,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun initView(address: Address, nick: String?) {
-        val recipient = Recipient.from(accountContext, address, true)
+        val recipient = Recipient.from(address, true)
         mRecipient = recipient
         mRecipient?.addListener(this)
 
@@ -165,7 +165,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
         if (null != profileKey) {
             AmeModuleCenter.contact(accountContext)?.updateProfileKey(this, recipient, profileKey)
         }
-        anchor_img.setPhoto(accountContext, recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+        anchor_img.setPhoto(recipient, nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
         anchor_name.text = nickname
         updateActionState(recipient)
 
