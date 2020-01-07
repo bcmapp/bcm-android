@@ -17,7 +17,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.cardview.widget.CardView
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.R
@@ -26,7 +25,6 @@ import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.emoji.EmojiTextView
@@ -44,8 +42,6 @@ import java.util.*
 import kotlin.math.min
 
 /**
- *
- * 
  *
  * Created by wjh on 2018/3/12
  */
@@ -79,9 +75,6 @@ class IndividualAvatarView : CardView {
             return@lazy map
         }
 
-        /**
-         * 
-         */
         fun getLocalAvatarObj(recipient: Recipient?): Any? {
             val avatar = recipient?.localAvatar
             return if (avatar == null || avatar.isEmpty()) {
@@ -91,11 +84,7 @@ class IndividualAvatarView : CardView {
             }
         }
 
-        /**
-         * 
-         */
         fun getAvatarThumbnailUrl(recipient: Recipient?, width: Int? = null, height: Int? = null): String? {
-            //
             val fullAvatar = if (recipient?.isGroupRecipient == true) {
                 return recipient.profileAvatar
             } else if (recipient == null) {
@@ -115,9 +104,6 @@ class IndividualAvatarView : CardView {
             return getAvatarThumbnailUrl(fullAvatar, width, height)
         }
 
-        /**
-         * 
-         */
         fun getAvatarThumbnailUrl(avatar: String?, width: Int? = null, height: Int? = null): String? {
             try {
                 if (avatar.isNullOrEmpty()) {
@@ -136,24 +122,16 @@ class IndividualAvatarView : CardView {
             return null
         }
 
-        /**
-         * 
-         */
         fun getDefaultBackgroundDrawable(): Drawable {
             return ColorDrawable(Color.parseColor("#5F768C"))
         }
 
-        /**
-         * 
-         */
-        fun getDefaultPortraitUrl(recipient: Recipient?): String {
-            val address = recipient?.address?.serialize()
-            val char = address?.substring(address.length - 1, address.length) ?: "#"
-            return portraitMap[char] ?: portraitMap["#"]!!
+        fun getDefaultPortraitUrl(uid: String?): String {
+            val char = uid?.substring(uid.length - 1, uid.length) ?: "#"
+            return portraitMap[char] ?: portraitMap["#"] ?: "#"
         }
 
         /**
-         * 
          * @param letter 
          * @param size 
          * @param color 
@@ -408,6 +386,62 @@ class IndividualAvatarView : CardView {
         }
     }
 
+    fun setPhoto(uid: String, nick: String, avatar: String) {
+        if (mRequestManager == null) {
+            mRequestManager = GlideApp.with(AppContextHolder.APP_CONTEXT)
+        }
+        val size = getCurrentSize()
+        if (size <= 0) {
+            if (mWaitingRunnable != null) {
+                removeCallbacks(mWaitingRunnable)
+            }
+            mWaitingRunnable = Runnable {
+                try {
+                    setPhoto(uid, nick, avatar)
+                } catch (ex: Exception) {
+                    ALog.e(TAG, "requestPhoto error", ex)
+                }
+            }
+            post(mWaitingRunnable)
+            return
+        }
+        updateText(nick, getTextSize(size))
+        updateStyle(size)
+        val photoObj = if (avatar.isNotEmpty() && BcmFileUtils.isExist(avatar)) {
+            needLetter = false
+            avatar
+        } else {
+            needLetter = true
+            getDefaultPortraitUrl(uid)
+        }
+        val strategy = if (photoObj.startsWith(ContentResolver.SCHEME_FILE)) {
+            DiskCacheStrategy.NONE
+        } else {
+            DiskCacheStrategy.ALL
+        }
+        mImageView?.let {
+            it.background = null
+            mRequestManager?.load(photoObj)
+                    ?.diskCacheStrategy(strategy)
+                    ?.placeholder(ColorDrawable(Color.parseColor("#5F768C")))
+                    ?.listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                            return false
+                        }
+
+                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            if (needLetter) {
+                                updateText(nick, getTextSize(size))
+                            } else {
+                                clearText()
+                            }
+                            return false
+                        }
+                    })
+                    ?.into(it)
+        }
+    }
+
     fun requestPhoto(photoObj: Any?, placeHolderResource: Int, errorHolderResource: Int) {
         if (mCurrentRequestObj == photoObj) {
             return
@@ -478,9 +512,6 @@ class IndividualAvatarView : CardView {
         }
     }
 
-    /**
-     * 
-     */
     private fun clearText() {
         mTextView?.visibility = View.GONE
     }
@@ -499,12 +530,8 @@ class IndividualAvatarView : CardView {
         }
     }
 
-    /**
-     * 
-     */
     private fun requestPhoto(accountContext: AccountContext?, requestManager: GlideRequests, recipient: Recipient?, alterName: String?, photoType: Int = DEFAULT_PHOTO_TYPE) {
         val size = getCurrentSize()
-        //
         if (size <= 0) {
             if (mWaitingRunnable != null) {
                 removeCallbacks(mWaitingRunnable)
@@ -533,7 +560,7 @@ class IndividualAvatarView : CardView {
                     getAvatarThumbnailUrl(recipient, size, size)
                 } else {
                     needLetter = true
-                    getDefaultPortraitUrl(recipient)
+                    getDefaultPortraitUrl(recipient?.address?.serialize())
                 }
             }
             LOCAL_PHOTO_TYPE -> {
@@ -541,7 +568,7 @@ class IndividualAvatarView : CardView {
                     recipient?.localAvatar
                 } else {
                     needLetter = true
-                    getDefaultPortraitUrl(recipient)
+                    getDefaultPortraitUrl(recipient?.address?.serialize())
                 }
             }
             PROFILE_PHOTO_TYPE -> {
@@ -553,7 +580,7 @@ class IndividualAvatarView : CardView {
                     getAvatarThumbnailUrl(recipient, size, size)
                 } else {
                     needLetter = true
-                    getDefaultPortraitUrl(recipient)
+                    getDefaultPortraitUrl(recipient?.address?.serialize())
                 }
             }
             else -> {
@@ -567,7 +594,7 @@ class IndividualAvatarView : CardView {
                     getAvatarThumbnailUrl(recipient, size, size)
                 } else {
                     needLetter = true
-                    getDefaultPortraitUrl(recipient)
+                    getDefaultPortraitUrl(recipient?.address?.serialize())
                 }
             }
         } ?: ""
@@ -584,7 +611,7 @@ class IndividualAvatarView : CardView {
             StringAppearanceUtil.getFirstCharacter(n ?: recipient?.address?.format()
             ?: Recipient.UNKNOWN_LETTER)
         }
-        if (mCurrentRecipient == recipient && mCurrentText == name && photoObj == mCurrentRequestObj) { //
+        if (mCurrentRecipient == recipient && mCurrentText == name && photoObj == mCurrentRequestObj) {
             ALog.d(TAG, "recipient: ${recipient?.address?.serialize()} same, not update avatar, photoObj: $photoObj")
             return
         }
