@@ -8,6 +8,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.components.MapShareView
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
@@ -34,7 +35,7 @@ class ChatLocationHolderAction() : BaseChatHolderAction<MapShareView>(), View.On
                 .navigation(v.context)
     }
 
-    override fun bindData(message: AmeGroupMessageDetail, body: MapShareView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: MapShareView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
 
         body.setOnClickListener(this)
         val data = message.message?.content as AmeGroupMessage.LocationContent
@@ -46,7 +47,7 @@ class ChatLocationHolderAction() : BaseChatHolderAction<MapShareView>(), View.On
         body.setMap(glideRequests, data)
     }
 
-    override fun resend(messageRecord: AmeGroupMessageDetail) {
-        GroupMessageLogic.messageSender.resendLocationMessage(messageRecord)
+    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+        GroupMessageLogic.get(accountContext).messageSender.resendLocationMessage(messageRecord)
     }
 }

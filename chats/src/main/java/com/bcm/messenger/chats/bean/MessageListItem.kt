@@ -11,6 +11,7 @@ import com.bcm.messenger.chats.components.AlertView
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.api.BindableConversationListItem
 import com.bcm.messenger.common.api.Unbindable
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -71,6 +72,10 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
     var distributionType: Int = 0
         private set
 
+    fun getAccountContext(): AccountContext {
+        return AMELogin.majorContext
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if(!EventBus.getDefault().isRegistered(this)) {
@@ -105,7 +110,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         this.unreadCount = threadRecord.unreadCount
         this.distributionType = threadRecord.distributionType
         this.lastSeen = threadRecord.lastSeenTime
-        if (threadRecord.getRecipient().isGroupRecipient) {
+        if (threadRecord.getRecipient(getAccountContext()).isGroupRecipient) {
             setGroup(threadRecord, lastThread?.id == threadRecord.id)
         } else {
             setPrivate(threadRecord, lastThread?.id == threadRecord.id)
@@ -151,7 +156,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         val builder = SpannableStringBuilder().append(unreadDescription)
         if (record.isJoinRequestMessage() && !record.isRead()) {
             // The priority of the group join request is higher than @
-            builder.append(GroupLogic.createNewJoinRequestDescription())
+            builder.append(GroupLogic.get(getAccountContext()).createNewJoinRequestDescription())
         }else if(record.isAtMeMessage() && !record.isRead()) {
             val desc = StringAppearanceUtil.applyAppearance(AppContextHolder.APP_CONTEXT.getString(R.string.chats_at_me_description),
                     color = getColor(R.color.common_content_warning_color))
@@ -216,18 +221,18 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                 if (message != null) {
 
                     if (message.isLiveMessage()) {
-                        val owner = GroupLogic.getGroupInfo(groupId)?.owner
+                        val owner = GroupLogic.get(getAccountContext()).getGroupInfo(groupId)?.owner
                         if (owner != null) {
                             val r = Recipient.from(AMELogin.majorContext, owner, true)
-                            val des = (message.content as AmeGroupMessage.LiveContent).getDescription(r)
-                            message.content.setRecipientCallback(, this)
+                            val des = (message.content as AmeGroupMessage.LiveContent).getDescription(getAccountContext(), r)
+                            message.content.setRecipientCallback(getAccountContext(), this)
                             des
                         } else {
                             ""
                         }
                     } else {
-                        message.content.setRecipientCallback(, this)
-                        val text = message.content.getDescribe(groupId, )
+                        message.content.setRecipientCallback(getAccountContext(), this)
+                        val text = message.content.getDescribe(groupId, getAccountContext())
                         text
                     }
                 } else {
@@ -240,7 +245,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                                 ExpirationUtil.getExpirationDisplayValue(context, (record.expiresTime / 1000).toInt()))
                     } else {
                         resources.getString(R.string.chats_read_burn_detail,
-                                record.getRecipient().name, ExpirationUtil.getExpirationDisplayValue(context, (record.expiresTime / 1000).toInt()))
+                                record.getRecipient(getAccountContext()).name, ExpirationUtil.getExpirationDisplayValue(context, (record.expiresTime / 1000).toInt()))
                     }
                 }
                 else if (record.isDecrypting()) {
@@ -248,7 +253,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                 } else if (record.isLocation()) {
                     val message = record.getGroupMessage()
                     if (message != null){
-                        message.content.setRecipientCallback(, this)
+                        message.content.setRecipientCallback(getAccountContext(), this)
                         val text = if(message.type == AmeGroupMessage.CONTROL_MESSAGE) {
                             val content = message.content as AmeGroupMessage.ControlContent
                             if(content.actionCode == AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE) {
@@ -257,14 +262,14 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                                 } else if (record.isPending()) {
                                     context.getString(R.string.common_chats_you_clearing_history_tip)
                                 } else {
-                                    content.getDescribe(groupId, )
+                                    content.getDescribe(groupId, getAccountContext())
                                 }
                             }else {
-                                content.getDescribe(groupId, )
+                                content.getDescribe(groupId, getAccountContext())
                             }
                         }
                         else {
-                            message.content.getDescribe(groupId, )
+                            message.content.getDescribe(groupId, getAccountContext())
                         }
                         text
                     } else {
@@ -322,12 +327,12 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
 
     private fun setPrivate(threadRecord: ThreadRecord, anim:Boolean) {
         this.lastThread = threadRecord
-        this.recipient = threadRecord.getRecipient()
+        this.recipient = threadRecord.getRecipient(getAccountContext())
         this.recipient?.addListener(this)
         this.fromView.text = recipient?.name ?: ""
         this.fromView.setCompoundDrawables(null, null, null, null)
         this.recipient?.let {
-            this.contactPhotoImage.showPrivateAvatar(it)
+            this.contactPhotoImage.showPrivateAvatar(getAccountContext(), it)
         }
         ALog.logForSecret(TAG, "setPrivate thread: ${threadRecord.id}, address: ${this.recipient?.address}")
         if (threadRecord.isOutgoing()) {
@@ -343,12 +348,12 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
 
     private fun setGroup(threadRecord: ThreadRecord, anim: Boolean) {
         this.lastThread = threadRecord
-        this.recipient = threadRecord.getRecipient()
+        this.recipient = threadRecord.getRecipient(getAccountContext())
         this.recipient?.addListener(this)
         this.groupId = this.recipient?.groupId ?: 0L
         ALog.logForSecret(TAG, "setGroup thread: ${threadRecord.id}, groupId: $groupId")
-        val groupInfo = GroupLogic.getGroupInfo(groupId)
-        this.contactPhotoImage.showGroupAvatar(groupId)
+        val groupInfo = GroupLogic.get(getAccountContext()).getGroupInfo(groupId)
+        this.contactPhotoImage.showGroupAvatar(getAccountContext(), groupId)
         this.fromView.text = groupInfo?.displayName ?: ""
         if(null != groupInfo) {
             if (groupInfo.legitimateState == AmeGroupInfo.LegitimateState.ILLEGAL){
@@ -401,7 +406,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                 fromView.text = event.name
             }
             if (event.avatarPath.isNotBlank()) {
-                contactPhotoImage.showGroupAvatar(event.gid, path = event.avatarPath)
+                contactPhotoImage.showGroupAvatar(getAccountContext(), event.gid, path = event.avatarPath)
             }
         }
     }

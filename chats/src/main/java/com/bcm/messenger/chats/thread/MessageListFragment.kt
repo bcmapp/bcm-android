@@ -251,7 +251,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
                 }
             }
             if (unreadList.isNotEmpty()) {
-                threadRepo.setReadList(unreadList, true)
+                threadRepo?.setReadList(unreadList, true)
             }
         }
     }
@@ -261,9 +261,9 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
         var groupId = 0L
         if (distributionType == ThreadRepo.DistributionTypes.NEW_GROUP) {
             groupId = recipient.groupId
-            val group = GroupLogic.getGroupInfo(groupId)
+            val group = GroupLogic.get(accountContext).getGroupInfo(groupId)
             if (null == group) {
-                GroupLogic.queryGroupInfo(groupId, null)
+                GroupLogic.get(accountContext).queryGroupInfo(groupId, null)
                 return
             }
             url = ARouterConstants.Activity.CHAT_GROUP_CONVERSATION
@@ -292,7 +292,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
     fun onEvent(e: GroupInfoUpdateNotify) {
         val gid = e.groupInfo?.gid ?: return
 
-        val groupInfo = GroupLogic.getGroupInfo(gid)
+        val groupInfo = GroupLogic.get(accountContext).getGroupInfo(gid)
         val newGroupInfo = e.groupInfo
         if (null != groupInfo && null != newGroupInfo) {
             groupInfo.name = newGroupInfo.name

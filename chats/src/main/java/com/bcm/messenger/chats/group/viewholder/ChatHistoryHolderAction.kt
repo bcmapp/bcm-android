@@ -16,7 +16,7 @@ import com.bcm.messenger.utility.logger.ALog
 /**
  * Created by Kin on 2018/10/24
  */
-class ChatHistoryHolderAction(accountContext: AccountContext) : BaseChatHolderAction<HistoryView>(accountContext), View.OnClickListener {
+class ChatHistoryHolderAction() : BaseChatHolderAction<HistoryView>(), View.OnClickListener {
 
     private val TAG = "ChatHistoryHolderAction"
 
@@ -30,7 +30,7 @@ class ChatHistoryHolderAction(accountContext: AccountContext) : BaseChatHolderAc
         v.context.startActivity(intent)
     }
 
-    override fun bindData(message: AmeGroupMessageDetail, body: HistoryView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: HistoryView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
         body.setOnClickListener(this)
         if (message.isSendByMe) {
             body.setStyle(IN_VIEW_CHAT_SEND)
@@ -42,7 +42,7 @@ class ChatHistoryHolderAction(accountContext: AccountContext) : BaseChatHolderAc
         body.bindData(content.messageList)
     }
 
-    override fun resend(messageRecord: AmeGroupMessageDetail) {
+    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
         GroupMessageLogic.get(accountContext).messageSender.resendHistoryMessage(messageRecord)
     }
 

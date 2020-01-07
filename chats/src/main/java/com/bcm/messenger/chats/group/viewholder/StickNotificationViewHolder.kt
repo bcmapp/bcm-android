@@ -3,7 +3,9 @@ package com.bcm.messenger.chats.group.viewholder
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.chats.group.logic.GroupLogic
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
+import com.bcm.messenger.common.provider.AMELogin
 import kotlinx.android.synthetic.main.chats_stick_notification_item.view.*
 
 /**
@@ -12,8 +14,12 @@ import kotlinx.android.synthetic.main.chats_stick_notification_item.view.*
  */
 class StickNotificationViewHolder(containerView: View) : RecyclerView.ViewHolder(containerView) {
 
+    fun getAccountContext(): AccountContext {
+        return AMELogin.majorContext
+    }
+
     fun bindData(messageRecord: AmeGroupMessageDetail) {
-        itemView.chats_stick_notification_layout?.setGroupInfo(GroupLogic.getGroupInfo(messageRecord.gid)
+        itemView.chats_stick_notification_layout?.setGroupInfo(GroupLogic.get(getAccountContext()).getGroupInfo(messageRecord.gid)
                 ?: return)
         itemView.chats_stick_notification_layout?.showLoading(messageRecord.isSending)
     }

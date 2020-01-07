@@ -10,10 +10,11 @@ import com.bcm.messenger.common.mms.GlideRequests
  *
  * Created by wjh on 2018/11/27
  */
-abstract class BaseChatHolderAction<V : View>(val accountContext: AccountContext) : IConversationContentAction<AmeGroupMessageDetail> {
+abstract class BaseChatHolderAction<V : View>() : IConversationContentAction<AmeGroupMessageDetail> {
 
     protected var mBaseView: V? = null
     protected var mMessageDetail: AmeGroupMessageDetail? = null
+    protected var mAccountContext: AccountContext? = null
 
     override fun hasPop(): Boolean {
         return true
@@ -34,13 +35,18 @@ abstract class BaseChatHolderAction<V : View>(val accountContext: AccountContext
         return mMessageDetail
     }
 
-    override fun bind(message: AmeGroupMessageDetail, body: View, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
-        mMessageDetail = message
-        mBaseView = body as V
-        bindData(message, body, glideRequests, batchSelected)
+    override fun getAccountContext(): AccountContext? {
+        return mAccountContext
     }
 
-    abstract fun bindData(message: AmeGroupMessageDetail, body: V, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?)
+    override fun bind(accountContext: AccountContext, message: AmeGroupMessageDetail, body: View, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+        mMessageDetail = message
+        mBaseView = body as V
+        mAccountContext = accountContext
+        bindData(accountContext, message, body, glideRequests, batchSelected)
+    }
+
+    abstract fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: V, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?)
 
     override fun unBind() {
 

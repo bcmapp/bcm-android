@@ -145,7 +145,7 @@ class MediaViewFragment : BaseFragment() {
                     data.setVideo(mediaview_videoplayer ?: return, masterSecret)
                 } else {
                     mediaview_play?.visibility = View.VISIBLE
-                    data.setVideoThumbnail(mediaview_videoplayer ?: return, glide, masterSecret)
+                    data.setVideoThumbnail(accountContext, mediaview_videoplayer ?: return, glide, masterSecret)
                 }
             }
         }

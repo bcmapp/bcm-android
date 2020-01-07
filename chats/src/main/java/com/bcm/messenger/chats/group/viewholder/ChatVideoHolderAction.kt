@@ -7,11 +7,11 @@ import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.util.ChatComponentListener
 import com.bcm.messenger.chats.util.ChatPreviewClickListener
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 
 /**
@@ -23,18 +23,18 @@ class ChatVideoHolderAction() : BaseChatHolderAction<ChatThumbnailView>() {
     private var mPreviewClickListener = ChatPreviewClickListener()
     private var mDownloadClickListener = AttachmentDownloadClickListener()
 
-    override fun bindData(message: AmeGroupMessageDetail, body: ChatThumbnailView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: ChatThumbnailView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
         ALog.d("ChatVideoHolderAction", "bind")
         body.setThumbnailClickListener(mPreviewClickListener)
         body.setDownloadClickListener(mDownloadClickListener)
         body.setThumbnailAppearance(R.drawable.common_video_place_img, R.drawable.common_video_broken_img, body.resources.getDimensionPixelSize(R.dimen.chats_conversation_item_radius))
         // MARK: Temporary set mastersecret
-        body.setImage(BCMEncryptUtils.getMasterSecret(AppContextHolder.APP_CONTEXT) ?: return, glideRequests, message)
+        body.setImage(BCMEncryptUtils.getMasterSecret(accountContext) ?: return, glideRequests, message)
     }
 
-    override fun resend(messageRecord: AmeGroupMessageDetail) {
+    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
         if (!messageRecord.attachmentUri.isNullOrEmpty()) {
-            GroupMessageLogic.messageSender.resendMediaMessage(messageRecord)
+            GroupMessageLogic.get(accountContext).messageSender.resendMediaMessage(messageRecord)
         }
     }
 

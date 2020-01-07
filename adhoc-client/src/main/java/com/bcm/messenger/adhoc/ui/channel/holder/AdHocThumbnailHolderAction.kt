@@ -5,6 +5,7 @@ import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
 import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
 import com.bcm.messenger.adhoc.util.AdHocPreviewClickListener
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.mms.GlideRequests
 
 /**
@@ -21,7 +22,7 @@ class AdHocThumbnailHolderAction() : BaseHolderAction<AdHocThumbnailView>() {
         body.setImage(glideRequests, message)
     }
 
-    override fun resend(message: AdHocMessageDetail) {
+    override fun resend(accountContext: AccountContext, message: AdHocMessageDetail) {
         AdHocMessageLogic.resend(message)
     }
 

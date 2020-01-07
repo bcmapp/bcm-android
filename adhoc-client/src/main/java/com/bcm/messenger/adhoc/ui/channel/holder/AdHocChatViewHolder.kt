@@ -125,7 +125,7 @@ class AdHocChatViewHolder(layout: View) : ConversationContentViewHolder<AdHocMes
             if (!messageRecord.success) {
                 AmePopup.bottom.newBuilder()
                         .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_resend)) {
-                            mAction?.resend(messageRecord)
+                            mAction?.resend(, messageRecord)
                         })
                         .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_delete)) {
                             Observable.create(ObservableOnSubscribe<Boolean> { emitter ->
@@ -243,7 +243,7 @@ class AdHocChatViewHolder(layout: View) : ConversationContentViewHolder<AdHocMes
         v?.setOnLongClickListener(this)
         mActionArray.put(type, action)
         if (v != null) {
-            action.bind(message, v, glideRequests, batchSelected)
+            action.bind(, message, v, glideRequests, batchSelected)
         }
         v?.visibility = View.VISIBLE
         return action

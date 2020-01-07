@@ -1,6 +1,7 @@
 package com.bcm.messenger.common.api
 
 import android.view.View
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.mms.GlideRequests
 
 /**
@@ -22,7 +23,7 @@ interface IConversationContentAction<T> {
     /**
      * 
      */
-    fun bind(message: T, body: View, glideRequests: GlideRequests, batchSelected: Set<T>?)
+    fun bind(accountContext: AccountContext, message: T, body: View, glideRequests: GlideRequests, batchSelected: Set<T>?)
 
     /**
      * 
@@ -32,7 +33,7 @@ interface IConversationContentAction<T> {
     /**
      * 
      */
-    fun resend(message: T)
+    fun resend(accountContext: AccountContext, message: T)
 
     /**
      * 
@@ -43,4 +44,6 @@ interface IConversationContentAction<T> {
      * 
      */
     fun getCurrent(): T?
+
+    fun getAccountContext(): AccountContext?
 }

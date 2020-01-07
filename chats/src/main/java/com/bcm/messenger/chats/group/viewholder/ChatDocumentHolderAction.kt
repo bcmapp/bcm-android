@@ -7,6 +7,7 @@ import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.util.ChatComponentListener
 import com.bcm.messenger.chats.util.ChatPreviewClickListener
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
@@ -21,15 +22,15 @@ class ChatDocumentHolderAction() : BaseChatHolderAction<ChatDocumentView>() {
     private var mPreviewClickListener = ChatPreviewClickListener()
     private var mDownloadClickListener = AttachmentDownloadClickListener()
 
-    override fun bindData(message: AmeGroupMessageDetail, body: ChatDocumentView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: ChatDocumentView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
         body.setDocumentClickListener(mPreviewClickListener)
         body.setDownloadClickListener(mDownloadClickListener)
         body.setDocument(message)
     }
 
-    override fun resend(messageRecord: AmeGroupMessageDetail) {
+    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
         if (!messageRecord.attachmentUri.isNullOrEmpty()) {
-            GroupMessageLogic.messageSender.resendMediaMessage(messageRecord)
+            GroupMessageLogic.get(accountContext).messageSender.resendMediaMessage(messageRecord)
         }
     }
 

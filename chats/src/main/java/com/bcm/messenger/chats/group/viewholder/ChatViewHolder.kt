@@ -173,7 +173,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
             if (messageRecord.sendState == AmeGroupMessageDetail.SendState.SEND_FAILED) {
                 AmePopup.bottom.newBuilder()
                         .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_resend)) {
-                            mAction?.resend(messageRecord)
+                            mAction?.resend(getAccountContext(), messageRecord)
                         })
                         .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_delete)) {
                             Observable.create(ObservableOnSubscribe<Boolean> { emitter ->
@@ -386,7 +386,7 @@ open class ChatViewHolder(containerView: View) : ConversationContentViewHolder<A
             v.setOnTouchListener(ClickSpanTouchHandler.getInstance(v.context))
         }
         if (v != null) {
-            action?.bind(messageRecord, v, glideRequests, batchSelected)
+            action?.bind(getAccountContext(), messageRecord, v, glideRequests, batchSelected)
         }
         v?.visibility = View.VISIBLE
         return action

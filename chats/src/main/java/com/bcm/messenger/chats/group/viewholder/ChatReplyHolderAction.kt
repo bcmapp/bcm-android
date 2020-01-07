@@ -5,6 +5,7 @@ import com.bcm.messenger.chats.bean.ReplyMessageEvent
 import com.bcm.messenger.chats.components.ChatReplyView
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.util.ChatComponentListener
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
 import org.greenrobot.eventbus.EventBus
@@ -21,13 +22,13 @@ class ChatReplyHolderAction() : BaseChatHolderAction<ChatReplyView>(), ChatCompo
         }
     }
 
-    override fun bindData(message: AmeGroupMessageDetail, body: ChatReplyView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: ChatReplyView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
         body.setReplyClickListener(this)
         body.setReply(message)
     }
 
-    override fun resend(messageRecord: AmeGroupMessageDetail) {
-        GroupMessageLogic.messageSender.resendTextMessage(messageRecord)
+    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+        GroupMessageLogic.get(accountContext).messageSender.resendTextMessage(messageRecord)
     }
 
 }

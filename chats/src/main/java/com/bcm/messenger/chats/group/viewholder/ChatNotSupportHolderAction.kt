@@ -1,6 +1,7 @@
 package com.bcm.messenger.chats.group.viewholder
 
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
@@ -13,7 +14,7 @@ import com.bcm.messenger.common.utils.getColorCompat
  */
 open class ChatNotSupportHolderAction : BaseChatHolderAction<EmojiTextView>() {
 
-    override fun bindData(message: AmeGroupMessageDetail, body: EmojiTextView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: EmojiTextView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
 
         val text = textFromMessage(message)
         if (text.isEmpty()) {
@@ -43,7 +44,7 @@ open class ChatNotSupportHolderAction : BaseChatHolderAction<EmojiTextView>() {
         }
     }
 
-    override fun resend(messageRecord: AmeGroupMessageDetail) {
+    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
 
     }
 

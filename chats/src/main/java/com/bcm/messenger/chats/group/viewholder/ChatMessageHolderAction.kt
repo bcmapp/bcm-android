@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.components.BigContentRecycleFragment
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
@@ -48,7 +49,7 @@ open class ChatMessageHolderAction() : BaseChatHolderAction<EmojiTextView>() {
         }
     })
 
-    override fun bindData(message: AmeGroupMessageDetail, body: EmojiTextView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, body: EmojiTextView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
         val text = textFromMessage(message)
         if (!message.isSendByMe) {
             if (message.message.type == AmeGroupMessage.NONSUPPORT){
@@ -87,8 +88,8 @@ open class ChatMessageHolderAction() : BaseChatHolderAction<EmojiTextView>() {
     override fun unBind() {
     }
 
-    override fun resend(messageRecord: AmeGroupMessageDetail) {
-        GroupMessageLogic.messageSender.resendTextMessage(messageRecord)
+    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
+        GroupMessageLogic.get(accountContext).messageSender.resendTextMessage(messageRecord)
     }
 
 }

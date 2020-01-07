@@ -4,11 +4,12 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
-import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import kotlinx.android.synthetic.main.chats_conversation_item_live.view.*
@@ -23,6 +24,10 @@ class ChatLiveViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var liveRecipient: Recipient? = null
     private var groupInfo: AmeGroupInfo? = null
 
+    fun getAccountContext(): AccountContext {
+        return AMELogin.majorContext
+    }
+
     fun unBindData() {
 
     }
@@ -30,9 +35,9 @@ class ChatLiveViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bindData(messageRecord: AmeGroupMessageDetail) {
         data = messageRecord.message.content as AmeGroupMessage.LiveContent
 
-        groupInfo = GroupLogic.getGroupInfo(messageRecord.gid)
+        groupInfo = GroupLogic.get(getAccountContext()).getGroupInfo(messageRecord.gid)
         groupInfo?.let {
-            liveRecipient = Recipient.from(itemView.context, Address.fromSerialized(it.owner), true)
+            liveRecipient = Recipient.from(getAccountContext(), it.owner, true)
             liveRecipient?.addListener(liveListener)
             setPlayTip(liveRecipient?.name)
         }

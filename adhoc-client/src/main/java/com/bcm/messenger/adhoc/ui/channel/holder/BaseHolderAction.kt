@@ -2,6 +2,7 @@ package com.bcm.messenger.adhoc.ui.channel.holder
 
 import android.view.View
 import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.api.IConversationContentAction
 import com.bcm.messenger.common.mms.GlideRequests
 
@@ -33,7 +34,7 @@ abstract class BaseHolderAction<V : View>() : IConversationContentAction<AdHocMe
         return mMessageDetail
     }
 
-    override fun bind(message: AdHocMessageDetail, body: View, glideRequests: GlideRequests, batchSelected: Set<AdHocMessageDetail>?) {
+    override fun bind(accountContext: AccountContext, message: AdHocMessageDetail, body: View, glideRequests: GlideRequests, batchSelected: Set<AdHocMessageDetail>?) {
         mMessageDetail = message
         mBaseView = body as V
         bindData(message, body, glideRequests, batchSelected)

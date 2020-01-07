@@ -3,11 +3,12 @@ package com.bcm.messenger.adhoc.ui.channel.holder
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
 import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.utils.getColorCompat
-import com.bcm.messenger.common.ui.emoji.EmojiTextView
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.ui.emoji.EmojiTextView
+import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.utility.logger.ALog
 
 /**
  *
@@ -31,7 +32,7 @@ class AdHocTextHolderAction() : BaseHolderAction<EmojiTextView>() {
         AdHocChatViewHolder.interceptTextLink(body, message.sendByMe, text)
     }
 
-    override fun resend(message: AdHocMessageDetail) {
+    override fun resend(accountContext: AccountContext, message: AdHocMessageDetail) {
         AdHocMessageLogic.resend(message)
     }
 

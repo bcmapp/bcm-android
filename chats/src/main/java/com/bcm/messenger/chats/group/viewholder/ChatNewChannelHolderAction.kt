@@ -7,6 +7,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.components.ShareChannelView
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.repositories.ThreadRepo
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
@@ -26,7 +27,7 @@ class ChatNewChannelHolderAction() : BaseChatHolderAction<ShareChannelView>(), S
     override fun onClick(v: View) {
     }
 
-    override fun bindData(message: AmeGroupMessageDetail, bodyView: ShareChannelView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
+    override fun bindData(accountContext: AccountContext, message: AmeGroupMessageDetail, bodyView: ShareChannelView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
 
         bodyView.setChannelClickListener(this)
         val data = message.message.content as AmeGroupMessage.NewShareChannelContent
@@ -59,7 +60,7 @@ class ChatNewChannelHolderAction() : BaseChatHolderAction<ShareChannelView>(), S
         },250)
     }
 
-    override fun resend(messageRecord: AmeGroupMessageDetail) {
+    override fun resend(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
         messageRecord.message.type = AmeGroupMessage.TEXT
         GroupMessageLogic.messageSender.resendTextMessage(messageRecord)
     }
