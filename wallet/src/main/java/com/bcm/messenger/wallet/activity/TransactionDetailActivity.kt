@@ -43,9 +43,7 @@ class TransactionDetailActivity : SwipeBaseActivity() {
             }
         })
 
-        mWalletModel = WalletViewModel.of(this).apply {
-            setAccountContext(accountContext)
-        }
+        mWalletModel = WalletViewModel.of(this, accountContext)
         initView()
 
     }

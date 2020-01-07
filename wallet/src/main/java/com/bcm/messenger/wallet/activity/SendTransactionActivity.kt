@@ -60,7 +60,7 @@ class SendTransactionActivity : SwipeBaseActivity() {
     }
 
     private fun initData() {
-        val walletModel = WalletViewModel.of(this)
+        val walletModel = WalletViewModel.of(this, accountContext)
         mWalletDisplay?.setManager(walletModel.getManager())
         walletModel.eventData.observe(this, Observer {event ->
             when(event?.id) {

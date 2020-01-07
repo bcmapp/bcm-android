@@ -66,7 +66,7 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
                 ?: Locale.getDefault()
 
         activity?.let {
-            mConversationViewModel = ViewModelProviders.of(it).get(AmeConversationViewModel::class.java)
+            mConversationViewModel = ViewModelProviders.of(it, AmeConversationModelFactory(accountContext)).get(AmeConversationViewModel::class.java)
         }
     }
 

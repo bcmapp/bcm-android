@@ -355,7 +355,7 @@ class AmeConversationViewModel(
     fun sendMediaMessage(context: Context, masterSecret: MasterSecret, message: OutgoingMediaMessage, callback: ((success: Boolean) -> Unit)? = null) {
         checkBeforeSendMessage(context) { doAfter ->
             Observable.create(ObservableOnSubscribe<Long> {
-                it.onNext(MessageSender.send(context, mAccountContext, masterSecret, message, mThreadId, null))
+                it.onNext(MessageSender.send(context, masterSecret, message, mThreadId, null))
                 it.onComplete()
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

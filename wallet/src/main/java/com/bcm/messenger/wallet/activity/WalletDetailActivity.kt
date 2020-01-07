@@ -129,9 +129,7 @@ class WalletDetailActivity : SwipeBaseActivity() {
 
     private fun initData() {
 
-        mWalletModel = WalletViewModel.of(this).apply {
-            setAccountContext(accountContext)
-        }
+        mWalletModel = WalletViewModel.of(this, accountContext)
         mWalletDisplay = intent.getParcelableExtra(ARouterConstants.PARAM.WALLET.WALLET_COIN)
         mWalletDisplay.setManager(mWalletModel?.getManager())
         mWalletModel?.eventData?.observe(this, Observer { event ->

@@ -55,9 +55,7 @@ class WalletListActivity : SwipeBaseActivity() {
     }
 
     private fun initData() {
-        mWalletModel = WalletViewModel.of(this).apply {
-            setAccountContext(accountContext)
-        }
+        mWalletModel = WalletViewModel.of(this, accountContext)
         mCoinType = intent.getStringExtra(ARouterConstants.PARAM.WALLET.COIN_TYPE)
         when (mCoinType) {
             WalletSettings.BTC -> list_title_bar.setCenterText(getString(R.string.wallet_list_btc_title))

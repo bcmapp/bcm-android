@@ -8,9 +8,17 @@ import android.os.Bundle
 import android.provider.MediaStore
 import androidx.lifecycle.Observer
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
+import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.saveTextToBoard
 import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.QREncoder
+import com.bcm.messenger.utility.StorageUtil
+import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.utility.permission.PermissionUtil
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.model.TransactionDisplay
 import com.bcm.messenger.wallet.model.WalletDisplay
@@ -18,20 +26,13 @@ import com.bcm.messenger.wallet.presenter.ImportantLiveData
 import com.bcm.messenger.wallet.presenter.WalletViewModel
 import com.bcm.messenger.wallet.ui.WalletConfirmDialog
 import com.bcm.messenger.wallet.utils.WalletSettings
+import com.bcm.route.api.BcmRouter
 import com.orhanobut.logger.Logger
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.wallet_receive_activity.*
-import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.utility.QREncoder
-import com.bcm.messenger.utility.permission.PermissionUtil
-import com.bcm.route.api.BcmRouter
-import com.bcm.messenger.utility.StorageUtil
 import java.io.File
 import java.io.FileOutputStream
 
@@ -73,7 +74,7 @@ class AssetsReceiveActivity : SwipeBaseActivity() {
     }
 
     private fun initData() {
-        val model = WalletViewModel.of(this)
+        val model = WalletViewModel.of(this, accountContext)
         mWalletDisplay = intent.getParcelableExtra(ARouterConstants.PARAM.WALLET.WALLET_COIN)
         mWalletDisplay.setManager(model.getManager())
         createWalletAddressQRCode()

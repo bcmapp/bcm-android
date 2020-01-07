@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * 钱包所有变更监控的视图实体
  * Created by wjh on 2018/6/1
  */
-class WalletViewModel : ViewModel(), IServerConnectStateListener {
+class WalletViewModel(private val mAccountContext: AccountContext) : ViewModel(), IServerConnectStateListener {
 
     companion object {
 
@@ -47,10 +47,10 @@ class WalletViewModel : ViewModel(), IServerConnectStateListener {
          * 获取当前现有的监控视图，如果没有则新建
          * @param activity
          */
-        fun of(activity: FragmentActivity): WalletViewModel {
+        fun of(activity: FragmentActivity, accountContext: AccountContext): WalletViewModel {
             if (walletModelSingle == null) {
                 try {
-                    walletModelSingle = ViewModelProviders.of(activity).get(WalletViewModel::class.java)
+                    walletModelSingle = ViewModelProviders.of(activity, WalletModelFactory(accountContext)).get(WalletViewModel::class.java)
                 }catch (ex: Exception) {
                     ALog.e("WalletViewModel", "of activity error", ex)
                 }
@@ -67,11 +67,11 @@ class WalletViewModel : ViewModel(), IServerConnectStateListener {
 
     }
 
-    private lateinit var mAccountContext: AccountContext
 
     init {
         ALog.i(TAG, "init")
         EventBus.getDefault().register(this)
+        AmeModuleCenter.serverDaemon(mAccountContext).addConnectionListener(this)
     }
 
     val eventData: ImportantLiveData by lazy { ImportantLiveData(getManager()) }
@@ -86,11 +86,6 @@ class WalletViewModel : ViewModel(), IServerConnectStateListener {
 
     override fun onServerConnectionChanged(accountContext: AccountContext, newState: ConnectState) {
         getManager().isBCMConnected = newState == ConnectState.CONNECTED
-    }
-
-    fun setAccountContext(accountContext: AccountContext) {
-        mAccountContext = accountContext
-        AmeModuleCenter.serverDaemon(mAccountContext).addConnectionListener(this)
     }
 
     fun getManager(): BCMWalletManagerContainer.BCMWalletManager {

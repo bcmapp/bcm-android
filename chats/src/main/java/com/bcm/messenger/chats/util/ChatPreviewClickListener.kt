@@ -155,7 +155,7 @@ open class ChatPreviewClickListener : ChatComponentListener {
 
             // retry download thumbnail
             if (messageRecord.isThumbnailDownloadFail) {
-                (v as? ChatThumbnailView)?.downloadGroupThumbnail(messageRecord)
+                (v as? ChatThumbnailView)?.downloadGroupThumbnail(AMELogin.majorContext, messageRecord)
                 return
             } else if (messageRecord.isFileDeleted && messageRecord.getThumbnailPartUri(AMELogin.majorContext) == null) {
                 if (messageType == AmeGroupMessage.VIDEO) {

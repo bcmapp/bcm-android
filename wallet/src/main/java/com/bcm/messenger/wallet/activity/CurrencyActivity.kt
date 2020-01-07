@@ -25,9 +25,7 @@ class CurrencyActivity : SwipeBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.wallet_currency_activity)
 
-        mWalletModel = WalletViewModel.of(this).apply {
-            setAccountContext(accountContext)
-        }
+        mWalletModel = WalletViewModel.of(this, accountContext)
         mCurrencyCode = mWalletModel?.getManager()?.getCurrentCurrency() ?: ""
 
         currency_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
@@ -65,7 +63,7 @@ class CurrencyActivity : SwipeBaseActivity() {
     }
 
     fun changeCurrencyCode(currency: String, callback: (success: Boolean) -> Unit) {
-        WalletViewModel.of(this).queryAllExchangeRate(currency) {result->
+        WalletViewModel.of(this, accountContext).queryAllExchangeRate(currency) {result->
             if (result != null) {
                 callback.invoke(result > 0)
             }else {
