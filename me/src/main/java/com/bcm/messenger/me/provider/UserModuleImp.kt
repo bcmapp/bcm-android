@@ -400,10 +400,11 @@ class UserModuleImp : IUserModule
         }
     }
 
-    override fun doForLogin(account: Address, profileKey: ByteArray?, profileName: String?, profileAvatar: String?) {
+    override fun doForLogin(address: Address, profileKey: ByteArray?, profileName: String?, profileAvatar: String?) {
+
         val context = AppContextHolder.APP_CONTEXT
-        Recipient.clearCache(context)
-        val recipient = Recipient.from(account, false)
+        Recipient.clearCache(context, address)
+        val recipient = Recipient.from(address, false)
 
         var changed = false
         val name = if (!profileName.isNullOrEmpty()) {
@@ -423,7 +424,7 @@ class UserModuleImp : IUserModule
         }
 
         AmeModuleCenter.contact(accountContext)?.fetchProfile(recipient) {}
-        AmeNoteLogic.getInstance().updateUser(account.serialize())
+        AmeNoteLogic.getInstance().updateUser(address.serialize())
 
     }
 

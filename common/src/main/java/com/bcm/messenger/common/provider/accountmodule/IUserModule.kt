@@ -13,14 +13,8 @@ import com.bcm.messenger.common.recipients.Recipient
  */
 interface IUserModule : IAmeAccountModule {
 
-    /**
-     *
-     */
     fun checkBackupAccountValid(qrString: String): Pair<String?, String?>
 
-    /**
-     *
-     */
     fun showImportAccountWarning(context: Context, dissmissCallback: (() -> Unit)? = null)
 
     fun showClearHistoryConfirm(context: Context, confirmCallback: () -> Unit, cancelCallback: () -> Unit)
@@ -33,26 +27,14 @@ interface IUserModule : IAmeAccountModule {
 
     fun saveAccount(recipient: Recipient, newPrivacyProfile: PrivacyProfile)
 
-    /**
-     *
-     */
-    fun doForLogin(account: Address, profileKey: ByteArray?, profileName: String?, profileAvatar: String?)
+    fun doForLogin(address: Address, profileKey: ByteArray?, profileName: String?, profileAvatar: String?)
 
-    /**
-     *
-     */
     fun doForLogout()
 
-
     fun gotoDataNote(context: Context)
-    /**
-     *
-     */
+
     fun gotoBackupTutorial()
 
-    /**
-     *
-     */
     fun hasBackupAccount(): Boolean
 
     fun checkUseDefaultPin(callback: (result: Boolean, defaultPin: String?) -> Unit)
@@ -66,9 +48,6 @@ interface IUserModule : IAmeAccountModule {
     @Throws(Exception::class)
     fun changePinPassword(oldPassword: String, newPassword: String): Boolean
 
-    /**
-     *
-     */
     fun feedback(tag: String, description: String, screenshotList: List<String>, callback: ((result: Boolean, cause: Throwable?) -> Unit)? = null)
 
     /**

@@ -3,6 +3,7 @@ package com.bcm.messenger.common.core;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,7 +42,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
     private static final Pattern PUBLIC_PATTERN = Pattern.compile("^[a-zA-Z0-9]+");
     private static final Pattern emailPattern = android.util.Patterns.EMAIL_ADDRESS;
 
-    public static final Address UNKNOWN = new Address(AMELogin.INSTANCE.getMajorContext(), UNKNOWN_STRING);
+    public static final Address UNKNOWN = new Address(new AccountContext(UNKNOWN_STRING, "", ""), UNKNOWN_STRING);
 
     private static final String TAG = "Address";
 
@@ -83,8 +84,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
         return addresses;
     }
 
-    public static @NonNull
-    String toSerializedList(@NonNull List<Address> addresses, char delimiter) {
+    public static @NonNull String toSerializedList(@NonNull List<Address> addresses, char delimiter) {
         Collections.sort(addresses);
 
         List<String> escapedAddresses = new LinkedList<>();
@@ -94,6 +94,10 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
         }
 
         return StringAppearanceUtil.INSTANCE.join(escapedAddresses, delimiter + "");
+    }
+
+    public boolean isUnknown() {
+        return TextUtils.equals(address, UNKNOWN_STRING) && TextUtils.equals(context.getUid(), UNKNOWN_STRING);
     }
 
     /**

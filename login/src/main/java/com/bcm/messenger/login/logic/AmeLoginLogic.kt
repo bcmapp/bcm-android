@@ -12,11 +12,10 @@ import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.MasterSecretUtil
 import com.bcm.messenger.common.crypto.PreKeyUtil
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.database.repositories.IdentityRepo
 import com.bcm.messenger.common.database.repositories.Repository
+import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.gcm.FcmUtil
-import com.bcm.messenger.common.grouprepository.room.database.GroupDatabase
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
@@ -147,6 +146,10 @@ object AmeLoginLogic {
         return AccountContext(uid, "", "")
     }
 
+    fun getTmpAccountContext(): AccountContext {
+        return tmpAccountContext
+    }
+
     /**
      * save account state
      */
@@ -192,7 +195,7 @@ object AmeLoginLogic {
 
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onAccountLogin(AppContextHolder.APP_CONTEXT, currentAccount.uid)
 
-        AmeModuleCenter.user(accountContext)?.doForLogin(Address.from(currentAccount.uid), null, currentAccount.name, currentAccount.avatar)
+        AmeModuleCenter.user(accountContext)?.doForLogin(Address.from(accountContext, currentAccount.uid), null, currentAccount.name, currentAccount.avatar)
 
         AmeModuleCenter.group(accountContext)?.doOnLogin()
 
@@ -219,9 +222,9 @@ object AmeLoginLogic {
                 if (clearHistory) {
                     ALog.i(TAG, "clear history")
                     try {
-                        if (DatabaseFactory.isDatabaseExist(AppContextHolder.APP_CONTEXT)) {
-                            DatabaseFactory.getInstance(AppContextHolder.APP_CONTEXT).deleteAllDatabase()
-                            GroupDatabase.getInstance().clearAllTables()
+                        if (DatabaseFactory.isDatabaseExist(accountContext, AppContextHolder.APP_CONTEXT)) {
+                            val deprecatedDatabase = DatabaseFactory(accountContext, AppContextHolder.APP_CONTEXT)
+                            deprecatedDatabase.deleteAllDatabase()
                         }
                         File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db").delete()
                         File("${AppContextHolder.APP_CONTEXT.filesDir.parent}/databases/user_${accountContext.uid}.db-shm").delete()
@@ -512,7 +515,7 @@ object AmeLoginLogic {
 
         AmeModuleCenter.onLoginSucceed(accountContext)
 
-        if (!DatabaseFactory.isDatabaseExist(AppContextHolder.APP_CONTEXT) || isRegister || (TextSecurePreferences.isDatabaseMigrated(accountContext) && TextSecurePreferences.getMigrateFailedCount(accountContext) < 3)) {
+        if (!DatabaseFactory.isDatabaseExist(accountContext, AppContextHolder.APP_CONTEXT) || isRegister || (TextSecurePreferences.isDatabaseMigrated(accountContext) && TextSecurePreferences.getMigrateFailedCount(accountContext) < 3)) {
             TextSecurePreferences.setHasDatabaseMigrated(accountContext)
             initAfterLoginSuccess(getAccountContext(uid), ecKeyPair, password)
         } else {
@@ -752,7 +755,7 @@ object AmeLoginLogic {
      * query nonce
      */
     private fun requestChallenge(uid: String): Observable<Pair<String, ChallengeResult>> {
-        return ProxyRetryChallenge.request(uid)
+        return ProxyRetryChallenge.get(tmpAccountContext).request(uid)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .map {
@@ -770,6 +773,7 @@ object AmeLoginLogic {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .flatMap {
+                    setTmpToken(it, "")
                     requestChallenge(it)
                 }.observeOn(Schedulers.io()).subscribe({
 
