@@ -34,9 +34,7 @@ import com.bcm.messenger.contacts.logic.BcmProfileLogic
 import com.bcm.messenger.contacts.logic.ContactRequestReceiver
 import com.bcm.messenger.contacts.search.CurrentSearchFragment
 import com.bcm.messenger.contacts.search.RecentSearchFragment
-import com.bcm.messenger.login.jobs.MultiDeviceBlockedUpdateJob
 import com.bcm.messenger.utility.AmeURLUtil
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
@@ -268,8 +266,7 @@ class ContactModuleImp : IContactModule {
             }
             Repository.getRecipientRepo(accountContext)?.setBlocked(recipient, block)
 
-            AmeModuleCenter.accountJobMgr(accountContext)?.add(MultiDeviceBlockedUpdateJob(AppContextHolder.APP_CONTEXT))
-
+            //todo multi device block state sync
             it.onNext(true)
             it.onComplete()
 

@@ -46,7 +46,7 @@ public class CleanPreKeysJob extends MasterSecretJob {
         this.signedPreKeyStoreFactory = new SignedPreKeyStoreFactory() {
             @Override
             public SignedPreKeyStore create() {
-                return new SignalProtocolStoreImpl(context);
+                return new SignalProtocolStoreImpl(context, accountContext);
             }
         };
     }

@@ -25,7 +25,6 @@ import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.BcmFileUtils
-import com.bcm.messenger.login.jobs.MultiDeviceProfileKeyUpdateJob
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
@@ -157,7 +156,7 @@ class UserModuleImp : IUserModule
             AmeModuleCenter.contact(accountContext)?.uploadBcmNick(AppContextHolder.APP_CONTEXT, recipient, name) { success ->
                 if (success) {
                     saveAccount(recipient, name, null)
-                    AmeModuleCenter.accountJobMgr(accountContext)?.add(MultiDeviceProfileKeyUpdateJob(AppContextHolder.APP_CONTEXT))
+                    //todo multi device user profile sync
                 }
                 callback.invoke(success)
             }
@@ -201,7 +200,7 @@ class UserModuleImp : IUserModule
             AmeModuleCenter.contact(accountContext)?.uploadBcmAvatar(AppContextHolder.APP_CONTEXT, recipient, avatarBitmap) { success ->
                 if (success) {
                     saveAccount(recipient, null, recipient.privacyAvatar)
-                    AmeModuleCenter.accountJobMgr(accountContext)?.add(MultiDeviceProfileKeyUpdateJob(AppContextHolder.APP_CONTEXT))
+                    //todo multi device user profile sync
                 }
                 callback.invoke(success)
             }

@@ -22,7 +22,7 @@ import java.io.IOException;
 
 public class CreateSignedPreKeyJob extends MasterSecretJob {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private static final String TAG = CreateSignedPreKeyJob.class.getSimpleName();
 

@@ -13,16 +13,15 @@ import com.bcm.messenger.chats.privatechat.jobs.SendReadReceiptJob;
 import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.crypto.MasterSecret;
+import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
+import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.deprecated.MessagingDatabase.ExpirationInfo;
 import com.bcm.messenger.common.deprecated.MessagingDatabase.MarkedMessageInfo;
 import com.bcm.messenger.common.deprecated.MessagingDatabase.SyncMessageId;
-import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
-import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.expiration.ExpirationManager;
 import com.bcm.messenger.common.expiration.IExpiringScheduler;
 import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
-import com.bcm.messenger.login.jobs.MultiDeviceReadUpdateJob;
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher;
 import com.bcm.messenger.utility.logger.ALog;
 
@@ -76,10 +75,7 @@ public class MarkReadReceiver extends MasterSecretBroadcastReceiver {
         }
 
         JobManager mgr = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
-        if (null != mgr) {
-            mgr.add(new MultiDeviceReadUpdateJob(context, syncMessageIds));
-        }
-
+        //todo multi device read state sync
 
         Map<Address, List<SyncMessageId>> addressMap = Stream.of(markedReadMessages)
                 .map(MarkedMessageInfo::getSyncMessageId)

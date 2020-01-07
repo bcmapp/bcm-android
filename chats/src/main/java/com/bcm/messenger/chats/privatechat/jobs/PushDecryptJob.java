@@ -23,7 +23,6 @@ import com.bcm.messenger.common.crypto.SecurityEvent;
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.common.crypto.storage.SignalProtocolStoreImpl;
 import com.bcm.messenger.common.crypto.storage.TextSecureSessionStore;
-import com.bcm.messenger.common.deprecated.NoSuchMessageException;
 import com.bcm.messenger.common.database.model.DecryptFailData;
 import com.bcm.messenger.common.database.model.ProfileKeyModel;
 import com.bcm.messenger.common.database.records.AttachmentRecord;
@@ -32,6 +31,7 @@ import com.bcm.messenger.common.database.repositories.PushRepo;
 import com.bcm.messenger.common.database.repositories.RecipientRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.database.repositories.ThreadRepo;
+import com.bcm.messenger.common.deprecated.NoSuchMessageException;
 import com.bcm.messenger.common.event.MessageReceiveNotifyEvent;
 import com.bcm.messenger.common.expiration.ExpirationManager;
 import com.bcm.messenger.common.expiration.IExpiringScheduler;
@@ -60,9 +60,6 @@ import com.bcm.messenger.common.utils.AppUtilKotlinKt;
 import com.bcm.messenger.common.utils.GroupUtil;
 import com.bcm.messenger.common.utils.IdentityUtil;
 import com.bcm.messenger.common.utils.RxBus;
-import com.bcm.messenger.login.jobs.MultiDeviceBlockedUpdateJob;
-import com.bcm.messenger.login.jobs.MultiDeviceGroupUpdateJob;
-import com.bcm.messenger.login.jobs.MultiDeviceReadReceiptUpdateJob;
 import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.Base64;
 import com.bcm.messenger.utility.EncryptUtils;
@@ -478,22 +475,6 @@ public class PushDecryptJob extends ContextJob {
 
     private void handleSynchronizeRequestMessage(@NonNull RequestMessage message) {
         ALog.i(TAG, "handleSynchronizeRequestMessage");
-
-        JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
-        if (manager != null) {
-
-            if (message.isGroupsRequest()) {
-                manager.add(new MultiDeviceGroupUpdateJob(getContext()));
-            }
-
-            if (message.isBlockedListRequest()) {
-                manager.add(new MultiDeviceBlockedUpdateJob(getContext()));
-            }
-
-            if (message.isConfigurationRequest()) {
-                manager.add(new MultiDeviceReadReceiptUpdateJob(getContext(), TextSecurePreferences.isReadReceiptsEnabled(accountContext)));
-            }
-        }
     }
 
     private void handleSynchronizeReadMessage(@NonNull List<ReadMessage> readMessages,
