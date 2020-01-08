@@ -153,12 +153,14 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
             }
             val addFragment = supportFragmentManager.beginTransaction()
 
+            val adhocUid = AmeModuleCenter.login().getAdHocUid()
+            val adhocContext = AmeModuleCenter.login().getAccountContext(adhocUid)
             val adhocMain = BcmRouter.getInstance()
                     .get(ARouterConstants.Activity.APP_HOME_AD_HOC_MAIN)
                     .navigation() as Fragment
 
             adhocMain.arguments = Bundle().apply {
-                putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, AMELogin.majorContext)
+                putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, adhocContext)
             }
             addFragment.add(R.id.home_adhoc_main, adhocMain, adHocMainTag)
             addFragment.commit()

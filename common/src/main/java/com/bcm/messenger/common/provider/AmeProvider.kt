@@ -97,9 +97,7 @@ object AmeProvider {
     }
 
     fun removeModule(providerName: String) {
-        synchronized(TAG) {
-            moduleMap.remove(Index(null, providerName))
-        }
+        moduleMap.remove(Index(null, providerName))
     }
 
     fun removeModule(context: AccountContext) {
@@ -109,5 +107,9 @@ object AmeProvider {
                 moduleMap.remove(it)
             }
         }
+    }
+
+    fun removeModule(context: AccountContext, providerName: String) {
+        moduleMap.remove(Index(context, providerName))
     }
 }

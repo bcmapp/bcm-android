@@ -41,6 +41,7 @@ class AmeAccountHistory {
         private const val AME_ACCOUNT_LIST = "AME_ACCOUNT_LIST"
         private const val AME_MAJOR_LOGIN_ACCOUNT = "AME_CURRENT_LOGIN"
         private const val AME_MINOR_LOGIN_ACCOUNT = "AME_MINOR_ACCOUNT_LIST"
+        private const val AME_ADHOC_UID = "AME_ADHOC_UID"
 
         const val LIMIT_SIZE = 50
     }
@@ -224,6 +225,18 @@ class AmeAccountHistory {
 
     fun getLastLoginUid(): String {
         return storage.get(AME_LAST_LOGIN,"")
+    }
+
+    fun setAdHocUid(uid:String) {
+        storage.set(AME_ADHOC_UID, uid)
+    }
+
+    fun getAdHocUid(): String {
+        val uid = storage.get(AME_ADHOC_UID, "")
+        if (uid.isEmpty()) {
+            return majorAccountUid
+        }
+        return uid
     }
 
     fun resetBackupState(uid: String) {

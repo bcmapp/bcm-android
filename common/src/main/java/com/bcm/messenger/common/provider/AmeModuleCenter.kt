@@ -49,6 +49,10 @@ object AmeModuleCenter {
         AmeProvider.removeModule(accountContext)
     }
 
+    fun removeModule(accountContext: AccountContext, providerName: String) {
+        AmeProvider.removeModule(accountContext, providerName)
+    }
+
     fun login(): ILoginModule {
         return AmeProvider.get(ARouterConstants.Provider.PROVIDER_LOGIN_BASE)!!
     }

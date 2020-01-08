@@ -97,4 +97,8 @@ interface ILoginModule : IAmeModule {
     fun getLoginAccountContextList(): List<AccountContext>
 
     fun checkPassword(accountContext: AccountContext, password: String, result: (right: Boolean) -> Unit)
+
+    fun setAdHocUid(uid: String)
+
+    fun getAdHocUid(): String
 }

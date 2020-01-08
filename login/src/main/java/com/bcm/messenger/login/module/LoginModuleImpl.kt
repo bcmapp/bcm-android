@@ -319,4 +319,12 @@ class LoginModuleImpl : ILoginModule
     override fun checkPassword(accountContext: AccountContext, password: String, result: (right: Boolean) -> Unit) {
         AmeLoginLogic.checkPassword(accountContext, password, result)
     }
+
+    override fun setAdHocUid(uid: String) {
+        AmeLoginLogic.accountHistory.setAdHocUid(uid)
+    }
+
+    override fun getAdHocUid(): String {
+        return AmeLoginLogic.accountHistory.getAdHocUid()
+    }
 }
