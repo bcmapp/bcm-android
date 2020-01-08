@@ -51,15 +51,18 @@ class ContactModuleImp : IContactModule {
 
     private lateinit var accountContext: AccountContext
 
-    private val mProfileLogic = BcmProfileLogic(accountContext)
-    private val mContactLogic = BcmContactLogic(accountContext)
-    private val contactRequestReceiver = ContactRequestReceiver(mContactLogic)
+    private lateinit var mProfileLogic:BcmProfileLogic
+    private lateinit var mContactLogic:BcmContactLogic
+    private lateinit var contactRequestReceiver:ContactRequestReceiver
 
     override val context: AccountContext
         get() = accountContext
 
     override fun setContext(context: AccountContext) {
         this.accountContext = context
+        mProfileLogic = BcmProfileLogic(accountContext)
+        mContactLogic = BcmContactLogic(accountContext)
+        contactRequestReceiver = ContactRequestReceiver(mContactLogic)
     }
 
     override fun initModule() {

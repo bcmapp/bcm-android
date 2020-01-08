@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
@@ -56,6 +58,8 @@ class PickNicknameFragment : AbsRegistrationFragment() {
                 if (it) {
                     AmePopup.loading.dismiss()
 
+                    val uid = BCMPrivateKeyUtils.provideUid(keyPair.publicKey.serialize())
+                    val accountContext = AmeModuleCenter.login().getAccountContext(uid)
                     val f = RegisterSucceedFragment()
                     activity?.supportFragmentManager?.beginTransaction()
                             ?.replace(R.id.register_container, f)
@@ -64,6 +68,7 @@ class PickNicknameFragment : AbsRegistrationFragment() {
                     new_nickname.postDelayed({
                         BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
                                 .putBoolean(ARouterConstants.PARAM.PARAM_LOGIN_FROM_REGISTER, true)
+                                .putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
                                 .navigation(activity)
                         activity?.finish()
                     }, 2000)
