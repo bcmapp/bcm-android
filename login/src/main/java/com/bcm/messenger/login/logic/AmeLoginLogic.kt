@@ -253,7 +253,7 @@ object AmeLoginLogic {
     /**
      * get account history
      */
-    fun getAccountList(): List<Any> {
+    fun getAccountList(): List<AmeAccountData> {
         return accountHistory.getAccountList().sortedWith(kotlin.Comparator { o1, o2 ->
             if (accountHistory.isLogin(o1.uid) || accountHistory.isLogin(o2.uid)) {
                 o2.lastLoginTime.compareTo(o1.lastLoginTime)

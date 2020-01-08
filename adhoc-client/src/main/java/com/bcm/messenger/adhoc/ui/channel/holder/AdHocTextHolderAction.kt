@@ -3,6 +3,7 @@ package com.bcm.messenger.adhoc.ui.channel.holder
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
 import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.ui.emoji.EmojiTextView
@@ -13,7 +14,7 @@ import com.bcm.messenger.utility.logger.ALog
  *
  * Created by wjh on 2019/7/27
  */
-class AdHocTextHolderAction() : BaseHolderAction<EmojiTextView>() {
+class AdHocTextHolderAction(private val accountContext: AccountContext) : BaseHolderAction<EmojiTextView>() {
 
     override fun bindData(message: AdHocMessageDetail, body: EmojiTextView, glideRequests: GlideRequests, batchSelected: Set<AdHocMessageDetail>?) {
         val text = textFromMessage(message)
@@ -32,7 +33,7 @@ class AdHocTextHolderAction() : BaseHolderAction<EmojiTextView>() {
     }
 
     override fun resend(message: AdHocMessageDetail) {
-        AdHocMessageLogic.resend(message)
+        AdHocMessageLogic.get(accountContext).resend(message)
     }
 
     private fun textFromMessage(message: AdHocMessageDetail): String {

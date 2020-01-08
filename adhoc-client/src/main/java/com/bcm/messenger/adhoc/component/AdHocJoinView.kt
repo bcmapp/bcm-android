@@ -11,8 +11,8 @@ import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.adhoc.logic.AdHocSessionLogic
 import com.bcm.messenger.adhoc.ui.channel.AdHocConversationActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.getDrawable
 import com.bcm.messenger.common.utils.startBcmActivity
@@ -30,6 +30,7 @@ class AdHocJoinView @JvmOverloads constructor(context: Context, attrs: Attribute
     private val TAG = "AdHocJoinView"
     private var mContent: AmeGroupMessage.AirChatContent? = null
     private var mOutgoing = false
+    private var accountContext:AccountContext? = null
 
 
     init {
@@ -39,9 +40,11 @@ class AdHocJoinView @JvmOverloads constructor(context: Context, attrs: Attribute
                 return@setOnClickListener
             }
             val content = mContent ?: return@setOnClickListener
-            AdHocSessionLogic.addChannelSession(content.name, content.password) {
-                if (it.isNotEmpty()) {
-                    context.startBcmActivity(AMELogin.majorContext, Intent(context, AdHocConversationActivity::class.java).apply {
+            val accountContext = this.accountContext ?: return@setOnClickListener
+            AdHocSessionLogic.get(accountContext).addChannelSession(content.name, content.password) {
+                val accountContext = this.accountContext
+                if (it.isNotEmpty() && accountContext != null) {
+                    context.startBcmActivity(accountContext, Intent(context, AdHocConversationActivity::class.java).apply {
                         putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, it)
                     })
                 }
@@ -55,11 +58,12 @@ class AdHocJoinView @JvmOverloads constructor(context: Context, attrs: Attribute
     /**
      * set name card data
      */
-    fun setData(content: AmeGroupMessage.AirChatContent, outgoing: Boolean) {
+    fun setData(accountContext: AccountContext, content: AmeGroupMessage.AirChatContent, outgoing: Boolean) {
         mContent = content
         mOutgoing = outgoing
+        this.accountContext = accountContext
 
-        var name = AdHocChannelLogic.getChannel(AdHocChannel.cid(content.name, content.password))?.viewName()
+        var name = AdHocChannelLogic.get(accountContext).getChannel(AdHocChannel.cid(content.name, content.password))?.viewName()
         if (name.isNullOrBlank()) {
             name = content.name
         }

@@ -75,7 +75,7 @@ class AdHocConversationFragment : BaseFragment() {
             val targetSession = data?.getStringExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION)
             if (targetSession != null && !mCurrentForwardText.isNullOrEmpty()) {
                 try {
-                    val message = AdHocMessageDetail(0, targetSession, AdHocMessageLogic.myAdHocId() ?: return).apply {
+                    val message = AdHocMessageDetail(0, targetSession, AdHocMessageLogic.get(accountContext).myAdHocId() ?: return).apply {
                         sendByMe = true
                         nickname = Recipient.major().name
                         setMessageBodyJson(mCurrentForwardText ?: "")
@@ -85,7 +85,7 @@ class AdHocConversationFragment : BaseFragment() {
                             thumbnailUri = content.url // attachmentContent url save path
                         }
                     }
-                    AdHocMessageLogic.send(targetSession, message.nickname, message)
+                    AdHocMessageLogic.get(accountContext).send(targetSession, message.nickname, message)
                 }catch (ex: Exception) {
                     ALog.e(TAG, "forward text fail", ex)
                 }
@@ -218,7 +218,7 @@ class AdHocConversationFragment : BaseFragment() {
         mCurrentForwardSource = null
         mCurrentForwardText = null
         mSelectItemBatch = null
-        mAdHocModel = AdHocMessageLogic.getModel()
+        mAdHocModel = AdHocMessageLogic.get(accountContext).getModel()
         mAdHocModel?.addOnMessageListener(object : AdHocMessageModel.DefaultOnMessageListener(TAG) {
 
             override fun onForward(source: String, text: String) {
@@ -396,7 +396,7 @@ class AdHocConversationFragment : BaseFragment() {
             }else {
                 mAdapter?.loadData(createStickySecureMessage(model.getSessionId()))
             }
-            AdHocMessageLogic.updateSessionUnread(model.getSessionId(), unread, true)
+            AdHocMessageLogic.get(accountContext).updateSessionUnread(model.getSessionId(), unread, true)
         }
     }
 
@@ -418,7 +418,7 @@ class AdHocConversationFragment : BaseFragment() {
 
 
     private fun createStickySecureMessage(session: String): AdHocMessageDetail {
-        return AdHocMessageDetail(0, session, AdHocMessageLogic.myAdHocId() ?: "").apply {
+        return AdHocMessageDetail(0, session, AdHocMessageLogic.get(accountContext).myAdHocId() ?: "").apply {
             setMessageBody(AmeGroupMessage(AmeGroupMessage.MESSAGE_SECURE_NOTICE, AmeGroupMessage.SecureContent()))
             time = -1L
         }

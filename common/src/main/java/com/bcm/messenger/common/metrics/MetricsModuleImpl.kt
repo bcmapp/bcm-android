@@ -109,7 +109,7 @@ class MetricsModuleImpl : IMetricsModule, ReportConfigure.IReportTickerListener 
 
 
     override fun addCustomNetworkReportData(topic: String, serverIp: String?, port: Int, reqMethod: String?, path: String?, returnCode: String, time: Long) {
-        if (AmeModuleCenter.adhoc().isAdHocMode()) {
+        if (AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true) {
             ALog.w(TAG, "AdHoc is running, stop report")
             return
         }
@@ -224,7 +224,7 @@ class MetricsModuleImpl : IMetricsModule, ReportConfigure.IReportTickerListener 
     }
 
     override fun addCustomCounterReportData(topic: String, counterName: String, increment: Boolean) {
-        if (AmeModuleCenter.adhoc().isAdHocMode()) {
+        if (AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true) {
             ALog.w(TAG, "AdHoc is running, stop report")
             return
         }

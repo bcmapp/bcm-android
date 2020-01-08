@@ -61,24 +61,8 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     private val badgeMarginEnd = (160.dp2Px() * 0.3f / 2).toInt()
     private val badgeMarginStart = 150.dp2Px() - badgeMarginEnd - 27.dp2Px()
 
-    var accountItem = HomeAccountItem(TYPE_ADD, AmeAccountData())
-        set(value) {
-            field = value
-            accountContext = AMELogin.accountContext(field.account.uid)
-            recipient = Recipient.from(accountContext, field.account.uid, true)
-        }
-
-    private var recipient = Recipient.major()
-        set(value) {
-            field.removeListener(this)
-            field = value
-
-            if (value.address.serialize().isNotEmpty()) {
-                field.addListener(this)
-                setProfile()
-            }
-        }
-    private var accountContext = AMELogin.accountContext("")
+    private lateinit var recipient: Recipient
+    private lateinit var accountItem: HomeAccountItem
 
     var isAccountBackup = true
         set(value) {
@@ -105,6 +89,14 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
                 updateHomeUnread(field + chatUnread)
             }
         }
+
+    fun setAccountItem(accountItem: HomeAccountItem) {
+        recipient.removeListener(this)
+        recipient = Recipient.from(accountItem.accountContext, accountItem.account.uid, true)
+        recipient.addListener(this)
+
+        setProfile()
+    }
 
     private fun updateHomeUnread(unread: Int) {
         ALog.i(TAG, "updateHomeUnread: $unread")
@@ -171,7 +163,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            it.context.startBcmActivity(accountContext, Intent(it.context, NewScanActivity::class.java).apply {
+            it.context.startBcmActivity(accountItem.accountContext, Intent(it.context, NewScanActivity::class.java).apply {
                 putExtra(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_CONTACT)
                 putExtra(ARouterConstants.PARAM.SCAN.HANDLE_DELEGATE, true)
             })
@@ -183,7 +175,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             BcmRouter.getInstance()
                     .get(ARouterConstants.Activity.PROFILE_EDIT)
                     .putBoolean(ARouterConstants.PARAM.ME.PROFILE_EDIT_SELF, true)
-                    .startBcmActivity(accountContext)
+                    .startBcmActivity(accountItem.accountContext)
         }
         home_profile_wallet_icon.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
@@ -191,20 +183,20 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             }
             BcmRouter.getInstance()
                     .get(ARouterConstants.Activity.WALLET_MAIN)
-                    .startBcmActivity(accountContext)
+                    .startBcmActivity(accountItem.accountContext)
         }
         home_profile_vault_icon.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            AmeModuleCenter.user(accountContext)?.gotoDataNote(context, accountContext)
+            AmeModuleCenter.user(accountItem.accountContext)?.gotoDataNote(context, accountItem.accountContext)
         }
         home_profile_air_chat_icon.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            val adhocProvider = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
-            adhocProvider?.configHocMode()
+            val adhocModule = AmeModuleCenter.adhoc(accountItem.accountContext)
+            adhocModule?.configHocMode()
         }
 
         showAllViews()

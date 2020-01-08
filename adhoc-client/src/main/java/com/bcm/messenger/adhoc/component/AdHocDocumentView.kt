@@ -9,6 +9,7 @@ import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
 import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
 import com.bcm.messenger.adhoc.logic.AdHocMessageModel
 import com.bcm.messenger.chats.util.ChatComponentListener
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmFileUtils
@@ -31,15 +32,6 @@ class AdHocDocumentView @JvmOverloads constructor(context: Context, attrs: Attri
         val v = resources.getDimensionPixelSize(R.dimen.common_vertical_gap)
         val h = resources.getDimensionPixelSize(R.dimen.common_horizontal_gap)
         setPadding(h, v, h, v)
-
-        AdHocMessageLogic.getModel()?.addOnMessageListener(object : AdHocMessageModel.DefaultOnMessageListener() {
-            override fun onProgress(message: AdHocMessageDetail, progress: Float) {
-                if (mAdHocMessage == message) {
-                    mAdHocMessage?.attachmentProgress = progress
-                    updateProgress(progress)
-                }
-            }
-        })
     }
 
     private fun updateProgress(progress: Float) {
@@ -62,8 +54,17 @@ class AdHocDocumentView @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    fun setDocument(messageRecord: AdHocMessageDetail) {
+    fun setDocument(accountContext: AccountContext, messageRecord: AdHocMessageDetail) {
         mAdHocMessage = messageRecord
+
+        AdHocMessageLogic.get(accountContext).getModel()?.addOnMessageListener(object : AdHocMessageModel.DefaultOnMessageListener() {
+            override fun onProgress(message: AdHocMessageDetail, progress: Float) {
+                if (mAdHocMessage == message) {
+                    mAdHocMessage?.attachmentProgress = progress
+                    updateProgress(progress)
+                }
+            }
+        })
 
         if (messageRecord.toAttachmentUri() != null) {
             document_download?.visibility = View.GONE

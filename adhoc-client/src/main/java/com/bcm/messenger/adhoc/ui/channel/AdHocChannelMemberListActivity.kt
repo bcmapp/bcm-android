@@ -10,6 +10,7 @@ import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.chats.components.recyclerview.SelectionDataSource
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AMELogin
@@ -51,12 +52,12 @@ class AdHocChannelMemberListActivity: SwipeBaseActivity(), AmeRecycleViewAdapter
         adapter.setHasStableIds(true)
         adhoc_member_list_list.adapter = adapter
 
-        dataSource.updateDataSource(AdHocChannelLogic.getChannelUserList(sessionId))
+        dataSource.updateDataSource(AdHocChannelLogic.get(accountContext).getChannelUserList(sessionId))
     }
 
     override fun createViewHolder(adapter: AmeRecycleViewAdapter<ChannelUserInfo>, inflater: LayoutInflater, parent: ViewGroup, viewType: Int): AmeRecycleViewAdapter.ViewHolder<ChannelUserInfo> {
         val view = inflater.inflate(R.layout.adhoc_channel_member_list_item, parent, false)
-        return MemberHolder(view)
+        return MemberHolder(accountContext, view)
     }
 
     override fun onViewClicked(adapter: AmeRecycleViewAdapter<ChannelUserInfo>, viewHolder: AmeRecycleViewAdapter.ViewHolder<ChannelUserInfo>) {
@@ -71,12 +72,12 @@ class AdHocChannelMemberListActivity: SwipeBaseActivity(), AmeRecycleViewAdapter
         AmeModuleCenter.contact(accountContext)?.openContactDataActivity(this, address, holder.getData()?.name)
     }
 
-    inner class MemberHolder(view: View):AmeRecycleViewAdapter.ViewHolder<ChannelUserInfo>(view) {
+    inner class MemberHolder(private val accountContext: AccountContext, view: View):AmeRecycleViewAdapter.ViewHolder<ChannelUserInfo>(view) {
         private val avatar = view.findViewById<IndividualAvatarView>(R.id.adhoc_member_item_avatar)
         private val name = view.findViewById<EmojiTextView>(R.id.adhoc_member_item_name)
         override fun setData(data: ChannelUserInfo) {
             super.setData(data)
-            avatar.setPhoto(Recipient.from(AMELogin.majorContext, data.uid, true), data.name, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+            avatar.setPhoto(Recipient.from(accountContext, data.uid, true), data.name, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
             name.text = data.name
         }
     }

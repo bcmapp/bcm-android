@@ -72,7 +72,7 @@ class AdHocPreviewFragment : BaseFragment(), MediaMoreView.MoreViewActionListene
 
     override fun onDestroy() {
         super.onDestroy()
-        AdHocMessageLogic.getModel()?.removeOnMessageListener(mAttachmentProgressCallback ?: return)
+        AdHocMessageLogic.get(accountContext).getModel()?.removeOnMessageListener(mAttachmentProgressCallback ?: return)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -142,7 +142,7 @@ class AdHocPreviewFragment : BaseFragment(), MediaMoreView.MoreViewActionListene
         mSessionId = activity.intent.getStringExtra(AdHocPreviewActivity.SESSION_ID)
         mIndexId = activity.intent.getLongExtra(AdHocPreviewActivity.INDEX_ID, 0L)
 
-        AdHocMessageLogic.getModel()?.findMessage(mIndexId) {
+        AdHocMessageLogic.get(accountContext).getModel()?.findMessage(mIndexId) {
             if (it == null) {
                 activity.finish()
                 return@findMessage
@@ -153,7 +153,7 @@ class AdHocPreviewFragment : BaseFragment(), MediaMoreView.MoreViewActionListene
                 setPreviewData(glide, attachmentUri,
                         activity.intent.getStringExtra(AdHocPreviewActivity.DATA_TYPE) ?: "")
 
-                AdHocMessageLogic.getModel()?.addOnMessageListener(mAttachmentProgressCallback ?: return@findMessage)
+                AdHocMessageLogic.get(accountContext).getModel()?.addOnMessageListener(mAttachmentProgressCallback ?: return@findMessage)
 
                 mListener?.onAttachmentComplete(attachmentUri != null)
             }

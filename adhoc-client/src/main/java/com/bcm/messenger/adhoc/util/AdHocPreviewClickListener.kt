@@ -14,6 +14,7 @@ import com.bcm.messenger.chats.BuildConfig
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.util.ChatComponentListener
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.activity.ApkInstallRequestActivity
@@ -32,12 +33,12 @@ import java.io.File
  *
  * Created by wjh on 2018/11/20
  */
-open class AdHocPreviewClickListener : ChatComponentListener {
+open class AdHocPreviewClickListener(private val accountContext: AccountContext) : ChatComponentListener {
 
     companion object {
         private val TAG = "AdHocPreviewClickListener"
 
-        private fun doForAdHoc(v: View, messageRecord: AdHocMessageDetail) {
+        private fun doForAdHoc(accountContext: AccountContext, v: View, messageRecord: AdHocMessageDetail) {
 
             if (AdHocPreviewActivity.isContentTypeSupported(messageRecord.getContentType())) {
                 val intent = Intent(v.context, AdHocPreviewActivity::class.java)
@@ -46,14 +47,14 @@ open class AdHocPreviewClickListener : ChatComponentListener {
                 intent.putExtra(AdHocPreviewActivity.DATA_TYPE, messageRecord.getContentType())
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(v.context as Activity, v, "${ShareElements.Activity.MEDIA_PREIVEW}${messageRecord.indexId}").toBundle()
-                gotoActivity(v.context, intent, bundle)
+                gotoActivity(accountContext, v.context, intent, bundle)
             } else {
                 val uri = messageRecord.toAttachmentUri() ?: return
-                doForOtherUri(v.context, uri, messageRecord.getContentType())
+                doForOtherUri(accountContext, v.context, uri, messageRecord.getContentType())
             }
         }
 
-        private fun doForOtherUri(context: Context, uri: Uri, mimeType: String?) {
+        private fun doForOtherUri(accountContext: AccountContext, context: Context, uri: Uri, mimeType: String?) {
 
             fun handle(uri: Uri, path: String?) {
                 ALog.i(TAG, "doForOtherUri: $uri, path: $path")
@@ -73,7 +74,7 @@ open class AdHocPreviewClickListener : ChatComponentListener {
                         mimeType
                     }
                     intent.setDataAndType(uri, type)
-                    gotoActivity(context, intent, null)
+                    gotoActivity(accountContext, context, intent, null)
                 }
             }
 
@@ -94,13 +95,13 @@ open class AdHocPreviewClickListener : ChatComponentListener {
                     })
         }
 
-        private fun gotoActivity(context: Context, intent: Intent, bundle: Bundle?) {
+        private fun gotoActivity(accountContext: AccountContext, context: Context, intent: Intent, bundle: Bundle?) {
             try {
                 if (context is Activity) {
                     context.startBcmActivity(AMELogin.majorContext, intent, bundle)
                 } else {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startBcmActivity(AMELogin.majorContext, intent, bundle)
+                    context.startBcmActivity(accountContext, intent, bundle)
                 }
             } catch (ex: Exception) {
                 ALog.e(TAG, "gotoActivity error", ex)
@@ -113,7 +114,7 @@ open class AdHocPreviewClickListener : ChatComponentListener {
     override fun onClick(v: View, data: Any) {
         try {
             if (data is AdHocMessageDetail) {
-                doForAdHoc(v, data)
+                doForAdHoc(accountContext, v, data)
             }
         } catch (ex: Exception) {
             ALog.e(TAG, "onClick error", ex)

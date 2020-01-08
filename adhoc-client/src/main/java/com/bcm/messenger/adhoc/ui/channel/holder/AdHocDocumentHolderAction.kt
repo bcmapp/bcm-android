@@ -4,23 +4,24 @@ import com.bcm.messenger.adhoc.component.AdHocDocumentView
 import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
 import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
 import com.bcm.messenger.adhoc.util.AdHocPreviewClickListener
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.mms.GlideRequests
 
 /**
  *
  * Created by wjh on 2019-08-27
  */
-class AdHocDocumentHolderAction() : BaseHolderAction<AdHocDocumentView>() {
+class AdHocDocumentHolderAction(private val accountContext: AccountContext) : BaseHolderAction<AdHocDocumentView>() {
 
-    private var mPreviewClickListener = AdHocPreviewClickListener()
+    private var mPreviewClickListener = AdHocPreviewClickListener(accountContext)
 
     override fun bindData(message: AdHocMessageDetail, body: AdHocDocumentView, glideRequests: GlideRequests, batchSelected: Set<AdHocMessageDetail>?) {
         body.setDocumentClickListener(mPreviewClickListener)
-        body.setDocument(message)
+        body.setDocument(accountContext, message)
     }
 
     override fun resend(message: AdHocMessageDetail) {
-        AdHocMessageLogic.resend(message)
+        AdHocMessageLogic.get(accountContext).resend(message)
 
     }
 

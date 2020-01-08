@@ -1,6 +1,7 @@
 package com.bcm.messenger.adhoc.search
 
 import com.bcm.messenger.adhoc.logic.AdHocSession
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.finder.BcmFindData
 import com.bcm.messenger.common.finder.BcmFinderType
 import com.bcm.messenger.common.finder.IBcmFindResult
@@ -15,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference
  *
  * Created by wjh on 2019-09-08
  */
-class BcmAdHocFinder : IBcmFinder {
+class BcmAdHocFinder(private val accountContext: AccountContext) : IBcmFinder {
 
     private val TAG = "BcmAdHocFinder"
     private val mSearchLock = AtomicReference(CountDownLatch(1))
@@ -54,12 +55,12 @@ class BcmAdHocFinder : IBcmFinder {
 
         var one = map[entry1]
         if (one == null) {
-            one = getCharacterLetterIndex(entry1.displayName())
+            one = getCharacterLetterIndex(entry1.displayName(accountContext))
             map[entry1] = one
         }
         var two = map[entry2]
         if (two == null) {
-            two = getCharacterLetterIndex(entry2.displayName())
+            two = getCharacterLetterIndex(entry2.displayName(accountContext))
             map[entry2] = two
         }
 
@@ -130,7 +131,7 @@ class BcmAdHocFinder : IBcmFinder {
                     if (mChanged) {
                         return listOf()
                     }
-                    if (StringAppearanceUtil.containIgnore(s.displayName(), mKeyword)) {
+                    if (StringAppearanceUtil.containIgnore(s.displayName(accountContext), mKeyword)) {
                         resultList.add(BcmFindData(s))
                         i++
                     }
@@ -153,7 +154,7 @@ class BcmAdHocFinder : IBcmFinder {
                     if (mChanged) {
                         return listOf()
                     }
-                    if (StringAppearanceUtil.containIgnore(s.displayName(), mKeyword)) {
+                    if (StringAppearanceUtil.containIgnore(s.displayName(accountContext), mKeyword)) {
                         resultList.add(BcmFindData(s))
                     }
                 }

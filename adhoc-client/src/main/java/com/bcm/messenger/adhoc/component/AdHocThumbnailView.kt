@@ -11,6 +11,7 @@ import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
 import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
 import com.bcm.messenger.adhoc.logic.AdHocMessageModel
 import com.bcm.messenger.chats.util.ChatComponentListener
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.mms.DecryptableStreamUriLoader.DecryptableUri
 import com.bcm.messenger.common.mms.GlideRequests
@@ -56,15 +57,6 @@ class AdHocThumbnailView @JvmOverloads constructor(context: Context, attrs: Attr
         lp.height = mMaxHeight
         thumbnail_card.layoutParams = lp
         thumbnail_card.radius = mImageRadius.toFloat()
-
-        AdHocMessageLogic.getModel()?.addOnMessageListener(object : AdHocMessageModel.DefaultOnMessageListener() {
-            override fun onProgress(message: AdHocMessageDetail, progress: Float) {
-                if (mAdHocMessage == message) {
-                    mAdHocMessage?.attachmentProgress = progress
-                    updateProgress(progress)
-                }
-            }
-        })
     }
 
     private fun updateProgress(progress: Float) {
@@ -121,11 +113,21 @@ class AdHocThumbnailView @JvmOverloads constructor(context: Context, attrs: Attr
         }
     }
 
-    fun setImage(glideRequests: GlideRequests, messageRecord: AdHocMessageDetail) {
+    fun setImage(accountContext: AccountContext, glideRequests: GlideRequests, messageRecord: AdHocMessageDetail) {
 
         ALog.d(TAG, "setImage messageRecord sessionId: ${messageRecord.sessionId}, indexId: ${messageRecord.indexId}")
         mAdHocMessage = messageRecord
         mGlideRequests = glideRequests
+
+        AdHocMessageLogic.get(accountContext).getModel()?.addOnMessageListener(object : AdHocMessageModel.DefaultOnMessageListener() {
+            override fun onProgress(message: AdHocMessageDetail, progress: Float) {
+                if (mAdHocMessage == message) {
+                    mAdHocMessage?.attachmentProgress = progress
+                    updateProgress(progress)
+                }
+            }
+        })
+
         updateState(messageRecord)
         setEncryptedThumbnail(glideRequests, messageRecord)
     }

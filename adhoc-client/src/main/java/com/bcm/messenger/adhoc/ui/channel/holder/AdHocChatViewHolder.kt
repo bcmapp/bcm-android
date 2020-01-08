@@ -146,7 +146,7 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
         mPhotoView?.setOnLongClickListener {
             val messageSubject = mMessageSubject
             if (messageSubject != null) {
-                AdHocMessageLogic.getModel()?.addAt(messageSubject.fromId, messageSubject.nickname)
+                AdHocMessageLogic.get(accountContext).getModel()?.addAt(messageSubject.fromId, messageSubject.nickname)
             }
             true
         }
@@ -197,43 +197,43 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
             AmeGroupMessage.TEXT -> {
                 v = getInflateView(R.id.conversation_message)
                 if (action == null) {
-                    action = AdHocTextHolderAction()
+                    action = AdHocTextHolderAction(accountContext)
                 }
             }
             AmeGroupMessage.ADHOC_INVITE -> {
                 v = getInflateView(R.id.conversation_join)
                 if (action == null) {
-                    action = AdHocJoinHolderAction()
+                    action = AdHocJoinHolderAction(accountContext)
                 }
             }
             AmeGroupMessage.IMAGE -> {
                 v = getInflateView(R.id.conversation_thumbnail)
                 if (action == null) {
-                    action = AdHocThumbnailHolderAction()
+                    action = AdHocThumbnailHolderAction(accountContext)
                 }
             }
             AmeGroupMessage.VIDEO -> {
                 v = getInflateView(R.id.conversation_video)
                 if (action == null) {
-                    action = AdHocThumbnailHolderAction()
+                    action = AdHocThumbnailHolderAction(accountContext)
                 }
             }
             AmeGroupMessage.FILE -> {
                 v = getInflateView(R.id.conversation_document)
                 if (action == null) {
-                    action = AdHocDocumentHolderAction()
+                    action = AdHocDocumentHolderAction(accountContext)
                 }
             }
             AmeGroupMessage.AUDIO -> {
                 v = getInflateView(R.id.conversation_audio)
                 if (action == null) {
-                    action = AdHocAudioHolderAction()
+                    action = AdHocAudioHolderAction(accountContext)
                 }
             }
             else -> {
                 v = getInflateView(R.id.conversation_not_support)
                 if (action == null) {
-                    action = AdHocJoinHolderAction()
+                    action = AdHocJoinHolderAction(accountContext)
                 }
             }
         }
@@ -251,7 +251,7 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
             mPhotoView?.visibility = View.GONE
             mNickView?.visibility = View.GONE
         }  else {
-            val session = AdHocSessionLogic.getSession(message.sessionId)
+            val session = AdHocSessionLogic.get(accountContext).getSession(message.sessionId)
             if (session != null && session.isChannel()) {
                 mPhotoView?.visibility = View.VISIBLE
                 mNickView?.visibility = View.VISIBLE
@@ -343,7 +343,7 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
                     }
 
                     override fun onDelete() {
-                        AdHocMessageLogic.getModel()?.deleteMessage(listOf(messageDetail)) {
+                        AdHocMessageLogic.get(accountContext).getModel()?.deleteMessage(listOf(messageDetail)) {
                             ALog.i(TAG, "delete Message : ${messageDetail.indexId} result: $it")
                         }
                     }
@@ -351,7 +351,7 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
                     override fun onForward() {
                         val messageSubject = mMessageSubject
                         if (messageSubject != null) {
-                            AdHocMessageLogic.getModel()?.forward(messageSubject)
+                            AdHocMessageLogic.get(accountContext).getModel()?.forward(messageSubject)
                         }
                     }
 

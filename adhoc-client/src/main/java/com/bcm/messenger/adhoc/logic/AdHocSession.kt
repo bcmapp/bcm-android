@@ -1,6 +1,7 @@
 package com.bcm.messenger.adhoc.logic
 
 import com.bcm.messenger.adhoc.util.AdHocUtil
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 
@@ -44,23 +45,23 @@ data class AdHocSession(val sessionId:String,
     }
 
 
-    fun displayName(): String {
+    fun displayName(accountContext: AccountContext): String {
         return if (isChannel()) {
-            AdHocChannelLogic.getChannel(cid)?.viewName() ?: cid
+            AdHocChannelLogic.get(accountContext).getChannel(cid)?.viewName() ?: cid
         } else {
             if (mRecipient == null) {
-                mRecipient = Recipient.from(AMELogin.majorContext, uid, true)
+                mRecipient = Recipient.from(accountContext, uid, true)
             }
             mRecipient?.name ?: uid
         }
     }
 
 
-    fun isValid(): Boolean {
+    fun isValid(accountContext: AccountContext): Boolean {
         return if (isChannel()) {
-            AdHocChannelLogic.isOnline()
+            AdHocChannelLogic.get(accountContext).isOnline()
         } else {
-            AdHocChannelLogic.getChannelUser(AdHocUtil.officialSessionId(), uid) != null
+            AdHocChannelLogic.get(accountContext).getChannelUser(AdHocUtil.officialSessionId(), uid) != null
         }
     }
 

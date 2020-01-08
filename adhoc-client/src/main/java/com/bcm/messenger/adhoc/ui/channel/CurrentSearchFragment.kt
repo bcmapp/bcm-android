@@ -51,7 +51,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic
 
     override fun onDestroyView() {
         super.onDestroyView()
-        AdHocChannelLogic.removeListener(this)
+        AdHocChannelLogic.get(accountContext).removeListener(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -84,7 +84,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic
             doSearchAction(mKeyword, mSearchLimit, mTypes)
         }
 
-        AdHocChannelLogic.addListener(this)
+        AdHocChannelLogic.get(accountContext).addListener(this)
     }
 
     override fun setKeyword(keyword: String, searchLimit: Boolean) {
@@ -197,8 +197,8 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic
             when(sd.type) {
                 BcmFinderType.AIR_CHAT -> {
                     val session = sd.tag as AdHocSession
-                    contentLogo.setSession(session)
-                    contentName.text = applyContentName(session.displayName())
+                    contentLogo.setSession(accountContext, session)
+                    contentName.text = applyContentName(session.displayName(accountContext))
                 }
                 else -> {
                     ALog.d(TAG, "bind nothing")

@@ -2,15 +2,37 @@ package com.bcm.messenger.adhoc.logic
 
 import com.bcm.messenger.adhoc.sdk.AdHocSDK
 import com.bcm.messenger.adhoc.sdk.AdHocSessionSDK
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import java.util.concurrent.atomic.AtomicInteger
 
-object AdHocSessionLogic : AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHocSessionEventListener {
-    private const val TAG = "AdHocSessionLogic"
+class AdHocSessionLogic(private val accountContext: AccountContext) : AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdHocSessionEventListener {
     private var listener: IAdHocSessionListener? = null
     private val sdk = AdHocSDK.messengerSdk
     private lateinit var sessionCache: AdHocSessionCache
+
+    companion object {
+        private const val TAG = "AdHocSessionLogic"
+
+        private var logic: AdHocSessionLogic? = null
+        fun get(accountContext: AccountContext): AdHocSessionLogic {
+            synchronized(TAG) {
+                var logic = this.logic
+                return if (null != logic && logic.accountContext == accountContext) {
+                    logic
+                } else {
+                    logic = AdHocSessionLogic(accountContext)
+                    this.logic = logic
+                    logic
+                }
+            }
+        }
+
+        fun remove() {
+            logic = null
+        }
+    }
 
     init {
 
@@ -28,24 +50,23 @@ object AdHocSessionLogic : AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdH
         val initFinish = AtomicInteger(0)
         AdHocSDK.addEventListener(this)
         sdk.addEventListener(this)
-        AdHocChannelLogic.instance().addListener(object : AdHocChannelLogic.IAdHocChannelListener {
+        AdHocChannelLogic.get(accountContext).instance().addListener(object : AdHocChannelLogic.IAdHocChannelListener {
             override fun onReady() {
                 checkInitFinish(initFinish.addAndGet(1))
             }
         })
-        sessionCache = AdHocSessionCache {
+        sessionCache = AdHocSessionCache(accountContext) {
             ALog.i(TAG, "session cache ${it.size}")
             this.listener?.onSessionListChanged()
             checkInitFinish(initFinish.addAndGet(1))
         }
-        AdHocMessageLogic.instance()
     }
 
     private fun syncSessions(list: List<AdHocSession>) {
         ALog.i(TAG, "syncSessions list: ${list.size}")
         list.forEach {
             if (it.cid.isNotEmpty()) {
-                val channel = AdHocChannelLogic.getChannel(it.cid)
+                val channel = AdHocChannelLogic.get(accountContext).getChannel(it.cid)
                 if (channel != null) {
                     sdk.addChannel(channel.channelName, channel.passwd) { }
                 }
@@ -163,7 +184,7 @@ object AdHocSessionLogic : AdHocSDK.IAdHocSDKEventListener, AdHocSessionSDK.IAdH
     fun addChannelSession(name: String, passwd: String, result: (sessionId: String) -> Unit) {
         sdk.addChannel(name, passwd) {
             if (it.isNotEmpty()) {
-                AdHocChannelLogic.addChannel(name, passwd)
+                AdHocChannelLogic.get(accountContext).addChannel(name, passwd)
                 AmeDispatcher.mainThread.dispatch {
                     sessionCache.saveChannelSession(it, AdHocChannel.cid(name, passwd)) { changed ->
                         if (changed) {

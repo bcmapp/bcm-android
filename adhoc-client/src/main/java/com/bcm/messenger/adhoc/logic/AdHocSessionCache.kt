@@ -1,6 +1,7 @@
 package com.bcm.messenger.adhoc.logic
 
 import com.bcm.messenger.adhoc.search.BcmAdHocFinder
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.grouprepository.room.dao.AdHocChannelDao
@@ -14,15 +15,15 @@ import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 
-class AdHocSessionCache(ready:(list:List<AdHocSession>)->Unit) {
+class AdHocSessionCache(private val accountContext: AccountContext, ready:(list:List<AdHocSession>)->Unit) {
 
     private val sessionList = HashMap<String, AdHocSession>()
-    private val sessionFinder = BcmAdHocFinder()
+    private val sessionFinder = BcmAdHocFinder(accountContext)
 
     init {
         ALog.i("AdHocSessionCache", "init begin")
         fun initPrivateChatUser(sessionList: List<AdHocSession>) {
-            val repo = Repository.getRecipientRepo(AMELogin.majorContext)
+            val repo = Repository.getRecipientRepo(accountContext)
             val uidMap = mutableMapOf<String, AdHocSession>()
             sessionList.forEach {
                 if (it.isChat()) {
@@ -32,11 +33,11 @@ class AdHocSessionCache(ready:(list:List<AdHocSession>)->Unit) {
             val settings = repo?.getRecipients(uidMap.keys)
             settings?.forEach {
                 ALog.i("AdHocSessionCache", "initPrivateChatUser uid: ${it.uid}")
-                uidMap[it.uid]?.updateRecipient(Recipient.fromSnapshot(AMELogin.majorContext, it.uid, it))
+                uidMap[it.uid]?.updateRecipient(Recipient.fromSnapshot(accountContext, it.uid, it))
             }
         }
 
-        BcmFinderManager.get(AMELogin.majorContext).registerFinder(sessionFinder)
+        BcmFinderManager.get(accountContext).registerFinder(sessionFinder)
         Observable.create<List<AdHocSession>> { em ->
             val sessionList = mutableListOf<AdHocSession>()
             val messageDao = messageDao()
@@ -71,7 +72,7 @@ class AdHocSessionCache(ready:(list:List<AdHocSession>)->Unit) {
             val session = AdHocSession(sessionId, "", uid, timestamp = AmeTimeUtil.localTimeMillis())
             sessionList[sessionId] = session
             AmeDispatcher.io.dispatch {
-                session.updateRecipient(Recipient.from(AMELogin.majorContext, uid, false))
+                session.updateRecipient(Recipient.from(accountContext, uid, false))
                 sessionFinder.updateSource(sessionList.values.toList())
                 val dbSession = AdHocSessionInfo(sessionId, session.cid, session.uid, timestamp = session.timestamp)
                 getDao().saveSession(dbSession)
@@ -174,17 +175,17 @@ class AdHocSessionCache(ready:(list:List<AdHocSession>)->Unit) {
 
     @Throws(Exception::class)
     private fun messageDao(): AdHocMessageDao {
-        return Repository.getAdHocMessageRepo(AMELogin.majorContext) ?: throw Exception("getMessageDao fail")
+        return Repository.getAdHocMessageRepo(accountContext) ?: throw Exception("getMessageDao fail")
     }
 
     @Throws(Exception::class)
     private fun getDao(): AdHocSessionDao {
-        return Repository.getAdHocSessionRepo(AMELogin.majorContext) ?: throw Exception("getSessionDao fail")
+        return Repository.getAdHocSessionRepo(accountContext) ?: throw Exception("getSessionDao fail")
     }
 
     @Throws(Exception::class)
     private fun channelDao(): AdHocChannelDao {
-        return Repository.getAdHocChannelRepo(AMELogin.majorContext)?: throw Exception("getChannelDao fail")
+        return Repository.getAdHocChannelRepo(accountContext)?: throw Exception("getChannelDao fail")
     }
 
     fun updatePin(sessionId: String, pin: Boolean): Boolean {

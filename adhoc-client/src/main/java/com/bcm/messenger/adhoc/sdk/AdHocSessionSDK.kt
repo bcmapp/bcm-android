@@ -7,6 +7,7 @@ import com.bcm.imcore.im.MessageStore
 import com.bcm.imcore.im.util.SessionStatus
 import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
 import com.bcm.messenger.adhoc.util.AdHocUtil
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.GsonUtils
@@ -28,9 +29,11 @@ class AdHocSessionSDK : IAdHocMessageListener.Stub() {
     private val eventListenerSet = Collections.newSetFromMap(WeakHashMap<IAdHocSessionEventListener, Boolean>())
     private val sendingMap = HashMap<String, SendingChat>()
     private var transferFileThread: Scheduler? = null
+    private lateinit var accountContext: AccountContext
 
-    fun init(sdkApi: IAdHocBinder) {
+    fun init(accountContext: AccountContext, sdkApi: IAdHocBinder) {
         this.sdkApi = sdkApi
+        this.accountContext = accountContext
         sdkApi.addMessageListener(this)
         transferFileThread = Schedulers.from(Executors.newSingleThreadExecutor())
     }
@@ -349,7 +352,7 @@ class AdHocSessionSDK : IAdHocMessageListener.Stub() {
                 proto.type == MessageStore.MessageType.ChannelChat,
                 null)
 
-        val atMe = (content.atList?.any { it == AdHocMessageLogic.myAdHocId() } == true)
+        val atMe = (content.atList?.any { it == AdHocMessageLogic.get(accountContext).myAdHocId() } == true)
 
         AmeDispatcher.singleScheduler.scheduleDirect {
             eventListenerSet.forEach {

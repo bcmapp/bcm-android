@@ -61,7 +61,7 @@ class AdHocInviteJoinActivity : SwipeBaseActivity() {
 
         val cid = intent.getStringExtra(ARouterConstants.PARAM.ADHOC.CID) ?: ""
         sessionId = intent.getStringExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION)?:""
-        channel = AdHocChannelLogic.getChannel(cid)
+        channel = AdHocChannelLogic.get(accountContext).getChannel(cid)
 
         invite_room_et.text = channel?.viewName()
         invite_password_et.text = channel?.passwd
@@ -80,7 +80,7 @@ class AdHocInviteJoinActivity : SwipeBaseActivity() {
                     null
                 }
                 if (myName != null) {
-                    AdHocMessageLogic.sendInvite(newSessionId, myName, newChannel.channelName, newChannel.passwd)
+                    AdHocMessageLogic.get(accountContext).sendInvite(newSessionId, myName, newChannel.channelName, newChannel.passwd)
                     AmePopup.result.succeed(this, getString(R.string.adhoc_invite_forward_success), true)
 
                 }

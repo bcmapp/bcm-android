@@ -1,9 +1,12 @@
 package com.bcm.messenger.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
+import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.bean.AmeAccountData
 import com.bcm.messenger.login.logic.AmeLoginLogic
@@ -52,7 +55,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
             HomeAddAccountView(context)
         } else {
             HomeProfileView(context).apply {
-                accountItem = account
+                setAccountItem(account)
                 isLogin = account.type == TYPE_ONLINE
                 isActive = position == lastActivePos
 //                if (position == lastActivePos) {
@@ -138,18 +141,20 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
         return -1
     }
 
+    @SuppressLint("CheckResult")
     fun loadAccounts() {
         Observable.create<List<HomeAccountItem>> {
             val dataList = mutableListOf<HomeAccountItem>()
             val list = AmeLoginLogic.getAccountList()
-            dataList.add(HomeAccountItem(TYPE_ADD, AmeAccountData().apply { uid = "ADD" }))
+            dataList.add(HomeAccountItem(TYPE_ADD, AmeAccountData().apply { uid = "ADD" }, AccountContext("","","")))
             list.forEach { accountData ->
-                val type = if ((accountData as AmeAccountData).curLogin) {
+                val accountContext = AmeModuleCenter.login().getAccountContext(accountData.uid)
+                val type = if (accountContext.isLogin) {
                     TYPE_ONLINE
                 } else {
                     TYPE_OFFLINE
                 }
-                dataList.add(HomeAccountItem(type, accountData))
+                dataList.add(HomeAccountItem(type, accountData, accountContext))
             }
             it.onNext(dataList)
             it.onComplete()

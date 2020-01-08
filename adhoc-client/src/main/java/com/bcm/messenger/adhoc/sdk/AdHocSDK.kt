@@ -21,6 +21,7 @@ import com.bcm.imcore.im.util.ImCoreLogger
 import com.bcm.imcore.im.util.secure.DHUtil
 import com.bcm.imcore.im.util.secure.IDHHelper
 import com.bcm.messenger.adhoc.R
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.AmeNotification
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.provider.AMELogin
@@ -56,6 +57,7 @@ object AdHocSDK {
     private var netSnapshot = NetSnapshot()
     private var logSource =  AdHocLoggerSource()
     private var mTargetClass: Class<out Activity>? = null
+    private var accountContext:AccountContext? = null
 
     val messengerSdk = AdHocSessionSDK()
 
@@ -72,8 +74,9 @@ object AdHocSDK {
                 ALog.i(TAG, "rebinding for adhoc")
                 connected = false
                 binding = false
+                val accountContext = this@AdHocSDK.accountContext?:return
                 AmeDispatcher.mainThread.dispatch ({
-                    init(AppContextHolder.APP_CONTEXT)
+                    init(accountContext, AppContextHolder.APP_CONTEXT)
                 }, 2000)
             }
         }
@@ -156,11 +159,12 @@ object AdHocSDK {
 
     private fun initSdk(sdkApi: IAdHocBinder) {
         this.sdkApi = sdkApi
+        val accountContext = this.accountContext?:return
 
         sdkApi.addAdHocListener(adHocListener)
         sdkApi.init(object :IAccountAuth.Stub() {
             override fun sign(data: ByteArray): ByteArray {
-                val priKey: ECPrivateKey = Curve.decodePrivatePoint(BCMEncryptUtils.getMyPrivateKey(AMELogin.majorContext))
+                val priKey: ECPrivateKey = Curve.decodePrivatePoint(BCMEncryptUtils.getMyPrivateKey(accountContext))
                 return BCMPrivateKeyUtils.sign(priKey, data)
             }
 
@@ -171,19 +175,19 @@ object AdHocSDK {
             }
 
             override fun getPublicKey(): ByteArray {
-                return BCMEncryptUtils.getMyPublicKey(AMELogin.majorContext)
+                return BCMEncryptUtils.getMyPublicKey(accountContext)
             }
 
             override fun getUid(): String {
-                return AMELogin.majorUid
+                return accountContext.uid
             }
 
             override fun getName(): String {
-                return Recipient.from(AMELogin.majorContext, AMELogin.majorUid, true).name
+                return Recipient.from(accountContext, accountContext.uid, true).name
             }
 
             override fun getAccountDir(): String {
-                val accountDir = AmeModuleCenter.login().getAccountContext(AMELogin.majorUid).accountDir
+                val accountDir = AmeModuleCenter.login().getAccountContext(accountContext.uid).accountDir
                 val dir =  File(accountDir, "airchat")
                 if (!dir.exists()) {
                     dir.mkdirs()
@@ -193,7 +197,7 @@ object AdHocSDK {
             }
 
         })
-        messengerSdk.init(sdkApi)
+        messengerSdk.init(accountContext, sdkApi)
 
         val sdkHelper = AdHocSdkHelper(sdkApi) {
             AmeDispatcher.singleScheduler.scheduleDirect {
@@ -343,8 +347,9 @@ object AdHocSDK {
     }
 
 
-    fun init(context: Context): Boolean {
+    fun init(accountContext: AccountContext, context: Context): Boolean {
         ALog.i(TAG, "init for adhoc")
+        this.accountContext = accountContext
         if (binding) {
             ALog.i(TAG, "init already called")
             return true
@@ -364,6 +369,7 @@ object AdHocSDK {
 
     fun unInit(context: Context) {
         ALog.i(TAG, "unInit  for adhoc")
+        accountContext = null
         if (!binding) {
             return
         }

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.component.AdHocSessionAvatar
 import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
+import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
 import com.bcm.messenger.adhoc.logic.AdHocSession
 import com.bcm.messenger.adhoc.logic.AdHocSessionLogic
 import com.bcm.messenger.adhoc.ui.channel.AdHocConversationActivity
@@ -27,6 +28,7 @@ import com.bcm.messenger.adhoc.ui.channel.RecentSearchFragment
 import com.bcm.messenger.adhoc.ui.setting.AdHocDevSettingActivity
 import com.bcm.messenger.adhoc.ui.setting.AdHocSettingActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.event.HomeTabEvent
@@ -64,8 +66,8 @@ class AdHocMainFragment: BaseFragment(),
         private const val SESSION_TYPE = 1
     }
 
-    private val deviceStateListener = AdHocDeviceStateListener()
-    private val adHocStep = AdHocConnectingStep()
+    private lateinit var deviceStateListener:AdHocDeviceStateListener
+    private lateinit var adHocStep:AdHocConnectingStep
 
     private lateinit var adHocRequire: AdHocDeviceRequire
     private var disposeRefresh:Disposable? = null
@@ -96,6 +98,9 @@ class AdHocMainFragment: BaseFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        deviceStateListener = AdHocDeviceStateListener(accountContext)
+        adHocStep = AdHocConnectingStep(accountContext)
+
         adHocRequire = AdHocDeviceRequire(view.context as Activity)
         adHocRequire.require()
 
@@ -155,15 +160,16 @@ class AdHocMainFragment: BaseFragment(),
         adapter.setHasStableIds(true)
         adhoc_main_channel_list.adapter = adapter
 
-        AdHocSessionLogic.setListener(this)
-        dataSource.updateDataSource(listOf(createSearchBarSessionData()) + AdHocSessionLogic.getSessionList())
-        RxBus.post(HomeTabEvent(HomeTabEvent.TAB_ADHOC, false, AdHocSessionLogic.getUnReadSessionCount()))
+        AdHocMessageLogic.get(accountContext)
+        AdHocSessionLogic.get(accountContext).setListener(this)
+        dataSource.updateDataSource(listOf(createSearchBarSessionData()) + AdHocSessionLogic.get(accountContext).getSessionList())
+        RxBus.post(HomeTabEvent(HomeTabEvent.TAB_ADHOC, false, AdHocSessionLogic.get(accountContext).getUnReadSessionCount()))
 
         deviceStateListener.setListener(this)
         deviceStateListener.init()
-        AdHocChannelLogic.setNotifyClass(activity?.javaClass)
-        AdHocChannelLogic.addListener(this)
-        AdHocChannelLogic.initAdHoc()
+        AdHocChannelLogic.get(accountContext).setNotifyClass(activity?.javaClass)
+        AdHocChannelLogic.get(accountContext).addListener(this)
+        AdHocChannelLogic.get(accountContext).initAdHoc(accountContext)
 
         activity?.window?.setStatusBarLightMode()
 
@@ -185,10 +191,10 @@ class AdHocMainFragment: BaseFragment(),
 
     override fun onDestroyView() {
         super.onDestroyView()
-        AdHocChannelLogic.unInitAdHoc()
+        AdHocChannelLogic.get(accountContext).unInitAdHoc()
         deviceStateListener.unInit()
         adHocStep.unInit()
-        AdHocChannelLogic.removeListener(this)
+        AdHocChannelLogic.get(accountContext).removeListener(this)
         adHocRequire.unRequire()
 
         if (disposeRefresh?.isDisposed == false) {
@@ -229,7 +235,7 @@ class AdHocMainFragment: BaseFragment(),
         }
         else {
             val view = inflater.inflate(R.layout.adhoc_channel_item_layout, parent, false)
-            return AdHocItemHolder(view)
+            return AdHocItemHolder(accountContext, view)
         }
     }
 
@@ -288,7 +294,7 @@ class AdHocMainFragment: BaseFragment(),
                                     .setTitle(R.string.chats_item_confirm_delete_title)
                                     .setMessage(R.string.chats_item_confirm_delete_message)
                                     .setPositiveButton(StringAppearanceUtil.applyAppearance(getString(R.string.chats_item_delete), color = getColor(R.color.common_color_ff3737))) { _, _ ->
-                                        AdHocSessionLogic.deleteSession(data.sessionId)
+                                        AdHocSessionLogic.get(accountContext).deleteSession(data.sessionId)
                                     }
                                     .setNegativeButton(R.string.chats_cancel, null)
                                     .show()
@@ -301,7 +307,7 @@ class AdHocMainFragment: BaseFragment(),
     }
 
     private fun switchNotePin(channelName: String, pin: Boolean) {
-        AdHocSessionLogic.updatePin(channelName, pin)
+        AdHocSessionLogic.get(accountContext).updatePin(channelName, pin)
     }
 
     private fun createSearchBarSessionData(): AdHocSession {
@@ -309,7 +315,7 @@ class AdHocMainFragment: BaseFragment(),
     }
 
 
-    class AdHocItemHolder(view:View):AmeRecycleViewAdapter.ViewHolder<AdHocSession>(view) {
+    class AdHocItemHolder(private val accountContext: AccountContext, view:View):AmeRecycleViewAdapter.ViewHolder<AdHocSession>(view) {
 
         private val avatar = view.findViewById<AdHocSessionAvatar>(R.id.adhoc_channel_item_avatar)
         private val titleView = view.findViewById<TextView>(R.id.adhoc_channel_item_name)
@@ -334,12 +340,12 @@ class AdHocMainFragment: BaseFragment(),
         override fun setData(data: AdHocSession) {
             super.setData(data)
             val context = itemView.context
-            var name = data.displayName()
+            var name = data.displayName(accountContext)
             if (data.isChannel()) {
-                name = "$name (${AdHocChannelLogic.getChannelUserCount(data.sessionId)})"
+                name = "$name (${AdHocChannelLogic.get(accountContext).getChannelUserCount(data.sessionId)})"
             }
             titleView.text = name
-            avatar.setSession(data)
+            avatar.setSession(accountContext, data)
 
             val  builder = SpannableStringBuilder()
             val text = if(!data.draft.isBlank() && data.unreadCount == 0) {
@@ -415,8 +421,8 @@ class AdHocMainFragment: BaseFragment(),
 
     override fun onSessionListChanged() {
         AmeDispatcher.mainThread.dispatch {
-            dataSource.updateDataSource(listOf(createSearchBarSessionData()) + AdHocSessionLogic.getSessionList())
-            RxBus.post(HomeTabEvent(HomeTabEvent.TAB_ADHOC, false, AdHocSessionLogic.getUnReadSessionCount()))
+            dataSource.updateDataSource(listOf(createSearchBarSessionData()) + AdHocSessionLogic.get(accountContext).getSessionList())
+            RxBus.post(HomeTabEvent(HomeTabEvent.TAB_ADHOC, false, AdHocSessionLogic.get(accountContext).getUnReadSessionCount()))
         }
     }
 
@@ -462,8 +468,8 @@ class AdHocMainFragment: BaseFragment(),
 
     override fun onReady() {
         AmeDispatcher.mainThread.dispatch {
-            dataSource.updateDataSource(listOf(createSearchBarSessionData()) + AdHocSessionLogic.getSessionList())
-            RxBus.post(HomeTabEvent(HomeTabEvent.TAB_ADHOC, false, AdHocSessionLogic.getUnReadSessionCount()))
+            dataSource.updateDataSource(listOf(createSearchBarSessionData()) + AdHocSessionLogic.get(accountContext).getSessionList())
+            RxBus.post(HomeTabEvent(HomeTabEvent.TAB_ADHOC, false, AdHocSessionLogic.get(accountContext).getUnReadSessionCount()))
         }
     }
 

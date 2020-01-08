@@ -1,6 +1,7 @@
 package com.bcm.messenger.adhoc.logic
 
 import androidx.lifecycle.ViewModel
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -11,7 +12,7 @@ import io.reactivex.schedulers.Schedulers
  * adhoc message model
  * Created by wjh on 2019/7/27
  */
-class AdHocMessageModel : ViewModel() {
+class AdHocMessageModel(private val accountContext: AccountContext) : ViewModel() {
 
     interface OnModelListener {
         fun onRecycle()
@@ -326,23 +327,23 @@ class AdHocMessageModel : ViewModel() {
 
 
     fun leaveChannel(callback: (result: Boolean) -> Unit) {
-        AdHocSessionLogic.deleteSession(mSessionId)
-        val session = AdHocSessionLogic.getSession(mSessionId)
+        AdHocSessionLogic.get(accountContext).deleteSession(mSessionId)
+        val session = AdHocSessionLogic.get(accountContext).getSession(mSessionId)
         if (session == null) {
             callback.invoke(false)
             return
         }
         if (session.cid.isNotEmpty()) {
-            AdHocChannelLogic.removeChannel(session.sessionId, session.cid)
+            AdHocChannelLogic.get(accountContext).removeChannel(session.sessionId, session.cid)
         } else {
-            AdHocChannelLogic.removeChat(session.sessionId)
+            AdHocChannelLogic.get(accountContext).removeChat(session.sessionId)
         }
         callback.invoke(true)
     }
 
 
     fun saveDraft(draft: CharSequence, callback: (result: Boolean) -> Unit) {
-        AdHocSessionLogic.updateDraft(mSessionId, draft.toString())
+        AdHocSessionLogic.get(accountContext).updateDraft(mSessionId, draft.toString())
         callback.invoke(true)
     }
 

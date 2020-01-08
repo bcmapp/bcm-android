@@ -82,7 +82,7 @@ class AdHocJoinChannelActivity: SwipeBaseActivity(), TextWatcher {
             return
         }
 
-        AdHocSessionLogic.addChannelSession(name, passwd) {
+        AdHocSessionLogic.get(accountContext).addChannelSession(name, passwd) {
             //enter session
             if (it.isNotEmpty()) {
                 startBcmActivity(Intent(this, AdHocConversationActivity::class.java).apply {

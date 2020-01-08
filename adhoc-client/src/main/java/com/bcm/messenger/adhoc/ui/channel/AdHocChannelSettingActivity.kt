@@ -13,6 +13,7 @@ import com.bcm.messenger.adhoc.logic.*
 import com.bcm.messenger.adhoc.util.AdHocUtil
 import com.bcm.messenger.chats.components.recyclerview.WrapContentGridLayoutManager
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AMELogin
@@ -66,18 +67,18 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        AdHocChannelLogic.removeListener(this)
+        AdHocChannelLogic.get(accountContext).removeListener(this)
     }
 
     private fun initView() {
         mSessionId = intent.getStringExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION) ?: ""
-        mSessionInfo = AdHocSessionLogic.getSession(mSessionId)
+        mSessionInfo = AdHocSessionLogic.get(accountContext).getSession(mSessionId)
         initNavigationBar()
         updateChannelView()
-        AdHocChannelLogic.addListener(this)
+        AdHocChannelLogic.get(accountContext).addListener(this)
 
         channel_invite_item.setOnClickListener {
-            val channel = AdHocChannelLogic.getChannel(mSessionInfo?.cid ?: "")
+            val channel = AdHocChannelLogic.get(accountContext).getChannel(mSessionInfo?.cid ?: "")
             if (channel != null) {
                 startBcmActivity(Intent(this, AdHocInviteJoinActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.ADHOC.CID, channel.cid)
@@ -94,7 +95,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
                 return@setOnClickListener
             }
             val pin = !channel_pin_item.getSwitchStatus()
-            AdHocSessionLogic.updatePin(mSessionId, pin)
+            AdHocSessionLogic.get(accountContext).updatePin(mSessionId, pin)
             channel_pin_item.setSwitchStatus(pin)
         }
 
@@ -104,7 +105,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
                 return@setOnClickListener
             }
             val mute = !channel_mute_item.getSwitchStatus()
-            AdHocSessionLogic.updateMute(mSessionId, mute)
+            AdHocSessionLogic.get(accountContext).updateMute(mSessionId, mute)
             channel_mute_item.setSwitchStatus(mute)
         }
 
@@ -115,7 +116,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
             AmePopup.bottom.newBuilder()
                     .withTitle(getString(R.string.adhoc_channel_setting_clear_notice))
                     .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clear), AmeBottomPopup.PopupItem.CLR_RED) {
-                        AdHocMessageLogic.getModel()?.clearHistory() {
+                        AdHocMessageLogic.get(accountContext).getModel()?.clearHistory() {
                             ALog.i(TAG, "clear local history result: $it")
                             if (it) {
                                 AmePopup.result.succeed(this, getString(R.string.adhoc_channel_setting_clear_success))
@@ -137,7 +138,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
             AmePopup.bottom.newBuilder()
                     .withTitle(getString(R.string.adhoc_channel_setting_leave_notice))
                     .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.adhoc_channel_setting_leave_action), AmeBottomPopup.PopupItem.CLR_RED) {
-                        AdHocMessageLogic.getModel()?.leaveChannel() {
+                        AdHocMessageLogic.get(accountContext).getModel()?.leaveChannel() {
                             ALog.i(TAG, "leave session result: $it")
                             if (it) {
                                 AmePopup.result.succeed(this, getString(R.string.adhoc_channel_setting_leave_success)) {
@@ -157,7 +158,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
 
 
     private fun updateMemberList() {
-        val list = AdHocChannelLogic.getChannelUserList(mSessionId)
+        val list = AdHocChannelLogic.get(accountContext).getChannelUserList(mSessionId)
         if (list.size <= 10) {
             onLineUserSource.updateDataSource(list)
         } else {
@@ -202,7 +203,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
     private fun updateChannelView() {
         val session = mSessionInfo ?: return
 
-        if (mSessionInfo?.isChannel() == true && AdHocChannelLogic.getChannel(session.cid)?.channelName == AdHocChannel.OFFICIAL_CHANNEL) {
+        if (mSessionInfo?.isChannel() == true && AdHocChannelLogic.get(accountContext).getChannel(session.cid)?.channelName == AdHocChannel.OFFICIAL_CHANNEL) {
             channel_leave_item?.visibility = View.GONE
         } else {
             channel_leave_item?.visibility = View.VISIBLE
@@ -210,11 +211,11 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
 
 
         session.getChatRecipient()?.addListener(this)
-        val name = session.displayName()
+        val name = session.displayName(accountContext)
         channel_control_name?.text = name
         channel_setting_title?.setCenterText(name)
 
-        channel_avatar_layout.setSession(session) { bitmap ->
+        channel_avatar_layout.setSession(accountContext, session) { bitmap ->
             if (bitmap != null) {
                 channel_header_layout?.setGradientBackground(bitmap) {
                     isBgLight = it
@@ -274,7 +275,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
                 if (mSessionInfo?.isChannel() == true) {
                     updateMemberList()
                 }
-                channel_avatar_layout?.setSession(mSessionInfo ?: return@dispatch)
+                channel_avatar_layout?.setSession(accountContext,mSessionInfo ?: return@dispatch)
             }
         }
     }
@@ -282,7 +283,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
     override fun onModified(recipient: Recipient) {
         if (recipient.address.serialize() == mSessionInfo?.uid) {
             mSessionInfo?.let {
-                val name = it.displayName()
+                val name = it.displayName(recipient.address.context())
                 channel_control_name?.text = name
                 channel_setting_title?.setCenterText(name)
             }
@@ -312,7 +313,7 @@ class AdHocChannelSettingActivity : SwipeBaseActivity(),
         override fun setData(data: ChannelUserInfo) {
             super.setData(data)
 
-            avatar.setPhoto(Recipient.from(AMELogin.majorContext, data.uid, true), data.name, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
+            avatar.setPhoto(Recipient.from(accountContext, data.uid, true), data.name, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
             name.text = data.name
         }
     }

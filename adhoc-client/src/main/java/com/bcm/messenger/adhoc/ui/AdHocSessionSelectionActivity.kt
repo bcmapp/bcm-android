@@ -74,7 +74,7 @@ class AdHocSessionSelectionActivity: SwipeBaseActivity(),AmeRecycleViewAdapter.I
             }
 
             override fun onMatch(data: AdHocSession, compare: String): Boolean {
-                val name = data.displayName()
+                val name = data.displayName(accountContext)
                 return StringAppearanceUtil.containIgnore(name, compare)
             }
         })
@@ -98,7 +98,7 @@ class AdHocSessionSelectionActivity: SwipeBaseActivity(),AmeRecycleViewAdapter.I
         }
 
         Observable.create<List<AdHocSession>> {
-            val list = AdHocSessionLogic.getSessionList().filter { it.sessionId != exceptSessionId }
+            val list = AdHocSessionLogic.get(accountContext).getSessionList().filter { it.sessionId != exceptSessionId }
             it.onNext(list)
             it.onComplete()
         }.subscribeOn(Schedulers.io())
@@ -146,8 +146,8 @@ class AdHocSessionSelectionActivity: SwipeBaseActivity(),AmeRecycleViewAdapter.I
         private val name = view.findViewById<EmojiTextView>(R.id.session_name_tv)
         override fun setData(data: AdHocSession) {
             super.setData(data)
-            avatar.setSession(data)
-            name.text = data.displayName()
+            avatar.setSession(accountContext, data)
+            name.text = data.displayName(accountContext)
             if (mMultiSelectMode) {
                 selection.visibility = View.VISIBLE
                 if (dataSource.isSelected(data)) {

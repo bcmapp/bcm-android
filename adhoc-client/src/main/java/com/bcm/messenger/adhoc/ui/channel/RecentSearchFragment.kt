@@ -36,7 +36,7 @@ class RecentSearchFragment() : BaseFragment(), AdHocChannelLogic.IAdHocChannelLi
                 return false
             }
             return if (record.type == BcmFinderType.AIR_CHAT) {
-                val session = AdHocSessionLogic.getSession(record.tag as String)
+                val session = AdHocSessionLogic.get(accountContext).getSession(record.tag as String)
                 session != null
             }
             else {
@@ -47,7 +47,7 @@ class RecentSearchFragment() : BaseFragment(), AdHocChannelLogic.IAdHocChannelLi
 
     override fun onDestroyView() {
         super.onDestroyView()
-        AdHocChannelLogic.removeListener(this)
+        AdHocChannelLogic.get(accountContext).removeListener(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -67,7 +67,7 @@ class RecentSearchFragment() : BaseFragment(), AdHocChannelLogic.IAdHocChannelLi
             adapter.setDataList(it)
         }
 
-        AdHocChannelLogic.addListener(this)
+        AdHocChannelLogic.get(accountContext).addListener(this)
     }
 
     override fun onChannelUserChanged(sessionList: List<String>) {
@@ -133,9 +133,9 @@ class RecentSearchFragment() : BaseFragment(), AdHocChannelLogic.IAdHocChannelLi
             val d = this.data ?: return
             when(d.type) {
                 BcmFinderType.AIR_CHAT -> {
-                    val s = AdHocSessionLogic.getSession(d.tag as String) ?: return
-                    photoView.setSession(s)
-                    nameView.text = s.displayName()
+                    val s = AdHocSessionLogic.get(accountContext).getSession(d.tag as String) ?: return
+                    photoView.setSession(accountContext, s)
+                    nameView.text = s.displayName(accountContext)
                     mActualData = s
                 }
                 else -> {

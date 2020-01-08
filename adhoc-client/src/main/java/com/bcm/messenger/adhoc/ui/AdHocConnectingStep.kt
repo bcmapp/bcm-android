@@ -3,6 +3,7 @@ package com.bcm.messenger.adhoc.ui
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.adhoc.sdk.AdHocSDK
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -14,7 +15,7 @@ import io.reactivex.disposables.Disposable
 import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 
-class AdHocConnectingStep {
+class AdHocConnectingStep(private val accountContext: AccountContext) {
     private val TAG = "AdHocConnectingStep"
     private var currentStep = STEP.INIT
     private var scanningStep: Disposable?= null
@@ -180,7 +181,7 @@ class AdHocConnectingStep {
 
     private fun stepFinished() {
         ALog.i(TAG, "stepFinished")
-        if (AdHocChannelLogic.isOnline()) {
+        if (AdHocChannelLogic.get(accountContext).isOnline()) {
             updateStep(STEP.FINISHED,connectingDevice)
         } else {
             stepScanning()

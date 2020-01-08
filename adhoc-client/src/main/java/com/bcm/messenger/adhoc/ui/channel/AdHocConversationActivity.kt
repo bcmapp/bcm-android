@@ -136,7 +136,7 @@ class AdHocConversationActivity : SwipeBaseActivity() {
         markAllRead {
             mSession = intent?.getStringExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION) ?: ""
             ALog.i(TAG, "onNewIntent session: $mSession")
-            AdHocMessageLogic.initModel(this, mSession)
+            AdHocMessageLogic.get(accountContext).initModel(this, mSession)
             initSessionInfo()
             mFragment?.onNewIntent()
         }
@@ -147,7 +147,7 @@ class AdHocConversationActivity : SwipeBaseActivity() {
         markAllRead()
         val draft = bottom_panel?.getComposeText()
         if (draft != null) {
-            AdHocMessageLogic.getModel()?.saveDraft(draft) {
+            AdHocMessageLogic.get(accountContext).getModel()?.saveDraft(draft) {
                 ALog.i(TAG, "saveDraft result: $it")
             }
         }
@@ -171,7 +171,7 @@ class AdHocConversationActivity : SwipeBaseActivity() {
             return
         }
         mSession = intent.getStringExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION) ?: ""
-        AdHocMessageLogic.initModel(this, mSession)
+        AdHocMessageLogic.get(accountContext).initModel(this, mSession)
         mFragment = initFragment(R.id.fragment_content, AdHocConversationFragment(), null)
 
         chat_title_bar.setOnChatTitleCallback(object : AdHocChatTitleBar.OnChatTitleCallback {
@@ -210,7 +210,7 @@ class AdHocConversationActivity : SwipeBaseActivity() {
             }
 
             override fun onMessageSend(message: CharSequence, atList: Set<String>) {
-                AdHocMessageLogic.send(mSession, mSelf?.name ?: "", message.toString(), atList)
+                AdHocMessageLogic.get(accountContext).send(mSession, mSelf?.name ?: "", message.toString(), atList)
             }
 
             override fun onEmojiPanelShow(show: Boolean) {
@@ -308,13 +308,13 @@ class AdHocConversationActivity : SwipeBaseActivity() {
     }
 
     private fun initSessionInfo() {
-        val sessionInfo = AdHocSessionLogic.getSession(mSession)
+        val sessionInfo = AdHocSessionLogic.get(accountContext).getSession(mSession)
         sessionInfo?.let {
-            chat_title_bar.setSession(sessionInfo)
+            chat_title_bar.setSession(accountContext, sessionInfo)
             bottom_panel.setComposeText(it.draft)
 
             if (sessionInfo.isChat()) {
-                AdHocSessionLogic.addChatSession(it.uid) {
+                AdHocSessionLogic.get(accountContext).addChatSession(it.uid) {
                     ALog.i(TAG, "initSessionInfo addChat result: $it")
                 }
             }
@@ -323,13 +323,13 @@ class AdHocConversationActivity : SwipeBaseActivity() {
 
 
     private fun markAllRead(callback: ((result: Boolean) -> Unit)? = null) {
-        val model = AdHocMessageLogic.getModel()
+        val model = AdHocMessageLogic.get(accountContext).getModel()
         if (model != null) {
             model.readAll {
                 ALog.i(TAG, "markAllRead session: $mSession, result: $it")
                 if (it) {
-                    AdHocMessageLogic.updateSessionUnread(mSession, 0, true)
-                    AdHocSessionLogic.updateAtMeStatus(mSession, false)
+                    AdHocMessageLogic.get(accountContext).updateSessionUnread(mSession, 0, true)
+                    AdHocSessionLogic.get(accountContext).updateAtMeStatus(mSession, false)
                 }
                 callback?.invoke(it)
             }
@@ -361,7 +361,7 @@ class AdHocConversationActivity : SwipeBaseActivity() {
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    AdHocMessageLogic.send(mSession, mSelf?.name ?: "", it)
+                    AdHocMessageLogic.get(accountContext).send(mSession, mSelf?.name ?: "", it)
                 }, {
                     ALog.e(TAG, "handleSendAudio error", it)
                 })
@@ -399,7 +399,7 @@ class AdHocConversationActivity : SwipeBaseActivity() {
                     val delay = if (index == 0) 0L else 1000L
                     index++
                     AmeDispatcher.mainThread.dispatch({
-                        AdHocMessageLogic.send(mSession, mSelf?.name ?: "", it)
+                        AdHocMessageLogic.get(accountContext).send(mSession, mSelf?.name ?: "", it)
                     }, delay)
 
                 }, {
@@ -442,7 +442,7 @@ class AdHocConversationActivity : SwipeBaseActivity() {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    AdHocMessageLogic.send(mSession, mSelf?.name ?: "", it)
+                    AdHocMessageLogic.get(accountContext).send(mSession, mSelf?.name ?: "", it)
 
                 }) { throwable ->
                     ALog.e(TAG, "handleSendDocument error", throwable)
@@ -482,7 +482,7 @@ class AdHocConversationActivity : SwipeBaseActivity() {
                     val delay = if (index > 0) 1000L else 0L
                     index++
                     AmeDispatcher.mainThread.dispatch({
-                        AdHocMessageLogic.send(mSession, mSelf?.name ?: "", it)
+                        AdHocMessageLogic.get(accountContext).send(mSession, mSelf?.name ?: "", it)
 
                     }, delay)
 

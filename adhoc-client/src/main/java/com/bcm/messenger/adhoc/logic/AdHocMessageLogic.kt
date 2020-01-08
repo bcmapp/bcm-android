@@ -7,6 +7,7 @@ import com.bcm.messenger.adhoc.sdk.AdHocChatMessage
 import com.bcm.messenger.adhoc.sdk.AdHocSDK
 import com.bcm.messenger.adhoc.sdk.AdHocSessionSDK
 import com.bcm.messenger.adhoc.sdk.AdHocSessionStatus
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.repositories.Repository
@@ -27,23 +28,44 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.log
 
 /**
  * adhoc logic class
  */
-object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChannelLogic.IAdHocChannelListener, AdHocMessageModel.OnModelListener {
+class AdHocMessageLogic(private val accountContext: AccountContext) : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChannelLogic.IAdHocChannelListener, AdHocMessageModel.OnModelListener {
+    companion object {
+        private const val TAG = "AdHocMessageLogic"
+
+        private var logic: AdHocMessageLogic? = null
+        fun get(accountContext: AccountContext): AdHocMessageLogic {
+            synchronized(TAG) {
+                var logic = this.logic
+                return if (null != logic && logic.accountContext == accountContext) {
+                    logic
+                } else {
+                    logic = AdHocMessageLogic(accountContext)
+                    this.logic = logic
+                    logic
+                }
+            }
+        }
+
+        fun remove() {
+            logic = null
+        }
+    }
 
     /**
      * wait for resend queue
      */
     data class WaitQueueData(var ready: AtomicInteger, var queue: Queue<AdHocMessageDetail>, var waitDisposable: Disposable? = null) {}
 
-    private const val TAG = "AdHocMessageLogic"
 
     private val mMessageStoreQueue: Queue<AdHocMessageDetail> = ConcurrentLinkedQueue()
     private var mWaitQueueMap: ConcurrentHashMap<String, WaitQueueData> = ConcurrentHashMap() //if key is not nullorempty: private chat waitting queue，wait for opposite connect;if null or empty: group chat，need major connected。
 
-    private val mCache: AdHocMessageCache = AdHocMessageCache()
+    private val mCache: AdHocMessageCache = AdHocMessageCache(accountContext)
     private var mModel: AdHocMessageModel? = null
     private var mAddingDisposable: Disposable? = null
     private val messengerSdk = AdHocSDK.messengerSdk
@@ -53,7 +75,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
     private var mCurrentState: Int? = null
 
     init {
-        AdHocChannelLogic.addListener(this)
+        AdHocChannelLogic.get(accountContext).addListener(this)
         messengerSdk.addEventListener(this)
     }
 
@@ -71,10 +93,6 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
             mModel = ViewModelProviders.of(activity).get(AdHocMessageModel::class.java)
         }
         mModel?.init(mCache, session, this@AdHocMessageLogic)
-    }
-
-    fun instance() {
-
     }
 
     fun myAdHocId(): String? {
@@ -153,7 +171,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
      * real send logic
      */
     fun send(sessionId: String, myNick: String, message: AdHocMessageDetail, callback: ((result: AdHocMessageDetail?) -> Unit)? = null) {
-        val session = AdHocSessionLogic.getSession(sessionId)
+        val session = AdHocSessionLogic.get(accountContext).getSession(sessionId)
         if (session == null) {
             ALog.w(TAG, "send message fail, session is null: $sessionId")
             callback?.invoke(null)
@@ -175,7 +193,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
                 }
                 val content = finalMessage.getMessageBody()?.content
                 if (content is AmeGroupMessage.AttachmentContent) {
-                    val adHocSession = AdHocSessionLogic.getSession(sessionId)
+                    val adHocSession = AdHocSessionLogic.get(accountContext).getSession(sessionId)
                     if (adHocSession == null) {
                         ALog.w(TAG, "send attachment fail, sessionInfo is null")
                         callback?.invoke(null)
@@ -254,7 +272,8 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
     override fun onSendFileComplete(sessionId: String, mid: String) {
         ALog.i(TAG, "onSendFileComplete sessionId: $sessionId, mid: $mid")
         Observable.create<AdHocMessageDetail> {
-            val m = mCache.getMessageDetail(sessionId, mid) ?: throw Exception("AdHocMessageDetail is null")
+            val m = mCache.getMessageDetail(sessionId, mid)
+                    ?: throw Exception("AdHocMessageDetail is null")
             m.isAttachmentDownloading = false
             m.attachmentState = true
             m.isSending = false
@@ -326,10 +345,10 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
         }
 
         ALog.i(TAG, "onReceiveMessage from:${message.nickname} session: ${message.sessionName}, message: ${message.text}, mid: ${message.messageId}")
-        val sessionInfo = AdHocSessionLogic.getSession(sessionId)
+        val sessionInfo = AdHocSessionLogic.get(accountContext).getSession(sessionId)
         if (sessionInfo == null) {
             if (!message.isChannel) {
-                AdHocSessionLogic.addChatSession(message.fromId) {
+                AdHocSessionLogic.get(accountContext).addChatSession(message.fromId) {
                     if (it == sessionId) {
                         gotoReceive(sessionId, atMe, message)
                     } else {
@@ -360,7 +379,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
 
 
     fun updateSessionUnread(session: String, unread: Int, reset: Boolean = false) {
-        val sessionInfo = AdHocSessionLogic.getSession(session)
+        val sessionInfo = AdHocSessionLogic.get(accountContext).getSession(session)
         sessionInfo?.let {
             var current = it.unreadCount
             if (reset) {
@@ -368,7 +387,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
             } else {
                 current += unread
             }
-            AdHocSessionLogic.updateUnreadCount(session, current)
+            AdHocSessionLogic.get(accountContext).updateUnreadCount(session, current)
         }
     }
 
@@ -455,7 +474,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
     }
 
     private fun handleForWaitQueue(message: AdHocMessageDetail) {
-        val session = AdHocSessionLogic.getSession(message.sessionId)
+        val session = AdHocSessionLogic.get(accountContext).getSession(message.sessionId)
         if (session == null) {
             ALog.w(TAG, "resend fail, session is null: ${message.sessionId}")
             message.success = false
@@ -480,7 +499,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
             tryHandleWaitingQueue(key)
         } else if (data.ready.get() == AdHocSessionStatus.TIMEOUT.ordinal) {
             if (session.isChat()) {
-                AdHocSessionLogic.addChatSession(session.uid) {
+                AdHocSessionLogic.get(accountContext).addChatSession(session.uid) {
                     ALog.i(TAG, "handleForWaitQueue finish, addChatSession result: $it")
                 }
             }
@@ -548,11 +567,11 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
                             m = mCache.mergeCacheForAttachment(m.sessionId, m.mid, m)
                         }
 
-                        val session = AdHocSessionLogic.getSession(m.sessionId)
+                        val session = AdHocSessionLogic.get(accountContext).getSession(m.sessionId)
                         if (session != null && session.isChat()) {
-                            val recipient = Recipient.from(AMELogin.majorContext, m.fromId, false)
+                            val recipient = Recipient.from(accountContext, m.fromId, false)
                             if (recipient.profileName != m.nickname) {
-                                Repository.getRecipientRepo(AMELogin.majorContext)?.setProfileName(recipient, m.nickname)
+                                Repository.getRecipientRepo(accountContext)?.setProfileName(recipient, m.nickname)
                             }
                         }
                         it.onNext(m)
@@ -586,7 +605,7 @@ object AdHocMessageLogic : AdHocSessionSDK.IAdHocSessionEventListener, AdHocChan
                         updateSessionUnread(result.sessionId, 1)
 
                         val isAtMe = result.isAtMe
-                        AmePushProcess.processPush(AMELogin.majorContext, AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.ADHOC_NOTIFY, 0,null, null, null, AmePushProcess.AdHocNotifyData(result.sessionId, isAtMe))))
+                        AmePushProcess.processPush(accountContext, AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.ADHOC_NOTIFY, 0, null, null, null, AmePushProcess.AdHocNotifyData(result.sessionId, isAtMe))))
 
                     }, {
                         ALog.e(TAG, "addStoreQueue fail", it)

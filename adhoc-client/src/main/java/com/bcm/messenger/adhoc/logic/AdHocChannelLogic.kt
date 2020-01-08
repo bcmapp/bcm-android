@@ -4,19 +4,39 @@ import android.app.Activity
 import com.bcm.imcore.im.ChannelUserInfo
 import com.bcm.messenger.adhoc.sdk.AdHocConnState
 import com.bcm.messenger.adhoc.sdk.AdHocSDK
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.listener.WeakListeners
 
-object AdHocChannelLogic: AdHocSDK.IAdHocSDKEventListener {
+class AdHocChannelLogic(private val accountContext: AccountContext): AdHocSDK.IAdHocSDKEventListener {
+    companion object {
+        private const val TAG = "AdHocChannelLogic"
 
-    private const val TAG = "AdHocChannelLogic"
+        private var logic: AdHocChannelLogic? = null
+        fun get(accountContext: AccountContext): AdHocChannelLogic {
+            synchronized(TAG) {
+                var logic = this.logic
+                return if (null != logic && logic.accountContext == accountContext) {
+                    logic
+                } else {
+                    logic = AdHocChannelLogic(accountContext)
+                    this.logic = logic
+                    logic
+                }
+            }
+        }
+
+        fun remove() {
+            logic = null
+        }
+    }
 
     private var mLastState: IAdHocChannelListener.CONNECT_STATE? = null
     private var listenerList = WeakListeners<IAdHocChannelListener>()
 
-    private val channelCache = AdHocChannelCache {
+    private val channelCache = AdHocChannelCache(accountContext) {
         listenerList.forEach {
             it.onChannelListChanged()
             it.onReady()
@@ -35,8 +55,8 @@ object AdHocChannelLogic: AdHocSDK.IAdHocSDKEventListener {
      * init
      * @return true success，false fail
      */
-    fun initAdHoc():Boolean {
-        return AdHocSDK.init(AppContextHolder.APP_CONTEXT)
+    fun initAdHoc(accountContext: AccountContext):Boolean {
+        return AdHocSDK.init(accountContext, AppContextHolder.APP_CONTEXT)
     }
 
     fun unInitAdHoc() {

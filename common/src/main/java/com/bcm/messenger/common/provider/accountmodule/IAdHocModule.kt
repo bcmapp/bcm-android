@@ -4,7 +4,7 @@ import android.content.Context
 import com.bcm.messenger.common.provider.IAmeModule
 
 
-interface IAdHocModule: IAmeModule {
+interface IAdHocModule: IAmeAccountModule {
 
     fun isAdHocMode(): Boolean
     fun configHocMode()

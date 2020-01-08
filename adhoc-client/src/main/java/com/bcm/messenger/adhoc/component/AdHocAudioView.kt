@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.FrameLayout
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.attachments.DatabaseAttachment
 import com.bcm.messenger.common.audio.AudioSlidePlayer
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -42,6 +43,7 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
     private var mAdHocMessage: AdHocMessageDetail? = null
 
     private var mCurrentControlView: View? = null
+    private var accountContext:AccountContext? = null
 
     /**
      *
@@ -75,8 +77,9 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
         }
     }
 
-    fun setAudio(messageRecord: AdHocMessageDetail) {
+    fun setAudio(accountContext: AccountContext, messageRecord: AdHocMessageDetail) {
         mAdHocMessage = messageRecord
+        this.accountContext = accountContext
         val content = messageRecord.getMessageBody()?.content as AmeGroupMessage.AudioContent
         val slide = AudioSlide(context, messageRecord.toAttachmentUri(), content.size, content.duration, false)
         displayControl(audio_play)
@@ -91,7 +94,7 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
         AudioSlidePlayer.stopAll()
         this.audioSlidePlayer = AudioSlidePlayer.createFor(context, null, slide, this)
         audio_progress.progress = 0
-        updateMediaDuration(audioSlidePlayer, slide.duration)
+        updateMediaDuration(accountContext, audioSlidePlayer, slide.duration)
         if (slide.duration <= 0) {
             audioSlidePlayer?.prepareDuration()
         }
@@ -122,11 +125,13 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     override fun onPrepare(player: AudioSlidePlayer?, totalMills: Long) {
-        updateMediaDuration(player, totalMills)
+        val accountContext = this.accountContext?:return
+        updateMediaDuration(accountContext, player, totalMills)
     }
 
     override fun onStart(player: AudioSlidePlayer?, totalMills: Long) {
-        updateMediaDuration(player, totalMills)
+        val accountContext = this.accountContext?:return
+        updateMediaDuration(accountContext, player, totalMills)
         if (this.audioSlidePlayer?.audioSlide == player?.audioSlide) {
             if (audio_pause.visibility != View.VISIBLE) {
                 togglePlayToPause()
@@ -177,7 +182,7 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
 
-    private fun updateMediaDuration(player: AudioSlidePlayer?, duration: Long) {
+    private fun updateMediaDuration(accountContext: AccountContext, player: AudioSlidePlayer?, duration: Long) {
 
         ALog.d(TAG, "updateMediaDuration: $duration")
         val audioSlide = player?.audioSlide
@@ -188,7 +193,7 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
                     if (audioSlide.asAttachment() is DatabaseAttachment) {
                         val databaseAttachment = audioSlide.asAttachment() as DatabaseAttachment
                         databaseAttachment.duration = duration
-                        Repository.getAttachmentRepo(AMELogin.majorContext)?.updateDuration(databaseAttachment.attachmentId.rowId, databaseAttachment.attachmentId.uniqueId, duration)
+                        Repository.getAttachmentRepo(accountContext)?.updateDuration(databaseAttachment.attachmentId.rowId, databaseAttachment.attachmentId.uniqueId, duration)
                     } else {
                         ALog.w(TAG, "current audio slide type is not DatabaseAttachment")
                     }

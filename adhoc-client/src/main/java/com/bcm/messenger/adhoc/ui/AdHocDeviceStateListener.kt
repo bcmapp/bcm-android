@@ -2,6 +2,7 @@ package com.bcm.messenger.adhoc.ui
 
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.ble.BleUtil
 import com.bcm.messenger.utility.gps.GPSUtil
@@ -9,7 +10,7 @@ import com.bcm.messenger.utility.wifi.WiFiUtil
 import com.bcm.messenger.utility.AppContextHolder
 import java.lang.StringBuilder
 
-class AdHocDeviceStateListener: WiFiUtil.IWiFiStateNotify, BleUtil.IBleStateNotify, GPSUtil.IGPSStateNotify{
+class AdHocDeviceStateListener(private val accountContext: AccountContext): WiFiUtil.IWiFiStateNotify, BleUtil.IBleStateNotify, GPSUtil.IGPSStateNotify{
     private var listener:IDeviceStateListener? = null
     private var state = ""
 
@@ -72,7 +73,7 @@ class AdHocDeviceStateListener: WiFiUtil.IWiFiStateNotify, BleUtil.IBleStateNoti
             stateBuilder.append(AppUtil.getString(R.string.adhoc_device_gps))
         }
 
-        val error = (stateBuilder.isNotEmpty() && !AdHocChannelLogic.isOnline())
+        val error = (stateBuilder.isNotEmpty() && !AdHocChannelLogic.get(accountContext).isOnline())
         val errorText = if (error) {
             AppContextHolder.APP_CONTEXT.getString(R.string.adhoc_device_state_error, stateBuilder.toString())
         } else {

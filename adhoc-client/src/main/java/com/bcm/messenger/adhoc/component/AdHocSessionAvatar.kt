@@ -10,6 +10,7 @@ import android.widget.FrameLayout
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.adhoc.logic.AdHocSession
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -33,10 +34,10 @@ class AdHocSessionAvatar @JvmOverloads constructor(context: Context, attrs: Attr
     init {
     }
 
-    fun setSession(session: AdHocSession, callback: ((bitmap: Bitmap?) -> Unit)? = null) {
+    fun setSession(accountContext: AccountContext, session: AdHocSession, callback: ((bitmap: Bitmap?) -> Unit)? = null) {
         initPhotoView()
         mSession = session
-        val isValid = session.isValid()
+        val isValid = session.isValid(accountContext)
         ALog.i(TAG, "setSession session: ${session.sessionId}, isValid: $isValid")
         when {
             session.isChannel() -> {
@@ -48,7 +49,7 @@ class AdHocSessionAvatar @JvmOverloads constructor(context: Context, attrs: Attr
                     background = null
                 }
                 mPhotoView.radius = mInnerMargin.toFloat()
-                val channel = AdHocChannelLogic.getChannel(session.cid)
+                val channel = AdHocChannelLogic.get(accountContext).getChannel(session.cid)
                 val resource = getChannelDrawableResource(channel?.channelName ?: session.cid)
                 callback?.invoke(BitmapFactory.decodeResource(resources, resource))
                 mPhotoView.setPhoto(resource)
