@@ -196,7 +196,7 @@ dependencies {
     releaseGoogleImplementation project(':appsflyer')
     release9appsImplementation project(':appsflyer')
     releaseApkpureImplementation project(':appsflyer')
-
+    releaseHuaweiImplementation project(':appsflyer')
 
     api('cn.hikyson.rocket:rocket-core:2.4.0') {
         exclude group: 'androidx.appcompat', module: 'appcompat'
