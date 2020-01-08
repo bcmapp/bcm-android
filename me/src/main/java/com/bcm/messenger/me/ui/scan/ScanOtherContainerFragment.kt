@@ -4,17 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.me.R
 import kotlinx.android.synthetic.main.me_fragment_container_scan_account.*
-import com.bcm.messenger.common.BaseFragment
 
 /**
  * Created by wjh on 2019/7/3
  */
-class ScanOtherContainerFragment : BaseFragment() {
+class ScanOtherContainerFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.me_fragment_container_scan_other, container, false)

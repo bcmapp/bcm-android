@@ -1,12 +1,14 @@
 package com.bcm.messenger.me.ui.scan
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.RxBus
@@ -28,6 +30,27 @@ class NewScanActivity : AppCompatActivity() {
     private val TAG = "NewScanActivity"
     private var mScanResultHandleDelegate: Boolean = false
     private var mScanType: Int = ARouterConstants.PARAM.SCAN.TYPE_OTHER
+
+    /**
+     * Set custom context in order to set language
+     */
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(setLocale(newBase))
+    }
+
+    /**
+     * AppCompat ver 1.1.0 bug fix.
+     * Cannot set locale through the attachBaseContext due to a bug in AppCompat 1.1.0.
+     * Check after updating the AppCompat.
+     */
+    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+        if (overrideConfiguration != null) {
+            val uiMode = overrideConfiguration.uiMode
+            overrideConfiguration.setTo(baseContext.resources.configuration)
+            overrideConfiguration.uiMode = uiMode
+        }
+        super.applyOverrideConfiguration(overrideConfiguration)
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -77,6 +100,7 @@ class NewScanActivity : AppCompatActivity() {
                 tran.add(R.id.scan_container_root, ScanWithCodeContainerFragment().apply {
                     arguments = Bundle().apply {
                         putInt(ARouterConstants.PARAM.SCAN.TAB, 1)
+                        putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT))
                     }
                 })
             }
