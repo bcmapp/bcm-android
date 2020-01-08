@@ -10,12 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.createScreenShot
@@ -36,26 +34,21 @@ import java.io.File
 /**
  * Created by wjh on 2019/7/3
  */
-class MyQRFragment : BaseFragment(), RecipientModifiedListener {
+class MyQRFragment : BaseFragment() {
 
     private val TAG = "MyQRFragment"
-    private lateinit var recipient: Recipient
-    private lateinit var mAccountContext: AccountContext
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.me_fragment_my_qr_code, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recipient = Recipient.login(mAccountContext)
-        recipient.addListener(this)
-
         initView()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        recipient.removeListener(this)
+    override fun onLoginRecipientRefresh() {
+        super.onLoginRecipientRefresh()
+        setSelfData()
     }
 
     private fun initView() {
@@ -84,9 +77,9 @@ class MyQRFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     private fun setSelfData() {
-        qr_code_avatar.showPrivateAvatar(recipient)
-        qr_code_name.text = recipient.name
-        initQrCode(recipient)
+        qr_code_avatar.showPrivateAvatar(getAccountRecipient())
+        qr_code_name.text = getAccountRecipient().name
+        initQrCode(getAccountRecipient())
     }
 
     private fun initQrCode(recipient: Recipient?) {
@@ -111,7 +104,7 @@ class MyQRFragment : BaseFragment(), RecipientModifiedListener {
                             qr_code_image?.setImageDrawable(null)
                         })
             }else {
-                AmeModuleCenter.contact(mAccountContext)?.updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
+                AmeModuleCenter.contact(accountContext)?.updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
                 }
             }
         }
@@ -179,8 +172,4 @@ class MyQRFragment : BaseFragment(), RecipientModifiedListener {
                 }
     }
 
-    override fun onModified(recipient: Recipient) {
-        this.recipient = recipient
-        setSelfData()
-    }
 }

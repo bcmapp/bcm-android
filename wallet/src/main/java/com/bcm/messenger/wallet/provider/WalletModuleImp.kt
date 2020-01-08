@@ -20,7 +20,6 @@ class WalletModuleImp : IWalletModule {
 
     private lateinit var accountContext: AccountContext
 
-
     override val context: AccountContext
         get() = accountContext
 

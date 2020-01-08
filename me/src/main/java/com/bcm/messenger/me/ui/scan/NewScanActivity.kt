@@ -105,7 +105,13 @@ class NewScanActivity : AppCompatActivity() {
                 })
             }
             ARouterConstants.PARAM.SCAN.TYPE_SCAN -> {
-                tran.add(R.id.scan_container_root, ScanWithCodeContainerFragment())
+                tran.add(R.id.scan_container_root, ScanWithCodeContainerFragment().apply {
+                    arguments = Bundle().apply {
+                        putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT))
+
+                    }
+
+                })
             }
             else -> {
                 tran.add(R.id.scan_container_root, ScanOtherContainerFragment())

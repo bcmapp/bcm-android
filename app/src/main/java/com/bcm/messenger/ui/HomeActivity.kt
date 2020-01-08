@@ -338,7 +338,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
             showMenu()
         }
         home_toolbar_chat.setOnClickListener {
-            startActivity(Intent(this, NewChatActivity::class.java))
+            startBcmActivity(Intent(this, NewChatActivity::class.java))
         }
 
         messageListFragment = MessageListFragment()

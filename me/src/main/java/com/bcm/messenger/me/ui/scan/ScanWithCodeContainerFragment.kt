@@ -51,7 +51,15 @@ class ScanWithCodeContainerFragment : BaseFragment() {
             container_pager.setCurrentItem(1, false)
         }
 
-        val fms = listOf<Fragment>(ScanFragment(), MyQRFragment())
+        val fms = listOf<Fragment>(ScanFragment().apply {
+            arguments = Bundle().apply {
+                putAll(this@ScanWithCodeContainerFragment.arguments)
+            }
+        }, MyQRFragment().apply {
+            arguments = Bundle().apply {
+                putAll(this@ScanWithCodeContainerFragment.arguments)
+            }
+        })
         val adapter = object : FragmentPagerAdapter(requireFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
             override fun getItem(position: Int): Fragment {

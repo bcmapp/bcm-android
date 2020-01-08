@@ -156,7 +156,7 @@ class NewChatActivity : SwipeBaseActivity() {
                     BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_CONVERSATION_PATH)
                             .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)
                             .putLong(ARouterConstants.PARAM.PARAM_THREAD, it)
-                            .navigation()
+                            .startBcmActivity(accountContext)
 
                 }
             }

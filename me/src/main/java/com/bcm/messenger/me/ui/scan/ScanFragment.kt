@@ -14,8 +14,8 @@ import android.os.*
 import android.provider.MediaStore
 import android.view.*
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.ui.scan.CameraManager
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AppUtil
@@ -41,7 +41,7 @@ import java.util.*
 /**
  * Created by wjh on 2019/7/2
  */
-class ScanFragment : BaseFragment(), TextureView.SurfaceTextureListener {
+class ScanFragment : Fragment(), TextureView.SurfaceTextureListener {
 
     companion object {
         private const val TAG = "ScanFragment"
