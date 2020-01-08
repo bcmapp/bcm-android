@@ -106,7 +106,7 @@ abstract class BaseExchangeCalculator {
             val request = Request.Builder()
             request.url("https://apiv2.bitcoinaverage.com/indices/global/ticker/short?crypto=" + coinBase + "&fiat=" + currency)
 
-            val response = BCMWalletManager.provideHttpClient().newCall(request.build()).execute()
+            val response = BCMWalletManagerContainer.provideHttpClient().newCall(request.build()).execute()
             if(response.isSuccessful) {
                 val responseString = response.body()?.string()
                 ALog.d("BaseExchangeCalculator", "findExchangeRate response: $responseString")
