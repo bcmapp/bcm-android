@@ -27,10 +27,6 @@ object AmeProvider {
 
     fun <T : IRouteProvider> get(providerName: String): T? {
         try {
-            ALog.e(TAG, "$providerName wating")
-            if (providerName == ARouterConstants.Provider.PROVIDER_LOGIN_BASE) {
-                ALog.i(TAG, ClassHelper.getCallStack())
-            }
             val key = Index(null, providerName)
 
             val module1 = moduleMap[key]
@@ -38,8 +34,8 @@ object AmeProvider {
                 return module1 as T
             }
 
+            ALog.e(TAG, "$providerName wating")
             synchronized(TAG) {
-
                 val module = moduleMap[key]
                 if (null != module) {
                     return module as T
@@ -61,8 +57,6 @@ object AmeProvider {
             }
         } catch (ex: Exception) {//ARouter，ARouter，，null
             ALog.e(TAG, "getProvider $providerName fail", ex)
-        } finally {
-            ALog.e(TAG, "$providerName instance finish")
         }
         return null
     }

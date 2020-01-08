@@ -8,10 +8,7 @@ import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.accountmodule.*
-import com.bcm.messenger.common.server.IServerConnectionDaemon
-import com.bcm.messenger.common.server.IServerDataDispatcher
-import com.bcm.messenger.common.server.ServerConnectionDaemon
-import com.bcm.messenger.common.server.ServerDataDispatcher
+import com.bcm.messenger.common.server.*
 import com.bcm.messenger.common.service.RotateSignedPreKeyListener
 import com.bcm.messenger.common.utils.AccountContextMap
 import com.bcm.messenger.utility.AppContextHolder
@@ -21,8 +18,9 @@ import org.whispersystems.jobqueue.JobManager
 
 object AmeModuleCenter {
     private val serverDataDispatcher: ServerDataDispatcher = ServerDataDispatcher()
+    private val daemonScheduler = DaemonScheduler()
     private val serverConnDaemons = AccountContextMap {
-        ServerConnectionDaemon(it, serverDataDispatcher)
+        ServerConnectionDaemon(it, daemonScheduler, serverDataDispatcher)
     }
 
     fun instance() {
@@ -138,6 +136,8 @@ object AmeModuleCenter {
         Repository.accountLogOut(accountContext)
         serverConnDaemons.remove(accountContext)
         AccountJobManager.remove(accountContext)
+
+
     }
 
 }

@@ -36,23 +36,23 @@ import java.security.SecureRandom
 import java.util.concurrent.*
 
 class ServerConnectionDaemon(private val accountContext: AccountContext
+                             , private val daemonScheduler: DaemonScheduler
                              , private val serverDataDispatcher: ServerDataDispatcher)
     : IServerConnectionDaemon
         , ServerConnection.IServerProtoDataEvent
-        , LBSFetcher.ILBSFetchResult {
+        , LBSFetcher.ILBSFetchResult
+        , DaemonScheduler.IDaemonTicker {
 
     companion object {
         private const val KEEPALIVE_TIMEOUT_MILLI = 60_000L
-        private const val DAEMON_TIMER_MILLI = 20_000L
         private const val TAG = "ServerConnectionDaemon"
         private const val CONN_METRICS_TOKEN = 1 //
         private const val CONN_DEFAULT_TOKEN = 0 //
     }
 
-    private val singleScheduler = Schedulers.from(Executors.newSingleThreadExecutor())
+    private val singleScheduler = daemonScheduler.scheduler
     private val messageScheduler = Schedulers.from(Executors.newSingleThreadExecutor())
 
-    private var daemonTimer: Disposable? = null
     private var serverConn: ServerConnection? = null
     private var lastKeepTime: Long = 0L
 
@@ -70,9 +70,11 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
 
     private var forceLogoutListener: IServerConnectForceLogoutListener? = null
 
+    private var tickListening = false
+
     private val networkReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (null != daemonTimer && NetworkUtil.isConnected()) {
+            if (tickListening && NetworkUtil.isConnected()) {
                 checkConnection(false)
             }
         }
@@ -110,7 +112,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
     }
 
     private fun isDaemonRunning(): Boolean {
-        return daemonTimer != null
+        return tickListening
     }
 
     override fun startConnection() {
@@ -279,19 +281,10 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
     }
 
     private fun start() {
+        daemonScheduler.startTicker()
         AppContextHolder.APP_CONTEXT.registerReceiver(networkReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
-
-        daemonTimer = Observable.timer(DAEMON_TIMER_MILLI, TimeUnit.MILLISECONDS)
-                .repeat()
-                .subscribeOn(singleScheduler)
-                .observeOn(singleScheduler)
-                .subscribe({
-                    daemonRun()
-                }, {
-                    ALog.i(TAG, "WebSocketDaemon start")
-
-                    startDaemon()
-                })
+        tickListening = true
+        daemonScheduler.tickListener.addListener(this)
     }
 
     private fun daemonRun() {
@@ -327,19 +320,23 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
 
 
     private fun stop() {
-        if (daemonTimer != null) {
+        if (tickListening) {
             try {
                 AppContextHolder.APP_CONTEXT.unregisterReceiver(networkReceiver)
             } catch (e: Throwable) {
             }
+            daemonScheduler.tickListener.removeListener(this)
 
-            val daemon = daemonTimer
-            daemonTimer = null
-
-            if (daemon != null && !daemon.isDisposed) {
-                daemon.dispose()
+            val loginList = AmeModuleCenter.login().getLoginAccountContextList()
+            if (loginList.isEmpty()
+                    || loginList.takeIf { it.size == 1 }?.first()?.uid == accountContext.uid) {
+                daemonScheduler.stopTicker()
             }
         }
+    }
+
+    override fun onDaemonTick() {
+        daemonRun()
     }
 
     private fun tickTime(): Long {
@@ -391,7 +388,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
     override fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent) {
         ALog.i(TAG, "onClientForceLogout $type $info")
         stopDaemon()
-        this.forceLogoutListener?.onClientForceLogout (accountContext, info, type)
+        this.forceLogoutListener?.onClientForceLogout(accountContext, info, type)
         onServiceConnected(accountContext, CONN_DEFAULT_TOKEN, ConnectState.DISCONNECTED)
     }
 
