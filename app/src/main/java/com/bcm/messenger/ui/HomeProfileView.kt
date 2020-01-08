@@ -12,20 +12,16 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.R
 import com.bcm.messenger.adapter.HomeAccountItem
-import com.bcm.messenger.adapter.TYPE_ADD
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getScreenWidth
 import com.bcm.messenger.common.utils.startBcmActivity
-import com.bcm.messenger.login.bean.AmeAccountData
 import com.bcm.messenger.me.ui.scan.NewScanActivity
+import com.bcm.messenger.me.ui.setting.SettingActivity
 import com.bcm.messenger.ui.widget.IProfileView
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
@@ -172,10 +168,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            BcmRouter.getInstance()
-                    .get(ARouterConstants.Activity.PROFILE_EDIT)
-                    .putBoolean(ARouterConstants.PARAM.ME.PROFILE_EDIT_SELF, true)
-                    .startBcmActivity(accountItem.accountContext)
+            context.startBcmActivity(accountItem.accountContext, Intent(context, SettingActivity::class.java))
         }
         home_profile_wallet_icon.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {

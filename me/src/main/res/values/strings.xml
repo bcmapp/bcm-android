@@ -295,6 +295,7 @@
 
     <!--Settings-->
     <string name="me_setting_title">Settings</string>
+    <string name="me_setting_general_head">GENERAL</string>
     <string name="me_setting_notifications_head">NOTIFICATIONS</string>
     <string name="me_settings_notification_disabled">BCM checked the notification is disabled. Would you like to enable the notification?</string>
     <string name="me_setting_notification_title">Notifications</string>
@@ -327,13 +328,15 @@
     <string name="me_setting_about_title">About</string>
     <string name="me_setting_help_title">FAQ</string>
 
-
     <!--Notification Setting-->
     <string name="me_notification_setting_title">Notification</string>
     <string name="me_notification_push_title">Push Notification</string>
     <string name="me_notification_title">Message Notifications</string>
     <string name="me_notification_sound_title">Sounds</string>
     <string name="me_notification_vibrate_title">Vibrate</string>
+
+    <!--privacy settings-->
+    <string name="me_privacy_settings_title">Privacy and Security</string>
 
     <!--Pin Lock -->
     <string name="me_pin_size_4">Use 4-digit PIN</string>

@@ -21,7 +21,6 @@ import com.bcm.messenger.common.api.BcmJSInterface
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.common.ui.NestedScrollWebView
 import com.bcm.messenger.common.BaseFragment
-import com.bcm.messenger.common.R
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 
@@ -51,7 +50,8 @@ open class BaseWebFragment : BaseFragment() {
         AmeDispatcher.mainThread.dispatch({
             try {
                 mWeb?.destroy()
-            }catch (ex: Exception) {}
+            } catch (ex: Exception) {
+            }
 
         }, delay)
     }
@@ -62,12 +62,12 @@ open class BaseWebFragment : BaseFragment() {
                 layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             }
 
-        }catch (ex: Resources.NotFoundException) {
+        } catch (ex: Resources.NotFoundException) {
             mWeb = NestedScrollWebView(AppContextHolder.APP_CONTEXT).apply {
                 layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             }
 
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "onCreateView error", ex)
         }
         return mWeb
@@ -187,10 +187,8 @@ open class BaseWebFragment : BaseFragment() {
         return if (mWeb?.canGoBack() == true) {
             mWeb?.goBack()
             true
-        }else {
+        } else {
             false
         }
     }
-
-
 }

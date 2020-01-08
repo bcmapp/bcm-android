@@ -116,6 +116,9 @@
         <activity android:name="com.bcm.messenger.me.fingerprint.BiometricVerifyActivity"
             android:launchMode="singleTask"
             android:theme="@style/BcmActivityTheme.Transparent" />
+        <activity android:name=".ui.setting.PrivacySettingsActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
     </application>
 

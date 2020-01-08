@@ -15,19 +15,17 @@ import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.provider.accountmodule.IChatModule
+import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.common.ui.popup.centerpopup.AmeLoadingPopup
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.logic.AmePinLogic
-import com.bcm.messenger.me.ui.block.BlockUsersActivity
 import com.bcm.messenger.me.ui.feedback.AmeFeedbackActivity
 import com.bcm.messenger.me.ui.language.LanguageSelectActivity
 import com.bcm.messenger.me.ui.language.LanguageViewModel
-import com.bcm.messenger.me.ui.pinlock.PinLockInitActivity
-import com.bcm.messenger.me.ui.pinlock.PinLockSettingActivity
+import com.bcm.messenger.me.ui.profile.ProfileActivity
 import com.bcm.messenger.me.ui.proxy.ProxySettingActivity
 import com.bcm.messenger.me.utils.BcmUpdateUtil
 import com.bcm.messenger.utility.QuickOpCheck
@@ -37,6 +35,7 @@ import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_activity_settings.*
+import kotlinx.android.synthetic.main.me_settings_head_view.*
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -44,12 +43,13 @@ import java.util.*
  * Created by zjl on 2018/4/27.
  */
 @Route(routePath = ARouterConstants.Activity.SETTINGS)
-class SettingActivity : SwipeBaseActivity() {
+class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
     private val TAG = "SettingActivity"
 
     private val REQUEST_SETTING = 100
     private val TAG_SSR = "ssrStageChanged"
     private var mChatModule: IChatModule? = null
+    private lateinit var recipient: Recipient
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -60,6 +60,9 @@ class SettingActivity : SwipeBaseActivity() {
         super.onDestroy()
         RxBus.unSubscribe(TAG_SSR)
         mChatModule?.finishAllConversationStorageQuery()
+        if (::recipient.isInitialized) {
+            recipient.removeListener(this)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,18 +70,17 @@ class SettingActivity : SwipeBaseActivity() {
         setContentView(R.layout.me_activity_settings)
 
         mChatModule = AmeModuleCenter.chat(accountContext)
+        recipient = Recipient.from(accountContext, accountContext.uid, true)
+        recipient.addListener(this)
 
         initView()
         initData()
+        initHeadView()
     }
 
     override fun onResume() {
         super.onResume()
         notification_noticer.checkNotice()
-    }
-
-    override fun onLoginRecipientRefresh() {
-        setting_block_stranger.setSwitchStatus(!getAccountRecipient().isAllowStranger)
     }
 
     private fun initView() {
@@ -87,6 +89,22 @@ class SettingActivity : SwipeBaseActivity() {
                 finish()
             }
         })
+
+        setting_head_view.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            startBcmActivity(Intent(this, ProfileActivity::class.java).apply {
+                putExtra(ARouterConstants.PARAM.ME.PROFILE_EDIT_SELF, true)
+            })
+        }
+
+        setting_privacy.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            startBcmActivity(Intent(this, PrivacySettingsActivity::class.java))
+        }
 
         setting_notification.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
@@ -156,44 +174,6 @@ class SettingActivity : SwipeBaseActivity() {
             startBcmActivity(intent)
         }
 
-        setting_blocked_user.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-            startBcmActivity(Intent(this, BlockUsersActivity::class.java))
-        }
-
-        setting_block_stranger.setSwitchEnable(false)
-        setting_block_stranger.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-
-            val allowStranger = !getAccountRecipient().isAllowStranger
-            AmePopup.loading.show(this)
-            AmeModuleCenter.login().updateAllowReceiveStrangers(accountContext, allowStranger) { success ->
-                if (!success) {
-                    AmePopup.loading.dismiss()
-                    AmePopup.result.failure(this, getString(R.string.me_setting_block_stranger_error), true)
-                } else {
-                    getAccountRecipient().privacyProfile.allowStranger = allowStranger
-                    updateStrangerState()
-                    AmePopup.loading.dismiss(AmeLoadingPopup.DELAY_DEFAULT)
-                }
-            }
-        }
-
-        setting_pin_lock.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-            if (AmePinLogic.hasPin()) {
-                startBcmActivityForResult(Intent(this, PinLockSettingActivity::class.java), REQUEST_SETTING)
-            } else {
-                startBcmActivityForResult(Intent(this, PinLockInitActivity::class.java), REQUEST_SETTING)
-            }
-        }
-
         setting_screen_secure.setSwitchEnable(false)
         setting_screen_secure.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
@@ -211,16 +191,6 @@ class SettingActivity : SwipeBaseActivity() {
                         .withOkTitle(getString(R.string.common_understood))
                         .show(this)
             }
-        }
-
-        setting_rtc_p2p.setSwitchEnable(false)
-        setting_rtc_p2p.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-            val turnOnly = !TextSecurePreferences.isTurnOnly(accountContext)
-            TextSecurePreferences.setTurnOnly(accountContext, turnOnly)
-            setting_rtc_p2p.setSwitchStatus(turnOnly)
         }
 
         setting_feedback.setOnClickListener {
@@ -259,14 +229,11 @@ class SettingActivity : SwipeBaseActivity() {
         val tipColor = getColorCompat(R.color.common_content_second_color)
         setting_language.setTip(LanguageViewModel.getDisplayName(SuperPreferences.getLanguageString(this, Locale.getDefault().language)), contentColor = tipColor)
 
-        updateStrangerState()
         setting_storage.setTip(getString(R.string.me_setting_data_stoarge_calulating_tip), contentColor = tipColor)
         mChatModule?.queryAllConversationStorageSize(accountContext) {
             ALog.i(TAG, "queryAllConversationStorageSize  callback")
             setting_storage?.setTip(StringAppearanceUtil.formatByteSizeString(it.storageUsed()), contentColor = tipColor)
         }
-        setting_pin_lock.setTip(if (AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip), contentColor = tipColor)
-        setting_rtc_p2p.setSwitchStatus(TextSecurePreferences.isTurnOnly(accountContext))
 
         setting_screen_secure.setSwitchStatus(TextSecurePreferences.isScreenSecurityEnabled(accountContext))
 
@@ -280,9 +247,10 @@ class SettingActivity : SwipeBaseActivity() {
         }
     }
 
-
-    private fun updateStrangerState() {
-        setting_block_stranger.setSwitchStatus(!getAccountRecipient().isAllowStranger)
+    private fun initHeadView() {
+        head_view_avatar.showPrivateAvatar(recipient)
+        head_view_name.text = recipient.name
+        head_view_id.text = "ID: ${recipient.address.serialize()}"
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -295,6 +263,13 @@ class SettingActivity : SwipeBaseActivity() {
             overridePendingTransition(R.anim.common_slide_from_right, R.anim.utility_slide_silent)
         } catch (e: Exception) {
             ALog.d(TAG, "Cannot open notification page.")
+        }
+    }
+
+    override fun onModified(recipient: Recipient) {
+        if (this.recipient == recipient) {
+            this.recipient = recipient
+            initHeadView()
         }
     }
 }

@@ -301,6 +301,7 @@
 
     <!--Settings-->
     <string name="me_settings_notification_disabled">通知栏通知已关闭。你想开启消息通知吗？</string>
+    <string name="me_setting_general_head">通用</string>
     <string name="me_setting_title">设置</string>
     <string name="me_setting_notifications_head">通知</string>
     <string name="me_setting_notification_title">通知</string>
@@ -340,6 +341,9 @@
     <string name="me_notification_title">消息通知</string>
     <string name="me_notification_sound_title">声音</string>
     <string name="me_notification_vibrate_title">震动</string>
+
+    <!--privacy settings-->
+    <string name="me_privacy_settings_title">隐私和安全</string>
 
     <string name="me_pin_size_4">切换成4位数PIN码</string>
     <string name="me_pin_size_6">切换成6位数PIN码</string>
