@@ -81,8 +81,6 @@ class AmeAccountHistory {
             for ((uid, account) in accountMap) {
                 accountContextMap[uid] = AccountContext(uid, genToken(uid, account.signalPassword), account.signalPassword)
             }
-
-            storage.remove(AME_LAST_LOGIN)
         } catch (e: Throwable) {
             ALog.e(TAG, "init error", e)
         }
@@ -183,6 +181,8 @@ class AmeAccountHistory {
 
         val token = genToken(majorAccountUid, accountData.signalPassword)
         accountContextMap[majorAccountUid] = AccountContext(majorAccountUid, token, accountData.signalPassword)
+
+        saveLastLoginUid(majorAccountUid)
         EventBus.getDefault().post(AccountLoginStateChangedEvent())
     }
 
@@ -209,7 +209,18 @@ class AmeAccountHistory {
 
         accountContextMap[uid] = AccountContext(uid, "", "")
 
+        saveLastLoginUid(majorAccountUid)
         EventBus.getDefault().post(AccountLoginStateChangedEvent())
+    }
+
+    private fun saveLastLoginUid(uid: String) {
+        if (uid.isNotEmpty()) {
+            storage.set(AME_LAST_LOGIN, uid)
+        }
+    }
+
+    fun getLastLoginUid(): String {
+        return storage.get(AME_LAST_LOGIN,"")
     }
 
     fun resetBackupState(uid: String) {

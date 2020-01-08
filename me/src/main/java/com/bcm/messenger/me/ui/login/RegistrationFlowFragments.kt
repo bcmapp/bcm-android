@@ -37,6 +37,7 @@ import kotlinx.android.synthetic.main.me_generate_key_fragment_2.*
 import kotlinx.android.synthetic.main.me_key_load_anim_layout.*
 import kotlinx.android.synthetic.main.me_layout_relogin.*
 import kotlinx.android.synthetic.main.me_startup_fragment.*
+import org.whispersystems.libsignal.ecc.Curve
 import org.whispersystems.libsignal.ecc.ECKeyPair
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
@@ -72,7 +73,7 @@ class ReloginFragment : AbsRegistrationFragment() {
             AmePopup.tipLoading.show(this.activity)
             Observable.create(ObservableOnSubscribe<ECKeyPair> {
                 try {
-                    it.onNext(IdentityKeyUtil.generateIdentityKeys(context))
+                    it.onNext(Curve.generateKeyPair())
                 } catch (ex: Exception) {
                     it.onError(ex)
                 } finally {
@@ -161,31 +162,7 @@ class ReloginFragment : AbsRegistrationFragment() {
 
         ALog.d(TAG, "fetchProfile uid: $uid, name: $name, avatar: $avatar")
         if (!realUid.isNullOrEmpty()) {
-
-            val weakThis = WeakReference(this)
-            Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
-                try {
-                    val recipient = Recipient.from(accountContext, realUid, false)
-                    val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
-                        avatar
-                    }else {
-                        null
-                    }
-                    recipient.setProfile(recipient.profileKey, name, finalAvatar)
-                    emitter.onNext(recipient)
-
-                } finally {
-                    emitter.onComplete()
-                }
-
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ recipient ->
-                        weakThis.get()?.relogin_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
-                    }, {
-
-                    })
-
+            relogin_avatar.setPhoto(realUid, name?:realUid.front(), avatar?:"")
         }
     }
 }
@@ -236,7 +213,7 @@ class StartupFragment : AbsRegistrationFragment() {
         AmePopup.tipLoading.show(this.activity)
         Observable.create(ObservableOnSubscribe<ECKeyPair> {
             try {
-                it.onNext(IdentityKeyUtil.generateIdentityKeys(context))
+                it.onNext(Curve.generateKeyPair())
             } finally {
                 it.onComplete()
             }

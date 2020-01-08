@@ -185,7 +185,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
     private fun handleLogout() {
         try {
             val loginRecipient = getAccountRecipient()
-            SwitchAccount().switchAccount(this, loginRecipient.address.serialize(), loginRecipient)
+            SwitchAccount.switchAccount(accountContext,this, loginRecipient)
         }catch (ex: Exception) {
             ALog.e("AccountSecurity", "handleLogout error", ex)
         }

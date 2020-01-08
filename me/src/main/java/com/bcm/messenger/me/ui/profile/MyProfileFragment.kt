@@ -124,7 +124,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
                 return@setOnClickListener
             }
             try {
-                SwitchAccount().switchAccount(it.context, recipient.address.toString(), getAccountRecipient())
+                SwitchAccount.switchAccount(accountContext, it.context, getAccountRecipient())
             } catch (ex: Exception) {
                 ALog.e(TAG, "handleLogout error", ex)
             }

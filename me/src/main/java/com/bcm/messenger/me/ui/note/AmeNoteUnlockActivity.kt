@@ -9,10 +9,12 @@ import android.view.View
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.audio.GlobalRinger
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmeNoteLogic
+import com.bcm.messenger.me.provider.UserModuleImp
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import kotlinx.android.synthetic.main.me_note_unlock_activity.*
 import java.lang.ref.WeakReference
@@ -20,6 +22,8 @@ import java.lang.ref.WeakReference
 class AmeNoteUnlockActivity : SwipeBaseActivity() {
     private lateinit var unlockAnim: Animator
     private lateinit var globalRinger: GlobalRinger
+    private lateinit var noteLogic: AmeNoteLogic
+
     private val scrollViewLayoutChanged = View.OnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
         if (note_unlock_scroll_view.getChildAt(0).height > (bottom - top)) {
             note_unlock_scroll_view.post {
@@ -34,6 +38,7 @@ class AmeNoteUnlockActivity : SwipeBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_note_unlock_activity)
 
+        noteLogic = (AmeModuleCenter.user(accountContext) as UserModuleImp).getNote()
 
 
         globalRinger = GlobalRinger(this)
@@ -60,7 +65,7 @@ class AmeNoteUnlockActivity : SwipeBaseActivity() {
 
                 showUnlockDoing()
 
-                AmeNoteLogic.getInstance().unlock(pwd) {
+                noteLogic.unlock(pwd) {
                     if (it) {
                         wself.get()?.pwdSucceed(System.currentTimeMillis() - animStart)
                     } else {

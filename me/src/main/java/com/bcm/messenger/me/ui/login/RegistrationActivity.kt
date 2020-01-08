@@ -49,7 +49,7 @@ class RegistrationActivity : AppCompatActivity() {
         if (intent.getBooleanExtra(CREATE_ACCOUNT_ID, false)) {
             handleFirstGoToLogin(null)
         } else {
-            val lastLoginUid = AmeLoginLogic.accountHistory.lastLoginUid()
+            val lastLoginUid = AmeLoginLogic.accountHistory.getLastLoginUid()
             handleFirstGoToLogin(lastLoginUid)
         }
     }
