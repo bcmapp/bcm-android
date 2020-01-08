@@ -2,16 +2,13 @@ package com.bcm.messenger.adhoc.logic
 
 import android.net.Uri
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
 import com.bcm.messenger.adhoc.sdk.AdHocChatMessage
 import com.bcm.messenger.adhoc.sdk.AdHocSDK
 import com.bcm.messenger.adhoc.sdk.AdHocSessionSDK
 import com.bcm.messenger.adhoc.sdk.AdHocSessionStatus
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.repositories.Repository
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.BcmFileUtils
@@ -28,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.math.log
 
 /**
  * adhoc logic class
@@ -90,7 +86,7 @@ class AdHocMessageLogic(private val accountContext: AccountContext) : AdHocSessi
 
     fun initModel(activity: FragmentActivity, session: String) {
         if (mModel == null && !activity.isFinishing && !activity.isDestroyed) {
-            mModel = ViewModelProviders.of(activity).get(AdHocMessageModel::class.java)
+            mModel = AdHocMessageModel.of(activity, accountContext)
         }
         mModel?.init(mCache, session, this@AdHocMessageLogic)
     }

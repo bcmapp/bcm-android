@@ -1,6 +1,10 @@
 package com.bcm.messenger.adhoc.logic
 
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.utility.logger.ALog
@@ -13,6 +17,33 @@ import io.reactivex.schedulers.Schedulers
  * Created by wjh on 2019/7/27
  */
 class AdHocMessageModel(private val accountContext: AccountContext) : ViewModel() {
+
+    companion object {
+        private const val TAG = "AdHocMessageModel"
+
+        /**
+         * 获取当前现有的监控视图，如果没有则新建
+         * @param activity
+         */
+        fun of(activity: FragmentActivity, accountContext: AccountContext): AdHocMessageModel {
+            return ViewModelProviders.of(activity, AdHocFactory(accountContext)).get(AdHocMessageModel::class.java)
+
+        }
+
+        fun of(fragment: Fragment, accountContext: AccountContext): AdHocMessageModel {
+            return ViewModelProviders.of(fragment, AdHocFactory(accountContext)).get(AdHocMessageModel::class.java)
+        }
+    }
+
+    class AdHocFactory(private val accountContext: AccountContext) : ViewModelProvider.NewInstanceFactory() {
+
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(AdHocMessageModel::class.java)) {
+                return AdHocMessageModel(accountContext) as T
+            }
+            return super.create(modelClass)
+        }
+    }
 
     interface OnModelListener {
         fun onRecycle()
@@ -66,10 +97,6 @@ class AdHocMessageModel(private val accountContext: AccountContext) : ViewModel(
             return tag.hashCode()
         }
 
-    }
-
-    companion object {
-        private const val TAG = "AdHocMessageModel"
     }
 
     private var mSessionId: String = ""

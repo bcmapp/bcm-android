@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeLoadingPopup
 import com.bcm.messenger.common.utils.getColorCompat
@@ -38,6 +39,11 @@ class PrivacySettingsActivity : SwipeBaseActivity() {
     }
 
     private fun initView() {
+        privacy_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
+            override fun onClickLeft() {
+                finish()
+            }
+        })
         privacy_blocked_user.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener

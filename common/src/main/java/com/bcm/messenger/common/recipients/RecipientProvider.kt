@@ -27,15 +27,18 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
 
         private var mUncommonCache: RecipientCache = RecipientCache(LRUCache(5000))
 
+        @Synchronized
         fun clearCache() {
             mCommonCache.reset()
             mUncommonCache.reset()
         }
 
+        @Synchronized
         fun findCache(address: Address): Recipient? {
             return mCommonCache[address] ?: mUncommonCache[address]
         }
 
+        @Synchronized
         fun updateCache(recipient: Recipient) {
             val r = recipient
             if (r.isLogin || (r.relationship != RecipientRepo.Relationship.STRANGER && r.relationship != RecipientRepo.Relationship.REQUEST)) {
@@ -47,6 +50,7 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
             }
         }
 
+        @Synchronized
         fun deleteCache(address: Address) {
             mCommonCache.remove(address)
             mUncommonCache.remove(address)
@@ -86,7 +90,6 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
         if (!useCache(current, asynchronous)) {
             current = Recipient(address, current)
             if (asynchronous) {
-                updateCache(current)
                 handleFetchDetailTask(context, current)
             } else {
                 val newDetail = details ?: RecipientDetails(address.serialize(), null, null, null, null)
@@ -171,6 +174,7 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
      */
     private fun handleFetchDetailTask(context: Context, recipient: Recipient) {
         ALog.d(TAG, "handleFetchDetailTask uid: ${recipient.address}")
+        updateCache(recipient)
         if (lockTaskCounter(recipient)) {
             mTaskDisposable = Observable.create<Boolean> {
                 ALog.d(TAG, "handleFetchDetailTask begin")
