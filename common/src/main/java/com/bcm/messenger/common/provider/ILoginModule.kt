@@ -95,4 +95,6 @@ interface ILoginModule : IAmeModule {
     fun refreshOfflineToken()
 
     fun getLoginAccountContextList(): List<AccountContext>
+
+    fun checkPassword(accountContext: AccountContext, password: String, result: (right: Boolean) -> Unit)
 }

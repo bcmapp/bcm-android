@@ -146,10 +146,6 @@ object AmeLoginLogic {
         return AccountContext(uid, "", "")
     }
 
-    fun getTmpAccountContext(): AccountContext {
-        return tmpAccountContext
-    }
-
     /**
      * save account state
      */
@@ -863,11 +859,11 @@ object AmeLoginLogic {
         return support
     }
 
-    fun checkPassword(password: String, result: (right: Boolean) -> Unit) {
+    fun checkPassword(accountContext: AccountContext, password: String, result: (right: Boolean) -> Unit) {
         AmeDispatcher.io.dispatch {
             var right = false
             try {
-                val account = getMajorAccount()
+                val account = getAccount(accountContext.uid)
                 if (null != account) {
                     right = accountHistory.getPrivateKeyWithPassword(account, password) != null
                 }

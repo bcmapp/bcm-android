@@ -32,7 +32,7 @@ import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmeNoteLogic
 import com.bcm.messenger.me.logic.AmePinLogic
 import com.bcm.messenger.me.logic.FeedbackReport
-import com.bcm.messenger.me.ui.keybox.SwitchAccountAdapter
+import com.bcm.messenger.me.ui.keybox.SwitchAccount
 import com.bcm.messenger.me.ui.note.AmeNoteActivity
 import com.bcm.messenger.me.ui.note.AmeNoteUnlockActivity
 import com.bcm.messenger.me.utils.MeConfirmDialog
@@ -70,6 +70,7 @@ class UserModuleImp : IUserModule
     private var kickOutDispose: Disposable? = null
 
     private var kickEvent: AccountKickedEvent? = null
+    private lateinit var noteLogic: AmeNoteLogic
 
     private lateinit var accountContext: AccountContext
     override val context: AccountContext
@@ -80,8 +81,12 @@ class UserModuleImp : IUserModule
     }
 
 
+    fun getNote():AmeNoteLogic {
+        return noteLogic
+    }
+
     override fun initModule() {
-        AmeNoteLogic.getInstance().refreshCurrentUser()
+        noteLogic = AmeNoteLogic(accountContext)
         AmeModuleCenter.serverDaemon(accountContext).setForceLogoutListener(this)
         AppForeground.listener.addListener(this)
         AmePinLogic.initLogic()
@@ -357,7 +362,7 @@ class UserModuleImp : IUserModule
     }
 
     override fun gotoDataNote(context: Context, accountContext: AccountContext) {
-        if (AmeNoteLogic.getInstance().isLocked()) {
+        if (noteLogic.isLocked()) {
             val intent = Intent(context, AmeNoteUnlockActivity::class.java)
             context.startBcmActivity(accountContext, intent)
         } else {
@@ -418,12 +423,11 @@ class UserModuleImp : IUserModule
         }
 
         AmeModuleCenter.contact(accountContext)?.fetchProfile(recipient) {}
-        AmeNoteLogic.getInstance().updateUser(address.serialize())
 
     }
 
     override fun doForLogout() {
-        AmeNoteLogic.getInstance().updateUser("")
+
     }
 
     override fun feedback(tag: String, description: String, screenshotList: List<String>, callback: ((result: Boolean, cause: Throwable?) -> Unit)?) {
@@ -654,6 +658,6 @@ class UserModuleImp : IUserModule
             return
         }
 
-        SwitchAccountAdapter().switchAccount(activity, accountContext.uid, Recipient.login(accountContext))
+        SwitchAccount.switchAccount(accountContext, activity, Recipient.login(accountContext))
     }
 }

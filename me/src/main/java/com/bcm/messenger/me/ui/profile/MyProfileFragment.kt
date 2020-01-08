@@ -22,7 +22,7 @@ import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.destroy.DestroyAccountDialog
 import com.bcm.messenger.me.ui.destroy.DestroyCheckPasswordFragment
 import com.bcm.messenger.me.ui.keybox.MyAccountKeyActivity
-import com.bcm.messenger.me.ui.keybox.SwitchAccountAdapter
+import com.bcm.messenger.me.ui.keybox.SwitchAccount
 import com.bcm.messenger.me.ui.login.ChangePasswordActivity
 import com.bcm.messenger.me.ui.login.backup.VerifyFingerprintActivity
 import com.bcm.messenger.me.ui.qrcode.BcmMyQRCodeActivity
@@ -124,7 +124,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
                 return@setOnClickListener
             }
             try {
-                SwitchAccountAdapter().switchAccount(it.context, recipient.address.toString(), getAccountRecipient())
+                SwitchAccount().switchAccount(it.context, recipient.address.toString(), getAccountRecipient())
             } catch (ex: Exception) {
                 ALog.e(TAG, "handleLogout error", ex)
             }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.getSelectedLocale
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
 import com.bcm.messenger.common.ui.adapter.ListDataSource
@@ -24,6 +25,7 @@ import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.bean.BcmNote
 import com.bcm.messenger.me.logic.AmeNoteLogic
+import com.bcm.messenger.me.provider.UserModuleImp
 import com.bcm.messenger.utility.*
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
@@ -39,7 +41,7 @@ import java.util.*
  */
 @Route(routePath = ARouterConstants.Activity.NOTE)
 class AmeNoteActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<BcmNote> {
-    private val noteLogic = AmeNoteLogic.getInstance()
+    private lateinit var noteLogic:AmeNoteLogic
     private val dataSource = object :ListDataSource<BcmNote>() {
         override fun getItemId(position: Int): Long {
             return EncryptUtils.byteArrayToLong(getData(position).topicId.toByteArray())
@@ -49,7 +51,12 @@ class AmeNoteActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDe
     public override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
         this.setContentView(R.layout.me_note_activity)
+        if (!accountContext.isLogin) {
+            finish()
+            return
+        }
 
+        noteLogic = (AmeModuleCenter.user(accountContext) as UserModuleImp).getNote()
         EventBus.getDefault().register(this)
 
         note_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {

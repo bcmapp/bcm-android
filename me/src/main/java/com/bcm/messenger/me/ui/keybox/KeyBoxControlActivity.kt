@@ -279,7 +279,7 @@ class KeyBoxControlActivity : SwipeBaseActivity() {
                     if (accountData?.uid == AMELogin.uid) {
                         startActivityForResult(Intent(this@KeyBoxControlActivity, VerifyFingerprintActivity::class.java), REQUEST_MY_ACCOUNT)
                     }else {
-                        SwitchAccountAdapter().switchAccount(it.context, id ?: "", recipient)
+                        SwitchAccount().switchAccount(it.context, id ?: "", recipient)
                     }
                 }
             }

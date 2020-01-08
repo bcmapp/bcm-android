@@ -316,4 +316,8 @@ class LoginModuleImpl : ILoginModule
             }
         }
     }
+
+    override fun checkPassword(accountContext: AccountContext, password: String, result: (right: Boolean) -> Unit) {
+        AmeLoginLogic.checkPassword(accountContext, password, result)
+    }
 }

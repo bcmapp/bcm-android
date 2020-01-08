@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.common.database.repositories.Repository
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.accountmodule.IContactModule
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.me.R
 import io.reactivex.Observable

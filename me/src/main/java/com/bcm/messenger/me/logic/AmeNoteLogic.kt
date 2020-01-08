@@ -6,9 +6,8 @@ import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.room.dao.NoteRecordDao
 import com.bcm.messenger.common.grouprepository.room.entity.NoteRecord
-import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
-import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.bean.BcmNote
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.Base64
@@ -26,7 +25,7 @@ import org.whispersystems.signalservice.internal.util.Util
 import java.io.*
 import java.security.MessageDigest
 
-class AmeNoteLogic : AppForeground.IForegroundEvent {
+class AmeNoteLogic(private val accountContext: AccountContext) : AppForeground.IForegroundEvent {
 
     companion object {
         private const val TAG = "AmeNoteLogic"
@@ -34,41 +33,18 @@ class AmeNoteLogic : AppForeground.IForegroundEvent {
         private const val MAC_KEY_LEN = 32
         private const val KEY_LEN = 32
         private const val HASH_LEN = 32 //hash256
-
-        private val sInstance: AmeNoteLogic by lazy {
-            AmeNoteLogic()
-        }
-
-        fun getInstance(): AmeNoteLogic {
-            return sInstance
-        }
     }
 
     private val notesList = ArrayList<BcmNote>()
-    private var uid: String = ""
     private var locked = true
 
     init {
         AppForeground.listener.addListener(this)
-    }
-
-    fun updateUser(uid: String) {
-        if (this.uid == uid) {
-            return
-        }
-
-        locked = true
-        this.uid = uid
-        if (this.uid.isBlank()) {
-            notesList.clear()
-        } else {
-            loadCache()
-        }
+        loadCache()
     }
 
     fun refreshCurrentUser() {
         locked = true
-        loadCache()
     }
 
     fun isLocked(): Boolean {
@@ -86,7 +62,7 @@ class AmeNoteLogic : AppForeground.IForegroundEvent {
     }
 
     fun unlock(pwd: String, result: (succeed: Boolean) -> Unit) {
-        AmeLoginLogic.checkPassword(pwd) {
+        AmeModuleCenter.login().checkPassword(accountContext, pwd) {
             if (it) {
                 locked = false
             }
@@ -96,7 +72,7 @@ class AmeNoteLogic : AppForeground.IForegroundEvent {
 
     @SuppressLint("CheckResult")
     private fun loadCache() {
-        if (!AMELogin.isLogin) {
+        if (!accountContext.isLogin) {
             return
         }
 
@@ -447,15 +423,15 @@ class AmeNoteLogic : AppForeground.IForegroundEvent {
         }
     }
 
-    private fun noteStorePath(accountContext: AccountContext): String {
+    private fun noteStorePath(): String {
         return accountContext.accountDir + NOTE_LOCAL_DIR
     }
 
-    private fun getDao(accountContext: AccountContext): NoteRecordDao? {
-        return Repository.getNoteRecordRepo(accountContext)
+    private fun getDao(): NoteRecordDao {
+        return Repository.getNoteRecordRepo(accountContext)?:throw Exception("db not initial")
     }
 
-    private fun encodeTopic(accountContext: AccountContext, topic: String): String {
+    private fun encodeTopic(topic: String): String {
         if (topic.isEmpty()) {
             return ""
         }
@@ -476,7 +452,7 @@ class AmeNoteLogic : AppForeground.IForegroundEvent {
         return ""
     }
 
-    private fun decodeTopic(accountContext: AccountContext, encryptedTopic: String): String {
+    private fun decodeTopic(encryptedTopic: String): String {
         if (encryptedTopic.isEmpty()) {
             return ""
         }

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
@@ -31,7 +32,7 @@ import io.reactivex.schedulers.Schedulers
 /**
  * bcm.social.01 2018/11/6.
  */
-class SwitchAccountAdapter {
+object SwitchAccount {
 
     class SwitchPopupHeader(private val switchToRecipient: Recipient?, private val switchForLogOut: Boolean) : AmeBottomPopup.CustomViewCreator, RecipientModifiedListener {
 
@@ -93,12 +94,7 @@ class SwitchAccountAdapter {
         }
     }
 
-    fun switchAccount(context: Context, uid: String, switchTo: Recipient?) {
-        if (uid.isEmpty()) {
-            ALog.e("SwitchAccountAdapters", "invalid account")
-            return
-        }
-
+    fun switchAccount(accountContext: AccountContext, context: Context, switchTo: Recipient?) {
         if (!AppUtil.checkNetwork()) {
             ALog.e("SwitchAccountAdapters", "network disconnected")
             return
@@ -109,7 +105,7 @@ class SwitchAccountAdapter {
             return
         }
 
-        val switchForLogOut = (uid == AMELogin.uid)
+        val switchForLogOut = true
         val viewCreator = SwitchPopupHeader(switchTo, switchForLogOut)
 
         var option = activity.getString(R.string.me_logout_tip_out)
@@ -122,14 +118,10 @@ class SwitchAccountAdapter {
         AmePopup.bottom.newBuilder()
                 .withCustomView(viewCreator)
                 .withPopItem(AmeBottomPopup.PopupItem(option, color) {
-                    if (!switchForLogOut) {
-                        AmeLoginLogic.accountHistory.saveLastLoginUid(uid)
-                    }
-
                     AmePopup.loading.show(activity as? FragmentActivity)
                     Observable.create(ObservableOnSubscribe<Boolean> {
                         try {
-                            AmeLoginLogic.quit(viewCreator.clear)
+                            AmeLoginLogic.quit(accountContext, viewCreator.clear)
                             it.onNext(true)
                         } catch (ex: Exception) {
                             it.onNext(false)
@@ -142,12 +134,12 @@ class SwitchAccountAdapter {
                             .subscribe {
                                 AmePopup.loading.dismiss()
 
-                                AmeModuleCenter.onLoginSucceed("")
+                                AmeModuleCenter.onLogOutSucceed(accountContext)
 
                                 activity.startActivity(Intent(activity, VerifyKeyActivity::class.java).apply {
                                     flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                                     putExtra(VerifyKeyActivity.BACKUP_JUMP_ACTION, VerifyKeyActivity.LOGIN_PROFILE)
-                                    putExtra(RegistrationActivity.RE_LOGIN_ID, uid)
+                                    putExtra(RegistrationActivity.RE_LOGIN_ID, "")
                                 })
 
                                 activity.finish()

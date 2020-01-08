@@ -1,11 +1,9 @@
-package com.bcm.messenger.common.provider
+package com.bcm.messenger.common.provider.accountmodule
 
 import android.content.Context
 import android.graphics.Bitmap
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.accountmodule.IAmeAccountModule
 import com.bcm.messenger.common.database.model.ProfileKeyModel
-import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
 import com.bcm.messenger.common.recipients.Recipient
 import io.reactivex.disposables.Disposable

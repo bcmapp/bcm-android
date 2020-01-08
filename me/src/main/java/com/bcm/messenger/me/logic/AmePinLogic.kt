@@ -159,7 +159,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
             }
             ALog.i(TAG, "show pin lock activity: ${topActivity != null}")
             val context = AppContextHolder.APP_CONTEXT
-            if(!DatabaseFactory.isDatabaseExist(context) || TextSecurePreferences.isDatabaseMigrated(context)) {
+            if(!DatabaseFactory.isDatabaseExist(AMELogin.majorContext, context) || TextSecurePreferences.isDatabaseMigrated(AMELogin.majorContext)) {
                 if (null != topActivity && topActivity !is RegistrationActivity && topActivity !is VerifyKeyActivity) {
                     PinInputActivity.routerVerifyUnlock(topActivity)
                 } else {

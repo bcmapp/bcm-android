@@ -44,7 +44,7 @@ import com.bcm.messenger.common.mms.OutgoingSecureMediaMessage;
 import com.bcm.messenger.common.mms.SlideDeck;
 import com.bcm.messenger.common.preferences.TextSecurePreferences;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
-import com.bcm.messenger.common.provider.IContactModule;
+import com.bcm.messenger.common.provider.accountmodule.IContactModule;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.sms.IncomingEncryptedMessage;
 import com.bcm.messenger.common.sms.IncomingEndSessionMessage;

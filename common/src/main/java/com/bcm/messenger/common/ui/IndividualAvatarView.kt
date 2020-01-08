@@ -25,7 +25,7 @@ import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.IContactModule
+import com.bcm.messenger.common.provider.accountmodule.IContactModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.emoji.EmojiTextView
 import com.bcm.messenger.common.utils.BcmFileUtils

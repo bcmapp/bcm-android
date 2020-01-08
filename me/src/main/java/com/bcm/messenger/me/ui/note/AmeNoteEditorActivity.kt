@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -16,6 +17,7 @@ import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmeNoteLogic
+import com.bcm.messenger.me.provider.UserModuleImp
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -30,7 +32,7 @@ class AmeNoteEditorActivity : SwipeBaseActivity() {
 
     private var topicId: String = ""
     private var initContentHash = ""
-    private val noteLogic = AmeNoteLogic.getInstance()
+    private lateinit var noteLogic:AmeNoteLogic
     private var saveEvent: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +40,11 @@ class AmeNoteEditorActivity : SwipeBaseActivity() {
         setContentView(R.layout.me_note_editor_activity)
         topicId = intent.getStringExtra(TOPIC_ID) ?: ""
 
+        if (!accountContext.isLogin) {
+            finish()
+            return
+        }
+        noteLogic = (AmeModuleCenter.user(accountContext) as UserModuleImp).getNote()
 
         note_editor_title_bar.setCenterText(getString(R.string.me_note_new_note_title))
 

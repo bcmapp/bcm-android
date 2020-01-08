@@ -25,7 +25,7 @@ import com.bcm.messenger.common.deprecated.RecipientDatabase.RegisteredState;
 import com.bcm.messenger.common.deprecated.RecipientDatabase.VibrateState;
 import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
-import com.bcm.messenger.common.provider.IContactModule;
+import com.bcm.messenger.common.provider.accountmodule.IContactModule;
 import com.bcm.messenger.common.provider.accountmodule.IGroupModule;
 import com.bcm.messenger.common.recipients.RecipientProvider.RecipientDetails;
 import com.bcm.messenger.common.ui.IndividualAvatarView;
