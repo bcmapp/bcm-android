@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bcm.messenger.common.ARouterConstants;
 import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.color.MaterialColor;
 import com.bcm.messenger.common.config.BcmFeatureSupport;
@@ -38,7 +37,6 @@ import com.bcm.messenger.utility.Util;
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher;
 import com.bcm.messenger.utility.logger.ALog;
 import com.bcm.messenger.utility.proguard.NotGuard;
-import com.bcm.route.api.BcmRouter;
 import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONObject;
@@ -449,10 +447,10 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
      */
     void updateRecipientDetails(@Nullable RecipientDetails details, boolean notify) {
 
+        this.resolving = false;
         if (details == null || (details.getCustomName() == null && details.getCustomAvatar() == null && details.getParticipants() == null && details.getSettings() == null)) {
             return;
         }
-
         synchronized (Recipient.this) {
 
             boolean changed = false;
@@ -475,9 +473,6 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
             if (Recipient.this.fillSettings(details.getSettings())) {
                 changed = true;
             }
-
-            this.resolving = false;
-
             if (!listeners.isEmpty()) {
                 for (Recipient recipient : Recipient.this.participants) {
                     recipient.addListener(Recipient.this);
