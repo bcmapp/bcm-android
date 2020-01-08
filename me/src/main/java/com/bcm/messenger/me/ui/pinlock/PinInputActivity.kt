@@ -211,7 +211,7 @@ class PinInputActivity : SwipeBaseActivity() {
                 pin_lock_nikename.visibility = View.VISIBLE
                 pin_word_size.visibility = View.GONE
                 pin_word_size.text = getString(R.string.me_forget_pin)
-                val recipient = getAccountRecipient()
+                val recipient = accountRecipient
                 pin_lock_avatar.setPhoto(recipient)
                 pin_lock_nikename.text = recipient.name
                 recipient.addListener {

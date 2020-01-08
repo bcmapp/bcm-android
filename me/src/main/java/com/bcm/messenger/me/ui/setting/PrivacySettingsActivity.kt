@@ -34,7 +34,7 @@ class PrivacySettingsActivity : SwipeBaseActivity() {
     }
 
     override fun onLoginRecipientRefresh() {
-        privacy_block_stranger.setSwitchStatus(!getAccountRecipient().isAllowStranger)
+        privacy_block_stranger.setSwitchStatus(!accountRecipient.isAllowStranger)
     }
 
     private fun initView() {
@@ -51,14 +51,14 @@ class PrivacySettingsActivity : SwipeBaseActivity() {
                 return@setOnClickListener
             }
 
-            val allowStranger = !getAccountRecipient().isAllowStranger
+            val allowStranger = !accountRecipient.isAllowStranger
             AmePopup.loading.show(this)
             AmeModuleCenter.login().updateAllowReceiveStrangers(accountContext, allowStranger) { success ->
                 if (!success) {
                     AmePopup.loading.dismiss()
                     AmePopup.result.failure(this, getString(R.string.me_setting_block_stranger_error), true)
                 } else {
-                    getAccountRecipient().privacyProfile.allowStranger = allowStranger
+                    accountRecipient.privacyProfile.allowStranger = allowStranger
                     updateStrangerState()
                     AmePopup.loading.dismiss(AmeLoadingPopup.DELAY_DEFAULT)
                 }
@@ -96,6 +96,6 @@ class PrivacySettingsActivity : SwipeBaseActivity() {
     }
 
     private fun updateStrangerState() {
-        privacy_block_stranger.setSwitchStatus(!getAccountRecipient().isAllowStranger)
+        privacy_block_stranger.setSwitchStatus(!accountRecipient.isAllowStranger)
     }
 }

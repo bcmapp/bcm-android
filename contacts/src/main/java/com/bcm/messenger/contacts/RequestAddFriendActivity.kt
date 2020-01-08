@@ -97,7 +97,7 @@ class RequestAddFriendActivity : SwipeBaseActivity(), RecipientModifiedListener 
         }
         request_notice_tv.text = getString(R.string.contacts_request_friend_notice, name)
         if (mUseDefaultHint) {
-            request_memo_input.setText(getString(R.string.contacts_request_friend_memo_hint, getAccountRecipient().name))
+            request_memo_input.setText(getString(R.string.contacts_request_friend_memo_hint, accountRecipient.name))
         }
         request_memo_input.requestFocus()
     }

@@ -37,7 +37,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     private lateinit var mHelper: SwipeBackActivityHelper
 
     private lateinit var accountContextObj: AccountContext
-    private lateinit var mLoginRecipient: Recipient
+    private lateinit var accountRecipientObj: Recipient
 
     private var disableDefaultTransition = false
     private var disabledClipboardCheck = false
@@ -47,10 +47,11 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     private var checkStartTime = System.currentTimeMillis()
 
     val accountContext get() = accountContextObj
+    val accountRecipient get() = accountRecipientObj
 
-    private var mLoginModifiedListener = RecipientModifiedListener { recipient ->
-        if (mLoginRecipient == recipient) {
-            mLoginRecipient = recipient
+    private var mModifiedListener = RecipientModifiedListener { recipient ->
+        if (accountRecipientObj == recipient) {
+            accountRecipientObj = recipient
             onLoginRecipientRefresh()
         }
     }
@@ -143,8 +144,8 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     override fun onDestroy() {
         super.onDestroy()
         Looper.myQueue().removeIdleHandler(idleHandler)
-        if (::mLoginRecipient.isInitialized) {
-            mLoginRecipient.removeListener(mLoginModifiedListener)
+        if (::accountRecipientObj.isInitialized) {
+            accountRecipientObj.removeListener(mModifiedListener)
         }
     }
 
@@ -193,7 +194,6 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(accountContextObj) ?: throw Exception("getMasterSecret is null")
 
-    fun getAccountRecipient(): Recipient = mLoginRecipient
 
     fun setAccountContext(context: AccountContext) {
         accountContextObj = context
@@ -201,11 +201,11 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     }
 
     private fun setAccountRecipient(recipient: Recipient) {
-        if (::mLoginRecipient.isInitialized) {
-            mLoginRecipient.removeListener(mLoginModifiedListener)
+        if (::accountRecipientObj.isInitialized) {
+            accountRecipientObj.removeListener(mModifiedListener)
         }
-        mLoginRecipient = recipient
-        mLoginRecipient.addListener(mLoginModifiedListener)
+        accountRecipientObj = recipient
+        accountRecipientObj.addListener(mModifiedListener)
     }
 
     /**

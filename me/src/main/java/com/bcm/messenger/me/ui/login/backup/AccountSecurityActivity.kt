@@ -98,7 +98,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
     }
 
     override fun onLoginRecipientRefresh() {
-        me_account_img?.setPhoto(getAccountRecipient())
+        me_account_img?.setPhoto(accountRecipient)
     }
 
     private fun initCard() {
@@ -140,7 +140,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
             me_account_name.text = it.name
             account_generate_date.text = getString(R.string.me_str_generation_key_date, DateUtils.formatDayTime(it.genKeyTime))
             me_account_openid.text = "${getString(R.string.me_id_title)}: ${it.uid}"
-            val backupState = AmeLoginLogic.accountHistory.getBackupTime(getAccountRecipient().address.serialize())
+            val backupState = AmeLoginLogic.accountHistory.getBackupTime(accountRecipient.address.serialize())
 
             val dateBuilder = SpannableStringBuilder()
             if (backupState > 0) {
@@ -159,7 +159,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
                 dateBuilder.setSpan(foregroundColor, dateBuilder.length - extra.length - 1, dateBuilder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
             account_backup_date.text = dateBuilder
-            me_account_img.setPhoto(getAccountRecipient())
+            me_account_img.setPhoto(accountRecipient)
         }
     }
 
@@ -174,7 +174,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
 
     private fun showQrCode() {
         val intent = Intent(this, MyAccountKeyActivity::class.java)
-        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, getAccountRecipient().address.serialize())
+        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, accountRecipient.address.serialize())
         startBcmActivity(intent)
     }
 
@@ -184,8 +184,7 @@ class AccountSecurityActivity : SwipeBaseActivity() {
 
     private fun handleLogout() {
         try {
-            val loginRecipient = getAccountRecipient()
-            SwitchAccount.switchAccount(accountContext,this, loginRecipient)
+            SwitchAccount.switchAccount(accountContext,this, accountRecipient)
         }catch (ex: Exception) {
             ALog.e("AccountSecurity", "handleLogout error", ex)
         }

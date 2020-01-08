@@ -529,38 +529,44 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             return
         }
         mShortLinkCreating = true
-
-        val recipient = handledRecipient.resolve()
-        val privacyProfile = recipient.privacyProfile
-        val sourceByteArray = Recipient.toQRCode(recipient).toByteArray()
-        val hash = BCMEncryptUtils.murmurHash3(0xFBA4C795, sourceByteArray)
-        val content = Base64.encodeBytes(BCMEncryptUtils.encryptByAES256(sourceByteArray, hash.toString().toByteArray()))
-        val req = UpdateShareLinkReq(content)
-        RxIMHttp.get(mAccountContext).put<UpdateShareLinkRes>(BcmHttpApiHelper.getApi(INDIVIDUAL_SHORT_SHARE_PATH)
-                , GsonUtils.toJson(req)
-                , UpdateShareLinkRes::class.java)
-                .subscribeOn(AmeDispatcher.ioScheduler)
+        Observable.create<Recipient> {
+            it.onNext(handledRecipient.resolve())
+            it.onComplete()
+        }.subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
-                .map {
-                    if (it.index.isNullOrEmpty()) {
-                        throw Exception("index failed")
-                    }
+                .subscribe { recipient ->
+                    val privacyProfile = recipient.privacyProfile
+                    val sourceByteArray = Recipient.toQRCode(recipient).toByteArray()
+                    val hash = BCMEncryptUtils.murmurHash3(0xFBA4C795, sourceByteArray)
+                    val content = Base64.encodeBytes(BCMEncryptUtils.encryptByAES256(sourceByteArray, hash.toString().toByteArray()))
+                    val req = UpdateShareLinkReq(content)
+                    RxIMHttp.get(mAccountContext).put<UpdateShareLinkRes>(BcmHttpApiHelper.getApi(INDIVIDUAL_SHORT_SHARE_PATH)
+                            , GsonUtils.toJson(req)
+                            , UpdateShareLinkRes::class.java)
+                            .subscribeOn(AmeDispatcher.ioScheduler)
+                            .observeOn(AmeDispatcher.ioScheduler)
+                            .map {
+                                if (it.index.isNullOrEmpty()) {
+                                    throw Exception("index failed")
+                                }
 
-                    privacyProfile.setShortLink(it.index, Base62.encode(hash))
+                                privacyProfile.setShortLink(it.index, Base62.encode(hash))
 
-                    ALog.d(TAG, "updateShareLink newShortLink: ${privacyProfile.shortLink}")
+                                ALog.d(TAG, "updateShareLink newShortLink: ${privacyProfile.shortLink}")
 
-                    Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, privacyProfile)
+                                Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, privacyProfile)
 
-                }.observeOn(AmeDispatcher.mainScheduler)
-                .subscribe({
-                    mShortLinkCreating = false
-                    callback.invoke(true)
-                }, {
-                    ALog.e(TAG, "updateShareLink error", it)
-                    mShortLinkCreating = false
-                    callback.invoke(false)
-                })
+                            }.observeOn(AmeDispatcher.mainScheduler)
+                            .subscribe({
+                                mShortLinkCreating = false
+                                callback.invoke(true)
+                            }, {
+                                ALog.e(TAG, "updateShareLink error", it)
+                                mShortLinkCreating = false
+                                callback.invoke(false)
+                            })
+                }
+
     }
 
 
