@@ -89,7 +89,6 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
             finish()
             return
         }
-        this.accountContextObj = accountContextObj
         setAccountContext(accountContextObj)
         EventBus.getDefault().register(this)
 
