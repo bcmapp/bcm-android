@@ -203,8 +203,10 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
 
     fun setAccountContext(context: AccountContext) {
-        accountContextObj = context
-        setAccountRecipient(Recipient.login(context))
+        if (accountContextObj != context) {
+            accountContextObj = context
+            setAccountRecipient(Recipient.login(context))
+        }
     }
 
     private fun setAccountRecipient(recipient: Recipient) {

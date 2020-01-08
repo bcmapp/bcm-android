@@ -14,15 +14,16 @@ data class HomeTopEvent(val finishTop: Boolean = true, val chatEvent: Conversati
     /**
      * 
      */
-    class ConversationEvent(val path: String, val threadId: Long, val address: Address?, val gid: Long?, val createIfNotExist: Boolean) {
+    class ConversationEvent(val path: String, val threadId: Long, val address: String, val createIfNotExist: Boolean) {
 
         companion object {
-            fun fromGroupConversation(address: Address?, gid: Long): ConversationEvent {
-                return ConversationEvent(ARouterConstants.Activity.CHAT_GROUP_CONVERSATION, 0L, address, gid, true)
+
+            fun fromGroupConversation(gid: Long): ConversationEvent {
+                return ConversationEvent(ARouterConstants.Activity.CHAT_GROUP_CONVERSATION, 0L, gid.toString(),  true)
             }
 
-            fun fromPrivateConversation(address: Address, createIfNotExist: Boolean): ConversationEvent {
-                return ConversationEvent(ARouterConstants.Activity.CHAT_CONVERSATION_PATH, 0L, address, null, createIfNotExist)
+            fun fromPrivateConversation(address: String, createIfNotExist: Boolean): ConversationEvent {
+                return ConversationEvent(ARouterConstants.Activity.CHAT_CONVERSATION_PATH, 0L, address, createIfNotExist)
             }
         }
     }

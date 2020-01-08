@@ -62,8 +62,8 @@ class GroupModuleImp : IGroupModule {
             ALog.d(TAG, "doGroupJoin queryGroupInfo is null: ${ameGroupInfo == null}, role: ${ameGroupInfo?.role ?: 0}")
             if (ameGroupInfo != null && ameGroupInfo.role != AmeGroupMemberInfo.VISITOR) {
                 AmeAppLifecycle.hideLoading()
-                AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
-                        HomeTopEvent.ConversationEvent.fromGroupConversation(null, gid)))
+                AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
+                        HomeTopEvent.ConversationEvent.fromGroupConversation(gid)))
                 callback?.invoke(true)
             }else {
                 GroupLogic.get(accountContext).checkJoinGroupNeedConfirm(groupShareContent.groupId) {succeed, needConfirm ->
@@ -82,8 +82,8 @@ class GroupModuleImp : IGroupModule {
                                 GroupLogic.get(accountContext).queryGroupInfo(groupShareContent.groupId) { ameGroupInfo, _, _ ->
                                     ALog.d(TAG, "after joinGroupByShareCode queryGroupInfo is null: ${ameGroupInfo == null}, role: ${ameGroupInfo?.role ?: 0}")
                                     if (ameGroupInfo != null && ameGroupInfo.role != AmeGroupMemberInfo.VISITOR) {
-                                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
-                                                HomeTopEvent.ConversationEvent.fromGroupConversation(null, gid)))
+                                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
+                                                HomeTopEvent.ConversationEvent.fromGroupConversation(gid)))
 
                                     }
                                     callback?.invoke(true)

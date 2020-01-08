@@ -85,9 +85,8 @@ class NewChatActivity : SwipeBaseActivity() {
                         if (succeed && null != groupInfo && null != groupInfo.gid) {
                             val activity = weakThis.get()
                             if (activity != null && !activity.isFinishing && !activity.isDestroyed) {
-                                val recipient = Recipient.recipientFromNewGroup(accountContext, groupInfo)
-                                AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
-                                        HomeTopEvent.ConversationEvent.fromGroupConversation(recipient.address, groupInfo.gid)))
+                                AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
+                                        HomeTopEvent.ConversationEvent.fromGroupConversation(groupInfo.gid)))
                             }
                         } else {
                             AmePopup.result.failure(this@NewChatActivity,error ?: resources.getString(R.string.chats_unknown), true)

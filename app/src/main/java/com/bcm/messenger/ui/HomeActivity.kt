@@ -17,6 +17,7 @@ import com.bcm.messenger.chats.thread.MessageListTitleView
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
@@ -260,12 +261,22 @@ class HomeActivity : SwipeBaseActivity() {
 
                     val con = event.chatEvent
                     if (con != null) {
-                        BcmRouter.getInstance()
-                                .get(con.path)
-                                .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, con.address)
-                                .putLong(ARouterConstants.PARAM.PARAM_THREAD, con.threadId)
-                                .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, con.gid ?: -1L)
-                                .navigation(this)
+                        if (con.path == ARouterConstants.Activity.CHAT_GROUP_CONVERSATION) {
+                            val gid = con.address.toLong()
+                            BcmRouter.getInstance()
+                                    .get(con.path)
+                                    .putLong(ARouterConstants.PARAM.PARAM_THREAD, con.threadId)
+                                    .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, gid)
+                                    .startBcmActivity(accountContext,this)
+
+                        }else if (con.path == ARouterConstants.Activity.CHAT_CONVERSATION_PATH) {
+                            BcmRouter.getInstance()
+                                    .get(con.path)
+                                    .putLong(ARouterConstants.PARAM.PARAM_THREAD, con.threadId)
+                                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.from(accountContext, con.address))
+                                    .startBcmActivity(accountContext,this)
+                        }
+
                     }
 
                     val call = event.callEvent
@@ -302,10 +313,10 @@ class HomeActivity : SwipeBaseActivity() {
         val schemeLaunchIntent = SchemeLaunchHelper.pullOutLaunchIntent()
         if (schemeLaunchIntent != null) {
             ALog.i(TAG, "Found unhandled outLaunch intent, continue handling")
-            mLaunchHelper.route(schemeLaunchIntent)
+            mLaunchHelper.route(accountContext, schemeLaunchIntent)
         } else {
             ALog.i(TAG, "Try handle current intent，check called by other app")
-            mLaunchHelper.route(intent)
+            mLaunchHelper.route(accountContext, intent)
         }
     }
 

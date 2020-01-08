@@ -11,7 +11,6 @@ import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
-import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -20,6 +19,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
 import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.route.api.BcmRouter
 import io.reactivex.disposables.Disposable
@@ -35,7 +35,6 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
     private var isProfileUpdated = false
 
     private var mProfileDispose: Disposable? = null
-    private var mAdHocModule: IAdHocModule? = null
 
     private var mOtherNick: String? = null
 
@@ -64,13 +63,11 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
             AmeModuleCenter.contact(accountContext)?.updateNickFromOtherWay(recipient, nick)
         }
 
-        mAdHocModule = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
-
         friend_chat.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            if (isProfileUpdated || mAdHocModule?.isAdHocMode() == true) {
+            if (isProfileUpdated || AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true) {
                 goChat()
             } else {
                 AmePopup.loading.show(this)
@@ -91,7 +88,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
             }
 
             override fun onClickRight() {
-                if (mAdHocModule?.isAdHocMode() == true) {
+                if (AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true) {
                     return
                 }
                 val builder = AmePopup.bottom.newBuilder()
@@ -128,7 +125,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
             }
         })
 
-        if (mAdHocModule?.isAdHocMode() == true) {
+        if (AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true) {
             title_bar.hideRightViews()
         }
 
@@ -141,7 +138,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
 
         }
 
-        if (mAdHocModule?.isAdHocMode() != true) {
+        if (AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() != true) {
             mProfileDispose = AmeModuleCenter.contact(accountContext)?.fetchProfile(recipient) {
                 isProfileUpdated = true
                 if (isWaitToChat) {
@@ -174,8 +171,8 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun updateActionState(recipient: Recipient) {
-        val allowChat = mAdHocModule?.isAdHocMode() == true || recipient.isFriend || recipient.isAllowStranger
-        val allowAdd = mAdHocModule?.isAdHocMode() != true && !recipient.isFriend
+        val allowChat = AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true || recipient.isFriend || recipient.isAllowStranger
+        val allowAdd = AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() != true && !recipient.isFriend
 
         if (allowChat) {
             friend_chat.isEnabled = true
@@ -200,20 +197,20 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun addFriend() {
-        val address = mRecipient?.address?:return
+        val address = mRecipient?.address ?: return
         BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND)
                 .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
                 .putString(ARouterConstants.PARAM.PARAM_NICK, mOtherNick)
-                .navigation(this)
+                .startBcmActivity(accountContext,this)
     }
 
     private fun goChat() {
         val recipient = mRecipient ?: return
-        if (mAdHocModule?.isAdHocMode() == true) {
-            mAdHocModule?.gotoPrivateChat(this, recipient.address.serialize())
+        if (AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true) {
+            AmeModuleCenter.adhoc(accountContext)?.gotoPrivateChat(this, recipient.address.serialize())
         }else {
-            AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
-                    HomeTopEvent.ConversationEvent.fromPrivateConversation(recipient.address, false)))
+            AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
+                    HomeTopEvent.ConversationEvent.fromPrivateConversation(recipient.address.serialize(), false)))
         }
     }
 

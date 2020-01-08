@@ -260,8 +260,8 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
 
         if (data != null) {
 
-            AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
-                        HomeTopEvent.ConversationEvent.fromGroupConversation(null, data.groupInfo.gid)))
+            AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
+                        HomeTopEvent.ConversationEvent.fromGroupConversation(data.groupInfo.gid)))
 
         }
 

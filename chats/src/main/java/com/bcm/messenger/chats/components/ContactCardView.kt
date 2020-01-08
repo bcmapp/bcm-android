@@ -51,8 +51,8 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
                             .putString(ARouterConstants.PARAM.PARAM_NICK, mContactContent?.nickName)
                             .navigation(context)
                 }else {
-                    AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
-                            HomeTopEvent.ConversationEvent.fromPrivateConversation(it.address,false)))
+                    AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(AMELogin.majorContext, HomeTopEvent(true,
+                            HomeTopEvent.ConversationEvent.fromPrivateConversation(it.address.serialize(),false)))
                 }
             }
 

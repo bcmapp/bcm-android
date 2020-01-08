@@ -1,6 +1,7 @@
 package com.bcm.messenger.common.provider
 
 import android.app.Activity
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.event.HomeTopEvent
 
 /**
@@ -64,6 +65,6 @@ interface IAmeAppModule : IAmeModule {
     /**
      * 
      */
-    fun gotoHome(event: HomeTopEvent)
+    fun gotoHome(accountContext: AccountContext, event: HomeTopEvent)
 
 }

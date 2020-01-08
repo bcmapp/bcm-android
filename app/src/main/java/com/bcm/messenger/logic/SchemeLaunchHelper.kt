@@ -94,9 +94,9 @@ class SchemeLaunchHelper(val context: Context) {
     /**
      * Route to destination Activity
      */
-    fun route(intent: Intent) {
+    fun route(accountContext: AccountContext, intent: Intent) {
         try {
-            handleTopEvent(intent.getStringExtra(ARouterConstants.PARAM.PARAM_DATA))
+            handleTopEvent(accountContext, intent.getStringExtra(ARouterConstants.PARAM.PARAM_DATA))
 
             val conversation = intent.getStringExtra(ARouterConstants.PARAM.PARAM_ROUTE_PATH)
             ALog.i(TAG, "route")
@@ -104,7 +104,7 @@ class SchemeLaunchHelper(val context: Context) {
                 when (conversation) {
                     ARouterConstants.Activity.CHAT_CONVERSATION_PATH -> {
                         ALog.i(TAG, "route path im: $conversation")
-                        routeToChat(intent)
+                        routeToChat(accountContext, intent)
                         return
                     }
                 }
@@ -120,14 +120,14 @@ class SchemeLaunchHelper(val context: Context) {
 
             val action = intent.action
             if (action == Intent.ACTION_SEND || action == Intent.ACTION_SEND_MULTIPLE) {
-                doForSystemShare(intent)
+                doForSystemShare(accountContext, intent)
             } else {
                 val schemeData = intent.data ?: return
                 ALog.i(TAG, "scheme data: $schemeData, ${schemeData.path}")
                 val path = schemeData.path
                 when (path) {
                     "/native/appaction/commit_log" -> {
-                        BcmRouter.getInstance().get(ARouterConstants.Activity.FEEDBACK).navigation(context)
+                        BcmRouter.getInstance().get(ARouterConstants.Activity.FEEDBACK).startBcmActivity(accountContext, context)
                     }
                     "/native/appaction/logout" -> {
                         val c = context
@@ -136,16 +136,16 @@ class SchemeLaunchHelper(val context: Context) {
                         }
                     }
                     "/native/addfriend/new_chat_page" -> {
-                        doForAddFriend(schemeData)
+                        doForAddFriend(accountContext, schemeData)
                     }
                     "/addfriend/new_chat_page" -> {
-                        doForAddFriend(schemeData)
+                        doForAddFriend(accountContext, schemeData)
                     }
                     "/native/joingroup/new_chat_page" -> {
-                        doForGroupJoin(schemeData)
+                        doForGroupJoin(accountContext, schemeData)
                     }
                     "/joingroup/new_chat_page" -> {
-                        doForGroupJoinShortLink(schemeData)
+                        doForGroupJoinShortLink(accountContext, schemeData)
                     }
                     else -> {
                         if (path.startsWith("/h5/")) {
@@ -159,7 +159,7 @@ class SchemeLaunchHelper(val context: Context) {
         }
     }
 
-    private fun handleTopEvent(data: String?) {
+    private fun handleTopEvent(accountContext: AccountContext, data: String?) {
         try {
             val current = AmeAppLifecycle.current() ?: return
             if (!data.isNullOrEmpty()) {
@@ -171,28 +171,23 @@ class SchemeLaunchHelper(val context: Context) {
 
                     val con = event.chatEvent
                     if (con != null) {
-                        val threadId = con.threadId
-                        val address = con.address
-                        if (threadId <= 0L && address != null && con.createIfNotExist) {
-                            ThreadListViewModel.getThreadId(Recipient.from(address, true)) { newThreadId ->
-                                BcmRouter.getInstance()
-                                        .get(con.path)
-                                        .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
-                                        .putLong(ARouterConstants.PARAM.PARAM_THREAD, newThreadId)
-                                        .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, con.gid ?: -1L)
-                                        .startBcmActivity(address.context(), current)
-                            }
-                        } else {
+                        if (con.path == ARouterConstants.Activity.CHAT_GROUP_CONVERSATION) {
+                            val gid = con.address.toLong()
                             BcmRouter.getInstance()
                                     .get(con.path)
-                                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, con.address)
-                                    .putLong(ARouterConstants.PARAM.PARAM_THREAD, threadId)
-                                    .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, con.gid
-                                            ?: -1L)
-                                    .navigation(current)
-                        }
-                    }
+                                    .putLong(ARouterConstants.PARAM.PARAM_THREAD, con.threadId)
+                                    .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, gid)
+                                    .startBcmActivity(accountContext)
 
+                        }else if (con.path == ARouterConstants.Activity.CHAT_CONVERSATION_PATH) {
+                            BcmRouter.getInstance()
+                                    .get(con.path)
+                                    .putLong(ARouterConstants.PARAM.PARAM_THREAD, con.threadId)
+                                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.from(accountContext, con.address))
+                                    .startBcmActivity(accountContext)
+                        }
+
+                    }
                     val call = event.callEvent
                     if (call != null) {
                         AmeModuleCenter.chat(AMELogin.majorContext)?.startRtcCallService(AppContextHolder.APP_CONTEXT, call.address, CameraState.Direction.NONE.ordinal)
@@ -220,24 +215,24 @@ class SchemeLaunchHelper(val context: Context) {
         }
     }
 
-    private fun doForSystemShare(intent: Intent) {
+    private fun doForSystemShare(accountContext: AccountContext, intent: Intent) {
         ALog.i(TAG, "doForSystemShare")
         intent.component = ComponentName(context, SystemShareActivity::class.java)
         intent.putExtra(ARouterConstants.PARAM.PARAM_ENTER_ANIM, R.anim.common_slide_from_bottom_fast)
         intent.putExtra(ARouterConstants.PARAM.PARAM_EXIT_ANIM, R.anim.common_slide_to_bottom_fast)
-        context.startActivity(intent)
+        context.startBcmActivity(accountContext, intent)
     }
 
-    private fun doForAddFriend(uri: Uri) {
+    private fun doForAddFriend(accountContext: AccountContext, uri: Uri) {
         val uid = uri.getQueryParameter("uid")
         if (uid.isNullOrBlank()) {
             return
         }
         val name = uri.getQueryParameter("name")
-        AmeModuleCenter.contact(AMELogin.majorContext)?.openContactDataActivity(AppContextHolder.APP_CONTEXT, Address.from(AMELogin.majorContext, uid), name)
+        AmeModuleCenter.contact(AMELogin.majorContext)?.openContactDataActivity(AppContextHolder.APP_CONTEXT, Address.from(accountContext, uid), name)
     }
 
-    private fun doForGroupJoin(uri: Uri) {
+    private fun doForGroupJoin(accountContext: AccountContext, uri: Uri) {
         ALog.i(TAG, "doForGroupJoin uri: $uri")
         val shareContent = AmeGroupMessage.GroupShareContent.fromBcmSchemeUrl(uri.toString())
         if (shareContent != null) {
@@ -255,7 +250,7 @@ class SchemeLaunchHelper(val context: Context) {
                     shareContent.shareCode, shareContent.shareSignature, shareContent.timestamp, eKeyByteArray) { success ->
                 if (!success) {
                     val homeIntent = Intent(context, HomeActivity::class.java)
-                    context.startActivity(homeIntent)
+                    context.startBcmActivity(accountContext, homeIntent)
                 }
             }
         } else {
@@ -264,9 +259,9 @@ class SchemeLaunchHelper(val context: Context) {
 
     }
 
-    private fun doForGroupJoinShortLink(uri: Uri) {
+    private fun doForGroupJoinShortLink(accountContext: AccountContext, uri: Uri) {
         ALog.d(TAG, "doForGroupJoinShortLink uri: $uri")
-        doForGroupJoin(uri)
+        doForGroupJoin(accountContext, uri)
     }
 
     private fun doForWeb(uri: Uri) {
@@ -302,13 +297,11 @@ class SchemeLaunchHelper(val context: Context) {
         }
     }
 
-    private fun routeToChat(intent: Intent) {
+    private fun routeToChat(accountContext: AccountContext, intent: Intent) {
         try {
             ALog.i(TAG, "routeToChat by intent")
             val current = AmeAppLifecycle.current() ?: return
-
-            val address = intent.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
-                    ?: return
+            val address = intent.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS) ?: return
 
             if (address.serialize().length > 100) {
                 return
@@ -322,7 +315,7 @@ class SchemeLaunchHelper(val context: Context) {
                     .putLong(ARouterConstants.PARAM.PARAM_THREAD, thread)
                     .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
                     .setUri(data)
-                    .navigation(current)
+                    .startBcmActivity(accountContext, current)
         } catch (e: Throwable) {
             ALog.e(TAG, "routeToChat", e)
         }

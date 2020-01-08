@@ -164,8 +164,8 @@ class ContactModuleImp : IContactModule {
                     BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_SHARE_DESCRIPTION).putString(ARouterConstants.PARAM.GROUP_SHARE.GROUP_SHARE_CONTENT, shareContent.toString()).navigation(context)
                     callback?.invoke(true)
                 }else {
-                    AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
-                            HomeTopEvent.ConversationEvent.fromGroupConversation(null, shareContent.groupId)))
+                    AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
+                            HomeTopEvent.ConversationEvent.fromGroupConversation(shareContent.groupId)))
                     callback?.invoke(true)
                 }
             }

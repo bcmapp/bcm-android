@@ -65,8 +65,8 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
                         if (a is ISearchCallback) {
                             a.onSelect(data.type, r.address.serialize())
                         }
-                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
-                                HomeTopEvent.ConversationEvent.fromPrivateConversation(r.address, true)))
+                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
+                                HomeTopEvent.ConversationEvent.fromPrivateConversation(r.address.serialize(), true)))
 
                     }
                     BcmFinderType.GROUP -> {
@@ -74,8 +74,8 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
                         if (a is ISearchCallback) {
                             a.onSelect(data.type, g.gid.toString())
                         }
-                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true,
-                                HomeTopEvent.ConversationEvent.fromGroupConversation(null, g.gid)))
+                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
+                                HomeTopEvent.ConversationEvent.fromGroupConversation(g.gid)))
                     }
                     else -> {}
                 }

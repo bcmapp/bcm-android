@@ -214,7 +214,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
                             if (it) {
                                 ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(mRecipient, threadId) {
                                     AmePopup.result.succeed(this, getString(R.string.chats_user_delete_success)) {
-                                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(HomeTopEvent(true))
+                                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true))
                                     }
                                 }
 
