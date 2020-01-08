@@ -105,7 +105,7 @@ dependencies {
 
     api 'com.annimon:stream:1.1.8'
 
-    api('androidx.biometric:biometric:1.0.0') {
+    api('androidx.biometric:biometric:1.0.1') {
         exclude group: 'androidx.appcompat', module: 'appcompat'
         exclude group: 'androidx.core', module: 'core'
 

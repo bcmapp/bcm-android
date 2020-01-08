@@ -43,6 +43,11 @@ interface IProfileView {
             (1 - innerPos) / 1
         }
 
+        if (!isActive) {
+            if ((this.position == -1f || this.position == 1f) && position == 0f) {
+                return
+            }
+        }
         this.position = innerPos
         onViewPositionChanged(innerPos, percent)
     }

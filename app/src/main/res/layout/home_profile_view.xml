@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.bcm.messenger.common.ui.RecipientAvatarView
+        <com.bcm.messenger.common.ui.IndividualAvatarView
             android:id="@+id/home_profile_avatar"
             android:layout_width="160dp"
             android:layout_height="160dp"

@@ -207,9 +207,9 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     private fun logoutSetAlpha(alpha: Float) {
-        ALog.i(TAG, "logout set alpha = $alpha")
-        ALog.i(TAG, "logout avatar visibility = ${home_profile_avatar.visibility}")
-        home_profile_delete.alpha = alpha
+        if (isActive) {
+            home_profile_delete.alpha = alpha
+        }
         home_profile_login.alpha = alpha
         if (alpha > 0.3f) {
             home_profile_avatar.alpha = 0.3f
@@ -221,14 +221,10 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     private fun inactiveSetAlpha(alpha: Float) {
-        ALog.i(TAG, "inactive set alpha = $alpha")
-        ALog.i(TAG, "inactive avatar visibility = ${home_profile_avatar.visibility}")
         home_profile_avatar.alpha = alpha
     }
 
     private fun activeSetAlpha(alpha: Float) {
-        ALog.i(TAG, "active set alpha = $alpha")
-        ALog.i(TAG, "active avatar visibility = ${home_profile_avatar.visibility}")
         home_profile_avatar.alpha = 1f
         home_profile_name.alpha = alpha
         home_profile_qr.alpha = alpha
@@ -251,7 +247,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     private fun logoutShowViews() {
-        home_profile_avatar.showPrivateAvatar(recipient)
+        setProfile()
 
         home_profile_avatar.visibility = View.VISIBLE
         home_profile_delete.visibility = View.VISIBLE
@@ -267,7 +263,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
 
     private fun inactiveShowViews() {
         setViewsAlpha(0f)
-        home_profile_avatar.showPrivateAvatar(recipient)
+        setProfile()
 
         home_profile_avatar.visibility = View.VISIBLE
         home_profile_delete.visibility = View.GONE
@@ -282,7 +278,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     private fun activeShowViews() {
-        home_profile_avatar.showPrivateAvatar(recipient)
+        setProfile()
 
         home_profile_avatar.visibility = View.INVISIBLE
         home_profile_delete.visibility = View.GONE
@@ -355,7 +351,6 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     override fun onViewPositionChanged(position: Float, percent: Float) {
-        ALog.i(TAG, "Position Changed, position = $position, uid = ${recipient.address.serialize()}")
         val scale = 0.7f + 0.3f * percent
         val curAvatarMargin = avatarMargin * (1 - percent)
 
@@ -416,7 +411,13 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     private fun setProfile() {
-        home_profile_avatar.showPrivateAvatar(recipient)
-        home_profile_name.text = recipient.name
+        if (isLogin) {
+            home_profile_avatar.setPhoto(recipient)
+            home_profile_name.text = recipient.name
+        } else {
+            val account = accountItem.account
+            home_profile_avatar.setPhoto(account.uid, account.name.substring(0, 1), account.avatar)
+            home_profile_name.text = account.name
+        }
     }
 }

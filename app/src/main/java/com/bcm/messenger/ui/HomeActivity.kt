@@ -23,7 +23,6 @@ import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.BcmRecyclerView
 import com.bcm.messenger.common.ui.CommonShareView
 import com.bcm.messenger.common.ui.ConstraintPullDownLayout
@@ -53,7 +52,7 @@ import java.util.concurrent.TimeUnit
  * Created by zjl on 2018/2/27.
  */
 @Route(routePath = ARouterConstants.Activity.APP_HOME_PATH)
-class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
+class HomeActivity : SwipeBaseActivity() {
     companion object {
         private const val TAG = "HomeActivity"
 
@@ -70,21 +69,19 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
     private var checkStartTime = System.currentTimeMillis()
     private var mPixelManager: PixelManager? = null
 
-    private var recipient = Recipient.major()
     private lateinit var titleView: MessageListTitleView
     private var mWaitForShortLink: Boolean = false //是否等待短链生成
     private var messageListFragment: MessageListFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AmeModuleCenter.metric(AMELogin.majorContext)?.launchEnd()
+        AmeModuleCenter.metric(AMELogin.majorContext)?.launchEnd() 
 
         setSwipeBackEnable(false)
 
         setContentView(R.layout.activity_home)
 
         checkShowIntroPage()
-        recipient.addListener(this)
 
         if (null != savedInstanceState) {
             recycleFragments()
@@ -198,7 +195,6 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        recipient.removeListener(this)
         RxBus.unSubscribe(TAG)
         ClipboardUtil.unInitClipboardUtil()
         titleView.unInit()
@@ -215,10 +211,10 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
         }
 
         // check need fetch profile or avatar
-        if (recipient.needRefreshProfile()) {
-            AmeModuleCenter.contact(accountContext)?.checkNeedFetchProfileAndIdentity(recipient, callback = null)
+        if (accountRecipient.needRefreshProfile()) {
+            AmeModuleCenter.contact(accountContext)?.checkNeedFetchProfileAndIdentity(accountRecipient, callback = null)
         } else {
-            AmeModuleCenter.contact(accountContext)?.checkNeedDownloadAvatarWithAll(recipient)
+            AmeModuleCenter.contact(accountContext)?.checkNeedDownloadAvatarWithAll(accountRecipient)
         }
     }
 
@@ -353,7 +349,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
             }
 
             override fun onClickInvite() {
-                doInvite(recipient)
+                doInvite(accountRecipient)
             }
         }
 
@@ -381,7 +377,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun initRecipientData() {
-        updateRecipientData(recipient)
+        updateRecipientData(accountRecipient)
         checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(accountContext.uid) > 0)
     }
 
@@ -488,7 +484,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     height == 0 -> {
                         home_toolbar_avatar.setPrivateElevation(0f)
                         home_toolbar_avatar.getIndividualAvatarView().showCoverText()
-                        home_toolbar_avatar.showPrivateAvatar(recipient)
+                        home_toolbar_avatar.showPrivateAvatar(accountRecipient)
 
                         home_toolbar.layoutParams = (home_toolbar.layoutParams as ConstraintLayout.LayoutParams).apply {
                             topMargin = 0
@@ -497,7 +493,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
                             topMargin = dp6
                         }
 
-                        home_profile_layout.checkCurrentPage(recipient.address.serialize())
+                        home_profile_layout.checkCurrentPage(accountRecipient.address.serialize())
                     }
                     height == topViewHeight -> {
                         home_toolbar_avatar.setPrivateElevation(0f)
@@ -581,16 +577,6 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
                 }
     }
 
-    override fun onModified(recipient: Recipient) {
-        if (recipient == this.recipient) {
-            this.recipient = recipient
-            updateRecipientData(recipient)
-            if (mWaitForShortLink) {
-                doInvite(recipient)
-            }
-        }
-    }
-
     private fun showMenu() {
         showAnim(home_toolbar_more)
         BcmPopupMenu.Builder(this)
@@ -605,7 +591,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
                             putExtra(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_SCAN)
                             putExtra(ARouterConstants.PARAM.SCAN.HANDLE_DELEGATE, true)
                         })
-                        1 -> doInvite(recipient)
+                        1 -> doInvite(accountRecipient)
                     }
                 }
                 .setDismissCallback {

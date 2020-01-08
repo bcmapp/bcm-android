@@ -16,10 +16,7 @@ import androidx.viewpager.widget.ViewPager
 import com.bcm.messenger.R
 import com.bcm.messenger.adapter.HomeAccountAdapter
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.utils.AmePushProcess
-import com.bcm.messenger.common.utils.getColor
-import com.bcm.messenger.common.utils.getStatusBarHeight
-import com.bcm.messenger.common.utils.getString
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
 import com.bcm.messenger.me.ui.login.RegistrationActivity
@@ -265,7 +262,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private fun loginAccount(uid: String) {
-        context.startActivity(Intent(context, VerifyKeyActivity::class.java).apply {
+        context.startBcmActivity((context as HomeActivity).accountContext, Intent(context, VerifyKeyActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
             putExtra(VerifyKeyActivity.BACKUP_JUMP_ACTION, VerifyKeyActivity.LOGIN_PROFILE)
             putExtra(RegistrationActivity.RE_LOGIN_ID, uid)

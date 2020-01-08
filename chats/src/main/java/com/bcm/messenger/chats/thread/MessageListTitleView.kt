@@ -34,6 +34,7 @@ import com.bcm.messenger.common.utils.sp2Px
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.network.INetworkConnectionListener
 import com.bcm.messenger.utility.network.NetworkUtil
 import com.bcm.netswitchy.proxy.IProxyStateChanged
@@ -104,7 +105,9 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
     }
 
     override fun onServerConnectionChanged(accountContext: AccountContext, newState: ConnectState) {
-        update()
+        AmeDispatcher.mainThread.dispatch {
+            update()
+        }
     }
 
     override fun onProxyConnecting(proxyName: String, isOfficial: Boolean) {
