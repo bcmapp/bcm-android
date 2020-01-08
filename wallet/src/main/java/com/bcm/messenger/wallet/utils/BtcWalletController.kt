@@ -340,7 +340,7 @@ class BtcWalletController(private val mManager: BCMWalletManagerContainer.BCMWal
         return Pair(true, txId)
     }
 
-    private fun toTransactionDisplay(BCMWallet: BCMWallet, btcWallet: Wallet, tran: Transaction): TransactionDisplay {
+    fun toTransactionDisplay(BCMWallet: BCMWallet, btcWallet: Wallet, tran: Transaction): TransactionDisplay {
         val amount = tran.getValue(btcWallet) ?: Coin.ZERO
         val sent = amount.isNegative
         val txId = tran.txId.toString()

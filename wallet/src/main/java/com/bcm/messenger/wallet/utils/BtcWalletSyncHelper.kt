@@ -1,6 +1,6 @@
 package com.bcm.messenger.wallet.utils
 
-import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.wallet.btc.WalletEx
@@ -35,18 +35,18 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by wjh on 2018/7/23
  */
-class BtcWalletSyncHelper(private val mManager: BCMWalletManager) {
+class BtcWalletSyncHelper(private val mManager: BCMWalletManagerContainer.BCMWalletManager) {
 
     companion object {
 
         private const val TAG = "BtcWalletSyncHelper"
 
-        fun getBlockChainPrefix(param: NetworkParameters): String {
+        fun getBlockChainPrefix(accountContext: AccountContext, param: NetworkParameters): String {
             return if (param.id == NetworkParameters.ID_MAINNET) {
                 "BCM_chain_production"
             } else {
                 "BCM_chain_test"
-            } + "_" + AMELogin.uid
+            } + "_" + accountContext.uid
         }
 
         fun getCheckpointFile(params: NetworkParameters): String {
@@ -115,7 +115,7 @@ class BtcWalletSyncHelper(private val mManager: BCMWalletManager) {
     }
 
     private fun getWalletChainFile(): File {
-        return File(mManager.btcController.getDestinationDirectory(), getBlockChainPrefix(BtcWalletController.NETWORK_PARAMETERS) + ".spvchain")
+        return File(mManager.btcController.getDestinationDirectory(), getBlockChainPrefix(mManager.accountContext, BtcWalletController.NETWORK_PARAMETERS) + ".spvchain")
     }
 
     private fun setEarliestKeyCreationTime(time: Long) {
@@ -130,19 +130,19 @@ class BtcWalletSyncHelper(private val mManager: BCMWalletManager) {
                 mSyncDone = true
                 //同步完成后，通知更新页面
                 WalletViewModel.walletModelSingle?.eventData?.noticeDelay(ImportantLiveData.ImportantEvent(ImportantLiveData.EVENT_BALANCE, null))
-                mManager.broadcastWalletInitProgress(BCMWalletManager.WalletStage.STAGE_DONE, 100, 100)
+                mManager.broadcastWalletInitProgress(BCMWalletManagerContainer.WalletStage.STAGE_DONE, 100, 100)
             }
 
             override fun startDownload(blocks: Int) {
                 ALog.d("BtcWalletSyncHelper", "walletKit startDownload blocks: $blocks")
                 mSyncDone = false
-                mManager.broadcastWalletInitProgress(BCMWalletManager.WalletStage.STAGE_SYNC, 0, 100)
+                mManager.broadcastWalletInitProgress(BCMWalletManagerContainer.WalletStage.STAGE_SYNC, 0, 100)
             }
 
             override fun progress(pct: Double, blocksSoFar: Int, date: Date?) {
                 ALog.d("BtcWalletSyncHelper", "walletKit progress: $pct, soFar: $blocksSoFar")
                 if (!mSyncDone) {
-                    mManager.broadcastWalletInitProgress(BCMWalletManager.WalletStage.STAGE_SYNC, pct.toInt(), 100)
+                    mManager.broadcastWalletInitProgress(BCMWalletManagerContainer.WalletStage.STAGE_SYNC, pct.toInt(), 100)
                 }
             }
         }
@@ -280,7 +280,7 @@ class BtcWalletSyncHelper(private val mManager: BCMWalletManager) {
     }
 
     private fun createWalletAppKit(): WalletAppKit {
-        val service = object : WalletAppKit(BtcWalletController.NETWORK_PARAMETERS, mManager.btcController.getDestinationDirectory(), getBlockChainPrefix(BtcWalletController.NETWORK_PARAMETERS)) {
+        val service = object : WalletAppKit(BtcWalletController.NETWORK_PARAMETERS, mManager.btcController.getDestinationDirectory(), getBlockChainPrefix(mManager.accountContext, BtcWalletController.NETWORK_PARAMETERS)) {
 
             override fun provideBlockStore(file: File?): BlockStore {
                 return SPVBlockStore(this.params, file, 10000, true)
@@ -307,7 +307,7 @@ class BtcWalletSyncHelper(private val mManager: BCMWalletManager) {
                 }
                 try {
                     if (mEarliestKeyCreationTime <= 0) {
-                        mEarliestKeyCreationTime = AMELogin.genTime
+                        mEarliestKeyCreationTime = mManager.accountContext.genTime
                     }
                     ALog.d(TAG, "setEarliestKeyCreationTiem: $mEarliestKeyCreationTime")
 

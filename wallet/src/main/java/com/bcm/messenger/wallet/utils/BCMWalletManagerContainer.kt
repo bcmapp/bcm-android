@@ -90,7 +90,7 @@ object BCMWalletManagerContainer : AccountContextMap<BCMWalletManagerContainer.B
         STAGE_ERROR //同步失败
     }
 
-    class BCMWalletManager(private val mAccountContext: AccountContext) {
+    class BCMWalletManager(val accountContext: AccountContext) {
 
         val btcController = BtcWalletController(this)
         val ethController = EthWalletController(this)
@@ -131,8 +131,8 @@ object BCMWalletManagerContainer : AccountContextMap<BCMWalletManagerContainer.B
         }
 
         fun getAccountPreferences(context: Context): SharedPreferences {
-            ALog.d(TAG, "getAccountPreferences table: wallet_preferences_${mAccountContext.uid}")
-            return context.getSharedPreferences("wallet_preferences_${mAccountContext.uid}", Context.MODE_PRIVATE)
+            ALog.d(TAG, "getAccountPreferences table: wallet_preferences_${accountContext.uid}")
+            return context.getSharedPreferences("wallet_preferences_${accountContext.uid}", Context.MODE_PRIVATE)
         }
 
 
@@ -328,7 +328,7 @@ object BCMWalletManagerContainer : AccountContextMap<BCMWalletManagerContainer.B
 
         fun verifyPassword(password: String): Boolean {
             return try {
-                AmeModuleCenter.user(mAccountContext)?.getUserPrivateKey(password) != null
+                AmeModuleCenter.user(accountContext)?.getUserPrivateKey(password) != null
             } catch (ex: Exception) {
                 false
             }
@@ -423,7 +423,7 @@ object BCMWalletManagerContainer : AccountContextMap<BCMWalletManagerContainer.B
                 val accounts = mWalletAccounts.get()
                 if (!accounts.isAccountExist(WalletSettings.BTC) || !accounts.isAccountExist(WalletSettings.ETH)) {
                     ALog.i(TAG, "checkAccountsCompleteOrWait, account is not complete")
-                    val keyPair = IdentityKeyUtil.getIdentityKeyPair(mAccountContext)
+                    val keyPair = IdentityKeyUtil.getIdentityKeyPair(accountContext)
                     startInitService(AppContextHolder.APP_CONTEXT, keyPair.privateKey.serialize()) {
                         callback(it)
                     }
@@ -470,7 +470,7 @@ object BCMWalletManagerContainer : AccountContextMap<BCMWalletManagerContainer.B
                 val addressMax = 2
                 var currentIndex = 0
                 var defaultWallet: Triple<BCMWallet, Boolean, Int>? = null
-                val seed = DeterministicSeed(privateKeyArray, "", mAccountContext.genTime)
+                val seed = DeterministicSeed(privateKeyArray, "", accountContext.genTime)
                 val hierarchy = KeyChainUtils.buildHierarchy(seed)
                 val coinTypeList = arrayOf(WalletSettings.BTC, WalletSettings.ETH)
                 var progress = 0
@@ -576,7 +576,7 @@ object BCMWalletManagerContainer : AccountContextMap<BCMWalletManagerContainer.B
             return try {
                 val accountIndex = getCurrentAccountIndex(coinType)
                 val utils = getWalletUtils(coinType)
-                val seed = DeterministicSeed(privateKeyArray, "", mAccountContext.genTime)
+                val seed = DeterministicSeed(privateKeyArray, "", accountContext.genTime)
                 val hierarchy = KeyChainUtils.buildHierarchy(seed)
                 val address = KeyChainUtils.computeMainChildAddress(coinType, accountIndex, hierarchy)
                 val w = BCMWallet(address, utils.getDestinationDirectory().absolutePath, coinType, accountIndex, System.currentTimeMillis()).apply {
@@ -670,7 +670,7 @@ object BCMWalletManagerContainer : AccountContextMap<BCMWalletManagerContainer.B
                     }, passwordChecker = { password ->
 
                 try {
-                    privateKeyArray = AmeModuleCenter.user(mAccountContext)?.getUserPrivateKey(password)
+                    privateKeyArray = AmeModuleCenter.user(accountContext)?.getUserPrivateKey(password)
                     privateKeyArray != null
                 } catch (ex: Exception) {
                     false
@@ -682,14 +682,14 @@ object BCMWalletManagerContainer : AccountContextMap<BCMWalletManagerContainer.B
             var privateKeyArray: ByteArray? = null
             WalletConfirmDialog.showForPassword(activity, activity?.getString(R.string.wallet_confirm_password_title), notice,
                     confirmListener = { password ->
-                        AmeModuleCenter.wallet(mAccountContext)?.initWallet(privateKeyArray
+                        AmeModuleCenter.wallet(accountContext)?.initWallet(privateKeyArray
                                 ?: return@showForPassword, password)
                         confirmCallback?.invoke()
 
                     }, passwordChecker = { password ->
 
                 try {
-                    privateKeyArray = AmeModuleCenter.user(mAccountContext)?.getUserPrivateKey(password)
+                    privateKeyArray = AmeModuleCenter.user(accountContext)?.getUserPrivateKey(password)
                     privateKeyArray != null
                 } catch (ex: Exception) {
                     false

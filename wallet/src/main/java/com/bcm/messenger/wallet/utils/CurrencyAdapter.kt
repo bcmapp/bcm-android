@@ -13,7 +13,7 @@ import com.bcm.messenger.wallet.R
  * 法币单位列表适配器
  * Created by wjh on 2018/6/2
  */
-class CurrencyAdapter(context: Context, private val manager: BCMWalletManager, private var listener: CurrencySelectionListener? = null) : LinearBaseAdapter<String>(context) {
+class CurrencyAdapter(context: Context, private val manager: BCMWalletManagerContainer.BCMWalletManager, private var listener: CurrencySelectionListener? = null) : LinearBaseAdapter<String>(context) {
 
     private var mLayoutInflater = LayoutInflater.from(context)
     private var selectedCurrency: String = manager.getCurrentCurrency()
