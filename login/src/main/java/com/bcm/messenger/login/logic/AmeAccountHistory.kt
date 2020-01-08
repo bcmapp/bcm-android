@@ -166,6 +166,8 @@ class AmeAccountHistory {
 
         minorAccountUids.add(uid)
         storage.set(AME_MINOR_LOGIN_ACCOUNT, GsonUtils.toJson(minorAccountUids))
+
+        EventBus.getDefault().post(AccountLoginStateChangedEvent())
     }
 
     fun setMajorLoginAccountUid(uid: String) {
