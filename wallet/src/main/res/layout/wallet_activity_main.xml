@@ -4,11 +4,10 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <fragment
-        android:id="@+id/wallet_main_fragment"
+    <FrameLayout
+        android:id="@+id/wallet_main_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:name="com.bcm.messenger.wallet.WalletFragment"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

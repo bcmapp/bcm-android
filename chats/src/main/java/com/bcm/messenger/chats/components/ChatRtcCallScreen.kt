@@ -543,7 +543,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             } else if (!recipient.bcmAvatar.isNullOrEmpty()) {
                 recipient.bcmAvatar
             } else {
-                IndividualAvatarView.getDefaultPortraitUrl(recipient)
+                IndividualAvatarView.getDefaultPortraitUrl(recipient.address.serialize())
             }
             request.load(loadObj)
             request.diskCacheStrategy(DiskCacheStrategy.ALL)

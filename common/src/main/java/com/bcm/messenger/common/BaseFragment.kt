@@ -1,6 +1,7 @@
 package com.bcm.messenger.common
 
 import android.os.Bundle
+import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
@@ -83,5 +84,21 @@ open class BaseFragment : Fragment() {
             ALog.w(TAG, "onNewIntent, new accountContextObj: ${accountContextObj.uid}")
             setAccountContext(accountContextObj)
         }
+    }
+
+    fun <T : Fragment> initFragment(@IdRes target: Int,
+                                    fragment: T,
+                                    extras: Bundle?): T {
+        val newArg = Bundle().apply {
+            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContextObj)
+        }
+        if (extras != null) {
+            newArg.putAll(extras)
+        }
+        fragment.arguments = newArg
+        fragmentManager?.beginTransaction()
+                ?.replace(target, fragment)
+                ?.commitAllowingStateLoss()
+        return fragment
     }
 }

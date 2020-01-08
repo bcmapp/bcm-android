@@ -22,7 +22,6 @@ import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 
 /**
- * 转账页
  * ling created in 2018/5/17
  */
 @Route(routePath = ARouterConstants.Activity.WALLET_SEND_TRANSACTION)
@@ -46,7 +45,6 @@ class SendTransactionActivity : SwipeBaseActivity() {
         val walletDisplay = intent.getParcelableExtra<WalletDisplay>(ARouterConstants.PARAM.WALLET.WALLET_COIN)
         mWalletDisplay = walletDisplay
 
-        val t = supportFragmentManager.beginTransaction()
         val fragment = if (walletDisplay.baseWallet.coinType == WalletSettings.BTC) {
             SendBitcoinFragment()
         } else {

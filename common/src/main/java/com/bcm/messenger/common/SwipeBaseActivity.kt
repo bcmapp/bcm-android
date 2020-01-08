@@ -224,7 +224,6 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         disabledLightStatusBar = true
     }
 
-
     fun <T : Fragment> initFragment(@IdRes target: Int,
                                             fragment: T,
                                             extras: Bundle?): T {

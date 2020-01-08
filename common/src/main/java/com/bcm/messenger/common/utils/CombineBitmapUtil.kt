@@ -103,7 +103,7 @@ object CombineBitmapUtil {
             if (!url.isNullOrEmpty()) {
                 return UrlBitmapUnit(url).toBitmap()
             }
-            val defaultAvatarUrl = IndividualAvatarView.getDefaultPortraitUrl(recipient)
+            val defaultAvatarUrl = IndividualAvatarView.getDefaultPortraitUrl(recipient.address.serialize())
             val letter = StringAppearanceUtil.getFirstCharacter(name)
             return CharacterBitmapUnit(letter, defaultAvatarUrl).toBitmap()
         }

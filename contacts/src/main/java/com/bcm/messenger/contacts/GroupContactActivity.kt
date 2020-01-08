@@ -30,6 +30,7 @@ class GroupContactActivity : SwipeBaseActivity() {
             }
         })
 
+        initFragment(R.id.group_contact_container, GroupContactFragment(), null)
         window?.setStatusBarLightMode()
     }
 }

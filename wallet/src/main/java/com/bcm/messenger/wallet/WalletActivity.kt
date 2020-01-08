@@ -1,11 +1,11 @@
 package com.bcm.messenger.wallet
 
 import android.os.Bundle
-import com.bcm.route.annotation.Route
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.ui.CommonTitleBar2
-import kotlinx.android.synthetic.main.wallet_activity_main.*
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.route.annotation.Route
+import kotlinx.android.synthetic.main.wallet_activity_main.*
 
 /**
  * Created by wjh on 2019/7/2
@@ -24,5 +24,7 @@ class WalletActivity : SwipeBaseActivity() {
                 finish()
             }
         })
+
+        initFragment(R.id.wallet_main_container, WalletFragment(), null)
     }
 }
