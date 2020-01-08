@@ -2,6 +2,7 @@ package com.bcm.messenger.login.logic
 
 import android.annotation.SuppressLint
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.bcmhttp.IMHttp
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AppUtil
@@ -37,9 +38,11 @@ object ProxyRetryChallenge: IProxyStateChanged {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe ({ challenge ->
                         RxIMHttp.remove(accountContext)
+                        IMHttp.remove(accountContext)
                         observableEmitter.onComplete(challenge)
                     }, { e ->
                         RxIMHttp.remove(accountContext)
+                        IMHttp.remove(accountContext)
                         AmePopup.tipLoading.updateTip(AppUtil.getString(R.string.login_loading_connecting_server))
                         tryProxy(e)}
                     )
@@ -91,9 +94,11 @@ object ProxyRetryChallenge: IProxyStateChanged {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe ({ challenge ->
                         RxIMHttp.remove(accountContext)
+                        IMHttp.remove(accountContext)
                         observableEmitter.onComplete(challenge)
                     },{
                         RxIMHttp.remove(accountContext)
+                        IMHttp.remove(accountContext)
                         observableEmitter.onError(it)
                     })
         } else {

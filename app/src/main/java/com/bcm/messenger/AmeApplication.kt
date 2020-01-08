@@ -177,7 +177,7 @@ class AmeApplication : MultiDexApplication() {
         SystemUtils.initAPPInfo(getPackageInfo().versionName, getPackageInfo().versionCode)
 
         val httpsEnable = EnvSettingLogic.getEnvSetting(isReleaseBuild).httpsEnable;
-        BaseHttp.setDevMode(!httpsEnable)
+        BaseHttp.setDevMode(true)
 
         ProxyManager.setConnectionChecker(IMServerConnectionChecker())
 
@@ -279,8 +279,5 @@ class AmeApplication : MultiDexApplication() {
         } else {
             o.a(AppContextHolder.APP_CONTEXT)
         }
-
-        //还没定方案，先不检测
-//        DataTransferCensor.init(this)
     }
 }

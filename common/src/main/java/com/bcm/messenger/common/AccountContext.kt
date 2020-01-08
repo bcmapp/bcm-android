@@ -21,7 +21,11 @@ class AccountContext(val uid: String, val token: String, val password: String) :
     }
 
     override fun compareTo(other: AccountContext): Int {
-        return uid.compareTo(other.uid)
+        val result = uid.compareTo(other.uid)
+        if (result == 0) {
+            return token.compareTo(other.token)
+        }
+        return result
     }
 
     override fun equals(other: Any?): Boolean {
@@ -31,8 +35,8 @@ class AccountContext(val uid: String, val token: String, val password: String) :
         other as AccountContext
 
         if (uid != other.uid) return false
-
-        return true
+        if (token != other.token) return false
+        return uid == other.uid && token == other.token
     }
 
     override fun hashCode(): Int {

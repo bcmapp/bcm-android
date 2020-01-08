@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.bcmhttp.IMHttp
 import com.bcm.messenger.common.bcmhttp.RxIMHttp
 import com.bcm.messenger.common.config.BcmFeatureSupport
 import com.bcm.messenger.common.core.Address
@@ -329,6 +330,7 @@ object AmeLoginLogic {
                         .observeOn(AmeDispatcher.singleScheduler)
                         .map {
                             RxIMHttp.remove(accountContext)
+                            IMHttp.remove(accountContext)
                             loginSucceed(data.getAccountID(), registrationId, data.uid, keyPair, signalingKey, signalPassword, password, "")
                         }
                         .observeOn(AndroidSchedulers.mainThread())
@@ -339,6 +341,7 @@ object AmeLoginLogic {
                             setTmpToken("", "")
 
                             RxIMHttp.remove(accountContext)
+                            IMHttp.remove(accountContext)
                             AmeModuleCenter.metric(accountContext)?.loginEnd(false)
 
                             when (ServerCodeUtil.getNetStatusCode(it)) {
@@ -477,6 +480,7 @@ object AmeLoginLogic {
                     .observeOn(AmeDispatcher.singleScheduler)
                     .map {
                         RxIMHttp.remove(accountContext)
+                        IMHttp.remove(accountContext)
                         registerSucceed(registrationId, uid, keyPair, signalingKey, signalPassword, password, passwordHint)
                     }
                     .doOnError {
@@ -487,6 +491,7 @@ object AmeLoginLogic {
                         result(true)
                     }, {
                         RxIMHttp.remove(accountContext)
+                        IMHttp.remove(accountContext)
                         ALog.logForSecret(TAG, "register error", it)
                         setTmpToken("", "")
                         result(false)
