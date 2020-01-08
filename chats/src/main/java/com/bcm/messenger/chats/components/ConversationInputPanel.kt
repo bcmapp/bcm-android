@@ -29,7 +29,6 @@ import com.bcm.messenger.chats.adapter.ChatAtListAdapter
 import com.bcm.messenger.chats.bean.BottomPanelItem
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.privatechat.AmeConversationViewModel
-import com.bcm.messenger.chats.provider.ChatModuleImp
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.audio.AudioRecorder
@@ -41,6 +40,7 @@ import com.bcm.messenger.common.event.MultiSelectEvent
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.OutgoingExpirationUpdateMessage
 import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.InputAwareLayout
 import com.bcm.messenger.common.ui.KeyboardAwareLinearLayout
@@ -852,7 +852,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
         panel_forward_btn.setOnClickListener {
 
             val weakThis = WeakReference(this)
-            ChatModuleImp().forwardMessage(context, isGroup, mCurrentConversationId, mBatchSelected ?: return@setOnClickListener) {
+            AmeModuleCenter.chat(AMELogin.majorContext)?.forwardMessage(context, isGroup, mCurrentConversationId, mBatchSelected ?: return@setOnClickListener) {
                 if (it.isEmpty()){
                     weakThis.get()?.postDelayed({
                         EventBus.getDefault().post(MultiSelectEvent(isGroup, null))
@@ -867,7 +867,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                 return@setOnClickListener
             }
             if(mBatchSelected?.isNotEmpty() == true) {
-                ChatModuleImp().deleteMessage(context, isGroup, mCurrentConversationId, mBatchSelected ?: return@setOnClickListener) {
+                AmeModuleCenter.chat(AMELogin.majorContext)?.deleteMessage(context, isGroup, mCurrentConversationId, mBatchSelected ?: return@setOnClickListener) {
                     if(it.isEmpty()) {
                         EventBus.getDefault().post(MultiSelectEvent(isGroup, null))
                     }

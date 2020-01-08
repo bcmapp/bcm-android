@@ -8,19 +8,16 @@ import android.text.SpannableStringBuilder
 import android.util.AttributeSet
 import android.view.View
 import com.bcm.messenger.chats.R
-import com.bcm.messenger.chats.provider.GroupModuleImp
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.ui.activity.WebActivity
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.utility.StringAppearanceUtil
-import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getColor
-import com.bcm.messenger.common.utils.getDrawable
-import kotlinx.android.synthetic.main.chats_layout_group_name_card.view.*
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.ui.activity.WebActivity
+import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.utility.StringAppearanceUtil
+import com.bcm.messenger.utility.logger.ALog
+import kotlinx.android.synthetic.main.chats_layout_group_name_card.view.*
 
 /**
  * Created by wjh on 2019/6/4
@@ -57,7 +54,7 @@ class GroupShareCardView @JvmOverloads constructor(context: Context, attrs: Attr
             } else {
                 null
             }
-            GroupModuleImp().doGroupJoin(context, shareContent.groupId, shareContent.groupName, shareContent.groupIcon,
+            AmeModuleCenter.group(AMELogin.majorContext)?.doGroupJoin(context, shareContent.groupId, shareContent.groupName, shareContent.groupIcon,
                     shareContent.shareCode, shareContent.shareSignature, shareContent.timestamp, eKeyByteArray) {success ->
                 ALog.d(TAG, "do join group success: $success")
             }

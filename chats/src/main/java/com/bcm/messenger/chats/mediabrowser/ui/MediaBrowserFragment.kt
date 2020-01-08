@@ -14,7 +14,6 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.mediabrowser.*
 import com.bcm.messenger.chats.mediabrowser.adapter.MediaBrowserAdapter
 import com.bcm.messenger.chats.mediapreview.MediaViewActivity
-import com.bcm.messenger.chats.provider.ChatModuleImp
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
@@ -23,6 +22,7 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
@@ -176,7 +176,7 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
         val list = mHandleViewModel?.selection?.value?.selectionList
         if (list?.isNotEmpty() == true) {
             val fileData = list[0]
-            ChatModuleImp().forwardMessage(activity ?: return, fileData.fromGroup,
+            AmeModuleCenter.chat(accountContext)?.forwardMessage(activity ?: return, fileData.fromGroup,
                     if(fileData.fromGroup) gid else threadId, list.map { it.msgSource }.toSet()) {
                 if(it.isEmpty()) {
                     mHandleViewModel?.clearSelectionList()

@@ -19,7 +19,6 @@ import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
-import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AmePushProcess
@@ -240,7 +239,6 @@ class SchemeLaunchHelper(val context: Context) {
 
     private fun doForGroupJoin(uri: Uri) {
         ALog.i(TAG, "doForGroupJoin uri: $uri")
-        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_GROUP_BASE).navigation() as IGroupModule
         val shareContent = AmeGroupMessage.GroupShareContent.fromBcmSchemeUrl(uri.toString())
         if (shareContent != null) {
             val eKey = shareContent.ekey
@@ -253,7 +251,7 @@ class SchemeLaunchHelper(val context: Context) {
             } else {
                 null
             }
-            provider.doGroupJoin(context, shareContent.groupId, shareContent.groupName, shareContent.groupIcon,
+            AmeModuleCenter.group(AMELogin.majorContext)?.doGroupJoin(context, shareContent.groupId, shareContent.groupName, shareContent.groupIcon,
                     shareContent.shareCode, shareContent.shareSignature, shareContent.timestamp, eKeyByteArray) { success ->
                 if (!success) {
                     val homeIntent = Intent(context, HomeActivity::class.java)

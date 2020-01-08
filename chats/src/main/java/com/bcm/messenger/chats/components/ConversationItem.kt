@@ -22,7 +22,6 @@ import com.bcm.messenger.chats.forward.ForwardActivity
 import com.bcm.messenger.chats.history.ChatHistoryActivity
 import com.bcm.messenger.chats.privatechat.jobs.AttachmentDownloadJob
 import com.bcm.messenger.chats.privatechat.logic.MessageSender
-import com.bcm.messenger.chats.provider.ChatModuleImp
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.chats.util.*
 import com.bcm.messenger.common.ARouterConstants
@@ -909,12 +908,12 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                 .withOutgoing(messageRecord.isOutgoing())
                 .withClickListener(object : ConversationItemPopWindow.PopWindowClickListener {
                     override fun onRecall() {
-                        ChatModuleImp().recallMessage(context, false, messageRecord, null)
+                        AmeModuleCenter.chat(getAccountContext())?.recallMessage(context, false, messageRecord, null)
                     }
 
                     override fun onDelete() {
                         ThreadListViewModel.getThreadId(conversationRecipient) { threadId ->
-                            ChatModuleImp().deleteMessage(context, false, threadId, setOf(messageRecord), null)
+                            AmeModuleCenter.chat(getAccountContext())?.deleteMessage(context, false, threadId, setOf(messageRecord), null)
                         }
                     }
 
@@ -925,7 +924,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                         BcmRouter.getInstance().get(ARouterConstants.Activity.FORWARD)
                                 .putLong(ForwardActivity.INDEX_ID, messageRecord.id)
                                 .putLong(ForwardActivity.GID, ARouterConstants.PRIVATE_MEDIA_CHAT)
-                                .navigation(context)
+                                .startBcmActivity(getAccountContext(), context)
                     }
 
                     override fun onSelect() {
@@ -951,12 +950,12 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                 .withOutgoing(messageRecord.isOutgoing())
                 .withClickListener(object : ConversationItemPopWindow.PopWindowClickListener {
                     override fun onRecall() {
-                        ChatModuleImp().recallMessage(context, false, messageRecord, null)
+                        AmeModuleCenter.chat(getAccountContext())?.recallMessage(context, false, messageRecord, null)
                     }
 
                     override fun onDelete() {
                         ThreadListViewModel.getThreadId(conversationRecipient) { threadId ->
-                            ChatModuleImp().deleteMessage(context, false, threadId, setOf(messageRecord), null)
+                            AmeModuleCenter.chat(getAccountContext())?.deleteMessage(context, false, threadId, setOf(messageRecord), null)
                         }
                     }
 
@@ -972,7 +971,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                         BcmRouter.getInstance().get(ARouterConstants.Activity.FORWARD)
                                 .putLong(ForwardActivity.INDEX_ID, messageRecord.id)
                                 .putLong(ForwardActivity.GID, ARouterConstants.PRIVATE_TEXT_CHAT)
-                                .navigation(context)
+                                .startBcmActivity(getAccountContext(), context)
                     }
 
                     override fun onSelect() {

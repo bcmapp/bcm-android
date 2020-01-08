@@ -21,7 +21,6 @@ import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.provider.accountmodule.IContactModule
 import com.bcm.messenger.common.provider.accountmodule.IContactModule.Companion.TAG
-import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.activity.SearchActivity
 import com.bcm.messenger.common.utils.AmeAppLifecycle

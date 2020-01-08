@@ -12,7 +12,6 @@ import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
-import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -135,7 +134,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
 
         updateUserInfo(recipient, null)
         if (groupId > 0 && recipient.address.isIndividual) {
-            AmeProvider.get<IGroupModule>(ARouterConstants.Provider.PROVIDER_GROUP_BASE)?.queryMember(groupId, recipient.address.serialize()) {
+            AmeModuleCenter.group(accountContext)?.queryMember(groupId, recipient.address.serialize()) {
                 groupMemberInfo = it
                 updateUserInfo(recipient, it)
             }

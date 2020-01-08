@@ -3,13 +3,13 @@ package com.bcm.messenger.chats.group
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import com.bcm.messenger.chats.R
-import com.bcm.messenger.chats.provider.GroupModuleImp
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.BcmShareCodeStatus
 import com.bcm.messenger.common.mms.GlideApp
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.base64Decode
 import com.bcm.messenger.common.utils.getColorCompat
@@ -70,7 +70,7 @@ class GroupShareDescriptionActivity : SwipeBaseActivity() {
                 } else {
                     null
                 }
-                GroupModuleImp().doGroupJoin(this, shareContent.groupId, shareContent.groupName, shareContent.groupIcon,
+                AmeModuleCenter.group(accountContext)?.doGroupJoin(this, shareContent.groupId, shareContent.groupName, shareContent.groupIcon,
                         shareContent.shareCode, shareContent.shareSignature, shareContent.timestamp, eKeyByteArray) { success ->
                     if (success) {
                         delayFinish()

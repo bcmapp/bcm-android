@@ -24,7 +24,6 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.group.logic.MessageSender
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
-import com.bcm.messenger.chats.provider.ChatModuleImp
 import com.bcm.messenger.chats.util.ClickSpanTouchHandler
 import com.bcm.messenger.chats.util.LinkUrlSpan
 import com.bcm.messenger.chats.util.TelUrlSpan
@@ -499,7 +498,7 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
                     }
 
                     override fun onDelete() {
-                        ChatModuleImp().deleteMessage(itemView.context, true, messageRecord.gid, setOf(messageRecord))
+                        AmeModuleCenter.chat(accountContext)?.deleteMessage(itemView.context, true, messageRecord.gid, setOf(messageRecord))
                     }
 
                     override fun onForward() {
@@ -507,7 +506,7 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
                     }
 
                     override fun onRecall() {
-                        ChatModuleImp().recallMessage(context, true, messageRecord)
+                        AmeModuleCenter.chat(accountContext)?.recallMessage(context, true, messageRecord)
                     }
 
                     override fun onSelect() {

@@ -17,14 +17,13 @@ import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.finder.BcmFinderType
 import com.bcm.messenger.common.finder.SearchRecordDetail
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
-import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.RecipientAvatarView
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
 import com.bcm.messenger.contacts.R
-import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.contacts_fragment_recent_search.*
 
 /**
@@ -33,14 +32,13 @@ import kotlinx.android.synthetic.main.contacts_fragment_recent_search.*
 @SuppressLint("ValidFragment")
 class RecentSearchFragment() : BaseFragment() {
 
-    private var mGroupProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_GROUP_BASE).navigationWithCast<IGroupModule>()
     private var mChecker = object : BcmFinderManager.SearchRecordChecker {
         override fun isValid(record: SearchRecordDetail): Boolean {
             if (record.tag == null || (record.type != BcmFinderType.ADDRESS_BOOK && record.type != BcmFinderType.GROUP)) {
                 return false
             }
             return if (record.type == BcmFinderType.GROUP) {
-                val groupInfo = mGroupProvider.getGroupInfo((record.tag as String).toLong())
+                val groupInfo = AmeModuleCenter.group(accountContext)?.getGroupInfo((record.tag as String).toLong())
                 groupInfo != null
             }
             else {
@@ -137,7 +135,7 @@ class RecentSearchFragment() : BaseFragment() {
                 }
                 BcmFinderType.GROUP -> {
                     val groupId = (d.tag as String).toLong()
-                    val g = mGroupProvider.getGroupInfo(groupId) ?: return
+                    val g = AmeModuleCenter.group(accountContext)?.getGroupInfo(groupId) ?: return
                     photoView.showRecipientAvatar(Recipient.recipientFromNewGroupId(accountContext, g.gid))
                     nameView.text = g.displayName
                     mActualData = g

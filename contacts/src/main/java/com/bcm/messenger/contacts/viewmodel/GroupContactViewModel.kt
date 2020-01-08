@@ -2,23 +2,21 @@ package com.bcm.messenger.contacts.viewmodel
 
 import android.annotation.SuppressLint
 import android.text.TextUtils
-import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.event.GroupListChangedEvent
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.accountmodule.IGroupModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.recipients.Recipient.LETTERS
+import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.recipients.Recipient.LETTERS
-import com.bcm.messenger.utility.StringAppearanceUtil
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import kotlin.collections.ArrayList
 
 /**
  * bcm.social.01 2018/11/27.
@@ -28,7 +26,7 @@ import kotlin.collections.ArrayList
  * groupContactReady
  * list:
  */
-class GroupContactViewModel(private val groupContactReady: (self: GroupContactViewModel, list: ArrayList<GroupContactViewData>) -> Unit) {
+class GroupContactViewModel(private val accountContext: AccountContext, private val groupContactReady: (self: GroupContactViewModel, list: ArrayList<GroupContactViewData>) -> Unit) {
 
      companion object {
          const val TAG = "GroupContactViewModel"
@@ -95,8 +93,7 @@ class GroupContactViewModel(private val groupContactReady: (self: GroupContactVi
     }
 
     private fun getGroupViewDataList(): ArrayList<GroupContactViewData>{
-        val groupProvider = AmeProvider.get<IGroupModule>(ARouterConstants.Provider.PROVIDER_GROUP_BASE)
-        val groupList = groupProvider?.getJoinedListBySort() ?: listOf()
+        val groupList = AmeModuleCenter.group(accountContext)?.getJoinedListBySort() ?: listOf()
         mTrueDataSize = groupList.size
         val resultList = ArrayList<GroupContactViewData>()
         resultList.add(SEARCH_BAR)

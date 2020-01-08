@@ -7,14 +7,12 @@ import android.net.Uri
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import androidx.room.Ignore
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
 import com.bcm.messenger.common.database.repositories.RecipientRepo
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.accountmodule.IGroupModule
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -654,7 +652,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             val context = AppContextHolder.APP_CONTEXT
             return when (this.tipType) {
                 TIP_JOIN_GROUP_REQUEST -> {
-                    val operators = getViewNameFromOperators(context, gid, accountContext, senderRecipient, ol)
+                    val operators = getViewNameFromOperators(context, accountContext, gid, senderRecipient, ol)
                     if (sender.isNullOrEmpty()) {
                         context.getString(R.string.common_chats_group_join_request_description, operators.second)
                     }else {
@@ -666,7 +664,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     }
                 }
                 TIP_JOIN -> {
-                    val operators = getViewNameFromOperators(context, gid, accountContext, senderRecipient, ol)
+                    val operators = getViewNameFromOperators(context, accountContext, gid, senderRecipient, ol)
                     if (operators.first.isEmpty()) {
                         context.getString(R.string.common_chats_group_join, operators.second)
                     }
@@ -677,15 +675,15 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     }
                 }
                 TIP_SUBSCRIBE -> {
-                    val operators = getViewNameFromOperators(context, gid, accountContext, senderRecipient, ol)
+                    val operators = getViewNameFromOperators(context, accountContext, gid, senderRecipient, ol)
                     context.getString(R.string.common_chats_subscribe_group, operators.first)
                 }
                 TIP_UPDATE -> {
-                    val operators = getViewNameFromOperators(context, gid, accountContext, senderRecipient, ol)
+                    val operators = getViewNameFromOperators(context, accountContext, gid, senderRecipient, ol)
                     context.getString(R.string.common_chats_group_owner_change, operators.second)
                 }
                 TIP_KICK -> {
-                    val operators = getViewNameFromOperators(context, gid, accountContext, senderRecipient, ol)
+                    val operators = getViewNameFromOperators(context, accountContext, gid, senderRecipient, ol)
                     var tip = ""
                     if (operators.second.isNotEmpty()) {
                         for (recipient in ol) {
@@ -703,7 +701,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     }
                 }
                 TIP_UNSUBSCRIBE -> {
-                    val operators = getViewNameFromOperators(context, gid, accountContext, senderRecipient, ol)
+                    val operators = getViewNameFromOperators(context, accountContext, gid, senderRecipient, ol)
                     if (operators.second.isNotEmpty()) {
                         context.getString(R.string.common_chats_group_remove_subscriber, operators.first, operators.second)
                     } else {
@@ -748,7 +746,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     }
                 }
                 TIP_GROUP_INVITE_STRANGER -> {
-                    val operators = getViewNameFromOperators(context, gid, accountContext, null, ol)
+                    val operators = getViewNameFromOperators(context, accountContext, gid, null, ol)
                     context.getString(R.string.common_group_invite_stranger_notice, operators.second)
                 }
                 TIP_GROUP_NAME_UPDATE -> {
@@ -771,13 +769,13 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         /**
          * 
          */
-        private fun getViewNameFromOperators(context: Context, gid:Long, accountContext: AccountContext, from: Recipient?, operators: MutableList<Recipient>): Pair<String, String> {
+        private fun getViewNameFromOperators(context: Context, accountContext: AccountContext, gid: Long, from: Recipient?, operators: MutableList<Recipient>): Pair<String, String> {
             if (groupMembers == null) {
                 val uidList = operators.map { it.address.serialize() }.toMutableList()
                 if (from != null && from.address.serialize() != "welcome") {
                     uidList.add(from.address.serialize())
                 }
-                syncMemberInfo(gid, uidList)
+                syncMemberInfo(accountContext, gid, uidList)
             }
             var fromInDoneList: Recipient? = null
             var fromViewName = ""
@@ -841,8 +839,8 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         /**
          * 
          */
-        private fun syncMemberInfo(gid: Long, uidList: List<String>) {
-            AmeProvider.get<IGroupModule>(ARouterConstants.Provider.PROVIDER_GROUP_BASE)?.getMembers(gid, uidList) {
+        private fun syncMemberInfo(accountContext: AccountContext, gid: Long, uidList: List<String>) {
+            AmeModuleCenter.group(accountContext)?.getMembers(gid, uidList) {
                 ALog.d("SystemContent", "syncMemberInfo ready: $ready")
                 val map = HashMap<String, AmeGroupMemberInfo>()
                 for (i in it) {

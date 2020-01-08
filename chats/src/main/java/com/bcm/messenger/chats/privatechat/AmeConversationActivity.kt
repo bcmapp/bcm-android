@@ -19,7 +19,6 @@ import com.bcm.messenger.chats.bean.SendContactEvent
 import com.bcm.messenger.chats.components.ConversationInputPanel
 import com.bcm.messenger.chats.components.titlebar.ChatTitleBar
 import com.bcm.messenger.chats.privatechat.webrtc.CameraState
-import com.bcm.messenger.chats.provider.ChatModuleImp
 import com.bcm.messenger.chats.user.SendContactActivity
 import com.bcm.messenger.chats.util.AttachmentUtils
 import com.bcm.messenger.chats.util.ScreenshotManager
@@ -555,8 +554,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                             checkRecipientBlock {
                                 if (it) {
                                     if (mRecipient.isFriend || mRecipient.isAllowStranger) {
-                                        val chatProvider = ChatModuleImp()
-                                        chatProvider.startRtcCallService(this@AmeConversationActivity, mRecipient.address, CameraState.Direction.NONE.ordinal)
+                                        AmeModuleCenter.chat(accountContext)?.startRtcCallService(this@AmeConversationActivity, mRecipient.address, CameraState.Direction.NONE.ordinal)
                                     } else {
                                         ToastUtil.show(this@AmeConversationActivity, getString(R.string.common_chats_stranger_disturb_notice, mRecipient.name), Toast.LENGTH_LONG)
                                     }

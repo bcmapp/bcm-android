@@ -134,7 +134,7 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
             }
         }))
 
-        val viewModel = GroupContactViewModel {self, list ->
+        val viewModel = GroupContactViewModel(accountContext) {self, list ->
             ALog.d(TAG, "GroupContactViewModel update groupList: ${list.size}")
             if (self.getTrueDataSize() == 0) {
                 group_contact_sidebar?.hide()
