@@ -37,10 +37,14 @@ import org.whispersystems.signalservice.internal.websocket.GroupMessageProtos
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-class GroupMessageReceiver : IServerDataListener {
+class GroupMessageReceiver(private val accountContext: AccountContext) : IServerDataListener {
     private val TAG = "GroupMessageReceiver"
 
     override fun onReceiveData(accountContext: AccountContext, proto: AbstractMessage): Boolean {
+        if (accountContext != this.accountContext) {
+            return false
+        }
+
         try {
             if (proto !is GroupMessageProtos.GroupMsg) {
                 return false

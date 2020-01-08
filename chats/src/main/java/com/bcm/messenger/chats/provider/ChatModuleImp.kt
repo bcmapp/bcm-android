@@ -47,7 +47,7 @@ import org.greenrobot.eventbus.EventBus
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_CONVERSATION_BASE)
 class ChatModuleImp : IChatModule {
-    private val chatMessageReceiver = ChatMessageReceiver()
+    private lateinit var chatMessageReceiver:ChatMessageReceiver
     private lateinit var accountContext: AccountContext
 
     override val context: AccountContext
@@ -55,6 +55,7 @@ class ChatModuleImp : IChatModule {
 
     override fun setContext(context: AccountContext) {
         this.accountContext = context
+        chatMessageReceiver = ChatMessageReceiver(context)
     }
 
     override fun initModule() {

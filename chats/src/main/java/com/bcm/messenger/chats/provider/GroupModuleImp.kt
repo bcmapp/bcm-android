@@ -30,16 +30,16 @@ import io.reactivex.schedulers.Schedulers
  */
 @Route(routePath = ARouterConstants.Provider.PROVIDER_GROUP_BASE)
 class GroupModuleImp : IGroupModule {
-    private val groupMessageReceiver = GroupMessageReceiver()
-
     private val TAG = "GroupProviderImp"
 
+    private lateinit var groupMessageReceiver:GroupMessageReceiver
     private lateinit var accountContext: AccountContext
     override val context: AccountContext
         get() = accountContext
 
     override fun setContext(context: AccountContext) {
         this.accountContext = context
+        this.groupMessageReceiver = GroupMessageReceiver(context)
     }
 
     override fun initModule() {

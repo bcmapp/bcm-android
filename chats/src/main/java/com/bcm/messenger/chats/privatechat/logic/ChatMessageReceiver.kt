@@ -30,10 +30,14 @@ import org.whispersystems.signalservice.internal.util.Base64
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-class ChatMessageReceiver : IServerDataListener {
+class ChatMessageReceiver(private val accountContext: AccountContext) : IServerDataListener {
     private val TAG = "ChatMessageReceiver"
 
     override fun onReceiveData(accountContext: AccountContext, proto: AbstractMessage): Boolean {
+        if (accountContext != this.accountContext) {
+            return false
+        }
+
         when (proto) {
             is SignalServiceProtos.Mailbox -> {
                 val mismatchDevices = mutableSetOf<SignalServiceAddress>()
