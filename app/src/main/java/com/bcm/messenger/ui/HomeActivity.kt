@@ -62,6 +62,7 @@ class HomeActivity : SwipeBaseActivity() {
         private const val TAB_ADHOC = 3
 
         const val REQ_SCAN_ACCOUNT = 1001
+        const val REQ_SCAN_LOGIN = 1002
     }
 
     private val mLaunchHelper = SchemeLaunchHelper(this)
@@ -135,7 +136,8 @@ class HomeActivity : SwipeBaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQ_SCAN_ACCOUNT -> home_profile_layout.analyseQrCode(data)
+            REQ_SCAN_ACCOUNT -> home_profile_layout.analyseQrCode(data, false)
+            REQ_SCAN_LOGIN -> home_profile_layout.analyseQrCode(data, true)
         }
     }
 
@@ -516,6 +518,10 @@ class HomeActivity : SwipeBaseActivity() {
                     ConstraintPullDownLayout.MOVE_UP -> {
                         home_profile_layout.visibility = View.GONE
                         hideAnimation().start()
+                        val ctx = home_profile_layout.getCloseAccount()
+                        if (ctx != null && ctx.uid != accountContext.uid) {
+                            AmeModuleCenter.login().setMajorAccount(ctx)
+                        }
                     }
                     ConstraintPullDownLayout.MOVE_DOWN -> {
                         if (home_profile_layout.visibility != View.VISIBLE) {

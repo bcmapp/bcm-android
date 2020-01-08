@@ -13,7 +13,10 @@ import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.preferences.TextSecurePreferences
+import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IUmengModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -28,6 +31,8 @@ import me.imid.swipebacklayout.lib.SwipeBackLayout
 import me.imid.swipebacklayout.lib.Utils
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import java.util.concurrent.TimeUnit
 
 open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
@@ -86,6 +91,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         }
         this.accountContextObj = accountContextObj
         setAccountContext(accountContextObj)
+        EventBus.getDefault().register(this)
 
         mHelper = SwipeBackActivityHelper(this)
         mHelper.onActivityCreate()
@@ -143,6 +149,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     override fun onDestroy() {
         super.onDestroy()
+        EventBus.getDefault().unregister(this)
         Looper.myQueue().removeIdleHandler(idleHandler)
         if (::accountRecipientObj.isInitialized) {
             accountRecipientObj.removeListener(mModifiedListener)
@@ -276,5 +283,12 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
                 .subscribe {
                     ClipboardUtil.checkClipboard(this)
                 }
+    }
+
+    @Subscribe
+    fun onEvent(event: AccountLoginStateChangedEvent) {
+        if (accountContext.uid != AmeModuleCenter.login().majorUid()) {
+            setAccountContext(AMELogin.majorContext)
+        }
     }
 }

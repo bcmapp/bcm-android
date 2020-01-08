@@ -13,6 +13,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.dp2Px
@@ -38,10 +41,7 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
     override var isLogin = false
     override var position = 0f
 
-    private val dp10 = 10.dp2Px()
     private val avatarMargin = (AppContextHolder.APP_CONTEXT.getScreenWidth() - 120.dp2Px()) / 2
-    private val badgeMarginEnd = (160.dp2Px() * 0.3f / 2).toInt()
-    private val badgeMarginStart = 150.dp2Px() - badgeMarginEnd - 27.dp2Px()
 
     private fun showAnimation() = AnimatorSet().apply {
         val updateListener = ValueAnimator.AnimatorUpdateListener {
@@ -58,24 +58,6 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
             }
 
             override fun onAnimationEnd(animation: Animator?) {
-                valueAnimator.removeAllUpdateListeners()
-                this@apply.removeAllListeners()
-            }
-        })
-    }
-
-    private fun hideAnimation() = AnimatorSet().apply {
-        val updateListener = ValueAnimator.AnimatorUpdateListener {
-            setViewsAlpha(it.animatedValue as Float)
-        }
-        val valueAnimator = ValueAnimator.ofFloat(1f, 0f)
-        valueAnimator.addUpdateListener(updateListener)
-
-        play(valueAnimator)
-
-        addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                hideAllViews()
                 valueAnimator.removeAllUpdateListeners()
                 this@apply.removeAllListeners()
             }
@@ -156,9 +138,25 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
         setPagerChangedAlpha(percent)
     }
 
+    override fun getCurrentContext(): AccountContext? {
+        return null
+    }
+
     private fun showActionSheet() {
         val builder = AmePopup.bottom.newBuilder()
                 .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_str_scan_to_login)) {
+                    if (!checkOnlineAccount()) {
+                        return@PopupItem
+                    }
+                    try {
+                        BcmRouter.getInstance().get(ARouterConstants.Activity.SCAN_NEW)
+                                .putInt(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_ACCOUNT)
+                                .navigation(context as FragmentActivity, HomeActivity.REQ_SCAN_LOGIN)
+                    } catch (ex: Exception) {
+                        ALog.e(TAG, "start ScanActivity error", ex)
+                    }
+                })
+                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.tabless_ui_import_account)) {
                     try {
                         BcmRouter.getInstance().get(ARouterConstants.Activity.SCAN_NEW)
                                 .putInt(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_ACCOUNT)
@@ -168,19 +166,30 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
                     }
                 })
                 .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_str_create_account)) {
+                    if (!checkOnlineAccount()) {
+                        return@PopupItem
+                    }
                     BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                             .putBoolean("CREATE_ACCOUNT", true)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                             .navigation()
                 })
         if (!isReleaseBuild()) {
-            builder.withPopItem(AmeBottomPopup.PopupItem("Import Account") {
+            builder.withPopItem(AmeBottomPopup.PopupItem("Import Account(For debug)") {
 
-            }).withPopItem(AmeBottomPopup.PopupItem("Export Account") {
+            }).withPopItem(AmeBottomPopup.PopupItem("Export Account(For debug)") {
 
             })
         }
         builder.withDoneTitle(getString(R.string.common_cancel))
                 .show(context as? FragmentActivity)
+    }
+
+    private fun checkOnlineAccount(): Boolean {
+        if (AmeModuleCenter.login().minorUidList().size == 2) {
+            AmePopup.result.notice((context as SwipeBaseActivity), getString(R.string.tabless_ui_account_reach_max_size))
+            return false
+        }
+        return true
     }
 }

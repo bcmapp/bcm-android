@@ -1,5 +1,7 @@
 package com.bcm.messenger.ui.widget
 
+import com.bcm.messenger.common.AccountContext
+
 /**
  * Created by Kin on 2020/1/2
  */
@@ -29,6 +31,8 @@ interface IProfileView {
     fun setPagerChangedAlpha(alpha: Float)
 
     fun onViewPositionChanged(position: Float, percent: Float)
+
+    fun getCurrentContext(): AccountContext?
 
     fun positionChanged(position: Float) {
         val innerPos = when {

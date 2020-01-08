@@ -13,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.R
 import com.bcm.messenger.adapter.HomeAccountItem
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -374,6 +375,13 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         }
 
         setPagerChangedAlpha(percent)
+    }
+
+    override fun getCurrentContext(): AccountContext? {
+        if (!isLogin) {
+            return null
+        }
+        return accountItem.accountContext
     }
 
     private fun logoutPagerChangedAlpha(alpha: Float) {

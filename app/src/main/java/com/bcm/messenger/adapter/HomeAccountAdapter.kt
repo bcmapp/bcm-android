@@ -174,7 +174,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
         var isChanged = false
         for (item in accountList) {
             if (item.account.getAccountID() == uid) {
-//                AmeLoginLogic.accountHistory.deleteAccount(uid)
+                AmeLoginLogic.accountHistory.deleteAccount(uid)
                 accountList.remove(item)
                 isChanged = true
                 break

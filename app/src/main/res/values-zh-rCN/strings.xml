@@ -71,6 +71,8 @@
     <string name="tabless_ui_intro_text_3"><Data><![CDATA[<font color=#C5F4F7>点击</font><font color=#FFFFFF><b>头像</b></font><font color=#C5F4F7>可以找到</font><br><font color=#FFFFFF><b>“更多”标签页</b></font><font color=#C5F4F7>内的功能<br></font>]]></Data></string>
     <string name="tabless_ui_delete_account_content">在删除该帐户之前，请确保已备份该帐户。 您确定要立即删除它吗？</string>
     <string name="tabless_ui_delete_account_str_remote">立即删除</string>
+    <string name="tabless_ui_account_reach_max_size">支持最多3个账号同时在线。若需登录一个新账号，请先退出一个在线账号。</string>
+    <string name="tabless_ui_import_account">导入账号</string>
 
     <!-- Dev Settings -->
     <string name="dev_settings_title">开发设置</string>

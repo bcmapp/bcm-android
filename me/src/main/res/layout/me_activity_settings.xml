@@ -41,7 +41,7 @@
             <include
                 android:id="@+id/setting_head_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="92dp"
                 layout="@layout/me_settings_head_view" />
 
             <com.bcm.messenger.common.ui.CommonSettingItem

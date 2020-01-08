@@ -91,6 +91,8 @@
     <string name="tabless_ui_intro_text_3"><Data><![CDATA[<font color=#C5F4F7>Find</font> <font color=#FFFFFF><b>More</b></font> <font color=#C5F4F7>in your</font> <font color=#FFFFFF><b>Avatar</b></font>]]></Data></string>
     <string name="tabless_ui_delete_account_content">Please make sure you have backed up this account before removing it. Are you sure to remove it now?</string>
     <string name="tabless_ui_delete_account_str_remote">Remove</string>
+    <string name="tabless_ui_account_reach_max_size">Up to 3 accounts can be online at the same time. To login to a new account, please log out of an online one first.</string>
+    <string name="tabless_ui_import_account">Import Account</string>
 
     <!-- Dev Settings -->
     <string name="dev_settings_title">Dev Settings</string>

@@ -16,6 +16,10 @@ import androidx.viewpager.widget.ViewPager
 import com.bcm.messenger.R
 import com.bcm.messenger.adapter.HomeAccountAdapter
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
@@ -33,7 +37,7 @@ import kotlinx.android.synthetic.main.home_profile_layout.view.*
  * Created by Kin on 2019/12/30
  */
 class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
-    private val TAG = "MessageProfileView"
+    private val TAG = "HomeProfileView"
 
     interface HomeProfileListener {
         fun onClickExit()
@@ -240,13 +244,20 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    fun analyseQrCode(data: Intent?) {
+    fun analyseQrCode(data: Intent?, toLogin: Boolean) {
         val qrCode = data?.getStringExtra(ARouterConstants.PARAM.SCAN.SCAN_RESULT) ?: return
         AmeLoginLogic.saveBackupFromExportModelWithWarning(qrCode) { accountId ->
             if (!accountId.isNullOrEmpty()){
                 viewPagerAdapter.loadAccounts()
+                if (toLogin) {
+                    loginAccount(accountId)
+                }
             }
         }
+    }
+
+    fun getCloseAccount(): AccountContext? {
+        return viewPagerAdapter.getCurrentView(home_profile_view_pager.currentItem)?.getCurrentContext()
     }
 
     private fun deleteAccount(uid: String) {
@@ -262,10 +273,21 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private fun loginAccount(uid: String) {
-        context.startBcmActivity((context as HomeActivity).accountContext, Intent(context, VerifyKeyActivity::class.java).apply {
+        if (!checkOnlineAccount()) {
+            return
+        }
+        context.startBcmActivity((context as SwipeBaseActivity).accountContext, Intent(context, VerifyKeyActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
             putExtra(VerifyKeyActivity.BACKUP_JUMP_ACTION, VerifyKeyActivity.LOGIN_PROFILE)
             putExtra(RegistrationActivity.RE_LOGIN_ID, uid)
         })
+    }
+
+    private fun checkOnlineAccount(): Boolean {
+        if (AmeModuleCenter.login().minorUidList().size == 2) {
+            AmePopup.result.notice((context as SwipeBaseActivity), getString(R.string.tabless_ui_account_reach_max_size))
+            return false
+        }
+        return true
     }
 }
