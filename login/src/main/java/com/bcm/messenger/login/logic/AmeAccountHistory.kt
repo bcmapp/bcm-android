@@ -40,7 +40,7 @@ class AmeAccountHistory {
         private const val AME_LAST_LOGIN = "AME_LAST_LOGIN"
         private const val AME_ACCOUNT_LIST = "AME_ACCOUNT_LIST"
         private const val AME_MAJOR_LOGIN_ACCOUNT = "AME_CURRENT_LOGIN"
-        private const val AME_MINOR_LOGIN_ACCOUNT = "AME_MINOR_ACCOUNT_LIST"
+        private const val AME_MINOR_LOGIN_ACCOUNT = "AME_MINOR_ACCOUNT_LIST1"
         private const val AME_ADHOC_UID = "AME_ADHOC_UID"
 
         const val LIMIT_SIZE = 50
@@ -73,6 +73,12 @@ class AmeAccountHistory {
                 changed = changed.or(fixLoginState(account))
                 changed = changed.or(fixBackupTime(account))
                 changed = changed.or(fixGenTime(account))
+
+                if (!isLogin(account.uid)) {
+                    account.signalPassword = ""
+                    account.signalingKey = ""
+                    account.registrationId = 0
+                }
             }
 
             if (changed > 0) {
@@ -256,6 +262,9 @@ class AmeAccountHistory {
     }
 
     fun saveAccount(data: AmeAccountData, replace: Boolean = true): Boolean {
+        if (data.signalPassword.isNotEmpty()) {
+            accountContextMap[data.uid] = AccountContext(data.uid, genToken(data.uid,data.signalPassword), data.signalPassword)
+        }
         return saveAccount(data.uid, data, replace)
     }
 

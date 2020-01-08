@@ -141,7 +141,7 @@ object ReportConfigure : LBSFetcher.ILBSFetchResult {
 
     private fun tryRunTicker() {
         if (AMELogin.isLogin) {
-            if (timeDisposable?.isDisposed != true) {
+            if (timeDisposable?.isDisposed != false) {
                 startTicker()
                 reportExecutor.scheduleDirect {
                     syncConfig()

@@ -94,7 +94,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
                                     putExtra(DatabaseMigrateActivity.IS_LOGIN_PROGRESS, true)
                                 })
                             } else {
-                                gotoHomeActivity(false)
+                                gotoHomeActivity(accountContext,false)
                             }
                         }, 1500)
                     } else {

@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.route.api.BcmRouter
@@ -26,10 +27,11 @@ abstract class AbsRegistrationFragment : Fragment() {
         }
     }
 
-    protected fun gotoHomeActivity(register: Boolean) {
+    protected fun gotoHomeActivity(accountContext: AccountContext, register: Boolean) {
         activity?.apply {
             BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
                     .putBoolean(ARouterConstants.PARAM.PARAM_LOGIN_FROM_REGISTER, register)
+                    .putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
                     .navigation(this)
         
             AmeDispatcher.mainThread.dispatch({

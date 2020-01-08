@@ -33,6 +33,7 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.concurrent.TimeUnit
 
 open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
@@ -286,10 +287,10 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
                 }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AccountLoginStateChangedEvent) {
         if (accountContext.uid != AmeModuleCenter.login().majorUid()) {
-            setAccountContext(AMELogin.majorContext)
+            //setAccountContext(AMELogin.majorContext)
         }
     }
 }
