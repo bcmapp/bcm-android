@@ -159,6 +159,15 @@ class AmeAccountHistory {
         return uid == majorAccountUid || minorAccountUids.contains(uid)
     }
 
+    fun setMinorAccountUid(uid: String) {
+        if (minorAccountUids.contains(uid)) {
+            return
+        }
+
+        minorAccountUids.add(uid)
+        storage.set(AME_MINOR_LOGIN_ACCOUNT, GsonUtils.toJson(minorAccountUids))
+    }
+
     fun setMajorLoginAccountUid(uid: String) {
         ALog.logForSecret(TAG, "setMajorLoginAccountUid current uid :$uid")
         val accountData = getAccount(uid)

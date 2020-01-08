@@ -327,4 +327,8 @@ class LoginModuleImpl : ILoginModule
     override fun getAdHocUid(): String {
         return AmeLoginLogic.accountHistory.getAdHocUid()
     }
+
+    override fun setMajorAccount(accountContext: AccountContext) {
+        AmeLoginLogic.accountHistory.setMajorLoginAccountUid(accountContext.uid)
+    }
 }

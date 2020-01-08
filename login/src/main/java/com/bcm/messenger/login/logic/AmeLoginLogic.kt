@@ -624,7 +624,12 @@ object AmeLoginLogic {
         accountData.signedPreKeyRegistered = true
 
         accountHistory.saveAccount(accountData)
-        accountHistory.setMajorLoginAccountUid(accountData.uid)
+
+        if (accountHistory.majorAccountUid().isEmpty()) {
+            accountHistory.setMajorLoginAccountUid(accountData.uid)
+        } else {
+            accountHistory.setMinorAccountUid(accountData.uid)
+        }
     }
 
     private fun initCreatePhrase(accountContext: AccountContext, ecKeyPair: ECKeyPair) {
