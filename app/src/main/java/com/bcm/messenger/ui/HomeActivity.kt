@@ -69,7 +69,6 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
     private val mLaunchHelper = SchemeLaunchHelper(this)
     private var checkDisposable: Disposable? = null
     private var checkStartTime = System.currentTimeMillis()
-    private val mAdHocModule: IAdHocModule by lazy { AmeModuleCenter.adhoc() }
     private var mPixelManager: PixelManager? = null
 
     private var recipient = Recipient.major()
@@ -107,21 +106,22 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
         RxBus.subscribe<HomeTabEvent>(TAG) {
             ALog.i(TAG, "receive HomeTabEvent position: ${it.position}, figure: ${it.showFigure}")
+            val adhocMode = AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true
             when (it.position) {
                 TAB_CHAT -> {
-                    if ((it.showFigure != null || it.showDot != null) && !mAdHocModule.isAdHocMode()) {
+                    if ((it.showFigure != null || it.showDot != null) && !adhocMode) {
                         home_profile_layout?.chatUnread = it.showFigure ?: 0
                     }
                 }
                 TAB_CONTACT -> {
-                    if ((it.showFigure != null || it.showDot != null) && !mAdHocModule.isAdHocMode()) {
+                    if ((it.showFigure != null || it.showDot != null) && !adhocMode) {
                         home_profile_layout?.friendReqUnread = it.showFigure ?: 0
                     }
                 }
                 TAB_ME -> {
                 }
                 TAB_ADHOC -> {
-                    if ((it.showFigure != null || it.showDot != null) && mAdHocModule.isAdHocMode()) {
+                    if ((it.showFigure != null || it.showDot != null) && adhocMode) {
                         home_profile_layout?.friendReqUnread = 0
                         home_profile_layout?.chatUnread = it.showFigure ?: 0
                     }
@@ -146,7 +146,9 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
     private fun checkAdHocMode(): Boolean {
         val adHocMainTag = "adhoc_main"
         val adHocMainFragment = supportFragmentManager.findFragmentByTag(adHocMainTag)
-        if (mAdHocModule.isAdHocMode()) {
+
+        val adhocMode = AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true
+        if (adhocMode) {
             if (null != adHocMainFragment) {
                 return true
             }
@@ -361,7 +363,8 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (home_pull_down_layout.isTopViewExpanded() && !mAdHocModule.isAdHocMode()) {
+            val adhocMode = AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true
+            if (home_pull_down_layout.isTopViewExpanded() && !adhocMode) {
                 home_pull_down_layout.closeTopViewAndCallback()
                 return true
             }

@@ -28,6 +28,7 @@ import com.bcm.messenger.chats.util.*
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.ShareElements
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.api.BindableConversationItem
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
@@ -154,7 +155,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
     private val multiClickListener = MultiClickObserver(2, object : MultiClickObserver.MultiClickListener {
         override fun onMultiClick(view: View?, count: Int) {
             view?.hideKeyboard()
-            BigContentRecycleFragment.showBigContent(context as FragmentActivity, messageRecord.threadId, messageRecord.id, masterSecret)
+            BigContentRecycleFragment.showBigContent(context as SwipeBaseActivity, messageRecord.threadId, messageRecord.id, masterSecret)
         }
     })
 

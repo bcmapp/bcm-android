@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.CompoundButton
+import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ARouterConstants.Activity.APP_DEV_SETTING
@@ -41,7 +42,7 @@ import java.util.regex.Pattern
 
 
 @Route(routePath = APP_DEV_SETTING)
-class DevSettingsActivity : SwipeBaseActivity() {
+class DevSettingsActivity : AppCompatActivity() {
     private val TAG = "DevSettingsActivity"
 
     private val curEnv = EnvSettingLogic.getEnvSetting().copy()
@@ -113,9 +114,14 @@ class DevSettingsActivity : SwipeBaseActivity() {
         }
 
         dev_setting_dev_pull_data.setOnClickListener {
-            val dirs = arrayOf("messages%s.db", "new_group%s", "user_%s")
+            if (!AMELogin.majorContext.isLogin) {
+                ToastUtil.show(this, "Export failed")
+                return@setOnClickListener
+            }
+
+            val dirs = arrayOf("messages%s.db", "new_group%s", "user_%s.db")
             for (i in dirs) {
-                val name = String.format(i, AMELogin.uid)
+                val name = String.format(i, AMELogin.majorContext)
                 val dbFile = AppContextHolder.APP_CONTEXT.getDatabasePath(name)
                 val diskPath = Environment.getExternalStorageDirectory().absolutePath
                 val dbDestPath= diskPath + File.separatorChar + ARouterConstants.SDCARD_ROOT_FOLDER + File.separatorChar + name
@@ -248,7 +254,9 @@ class DevSettingsActivity : SwipeBaseActivity() {
                             AmePopup.loading.show(this@DevSettingsActivity)
                             Observable.create(ObservableOnSubscribe<Boolean> {
                                 try {
-                                    AmeLoginLogic.quit(false)
+                                    if(AMELogin.majorContext.isLogin) {
+                                        AmeLoginLogic.quit(AMELogin.majorContext,false)
+                                    }
                                     it.onNext(true)
                                 } catch (ex: Exception) {
                                     it.onNext(false)
