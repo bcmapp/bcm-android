@@ -2,7 +2,6 @@ package com.bcm.messenger.chats.components
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View

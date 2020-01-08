@@ -66,7 +66,7 @@ class MapActivity : SwipeBaseActivity(), MapActionCallback {
         checkGPS()
         try {
             me = Recipient.major()
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             finish()
             return
         }
@@ -102,7 +102,7 @@ class MapActivity : SwipeBaseActivity(), MapActionCallback {
     override fun onSearchResult(isAdd: Boolean, list: List<LocationItem>) {
         if (isAdd) {
             searchAdapter.addDataList(list)
-        }else {
+        } else {
             searchAdapter.resetDataList(list)
         }
         if (searchAdapter.itemCount != 0) {
@@ -120,7 +120,7 @@ class MapActivity : SwipeBaseActivity(), MapActionCallback {
         if (provider?.isSupport(this) == true) {
             mapType = MapApiConstants.GDMAP
             mapFragment = initFragment(R.id.map_container, provider.getWorkFragment(), null)
-        }else {
+        } else {
             mapType = MapApiConstants.GOOGLEMAP
             mapFragment = initFragment(R.id.map_container, GoogleMapFragment(), null)
         }
@@ -211,7 +211,8 @@ class MapActivity : SwipeBaseActivity(), MapActionCallback {
             if (mapType == MapApiConstants.GDMAP) {
                 val pair = mModule?.fromGDLatLng(this, item.latitude, item.longitude)
                 intent.putExtra(ARouterConstants.PARAM.MAP.LATITUDE, pair?.first ?: item.latitude)
-                intent.putExtra(ARouterConstants.PARAM.MAP.LONGTITUDE, pair?.second ?: item.longitude)
+                intent.putExtra(ARouterConstants.PARAM.MAP.LONGTITUDE, pair?.second
+                        ?: item.longitude)
             } else {
                 intent.putExtra(ARouterConstants.PARAM.MAP.LATITUDE, item.latitude)
                 intent.putExtra(ARouterConstants.PARAM.MAP.LONGTITUDE, item.longitude)

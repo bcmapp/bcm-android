@@ -319,12 +319,14 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
     private inner class MediaViewPagerAdapter : CustomFragmentStatePagerAdapter<MediaViewData>(supportFragmentManager) {
 
         override fun getItem(position: Int): Fragment {
-            val f = MediaViewFragment()
-            f.setData(getItemData(position))
-            f.setMasterSecret(getMasterSecret())
-            f.setAccountContext(accountContext)
-            f.setListener(fragmentListener)
-            return f
+            return MediaViewFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+                }
+                setData(getItemData(position))
+                setMasterSecret(getMasterSecret())
+                setListener(fragmentListener)
+            }
         }
 
         override fun getItemData(position: Int): MediaViewData? {

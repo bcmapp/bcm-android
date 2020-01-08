@@ -232,8 +232,8 @@ class ChatGroupConversationFragment : BaseFragment() {
 
         if (this.threadId > 0L) {
             glideRequests = GlideApp.with(AppContextHolder.APP_CONTEXT)
-            val adapter = CommonConversationAdapter<AmeGroupMessageDetail>(context
-                    ?: return, object : CommonConversationAdapter.IConversationDelegate<AmeGroupMessageDetail> {
+            val adapter = CommonConversationAdapter(context ?: return,
+                    object : CommonConversationAdapter.IConversationDelegate<AmeGroupMessageDetail> {
 
                 private val calendar = Calendar.getInstance()
                 override fun getViewHolderType(adapter: CommonConversationAdapter<AmeGroupMessageDetail>, position: Int, data: AmeGroupMessageDetail): Int {

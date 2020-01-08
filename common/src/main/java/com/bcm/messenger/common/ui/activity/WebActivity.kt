@@ -14,7 +14,7 @@ import com.bcm.messenger.common.R
 import com.bcm.messenger.common.SwipeBaseActivity
 
 /**
- * 
+ *
  * Created by zjl on 2017/3/29.
  */
 @Route(routePath = ARouterConstants.Activity.WEB)
@@ -68,7 +68,7 @@ class WebActivity : SwipeBaseActivity() {
         val clazz = intent.getStringExtra(ARouterConstants.PARAM.WEB_FRAGMENT)
         val fragment = if (clazz.isNullOrEmpty()) {
             BaseWebFragment()
-        }else {
+        } else {
             BcmRouter.getInstance().get(clazz).navigationWithCast()
         }
         mFragment = initFragment(R.id.web_fragment, fragment, null)

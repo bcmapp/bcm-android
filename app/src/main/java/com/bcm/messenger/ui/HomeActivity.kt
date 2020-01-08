@@ -382,7 +382,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun updateRecipientData(recipient: Recipient) {
-        home_toolbar_avatar.showPrivateAvatar(accountContext, recipient)
+        home_toolbar_avatar.showPrivateAvatar(recipient)
     }
 
     private fun initPullDownView() {
@@ -484,7 +484,7 @@ class HomeActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     height == 0 -> {
                         home_toolbar_avatar.setPrivateElevation(0f)
                         home_toolbar_avatar.getIndividualAvatarView().showCoverText()
-                        home_toolbar_avatar.showPrivateAvatar(accountContext, recipient)
+                        home_toolbar_avatar.showPrivateAvatar(recipient)
 
                         home_toolbar.layoutParams = (home_toolbar.layoutParams as ConstraintLayout.LayoutParams).apply {
                             topMargin = 0

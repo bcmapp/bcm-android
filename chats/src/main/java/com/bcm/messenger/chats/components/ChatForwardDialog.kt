@@ -68,7 +68,7 @@ class ChatForwardDialog : DialogFragment() {
     private val privateMessageList = mutableListOf<MessageRecord>()
     private val groupMessageList = mutableListOf<AmeGroupMessageDetail>()
 
-    private lateinit var accountContext:AccountContext
+    private lateinit var accountContext: AccountContext
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return Dialog(context, R.style.ForwardDialogStyle)
@@ -187,7 +187,8 @@ class ChatForwardDialog : DialogFragment() {
             }
         }
         when (recipients.size) {
-            0 -> {}
+            0 -> {
+            }
             1 -> {
                 if (recipients[0].isGroupRecipient) {
                     val gid = recipients[0].groupId
@@ -215,7 +216,7 @@ class ChatForwardDialog : DialogFragment() {
             dismiss()
         }
         forward_comment_text.imeOptions = EditorInfo.IME_ACTION_SEND
-        forward_comment_text.setOnEditorActionListener {_, actionId, _ ->
+        forward_comment_text.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener if (actionId == EditorInfo.IME_ACTION_SEND && forward_comment_text.text?.isNotEmpty() == true) {
                 forward()
                 true

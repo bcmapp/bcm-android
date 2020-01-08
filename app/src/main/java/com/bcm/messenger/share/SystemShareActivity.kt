@@ -64,12 +64,9 @@ class SystemShareActivity : SwipeBaseActivity(), IContactsCallback {
                 onSelect(recipient)
             }
         })
-        fragment.setMasterSecret(getMasterSecret())
         fragment.setContactSelectContainer(R.id.share_fragment_container)
         fragment.setGroupSelectContainer(R.id.share_fragment_container)
-        supportFragmentManager.beginTransaction()
-                .add(R.id.share_fragment_container, fragment)
-                .commit()
+        initFragment(R.id.share_fragment_container, fragment, null)
     }
 
     private fun handleIntent() {

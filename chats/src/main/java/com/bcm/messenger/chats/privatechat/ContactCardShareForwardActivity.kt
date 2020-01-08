@@ -51,7 +51,7 @@ class ContactCardShareForwardActivity : SwipeBaseActivity() {
     }
 
     private fun initView() {
-        val forwardProvider = BcmRouter.getInstance().get(ARouterConstants.Fragment.FORWARD_FRAGMENT).navigation()
+        val forwardProvider = BcmRouter.getInstance().get(ARouterConstants.Fragment.FORWARD_FRAGMENT).navigationWithCast<Fragment>()
         if (forwardProvider is IForwardSelectProvider) {
             forwardProvider.setCallback(object : IForwardSelectProvider.ForwardSelectCallback {
                 override fun onClickContact(recipient: Recipient) {
@@ -65,9 +65,7 @@ class ContactCardShareForwardActivity : SwipeBaseActivity() {
             forwardProvider.setContactSelectContainer(R.id.activity_forward_root)
             forwardProvider.setGroupSelectContainer(R.id.activity_forward_root)
         }
-        supportFragmentManager.beginTransaction()
-                .add(R.id.activity_forward_root, forwardProvider as Fragment)
-                .commit()
+        initFragment(R.id.activity_forward_root, forwardProvider, null)
     }
 
     override fun finish() {

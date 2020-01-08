@@ -10,14 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.util.TTSUtil
+import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.MessageRecord
@@ -26,7 +26,7 @@ import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.ui.StateButton
 import com.bcm.messenger.common.ui.emoji.EmojiTextView
-import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.getDrawable
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -45,12 +45,13 @@ class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
 
     companion object {
 
-        fun showBigContent(activity: FragmentActivity, gid: Long, indexId: Long) {
+        fun showBigContent(activity: SwipeBaseActivity, gid: Long, indexId: Long) {
             val f = BigContentRecycleFragment()
             val arg = Bundle()
             arg.putLong(GID, gid)
             arg.putLong(INDEX_ID, indexId)
             arg.putInt(STYLE, GROUP_STYLE)
+            arg.putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, activity.accountContext)
             f.arguments = arg
 
             activity.supportFragmentManager.beginTransaction()
@@ -61,13 +62,14 @@ class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
             activity.hideKeyboard()
         }
 
-        fun showBigContent(activity: FragmentActivity, threadId: Long, id: Long, masterSecret: MasterSecret) {
+        fun showBigContent(activity: SwipeBaseActivity, threadId: Long, id: Long, masterSecret: MasterSecret) {
             val f = BigContentRecycleFragment()
             val arg = Bundle()
             arg.putLong(THREAD_ID, threadId)
             arg.putLong(INDEX_ID, id)
             arg.putParcelable(MASTERSECTRET, masterSecret)
             arg.putInt(STYLE, PRIVATE_STYLE)
+            arg.putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, activity.accountContext)
             f.arguments = arg
 
             activity.supportFragmentManager.beginTransaction()
@@ -87,7 +89,6 @@ class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
         const val PRIVATE_STYLE = 0
         const val GROUP_STYLE = 1
         const val MASTERSECTRET = "master_secret"
-
     }
 
     private val textItems = mutableListOf<AmeGroupMessageDetail>()
@@ -188,14 +189,14 @@ class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
         }
     }
 
-    fun setPlay() {
+    private fun setPlay() {
         if (ttsPlay) {
             context?.let {
                 tts_speak.post {
                     anim = AnimationDrawable()
-                    anim?.addFrame(AppUtil.getDrawable(it.resources, R.drawable.chats_40_tts1), 300)
-                    anim?.addFrame(AppUtil.getDrawable(it.resources, R.drawable.chats_40_tts2), 300)
-                    anim?.addFrame(AppUtil.getDrawable(it.resources, R.drawable.chats_40_tts3), 300)
+                    anim?.addFrame(getDrawable(R.drawable.chats_40_tts1), 300)
+                    anim?.addFrame(getDrawable(R.drawable.chats_40_tts2), 300)
+                    anim?.addFrame(getDrawable(R.drawable.chats_40_tts3), 300)
                     anim?.isOneShot = false
                     tts_speak.setImageDrawable(anim)
                     anim?.start()
@@ -212,9 +213,9 @@ class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
                 if (it.isSpeaking) {
                     tts_speak.postDelayed(this, 1000)
                 } else {
-                    anim?.let {
-                        if (it.isRunning)
-                            it.stop()
+                    anim?.let { animDrawable ->
+                        if (animDrawable.isRunning)
+                            animDrawable.stop()
                         ttsPlay = false
                         setImage()
                     }
@@ -318,7 +319,7 @@ class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
         }
     }
 
-    val speakRunnable = Runnable {
+    private val speakRunnable = Runnable {
         play()
     }
 

@@ -172,18 +172,16 @@ class GoogleMapFragment : BaseFragment(), OnMapReadyCallback, MapBaseInterface, 
     }
 
 
-    private val mUpdatePlaceDetailsCallback = object : OnCompleteListener<PlaceBufferResponse> {
-        override fun onComplete(task: Task<PlaceBufferResponse>) {
-            try {
-                val place = task.result?.get(0)
-                if (place != null) {
-                    mCallback?.onSearchResult(true, listOf(LocationItem(false, place.latLng.latitude, place.latLng.longitude, place.name.toString(), place.address.toString())))
-                    ALog.i(TAG, "Place details received: " + place.name)
-                }
-                task.result?.release()
-            } catch (e: RuntimeRemoteException) {
-                ALog.e(TAG, e)
+    private val mUpdatePlaceDetailsCallback = OnCompleteListener<PlaceBufferResponse> { task ->
+        try {
+            val place = task.result?.get(0)
+            if (place != null) {
+                mCallback?.onSearchResult(true, listOf(LocationItem(false, place.latLng.latitude, place.latLng.longitude, place.name.toString(), place.address.toString())))
+                ALog.i(TAG, "Place details received: " + place.name)
             }
+            task.result?.release()
+        } catch (e: RuntimeRemoteException) {
+            ALog.e(TAG, e)
         }
     }
 

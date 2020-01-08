@@ -76,9 +76,7 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
                 recipient = Recipient.from(accountContext, address.serialize(), true)
                 recipient.addListener(this)
                 initResource(act)
-
             }
-
         }
     }
 
@@ -130,12 +128,10 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
     }
 
     fun initView(context: Context) {
-
         val layoutManager = LinearLayoutManager(context)
         file_browser_list.layoutManager = layoutManager
         adapter = FileBrowserAdapter(context, accountContext)
         file_browser_list.adapter = adapter
-
     }
 
 

@@ -87,6 +87,9 @@ class ForwardRecentFragment : BaseFragment(), IForwardSelectProvider {
 
     private fun showContactSelectFragment(layoutId: Int) {
         val fragment = ForwardContactFragment()
+        fragment.arguments = Bundle().apply {
+            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+        }
         fragment.setCallback(callback)
         fragmentManager?.beginTransaction()
                 ?.setCustomAnimations(R.anim.common_slide_from_right, R.anim.common_slide_to_right, R.anim.common_slide_from_right, R.anim.common_slide_to_right)
@@ -99,6 +102,7 @@ class ForwardRecentFragment : BaseFragment(), IForwardSelectProvider {
         val fragment = ForwardContactFragment()
         fragment.arguments = Bundle().apply {
             putBoolean(ARouterConstants.PARAM.CONTACTS_SELECT.PARAM_CONTACT_GROUP, true)
+            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
         }
         fragment.setCallback(callback)
         fragmentManager?.beginTransaction()
@@ -120,7 +124,9 @@ class ForwardRecentFragment : BaseFragment(), IForwardSelectProvider {
 
     private fun initThreadList() {
         Observable.create<List<Recipient>> {
-            it.onNext(Repository.getThreadRepo(AMELogin.majorContext)?.getAllThreads()?.map { it.getRecipient(AMELogin.majorContext) }?: listOf())
+            it.onNext(Repository.getThreadRepo(AMELogin.majorContext)?.getAllThreads()?.map { record ->
+                record.getRecipient(AMELogin.majorContext)
+            } ?: listOf())
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

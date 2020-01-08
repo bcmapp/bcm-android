@@ -1,10 +1,6 @@
 package com.bcm.messenger.login.bean
 
-import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
-import com.bcm.messenger.utility.Base64
-import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.proguard.NotGuard
-import org.whispersystems.libsignal.ecc.Curve
 
 /**
  * Created by bcm.social.01 on 2018/9/6.
