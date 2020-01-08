@@ -9,6 +9,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
@@ -68,8 +69,7 @@ class PickNicknameFragment : AbsRegistrationFragment() {
                     new_nickname.postDelayed({
                         BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
                                 .putBoolean(ARouterConstants.PARAM.PARAM_LOGIN_FROM_REGISTER, true)
-                                .putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
-                                .navigation(activity)
+                                .startBcmActivity(accountContext, activity)
                         activity?.finish()
                     }, 2000)
 

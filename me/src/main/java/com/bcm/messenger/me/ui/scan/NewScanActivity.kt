@@ -100,14 +100,14 @@ class NewScanActivity : AppCompatActivity() {
                 tran.add(R.id.scan_container_root, ScanWithCodeContainerFragment().apply {
                     arguments = Bundle().apply {
                         putInt(ARouterConstants.PARAM.SCAN.TAB, 1)
-                        putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT))
+                        putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT))
                     }
                 })
             }
             ARouterConstants.PARAM.SCAN.TYPE_SCAN -> {
                 tran.add(R.id.scan_container_root, ScanWithCodeContainerFragment().apply {
                     arguments = Bundle().apply {
-                        putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT))
+                        putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT))
 
                     }
 

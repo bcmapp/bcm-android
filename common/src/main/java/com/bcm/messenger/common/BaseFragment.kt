@@ -65,7 +65,7 @@ open class BaseFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val accountContextObj: AccountContext? = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        val accountContextObj: AccountContext? = arguments?.getSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext
         if (accountContextObj == null) {
             ALog.w(TAG, "accountContextObj is null, finish")
             activity?.finish()
@@ -79,7 +79,7 @@ open class BaseFragment : Fragment() {
     }
 
     open fun onNewIntent() {
-        val accountContextObj: AccountContext? = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        val accountContextObj: AccountContext? = arguments?.getSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext
         if (accountContextObj != null) {
             ALog.w(TAG, "onNewIntent, new accountContextObj: ${accountContextObj.uid}")
             setAccountContext(accountContextObj)
@@ -90,7 +90,7 @@ open class BaseFragment : Fragment() {
                                     fragment: T,
                                     extras: Bundle?): T {
         val newArg = Bundle().apply {
-            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContextObj)
+            putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContextObj)
         }
         if (extras != null) {
             newArg.putAll(extras)

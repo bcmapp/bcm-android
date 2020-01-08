@@ -1,24 +1,12 @@
 package com.bcm.messenger.common
 
-import android.os.Parcel
-import android.os.Parcelable
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.utility.proguard.NotGuard
+import java.io.Serializable
 
-class AccountContext(val uid: String, val token: String, val password: String) : Parcelable, Comparable<AccountContext>, NotGuard {
+class AccountContext(val uid: String, val token: String, val password: String) : Serializable,  Comparable<AccountContext>, NotGuard {
 
-    constructor(parcel: Parcel) : this(parcel.readString() ?: "", parcel.readString()
-            ?: "", parcel.readString() ?: "")
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(uid)
-        parcel.writeString(token)
-        parcel.writeString(password)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
+    private val serialVersionUID = 1L
 
     override fun compareTo(other: AccountContext): Int {
         val result = uid.compareTo(other.uid)
@@ -44,16 +32,6 @@ class AccountContext(val uid: String, val token: String, val password: String) :
         return result
     }
 
-
-    companion object CREATOR : Parcelable.Creator<AccountContext> {
-        override fun createFromParcel(parcel: Parcel): AccountContext {
-            return AccountContext(parcel)
-        }
-
-        override fun newArray(size: Int): Array<AccountContext?> {
-            return arrayOfNulls(size)
-        }
-    }
 
     val isLogin get() = AmeModuleCenter.login().isAccountLogin(uid)
     val accountDir: String get() = AmeModuleCenter.login().accountDir(uid)

@@ -1,23 +1,23 @@
 package com.bcm.messenger.chats.forward
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.api.IContactsAction
 import com.bcm.messenger.common.api.IContactsCallback
 import com.bcm.messenger.common.provider.IForwardSelectProvider.ForwardSelectCallback
-import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.utils.setStatusBarLightMode
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_fragment_forward_contact.*
-import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.utils.setStatusBarLightMode
 
 class ForwardContactFragment : BaseFragment(), IContactsCallback {
     private var callback: ForwardSelectCallback? = null
@@ -43,7 +43,7 @@ class ForwardContactFragment : BaseFragment(), IContactsCallback {
                 .putBoolean(ARouterConstants.PARAM.CONTACTS_SELECT.PARAM_CONTACT_GROUP,
                         arguments?.getBoolean(ARouterConstants.PARAM.CONTACTS_SELECT.PARAM_CONTACT_GROUP, false) ?: false)
                 .putBoolean(ARouterConstants.PARAM.CONTACTS_SELECT.PARAM_INCLUDE_ME, true)
-                .putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+                .putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
                 .navigationWithCast<Fragment>()
 
         if (fragment is IContactsAction) {

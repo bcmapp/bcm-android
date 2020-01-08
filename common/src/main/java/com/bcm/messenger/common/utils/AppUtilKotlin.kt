@@ -79,8 +79,8 @@ private fun checkIntent(accountContext: AccountContext, intent: Intent) {
 }
 
 private fun checkBundle(accountContext: AccountContext, bundle: Bundle) {
-    if (bundle.getParcelable<AccountContext>(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) == null) {
-        bundle.putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+    if (bundle.getSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) == null) {
+        bundle.putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
     }
 }
 
@@ -161,22 +161,22 @@ fun Context.startBcmActivity(accountContext: AccountContext, intent: Intent, opt
 }
 
 fun BcmRouterIntent.startBcmActivity(accountContext: AccountContext) {
-    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+    putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
     navigation()
 }
 
 fun BcmRouterIntent.startBcmActivity(accountContext: AccountContext, context: Context?) {
-    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+    putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
     navigation(context)
 }
 
 fun BcmRouterIntent.startBcmActivity(accountContext: AccountContext, activity: Activity, requestCode: Int) {
-    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+    putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
     navigation(activity, requestCode)
 }
 
 fun <T> BcmRouterIntent.navigationWithAccountContext(accountContext: AccountContext): T {
-    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+    putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
     return navigationWithCast<T>()
 }
 

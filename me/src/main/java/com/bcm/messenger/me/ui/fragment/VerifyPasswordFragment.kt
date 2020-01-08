@@ -77,7 +77,7 @@ class VerifyPasswordFragment : BaseFragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        fetchProfile(arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT))
+        fetchProfile(arguments?.getSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext)
 
         updateVerifyInput(verify_pin_input_text.text.isNotEmpty())
 

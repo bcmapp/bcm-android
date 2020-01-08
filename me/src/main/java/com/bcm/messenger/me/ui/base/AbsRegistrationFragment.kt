@@ -31,7 +31,7 @@ abstract class AbsRegistrationFragment : Fragment() {
         activity?.apply {
             BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
                     .putBoolean(ARouterConstants.PARAM.PARAM_LOGIN_FROM_REGISTER, register)
-                    .putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+                    .putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
                     .navigation(this)
         
             AmeDispatcher.mainThread.dispatch({

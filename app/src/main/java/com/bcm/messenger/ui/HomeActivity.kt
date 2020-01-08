@@ -166,7 +166,7 @@ class HomeActivity : SwipeBaseActivity() {
                     .navigation() as Fragment
 
             adhocMain.arguments = Bundle().apply {
-                putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, adhocContext)
+                putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, adhocContext)
             }
             addFragment.add(R.id.home_adhoc_main, adhocMain, adHocMainTag)
             addFragment.commit()

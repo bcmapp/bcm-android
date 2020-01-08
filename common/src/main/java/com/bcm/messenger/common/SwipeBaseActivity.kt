@@ -82,7 +82,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         super.onCreate(savedInstanceState)
         ALog.d(TAG, "onCreate: $localClassName")
         window.setTranslucentStatus()
-        val accountContextObj: AccountContext? = intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        val accountContextObj: AccountContext? = intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext
         if (accountContextObj == null) {
             ALog.w(TAG, "accountContextObj is null, finish")
             finish()
@@ -101,7 +101,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        val accountContextObj: AccountContext? = intent?.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)
+        val accountContextObj: AccountContext? = intent?.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext
         if (accountContextObj != null) {
             ALog.w(TAG, "onNewIntent, new accountContextObj: ${accountContextObj.uid}")
             setAccountContext(accountContextObj)
@@ -234,7 +234,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
                                             fragment: T,
                                             extras: Bundle?): T {
         val newArg = Bundle().apply {
-            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContextObj)
+            putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContextObj)
         }
         if (extras != null) {
             newArg.putAll(extras)

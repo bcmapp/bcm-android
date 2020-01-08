@@ -51,7 +51,7 @@ class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
             arg.putLong(GID, gid)
             arg.putLong(INDEX_ID, indexId)
             arg.putInt(STYLE, GROUP_STYLE)
-            arg.putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, activity.accountContext)
+            arg.putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, activity.accountContext)
             f.arguments = arg
 
             activity.supportFragmentManager.beginTransaction()
@@ -69,7 +69,7 @@ class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
             arg.putLong(INDEX_ID, id)
             arg.putParcelable(MASTERSECTRET, masterSecret)
             arg.putInt(STYLE, PRIVATE_STYLE)
-            arg.putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, activity.accountContext)
+            arg.putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, activity.accountContext)
             f.arguments = arg
 
             activity.supportFragmentManager.beginTransaction()

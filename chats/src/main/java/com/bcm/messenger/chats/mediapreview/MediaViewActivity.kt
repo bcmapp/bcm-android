@@ -321,7 +321,7 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
         override fun getItem(position: Int): Fragment {
             return MediaViewFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+                    putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
                 }
                 setData(getItemData(position))
                 setMasterSecret(getMasterSecret())

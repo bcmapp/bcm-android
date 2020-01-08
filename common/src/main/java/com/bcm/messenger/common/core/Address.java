@@ -55,7 +55,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
     }
 
     public Address(Parcel in) {
-        this.context = in.readParcelable(AccountContext.class.getClassLoader());
+        this.context = (AccountContext)in.readSerializable();
         this.address = in.readString();
     }
 
@@ -178,7 +178,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(context, flags);
+        dest.writeSerializable(context);
         dest.writeString(address);
     }
 

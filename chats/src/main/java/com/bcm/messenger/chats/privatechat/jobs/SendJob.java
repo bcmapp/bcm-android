@@ -24,7 +24,7 @@ import java.util.List;
 public abstract class SendJob extends MasterSecretJob {
 
     private final static String TAG = SendJob.class.getSimpleName();
-    protected Repository repository;
+    protected transient Repository repository;
 
     public SendJob(Context context, AccountContext accountContext, JobParameters parameters) {
         super(context, accountContext, parameters);

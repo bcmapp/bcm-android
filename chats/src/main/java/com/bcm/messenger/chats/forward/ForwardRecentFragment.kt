@@ -88,7 +88,7 @@ class ForwardRecentFragment : BaseFragment(), IForwardSelectProvider {
     private fun showContactSelectFragment(layoutId: Int) {
         val fragment = ForwardContactFragment()
         fragment.arguments = Bundle().apply {
-            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+            putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
         }
         fragment.setCallback(callback)
         fragmentManager?.beginTransaction()
@@ -102,7 +102,7 @@ class ForwardRecentFragment : BaseFragment(), IForwardSelectProvider {
         val fragment = ForwardContactFragment()
         fragment.arguments = Bundle().apply {
             putBoolean(ARouterConstants.PARAM.CONTACTS_SELECT.PARAM_CONTACT_GROUP, true)
-            putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+            putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
         }
         fragment.setCallback(callback)
         fragmentManager?.beginTransaction()

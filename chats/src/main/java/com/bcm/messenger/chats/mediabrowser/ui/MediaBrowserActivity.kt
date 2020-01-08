@@ -147,7 +147,7 @@ class MediaBrowserActivity : SwipeBaseActivity() {
         arg.putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
         arg.putParcelable(ARouterConstants.PARAM.PARAM_MASTER_SECRET, getMasterSecret())
         arg.putLong(ARouterConstants.PARAM.PARAM_INDEX_ID, indexId)
-        arg.putParcelable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+        arg.putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
         mediaFragment?.arguments = arg
         mediaFragment?.let {
             fms.add(it)
