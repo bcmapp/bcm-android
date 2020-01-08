@@ -274,7 +274,7 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
                 .putLong(ARouterConstants.PARAM.PARAM_THREAD, threadId)
                 .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, groupId)
                 .putLong(ARouterConstants.PARAM.PRIVATE_CHAT.LAST_SEEN_EXTRA, lastSeen)
-                .navigation(context)
+                .startBcmActivity(accountContext, context)
 
     }
 

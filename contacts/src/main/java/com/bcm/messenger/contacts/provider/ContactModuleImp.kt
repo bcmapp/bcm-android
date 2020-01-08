@@ -152,7 +152,11 @@ class ContactModuleImp : IContactModule {
     override fun discernLink(context: Context, link: String, callback: ((result: Boolean) -> Unit)?) {
         val shareContent = AmeGroupMessage.GroupShareContent.fromLink(link)
         if (shareContent != null) {
-            val groupProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_GROUP_BASE).navigationWithCast<IGroupModule>()
+            val groupProvider = AmeModuleCenter.group(accountContext)
+            if (groupProvider == null) {
+                callback?.invoke(false)
+                return
+            }
             groupProvider.queryGroupInfo(shareContent.groupId) {groupInfo ->
                 if (groupInfo == null || groupInfo.role == AmeGroupMemberInfo.VISITOR) {
                     BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_SHARE_DESCRIPTION).putString(ARouterConstants.PARAM.GROUP_SHARE.GROUP_SHARE_CONTENT, shareContent.toString()).navigation(context)

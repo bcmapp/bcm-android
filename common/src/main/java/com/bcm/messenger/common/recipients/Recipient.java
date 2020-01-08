@@ -379,8 +379,6 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
 
     private long groupId = -1L;
 
-    private IGroupModule mGroupProvider;
-
     public long getUniquenessId() {
         return uniquenessId;
     }
@@ -772,10 +770,13 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
             if (!TextUtils.isEmpty(groupTitle)) {
                 return groupTitle;
             }
-            if (mGroupProvider == null) {
-                mGroupProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_GROUP_BASE).navigationWithCast();
+            IGroupModule groupProvider = AmeModuleCenter.INSTANCE.group(address.context());
+            AmeGroupInfo groupInfo;
+            if (groupProvider == null) {
+                groupInfo = null;
+            } else {
+                groupInfo = groupProvider.getGroupInfo(groupId);
             }
-            AmeGroupInfo groupInfo = mGroupProvider.getGroupInfo(groupId);
             if (groupInfo != null && !TextUtils.isEmpty(groupInfo.getDisplayName())) {
                 return groupInfo.getDisplayName();
             }

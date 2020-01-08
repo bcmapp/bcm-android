@@ -10,14 +10,11 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getDrawable
-import com.bcm.route.api.BcmRouter
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -27,6 +24,7 @@ import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.common_group_avatar_view.view.*
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.mms.GlideApp
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import java.io.File
@@ -77,8 +75,8 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
     fun showGroupAvatar(accountContext: AccountContext, gid: Long, showSplice: Boolean = true, path: String = "") {
         ALog.i(TAG, "Show group avatar")
 
-        val provider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_GROUP_BASE).navigationWithCast<IGroupModule>()
-        val groupInfo = provider.getGroupInfo(gid)
+        val provider = AmeModuleCenter.group(accountContext)
+        val groupInfo = provider?.getGroupInfo(gid)
         when {
             !groupInfo?.iconUrl.isNullOrBlank() -> {
                 ALog.i(TAG, "Group icon url is not empty")
@@ -100,7 +98,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         }
 
         if ((groupInfo?.name.isNullOrEmpty() && groupInfo?.spliceName.isNullOrEmpty()) || (groupInfo?.iconUrl.isNullOrEmpty() && groupInfo?.spliceAvatarPath.isNullOrEmpty())) {
-            provider.refreshGroupNameAndAvatar(gid)
+            provider?.refreshGroupNameAndAvatar(gid)
         }
     }
 

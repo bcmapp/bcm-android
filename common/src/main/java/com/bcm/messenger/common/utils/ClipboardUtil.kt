@@ -11,7 +11,6 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -140,7 +139,7 @@ object ClipboardUtil {
             if (json.isNotBlank()) {
                 val groupShareContent = AmeGroupMessage.GroupShareContent.fromClipboard(json)
                 if (groupShareContent != null && groupShareContent.groupId != 0L && !groupShareContent.shareCode.isNullOrBlank() && !groupShareContent.shareSignature.isNullOrBlank()) {
-                    val groupProvider = BcmRouter.getInstance().get(ARouterConstants.Provider.PROVIDER_GROUP_BASE).navigationWithCast<IGroupModule>()
+                    val groupProvider = AmeModuleCenter.group(AMELogin.majorContext)
                     ALog.i(TAG, "checkGroup gid: ${groupShareContent.groupId}")
                     val eKey = groupShareContent.ekey
                     val eKeyByteArray = if (!eKey.isNullOrEmpty()) {
@@ -152,7 +151,7 @@ object ClipboardUtil {
                     } else {
                         null
                     }
-                    groupProvider.doGroupJoin(activity, groupShareContent.groupId, groupShareContent.groupName, groupShareContent.groupIcon, groupShareContent.shareCode,
+                    groupProvider?.doGroupJoin(activity, groupShareContent.groupId, groupShareContent.groupName, groupShareContent.groupIcon, groupShareContent.shareCode,
                             groupShareContent.shareSignature, groupShareContent.timestamp, eKeyByteArray) { success ->
                         if (!success) {
                             BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH).navigation(activity)

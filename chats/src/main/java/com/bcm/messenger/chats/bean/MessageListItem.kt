@@ -74,7 +74,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if(!EventBus.getDefault().isRegistered(this)) {
+        if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
     }
@@ -123,7 +123,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
     fun checkPin(): Boolean {
         return if (::threadRecord.isInitialized) {
             threadRecord.pinTime > 0L
-        }else {
+        } else {
             false
         }
     }
@@ -153,7 +153,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         if (record.isJoinRequestMessage() && !record.isRead()) {
             // The priority of the group join request is higher than @
             builder.append(createNewJoinRequestDescription())
-        }else if(record.isAtMeMessage() && !record.isRead()) {
+        } else if (record.isAtMeMessage() && !record.isRead()) {
             val desc = StringAppearanceUtil.applyAppearance(AppContextHolder.APP_CONTEXT.getString(R.string.chats_at_me_description),
                     color = getColor(R.color.common_content_warning_color))
             builder.append(desc)
@@ -216,8 +216,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                     builder.append(" ")
                     record.snippetContent
                 }
-            }
-            else if (record.isGroup()) {
+            } else if (record.isGroup()) {
                 val message = record.getGroupMessage()
                 if (message != null) {
 
@@ -248,16 +247,15 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                         resources.getString(R.string.chats_read_burn_detail,
                                 record.getRecipient(accountContext).name, ExpirationUtil.getExpirationDisplayValue(context, (record.expiresTime / 1000).toInt()))
                     }
-                }
-                else if (record.isDecrypting()) {
+                } else if (record.isDecrypting()) {
                     ARouterConstants.CONSTANT_LEFT_BRACKET + context.getString(R.string.chats_message_decrypting_description) + ARouterConstants.CONSTANT_RIGHT_BRACKET
                 } else if (record.isLocation()) {
                     val message = record.getGroupMessage()
-                    if (message != null){
+                    if (message != null) {
                         message.content.setRecipientCallback(accountContext, this)
-                        val text = if(message.type == AmeGroupMessage.CONTROL_MESSAGE) {
+                        val text = if (message.type == AmeGroupMessage.CONTROL_MESSAGE) {
                             val content = message.content as AmeGroupMessage.ControlContent
-                            if(content.actionCode == AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE) {
+                            if (content.actionCode == AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE) {
                                 if (record.isFailed() || record.isPendingInsecureFallback()) {
                                     context.getString(R.string.common_chats_you_clear_history_fail_tip)
                                 } else if (record.isPending()) {
@@ -265,11 +263,10 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                                 } else {
                                     content.getDescribe(groupId, accountContext)
                                 }
-                            }else {
+                            } else {
                                 content.getDescribe(groupId, accountContext)
                             }
-                        }
-                        else {
+                        } else {
                             message.content.getDescribe(groupId, accountContext)
                         }
                         text
@@ -326,7 +323,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         isSelected = batch && selectedThreads?.contains(threadId) == true
     }
 
-    private fun setPrivate(accountContext: AccountContext, threadRecord: ThreadRecord, anim:Boolean) {
+    private fun setPrivate(accountContext: AccountContext, threadRecord: ThreadRecord, anim: Boolean) {
         this.lastThread = threadRecord
         this.recipient = threadRecord.getRecipient(accountContext)
         this.recipient?.addListener(this)
@@ -356,11 +353,10 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         val groupInfo = GroupLogic.get(accountContext).getGroupInfo(groupId)
         this.contactPhotoImage.showGroupAvatar(accountContext, groupId)
         this.fromView.text = groupInfo?.displayName ?: ""
-        if(null != groupInfo) {
-            if (groupInfo.legitimateState == AmeGroupInfo.LegitimateState.ILLEGAL){
+        if (null != groupInfo) {
+            if (groupInfo.legitimateState == AmeGroupInfo.LegitimateState.ILLEGAL) {
                 alertView.setNone()
-            }
-            else {
+            } else {
                 if (groupInfo.mute) {
                     alertView.setNotificationAlert(unreadCount, true, anim)
                 } else {
@@ -372,7 +368,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
             } else {
                 group_live_icon.visibility = View.GONE
             }
-        }else {
+        } else {
             ALog.i(TAG, "setGroup thread: ${threadRecord.id}, groupId: $groupId, groupInfo is null")
         }
     }

@@ -13,6 +13,7 @@ import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.activity.DatabaseMigrateActivity
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.logic.SchemeLaunchHelper
 import com.bcm.messenger.me.ui.login.RegistrationActivity
 import com.bcm.messenger.me.utils.BcmUpdateUtil
@@ -108,7 +109,7 @@ class LaunchActivity : AppCompatActivity() {
         ALog.i(TAG, "routeToHome")
         SchemeLaunchHelper.storeSchemeIntent(null)
         intent.component = ComponentName(this, HomeActivity::class.java)
-        startActivity(intent)
+        startBcmActivity(AMELogin.majorContext, intent)
         delayFinish()
     }
 

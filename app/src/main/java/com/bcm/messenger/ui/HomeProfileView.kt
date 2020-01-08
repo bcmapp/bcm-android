@@ -87,7 +87,8 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         }
 
     fun setAccountItem(accountItem: HomeAccountItem) {
-        recipient.removeListener(this)
+        this.accountItem = accountItem
+//        recipient.removeListener(this)
         recipient = Recipient.from(accountItem.accountContext, accountItem.account.uid, true)
         recipient.addListener(this)
 
