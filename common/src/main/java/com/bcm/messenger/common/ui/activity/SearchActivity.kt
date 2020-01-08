@@ -18,6 +18,8 @@ import com.bcm.messenger.common.finder.BcmFinderType
 import com.bcm.messenger.common.ui.CommonSearchBar
 import com.bcm.messenger.common.utils.getStatusBarHeight
 import com.bcm.messenger.common.utils.hideKeyboard
+import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.startBcmActivityForResult
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.common_activity_search.*
 
@@ -49,20 +51,20 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
 
             if (context is Activity) {
                 if (requestCode != 0) {
-                    context.startActivityForResult(intent, requestCode)
+                    context.startBcmActivityForResult(accountContext, intent, requestCode)
                 }else {
-                    context.startActivity(intent)
+                    context.startBcmActivity(accountContext, intent)
                 }
             }else {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(intent)
+                context.startBcmActivity(accountContext, intent)
             }
 
         }
     }
 
-    private var mHasPrevious = false//
-    private var mDisplayAll = false//，false，
+    private var mHasPrevious = false
+    private var mDisplayAll = false
 
     private var mRecentFragmentClazz: String? = null
     private var mCurrentFragmentClazz: String? = null

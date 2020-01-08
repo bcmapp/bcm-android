@@ -17,8 +17,6 @@ import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.activity.DatabaseMigrateActivity
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.*
@@ -34,13 +32,8 @@ import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.netswitchy.proxy.IProxyStateChanged
 import com.bcm.netswitchy.proxy.ProxyManager
-import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.me_layout_login_success.*
 import kotlinx.android.synthetic.main.me_layout_relogin_input_pin.*
-import java.lang.ref.WeakReference
 
 /**
  * ling created in 2018/6/7
@@ -185,28 +178,8 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
             val avatar: String? = account?.avatar
 
             if (!realUid.isNullOrEmpty()) {
-
-                val weakThis = WeakReference(this)
-                Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
-                    try {
-                        val recipient = Recipient.from(accountContext, realUid, false)
-                        val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
-                            avatar
-                        }else {
-                            null
-                        }
-                        recipient.setProfile(recipient.profileKey, name, finalAvatar)
-                        emitter.onNext(recipient)
-                    } finally {
-                        emitter.onComplete()
-                    }
-                }).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ recipient ->
-                            weakThis.get()?.relogin_input_pin_nikename?.text = recipient.name
-                            weakThis.get()?.relogin_input_pin_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
-                        }, {
-                        })
+                relogin_input_pin_nikename?.text = name
+                relogin_input_pin_avatar?.setPhoto(realUid, name ?: realUid, avatar ?: "")
 
             }
         }

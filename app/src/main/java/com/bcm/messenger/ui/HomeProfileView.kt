@@ -430,7 +430,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     private fun setProfile() {
-        home_profile_avatar.showPrivateAvatar(accountContext, recipient)
+        home_profile_avatar.showPrivateAvatar(recipient)
         home_profile_name.text = recipient.name
     }
 }

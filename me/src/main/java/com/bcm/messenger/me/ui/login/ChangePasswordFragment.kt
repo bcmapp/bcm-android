@@ -10,13 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
 import com.bcm.messenger.me.ui.keybox.MyAccountKeyActivity
 import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
 import com.bcm.messenger.utility.QuickOpCheck
@@ -29,7 +29,7 @@ import java.util.regex.Pattern
  *
  * Created by wjh on 2019-12-10
  */
-class ChangePasswordFragment : AbsRegistrationFragment() {
+class ChangePasswordFragment : BaseFragment() {
     private val TAG = "ChangePasswordFragment"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

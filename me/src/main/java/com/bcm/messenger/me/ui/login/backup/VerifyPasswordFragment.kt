@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -17,7 +18,6 @@ import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmePinLogic
-import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
 import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
 import com.bcm.messenger.me.ui.pinlock.PinInputActivity
 import com.bcm.messenger.me.ui.qrcode.ShowQRCodeActivity
@@ -35,7 +35,7 @@ import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 
 
-class VerifyPasswordFragment : AbsRegistrationFragment() {
+class VerifyPasswordFragment : BaseFragment() {
 
     private val TAG = "VerifyPasswordFragment"
     private var action: Int = 0
@@ -142,7 +142,7 @@ class VerifyPasswordFragment : AbsRegistrationFragment() {
                                 if (!arguments?.getString(VerifyKeyActivity.ACCOUNT_ID).isNullOrEmpty()) {
                                     intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, arguments?.getString(VerifyKeyActivity.ACCOUNT_ID))
                                 }
-                                startActivity(intent)
+                                startBcmActivity(intent)
                                 if (needFinish) {
                                     activity?.finish()
                                 }

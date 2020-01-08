@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
+import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.route.annotation.Route
@@ -14,7 +14,7 @@ import com.bcm.route.annotation.Route
  * Created by ling
  */
 @Route(routePath = ARouterConstants.Activity.USER_REGISTER_PATH)
-class RegistrationActivity : SwipeBaseActivity() {
+class RegistrationActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "RegistrationActivity"
         const val RE_LOGIN_ID = "RE_LOGIN_ID"
@@ -43,10 +43,7 @@ class RegistrationActivity : SwipeBaseActivity() {
     }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
-        disableStatusBarLightMode()
-
         super.onCreate(savedInstanceState)
-        setSwipeBackEnable(false)
         setContentView(R.layout.me_activity_registration)
 
         if (intent.getBooleanExtra(CREATE_ACCOUNT_ID, false)) {
