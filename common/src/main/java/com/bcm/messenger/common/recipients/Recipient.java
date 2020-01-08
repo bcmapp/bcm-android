@@ -390,7 +390,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
      */
     Recipient(@NonNull Address address,
               @Nullable Recipient stale) {
-
+        ALog.d(TAG, "contructor address: " + address);
         this.address = address;
         this.color = null;
         this.resolving = true;
@@ -446,7 +446,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
      * @param notify 
      */
     void updateRecipientDetails(@Nullable RecipientDetails details, boolean notify) {
-
+        ALog.d(TAG, "updateRecipientDetails uid: " + address + ", details is null: " + (details == null) + ", notify: " + notify);
         this.resolving = false;
         if (details == null || (details.getCustomName() == null && details.getCustomAvatar() == null && details.getParticipants() == null && details.getSettings() == null)) {
             return;

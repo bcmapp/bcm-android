@@ -9,16 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bcm.messenger.common.AccountContext;
-import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.utils.GroupUtil;
-import com.bcm.messenger.utility.DelimiterUtil;
-import com.bcm.messenger.utility.StringAppearanceUtil;
 import com.bcm.messenger.utility.proguard.NotGuard;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -169,12 +163,12 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
         }
 
         Address oa = (Address)other;
-        return context.equals(oa.context) && address.equals(oa.address);
+        return context.getUid().equals(oa.context.getUid()) && address.equals(oa.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(context, address);
+        return Objects.hash(context.getUid(), address);
     }
 
     @Override

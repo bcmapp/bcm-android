@@ -39,8 +39,10 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
         fun updateCache(recipient: Recipient) {
             val r = recipient
             if (r.isLogin || (r.relationship != RecipientRepo.Relationship.STRANGER && r.relationship != RecipientRepo.Relationship.REQUEST)) {
+                mUncommonCache.remove(r.address)
                 mCommonCache[r.address] = r
             }else {
+                mCommonCache.remove(r.address)
                 mUncommonCache[r.address] = r
             }
         }
@@ -66,9 +68,6 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
             } else if (!asynchronous && cachedRecipient.isResolving) {
                 return false
             }
-            //        else if (hasGroup && hasSettings && (cachedRecipient.isResolving() || !cachedRecipient.isGroupRecipient() && !cachedRecipient.isSystemContact())) {
-            //            return false;
-            //        }
             return true
 
         }
@@ -81,11 +80,13 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
 
     private var mTargetList: MutableList<Recipient> = mutableListOf()
 
+    @Synchronized
     fun getRecipient(context: Context, address: Address, details: RecipientDetails?, asynchronous: Boolean): Recipient {
         var current = findCache(address)
         if (!useCache(current, asynchronous)) {
             current = Recipient(address, current)
             if (asynchronous) {
+                updateCache(current)
                 handleFetchDetailTask(context, current)
             } else {
                 val newDetail = details ?: RecipientDetails(address.serialize(), null, null, null, null)
@@ -114,15 +115,21 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
         }
     }
 
-    private fun getRecipientDetails(context: Context, addressList: List<String>): List<RecipientDetails> {
+    private fun getRecipientDetails(context: Context, addressMap: Map<String, Recipient>) {
         val recipientRepo = Repository.getRecipientRepo(mAccountContext)
-        return if (recipientRepo != null) {
-            val settingList = recipientRepo.getRecipients(addressList)
-            settingList.map {
-                RecipientDetails(it.uid, null, null, it, null)
+        if (recipientRepo != null) {
+            val settingList = recipientRepo.getRecipients(addressMap.map {
+                ALog.d(TAG, "getRecipientDetails uid: ${it.key}")
+                it.key
+            })
+            settingList.forEach {
+                addressMap[it.uid]?.updateRecipientDetails(RecipientDetails(it.uid, null, null, it, null))
             }
-        }else {
-            listOf()
+        }
+        for ((uid, r) in addressMap) {
+            if (r.isResolving) {
+                r.updateRecipientDetails(RecipientDetails(uid, null, null, null, null))
+            }
         }
     }
 
@@ -163,21 +170,19 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
      * handle recipient init task
      */
     private fun handleFetchDetailTask(context: Context, recipient: Recipient) {
+        ALog.d(TAG, "handleFetchDetailTask uid: ${recipient.address}")
         if (lockTaskCounter(recipient)) {
             mTaskDisposable = Observable.create<Boolean> {
-
+                ALog.d(TAG, "handleFetchDetailTask begin")
                 val targetMap = releaseTaskCounter()
-                val resultList = getRecipientDetails(AppContextHolder.APP_CONTEXT, targetMap.map { it.key })
-                resultList.forEach {rd ->
-                    targetMap[rd.uid]?.updateRecipientDetails(rd)
-                }
+                getRecipientDetails(AppContextHolder.APP_CONTEXT, targetMap)
                 it.onNext(true)
                 it.onComplete()
 
             }.delaySubscription(500, TimeUnit.MILLISECONDS, AmeDispatcher.ioScheduler)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-
+                        ALog.d(TAG, "handleFetchDetailTask end")
                     }, {
                         ALog.e(TAG, "handleFetchDetailTask error", it)
                     })
@@ -185,18 +190,13 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
         }
     }
 
-    /**
-     *
-     */
+
     class RecipientDetails internal constructor(var uid: String,
                                                 var customName: String?,
                                                 var customAvatar: String?,
                                                 var settings: RecipientSettings?,
                                                 var participants: List<Recipient>?)
 
-    /**
-     *
-     */
     private class RecipientCache internal constructor(private val cache: MutableMap<Address, Recipient>) {
 
         @Synchronized

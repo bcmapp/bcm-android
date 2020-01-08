@@ -34,13 +34,14 @@ class AccountContext(val uid: String, val token: String, val password: String) :
 
         other as AccountContext
 
-        if (uid != other.uid) return false
-        if (token != other.token) return false
         return uid == other.uid && token == other.token
     }
 
     override fun hashCode(): Int {
-        return uid.hashCode()
+        var result = uid.hashCode()
+        result = 31 * result + token.hashCode()
+        result = 31 * result + password.hashCode()
+        return result
     }
 
 
