@@ -89,7 +89,6 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
             return
         }
         setAccountContext(accountContextObj)
-        EventBus.getDefault().register(this)
 
         mHelper = SwipeBackActivityHelper(this)
         mHelper.onActivityCreate()
@@ -200,7 +199,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(accountContextObj) ?: throw Exception("getMasterSecret is null")
 
 
-    fun setAccountContext(context: AccountContext) {
+    protected fun setAccountContext(context: AccountContext) {
         if (!::accountContextObj.isInitialized || accountContextObj != context) {
             accountContextObj = context
             setAccountRecipient(Recipient.login(context))
@@ -283,10 +282,5 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
                 .subscribe {
                     ClipboardUtil.checkClipboard(this)
                 }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(event: AccountLoginStateChangedEvent) {
-
     }
 }

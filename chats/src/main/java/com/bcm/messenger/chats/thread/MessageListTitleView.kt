@@ -30,6 +30,7 @@ import com.bcm.messenger.common.server.IServerConnectStateListener
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.AppUtil.getString
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.front
 import com.bcm.messenger.common.utils.sp2Px
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
@@ -56,18 +57,17 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
     private var mHasNoticeLowVersionWarning = false
     private var state = INIT
 
-    private var recipient = Recipient.major()
-    private var currentName = recipient.name
+    private var recipient:Recipient? = null
+    private var currentName = ""
+    private var accountContext:AccountContext? = null
 
     constructor(context: Context) : super(context, null)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     fun init() {
-        AmeModuleCenter.serverDaemon(AMELogin.majorContext).addConnectionListener(this)
+
         NetworkUtil.addListener(this)
         ProxyManager.setListener(this)
-        recipient.addListener(this)
-        currentName = recipient.name
 
         inAnimation = AnimationUtils.loadAnimation(context, R.anim.common_popup_drop_in)
         outAnimation = AnimationUtils.loadAnimation(context, R.anim.common_popup_drop_out)
@@ -86,7 +86,21 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
     fun unInit() {
         AmeModuleCenter.serverDaemon(AMELogin.majorContext).removeConnectionListener(this)
         NetworkUtil.removeListener(this)
-        recipient.removeListener(this)
+        recipient?.removeListener(this)
+    }
+
+    fun updateContext(accountContext: AccountContext) {
+        val a = this.accountContext
+        if (null != a) {
+            AmeModuleCenter.serverDaemon(a).removeConnectionListener(this)
+        }
+        this.accountContext = accountContext
+        AmeModuleCenter.serverDaemon(accountContext).addConnectionListener(this)
+
+        recipient = Recipient.from(accountContext, accountContext.uid, true)
+        recipient?.addListener(this)
+        currentName = recipient?.name?:accountContext.uid.front()
+        update()
     }
 
     private fun jump() {

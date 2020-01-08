@@ -20,12 +20,10 @@ import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.database.repositories.ThreadRepo
-import com.bcm.messenger.common.event.FriendRequestEvent
-import com.bcm.messenger.common.event.GroupInfoCacheReadyEvent
-import com.bcm.messenger.common.event.GroupListChangedEvent
-import com.bcm.messenger.common.event.HomeTabEvent
+import com.bcm.messenger.common.event.*
 import com.bcm.messenger.common.grouprepository.events.GroupInfoUpdateNotify
 import com.bcm.messenger.common.mms.GlideApp
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -355,5 +353,12 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
                     mAdapter?.updateFriendRequest(it.first, it.second)
                     RxBus.post(HomeTabEvent(HomeTabEvent.TAB_CONTACT, showFigure = it.second))
                 }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(event: AccountLoginStateChangedEvent) {
+        if (accountContext.uid != AmeModuleCenter.login().majorUid()) {
+            setAccountContext(AMELogin.majorContext)
+        }
     }
 }

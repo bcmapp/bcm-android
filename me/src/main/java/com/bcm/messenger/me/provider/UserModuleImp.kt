@@ -232,7 +232,7 @@ class UserModuleImp : IUserModule
     }
 
     override fun saveAccount(recipient: Recipient, newName: String?, newAvatar: String?) {
-        AmeLoginLogic.getMajorAccount()?.apply {
+        AmeLoginLogic.getAccount(recipient.address.serialize())?.apply {
             if (newName != null) {
                 name = newName
             }
@@ -244,7 +244,7 @@ class UserModuleImp : IUserModule
     }
 
     override fun saveAccount(recipient: Recipient, newPrivacyProfile: PrivacyProfile) {
-        AmeLoginLogic.getMajorAccount()?.apply {
+        AmeLoginLogic.getAccount(recipient.address.serialize())?.apply {
             name = if (!newPrivacyProfile.name.isNullOrEmpty()) {
                 newPrivacyProfile.name ?: ""
             } else {

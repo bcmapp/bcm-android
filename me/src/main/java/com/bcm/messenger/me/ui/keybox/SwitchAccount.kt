@@ -18,6 +18,7 @@ import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.login.RegistrationActivity
@@ -136,7 +137,7 @@ object SwitchAccount {
 
                                 AmeModuleCenter.onLogOutSucceed(accountContext)
 
-                                activity.startActivity(Intent(activity, VerifyKeyActivity::class.java).apply {
+                                activity.startBcmActivity(accountContext, Intent(activity, VerifyKeyActivity::class.java).apply {
                                     flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                                     putExtra(VerifyKeyActivity.BACKUP_JUMP_ACTION, VerifyKeyActivity.LOGIN_PROFILE)
                                     putExtra(RegistrationActivity.RE_LOGIN_ID, "")

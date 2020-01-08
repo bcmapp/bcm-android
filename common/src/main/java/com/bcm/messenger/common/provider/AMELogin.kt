@@ -10,7 +10,7 @@ object AMELogin {
     private val login = AmeModuleCenter.login()
     val majorUid get() = login.majorUid()
     val isLogin get() = login.isLogin()
-    val majorContext = login.getAccountContext(majorUid)
+    val majorContext get() = login.getAccountContext(majorUid)
 
     fun accountContext(uid:String): AccountContext {
         return login.getAccountContext(uid)

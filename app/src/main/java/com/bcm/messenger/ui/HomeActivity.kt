@@ -18,6 +18,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
@@ -46,6 +47,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.home_profile_layout.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.concurrent.TimeUnit
 
 /**
@@ -77,8 +81,8 @@ class HomeActivity : SwipeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AmeModuleCenter.metric(AMELogin.majorContext)?.launchEnd() 
 
+        EventBus.getDefault().register(this)
         setSwipeBackEnable(false)
 
         setContentView(R.layout.activity_home)
@@ -91,6 +95,8 @@ class HomeActivity : SwipeBaseActivity() {
         initView()
         initPullDownView()
         initRecipientData()
+
+        AmeModuleCenter.metric(AMELogin.majorContext)?.launchEnd()
 
         BcmUpdateUtil.checkUpdate { hasUpdate, forceUpdate, _ ->
             if (hasUpdate) {
@@ -198,6 +204,7 @@ class HomeActivity : SwipeBaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        EventBus.getDefault().unregister(this)
         RxBus.unSubscribe(TAG)
         ClipboardUtil.unInitClipboardUtil()
         titleView.unInit()
@@ -339,6 +346,7 @@ class HomeActivity : SwipeBaseActivity() {
     private fun initView() {
         titleView = home_toolbar_name as MessageListTitleView
         titleView.init()
+        titleView.updateContext(accountContext)
 
         home_toolbar_name.setOnClickListener(MultiClickObserver(2, object : MultiClickObserver.MultiClickListener {
             override fun onMultiClick(view: View?, count: Int) {
@@ -655,6 +663,16 @@ class HomeActivity : SwipeBaseActivity() {
     private fun checkShowIntroPage() {
         if (!SuperPreferences.getTablessIntroductionFlag(this)) {
             startActivity(Intent(this, TablessIntroActivity::class.java))
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(event: AccountLoginStateChangedEvent) {
+        if (accountContext.uid != AmeModuleCenter.login().majorUid()) {
+            setAccountContext(AMELogin.majorContext)
+            titleView.updateContext(accountContext)
+
+            home_toolbar_avatar.showRecipientAvatar(accountRecipient)
         }
     }
 }

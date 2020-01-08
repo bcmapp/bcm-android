@@ -177,7 +177,7 @@ class AmeApplication : MultiDexApplication() {
         SystemUtils.initAPPInfo(getPackageInfo().versionName, getPackageInfo().versionCode)
 
         val httpsEnable = EnvSettingLogic.getEnvSetting(isReleaseBuild).httpsEnable;
-        BaseHttp.setDevMode(true)
+        BaseHttp.setDevMode(httpsEnable)
 
         ProxyManager.setConnectionChecker(IMServerConnectionChecker())
 

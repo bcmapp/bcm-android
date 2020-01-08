@@ -35,7 +35,7 @@ open class BaseFragment : Fragment() {
 
     fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(accountContextObj) ?: throw Exception("getMasterSecret is null")
 
-    private fun setAccountContext(context: AccountContext) {
+    protected fun setAccountContext(context: AccountContext) {
         accountContextObj = context
         setAccountRecipient(Recipient.login(context))
     }
