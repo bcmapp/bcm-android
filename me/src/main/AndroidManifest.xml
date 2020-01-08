@@ -52,12 +52,6 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
-            android:name="com.bcm.messenger.me.ui.keybox.KeyboxGuideActivity"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name="com.bcm.messenger.me.ui.keybox.KeyBoxControlActivity"
-            android:screenOrientation="portrait"/>
-        <activity
             android:name="com.bcm.messenger.me.ui.keybox.VerifyKeyActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BcmActivityTheme.Basic"
