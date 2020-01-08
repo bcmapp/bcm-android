@@ -67,7 +67,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.chats_conversation_activity.*
 import kotlinx.android.synthetic.main.chats_conversation_input_panel.view.*
 import me.imid.swipebacklayout.lib.SwipeBackLayout
-import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
@@ -135,7 +134,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chats_conversation_activity)
-        EventBus.getDefault().register(this)
 
         val address = intent.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
         if (address != null) {
@@ -190,8 +188,6 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
     }
 
     override fun onDestroy() {
-        EventBus.getDefault().unregister(this)
-
         if (::mRecipient.isInitialized) {
             mRecipient.removeListener(this)
             RxBus.unSubscribe(mRecipient.address.serialize())

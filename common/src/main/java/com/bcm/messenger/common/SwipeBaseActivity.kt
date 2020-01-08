@@ -16,7 +16,6 @@ import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IUmengModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -290,7 +289,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AccountLoginStateChangedEvent) {
         if (accountContext.uid != AmeModuleCenter.login().majorUid()) {
-            //setAccountContext(AMELogin.majorContext)
+            setAccountContext(AMELogin.majorContext)
         }
     }
 }

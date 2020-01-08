@@ -80,11 +80,9 @@ public class MessageSender {
             allocatedThreadId = threadId;
         }
 
-        //
         long messageId = chatRepo.insertOutgoingTextMessage(allocatedThreadId,
                 message, AmeTimeUtil.INSTANCE.getMessageSendTime(), insertListener);
 
-        // 
         if (!recipient.isFriend() && !recipient.isAllowStranger()) {
             chatRepo.setMessageSendFail(messageId);
         } else {

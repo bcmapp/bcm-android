@@ -69,7 +69,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.chats_tt_conversation_activity.*
 import me.imid.swipebacklayout.lib.SwipeBackLayout
-import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
@@ -113,14 +112,12 @@ class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedList
     override fun onDestroy() {
         ALog.d(TAG, "onDestroy")
         liveController?.onDestroy()
-        EventBus.getDefault().unregister(this)
         groupModel?.destroy()
         super.onDestroy()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        EventBus.getDefault().register(this)
         setContentView(R.layout.chats_tt_conversation_activity)
         initView()
         initData()
