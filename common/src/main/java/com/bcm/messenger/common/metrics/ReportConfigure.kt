@@ -8,9 +8,11 @@ import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.GsonUtils
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.listener.IWeakListeners
 import com.bcm.messenger.utility.listener.SafeWeakListeners
 import com.bcm.messenger.utility.logger.ALog
@@ -163,25 +165,27 @@ object ReportConfigure : LBSFetcher.ILBSFetchResult {
 
     private fun syncConfig() {
         if (AMELogin.isLogin) {
-            val publicKey = IdentityKeyUtil.getIdentityKey(AMELogin.majorContext)
-            val pubKey = Base64.encodeBytes((publicKey.publicKey as DjbECPublicKey).serialize())
-            val signature = Base64.encodeBytes(BCMEncryptUtils.signWithMe(AMELogin.majorContext, AMELogin.majorContext.uid.toByteArray()))
+            AmeDispatcher.io.dispatch ({
+                val publicKey = IdentityKeyUtil.getIdentityKey(AMELogin.majorContext)
+                val pubKey = Base64.encodeBytes((publicKey.publicKey as DjbECPublicKey).serialize())
+                val signature = Base64.encodeBytes(BCMEncryptUtils.signWithMe(AMELogin.majorContext, AMELogin.majorContext.uid.toByteArray()))
 
-            val configReq = HistogramConfigReq(AMELogin.majorContext.uid, pubKey, signature)
-            val configs = getTimeSplicesConfig(AMELogin.majorContext, configReq)
+                val configReq = HistogramConfigReq(AMELogin.majorContext.uid, pubKey, signature)
+                val configs = getTimeSplicesConfig(AMELogin.majorContext, configReq)
 
-            if (null != configs) {
-                updateConfig(configs)
-                val sliceStorage = SliceStorage()
-                sliceStorage.sliceList.addAll(slicesMap.values)
+                if (null != configs) {
+                    updateConfig(configs)
+                    val sliceStorage = SliceStorage()
+                    sliceStorage.sliceList.addAll(slicesMap.values)
 
-                val configStorage = ConfigStorage()
-                configStorage.configList.addAll(histogramConfigMap.toList())
+                    val configStorage = ConfigStorage()
+                    configStorage.configList.addAll(histogramConfigMap.toList())
 
-                val preference = SuperPreferences.getSuperPreferences(AppContextHolder.APP_CONTEXT, SuperPreferences.METRICS)
-                preference.edit().putString("config", GsonUtils.toJson(configStorage)).apply()
-                preference.edit().putString("slice", GsonUtils.toJson(sliceStorage)).apply()
-            }
+                    val preference = SuperPreferences.getSuperPreferences(AppContextHolder.APP_CONTEXT, SuperPreferences.METRICS)
+                    preference.edit().putString("config", GsonUtils.toJson(configStorage)).apply()
+                    preference.edit().putString("slice", GsonUtils.toJson(sliceStorage)).apply()
+                }
+            }, 2000)
         }
     }
 
@@ -189,7 +193,8 @@ object ReportConfigure : LBSFetcher.ILBSFetchResult {
         var configs: MetricsConfigs? = null
 
         try {
-            configs = ReportHttp(accountContext).post<MetricsConfigs>(CONFIGURE_URL, configReq.toJson(), MetricsConfigs::class.java)
+            val metrics = AmeModuleCenter.metric(accountContext)?:return null
+            configs = ReportHttp(metrics).post<MetricsConfigs>(CONFIGURE_URL, configReq.toJson(), MetricsConfigs::class.java)
         } catch (e: Throwable) {
             ALog.e(TAG, e)
         }

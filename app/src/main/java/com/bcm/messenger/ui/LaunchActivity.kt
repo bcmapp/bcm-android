@@ -97,7 +97,7 @@ class LaunchActivity : AppCompatActivity() {
                 }
             }
             routeToRegister()
-        } else if (DatabaseFactory.isDatabaseExist(this) && !TextSecurePreferences.isDatabaseMigrated(this)) {
+        } else if (DatabaseFactory.isDatabaseExist(AMELogin.majorContext,this) && !TextSecurePreferences.isDatabaseMigrated(AMELogin.majorContext)) {
             routeToDatabaseMigrate()
         } else {
             routeToHome()

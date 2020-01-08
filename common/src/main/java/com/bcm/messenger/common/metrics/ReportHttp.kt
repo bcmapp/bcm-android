@@ -5,6 +5,7 @@ import com.bcm.messenger.common.bcmhttp.configure.sslfactory.IMServerSSL
 import com.bcm.messenger.common.bcmhttp.interceptor.BcmAuthHeaderInterceptor
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptorHelper
 import com.bcm.messenger.common.bcmhttp.interceptor.metrics.ReportMetricInterceptor
+import com.bcm.messenger.common.provider.accountmodule.IMetricsModule
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.bcmhttp.facade.AmeEmpty
 import com.bcm.messenger.utility.bcmhttp.exception.NoContentException
@@ -16,15 +17,15 @@ import java.io.IOException
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
-class ReportHttp(accountContext: AccountContext) : BaseHttp() {
+class ReportHttp(metrics:IMetricsModule) : BaseHttp() {
     init {
         val sslFactory = IMServerSSL()
         val clientBuilder = OkHttpClient.Builder()
                 .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
                 .hostnameVerifier(trustAllHostVerify())
                 .addInterceptor(RedirectInterceptorHelper.metricsServerInterceptor)
-                .addInterceptor(ReportMetricInterceptor(accountContext))
-                .addInterceptor(BcmAuthHeaderInterceptor(accountContext))
+                .addInterceptor(ReportMetricInterceptor(metrics))
+                .addInterceptor(BcmAuthHeaderInterceptor(metrics.context))
                 .readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)

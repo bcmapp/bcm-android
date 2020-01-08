@@ -4,8 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
+import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.RxBus
 import com.bcm.messenger.me.R
@@ -18,7 +20,7 @@ import com.google.zxing.Result
  * Created by wjh on 2019/7/2
  */
 @Route(routePath = ARouterConstants.Activity.SCAN_NEW)
-class NewScanActivity : SwipeBaseActivity() {
+class NewScanActivity : AppCompatActivity() {
 
     class ScanResultEvent(val result: Result)
     class ScanResumeEvent
@@ -41,8 +43,6 @@ class NewScanActivity : SwipeBaseActivity() {
             handleScanResult(scanResult.result)
         }
         initFragment()
-
-        setSwipeBackEnable(false)
     }
 
     override fun onBackPressed() {
@@ -92,8 +92,8 @@ class NewScanActivity : SwipeBaseActivity() {
 
     private fun handleScanResult(scanResult: Result) {
         try {
-            if (mScanResultHandleDelegate) {
-                AmeModuleCenter.contact(accountContext)?.discernScanData(this, scanResult.text) { discern ->
+            if (mScanResultHandleDelegate && AMELogin.isLogin) {
+                AmeModuleCenter.contact(AMELogin.majorContext)?.discernScanData(this, scanResult.text) { discern ->
                     if (discern) {
                         AmeDispatcher.mainThread.dispatch({
                             finish()

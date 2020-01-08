@@ -45,7 +45,7 @@ class MetricsModuleImpl : IMetricsModule, ReportConfigure.IReportTickerListener 
 
     override fun setContext(context: AccountContext) {
         this.accountContext = context
-        this.reportHttp = ReportHttp(context)
+        this.reportHttp = ReportHttp(this)
     }
 
     override fun initModule() {

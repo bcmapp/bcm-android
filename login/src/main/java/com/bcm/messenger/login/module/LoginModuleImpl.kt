@@ -48,7 +48,6 @@ class LoginModuleImpl : ILoginModule
 
     init {
         ALog.i(TAG, "init")
-        EventBus.getDefault().register(this)
         AppForeground.listener.addListener(this)
         ProxyManager.setListener(this)
         NetworkUtil.addListener(this)

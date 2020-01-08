@@ -14,6 +14,7 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.OutgoingMediaMessage
 import com.bcm.messenger.common.mms.OutgoingSecureMediaMessage
 import com.bcm.messenger.common.mms.SlideDeck
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.sms.OutgoingEncryptedMessage
 import com.bcm.messenger.common.utils.BcmFileUtils
@@ -37,7 +38,7 @@ object SystemShareUtil {
     private fun sendTextToPrivateChat(threadId: Long, recipient: Recipient, masterSecret: MasterSecret, body: String, callback: (() -> Unit)? = null) {
         val textMessage = OutgoingEncryptedMessage(recipient, body, recipient.expireMessages * 1000L)
         Observable.create<Long> {
-            it.onNext(com.bcm.messenger.chats.privatechat.logic.MessageSender.send(AppContextHolder.APP_CONTEXT,
+            it.onNext(com.bcm.messenger.chats.privatechat.logic.MessageSender.send(AppContextHolder.APP_CONTEXT, masterSecret.accountContext,
                     textMessage, threadId, null))
             it.onComplete()
         }.subscribeOn(Schedulers.io())
@@ -95,7 +96,7 @@ object SystemShareUtil {
 
     private fun sendTextToGroupChat(groupId: Long, body: String, callback: (() -> Unit)? = null) {
         Observable.create<Unit> {
-            GroupMessageLogic.messageSender.sendTextMessage(groupId,  body, object : MessageSender.SenderCallback {
+            GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendTextMessage(groupId,  body, object : MessageSender.SenderCallback {
                 override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                     it.onComplete()
                 }
@@ -112,7 +113,7 @@ object SystemShareUtil {
         Observable.create<Unit> {
             val triple = getGroupContent(uri, type)
             val content = triple.third as AmeGroupMessage.ImageContent
-            GroupMessageLogic.messageSender.sendImageMessage(masterSecret, groupId, content, Uri.fromFile(File(triple.second)), triple.second, object : MessageSender.SenderCallback {
+            GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendImageMessage(masterSecret, groupId, content, Uri.fromFile(File(triple.second)), triple.second, object : MessageSender.SenderCallback {
                 override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                     it.onComplete()
                 }
@@ -129,7 +130,7 @@ object SystemShareUtil {
         Observable.create<Unit> {
             val triple = getGroupContent(uri, type)
             val content = triple.third as AmeGroupMessage.VideoContent
-            GroupMessageLogic.messageSender.sendVideoMessage(masterSecret, groupId, Uri.fromFile(File(triple.second)), content, triple.second, object : MessageSender.SenderCallback {
+            GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendVideoMessage(masterSecret, groupId, Uri.fromFile(File(triple.second)), content, triple.second, object : MessageSender.SenderCallback {
                 override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                     it.onComplete()
                 }
@@ -146,7 +147,7 @@ object SystemShareUtil {
         Observable.create<Unit> {
             val triple = getGroupContent(uri, type)
             val content = triple.third as AmeGroupMessage.FileContent
-            GroupMessageLogic.messageSender.sendDocumentMessage(masterSecret, groupId, content, triple.second, object : MessageSender.SenderCallback {
+            GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendDocumentMessage(masterSecret, groupId, content, triple.second, object : MessageSender.SenderCallback {
                 override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
                     it.onComplete()
                 }

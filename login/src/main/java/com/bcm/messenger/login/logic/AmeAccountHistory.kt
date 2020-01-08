@@ -152,6 +152,9 @@ class AmeAccountHistory {
     }
 
     fun isLogin(uid: String): Boolean {
+        if (uid.isEmpty()) {
+            return false
+        }
         return uid == majorAccountUid || minorAccountUids.contains(uid)
     }
 

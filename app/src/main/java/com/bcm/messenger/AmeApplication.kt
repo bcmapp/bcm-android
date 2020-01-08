@@ -96,6 +96,8 @@ class AmeApplication : MultiDexApplication() {
             return
         }
 
+        AmeModuleCenter.login()
+
         check()
 
         WebRtcSetup.setup()
