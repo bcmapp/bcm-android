@@ -136,7 +136,7 @@ object AmeLoginLogic {
 
     fun getAccountContext(uid: String): AccountContext {
         val context = accountHistory.getAccountContext(uid)
-        if (null != context) {
+        if (null != context && context.token.isNotEmpty()) {
             return context
         }
 
