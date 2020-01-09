@@ -9,9 +9,11 @@
     <color name="common_color_white_70">#B3ffffff</color>
     <color name="common_color_white_30">#4dffffff</color>
     <color name="common_color_black">#000000</color>
+    <color name="common_color_black_15">#19000000</color>
+    <color name="common_color_black_30">#38000000</color>
     <color name="common_color_black_50">#80000000</color>
-    <color name="common_color_black_60">#66000000</color>
-    <color name="common_color_black_70">#4d000000</color>
+    <color name="common_color_black_60">#99000000</color>
+    <color name="common_color_black_70">#B2000000</color>
     <color name="common_color_666666">#666666</color>
     <color name="common_color_999999">#999999</color>
     <color name="common_color_eeeeee">#eeeeee</color>

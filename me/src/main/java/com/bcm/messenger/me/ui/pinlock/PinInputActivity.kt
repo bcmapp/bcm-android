@@ -97,8 +97,6 @@ class PinInputActivity : AccountSwipeBaseActivity() {
         super.onNewIntent(intent)
         ALog.d(TAG, "onNewIntent")
 
-        pin_lock_avatar.visibility = View.GONE
-        pin_lock_nikename.visibility = View.GONE
         pin_input_title.visibility = View.VISIBLE
         input_back.visibility = View.VISIBLE
         input_verify.visibility = View.GONE
@@ -154,7 +152,7 @@ class PinInputActivity : AccountSwipeBaseActivity() {
         input_back.setOnClickListener {
             checkBack()
         }
-        if (pin_lock_avatar.visibility == View.VISIBLE && AppUtil.checkDeviceHasNavigationBar(this) && getNavigationBarHeight() > 0) {
+        if (AppUtil.checkDeviceHasNavigationBar(this) && getNavigationBarHeight() > 0) {
             val lp = input_keyboard.layoutParams as ConstraintLayout.LayoutParams
             lp.topMargin = 60.dp2Px()
             input_keyboard.layoutParams = lp
@@ -207,25 +205,14 @@ class PinInputActivity : AccountSwipeBaseActivity() {
                 pin_input_title.visibility = View.INVISIBLE
                 input_back.visibility = View.GONE
                 input_verify.visibility = View.VISIBLE
-                pin_lock_avatar.visibility = View.VISIBLE
-                pin_lock_nikename.visibility = View.VISIBLE
                 pin_word_size.visibility = View.GONE
                 pin_word_size.text = getString(R.string.me_forget_pin)
-                val recipient = accountRecipient
-                pin_lock_avatar.setPhoto(recipient)
-                pin_lock_nikename.text = recipient.name
-                recipient.addListener {
-                    pin_lock_avatar.setPhoto(recipient)
-                    pin_lock_nikename.text = recipient.name
-                }
+
                 input_verify.setOnClickListener {
                     if (!isFingerShow) {
                         startAuthenticate()
                     }
                 }
-                val avaterlp = pin_lock_avatar.layoutParams as ConstraintLayout.LayoutParams
-                avaterlp.setMargins(0, getStatusBarHeight() + 16.dp2Px(), 0, 0)
-                pin_lock_avatar.layoutParams = avaterlp
 
                 titlelp.setMargins(0, getStatusBarHeight() + 66.dp2Px(), 0, 0)
                 startAuthenticate()
