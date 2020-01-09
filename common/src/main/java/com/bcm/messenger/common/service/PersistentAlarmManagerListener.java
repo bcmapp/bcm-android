@@ -6,11 +6,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.bcm.messenger.common.ARouterConstants;
 import com.bcm.messenger.common.AccountContext;
-import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.utility.logger.ALog;
 
 public abstract class PersistentAlarmManagerListener extends BroadcastReceiver {
@@ -24,7 +22,7 @@ public abstract class PersistentAlarmManagerListener extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         try {
-            AccountContext accountContext = intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT);
+            AccountContext accountContext = (AccountContext)intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT);
             if (null == accountContext || !accountContext.isLogin()) {
                 ALog.w(TAG, "onReceive account must login");
                 return;
