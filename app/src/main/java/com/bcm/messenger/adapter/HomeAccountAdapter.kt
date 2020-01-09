@@ -56,7 +56,9 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val account = accountList[position]
         val view: IProfileView = if (account.type == TYPE_ADD) {
-            HomeAddAccountView(context)
+            HomeAddAccountView(context).apply {
+                isActive = position == lastActivePos
+            }
         } else {
             HomeProfileView(context).apply {
                 setAccountItem(account)

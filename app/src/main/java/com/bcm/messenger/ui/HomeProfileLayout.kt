@@ -144,7 +144,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
             override fun onResortSuccess() {
                 home_profile_view_pager.setCurrentItem(1, false)
-                viewPagerAdapter.setActiveView(1)
+//                viewPagerAdapter.setActiveView(1)
             }
 
             override fun onViewClickLogin(uid: String) {
@@ -190,10 +190,6 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     fun showAllViewsWithAnimation() {
-        if (shownViews.isEmpty()) {
-            home_profile_view_pager.setCurrentItem(1, false)
-            viewPagerAdapter.setActiveView(1)
-        }
         showAnimation().start()
         shownViews.forEach {
             it.showAllViewsWithAnimation()
@@ -202,9 +198,6 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
     fun showAllViews() {
         home_profile_exit.visibility = View.VISIBLE
-        shownViews.forEach {
-            it.showAllViews()
-        }
     }
 
     fun showAvatar() {
@@ -268,6 +261,10 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     fun checkAccountLogin(): Boolean {
+        if (shownViews.isEmpty()) {
+            home_profile_view_pager.setCurrentItem(1, false)
+            viewPagerAdapter.setActiveView(1)
+        }
         return viewPagerAdapter.getCurrentView(home_profile_view_pager.currentItem)?.isLogin ?: false
     }
 

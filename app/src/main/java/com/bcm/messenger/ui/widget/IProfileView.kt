@@ -61,7 +61,11 @@ interface IProfileView {
         }
 
         if (!isActive) {
-            if ((this.position == leftPosition || this.position == rightPosition) && position == centerPosition) {
+            if ((this.position == leftPosition || this.position == rightPosition) && (position == centerPosition || position == 0f)) {
+                return
+            }
+        } else {
+            if (this.position == centerPosition && position == 0f) {
                 return
             }
         }

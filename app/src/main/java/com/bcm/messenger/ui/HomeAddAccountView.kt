@@ -125,8 +125,6 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
     }
 
     override fun onViewPositionChanged(position: Float, percent: Float) {
-        this.position = position
-
         val scale = 0.7f + 0.3f * percent
         val curAvatarMargin = avatarMargin * (1 - percent)
 

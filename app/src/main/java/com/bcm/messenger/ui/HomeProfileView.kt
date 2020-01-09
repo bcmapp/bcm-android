@@ -317,7 +317,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
 
     override fun setMargin(topMargin: Int) {
         home_profile_avatar_layout.layoutParams = (home_profile_avatar_layout.layoutParams as LayoutParams).apply {
-            setMargins(0, 60.dp2Px() + topMargin / 2, 0, 0)
+            this.topMargin = 60.dp2Px() + topMargin / 2
         }
     }
 

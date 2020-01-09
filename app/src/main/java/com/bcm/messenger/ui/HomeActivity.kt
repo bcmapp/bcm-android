@@ -474,7 +474,13 @@ class HomeActivity : AccountSwipeBaseActivity() {
                             topMargin = dp6
                         }
 
-                        home_profile_layout.checkCurrentPage(accountRecipient.address.serialize())
+                        val ctx = home_profile_layout.getCloseAccount()
+                        if (ctx != null && ctx.uid != accountContext.uid) {
+                            AmeModuleCenter.login().setMajorAccount(ctx)
+                            home_profile_layout.reSortAccountList()
+                        } else {
+                            home_profile_layout.checkCurrentPage(accountRecipient.address.serialize())
+                        }
                     }
                     height == topViewHeight -> {
                         checked = false
@@ -500,11 +506,6 @@ class HomeActivity : AccountSwipeBaseActivity() {
                     ConstraintPullDownLayout.MOVE_UP -> {
                         home_profile_layout.visibility = View.GONE
                         hideAnimation().start()
-                        val ctx = home_profile_layout.getCloseAccount()
-                        if (ctx != null && ctx.uid != accountContext.uid) {
-                            AmeModuleCenter.login().setMajorAccount(ctx)
-                            home_profile_layout.reSortAccountList()
-                        }
                     }
                     ConstraintPullDownLayout.MOVE_DOWN -> {
                         if (home_profile_layout.visibility != View.VISIBLE) {
