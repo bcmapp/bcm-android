@@ -104,8 +104,6 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         this.privateRecipient?.removeListener(this)
         this.privateRecipient = recipient
         this.privateRecipient?.addListener(this)
-        this.accountContext = accountContext
-
         setRecipientAvatar()
     }
 
@@ -113,8 +111,6 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         this.groupRecipient?.removeListener(this)
         this.groupRecipient = recipient
         this.groupRecipient?.addListener(this)
-        this.accountContext = accountContext
-
         setGroupRecipientAvatar()
     }
 
@@ -240,4 +236,5 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     fun getIndividualAvatarView() = member_single_avatar
+    
 }
