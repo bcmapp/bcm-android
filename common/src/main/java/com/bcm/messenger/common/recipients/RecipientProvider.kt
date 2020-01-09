@@ -29,6 +29,7 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
 
         @Synchronized
         fun clearCache() {
+            ALog.d(TAG, "clearCache")
             mCommonCache.reset()
             mUncommonCache.reset()
         }
@@ -42,9 +43,11 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
         fun updateCache(recipient: Recipient) {
             val r = recipient
             if (r.isLogin || (r.relationship != RecipientRepo.Relationship.STRANGER && r.relationship != RecipientRepo.Relationship.REQUEST)) {
+                ALog.d(TAG, "update cache to common: " + recipient.address)
                 mUncommonCache.remove(r.address)
                 mCommonCache[r.address] = r
             }else {
+                ALog.d(TAG, "update cache to uncommon: " + recipient.address)
                 mCommonCache.remove(r.address)
                 mUncommonCache[r.address] = r
             }
@@ -52,6 +55,7 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
 
         @Synchronized
         fun deleteCache(address: Address) {
+            ALog.d(TAG, "deleteCache: $address")
             mCommonCache.remove(address)
             mUncommonCache.remove(address)
         }

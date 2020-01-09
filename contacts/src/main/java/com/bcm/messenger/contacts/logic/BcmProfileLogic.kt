@@ -619,7 +619,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
     }
 
     private fun getHandlingMapKey(recipient: Recipient, type: Int): String {
-        return "${recipient.address}_$type"
+        return "${recipient.address.serialize()}_$type"
     }
 
     fun getAvailableTaskDataListOfProfile(): List<TaskData> {

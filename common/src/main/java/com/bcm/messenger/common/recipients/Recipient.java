@@ -184,6 +184,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     private static synchronized RecipientProvider getProvider(AccountContext accountContext) {
         RecipientProvider provider = sProviderMap.get(accountContext);
         if (provider == null) {
+            ALog.d(TAG, "getProvider null, new RecipientProvider accountContext:" + accountContext);
             provider = new RecipientProvider(accountContext);
             sProviderMap.put(accountContext, provider);
         }
@@ -254,21 +255,20 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
 
     @NonNull
     public static Recipient from(@NonNull Address address, boolean asynchronous) {
-        ALog.d(TAG, "from accountContext:" + address.context().getUid() + ", from(uid: " + address.serialize() + ", asynchronous:" + asynchronous + ")");
+        ALog.d(TAG, "from accountContext:" + address.context() + ", from(uid: " + address.serialize() + ", asynchronous:" + asynchronous + ")");
         return getProvider(address.context()).getRecipient(AppContextHolder.APP_CONTEXT, address, null, asynchronous);
     }
 
-
     @NonNull
     public static Recipient from(@NonNull AccountContext context, @NonNull String uid, boolean asynchronous) {
-        ALog.d(TAG, "from accountContext:" + context.getUid() + ", from(uid: " + uid + ", (asynchronous:" + asynchronous + ")");
+        ALog.d(TAG, "from accountContext:" + context + ", from(uid: " + uid + ", (asynchronous:" + asynchronous + ")");
         return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, Address.from(context, uid), null, asynchronous);
     }
 
 
     @NonNull
     public static Recipient fromSnapshot(@NonNull AccountContext context, @NonNull String uid, @NonNull RecipientSettings settings) {
-        ALog.d(TAG, "from accountContext:" + context.getUid() + ", fromSnapshot(uid: " + uid + ")");
+        ALog.d(TAG, "from accountContext:" + context + ", fromSnapshot(uid: " + uid + ")");
         RecipientDetails details = new RecipientDetails(uid, null, null, settings, null);
         return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, Address.from(context, uid), details, false);
     }
@@ -447,48 +447,50 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
      */
     void updateRecipientDetails(@Nullable RecipientDetails details, boolean notify) {
         ALog.d(TAG, "updateRecipientDetails uid: " + address + ", details is null: " + (details == null) + ", notify: " + notify);
-        this.resolving = false;
-        if (details == null || (details.getCustomName() == null && details.getCustomAvatar() == null && details.getParticipants() == null && details.getSettings() == null)) {
-            return;
-        }
-        synchronized (Recipient.this) {
+        try {
+            if (details == null || (details.getCustomName() == null && details.getCustomAvatar() == null && details.getParticipants() == null && details.getSettings() == null)) {
+                return;
+            }
+            synchronized (Recipient.this) {
 
-            boolean changed = false;
-            if (isGroupRecipient()) {
-                if (details.getCustomName() != null) {
-                    Recipient.this.groupTitle = details.getCustomName();
+                boolean changed = false;
+                if (isGroupRecipient()) {
+                    if (details.getCustomName() != null) {
+                        Recipient.this.groupTitle = details.getCustomName();
+                        changed = true;
+                    }
+                    if (details.getCustomAvatar() != null) {
+                        Recipient.this.customLabel = details.getCustomAvatar();
+                        changed = true;
+                    }
+                }
+                if (details.getParticipants() != null) {
+                    Recipient.this.participants.clear();
+                    Recipient.this.participants.addAll(details.getParticipants());
                     changed = true;
                 }
-                if (details.getCustomAvatar() != null) {
-                    Recipient.this.customLabel = details.getCustomAvatar();
+
+                if (Recipient.this.fillSettings(details.getSettings())) {
                     changed = true;
                 }
-            }
-            if (details.getParticipants() != null) {
-                Recipient.this.participants.clear();
-                Recipient.this.participants.addAll(details.getParticipants());
-                changed = true;
-            }
-
-            if (Recipient.this.fillSettings(details.getSettings())) {
-                changed = true;
-            }
-            if (!listeners.isEmpty()) {
-                for (Recipient recipient : Recipient.this.participants) {
-                    recipient.addListener(Recipient.this);
+                if (!listeners.isEmpty()) {
+                    for (Recipient recipient : Recipient.this.participants) {
+                        recipient.addListener(Recipient.this);
+                    }
+                }
+                if (notify && changed) {
+                    notifyListeners();
                 }
             }
-            if (notify && changed) {
-                notifyListeners();
+
+        }finally {
+            this.resolving = false;
+            RecipientProvider.Companion.updateCache(this);
+            //check FOLLOW relationship
+            IContactModule module = AmeModuleCenter.INSTANCE.contact(address.context());
+            if (module != null) {
+                module.checkNeedRequestAddFriend(AppContextHolder.APP_CONTEXT, Recipient.this);
             }
-        }
-
-        RecipientProvider.Companion.updateCache(this);
-
-        //check FOLLOW relationship
-        IContactModule module = AmeModuleCenter.INSTANCE.contact(address.context());
-        if (module != null) {
-            module.checkNeedRequestAddFriend(AppContextHolder.APP_CONTEXT, Recipient.this);
         }
     }
 

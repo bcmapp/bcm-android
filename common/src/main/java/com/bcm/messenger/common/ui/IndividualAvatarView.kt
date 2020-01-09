@@ -127,8 +127,8 @@ class IndividualAvatarView : CardView {
         }
 
         fun getDefaultPortraitUrl(uid: String?): String {
-            val char = uid?.substring(uid.length - 1, uid.length) ?: "#"
-            return portraitMap[char] ?: portraitMap["#"] ?: "#"
+            val char = if (uid.isNullOrEmpty()) Recipient.UNKNOWN_LETTER else uid.substring(uid.length - 1, uid.length)
+            return portraitMap[char] ?: portraitMap[Recipient.UNKNOWN_LETTER] ?: Recipient.UNKNOWN_LETTER
         }
 
         /**
@@ -405,7 +405,8 @@ class IndividualAvatarView : CardView {
             post(mWaitingRunnable)
             return
         }
-        updateText(nick, getTextSize(size))
+        val name = if (nick.isEmpty()) Recipient.UNKNOWN_LETTER else nick.substring(0, 1)
+        updateText(name, getTextSize(size))
         updateStyle(size)
         val photoObj = if (avatar.isNotEmpty() && BcmFileUtils.isExist(avatar)) {
             needLetter = false
@@ -431,7 +432,7 @@ class IndividualAvatarView : CardView {
 
                         override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                             if (needLetter) {
-                                updateText(nick, getTextSize(size))
+                                updateText(name, getTextSize(size))
                             } else {
                                 clearText()
                             }

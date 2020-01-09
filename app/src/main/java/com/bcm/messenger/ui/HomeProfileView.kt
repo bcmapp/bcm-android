@@ -434,7 +434,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             home_profile_name.text = recipient.name
         } else {
             val account = accountItem.account
-            home_profile_avatar.setPhoto(account.uid, account.name.substring(0, 1), account.avatar)
+            home_profile_avatar.setPhoto(account.uid, account.name, account.avatar)
             home_profile_name.text = account.name
         }
     }
