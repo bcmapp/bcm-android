@@ -174,8 +174,7 @@ class AccountSecurityActivity : AccountSwipeBaseActivity() {
 
     private fun showQrCode() {
         val intent = Intent(this, MyAccountKeyActivity::class.java)
-        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, accountRecipient.address.serialize())
-        startBcmActivity(intent)
+        startBcmActivity(accountContext, intent)
     }
 
     private fun showAccountKeyDetails() {

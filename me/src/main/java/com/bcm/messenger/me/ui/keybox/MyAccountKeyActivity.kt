@@ -1,5 +1,6 @@
 package com.bcm.messenger.me.ui.keybox
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -137,6 +138,7 @@ class MyAccountKeyActivity : AccountSwipeBaseActivity() {
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun fetchProfile() {
         val account = AmeLoginLogic.accountHistory.getAccount(accountContext.uid)
         val realUid: String? = account?.uid
@@ -169,6 +171,7 @@ class MyAccountKeyActivity : AccountSwipeBaseActivity() {
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun createAccountQRCodeWithAccountData(accountData: AmeAccountData) {
         val weakQr = WeakReference(keybox_account_qr)
 
@@ -201,6 +204,7 @@ class MyAccountKeyActivity : AccountSwipeBaseActivity() {
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun copyQRCode() {
         AmePopup.loading.show(this)
         Observable.create<Uri> {

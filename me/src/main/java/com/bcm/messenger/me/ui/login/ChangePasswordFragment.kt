@@ -15,6 +15,7 @@ import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.keybox.MyAccountKeyActivity
@@ -166,8 +167,7 @@ class ChangePasswordFragment : BaseFragment() {
                                     }
                                     .withOkListener {
                                         val intent = Intent(activity, MyAccountKeyActivity::class.java)
-                                        intent.putExtra(VerifyKeyActivity.ACCOUNT_ID, accountContext.uid)
-                                        startActivity(intent)
+                                        startBcmActivity(accountContext, intent)
 
                                         activity?.finish()
                                     }
