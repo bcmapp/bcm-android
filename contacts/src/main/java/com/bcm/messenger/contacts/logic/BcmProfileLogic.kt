@@ -264,7 +264,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             val privacyProfile = recipient.privacyProfile
             if (toUpload) {
                 val encryptName = getPrivacyContent(name, privacyProfile.nameKey, privacyProfile.version)
-                ALog.d(TAG, "setEncryptName: $encryptName")
+                ALog.d(TAG, "address: ${handledRecipient.address}, nick: $name, setEncryptName: $encryptName")
 
                 val path = String.format(UPLOAD_ENCRYPT_NAME_PATH, URLEncoder.encode(encryptName))
                 RxIMHttp.get(mAccountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(path), "", AmeEmpty::class.java)

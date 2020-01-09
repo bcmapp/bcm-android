@@ -394,6 +394,7 @@ class ContactModuleImp : IContactModule {
     }
 
     override fun fetchProfile(recipient: Recipient, callback: (success: Boolean) -> Unit): Disposable {
+        ALog.d(TAG, "fetchProfile accountContext: $accountContext recipient: ${recipient.address}")
         return mProfileLogic.fetchProfileWithNoQueue(recipient, callback)
     }
 

@@ -96,7 +96,7 @@ class HomeActivity : SwipeBaseActivity() {
         initPullDownView()
         initRecipientData()
 
-        AmeModuleCenter.metric(AMELogin.majorContext)?.launchEnd()
+        AmeModuleCenter.metric(accountContext)?.launchEnd()
 
         BcmUpdateUtil.checkUpdate { hasUpdate, forceUpdate, _ ->
             if (hasUpdate) {

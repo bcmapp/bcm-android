@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bcm.messenger.common.AccountContext;
-import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.utils.GroupUtil;
 import com.bcm.messenger.utility.proguard.NotGuard;
 
@@ -72,7 +71,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
      * @return
      */
     public boolean isCurrentLogin() {
-        return AmeModuleCenter.INSTANCE.login().isAccountLogin(address);
+        return context.isLogin() && context.getUid().equals(address);
     }
 
     /**

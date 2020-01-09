@@ -188,7 +188,7 @@ object AmeLoginLogic {
 
     private fun handleLocalLogin(accountContext: AccountContext, context: Context) {
 
-        val currentAccount = getMajorAccount() ?: return
+        val currentAccount = getAccount(accountContext.uid) ?: return
 
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onAccountLogin(AppContextHolder.APP_CONTEXT, currentAccount.uid)
 
