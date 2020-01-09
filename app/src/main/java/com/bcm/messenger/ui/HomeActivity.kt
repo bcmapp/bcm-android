@@ -279,6 +279,23 @@ class HomeActivity : AccountSwipeBaseActivity() {
         }
     }
 
+    private fun initThreadListFragment() {
+        messageListFragment = MessageListFragment()
+        messageListFragment?.callback = object : MessageListFragment.MessageListCallback {
+            override fun onRecyclerViewCreated(recyclerView: BcmRecyclerView) {
+                home_pull_down_layout.setScrollView(recyclerView)
+            }
+
+            override fun onClickInvite() {
+                doInvite(accountRecipient)
+            }
+        }
+
+        messageListFragment?.let {
+            initFragment(R.id.home_chats_main, it, it.arguments)
+        }
+    }
+
     private fun initView() {
         titleView = home_toolbar_name as MessageListTitleView
         titleView.init()
@@ -296,24 +313,9 @@ class HomeActivity : AccountSwipeBaseActivity() {
             startBcmActivity(Intent(this, NewChatActivity::class.java))
         }
 
-        messageListFragment = MessageListFragment()
-        messageListFragment?.arguments = Bundle().apply {
-            putParcelable(ARouterConstants.PARAM.PARAM_MASTER_SECRET, getMasterSecret())
-        }
-        messageListFragment?.callback = object : MessageListFragment.MessageListCallback {
-            override fun onRecyclerViewCreated(recyclerView: BcmRecyclerView) {
-                home_pull_down_layout.setScrollView(recyclerView)
-            }
-
-            override fun onClickInvite() {
-                doInvite(accountRecipient)
-            }
-        }
-
-        messageListFragment?.let {
-            initFragment(R.id.home_chats_main, it, it.arguments)
-        }
+        initThreadListFragment()
     }
+
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -642,8 +644,10 @@ class HomeActivity : AccountSwipeBaseActivity() {
         if (accountContext.uid != AmeModuleCenter.login().majorUid()) {
             setAccountContext(AMELogin.majorContext)
             titleView.updateContext(accountContext)
-
             home_toolbar_avatar.showRecipientAvatar(accountRecipient)
+
+            recycleFragments()
+            initThreadListFragment()
         }
         home_profile_layout.reloadAccountList()
     }

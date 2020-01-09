@@ -26,7 +26,6 @@ import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.BcmRecyclerView
 import com.bcm.messenger.common.ui.SystemNoticeDialog
 import com.bcm.messenger.common.utils.*
@@ -49,7 +48,7 @@ import org.greenrobot.eventbus.ThreadMode
  * Created by zjl on 2018/2/28.
  */
 @Route(routePath = ARouterConstants.Activity.CHAT_MESSAGE_PATH)
-class MessageListFragment : BaseFragment(), RecipientModifiedListener {
+class MessageListFragment : BaseFragment() {
     interface MessageListCallback {
         fun onRecyclerViewCreated(recyclerView: BcmRecyclerView)
         fun onClickInvite()
@@ -61,7 +60,6 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
 
     private var archive = false
 
-    private lateinit var recipient: Recipient
     private var mAdapter: MessageListAdapter? = null
 
     private var firstVisiblePosition = 0
@@ -73,19 +71,13 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().unregister(this)
-
-        if (::recipient.isInitialized) {
-            recipient.removeListener(this)
-        }
-
         RxBus.unSubscribe(TAG)
         callback = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        archive = arguments?.getBoolean(ARouterConstants.PARAM.PRIVATE_CHAT.IS_ARCHIVED_EXTRA, false)
-                ?: false
+        archive = arguments?.getBoolean(ARouterConstants.PARAM.PRIVATE_CHAT.IS_ARCHIVED_EXTRA, false) ?: false
 
         EventBus.getDefault().register(this)
         showShadeView(true)
@@ -116,18 +108,6 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         ALog.d(TAG, "onViewCreated")
-        try {
-            recipient = Recipient.major()
-            recipient.addListener(this)
-        } catch (ex: Exception) {
-            ALog.e(TAG, "onActivityCreated fail, get major recipient fail", ex)
-            try {
-                AmeModuleCenter.user(accountContext)?.logoutMenu()
-            } catch (ex: Exception) {
-                activity?.finish()
-            }
-        }
-
         activity?.let {
             initView(it)
             initializeListAdapter(it)
@@ -276,13 +256,11 @@ class MessageListFragment : BaseFragment(), RecipientModifiedListener {
 
     }
 
-    override fun onModified(recipient: Recipient) {
-        if (this.recipient == recipient) {
-            if (recipient.name.isBlank()) {
-                showNicknameNotice()
-            } else {
-                hideNicknameNotice()
-            }
+    override fun onLoginRecipientRefresh() {
+        if (getAccountRecipient().name.isBlank()) {
+            showNicknameNotice()
+        } else {
+            hideNicknameNotice()
         }
     }
 

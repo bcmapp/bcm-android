@@ -35,7 +35,6 @@ open class BaseFragment : Fragment() {
 
     fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(accountContextObj) ?: throw Exception("getMasterSecret is null")
 
-
     fun setAccountContext(context: AccountContext) {
         ALog.d(TAG, "setAccountContext: $context")
         if (!::accountContextObj.isInitialized || accountContextObj != context) {
