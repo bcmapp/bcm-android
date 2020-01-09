@@ -15,6 +15,57 @@ class AccountContext(val uid: String, val token: String, val password: String) :
 
     @Transient
     private  var  masterSecretObj:MasterSecret? = null
+    val isLogin get() = AmeModuleCenter.login().isAccountLogin(uid)
+    val accountDir: String get() = AmeModuleCenter.login().accountDir(uid)
+    val genTime get() = AmeModuleCenter.login().genTime(uid)
+    val registrationId: Int get() = AmeModuleCenter.login().registrationId(uid)
+    val signalingKey: String get() = AmeModuleCenter.login().signalingKey(uid) ?: ""
+
+    val masterSecret:MasterSecret? get()  {
+        if (!isLogin) {
+            ALog.e("AccountContext", "account not login")
+            return null
+        }
+
+        val masterSecret = this.masterSecretObj
+        if (masterSecret != null) {
+            return masterSecret
+        }
+
+        synchronized(AccountContext::class) {
+            var masterSecret1 = this.masterSecretObj
+            if (masterSecret1 != null) {
+                return masterSecret1
+            }
+            masterSecret1 = MasterSecretUtil.getMasterSecret(this, MasterSecretUtil.UNENCRYPTED_PASSPHRASE)
+            this.masterSecretObj = masterSecret1
+            return masterSecret1
+        }
+    }
+
+    var isSignedPreKeyRegistered: Boolean
+        set(value) {
+            AmeModuleCenter.login().setSignedPreKeyRegistered(uid, value)
+        }
+        get() {
+            return AmeModuleCenter.login().isSignedPreKeyRegistered(uid)
+        }
+
+    var signedPreKeyFailureCount: Int
+        set(value) {
+            AmeModuleCenter.login().setSignedPreKeyFailureCount(uid, value)
+        }
+        get() {
+            return AmeModuleCenter.login().getSignedPreKeyFailureCount(uid)
+        }
+
+    var signedPreKeyRotationTime: Long
+        set(value) {
+            AmeModuleCenter.login().setSignedPreKeyRotationTime(uid, value)
+        }
+        get() {
+            return AmeModuleCenter.login().getSignedPreKeyRotationTime(uid)
+        }
 
     override fun compareTo(other: AccountContext): Int {
         val result = uid.compareTo(other.uid)
@@ -43,57 +94,5 @@ class AccountContext(val uid: String, val token: String, val password: String) :
     override fun toString(): String {
         return "$uid\\_$token"
     }
-
-    val masterSecret:MasterSecret? get()  {
-        if (!isLogin) {
-            ALog.e("AccountContext", "account not login")
-            return null
-        }
-
-        val masterSecret = this.masterSecretObj
-        if (masterSecret != null) {
-            return masterSecret
-        }
-
-        synchronized(AccountContext::class) {
-            var masterSecret1 = this.masterSecretObj
-            if (masterSecret1 != null) {
-                return masterSecret1
-            }
-            masterSecret1 = MasterSecretUtil.getMasterSecret(this, MasterSecretUtil.UNENCRYPTED_PASSPHRASE)
-            this.masterSecretObj = masterSecret1
-            return masterSecret1
-        }
-    }
-
-    val isLogin get() = AmeModuleCenter.login().isAccountLogin(uid)
-    val accountDir: String get() = AmeModuleCenter.login().accountDir(uid)
-    val genTime get() = AmeModuleCenter.login().genTime(uid)
-
-    val registrationId: Int get() = AmeModuleCenter.login().registrationId(uid)
-    val signalingKey: String get() = AmeModuleCenter.login().signalingKey(uid) ?: ""
-    var isSignedPreKeyRegistered: Boolean
-        set(value) {
-            AmeModuleCenter.login().setSignedPreKeyRegistered(uid, value)
-        }
-        get() {
-            return AmeModuleCenter.login().isSignedPreKeyRegistered(uid)
-        }
-
-    var signedPreKeyFailureCount: Int
-        set(value) {
-            AmeModuleCenter.login().setSignedPreKeyFailureCount(uid, value)
-        }
-        get() {
-            return AmeModuleCenter.login().getSignedPreKeyFailureCount(uid)
-        }
-
-    var signedPreKeyRotationTime: Long
-        set(value) {
-            AmeModuleCenter.login().setSignedPreKeyRotationTime(uid, value)
-        }
-        get() {
-            return AmeModuleCenter.login().getSignedPreKeyRotationTime(uid)
-        }
 }
 
