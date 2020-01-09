@@ -66,7 +66,7 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
         mHandleViewModel = handleViewModel
         if (!address.isGroup) {
             val model = ViewModelProviders.of(act, MediaBrowserModelFactory(accountContext)).get(PrivateMediaBrowseModel::class.java)
-            val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
+            val masterSecret = accountContext.masterSecret
             val recipient = Recipient.from(accountContext, address.serialize(), true)
             ThreadListViewModel.getThreadId(recipient) {
                 threadId = it

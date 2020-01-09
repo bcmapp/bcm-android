@@ -27,7 +27,7 @@ class ChatAudioHolderAction(accountContext: AccountContext) : BaseChatHolderActi
         bodyView.setDownloadClickListener(mDownloadClickListener)
 
         val content = messageRecord.message?.content as? AmeGroupMessage.AudioContent ?: return
-        bodyView.setAudio(BCMEncryptUtils.getMasterSecret(accountContext) ?: return, messageRecord)
+        bodyView.setAudio(accountContext.masterSecret ?: return, messageRecord)
         if (messageRecord.isSendByMe) {
             bodyView.setProgressDrawableResource(R.drawable.chats_audio_send_top_progress_bg)
 
@@ -82,7 +82,7 @@ class ChatAudioHolderAction(accountContext: AccountContext) : BaseChatHolderActi
         private fun updateAudioMessage(v: View, messageRecord: AmeGroupMessageDetail) {
 
             if(mBaseView == v) {
-                mBaseView?.setAudio(BCMEncryptUtils.getMasterSecret(accountContext) ?: return, messageRecord)
+                mBaseView?.setAudio(accountContext.masterSecret ?: return, messageRecord)
             }
 
         }

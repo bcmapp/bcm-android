@@ -22,7 +22,7 @@ class ChatThumbnailHolderAction(accountContext: AccountContext) : BaseChatHolder
 
         mBaseView?.setThumbnailAppearance(R.drawable.common_image_place_img, R.drawable.common_image_broken_img, body.resources.getDimensionPixelSize(R.dimen.chats_conversation_item_radius))
         // MARK: Temporary set mastersecret
-        mBaseView?.setImage(BCMEncryptUtils.getMasterSecret(accountContext) ?: return, glideRequests, message)
+        mBaseView?.setImage(accountContext.masterSecret ?: return, glideRequests, message)
         mBaseView?.setThumbnailClickListener(mPreviewClickListener)
     }
 

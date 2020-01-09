@@ -14,7 +14,7 @@ public abstract class MasterSecretBroadcastReceiver extends BroadcastReceiver {
 
   @Override
   public final void onReceive(Context context, Intent intent) {
-    onReceive(context, intent, BCMEncryptUtils.INSTANCE.getMasterSecret(AMELogin.INSTANCE.getMajorContext()));
+    onReceive(context, intent, AMELogin.INSTANCE.getMajorContext().getMasterSecret());
   }
 
   protected abstract void onReceive(Context context, Intent intent, @Nullable MasterSecret masterSecret);

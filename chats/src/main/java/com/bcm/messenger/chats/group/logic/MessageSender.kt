@@ -308,7 +308,7 @@ class MessageSender(private val mAccountContext: AccountContext) {
 
     @SuppressLint("CheckResult")
     fun resendMediaMessage(messageDetail: AmeGroupMessageDetail, call: ResendCallback? = null) {
-        val masterSecret = BCMEncryptUtils.getMasterSecret(mAccountContext) ?: return
+        val masterSecret = mAccountContext.masterSecret ?: return
 
         Observable.create(ObservableOnSubscribe<String> {
 

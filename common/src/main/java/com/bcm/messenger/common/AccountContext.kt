@@ -1,6 +1,10 @@
 package com.bcm.messenger.common
 
+import com.bcm.messenger.common.crypto.MasterSecret
+import com.bcm.messenger.common.crypto.MasterSecretUtil
+import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.proguard.NotGuard
 import java.io.Serializable
 
@@ -8,6 +12,9 @@ class AccountContext(val uid: String, val token: String, val password: String) :
     companion object {
         private const val serialVersionUID = 1L
     }
+
+    @Transient
+    private  var  masterSecretObj:MasterSecret? = null
 
     override fun compareTo(other: AccountContext): Int {
         val result = uid.compareTo(other.uid)
@@ -35,6 +42,28 @@ class AccountContext(val uid: String, val token: String, val password: String) :
 
     override fun toString(): String {
         return "$uid\\_$token"
+    }
+
+    val masterSecret:MasterSecret? get()  {
+        if (!isLogin) {
+            ALog.e("AccountContext", "account not login")
+            return null
+        }
+
+        val masterSecret = this.masterSecretObj
+        if (masterSecret != null) {
+            return masterSecret
+        }
+
+        synchronized(AccountContext::class) {
+            var masterSecret1 = this.masterSecretObj
+            if (masterSecret1 != null) {
+                return masterSecret1
+            }
+            masterSecret1 = MasterSecretUtil.getMasterSecret(this, MasterSecretUtil.UNENCRYPTED_PASSPHRASE)
+            this.masterSecretObj = masterSecret1
+            return masterSecret1
+        }
     }
 
     val isLogin get() = AmeModuleCenter.login().isAccountLogin(uid)

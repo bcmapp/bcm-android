@@ -11,7 +11,7 @@ import com.bcm.messenger.utility.AppContextHolder
  */
 abstract class BaseMediaViewModel(protected val accountContext: AccountContext) : ViewModel() {
 
-    protected val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
+    protected val masterSecret = accountContext.masterSecret
 
     abstract fun getCurrentData(threadId: Long, indexId: Long, result: (data: MediaViewData) -> Unit)
 

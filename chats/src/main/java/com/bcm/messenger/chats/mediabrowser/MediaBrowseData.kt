@@ -151,7 +151,7 @@ data class MediaBrowseData(val name: String,
         }
 
         GlideApp.with(view)
-                .load(DecryptableStreamUriLoader.DecryptableUri(BCMEncryptUtils.getMasterSecret(accountContext)
+                .load(DecryptableStreamUriLoader.DecryptableUri(accountContext.masterSecret
                         ?: throw Exception("getMasterSecret fail"), uri))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .override(mOverrideWidth, mOverrideHeight)

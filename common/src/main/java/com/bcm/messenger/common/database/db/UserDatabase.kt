@@ -58,7 +58,7 @@ internal abstract class UserDatabase : RoomDatabase() {
 
         @JvmStatic
         fun openDatabase(accountContext: AccountContext, needCheckDb: Boolean = true): UserDatabase {
-            val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
+            val masterSecret = accountContext.masterSecret
             val options = SafeHelperFactory.Options.builder().setClearPassphrase(false).build()
             val factory = SafeHelperFactory(masterSecret?.encryptionKey?.encoded, options)
             val dbBuilder = Room.databaseBuilder(AppContextHolder.APP_CONTEXT, UserDatabase::class.java, "user_${accountContext.uid}.db")

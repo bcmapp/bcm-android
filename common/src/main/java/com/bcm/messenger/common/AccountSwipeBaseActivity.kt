@@ -49,7 +49,7 @@ open class AccountSwipeBaseActivity : SwipeBaseActivity() {
         updateScreenshotSecurity()
     }
 
-    fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(accountContextObj) ?: throw Exception("getMasterSecret is null")
+    fun getMasterSecret(): MasterSecret = accountContextObj.masterSecret ?: throw Exception("getMasterSecret is null")
 
     fun setAccountContext(context: AccountContext) {
         if (!::accountContextObj.isInitialized || accountContextObj != context) {

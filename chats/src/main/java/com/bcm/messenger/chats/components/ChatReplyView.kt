@@ -182,7 +182,7 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                         }
                         if (mGroupMessage == messageRecord) {
                             if (success) {
-                                val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext) ?: return
+                                val masterSecret = accountContext.masterSecret ?: return
                                 buildThumbnailRequest(masterSecret, uri) {
                                     ALog.d(TAG, "buildThumbnailRequest uri: $uri fail, try again")
                                     Observable.create(ObservableOnSubscribe<AmeGroupMessage<*>> {

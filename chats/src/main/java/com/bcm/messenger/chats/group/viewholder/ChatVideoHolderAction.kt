@@ -29,7 +29,7 @@ class ChatVideoHolderAction(accountContext: AccountContext) : BaseChatHolderActi
         body.setDownloadClickListener(mDownloadClickListener)
         body.setThumbnailAppearance(R.drawable.common_video_place_img, R.drawable.common_video_broken_img, body.resources.getDimensionPixelSize(R.dimen.chats_conversation_item_radius))
         // MARK: Temporary set mastersecret
-        body.setImage(BCMEncryptUtils.getMasterSecret(accountContext) ?: return, glideRequests, message)
+        body.setImage(accountContext.masterSecret ?: return, glideRequests, message)
     }
 
     override fun resend(message: AmeGroupMessageDetail) {

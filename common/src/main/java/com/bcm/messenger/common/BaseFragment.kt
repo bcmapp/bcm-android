@@ -33,7 +33,7 @@ open class BaseFragment : Fragment() {
 
     fun getAccountRecipient() = mAccountRecipient
 
-    fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(accountContextObj) ?: throw Exception("getMasterSecret is null")
+    fun getMasterSecret(): MasterSecret = accountContextObj.masterSecret ?: throw Exception("getMasterSecret is null")
 
     fun setAccountContext(context: AccountContext) {
         ALog.d(TAG, "setAccountContext: $context")

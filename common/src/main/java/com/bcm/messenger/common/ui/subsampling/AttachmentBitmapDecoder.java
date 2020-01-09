@@ -29,7 +29,7 @@ public class AttachmentBitmapDecoder implements ImageDecoder {
       return new SkiaImageDecoder().decode(context, uri);
     }
 
-    MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(accountContext);
+    MasterSecret masterSecret = accountContext.getMasterSecret();
 
     if (masterSecret == null) {
       throw new IllegalStateException("Can't decode without secret");

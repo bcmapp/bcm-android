@@ -46,7 +46,7 @@ public abstract class MasterSecretJob extends ContextJob implements NotGuard {
     public abstract boolean onShouldRetryThrowable(Exception exception);
 
     private MasterSecret getMasterSecret() throws RequirementNotMetException {
-        MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(accountContext);
+        MasterSecret masterSecret = accountContext.getMasterSecret();
 
         if (masterSecret == null) throw new RequirementNotMetException();
         else return masterSecret;

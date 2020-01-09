@@ -43,27 +43,6 @@ object BCMEncryptUtils {
 
     private const val CBC_MODE = "AES/CBC/PKCS7Padding"
 
-    private var masterSecret: MasterSecret? = null
-
-    @Synchronized
-    fun getMasterSecret(accountContext: AccountContext): MasterSecret? {
-        if (masterSecret == null && AMELogin.isLogin) {
-            try {
-                masterSecret = MasterSecretUtil.getMasterSecret(accountContext, MasterSecretUtil.UNENCRYPTED_PASSPHRASE)
-            } catch (e: Exception) {
-                ALog.e(TAG, e)
-            }
-
-        }
-        return masterSecret
-    }
-
-    @Synchronized
-    fun clearMasterSecret() {
-        masterSecret = null
-    }
-
-    //
     fun getMyPrivateKey(accountContext: AccountContext): ByteArray {
         val myKeyPair = IdentityKeyUtil.getIdentityKeyPair(accountContext)
         return (myKeyPair.privateKey as DjbECPrivateKey).privateKey

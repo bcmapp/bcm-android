@@ -36,7 +36,7 @@ class GroupMediaBrowserViewModel(accountContext: AccountContext) : BaseMediaBrow
 
     private var gid = -1L // MUST set before invoking any functions.
     private val dateFormat = SimpleDateFormat(FORMAT_DATE_TITLE, Locale.getDefault())
-    private val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
+    private val masterSecret = accountContext.masterSecret
     private var destroyed = false
 
     init {

@@ -181,7 +181,6 @@ object AmeLoginLogic {
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onAccountLogout(AppContextHolder.APP_CONTEXT, "")
 
         AmeModuleCenter.onLogOutSucceed(accountContext)
-        BCMEncryptUtils.clearMasterSecret()
         Recipient.clearCache(context)
 
     }

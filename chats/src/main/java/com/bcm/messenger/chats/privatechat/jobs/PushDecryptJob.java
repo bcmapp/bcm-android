@@ -149,7 +149,7 @@ public class PushDecryptJob extends ContextJob {
             return;
         }
 
-        MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(accountContext);
+        MasterSecret masterSecret = accountContext.getMasterSecret();
         PushRepo pushRepo = repository.getPushRepo();
         SignalServiceProtos.Envelope envelope = pushRepo.get(messageId);
 

@@ -20,7 +20,7 @@ public class MasterSecretRequirement implements Requirement, ContextDependent {
 
     @Override
     public boolean isPresent() {
-        return BCMEncryptUtils.INSTANCE.getMasterSecret(accountContext) != null;
+        return accountContext.getMasterSecret() != null;
     }
 
     @Override

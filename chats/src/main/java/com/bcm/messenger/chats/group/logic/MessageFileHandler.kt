@@ -171,7 +171,7 @@ object MessageFileHandler {
 
                                 try {
                                     val fileInfo = ChatFileEncryptDecryptUtil.decryptAndSaveFile(accountContext,
-                                            BCMEncryptUtils.getMasterSecret(accountContext),
+                                            accountContext.masterSecret,
                                             response,
                                             messageDetail,
                                             if (useThumbnail) ChatFileEncryptDecryptUtil.FileType.GROUP_THUMB else ChatFileEncryptDecryptUtil.FileType.GROUP)
@@ -276,7 +276,7 @@ object MessageFileHandler {
                             } else {
                                 try {
                                     val fileInfo = ChatFileEncryptDecryptUtil.decryptAndSaveFile(accountContext,
-                                            BCMEncryptUtils.getMasterSecret(accountContext),
+                                            accountContext.masterSecret,
                                             response,
                                             AmeGroupMessageDetail().apply {
                                                 this.gid = gid
@@ -397,7 +397,7 @@ object MessageFileHandler {
                     }
                     try {
                         val fileInfo = ChatFileEncryptDecryptUtil.decryptAndSaveFile(accountContext,
-                                BCMEncryptUtils.getMasterSecret(accountContext),
+                                accountContext.masterSecret,
                                 response,
                                 messageDetail,
                                 ChatFileEncryptDecryptUtil.FileType.GROUP

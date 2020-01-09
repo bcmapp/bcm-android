@@ -42,7 +42,7 @@ public class AttachmentRegionDecoder implements ImageRegionDecoder {
       return passthrough.init(context, uri);
     }
 
-    MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(accountContext);
+    MasterSecret masterSecret = accountContext.getMasterSecret();
 
     if (masterSecret == null) {
       throw new IllegalStateException("No master secret available...");

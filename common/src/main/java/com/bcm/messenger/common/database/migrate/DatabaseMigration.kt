@@ -37,7 +37,7 @@ object DatabaseMigration : IDatabaseMigration {
 
     override fun doMigrate(accountContext: AccountContext, callback: (finishCount: Int) -> Unit) {
         val migrateDatabase = MigrateDatabase(accountContext)
-        val masterSecret = BCMEncryptUtils.getMasterSecret(accountContext)
+        val masterSecret = accountContext.masterSecret
         val oldDatabase = DatabaseFactory(accountContext, AppContextHolder.APP_CONTEXT)
         if (masterSecret != null && !isUpgrading) {
             isUpgrading = true

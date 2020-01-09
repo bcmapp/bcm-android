@@ -101,7 +101,7 @@ public class PartProvider extends ContentProvider {
 
     @Override
     public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
-        final MasterSecret masterSecret = BCMEncryptUtils.INSTANCE.getMasterSecret(AMELogin.INSTANCE.getMajorContext());
+        final MasterSecret masterSecret = AMELogin.INSTANCE.getMajorContext().getMasterSecret();
         Log.w(TAG, "openFile() called!");
 
         if (masterSecret == null) {

@@ -17,7 +17,7 @@ public abstract class MasterSecretIntentService extends IntentService {
 
   @Override
   protected final void onHandleIntent(Intent intent) {
-    onHandleIntent(intent, BCMEncryptUtils.INSTANCE.getMasterSecret(AMELogin.INSTANCE.getMajorContext()));
+    onHandleIntent(intent, AMELogin.INSTANCE.getMajorContext().getMasterSecret());
   }
 
   protected abstract void onHandleIntent(Intent intent, @Nullable MasterSecret masterSecret);

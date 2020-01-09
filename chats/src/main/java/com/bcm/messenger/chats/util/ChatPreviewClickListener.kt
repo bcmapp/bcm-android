@@ -81,7 +81,7 @@ open class ChatPreviewClickListener(private val accountContext: AccountContext) 
         AmeAppLifecycle.showLoading()
         Observable.create<Pair<Uri, String>> {
             if (contentType == null || !contentType.startsWith("text/")) {
-                val masterSecret = BCMEncryptUtils.getMasterSecret(AMELogin.majorContext)
+                val masterSecret = AMELogin.majorContext.masterSecret
                 val outFile = File(AmeFileUploader.DOCUMENT_DIRECTORY, name
                         ?: System.currentTimeMillis().toString())
                 if (!BcmFileUtils.isExist(outFile.absolutePath)) {

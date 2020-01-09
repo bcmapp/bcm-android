@@ -98,17 +98,6 @@ public class MasterSecretUtil {
         AppContextHolder.APP_CONTEXT.getSharedPreferences(getPreferencesName(accountContext), 0).edit().clear().apply();
     }
 
-    public static MasterSecret changeMasterSecretPassphrase(@NonNull AccountContext accountContext,
-                                                            String originalPassphrase,
-                                                            String newPassphrase)
-            throws InvalidPassphraseException {
-        MasterSecret masterSecret = getMasterSecret(accountContext, originalPassphrase);
-        changeMasterSecretPassphrase(accountContext, masterSecret, newPassphrase);
-
-        return masterSecret;
-    }
-
-
     public static MasterSecret getMasterSecret(@NonNull AccountContext accountContext, String passphrase)
             throws InvalidPassphraseException {
         try {
