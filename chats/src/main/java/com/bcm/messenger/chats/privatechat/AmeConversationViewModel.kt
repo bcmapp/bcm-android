@@ -103,7 +103,7 @@ class AmeConversationViewModel(
         RxBus.unSubscribe(PrivateChatRepo.CHANGED_TAG + mThreadId)
         RxBus.unSubscribe(ARouterConstants.PARAM.PARAM_HAS_REQUEST)
         mRecipient?.let { last ->
-            RxBus.unSubscribe(last.address.serialize())
+            RxBus.unSubscribe(last.address.toString())
         }
     }
 
@@ -113,9 +113,9 @@ class AmeConversationViewModel(
         this.mRecipient = recipient
         if (this.mRecipient != recipient) {
             mRecipient?.let { last ->
-                RxBus.unSubscribe(last.address.serialize())
+                RxBus.unSubscribe(last.address.toString())
             }
-            RxBus.subscribe<Long>(recipient.address.serialize()) { newThreadId ->
+            RxBus.subscribe<Long>(recipient.address.toString()) { newThreadId ->
                 updateThread(newThreadId)
             }
         }
@@ -799,6 +799,9 @@ class AmeConversationViewModel(
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEventTextSendState(sendEvent: TextSendEvent) {
+        if (mAccountContext != sendEvent.accountContext) {
+            return
+        }
         if (clearMessageId == -10086L)
             return
         if (clearMessageId == sendEvent.messageId) {
@@ -833,7 +836,7 @@ class AmeConversationViewModel(
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(e: MessageReceiveNotifyEvent) {
         val recipient = mRecipient
-        if (recipient?.address?.serialize() == e.source) {
+        if (mAccountContext == e.accountContext && recipient?.address?.serialize() == e.source) {
             ALog.i(TAG, "receive messageReceiveNotifyEvent")
             updateThread(e.threadId)
         }

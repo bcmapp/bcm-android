@@ -8,9 +8,9 @@ import com.bcm.messenger.common.bcmhttp.exception.VersionTooLowException;
 import com.bcm.messenger.common.core.Address;
 import com.bcm.messenger.common.core.AmeGroupMessage;
 import com.bcm.messenger.common.crypto.MasterSecret;
-import com.bcm.messenger.common.deprecated.NoSuchMessageException;
 import com.bcm.messenger.common.database.records.MessageRecord;
 import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
+import com.bcm.messenger.common.deprecated.NoSuchMessageException;
 import com.bcm.messenger.common.event.TextSendEvent;
 import com.bcm.messenger.common.event.UserOfflineEvent;
 import com.bcm.messenger.common.event.VersionTooLowEvent;
@@ -67,7 +67,7 @@ public class PushTextSendJob extends PushSendJob {
         try {
             ALog.i(TAG, "onPushSend " + messageId + " time:" + record.getDateSent());
             deliver(record);
-            EventBus.getDefault().post(new TextSendEvent(messageId, true, "success"));
+            EventBus.getDefault().post(new TextSendEvent(accountContext, messageId, true, "success"));
             chatRepo.setMessageSendSuccess(messageId);
             if (record.getExpiresTime() > 0) {
                 chatRepo.setMessageExpiresStart(messageId);
@@ -78,12 +78,12 @@ public class PushTextSendJob extends PushSendJob {
             ALog.i(TAG, "send complete:" + messageId);
         } catch (InsecureFallbackApprovalException e) {
             ALog.e(TAG, e);
-            EventBus.getDefault().post(new TextSendEvent(messageId, false, e.getMessage()));
+            EventBus.getDefault().post(new TextSendEvent(accountContext, messageId, false, e.getMessage()));
             chatRepo.setMessagePendingInsecureSmsFallback(record.getId());
         } catch (UntrustedIdentityException e) {
             ALog.d(TAG, e + "address = " + e.getE164Number() + " identitykey = " + e.getIdentityKey());
             ALog.e(TAG, "UntrustedIdentityException occurred", e);
-            EventBus.getDefault().post(new TextSendEvent(messageId, false, e.getMessage()));
+            EventBus.getDefault().post(new TextSendEvent(accountContext, messageId, false, e.getMessage()));
 
             JobManager manager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
             if (manager != null) {

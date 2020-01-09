@@ -91,7 +91,7 @@ class RecipientRepo(
         val messageId = repository.chatRepo.insertOutgoingTextMessage(threadId, message, AmeTimeUtil.getMessageSendTime(), null)
         repository.chatRepo.setMessageSendSuccess(messageId)
 
-        RxBus.post(recipient.address.serialize(), threadId)
+        RxBus.post(recipient.address.toString(), threadId)
     }
 
     fun setMuted(recipient: Recipient, until: Long) {
@@ -359,7 +359,7 @@ class RecipientRepo(
         val messageId = repository.chatRepo.insertOutgoingTextMessage(threadId, textMessage, AmeTimeUtil.getMessageSendTime(), null)
         repository.chatRepo.setMessageSendSuccess(messageId)
 
-        RxBus.post(recipient.address.serialize(), threadId)
+        RxBus.post(recipient.address.toString(), threadId)
     }
 
     private fun updateOrInsert(settings: RecipientSettings) {

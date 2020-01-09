@@ -20,7 +20,6 @@ import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.crypto.MasterSecretUnion;
 import com.bcm.messenger.common.crypto.MasterSecretUtil;
 import com.bcm.messenger.common.crypto.SecurityEvent;
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.common.crypto.storage.SignalProtocolStoreImpl;
 import com.bcm.messenger.common.crypto.storage.TextSecureSessionStore;
 import com.bcm.messenger.common.database.model.DecryptFailData;
@@ -254,7 +253,7 @@ public class PushDecryptJob extends ContextJob {
                 AmeModuleCenter.INSTANCE.login().refreshPrekeys(accountContext);
             }
             //After receiving the message, you should notify the private chat window to update the thread
-            EventBus.getDefault().post(new MessageReceiveNotifyEvent(envelope.getSource(), repository.getThreadRepo().getThreadIdIfExist(envelope.getSource())));
+            EventBus.getDefault().post(new MessageReceiveNotifyEvent(accountContext, envelope.getSource(), repository.getThreadRepo().getThreadIdIfExist(envelope.getSource())));
 
         } catch (InvalidVersionException e) {
             ALog.e(TAG, e);

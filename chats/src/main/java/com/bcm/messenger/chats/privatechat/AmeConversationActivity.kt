@@ -23,8 +23,8 @@ import com.bcm.messenger.chats.user.SendContactActivity
 import com.bcm.messenger.chats.util.AttachmentUtils
 import com.bcm.messenger.chats.util.ScreenshotManager
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.AccountSwipeBaseActivity
+import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.audio.AudioSlidePlayer
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -194,7 +194,6 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
 
         if (::mRecipient.isInitialized) {
             mRecipient.removeListener(this)
-            RxBus.unSubscribe(mRecipient.address.serialize())
         }
 
         if (recipientsStaleReceiver != null) {

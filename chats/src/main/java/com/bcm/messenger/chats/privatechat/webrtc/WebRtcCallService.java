@@ -997,7 +997,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                     result = chatRepo.insertOutgoingMissedCall(recipient.getAddress().serialize());
                 }
                 if (result.getSecond() > 0L) {
-                    EventBus.getDefault().post(new MessageReceiveNotifyEvent(recipient.getAddress().serialize(), result.getSecond()));
+                    EventBus.getDefault().post(new MessageReceiveNotifyEvent(accountContext, recipient.getAddress().serialize(), result.getSecond()));
                 }
             }
         }else {
@@ -1019,7 +1019,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                     result = chatRepo.insertOutgoingMissedCall(recipient.getAddress().serialize());
                 }
                 if (result.getSecond() > 0L) {
-                    EventBus.getDefault().post(new MessageReceiveNotifyEvent(recipient.getAddress().serialize(), result.getSecond()));
+                    EventBus.getDefault().post(new MessageReceiveNotifyEvent(accountContext, recipient.getAddress().serialize(), result.getSecond()));
                 }
             }
         }else {
