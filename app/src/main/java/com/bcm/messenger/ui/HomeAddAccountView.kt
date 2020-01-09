@@ -16,6 +16,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.dp2Px
@@ -115,6 +116,7 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
         home_add_view_layout.layoutParams = (home_add_view_layout.layoutParams as LayoutParams).apply {
             setMargins(0, 60.dp2Px(), 0, 0)
         }
+        onViewPositionChanged(-1f, 0f)
     }
 
     override fun setPagerChangedAlpha(alpha: Float) {
@@ -122,14 +124,18 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
     }
 
     override fun onViewPositionChanged(position: Float, percent: Float) {
+        this.position = position
+
         val scale = 0.7f + 0.3f * percent
         val curAvatarMargin = avatarMargin * (1 - percent)
 
         home_add_view_add.layoutParams = (home_add_view_add.layoutParams as LayoutParams).apply {
             if (position < 0) {
                 marginStart = curAvatarMargin.toInt()
+                marginEnd = 0
             } else {
                 marginEnd = curAvatarMargin.toInt()
+                marginStart = 0
             }
         }
         home_add_view_add.scaleX = scale
@@ -139,6 +145,10 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
     }
 
     override fun getCurrentContext(): AccountContext? {
+        return null
+    }
+
+    override fun getCurrentRecipient(): Recipient? {
         return null
     }
 

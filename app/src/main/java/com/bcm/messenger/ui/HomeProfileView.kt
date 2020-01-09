@@ -327,7 +327,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         home_profile_avatar_layout.layoutParams = (home_profile_avatar_layout.layoutParams as LayoutParams).apply {
             marginStart = 0
             marginEnd = 0
-            setMargins(0, 60.dp2Px(), 0, 0)
+            topMargin = 60.dp2Px()
         }
         home_profile_avatar.layoutParams = (home_profile_avatar.layoutParams as LayoutParams).apply {
             marginStart = 0
@@ -340,6 +340,8 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             } else {
                 onViewPositionChanged(1f, 0f)
             }
+        } else {
+            onViewPositionChanged(0f, 1f)
         }
     }
 
@@ -382,6 +384,14 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             return null
         }
         return accountItem.accountContext
+    }
+
+    override fun getCurrentRecipient(): Recipient? {
+        return if (isLogin) {
+            recipient
+        } else {
+            null
+        }
     }
 
     private fun logoutPagerChangedAlpha(alpha: Float) {

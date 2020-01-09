@@ -498,9 +498,11 @@ class HomeActivity : SwipeBaseActivity() {
                 when {
                     height != 0 && height != topViewHeight -> {
                         home_toolbar_avatar.setPrivateElevation(32f.dp2Px())
-                        home_toolbar_avatar.visibility = View.VISIBLE
-                        home_toolbar_avatar.getIndividualAvatarView().hideCoverText()
-                        home_profile_layout.hideAvatar()
+                        if (home_toolbar_avatar.visibility == View.GONE) {
+                            home_toolbar_avatar.visibility = View.VISIBLE
+                            home_toolbar_avatar.getIndividualAvatarView().hideCoverText()
+                            home_profile_layout.hideAvatar()
+                        }
                     }
                     height == 0 -> {
                         home_toolbar_avatar.setPrivateElevation(0f)
@@ -540,6 +542,7 @@ class HomeActivity : SwipeBaseActivity() {
                         val ctx = home_profile_layout.getCloseAccount()
                         if (ctx != null && ctx.uid != accountContext.uid) {
                             AmeModuleCenter.login().setMajorAccount(ctx)
+                            home_profile_layout.reSortAccountList()
                         }
                     }
                     ConstraintPullDownLayout.MOVE_DOWN -> {
@@ -577,6 +580,14 @@ class HomeActivity : SwipeBaseActivity() {
 
             override fun onViewPagerScrollStateChanged(newState: Int) {
                 home_pull_down_layout.setViewPagerState(newState)
+            }
+
+            override fun onViewChanged(newRecipient: Recipient?) {
+                if (newRecipient != null) {
+                    home_toolbar_avatar.showPrivateAvatar(newRecipient)
+                } else {
+                    home_toolbar_avatar.showPrivateAvatar(accountRecipient)
+                }
             }
         })
     }
@@ -674,5 +685,6 @@ class HomeActivity : SwipeBaseActivity() {
 
             home_toolbar_avatar.showRecipientAvatar(accountRecipient)
         }
+        home_profile_layout.reloadAccountList()
     }
 }

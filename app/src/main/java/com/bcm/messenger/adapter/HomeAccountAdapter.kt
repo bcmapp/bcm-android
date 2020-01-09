@@ -1,11 +1,11 @@
 package com.bcm.messenger.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.bean.AmeAccountData
@@ -26,6 +26,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
     interface AdapterListener {
         fun onViewClickedClose()
         fun onAccountLoadSuccess()
+        fun onResortSuccess()
         fun onViewClickLogin(uid: String)
         fun onViewClickDelete(uid: String)
     }
@@ -58,9 +59,6 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
                 setAccountItem(account)
                 isLogin = account.type == TYPE_ONLINE
                 isActive = position == lastActivePos
-//                if (position == lastActivePos) {
-//                    isActive = true
-//                }
                 setListener(object : HomeProfileView.ProfileViewCallback {
                     override fun onClickExit() {
                         listener?.onViewClickedClose()
@@ -124,7 +122,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
         lastActivePos = currentPos
     }
 
-    fun getCurrentShownViews(currentPos: Int): List<IProfileView> {
+    fun getCurrentShownViews(): List<IProfileView> {
         return views.values.toList()
     }
 
@@ -141,7 +139,35 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
         return -1
     }
 
-    @SuppressLint("CheckResult")
+    private val comparator = Comparator<HomeAccountItem> { o1, o2 ->
+        if (o1.type == o2.type) {
+            when {
+                o1.accountContext.uid == AMELogin.majorUid -> -1
+                o2.accountContext.uid == AMELogin.majorUid -> 1
+                else -> o1.account.lastLoginTime.compareTo(o2.account.lastLoginTime)
+            }
+        } else {
+            o1.type - o2.type
+        }
+    }
+
+    fun reSortAccounts() {
+        Observable.create<List<HomeAccountItem>> {
+            val dataList = accountList.toMutableList()
+            dataList.sortWith(comparator)
+            it.onNext(dataList)
+            it.onComplete()
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    accountList.clear()
+                    accountList.addAll(it)
+                    notifyDataSetChanged()
+                    listener?.onResortSuccess()
+                }, {
+                })
+    }
+
     fun loadAccounts() {
         Observable.create<List<HomeAccountItem>> {
             val dataList = mutableListOf<HomeAccountItem>()
@@ -156,6 +182,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
                 }
                 dataList.add(HomeAccountItem(type, accountData, accountContext))
             }
+            dataList.sortWith(comparator)
             it.onNext(dataList)
             it.onComplete()
         }.subscribeOn(Schedulers.io())

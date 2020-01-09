@@ -251,15 +251,7 @@ object AmeLoginLogic {
      * get account history
      */
     fun getAccountList(): List<AmeAccountData> {
-        return accountHistory.getAccountList().sortedWith(kotlin.Comparator { o1, o2 ->
-            if (accountHistory.isLogin(o1.uid) || accountHistory.isLogin(o2.uid)) {
-                o2.lastLoginTime.compareTo(o1.lastLoginTime)
-            } else {
-                val o1t = max(o1.lastLoginTime, o1.backupTime)
-                val o2t = max(o2.lastLoginTime, o2.backupTime)
-                o2t.compareTo(o1t)
-            }
-        })
+        return accountHistory.getAccountList()
     }
 
     private fun setTmpToken(uid: String, password: String) {

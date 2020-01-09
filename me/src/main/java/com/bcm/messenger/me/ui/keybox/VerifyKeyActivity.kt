@@ -30,7 +30,13 @@ class VerifyKeyActivity : SwipeBaseActivity() {
     private var controlType: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        disableStatusBarLightMode()
+        controlType = intent.getIntExtra(BACKUP_JUMP_ACTION, 0)
+        if (controlType == LOGIN_PROFILE) {
+            disableDefaultTransitionAnimation()
+            overridePendingTransition(R.anim.common_popup_alpha_in, R.anim.common_popup_alpha_out)
+        } else {
+            disableStatusBarLightMode()
+        }
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_verify)
@@ -38,7 +44,6 @@ class VerifyKeyActivity : SwipeBaseActivity() {
     }
 
     fun initView() {
-        controlType = intent.getIntExtra(BACKUP_JUMP_ACTION, 0)
         val arg = intent.extras
         arg?.putBoolean(NEED_FINISH, true)
         if (controlType == DELETE_PROFILE || controlType == SHOW_QRCODE_BACKUP || controlType == CHANGE_PIN || controlType == CLEAR_PIN) {
@@ -58,7 +63,7 @@ class VerifyKeyActivity : SwipeBaseActivity() {
             PinInputActivity.routerVerifyUnlock(this)
             finish()
         } else {
-            if (!AMELogin.isLogin){
+            if (!AMELogin.isLogin) {
                 hideKeyboard()
                 val intent = Intent(this, RegistrationActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -67,6 +72,13 @@ class VerifyKeyActivity : SwipeBaseActivity() {
             } else {
                 super.onBackPressed()
             }
+        }
+    }
+
+    override fun finish() {
+        super.finish()
+        if (controlType == LOGIN_PROFILE) {
+            overridePendingTransition(0, R.anim.common_popup_alpha_out)
         }
     }
 }

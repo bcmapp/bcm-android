@@ -1,26 +1,26 @@
 package com.bcm.messenger.me.ui.login
 
-import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.activity.DatabaseMigrateActivity
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.common.utils.keyboard.KeyboardWatcher
 import com.bcm.messenger.login.logic.AmeLoginErrorPasswordException
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.login.logic.AmeLoginUnknownException
@@ -28,18 +28,19 @@ import com.bcm.messenger.login.logic.AmeLoginWrongAccountException
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
 import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.QuickOpCheck
+import com.bcm.messenger.utility.ViewUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.netswitchy.proxy.IProxyStateChanged
 import com.bcm.netswitchy.proxy.ProxyManager
+import kotlinx.android.synthetic.main.me_fragment_verify_password.*
 import kotlinx.android.synthetic.main.me_layout_login_success.*
-import kotlinx.android.synthetic.main.me_layout_relogin_input_pin.*
 
 /**
  * ling created in 2018/6/7
  **/
-class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKeyboardStateListener, IProxyStateChanged {
-    private lateinit var keyboardWatcher: KeyboardWatcher
+class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
     private var uid: String? = null
 
     private var tryingProxy = 0L
@@ -50,8 +51,18 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
         const val ACTION_BACKUP_MODE = 1
     }
 
+    private val statusBarHeight = AppContextHolder.APP_CONTEXT.getStatusBarHeight()
+
+    private val topViewHeight = if (AppContextHolder.APP_CONTEXT.checkDeviceHasNavigationBar()) {
+        getRealScreenHeight() - AppContextHolder.APP_CONTEXT.getNavigationBarHeight()
+    } else {
+        getRealScreenHeight()
+    }
+
+    private val gapSize = (topViewHeight - statusBarHeight - 426.dp2Px()) / 3 + 40.dp2Px() - 52.dp2Px()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.me_login_input_pin, container, false)
+        return inflater.inflate(R.layout.me_fragment_verify_password, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,8 +75,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
 
     override fun onDestroyView() {
         super.onDestroyView()
-        relogin_input_pin_editText.removeCallbacks(inputPinRunnable)
-        keyboardWatcher.removeSoftKeyboardStateListener(this)
+        verify_pin_input_text.removeCallbacks(inputPinRunnable)
     }
 
     private fun decodeAndLogin(pin: String, retry: Boolean = false) {
@@ -73,16 +83,16 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
         activity?.apply {
             if (!retry) {
                 hideKeyboard()
-                AmePopup.tipLoading.show(this, false)
+                startAnim()
             }
             val reLoginUid = arguments?.getString(RegistrationActivity.RE_LOGIN_ID)
             if (reLoginUid?.isNotEmpty() == true) {
-                relogin_pin_input_done_button.isEnabled = false
+                verify_pin_input_go.isEnabled = false
                 AmeLoginLogic.login(reLoginUid, pin) { succeed, exception, error ->
-                    relogin_pin_input_done_button?.isEnabled = true
+                    stopAnim()
+                    verify_pin_input_go?.isEnabled = true
+
                     if (succeed) {
-                        AmePopup.tipLoading.dismiss()
-                        relogin_input_pin_layout?.visibility = View.GONE
                         login_success_header?.text = resources.getString(R.string.me_login_successful)
                         login_success_layout?.visibility = View.VISIBLE
                         showAnimatorForView(login_success_done_button)
@@ -94,21 +104,24 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
                                     putExtra(DatabaseMigrateActivity.IS_LOGIN_PROGRESS, true)
                                 })
                             } else {
-                                gotoHomeActivity(accountContext,false)
+                                gotoHomeActivity(accountContext, false)
                             }
                         }, 1500)
                     } else {
                         ALog.e(TAG, "decodeAndLogin error$error, retry: $retry", exception)
-                        val failedByFunction = when(exception) {
-                            is AmeLoginErrorPasswordException, is AmeLoginWrongAccountException, is AmeLoginUnknownException -> true
+                        val failedByFunction = when (exception) {
+                            is AmeLoginErrorPasswordException,
+                            is AmeLoginWrongAccountException,
+                            is AmeLoginUnknownException -> true
                             else -> false
                         }
                         if (retry || failedByFunction) {
                             tryingProxy = 0
-                            AmePopup.tipLoading.dismiss()
-                            AmePopup.result.failure(this, error)
+                            ViewUtils.fadeIn(verify_pin_error, 250)
+                            verify_pin_error.text = error
                         } else {
-                            AmePopup.tipLoading.updateTip(getString(R.string.me_proxy_connecing_to_server))
+                            ViewUtils.fadeIn(verify_pin_tips, 250)
+                            verify_pin_tips.text = getString(R.string.me_proxy_connecing_to_server)
                             tryProxy()
                         }
                     }
@@ -148,7 +161,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
             getString(R.string.login_try_official_proxy_using_xxx)
         }
 
-        AmePopup.tipLoading.updateSubTip(tip)
+        verify_pin_tips.text = tip
     }
 
     override fun onProxyConnectFinished() {
@@ -158,14 +171,12 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
                 return
             }
 
+            ViewUtils.fadeOut(verify_pin_tips, 250)
             if (ProxyManager.isProxyRunning()) {
-                AmePopup.tipLoading.updateTip("")
-                AmePopup.tipLoading.updateSubTip("")
-                decodeAndLogin(relogin_input_pin_editText.text.toString())
+                decodeAndLogin(verify_pin_input_text.text.toString())
             } else {
                 tryingProxy = 0
-                AmePopup.tipLoading.dismiss()
-                AmeAppLifecycle.failure(getString(R.string.login_login_failed), false)
+                verify_pin_error.text = getString(R.string.login_login_failed)
             }
         }
     }
@@ -178,87 +189,105 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
             val avatar: String? = account?.avatar
 
             if (!realUid.isNullOrEmpty()) {
-                relogin_input_pin_nikename?.text = name
-                relogin_input_pin_avatar?.setPhoto(realUid, name ?: realUid, avatar ?: "")
+                val avatarText = name?.substring(0, 1) ?: realUid.substring(0, 1)
+                verify_pin_name?.text = name
+                verify_pin_avatar?.setPhoto(realUid, avatarText, avatar ?: "")
             }
         }
-    }
-
-    override fun onSoftKeyboardOpened(keyboardHeightInPx: Int) {
-        activity?.apply {
-            val location = IntArray(2)
-            content_layout.getLocationOnScreen(location)    
-            val x = location[0]
-            val y = location[1]
-            val bottom = getScreenHeight() - (y + content_layout.height)
-            if (keyboardHeightInPx > bottom) {
-                val mAnimatorTranslateY = ObjectAnimator.ofFloat(content_layout, "translationY",
-                        0.0f, -(keyboardHeightInPx - bottom + 16f.dp2Px()))
-                mAnimatorTranslateY.duration = 200
-                mAnimatorTranslateY.interpolator = AccelerateDecelerateInterpolator()
-                mAnimatorTranslateY.start()
-            }
-        }
-
-    }
-
-    override fun onSoftKeyboardClosed() {
-        val mAnimatorTranslateY = ObjectAnimator.ofFloat(content_layout, "translationY", content_layout.translationY, 0f)
-        mAnimatorTranslateY.duration = 200
-        mAnimatorTranslateY.interpolator = AccelerateDecelerateInterpolator()
-        mAnimatorTranslateY.start()
     }
 
     private val inputPinRunnable = Runnable {
-        relogin_input_pin_editText.requestFocus()
-        (activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.showSoftInput(relogin_input_pin_editText, 0)
+        verify_pin_input_text.requestFocus()
+        (activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.showSoftInput(verify_pin_input_text, 0)
     }
 
     private fun initViews() {
-        relogin_pin_input_done_button.setOnClickListener {
-            if (TextUtils.isEmpty(relogin_input_pin_editText.text)) {
+        verify_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
+            override fun onClickLeft() {
+                val act = activity ?: return
+                if (uid != null) {
+                    if (AMELogin.isLogin) {
+                        act.finish()
+                    } else {
+                        act.hideKeyboard()
+                        val intent = Intent(act, RegistrationActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        act.finish()
+                    }
+                } else {
+                    act.apply { supportFragmentManager.popBackStack() }
+                }
+            }
+        })
+        val action = arguments?.getInt(ACTION, 0)
+        if (action == ACTION_BACKUP_MODE) {
+            verify_title_bar.setCenterText(getString(R.string.me_account_verify_title))
+        } else {
+            verify_title_bar.setCenterText(getString(R.string.me_str_login))
+        }
+
+        verify_pin_avatar.layoutParams = (verify_pin_avatar.layoutParams as ConstraintLayout.LayoutParams).apply {
+            topMargin = gapSize
+        }
+
+        verify_pin_input_go.setOnClickListener {
+            if (TextUtils.isEmpty(verify_pin_input_text.text)) {
                 Toast.makeText(activity!!, R.string.me_input_pin_hint, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             } else if (!AppUtil.checkNetwork()) {
                 return@setOnClickListener
             }
 
-            decodeAndLogin(relogin_input_pin_editText.text.toString())
-        }
-        relogin_input_pin_back.setOnClickListener {
-            val act = activity ?: return@setOnClickListener
-            if (uid != null) {
-                if (AMELogin.isLogin) {
-                    act.finish()
-                } else {
-                    act.hideKeyboard()
-                    val intent = Intent(act, RegistrationActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    this.startActivity(intent)
-                    act.finish()
-                }
-
-            } else
-                act.apply { supportFragmentManager.popBackStack() }
+            decodeAndLogin(verify_pin_input_text.text.toString())
         }
 
-        relogin_input_pin_editText.postDelayed(inputPinRunnable, 200L)
-
-        val action = arguments?.getInt(ACTION, 0)
-        if (action == ACTION_BACKUP_MODE) {
-            forget_password_button.visibility = View.GONE
-        } else {
-            forget_password_button.visibility = View.VISIBLE
-            forget_password_button.setOnClickListener {
-                activity?.apply {
-                    supportFragmentManager.beginTransaction()
-                            .replace(R.id.register_container, BanResetPasswordFragment(), "ban_reset_password_fragment")
-                            .addToBackStack("login_verify_pin")
-                            .commit()
-                }
+        verify_pin_input_text.postDelayed(inputPinRunnable, 200L)
+        verify_pin_input_text.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                updateVerifyInput(s?.isNotEmpty() == true)
             }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+
+        verify_pin_input_clear.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            verify_pin_input_text.text.clear()
         }
-        keyboardWatcher = KeyboardWatcher(activity?.findViewById(Window.ID_ANDROID_CONTENT))
-        keyboardWatcher.addSoftKeyboardStateListener(this)
+    }
+
+    private fun updateVerifyInput(hasText: Boolean) {
+        if (hasText) {
+            verify_pin_input_clear.alpha = 1f
+            verify_pin_input_clear.isEnabled = true
+            verify_pin_input_go.isEnabled = true
+            verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_icon)
+            verify_pin_error.visibility = View.GONE
+        } else {
+            verify_pin_input_clear.alpha = 0.7f
+            verify_pin_input_clear.isEnabled = false
+            verify_pin_input_go.isEnabled = false
+            verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_disabled_icon)
+        }
+    }
+
+    private fun startAnim() {
+        ViewUtils.fadeOut(verify_pin_input_go, 250)
+        ViewUtils.fadeOut(verify_pin_error, 250)
+        ViewUtils.fadeIn(verify_pin_loading, 250)
+        verify_pin_loading.startAnim()
+    }
+
+    private fun stopAnim() {
+        ViewUtils.fadeOut(verify_pin_loading, 250)
+        ViewUtils.fadeIn(verify_pin_input_go, 250)
+        verify_pin_loading.stopAnim()
     }
 }

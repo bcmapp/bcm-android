@@ -1,6 +1,7 @@
 package com.bcm.messenger.ui.widget
 
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.recipients.Recipient
 
 /**
  * Created by Kin on 2020/1/2
@@ -33,6 +34,8 @@ interface IProfileView {
     fun onViewPositionChanged(position: Float, percent: Float)
 
     fun getCurrentContext(): AccountContext?
+
+    fun getCurrentRecipient(): Recipient?
 
     fun positionChanged(position: Float) {
         val innerPos = when {

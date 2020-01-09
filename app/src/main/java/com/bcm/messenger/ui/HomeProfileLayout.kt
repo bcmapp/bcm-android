@@ -19,6 +19,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.logic.AmeLoginLogic
@@ -44,6 +45,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         fun onDragVertically(ev: MotionEvent?): Boolean
         fun onInterceptEvent(ev: MotionEvent?): Boolean
         fun onViewPagerScrollStateChanged(newState: Int)
+        fun onViewChanged(newRecipient: Recipient?)
     }
 
     private val statusBarHeight = context.getStatusBarHeight()
@@ -138,7 +140,11 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
             }
 
             override fun onAccountLoadSuccess() {
+            }
 
+            override fun onResortSuccess() {
+                home_profile_view_pager.setCurrentItem(1, false)
+                viewPagerAdapter.setActiveView(1)
             }
 
             override fun onViewClickLogin(uid: String) {
@@ -161,7 +167,8 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
             override fun onPageSelected(position: Int) {
                 viewPagerAdapter.setActiveView(position)
-                shownViews = viewPagerAdapter.getCurrentShownViews(position)
+                shownViews = viewPagerAdapter.getCurrentShownViews()
+                listener?.onViewChanged(viewPagerAdapter.getCurrentView(position)?.getCurrentRecipient())
             }
         })
         home_profile_view_pager.listener = object : HomeViewPager.DragListener {
@@ -260,6 +267,14 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         return viewPagerAdapter.getCurrentView(home_profile_view_pager.currentItem)?.getCurrentContext()
     }
 
+    fun reSortAccountList() {
+        viewPagerAdapter.reSortAccounts()
+    }
+
+    fun reloadAccountList() {
+        viewPagerAdapter.loadAccounts()
+    }
+
     private fun deleteAccount(uid: String) {
         AlertDialog.Builder(context)
                 .setMessage(R.string.tabless_ui_delete_account_content)
@@ -276,11 +291,12 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         if (!checkOnlineAccount()) {
             return
         }
-        context.startBcmActivity((context as SwipeBaseActivity).accountContext, Intent(context, VerifyKeyActivity::class.java).apply {
+        val intent = Intent(context, VerifyKeyActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
             putExtra(VerifyKeyActivity.BACKUP_JUMP_ACTION, VerifyKeyActivity.LOGIN_PROFILE)
             putExtra(RegistrationActivity.RE_LOGIN_ID, uid)
-        })
+        }
+        context.startBcmActivity((context as SwipeBaseActivity).accountContext, intent)
     }
 
     private fun checkOnlineAccount(): Boolean {

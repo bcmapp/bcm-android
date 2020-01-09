@@ -13,10 +13,7 @@ import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
-import com.bcm.messenger.common.utils.BcmFileUtils
-import com.bcm.messenger.common.utils.hideKeyboard
-import com.bcm.messenger.common.utils.setStatusBarLightMode
-import com.bcm.messenger.common.utils.showKeyboard
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.QuickOpCheck
