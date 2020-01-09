@@ -180,7 +180,6 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), KeyboardWatcher.SoftKe
             if (!realUid.isNullOrEmpty()) {
                 relogin_input_pin_nikename?.text = name
                 relogin_input_pin_avatar?.setPhoto(realUid, name ?: realUid, avatar ?: "")
-
             }
         }
     }

@@ -331,7 +331,7 @@ object AmeLoginLogic {
                         .map {
                             RxIMHttp.remove(accountContext)
                             IMHttp.remove(accountContext)
-                            loginSucceed(data.getAccountID(), registrationId, data.uid, keyPair, signalingKey, signalPassword, password, "")
+                            loginSucceed(registrationId, data.uid, keyPair, signalingKey, signalPassword, password, "")
                         }
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
@@ -501,17 +501,17 @@ object AmeLoginLogic {
     }
 
     private fun registerSucceed(registrationId: Int, uid: String, ecKeyPair: ECKeyPair, signalKey: String, signalPassword: String, password: String, passwordHint: String) {
-        loginSucceed(uid, registrationId, uid, ecKeyPair, signalKey, signalPassword, password, passwordHint, true)
+        loginSucceed(registrationId, uid, ecKeyPair, signalKey, signalPassword, password, passwordHint, true)
     }
 
-    private fun loginSucceed(accountId: String, registrationId: Int, uid: String, ecKeyPair: ECKeyPair, signalKey: String,
+    private fun loginSucceed(registrationId: Int, uid: String, ecKeyPair: ECKeyPair, signalKey: String,
                              signalPassword: String, password: String, passwordHint: String,
                              isRegister: Boolean = false) {
 
         setTmpToken("", "")
         AmePushProcess.reset()
 
-        saveAccountData(accountId, registrationId, uid, ecKeyPair, signalKey, signalPassword, password, passwordHint)
+        saveAccountData(registrationId, uid, ecKeyPair, signalKey, signalPassword, password, passwordHint)
 
         val accountContext = getAccountContext(uid)
         initCreatePhrase(accountContext, ecKeyPair)
@@ -578,7 +578,7 @@ object AmeLoginLogic {
     /**
      * save login account state
      */
-    private fun saveAccountData(accountId: String, registrationId: Int, uid: String,
+    private fun saveAccountData(registrationId: Int, uid: String,
                                 ecKeyPair: ECKeyPair,
                                 signalKey: String,
                                 signalPassword: String,
@@ -600,7 +600,7 @@ object AmeLoginLogic {
         val encryptedPrivateKeyString = BCMPrivateKeyUtils.encryptPrivateKey(ecKeyPair.privateKey.serialize(), password.toByteArray())
         val pubKey = Base64.encodeBytes(ecKeyPair.publicKey.serialize())
 
-        var accountData = accountHistory.getAccount(accountId)
+        var accountData = accountHistory.getAccount(uid)
         if (null == accountData) {
             accountData = AmeAccountData()
             accountData.uid = uid

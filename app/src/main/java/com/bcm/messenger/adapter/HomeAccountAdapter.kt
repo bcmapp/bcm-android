@@ -69,7 +69,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
                     override fun onClickDelete(uid: String) {
                         accountList.forEach {
                             if (it.account.uid == uid) {
-                                listener?.onViewClickDelete(it.account.getAccountID())
+                                listener?.onViewClickDelete(it.account.uid)
                             }
                         }
                     }
@@ -173,7 +173,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
     fun deleteAccount(uid: String) {
         var isChanged = false
         for (item in accountList) {
-            if (item.account.getAccountID() == uid) {
+            if (item.account.uid == uid) {
                 AmeLoginLogic.accountHistory.deleteAccount(uid)
                 accountList.remove(item)
                 isChanged = true

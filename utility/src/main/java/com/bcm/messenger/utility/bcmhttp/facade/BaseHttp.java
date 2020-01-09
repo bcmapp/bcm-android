@@ -15,6 +15,7 @@ import com.bcm.messenger.utility.bcmhttp.utils.config.Platform;
 import com.bcm.messenger.utility.bcmhttp.utils.progress.ProgressInfo;
 import com.bcm.messenger.utility.bcmhttp.utils.progress.ProgressListener;
 import com.bcm.messenger.utility.bcmhttp.utils.progress.ProgressManager;
+import com.bcm.messenger.utility.logger.ALog;
 
 import java.io.IOException;
 import java.net.ConnectException;

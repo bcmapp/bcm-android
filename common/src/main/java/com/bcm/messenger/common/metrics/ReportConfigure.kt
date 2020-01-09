@@ -100,7 +100,7 @@ object ReportConfigure : LBSFetcher.ILBSFetchResult {
 
 
     fun getConfig(protoKey: String): TimeSlice {
-        return slicesMap[histogramConfigMap[protoKey]] ?: DEFAULT_SLICE
+        return slicesMap[histogramConfigMap[protoKey]]?: slicesMap["Default1"] ?: DEFAULT_SLICE
     }
 
     fun updateConfig(newConfig: MetricsConfigs) {

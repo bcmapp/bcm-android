@@ -96,6 +96,8 @@ class AmeApplication : MultiDexApplication() {
             return
         }
 
+        initNetWork(isReleaseBuild)
+
         AmeModuleCenter.login()
 
         check()
@@ -108,7 +110,6 @@ class AmeApplication : MultiDexApplication() {
         WiFiUtil.init(this)
         BleUtil.init(this)
 
-        initNetWork(isReleaseBuild)
         AmePushProcess.clearNotificationCenter()
 
         if (AMELogin.isLogin) {
@@ -176,8 +177,10 @@ class AmeApplication : MultiDexApplication() {
     private fun initNetWork(isReleaseBuild: Boolean) {
         SystemUtils.initAPPInfo(getPackageInfo().versionName, getPackageInfo().versionCode)
 
-        val httpsEnable = EnvSettingLogic.getEnvSetting(isReleaseBuild).httpsEnable;
-        BaseHttp.setDevMode(httpsEnable)
+        val httpsEnable = EnvSettingLogic.getEnvSetting(isReleaseBuild).httpsEnable
+        BaseHttp.setDevMode(!httpsEnable)
+
+        ALog.i(TAG, "initNetWork $httpsEnable")
 
         ProxyManager.setConnectionChecker(IMServerConnectionChecker())
 
