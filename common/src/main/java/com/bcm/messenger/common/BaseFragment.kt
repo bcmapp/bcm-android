@@ -94,12 +94,11 @@ open class BaseFragment : Fragment() {
     fun <T : Fragment> initFragment(@IdRes target: Int,
                                     fragment: T,
                                     extras: Bundle?): T {
-        val newArg = Bundle().apply {
-            putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContextObj)
-        }
+        val newArg = Bundle()
         if (extras != null) {
             newArg.putAll(extras)
         }
+        newArg.putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContextObj)
         fragment.arguments = newArg
         fragmentManager?.beginTransaction()
                 ?.replace(target, fragment)

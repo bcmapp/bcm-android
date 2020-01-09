@@ -2,34 +2,17 @@ package com.bcm.messenger.common
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
-import android.os.Looper
-import android.os.MessageQueue
 import android.view.WindowManager
 import androidx.annotation.IdRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IUmengModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
-import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.logger.ALog
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
-import me.imid.swipebacklayout.lib.SwipeBackLayout
-import me.imid.swipebacklayout.lib.Utils
-import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase
-import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper
-import java.util.concurrent.TimeUnit
 
 open class AccountSwipeBaseActivity : SwipeBaseActivity() {
 
@@ -44,6 +27,7 @@ open class AccountSwipeBaseActivity : SwipeBaseActivity() {
     private var mModifiedListener = RecipientModifiedListener { recipient ->
         if (accountRecipientObj == recipient) {
             accountRecipientObj = recipient
+            onLoginRecipientRefresh()
         }
     }
 
@@ -89,12 +73,11 @@ open class AccountSwipeBaseActivity : SwipeBaseActivity() {
     override fun <T : Fragment> initFragment(@IdRes target: Int,
                                             fragment: T,
                                             extras: Bundle?): T {
-        val newArg = Bundle().apply {
-            putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContextObj)
-        }
+        val newArg = Bundle()
         if (extras != null) {
             newArg.putAll(extras)
         }
+        newArg.putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContextObj)
         return super.initFragment(target, fragment, newArg)
 
     }

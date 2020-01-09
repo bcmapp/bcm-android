@@ -14,9 +14,8 @@ import com.bcm.messenger.chats.NewChatActivity
 import com.bcm.messenger.chats.thread.MessageListFragment
 import com.bcm.messenger.chats.thread.MessageListTitleView
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.AccountSwipeBaseActivity
-import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
@@ -641,7 +640,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AccountLoginStateChangedEvent) {
-        if (accountContext.uid != AmeModuleCenter.login().majorUid()) {
+        if (accountContext != AMELogin.majorContext) {
             setAccountContext(AMELogin.majorContext)
             titleView.updateContext(accountContext)
             home_toolbar_avatar.showRecipientAvatar(accountRecipient)
