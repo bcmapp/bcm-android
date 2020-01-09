@@ -102,6 +102,7 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
         recipient?.addListener(this)
         currentName = recipient?.name?:accountContext.uid.front()
         update()
+        updateName()
     }
 
     private fun jump() {
@@ -245,7 +246,8 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
     }
 
     private fun getState(): Int {
-        val serviceConnectState = AmeModuleCenter.serverDaemon(AMELogin.majorContext).state()
+        val accountContext = this.accountContext?:return CONNECTED
+        val serviceConnectState = AmeModuleCenter.serverDaemon(accountContext).state()
         return when {
             !NetworkUtil.isConnected() -> {
                 OFFLINE
@@ -274,15 +276,20 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
             if (recipient.name != currentName) {
                 currentName = recipient.name
 
-                if (getState() == CONNECTED) {
-                    val spanString = SpannableString(currentName)
-                    spanString.setSpan(StyleSpan(Typeface.BOLD), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    spanString.setSpan(AbsoluteSizeSpan(22.sp2Px()), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    spanString.setSpan(ForegroundColorSpan(getColor(context, R.color.common_color_black)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-                    setText(spanString)
-                }
+                updateName()
             }
         }
     }
+
+    private fun updateName() {
+        if (getState() == CONNECTED) {
+            val spanString = SpannableString(currentName)
+            spanString.setSpan(StyleSpan(Typeface.BOLD), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spanString.setSpan(AbsoluteSizeSpan(22.sp2Px()), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spanString.setSpan(ForegroundColorSpan(getColor(context, R.color.common_color_black)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+            setText(spanString)
+        }
+    }
+
 }

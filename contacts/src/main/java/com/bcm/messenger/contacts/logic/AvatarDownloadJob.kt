@@ -168,7 +168,7 @@ class AvatarDownloadJob(private val context: Context, private val accountContext
                             Repository.getRecipientRepo(accountContext)?.setPrivacyProfile(recipient, privacyProfile)
 
                             if (recipient.isLogin) {
-                                AmeModuleCenter.user(logic.mAccountContext)?.saveAccount(recipient, null, recipient.privacyAvatar)
+                                AmeModuleCenter.user(accountContext)?.saveAccount(recipient, null, recipient.privacyAvatar)
                             }
                             callback(true)
 
