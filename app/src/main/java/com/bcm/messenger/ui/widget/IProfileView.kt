@@ -6,6 +6,10 @@ import com.bcm.messenger.common.recipients.Recipient
 /**
  * Created by Kin on 2020/1/2
  */
+const val centerPosition = 0.20588236f
+const val leftPosition = -0.79411764f
+const val rightPosition = 1.20588236f
+
 interface IProfileView {
     var isActive: Boolean
     var isLogin: Boolean
@@ -39,19 +43,19 @@ interface IProfileView {
 
     fun positionChanged(position: Float) {
         val innerPos = when {
-            position < -1f -> -1f
-            position > 1f -> 1f
+            position < leftPosition -> leftPosition
+            position > rightPosition -> rightPosition
             else -> position
         }
 
-        val percent = if (innerPos < 0) {
-            (1 + innerPos) / 1
+        val percent = if (innerPos < centerPosition) {
+            (1 - centerPosition + innerPos) / 1
         } else {
-            (1 - innerPos) / 1
+            (centerPosition - innerPos + 1) / 1
         }
 
         if (!isActive) {
-            if ((this.position == -1f || this.position == 1f) && position == 0f) {
+            if ((this.position == leftPosition || this.position == rightPosition) && position == centerPosition) {
                 return
             }
         }

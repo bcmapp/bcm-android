@@ -24,6 +24,7 @@ import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.me.ui.scan.NewScanActivity
 import com.bcm.messenger.me.ui.setting.SettingActivity
 import com.bcm.messenger.ui.widget.IProfileView
+import com.bcm.messenger.ui.widget.centerPosition
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.logger.ALog
@@ -38,7 +39,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
                                                 attrs: AttributeSet? = null,
                                                 defStyleAttr: Int = 0)
     : ConstraintLayout(context, attrs, defStyleAttr), RecipientModifiedListener, IProfileView {
-    private val TAG = "MessageProfileView"
+    private val TAG = "HomeProfileView"
 
     interface ProfileViewCallback {
         fun onClickExit()
@@ -358,7 +359,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         val curAvatarMargin = avatarMargin * (1 - percent)
 
         home_profile_avatar.layoutParams = (home_profile_avatar.layoutParams as LayoutParams).apply {
-            if (position < 0) {
+            if (position < centerPosition) {
                 marginStart = curAvatarMargin.toInt()
             } else {
                 marginEnd = curAvatarMargin.toInt()
@@ -368,7 +369,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         home_profile_avatar.scaleY = scale
 
         home_profile_unread.layoutParams = (home_profile_unread.layoutParams as LayoutParams).apply {
-            marginEnd = if (position < 0) {
+            marginEnd = if (position < centerPosition) {
                 dp10 + (badgeMarginEnd * (1 - percent)).toInt()
             } else {
                 dp10 + (badgeMarginStart * (1 - percent)).toInt()

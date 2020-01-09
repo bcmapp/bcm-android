@@ -13,6 +13,9 @@ import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.ui.HomeAddAccountView
 import com.bcm.messenger.ui.HomeProfileView
 import com.bcm.messenger.ui.widget.IProfileView
+import com.bcm.messenger.ui.widget.centerPosition
+import com.bcm.messenger.ui.widget.leftPosition
+import com.bcm.messenger.ui.widget.rightPosition
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -88,9 +91,9 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
         }
         view.initView()
         when {
-            position < lastActivePos -> view.positionChanged(-1f)
-            position == lastActivePos -> view.positionChanged(0f)
-            position > lastActivePos -> view.positionChanged(1f)
+            position < lastActivePos -> view.positionChanged(leftPosition)
+            position == lastActivePos -> view.positionChanged(centerPosition)
+            position > lastActivePos -> view.positionChanged(rightPosition)
         }
         (view as View).tag = Pair(position, account.account.uid)
 

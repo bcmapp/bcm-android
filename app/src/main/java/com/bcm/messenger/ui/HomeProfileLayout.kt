@@ -267,6 +267,10 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         return viewPagerAdapter.getCurrentView(home_profile_view_pager.currentItem)?.getCurrentContext()
     }
 
+    fun checkAccountLogined(): Boolean {
+        return viewPagerAdapter.getCurrentView(home_profile_view_pager.currentItem)?.isLogin ?: false
+    }
+
     fun reSortAccountList() {
         viewPagerAdapter.reSortAccounts()
     }

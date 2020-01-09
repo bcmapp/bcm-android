@@ -391,6 +391,9 @@ class HomeActivity : SwipeBaseActivity() {
             private val avatarMaxSize = 160.dp2Px()
             private val avatarStartMaxMargin = (screenWidth - avatarMaxSize) / 2 - dp15
 
+            private var checked = false
+            private var isCurrentLogin = true
+
             override fun onTopViewHeightChanged(height: Int, direction: Int) {
                 val percentage = height.toFloat() / topViewHeight
                 val distance = if (direction == ConstraintPullDownLayout.MOVE_DOWN) {
@@ -408,11 +411,23 @@ class HomeActivity : SwipeBaseActivity() {
                 val avatarSize = (dp120.toFloat() * percentage).toInt() + dp40
                 val marginStart = dp15 + (avatarStartMaxMargin.toFloat() * percentage).toInt()
                 val marginTop = (gapSize.toFloat() * percentage).toInt() + dp10
+
+                if (!checked) {
+                    isCurrentLogin = home_profile_layout.checkAccountLogined()
+                }
+
                 home_toolbar_avatar.layoutParams = (home_toolbar_avatar.layoutParams as ConstraintLayout.LayoutParams).apply {
-                    this.marginStart = marginStart
-                    this.topMargin = marginTop
-                    this.width = avatarSize
-                    this.height = avatarSize
+                    if (direction == ConstraintPullDownLayout.MOVE_DOWN || isCurrentLogin) {
+                        this.marginStart = marginStart
+                        this.topMargin = marginTop
+                        this.width = avatarSize
+                        this.height = avatarSize
+                    } else {
+                        this.marginStart = dp15
+                        this.topMargin = dp10
+                        this.width = dp40
+                        this.height = dp40
+                    }
                 }
                 home_toolbar_avatar.updateOval()
 
@@ -432,14 +447,20 @@ class HomeActivity : SwipeBaseActivity() {
 
                 when {
                     height != 0 && height != topViewHeight -> {
-                        home_toolbar_avatar.setPrivateElevation(32f.dp2Px())
-                        if (home_toolbar_avatar.visibility == View.GONE) {
+                        if (isCurrentLogin) {
+                            home_toolbar_avatar.setPrivateElevation(32f.dp2Px())
+                            if (home_toolbar_avatar.visibility == View.GONE) {
+                                home_toolbar_avatar.visibility = View.VISIBLE
+                                home_toolbar_avatar.getIndividualAvatarView().hideCoverText()
+                                home_profile_layout.hideAvatar()
+                            }
+                        } else {
                             home_toolbar_avatar.visibility = View.VISIBLE
-                            home_toolbar_avatar.getIndividualAvatarView().hideCoverText()
-                            home_profile_layout.hideAvatar()
                         }
                     }
                     height == 0 -> {
+                        isCurrentLogin = true
+
                         home_toolbar_avatar.setPrivateElevation(0f)
                         home_toolbar_avatar.getIndividualAvatarView().showCoverText()
                         home_toolbar_avatar.showPrivateAvatar(accountRecipient)
@@ -454,6 +475,9 @@ class HomeActivity : SwipeBaseActivity() {
                         home_profile_layout.checkCurrentPage(accountRecipient.address.serialize())
                     }
                     height == topViewHeight -> {
+                        checked = false
+                        isCurrentLogin = true
+
                         home_toolbar_avatar.setPrivateElevation(0f)
                         home_toolbar_avatar.visibility = View.GONE
                         home_profile_layout.showAvatar()

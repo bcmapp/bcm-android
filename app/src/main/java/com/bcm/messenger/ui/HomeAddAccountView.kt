@@ -24,6 +24,7 @@ import com.bcm.messenger.common.utils.getScreenWidth
 import com.bcm.messenger.common.utils.getString
 import com.bcm.messenger.common.utils.isReleaseBuild
 import com.bcm.messenger.ui.widget.IProfileView
+import com.bcm.messenger.ui.widget.centerPosition
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
@@ -130,7 +131,7 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
         val curAvatarMargin = avatarMargin * (1 - percent)
 
         home_add_view_add.layoutParams = (home_add_view_add.layoutParams as LayoutParams).apply {
-            if (position < 0) {
+            if (position < centerPosition) {
                 marginStart = curAvatarMargin.toInt()
                 marginEnd = 0
             } else {
