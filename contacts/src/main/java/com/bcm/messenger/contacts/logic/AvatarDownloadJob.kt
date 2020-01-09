@@ -5,7 +5,6 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.repositories.Repository
-import com.bcm.messenger.common.jobs.ContextJob
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.BcmFileUtils
@@ -13,8 +12,6 @@ import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.bcmhttp.callback.FileDownCallback
 import com.bcm.messenger.utility.logger.ALog
 import okhttp3.Call
-import org.whispersystems.jobqueue.JobParameters
-import org.whispersystems.signalservice.api.push.exceptions.PushNetworkException
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -22,9 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger
  *
  * Created by wjh on 2019-12-31
  */
-class AvatarDownloadJob(context: Context, accountContext: AccountContext, private val logic: BcmProfileLogic) : ContextJob(context, accountContext,
-        JobParameters.newBuilder().withGroupId("RecipientProfileLogic_avatarDownloadJob")
-                .withRetryCount(3).create()) {
+class AvatarDownloadJob(private val context: Context, private val accountContext: AccountContext, private val logic: BcmProfileLogic) : Runnable {
 
     private val TAG = "AvatarDownloadJob"
     private var mCurrentList: List<BcmProfileLogic.TaskData>? = null
@@ -92,7 +87,7 @@ class AvatarDownloadJob(context: Context, accountContext: AccountContext, privat
     }
 
     @Throws(Exception::class)
-    override fun onRun() {
+    override fun run() {
         var hasWait = false
         do {
             if (mCurrentList != null) {
@@ -192,16 +187,6 @@ class AvatarDownloadJob(context: Context, accountContext: AccountContext, privat
             callback(false)
         }
 
-    }
-
-    override fun onShouldRetry(e: Exception): Boolean {
-        return e is PushNetworkException
-    }
-
-    override fun onAdded() {
-    }
-
-    override fun onCanceled() {
     }
 
 }

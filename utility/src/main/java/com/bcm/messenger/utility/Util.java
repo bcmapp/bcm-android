@@ -78,6 +78,19 @@ public class Util {
         return executor;
     }
 
+    public static ExecutorService newThreadedExecutor(int coreSize) {
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(coreSize, coreSize, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>());
+
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+            }
+        });
+
+        return executor;
+    }
+
     public static ExecutorService newMasterSecretExecutor() {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 5,
                 10L, TimeUnit.SECONDS, new LinkedBlockingQueue());

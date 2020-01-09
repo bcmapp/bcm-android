@@ -3,24 +3,17 @@ package com.bcm.messenger.contacts.logic
 import android.annotation.SuppressLint
 import android.content.Context
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.jobs.ContextJob
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
-import org.whispersystems.jobqueue.JobParameters
-import org.whispersystems.signalservice.api.push.exceptions.PushNetworkException
 
 /**
  *
  * Created by wjh on 2019-12-31
  */
-class ProfileFetchJob(context: Context, accountContext: AccountContext, private val logic: BcmProfileLogic) : ContextJob(context, accountContext,
-        JobParameters.newBuilder().withGroupId("RecipientProfileLogic_profileFetchJob")
-                .withRetryCount(3).create()) {
+class ProfileFetchJob(private val context: Context, private val accountContext: AccountContext, private val logic: BcmProfileLogic) : Runnable {
 
     private val TAG = "ProfileFetchJob"
     private var mCurrentList: List<BcmProfileLogic.TaskData>? = null
-
-    override fun onAdded() {}
 
     @SuppressLint("CheckResult")
     private fun handleTaskData(dataList: List<BcmProfileLogic.TaskData>) {
@@ -40,7 +33,7 @@ class ProfileFetchJob(context: Context, accountContext: AccountContext, private 
     }
 
     @Throws(Exception::class)
-    override fun onRun() {
+    override fun run() {
         var hasWait = false
         do {
             if (mCurrentList != null) {
@@ -68,12 +61,5 @@ class ProfileFetchJob(context: Context, accountContext: AccountContext, private 
 
         logic.finishJob(this)
     }
-
-    override fun onShouldRetry(e: Exception): Boolean {
-        ALog.e(TAG, "retrieve profiles error", e)
-        return e is PushNetworkException
-    }
-
-    override fun onCanceled() {}
 
 }

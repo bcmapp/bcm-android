@@ -28,11 +28,11 @@ public abstract class SendJob extends MasterSecretJob {
 
     public SendJob(Context context, AccountContext accountContext, JobParameters parameters) {
         super(context, accountContext, parameters);
-        repository = Repository.getInstance(accountContext);
     }
 
     @Override
     public final void onRun(MasterSecret masterSecret) throws Exception {
+        this.repository = Repository.getInstance(accountContext);
         if (repository == null) {
             ALog.logForSecret(TAG, "User " + accountContext.getUid() + " is not login");
             return;

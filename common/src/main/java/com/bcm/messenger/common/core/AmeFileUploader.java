@@ -86,7 +86,7 @@ public class AmeFileUploader {
     public static void initDownloadPath(Context context) {
 
         //todo wangshuhe
-        DOWNLOAD_PATH = "";//AMELogin.INSTANCE.getAccountDir();
+        DOWNLOAD_PATH = context.getApplicationContext().getFilesDir().getAbsolutePath();//AMELogin.INSTANCE.getAccountDir();
         AUDIO_DIRECTORY = DOWNLOAD_PATH + "/audio";
         THUMBNAIL_DIRECTORY = DOWNLOAD_PATH + "/thumbnail";
         DOCUMENT_DIRECTORY = DOWNLOAD_PATH + "/document";
@@ -133,6 +133,11 @@ public class AmeFileUploader {
         }
 
         f = new File(TEMP_DIRECTORY);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+
+        f = new File(CHAT_FILE_DIRECTORY);
         if (!f.exists()) {
             f.mkdirs();
         }

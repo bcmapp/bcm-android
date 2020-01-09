@@ -18,7 +18,6 @@ import com.bcm.messenger.common.core.*
 import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
-import com.bcm.messenger.common.jobs.ContextJob
 import com.bcm.messenger.common.profiles.PlaintextServiceProfile
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -26,10 +25,8 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.IdentityUtil
-import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.*
 import com.bcm.messenger.utility.Base64
-import com.bcm.messenger.utility.EncryptUtils
-import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.bcmhttp.exception.NoContentException
 import com.bcm.messenger.utility.bcmhttp.callback.FileDownCallback
 import com.bcm.messenger.utility.bcmhttp.exception.NoContentException
@@ -1039,7 +1036,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
 
 
     @Synchronized
-    fun finishJob(job: ContextJob) {
+    fun finishJob(job: Runnable) {
 
         if (job is ProfileFetchJob) {
             ALog.i(TAG, "finish profile job")
@@ -1054,13 +1051,12 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
     private fun handleDownloadAvatar() {
 
         if (mAvatarJob?.get() == null) {
-            val accountJobManager = AmeModuleCenter.accountJobMgr(mAccountContext)
-            if (accountJobManager != null) {
-                ALog.i(TAG, "handleDownloadAvatar")
-                val job = AvatarDownloadJob(AppContextHolder.APP_CONTEXT, mAccountContext,this)
-                mAvatarJob = WeakReference(job)
-                accountJobManager.add(job)
-            }
+
+            ALog.i(TAG, "handleDownloadAvatar")
+            val job = AvatarDownloadJob(AppContextHolder.APP_CONTEXT, mAccountContext,this)
+            mAvatarJob = WeakReference(job)
+            Util.newThreadedExecutor(2).submit(job)
+
         } else {
             ALog.i(TAG, "handleDownloadAvatar exist")
         }
@@ -1070,13 +1066,12 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
     private fun handleFetchProfile() {
 
         if (mProfileJob?.get() == null) {
-            val accountJobManager = AmeModuleCenter.accountJobMgr(mAccountContext)
-            if (accountJobManager != null) {
-                ALog.i(TAG, "handleFetchProfile")
-                val job = ProfileFetchJob(AppContextHolder.APP_CONTEXT, mAccountContext,this)
-                mProfileJob = WeakReference(job)
-                accountJobManager.add(job)
-            }
+
+            ALog.i(TAG, "handleFetchProfile")
+            val job = ProfileFetchJob(AppContextHolder.APP_CONTEXT, mAccountContext,this)
+            mProfileJob = WeakReference(job)
+            Util.newThreadedExecutor(2).submit(job)
+
         } else {
             ALog.i(TAG, "handleFetchProfile exist")
         }

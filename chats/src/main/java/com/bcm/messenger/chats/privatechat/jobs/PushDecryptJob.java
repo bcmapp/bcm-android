@@ -117,7 +117,7 @@ public class PushDecryptJob extends ContextJob {
 
     private final long messageId;
     private final long smsMessageId;
-    private Repository repository;
+    private transient Repository repository;
 
     public PushDecryptJob(Context context, AccountContext accountContext, long pushMessageId) {
         this(context, accountContext, pushMessageId, -1);
@@ -131,13 +131,6 @@ public class PushDecryptJob extends ContextJob {
                 .create());
         this.messageId = pushMessageId;
         this.smsMessageId = smsMessageId;
-
-        Repository repository = Repository.getInstance(accountContext);
-        if (repository == null) {
-            ALog.logForSecret(TAG, "User " + accountContext.getUid() + " is not login");
-            return;
-        }
-        this.repository = repository;
     }
 
     @Override
@@ -146,13 +139,13 @@ public class PushDecryptJob extends ContextJob {
 
     @Override
     public void onRun() throws NoSuchMessageException {
-
-        if (!IdentityKeyUtil.hasIdentityKey(accountContext)) {
-            ALog.e(TAG, "Skipping job, waiting for migration...");
+        this.repository = Repository.getInstance(accountContext);
+        if (repository == null) {
+            ALog.logForSecret(TAG, "User " + accountContext.getUid() + " is not login");
             return;
         }
-        if (this.repository == null) {
-            ALog.logForSecret(TAG, "User " + accountContext.getUid() + " is not login");
+        if (!IdentityKeyUtil.hasIdentityKey(accountContext)) {
+            ALog.e(TAG, "Skipping job, waiting for migration...");
             return;
         }
 
