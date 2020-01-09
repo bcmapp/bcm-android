@@ -108,6 +108,8 @@
 
         <activity android:name=".ui.TablessIntroActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.AccountSwitcherActivity"
+            android:screenOrientation="portrait" />
 
         <service android:name="com.bcm.messenger.google.FcmMessagingService">
             <intent-filter>

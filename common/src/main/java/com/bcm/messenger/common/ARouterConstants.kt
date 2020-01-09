@@ -231,6 +231,8 @@ object ARouterConstants {
         const val CONTACT_SEND = PREFIX.CONTACT + "/contact_send"
 
         const val SETTINGS = PREFIX.USER + "/settings"
+
+        const val ACCOUNT_SWITCHER = PREFIX.APP + "/account_switcher"
     }
 
 
