@@ -16,7 +16,6 @@ import com.bcm.messenger.chats.util.ChatComponentListener
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.ShareElements
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.activity.ApkInstallRequestActivity
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.AmeAppLifecycle
@@ -98,7 +97,7 @@ open class AdHocPreviewClickListener(private val accountContext: AccountContext)
         private fun gotoActivity(accountContext: AccountContext, context: Context, intent: Intent, bundle: Bundle?) {
             try {
                 if (context is Activity) {
-                    context.startBcmActivity(AMELogin.majorContext, intent, bundle)
+                    context.startBcmActivity(accountContext, intent, bundle)
                 } else {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startBcmActivity(accountContext, intent, bundle)

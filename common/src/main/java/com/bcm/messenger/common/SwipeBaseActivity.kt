@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IUmengModule
@@ -29,9 +28,6 @@ import me.imid.swipebacklayout.lib.SwipeBackLayout
 import me.imid.swipebacklayout.lib.Utils
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import java.util.concurrent.TimeUnit
 
 open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
@@ -83,12 +79,14 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         ALog.d(TAG, "onCreate: $localClassName")
         window.setTranslucentStatus()
         val accountContextObj: AccountContext? = intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext
-        if (accountContextObj == null) {
+        if (accountContextObj != null) {
+            setAccountContext(accountContextObj)
+        }
+        if (!checkHasAccountContext()) {
             ALog.w(TAG, "accountContextObj is null, finish")
             finish()
             return
         }
-        setAccountContext(accountContextObj)
 
         mHelper = SwipeBackActivityHelper(this)
         mHelper.onActivityCreate()
@@ -146,7 +144,6 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     override fun onDestroy() {
         super.onDestroy()
-        EventBus.getDefault().unregister(this)
         Looper.myQueue().removeIdleHandler(idleHandler)
         if (::accountRecipientObj.isInitialized) {
             accountRecipientObj.removeListener(mModifiedListener)
@@ -198,12 +195,15 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(accountContextObj) ?: throw Exception("getMasterSecret is null")
 
-
-    protected fun setAccountContext(context: AccountContext) {
+    fun setAccountContext(context: AccountContext) {
         if (!::accountContextObj.isInitialized || accountContextObj != context) {
             accountContextObj = context
             setAccountRecipient(Recipient.login(context))
         }
+    }
+
+    private fun checkHasAccountContext(): Boolean {
+        return ::accountContextObj.isInitialized
     }
 
     private fun setAccountRecipient(recipient: Recipient) {

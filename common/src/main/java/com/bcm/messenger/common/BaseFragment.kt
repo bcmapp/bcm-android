@@ -35,9 +35,17 @@ open class BaseFragment : Fragment() {
 
     fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(accountContextObj) ?: throw Exception("getMasterSecret is null")
 
-    protected fun setAccountContext(context: AccountContext) {
-        accountContextObj = context
-        setAccountRecipient(Recipient.login(context))
+
+    fun setAccountContext(context: AccountContext) {
+        ALog.d(TAG, "setAccountContext: $context")
+        if (!::accountContextObj.isInitialized || accountContextObj != context) {
+            accountContextObj = context
+            setAccountRecipient(Recipient.login(context))
+        }
+    }
+
+    private fun checkHasAccountContext(): Boolean {
+        return ::accountContextObj.isInitialized
     }
 
     private fun setAccountRecipient(recipient: Recipient) {
@@ -66,12 +74,14 @@ open class BaseFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val accountContextObj: AccountContext? = arguments?.getSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext
-        if (accountContextObj == null) {
+        if (accountContextObj != null) {
+            setAccountContext(accountContextObj)
+        }
+        if (!checkHasAccountContext()) {
             ALog.w(TAG, "accountContextObj is null, finish")
             activity?.finish()
             return
         }
-        setAccountContext(accountContextObj)
     }
 
     protected open fun onLoginRecipientRefresh() {

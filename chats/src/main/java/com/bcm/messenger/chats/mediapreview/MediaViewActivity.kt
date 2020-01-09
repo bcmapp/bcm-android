@@ -2,7 +2,6 @@ package com.bcm.messenger.chats.mediapreview
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -95,8 +94,6 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
     }
 
     private fun initView() {
-        window.decorView.setBackgroundColor(Color.BLACK)
-
         adapter = MediaViewPagerAdapter()
         chats_media_view_pager.adapter = adapter
 
@@ -105,6 +102,7 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
         postponeEnterTransition()
 
         initResources()
+
     }
 
     private fun initOnClickListeners() {
@@ -320,12 +318,10 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
 
         override fun getItem(position: Int): Fragment {
             return MediaViewFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
-                }
-                setData(getItemData(position))
-                setMasterSecret(getMasterSecret())
-                setListener(fragmentListener)
+                this.setAccountContext(this@MediaViewActivity.accountContext)
+                this.setData(getItemData(position))
+                this.setMasterSecret(this@MediaViewActivity.getMasterSecret())
+                this.setListener(fragmentListener)
             }
         }
 
