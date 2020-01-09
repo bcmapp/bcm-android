@@ -163,12 +163,12 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
         }
 
         Address oa = (Address)other;
-        return context.getUid().equals(oa.context.getUid()) && address.equals(oa.address);
+        return context.equals(oa.context) && address.equals(oa.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(context.getUid(), address);
+        return Objects.hash(context, address);
     }
 
     @Override
