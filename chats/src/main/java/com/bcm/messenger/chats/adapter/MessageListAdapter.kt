@@ -12,6 +12,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.bean.MessageListItem
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.mms.GlideRequests
@@ -149,7 +150,7 @@ class MessageListAdapter(context: Context,
 //                TODO: Waiting merge
 //            }
             mHeaderRequest -> {
-                FriendRequestViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.chats_message_list_header_friend_requset, parent, false))
+                FriendRequestViewHolder(masterSecret.accountContext, LayoutInflater.from(getContext()).inflate(R.layout.chats_message_list_header_friend_requset, parent, false))
             }
             else -> {
                 super.onCreateHeaderHolder(parent, viewType)
@@ -287,12 +288,13 @@ class MessageListAdapter(context: Context,
 
     }
 
-    inner class FriendRequestViewHolder(itemView: View) : ViewHolder<ThreadRecord>(itemView) {
+    inner class FriendRequestViewHolder(accountContext: AccountContext, itemView: View) : ViewHolder<ThreadRecord>(itemView) {
         init {
             itemView.header_friend_request.visibility = View.GONE
             itemView.setOnClickListener {
                 BcmRouter.getInstance()
                         .get(ARouterConstants.Activity.FRIEND_REQUEST_LIST)
+                        .putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
                         .navigation(getContext())
             }
         }
