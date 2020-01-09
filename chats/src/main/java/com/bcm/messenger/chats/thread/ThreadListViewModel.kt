@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference
  * Created by Kin on 2019/9/17
  */
 class ThreadListViewModel(
-        private val mAccountContext: AccountContext
+        private var mAccountContext: AccountContext
 ) : ViewModel() {
 
     class ThreadListData(val data: List<ThreadRecord>, val unread: Int)
@@ -112,7 +112,7 @@ class ThreadListViewModel(
 
     private val TAG = "ThreadListViewModel"
 
-    private val threadRepo = Repository.getThreadRepo(mAccountContext)!!
+    private var threadRepo = Repository.getThreadRepo(mAccountContext)!!
     private var localLiveData: LiveData<List<ThreadRecord>>? = null
 
     val threadLiveData = MutableLiveData<ThreadListData>()
@@ -168,6 +168,14 @@ class ThreadListViewModel(
             localLiveData = threadRepo.getAllThreadsLiveData()
             localLiveData?.observeForever(threadObserver)
         }
+    }
+
+    fun updateAccountContext(accountContext: AccountContext) {
+        this.mAccountContext = accountContext
+        threadRepo = Repository.getThreadRepo(mAccountContext)!!
+        localLiveData?.removeObserver(threadObserver)
+        localLiveData = threadRepo.getAllThreadsLiveData()
+        localLiveData?.observeForever(threadObserver)
     }
 
     override fun onCleared() {

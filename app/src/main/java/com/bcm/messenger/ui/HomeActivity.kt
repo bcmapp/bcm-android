@@ -262,39 +262,6 @@ class HomeActivity : AccountSwipeBaseActivity() {
         }
     }
 
-    private fun recycleFragments() {
-        val list = ArrayList<Fragment>()
-        if (supportFragmentManager.fragments.size > 0) {
-            for (i in supportFragmentManager.fragments) {
-                if (i is BaseFragment) {
-                    list.add(i)
-                    ALog.i(TAG, "fragment exit ${i.javaClass.name}")
-                }
-            }
-        }
-
-        for (fragment in list) {
-            supportFragmentManager.beginTransaction().remove(fragment).commit()
-        }
-    }
-
-    private fun initThreadListFragment() {
-        messageListFragment = MessageListFragment()
-        messageListFragment?.callback = object : MessageListFragment.MessageListCallback {
-            override fun onRecyclerViewCreated(recyclerView: BcmRecyclerView) {
-                home_pull_down_layout.setScrollView(recyclerView)
-            }
-
-            override fun onClickInvite() {
-                doInvite(accountRecipient)
-            }
-        }
-
-        messageListFragment?.let {
-            initFragment(R.id.home_chats_main, it, it.arguments)
-        }
-    }
-
     private fun initView() {
         titleView = home_toolbar_name as MessageListTitleView
         titleView.init()
@@ -312,7 +279,20 @@ class HomeActivity : AccountSwipeBaseActivity() {
             startBcmActivity(Intent(this, NewChatActivity::class.java))
         }
 
-        initThreadListFragment()
+        messageListFragment = MessageListFragment()
+        messageListFragment?.callback = object : MessageListFragment.MessageListCallback {
+            override fun onRecyclerViewCreated(recyclerView: BcmRecyclerView) {
+                home_pull_down_layout.setScrollView(recyclerView)
+            }
+
+            override fun onClickInvite() {
+                doInvite(accountRecipient)
+            }
+        }
+
+        messageListFragment?.let {
+            initFragment(R.id.home_chats_main, it, it.arguments)
+        }
     }
 
 
@@ -639,15 +619,29 @@ class HomeActivity : AccountSwipeBaseActivity() {
         }
     }
 
+    private fun recycleFragments() {
+        val list = ArrayList<Fragment>()
+        if (supportFragmentManager.fragments.size > 0) {
+            for (i in supportFragmentManager.fragments) {
+                if (i is BaseFragment) {
+                    list.add(i)
+                    ALog.i(TAG, "fragment exit ${i.javaClass.name}")
+                }
+            }
+        }
+
+        for (fragment in list) {
+            supportFragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AccountLoginStateChangedEvent) {
         if (accountContext != AMELogin.majorContext) {
             setAccountContext(AMELogin.majorContext)
             titleView.updateContext(accountContext)
             home_toolbar_avatar.showRecipientAvatar(accountRecipient)
-
-            recycleFragments()
-            initThreadListFragment()
+            messageListFragment?.updateAccountContext(accountContext)
         }
         home_profile_layout.reloadAccountList()
     }

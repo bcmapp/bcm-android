@@ -38,7 +38,7 @@ import kotlin.collections.HashSet
  * Created by wjh on 2019/7/24
  */
 class MessageListAdapter(context: Context,
-                         val masterSecret: MasterSecret,
+                         var masterSecret: MasterSecret,
                          val glideRequests: GlideRequests,
                          private val local: Locale,
                          private val delegate: IThreadHolderDelete) :
@@ -76,6 +76,11 @@ class MessageListAdapter(context: Context,
         } catch (nsae: NoSuchAlgorithmException) {
             throw AssertionError("SHA-1 missing")
         }
+    }
+
+    fun updateMasterSecret(masterSecret: MasterSecret) {
+        this.masterSecret = masterSecret
+        setDataList(listOf())
     }
 
     fun setThreadList(threadList: List<ThreadRecord>) {

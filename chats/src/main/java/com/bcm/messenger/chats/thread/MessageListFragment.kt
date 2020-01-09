@@ -15,6 +15,7 @@ import com.bcm.messenger.chats.adapter.MessageListAdapter
 import com.bcm.messenger.chats.bean.MessageListItem
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.database.records.ThreadRecord
@@ -332,6 +333,13 @@ class MessageListFragment : BaseFragment() {
                     mAdapter?.updateFriendRequest(it.first, it.second)
                     RxBus.post(HomeTabEvent(HomeTabEvent.TAB_CONTACT, showFigure = it.second))
                 }
+    }
+
+    fun updateAccountContext(accountContext: AccountContext) {
+        setAccountContext(accountContext)
+        val masterSecret = accountContext.masterSecret?:return
+        mAdapter?.updateMasterSecret(masterSecret)
+        viewModel.updateAccountContext(accountContext)
     }
 
 }
