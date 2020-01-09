@@ -11,6 +11,8 @@ import com.bcm.messenger.common.ARouterConstants;
 import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.utility.logger.ALog;
 
+import java.io.Serializable;
+
 public abstract class PersistentAlarmManagerListener extends BroadcastReceiver {
 
     private static final String TAG = "PersistentAlarmManagerListener";
@@ -22,28 +24,33 @@ public abstract class PersistentAlarmManagerListener extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         try {
-            AccountContext accountContext = (AccountContext)intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT);
-            if (null == accountContext || !accountContext.isLogin()) {
-                ALog.w(TAG, "onReceive account must login");
-                return;
-            }
-            long scheduledTime = getNextScheduledExecutionTime(context, accountContext);
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            Intent alarmIntent = new Intent(context, getClass());
+            if (intent.hasExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)) {
+                Serializable obj = intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT);
+                if (obj instanceof AccountContext) {
+                    AccountContext accountContext = (AccountContext)obj;
+                    if (!accountContext.isLogin()) {
+                        ALog.w(TAG, "onReceive account must login");
+                        return;
+                    }
+                    long scheduledTime = getNextScheduledExecutionTime(context, accountContext);
+                    AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                    Intent alarmIntent = new Intent(context, getClass());
 
-            alarmIntent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext);
+                    alarmIntent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext);
 
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
 
-            if (System.currentTimeMillis() >= scheduledTime) {
-                scheduledTime = onAlarm(context, accountContext, scheduledTime);
-            }
+                    if (System.currentTimeMillis() >= scheduledTime) {
+                        scheduledTime = onAlarm(context, accountContext, scheduledTime);
+                    }
 
-            ALog.w(TAG, getClass() + " scheduling for: " + scheduledTime);
+                    ALog.w(TAG, getClass() + " scheduling for: " + scheduledTime);
 
-            alarmManager.cancel(pendingIntent);
-            if (accountContext.isLogin()) {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, scheduledTime, pendingIntent);
+                    alarmManager.cancel(pendingIntent);
+                    if (accountContext.isLogin()) {
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, scheduledTime, pendingIntent);
+                    }
+                }
             }
         } catch (Throwable e) {
             ALog.e(TAG, "onReceive", e);

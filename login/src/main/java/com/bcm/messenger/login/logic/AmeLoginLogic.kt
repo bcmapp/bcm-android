@@ -10,6 +10,7 @@ import com.bcm.messenger.common.bcmhttp.IMHttp
 import com.bcm.messenger.common.bcmhttp.RxIMHttp
 import com.bcm.messenger.common.config.BcmFeatureSupport
 import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.crypto.AccountMasterSecret
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.MasterSecretUtil
 import com.bcm.messenger.common.crypto.PreKeyUtil
@@ -233,7 +234,6 @@ object AmeLoginLogic {
                     }
                     ALog.i(TAG, "clear history finish")
                 }
-
             } catch (e: Throwable) {
                 ALog.logForSecret(TAG, "quit error", e)
             }
@@ -242,6 +242,7 @@ object AmeLoginLogic {
             ALog.i(TAG, "just only clear current login uid")
         }
 
+        AccountMasterSecret.remove(accountContext)
         accountHistory.removeLoginAccountUid(accountContext.uid)
         loginTempData = null
     }

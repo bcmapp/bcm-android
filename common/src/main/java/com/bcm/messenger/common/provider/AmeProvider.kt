@@ -16,15 +16,6 @@ import java.util.concurrent.ConcurrentHashMap
 object AmeProvider {
     private const val TAG = "AmeProvider"
     private val moduleMap = ConcurrentHashMap<Index, IRouteProvider>()
-    private data class Index(val context: AccountContext?, val providerName: String) {
-        override fun equals(other: Any?): Boolean {
-            if (other is Index) {
-                return this.context == other.context && this.providerName == other.providerName
-            }
-            return false
-        }
-    }
-
     fun <T : IRouteProvider> get(providerName: String): T? {
         try {
             val key = Index(null, providerName)
@@ -35,7 +26,7 @@ object AmeProvider {
             }
 
             ALog.e(TAG, "$providerName wating")
-            synchronized(TAG) {
+            synchronized(AmeProvider::class) {
                 val module = moduleMap[key]
                 if (null != module) {
                     return module as T
@@ -71,7 +62,7 @@ object AmeProvider {
                 return module1 as T
             }
 
-            synchronized(TAG) {
+            synchronized(AmeProvider::class) {
                 val module = moduleMap[key]
                 if (null != module) {
                     return module as T
@@ -86,12 +77,13 @@ object AmeProvider {
                     provider.setContext(context)
                     moduleMap[key] = provider
                 } else {
+                    ALog.e(TAG, "getAccountModule $providerName fail")
                     return null
                 }
                 return provider
             }
         } catch (ex: Exception) {
-            ALog.e(TAG, "getProvider $providerName fail", ex)
+            ALog.e(TAG, "getAccountModule $providerName fail", ex)
         }
         return null
     }
@@ -111,5 +103,20 @@ object AmeProvider {
 
     fun removeModule(context: AccountContext, providerName: String) {
         moduleMap.remove(Index(context, providerName))
+    }
+
+    private data class Index(val context: AccountContext?, val providerName: String) {
+        override fun equals(other: Any?): Boolean {
+            if (other is Index) {
+                return this.context == other.context && this.providerName == other.providerName
+            }
+            return false
+        }
+
+        override fun hashCode(): Int {
+            var result = context?.hashCode() ?: 0
+            result = 31 * result + providerName.hashCode()
+            return result
+        }
     }
 }

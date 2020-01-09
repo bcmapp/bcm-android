@@ -1,5 +1,6 @@
 package com.bcm.messenger.common
 
+import com.bcm.messenger.common.crypto.AccountMasterSecret
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.crypto.MasterSecretUtil
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
@@ -13,8 +14,6 @@ class AccountContext(val uid: String, val token: String, val password: String) :
         private const val serialVersionUID = 1L
     }
 
-    @Transient
-    private  var  masterSecretObj:MasterSecret? = null
     val isLogin get() = AmeModuleCenter.login().isAccountLogin(uid)
     val accountDir: String get() = AmeModuleCenter.login().accountDir(uid)
     val genTime get() = AmeModuleCenter.login().genTime(uid)
@@ -22,25 +21,7 @@ class AccountContext(val uid: String, val token: String, val password: String) :
     val signalingKey: String get() = AmeModuleCenter.login().signalingKey(uid) ?: ""
 
     val masterSecret:MasterSecret? get()  {
-        if (!isLogin) {
-            ALog.e("AccountContext", "account not login")
-            return null
-        }
-
-        val masterSecret = this.masterSecretObj
-        if (masterSecret != null) {
-            return masterSecret
-        }
-
-        synchronized(AccountContext::class) {
-            var masterSecret1 = this.masterSecretObj
-            if (masterSecret1 != null) {
-                return masterSecret1
-            }
-            masterSecret1 = MasterSecretUtil.getMasterSecret(this, MasterSecretUtil.UNENCRYPTED_PASSPHRASE)
-            this.masterSecretObj = masterSecret1
-            return masterSecret1
-        }
+        return AccountMasterSecret.get(this)
     }
 
     var isSignedPreKeyRegistered: Boolean

@@ -19,7 +19,7 @@ import kotlin.math.max
  */
 class GroupOfflineSyncManager(private val accountContext: AccountContext, private val syncCallback: OfflineSyncCallback) {
     companion object {
-        private const val QUERY_ONE_TIME = 4
+        private const val QUERY_ONE_TIME = 2
         private const val PAGE_SIZE = 500L
         private const val SERIALIZABLE_FILE_NAME = "group_offline_sync_tasks"
         private const val TAG = "GroupOfflineSyncManager"
