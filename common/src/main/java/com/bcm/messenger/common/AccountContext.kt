@@ -5,8 +5,9 @@ import com.bcm.messenger.utility.proguard.NotGuard
 import java.io.Serializable
 
 class AccountContext(val uid: String, val token: String, val password: String) : Serializable,  Comparable<AccountContext>, NotGuard {
-
-    private val serialVersionUID = 1L
+    companion object {
+        private const val serialVersionUID = 1L
+    }
 
     override fun compareTo(other: AccountContext): Int {
         val result = uid.compareTo(other.uid)

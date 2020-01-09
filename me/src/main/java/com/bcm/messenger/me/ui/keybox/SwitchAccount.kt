@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
+import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -25,6 +26,7 @@ import com.bcm.messenger.me.ui.login.RegistrationActivity
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
+import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -137,12 +139,11 @@ object SwitchAccount {
 
                                 AmeModuleCenter.onLogOutSucceed(accountContext)
 
-                                activity.startBcmActivity(accountContext, Intent(activity, VerifyKeyActivity::class.java).apply {
-                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                                    putExtra(VerifyKeyActivity.BACKUP_JUMP_ACTION, VerifyKeyActivity.LOGIN_PROFILE)
-                                    putExtra(RegistrationActivity.RE_LOGIN_ID, "")
-                                })
-
+                                if (!AMELogin.isLogin) {
+                                    BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_SWITCHER)
+                                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            .navigation()
+                                }
                                 activity.finish()
                             }
 

@@ -331,4 +331,8 @@ class LoginModuleImpl : ILoginModule
     override fun setMajorAccount(accountContext: AccountContext) {
         AmeLoginLogic.accountHistory.setMajorLoginAccountUid(accountContext.uid)
     }
+
+    override fun accountSize(): Int {
+        return AmeLoginLogic.getAccountList().size
+    }
 }

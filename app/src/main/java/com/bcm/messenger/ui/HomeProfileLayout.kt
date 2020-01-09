@@ -296,7 +296,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
             putExtra(VerifyKeyActivity.BACKUP_JUMP_ACTION, VerifyKeyActivity.LOGIN_PROFILE)
             putExtra(RegistrationActivity.RE_LOGIN_ID, uid)
         }
-        context.startBcmActivity((context as SwipeBaseActivity).accountContext, intent)
+        context.startBcmActivity(AmeLoginLogic.getAccountContext(uid), intent)
     }
 
     private fun checkOnlineAccount(): Boolean {

@@ -103,4 +103,6 @@ interface ILoginModule : IAmeModule {
     fun getAdHocUid(): String
 
     fun setMajorAccount(accountContext: AccountContext)
+
+    fun accountSize(): Int
 }

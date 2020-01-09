@@ -3,11 +3,13 @@ package com.bcm.messenger.me.ui.profile
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.EventLog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
+import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -30,6 +32,9 @@ import com.bcm.messenger.utility.InputLengthFilter
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.me_fragment_my_profile.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 /**
  * Created by wjh on 2019-12-11

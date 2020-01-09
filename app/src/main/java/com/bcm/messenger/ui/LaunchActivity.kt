@@ -12,6 +12,7 @@ import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.activity.DatabaseMigrateActivity
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.logic.SchemeLaunchHelper
@@ -22,6 +23,7 @@ import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.permission.PermissionUtil
 import com.bcm.route.annotation.Route
+import com.bcm.route.api.BcmRouter
 
 
 /**
@@ -57,26 +59,17 @@ class LaunchActivity : AppCompatActivity() {
             finish()
             return
         }
-
         val hasSchemeData = SchemeLaunchHelper.hasSchemeData(intent)
         ALog.i(TAG, "root: $isTaskRoot scheme data:$hasSchemeData")
 
-        if (AMESelfData.isLogin) {
+        if (AMELogin.isLogin) {
             if (!isTaskRoot && !hasSchemeData) {
                 finish()
                 return
             }
         }
 
-        if (LaunchAdConfigure.adEnable()) {
-            LaunchAdConfigure.disableAd()
-            setContentView(R.layout.launch_activity)
-            AmeDispatcher.mainThread.dispatch({
-                checkLaunch()
-            }, 2000)
-        } else {
-            checkLaunch()
-        }
+        checkLaunch()
     }
 
     private fun checkLaunch() {
@@ -114,9 +107,17 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun routeToRegister() {
-        ALog.i(TAG, "routeToRegister")
-        SchemeLaunchHelper.storeSchemeIntent(intent)
-        startActivity(Intent(this, RegistrationActivity::class.java))
+        if (AmeModuleCenter.login().accountSize() > 0) {
+            ALog.i(TAG, "routeToLogin")
+            BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_SWITCHER)
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    .navigation()
+        } else {
+            ALog.i(TAG, "routeToRegister")
+            SchemeLaunchHelper.storeSchemeIntent(intent)
+            startActivity(Intent(this, RegistrationActivity::class.java))
+        }
+
         delayFinish()
     }
 

@@ -1,5 +1,6 @@
 package com.bcm.messenger.me.ui.setting
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -9,6 +10,7 @@ import androidx.annotation.RequiresApi
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AmeNotification
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -36,6 +38,9 @@ import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_activity_settings.*
 import kotlinx.android.synthetic.main.me_settings_head_view.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -58,6 +63,7 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
     override fun onDestroy() {
         super.onDestroy()
+        EventBus.getDefault().unregister(this)
         RxBus.unSubscribe(TAG_SSR)
         mChatModule?.finishAllConversationStorageQuery()
         if (::recipient.isInitialized) {
@@ -68,6 +74,8 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_settings)
+
+        EventBus.getDefault().register(this)
 
         mChatModule = AmeModuleCenter.chat(accountContext)
         recipient = Recipient.from(accountContext, accountContext.uid, true)
@@ -270,6 +278,13 @@ class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
         if (this.recipient == recipient) {
             this.recipient = recipient
             initHeadView()
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(e: AccountLoginStateChangedEvent) {
+        if (!accountContext.isLogin) {
+            finish()
         }
     }
 }
