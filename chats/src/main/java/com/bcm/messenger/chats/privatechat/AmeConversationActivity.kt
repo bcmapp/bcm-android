@@ -547,7 +547,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     }
                 }))
 
-        if (!mRecipient.isGroupRecipient && !mRecipient.isContextLogin) {
+        if (!mRecipient.isGroupRecipient && !mRecipient.isLogin) {
             bottom_panel.addOptionItem(
                     BottomPanelItem(getString(R.string.chats_more_option_call), R.drawable.chats_icon_call, object : BottomPanelClickListener {
                         override fun onClick(name: String, view: View) {
@@ -589,7 +589,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                         }
                     }
                 }))
-        if (!mRecipient.isContextLogin) {
+        if (!mRecipient.isLogin) {
             bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_shredder), R.drawable.chats_72_recall, object : BottomPanelClickListener {
                 override fun onClick(name: String, view: View) {
                     checkRecipientBlock {

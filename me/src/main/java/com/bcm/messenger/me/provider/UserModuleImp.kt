@@ -158,7 +158,7 @@ class UserModuleImp : IUserModule
 
     @SuppressLint("CheckResult")
     override fun updateNameProfile(recipient: Recipient, name: String, callback: (success: Boolean) -> Unit) {
-        if (recipient.isContextLogin) {
+        if (recipient.isLogin) {
             AmeModuleCenter.contact(accountContext)?.uploadBcmNick(AppContextHolder.APP_CONTEXT, recipient, name) { success ->
                 if (success) {
                     saveAccount(recipient, name, null)
@@ -198,7 +198,7 @@ class UserModuleImp : IUserModule
 
     @SuppressLint("CheckResult")
     override fun updateAvatarProfile(recipient: Recipient, avatarBitmap: Bitmap?, callback: (success: Boolean) -> Unit) {
-        if (recipient.isContextLogin) {
+        if (recipient.isLogin) {
             if (avatarBitmap == null) {
                 callback(false)
                 return

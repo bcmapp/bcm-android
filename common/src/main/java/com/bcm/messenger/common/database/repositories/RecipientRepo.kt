@@ -77,7 +77,7 @@ class RecipientRepo(
     }
 
     private fun createBlockMessage(recipient: Recipient, isBlocked: Boolean) {
-        if (recipient.isContextLogin) return
+        if (recipient.isLogin) return
 
         val blockMessage = if (isBlocked) {
             AmeGroupMessage(AmeGroupMessage.SYSTEM_INFO, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_BLOCK,
@@ -344,7 +344,7 @@ class RecipientRepo(
     }
 
     fun createFriendMessage(recipient: Recipient, isFriend: Boolean) {
-        if (recipient.isContextLogin) return
+        if (recipient.isLogin) return
         val messageBody = AmeGroupMessage(AmeGroupMessage.FRIEND, AmeGroupMessage.FriendContent(
                 if (isFriend) AmeGroupMessage.FriendContent.ADD else AmeGroupMessage.FriendContent.DELETE,
                 recipient.address.serialize()

@@ -41,7 +41,7 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
         @Synchronized
         fun updateCache(recipient: Recipient) {
             val r = recipient
-            if (r.isContextLogin || (r.relationship != RecipientRepo.Relationship.STRANGER && r.relationship != RecipientRepo.Relationship.REQUEST)) {
+            if (r.isLogin || (r.relationship != RecipientRepo.Relationship.STRANGER && r.relationship != RecipientRepo.Relationship.REQUEST)) {
                 mUncommonCache.remove(r.address)
                 mCommonCache[r.address] = r
             }else {

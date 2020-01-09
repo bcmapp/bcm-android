@@ -30,7 +30,7 @@ class ContactsListLoader(private val accountContext: AccountContext, private val
                 if (includeMe) {
                     results.addAll(AmeModuleCenter.contact(accountContext)?.getContactListWithWait() ?: listOf())
                 } else {
-                    results.addAll(AmeModuleCenter.contact(accountContext)?.getContactListWithWait()?.filter { !it.isContextLogin } ?: listOf())
+                    results.addAll(AmeModuleCenter.contact(accountContext)?.getContactListWithWait()?.filter { !it.isLogin } ?: listOf())
                 }
             }
             ALog.d("ContactsListLoader", "load contacts end")

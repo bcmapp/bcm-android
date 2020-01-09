@@ -8,6 +8,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -37,7 +38,12 @@ class EditNameActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
         mForLocal = intent.getBooleanExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, false)
 
-        recipient = Recipient.from(accountContext, accountContext.uid, true)
+        val address = intent.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
+        recipient = if (address == null) {
+            accountRecipient
+        } else {
+            Recipient.from(address, true)
+        }
         recipient.addListener(this)
         initView()
     }

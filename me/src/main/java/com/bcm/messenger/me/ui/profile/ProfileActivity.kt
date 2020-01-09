@@ -25,7 +25,7 @@ class ProfileActivity : SwipeBaseActivity() {
         try {
             val address = intent.getParcelableExtra<Address?>(ARouterConstants.PARAM.PARAM_ADDRESS)
             recipient = if (address == null) {
-                Recipient.major()
+                accountRecipient
             } else {
                 Recipient.from(address, true)
             }

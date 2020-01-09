@@ -101,14 +101,14 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
                         if (it) {
                             window.setStatusBarLightMode()
                             chat_user_name.setTextColor(getColorCompat(R.color.common_color_black))
-                            if (!mRecipient.isContextLogin) {
+                            if (!mRecipient.isLogin) {
                                 chat_user_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
                             }
                         } else {
                             chat_user_title_bar.setLeftIcon(R.drawable.common_back_arrow_white_icon)
                             chat_user_title_bar.setRightTextColor(getColorCompat(R.color.common_color_white))
                             chat_user_name.setTextColor(getColorCompat(R.color.common_color_white))
-                            if (!mRecipient.isContextLogin) {
+                            if (!mRecipient.isLogin) {
                                 chat_user_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
                             }
                         }
@@ -291,7 +291,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
 
         chat_user_img.setPhoto(recipient)
         chat_user_name.text = recipient.name
-        if (!recipient.isContextLogin) {
+        if (!recipient.isLogin) {
             if (isBgLight) {
                 chat_user_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
             } else {
@@ -321,7 +321,7 @@ class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
             chat_user_title_bar.setRightIcon(R.drawable.chats_add_friend_icon)
         }
 
-        if (recipient.isContextLogin) {
+        if (recipient.isLogin) {
             chat_user_mute.visibility = View.GONE
             chat_user_block.visibility = View.GONE
             chat_user_delete.visibility = View.GONE

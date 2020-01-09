@@ -687,7 +687,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     var tip = ""
                     if (operators.second.isNotEmpty()) {
                         for (recipient in ol) {
-                            if (recipient.isContextLogin()) {
+                            if (recipient.isLogin()) {
                                 tip = context.getString(R.string.common_chats_group_kick_me, operators.first)
                             }
                         }

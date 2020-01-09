@@ -335,7 +335,7 @@ public class MessageSender {
             return false;
         }
 
-        return recipient.isContextLogin();
+        return recipient.isLogin();
     }
 
     public static void recall(@NonNull AccountContext accountContext,

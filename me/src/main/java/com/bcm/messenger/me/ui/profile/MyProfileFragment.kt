@@ -59,7 +59,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recipient = Recipient.from(accountContext, accountContext.uid, true)
+        recipient = Recipient.from(accountContext, arguments?.getString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID) ?: accountContext.uid, true)
         recipient.addListener(this)
         initView()
     }
@@ -168,7 +168,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     private fun checkBackupNotice(recipient: Recipient) {
-        if (recipient.isContextLogin) {
+        if (recipient.isLogin) {
             val hadBackup = AmeLoginLogic.accountHistory.getBackupTime(recipient.address.serialize()) > 0
             if (hadBackup) {
                 profile_account_item.hideTip()

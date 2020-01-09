@@ -128,6 +128,7 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
         if (forLocal) {
             startBcmActivity(accountContext, Intent(activity, EditNameActivity::class.java).apply {
                 putExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, forLocal)
+                putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)
             })
         }
     }
@@ -139,6 +140,7 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
         val intent = Intent(activity, ImageViewActivity::class.java)
         intent.putExtra(ARouterConstants.PARAM.ME.PROFILE_EDIT, true)
         intent.putExtra(ARouterConstants.PARAM.ME.PROFILE_FOR_LOCAL, forLocal)
+        intent.putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)
         startBcmActivity(accountContext, intent)
     }
 

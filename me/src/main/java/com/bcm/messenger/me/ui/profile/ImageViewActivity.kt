@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.FullTransSwipeBaseActivity
+import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
 import com.bcm.messenger.common.imagepicker.CropResultCallback
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -70,12 +71,11 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
             }
         })
 
-        try {
-            recipient = Recipient.from(accountContext, accountContext.uid, true)
-        } catch (ex: Exception) {
-            ALog.e(TAG, "get major recipient fail", ex)
-            finish()
-            return
+        val address = intent.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
+        recipient = if (address == null) {
+            accountRecipient
+        } else {
+            Recipient.from(address, true)
         }
         if (recipient.isResolving) {
             recipient.addListener(this)
@@ -88,7 +88,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
 
         fun openChooseDialog() {
             val popBuilder = AmePopup.bottom.newBuilder()
-            if (!mForLocal && !recipient.isContextLogin) {
+            if (!mForLocal && !recipient.isLogin) {
                 popBuilder.withPopItem(AmeBottomPopup.PopupItem(getString(R.string.common_save_to_album)) {
                     PermissionUtil.checkStorage(this) { granted ->
                         if (granted) {

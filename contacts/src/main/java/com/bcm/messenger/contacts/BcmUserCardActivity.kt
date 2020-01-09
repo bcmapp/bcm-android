@@ -98,7 +98,7 @@ class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
                             .startBcmActivity(accountContext, this@BcmUserCardActivity)
 
                 })
-                if (!recipient.isContextLogin) {
+                if (!recipient.isLogin) {
                     builder.withPopItem(AmeBottomPopup.PopupItem(if (recipient.isBlocked) getString(R.string.contacts_user_card_unblock_title) else getString(R.string.contacts_user_card_block_title), AmeBottomPopup.PopupItem.CLR_RED) {
                         val provider = AmeModuleCenter.contact(accountContext)
                         provider?.blockContact(recipient.address, !recipient.isBlocked) { success ->
