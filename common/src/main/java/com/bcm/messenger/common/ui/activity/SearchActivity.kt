@@ -180,7 +180,11 @@ class SearchActivity : SwipeBaseActivity(), ISearchCallback {
         }
         var f = mRecentSearchFragment
         if (f == null) {
-            f = supportFragmentManager.fragmentFactory.instantiate(classLoader, mRecentFragmentClazz.orEmpty())
+            f = supportFragmentManager.fragmentFactory.instantiate(classLoader, mRecentFragmentClazz.orEmpty()).apply {
+                arguments = Bundle().apply {
+                    putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+                }
+            }
             mRecentSearchFragment = f
             tran.add(R.id.search_main_layout, f)
         }else {

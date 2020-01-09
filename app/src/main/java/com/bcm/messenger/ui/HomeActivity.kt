@@ -11,16 +11,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.R
 import com.bcm.messenger.chats.NewChatActivity
-import com.bcm.messenger.chats.privatechat.webrtc.CameraState
 import com.bcm.messenger.chats.thread.MessageListFragment
 import com.bcm.messenger.chats.thread.MessageListTitleView
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.event.HomeTabEvent
-import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -36,12 +33,10 @@ import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.ui.scan.NewScanActivity
 import com.bcm.messenger.me.utils.BcmUpdateUtil
 import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.MultiClickObserver
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
-import com.google.gson.reflect.TypeToken
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -137,7 +132,7 @@ class HomeActivity : SwipeBaseActivity() {
 
         initClipboardUtil()
         checkAdHocMode()
-        handleTopEvent()
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -250,66 +245,6 @@ class HomeActivity : SwipeBaseActivity() {
             PushUtil.loadSystemMessages(accountContext)
 
             checkSchemeLaunch()
-        }
-    }
-
-    /**
-     * 处理请求过来的topevent事件
-     */
-    private fun handleTopEvent() {
-        try {
-            val data = intent.getStringExtra(ARouterConstants.PARAM.PARAM_DATA)
-            if (!data.isNullOrEmpty()) {
-                val event = GsonUtils.fromJson<HomeTopEvent>(data, object : TypeToken<HomeTopEvent>() {}.type)
-                fun continueAction() {
-                    if (event.finishTop) {
-                        BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH).navigation(this)
-                    }
-
-                    val con = event.chatEvent
-                    if (con != null) {
-                        if (con.path == ARouterConstants.Activity.CHAT_GROUP_CONVERSATION) {
-                            val gid = con.address.toLong()
-                            BcmRouter.getInstance()
-                                    .get(con.path)
-                                    .putLong(ARouterConstants.PARAM.PARAM_THREAD, con.threadId)
-                                    .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, gid)
-                                    .startBcmActivity(accountContext,this)
-
-                        }else if (con.path == ARouterConstants.Activity.CHAT_CONVERSATION_PATH) {
-                            BcmRouter.getInstance()
-                                    .get(con.path)
-                                    .putLong(ARouterConstants.PARAM.PARAM_THREAD, con.threadId)
-                                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.from(accountContext, con.address))
-                                    .startBcmActivity(accountContext,this)
-                        }
-
-                    }
-
-                    val call = event.callEvent
-                    if (call != null) {
-                        AmeModuleCenter.chat(call.address.context())?.startRtcCallService(AppContextHolder.APP_CONTEXT, call.address, CameraState.Direction.NONE.ordinal)
-                    }
-                }
-
-                val notify = event.notifyEvent
-                if (notify != null) {
-                    ALog.d(TAG, "receive HomeTopEvent success: ${notify.success}, message: ${notify.message}")
-                    if (notify.success) {
-                        AmeAppLifecycle.succeed(notify.message, true) {
-                            continueAction()
-                        }
-                    } else {
-                        AmeAppLifecycle.failure(notify.message, true) {
-                            continueAction()
-                        }
-                    }
-                } else {
-                    continueAction()
-                }
-            }
-        } catch (ex: Exception) {
-            ALog.e(TAG, "handleTopEvent error", ex)
         }
     }
 

@@ -180,11 +180,24 @@ class SchemeLaunchHelper(val context: Context) {
                                     .startBcmActivity(accountContext)
 
                         }else if (con.path == ARouterConstants.Activity.CHAT_CONVERSATION_PATH) {
-                            BcmRouter.getInstance()
-                                    .get(con.path)
-                                    .putLong(ARouterConstants.PARAM.PARAM_THREAD, con.threadId)
-                                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.from(accountContext, con.address))
-                                    .startBcmActivity(accountContext)
+                            val address = Address.from(accountContext, con.address)
+                            val threadId = con.threadId
+                            if (threadId <= 0) {
+                                ThreadListViewModel.getThreadId(Recipient.from(address, true)) { newThread ->
+                                    BcmRouter.getInstance()
+                                            .get(con.path)
+                                            .putLong(ARouterConstants.PARAM.PARAM_THREAD, newThread)
+                                            .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
+                                            .startBcmActivity(accountContext)
+                                }
+                            }else {
+                                BcmRouter.getInstance()
+                                        .get(con.path)
+                                        .putLong(ARouterConstants.PARAM.PARAM_THREAD, threadId)
+                                        .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
+                                        .startBcmActivity(accountContext)
+                            }
+
                         }
 
                     }
