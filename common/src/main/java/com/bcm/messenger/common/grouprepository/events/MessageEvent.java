@@ -9,7 +9,7 @@ import java.util.List;
  * 
  */
 public class MessageEvent {
-
+    public final AccountContext accountContext;
     public final long gid;
     public final long indexId;
     public final EventType type;
@@ -17,6 +17,7 @@ public class MessageEvent {
     public final List<AmeGroupMessageDetail> targetList;
 
     public MessageEvent(AccountContext accountContext, long gid, long indexId, EventType type) {
+        this.accountContext = accountContext;
         this.gid = gid;
         this.indexId = indexId;
         this.type = type;
@@ -25,6 +26,7 @@ public class MessageEvent {
     }
 
     public MessageEvent(AccountContext accountContext, long gid, EventType type, List<AmeGroupMessageDetail> list) {
+        this.accountContext = accountContext;
         this.gid = gid;
         this.indexId = 0L;
         this.type = type;
@@ -33,6 +35,7 @@ public class MessageEvent {
     }
 
     public MessageEvent(AccountContext accountContext, long gid, List<Long> indexIdList) {
+        this.accountContext = accountContext;
         this.gid = gid;
         this.indexId = 0L;
         this.indexIdList = indexIdList;
@@ -41,6 +44,7 @@ public class MessageEvent {
     }
 
     public MessageEvent(AccountContext accountContext, long gid, long indexId, EventType type, List<AmeGroupMessageDetail> list) {
+        this.accountContext = accountContext;
         this.gid = gid;
         this.indexId = indexId;
         this.type = type;

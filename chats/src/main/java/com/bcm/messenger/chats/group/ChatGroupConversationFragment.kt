@@ -809,8 +809,7 @@ class ChatGroupConversationFragment : BaseFragment() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: MessageEvent) {
-
-        if (event.gid != groupId) {
+        if (event.accountContext != accountContext || event.gid != groupId) {
             ALog.i(TAG, "receive message gid: ${event.gid}, current gid: $groupId")
             return
         }

@@ -143,7 +143,7 @@ class AmeConversationViewModel(
 
             RxBus.subscribe<PrivateChatEvent>(PrivateChatRepo.CHANGED_TAG + threadId) {
                 ALog.i(TAG, "receive private chat event: ${it.threadId}")
-                if (it.threadId == mThreadId) {
+                if (it.accountContext == mAccountContext && it.threadId == mThreadId) {
                     when (it.type) {
                         PrivateChatEvent.EventType.INSERT -> it.records.forEach { record -> insertMessage(record) }
                         PrivateChatEvent.EventType.DELETE -> deleteMessages(it.ids)

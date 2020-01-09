@@ -138,7 +138,7 @@ class PrivateChatRepo(
         model.id = messageId
         insertCallback?.invoke(messageId)
 
-        notifyMessageChanged(PrivateChatEvent(realThreadId, PrivateChatEvent.EventType.INSERT, listOf(model)))
+        notifyMessageChanged(PrivateChatEvent(accountContext, realThreadId, PrivateChatEvent.EventType.INSERT, listOf(model)))
 
         threadRepo.updateThread(realThreadId, model)
         threadRepo.setLastSeenTime(realThreadId)
@@ -175,7 +175,7 @@ class PrivateChatRepo(
 
         model.attachments = repository.attachmentRepo.insertAttachments(message.attachments, masterSecret, messageId)
 
-        notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.INSERT, listOf(model)))
+        notifyMessageChanged(PrivateChatEvent(accountContext, threadId, PrivateChatEvent.EventType.INSERT, listOf(model)))
 
         threadRepo.updateThread(threadId, model)
         threadRepo.setLastSeenTime(threadId)
@@ -234,7 +234,7 @@ class PrivateChatRepo(
         val messageId = chatDao.insertChatMessage(model)
         model.id = messageId
 
-        notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.INSERT, listOf(model)))
+        notifyMessageChanged(PrivateChatEvent(accountContext, threadId, PrivateChatEvent.EventType.INSERT, listOf(model)))
 
         threadRepo.updateThread(threadId, model)
         if (unread) threadRepo.increaseUnreadCount(threadId, 1)
@@ -276,7 +276,7 @@ class PrivateChatRepo(
         model.attachments = repository.attachmentRepo.insertAttachments(message.attachments, masterSecret, messageId)
         model.id = messageId
 
-        notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.INSERT, listOf(model)))
+        notifyMessageChanged(PrivateChatEvent(accountContext, threadId, PrivateChatEvent.EventType.INSERT, listOf(model)))
         threadRepo.updateThread(threadId, model)
 
         if (!message.isExpirationUpdate) {
@@ -309,7 +309,7 @@ class PrivateChatRepo(
         val messageId = chatDao.insertChatMessage(model)
         model.id = messageId
 
-        notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.INSERT, listOf(model)))
+        notifyMessageChanged(PrivateChatEvent(accountContext, threadId, PrivateChatEvent.EventType.INSERT, listOf(model)))
 
         threadRepo.updateThread(threadId, model)
         if (isUnread) {
@@ -347,7 +347,7 @@ class PrivateChatRepo(
             chatDao.updateMessageRead(it.id)
         }
 
-        notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.UPDATE, messages))
+        notifyMessageChanged(PrivateChatEvent(accountContext, threadId, PrivateChatEvent.EventType.UPDATE, messages))
 
         return result
     }
@@ -539,7 +539,7 @@ class PrivateChatRepo(
     private fun updateMessage(id: Long) {
         val record = chatDao.queryChatMessage(id)
         if (record != null) {
-            notifyMessageChanged(PrivateChatEvent(record.threadId, PrivateChatEvent.EventType.UPDATE, listOf(record)))
+            notifyMessageChanged(PrivateChatEvent(accountContext, record.threadId, PrivateChatEvent.EventType.UPDATE, listOf(record)))
             repository.threadRepo.updateThread(record.threadId, record)
         }
     }
@@ -547,7 +547,7 @@ class PrivateChatRepo(
     private fun updateMessages(records: List<MessageRecord>) {
         chatDao.updateChatMessages(records)
         records.forEach {
-            notifyMessageChanged(PrivateChatEvent(it.threadId, PrivateChatEvent.EventType.UPDATE, listOf(it)))
+            notifyMessageChanged(PrivateChatEvent(accountContext, it.threadId, PrivateChatEvent.EventType.UPDATE, listOf(it)))
             repository.threadRepo.updateThread(it.threadId, it)
         }
     }
@@ -561,38 +561,38 @@ class PrivateChatRepo(
 
     fun deleteMessage(record: MessageRecord) {
         chatDao.deleteChatMessage(record)
-        notifyMessageChanged(PrivateChatEvent(record.threadId, PrivateChatEvent.EventType.DELETE, emptyList(), listOf(record.id)))
+        notifyMessageChanged(PrivateChatEvent(accountContext, record.threadId, PrivateChatEvent.EventType.DELETE, emptyList(), listOf(record.id)))
         repository.threadRepo.updateThread(record.threadId)
     }
 
     fun deleteMessage(threadId: Long, messageId: Long) {
         chatDao.deleteChatMessage(messageId)
-        notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.DELETE, emptyList(), listOf(messageId)))
+        notifyMessageChanged(PrivateChatEvent(accountContext, threadId, PrivateChatEvent.EventType.DELETE, emptyList(), listOf(messageId)))
         repository.threadRepo.updateThread(threadId)
     }
 
     fun deleteMessages(threadId: Long, ids: List<Long>) {
         chatDao.deleteChatMessages(ids)
-        notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.DELETE, emptyList(), ids))
+        notifyMessageChanged(PrivateChatEvent(accountContext, threadId, PrivateChatEvent.EventType.DELETE, emptyList(), ids))
         repository.threadRepo.updateThread(threadId)
     }
 
     fun cleanChatMessages(threadId: Long) {
         chatDao.deleteChatMessages(threadId)
-        notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.DELETE_ALL, emptyList(), emptyList()))
+        notifyMessageChanged(PrivateChatEvent(accountContext, threadId, PrivateChatEvent.EventType.DELETE_ALL, emptyList(), emptyList()))
         repository.threadRepo.updateThread(threadId)
     }
 
     fun cleanThreadExcept(threadId: Long, ids: List<Long>) {
         chatDao.deleteChatMessages(threadId, ids)
-        notifyMessageChanged(PrivateChatEvent(threadId, PrivateChatEvent.EventType.DELETE_EXCEPT, emptyList(), ids))
+        notifyMessageChanged(PrivateChatEvent(accountContext, threadId, PrivateChatEvent.EventType.DELETE_EXCEPT, emptyList(), ids))
         repository.threadRepo.updateThread(threadId)
     }
 
     fun attachmentUpdate(messageId: Long) {
         val record = chatDao.queryChatMessage(messageId)
         if (record != null) {
-            notifyMessageChanged(PrivateChatEvent(record.threadId, PrivateChatEvent.EventType.UPDATE, listOf(record)))
+            notifyMessageChanged(PrivateChatEvent(accountContext, record.threadId, PrivateChatEvent.EventType.UPDATE, listOf(record)))
             repository.threadRepo.updateThread(record.threadId, record)
         }
     }
