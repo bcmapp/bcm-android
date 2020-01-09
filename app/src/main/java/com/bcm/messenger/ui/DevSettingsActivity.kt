@@ -18,6 +18,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.logic.EnvSettingLogic
 import com.bcm.messenger.logic.bean.EnvSetting
 import com.bcm.messenger.login.logic.AmeLoginLogic
@@ -56,6 +57,8 @@ class DevSettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_dev_setting)
         setupActionBar()
         initServerEnv()
+
+        window.setStatusBarLightMode()
     }
 
     private fun initServerEnv() {

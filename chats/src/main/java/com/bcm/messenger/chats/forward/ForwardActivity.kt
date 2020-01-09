@@ -153,7 +153,8 @@ class ForwardActivity : AccountSwipeBaseActivity() {
                         .show(this)
             }
             viewModel.groupMessageList.size > 1 ->
-                ChatForwardDialog().setMasterSecret(getMasterSecret())
+                ChatForwardDialog(accountContext)
+                        .setMasterSecret(getMasterSecret())
                         .setRecipients(viewModel.selectRecipients)
                         .setForwardGroupMultiple(viewModel.groupMessageList)
                         .setCallback { forwardHistory, commentText ->
@@ -167,7 +168,8 @@ class ForwardActivity : AccountSwipeBaseActivity() {
                         }
 
             viewModel.privateMessageList.size > 1 ->
-                ChatForwardDialog().setMasterSecret(getMasterSecret())
+                ChatForwardDialog(accountContext)
+                        .setMasterSecret(getMasterSecret())
                         .setRecipients(viewModel.selectRecipients)
                         .setForwardPrivateMultiple(viewModel.privateMessageList)
                         .setCallback { forwardHistory, commentText ->
@@ -186,7 +188,7 @@ class ForwardActivity : AccountSwipeBaseActivity() {
     }
 
     private fun handlePrivateMessage() {
-        val dialog = ChatForwardDialog()
+        val dialog = ChatForwardDialog(accountContext)
                 .setMasterSecret(getMasterSecret())
                 .setRecipients(viewModel.selectRecipients)
                 .setCallback { _, commentText ->
@@ -247,7 +249,7 @@ class ForwardActivity : AccountSwipeBaseActivity() {
     }
 
     private fun handleGroupMessage() {
-        val dialog = ChatForwardDialog()
+        val dialog = ChatForwardDialog(accountContext)
                 .setRecipients(viewModel.selectRecipients)
                 .setIsGroup(true)
                 .setCallback { _, commentText ->

@@ -46,7 +46,7 @@ const val FORWARD_PRIVATE_MULTIPLE = 6
 const val FORWARD_GROUP_MULTIPLE = 7
 
 
-class ChatForwardDialog : DialogFragment() {
+class ChatForwardDialog(private val accountContext: AccountContext) : DialogFragment() {
 
     private val TAG = "ChatForwardDialog"
 
@@ -67,8 +67,6 @@ class ChatForwardDialog : DialogFragment() {
     private var locationContent = ""
     private val privateMessageList = mutableListOf<MessageRecord>()
     private val groupMessageList = mutableListOf<AmeGroupMessageDetail>()
-
-    private lateinit var accountContext: AccountContext
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return Dialog(context, R.style.ForwardDialogStyle)

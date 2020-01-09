@@ -13,8 +13,6 @@ import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.provider.accountmodule.IChatModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -169,8 +167,7 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            val adhocProvider = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
-            adhocProvider?.configHocMode()
+            AmeModuleCenter.adhoc(accountContext)?.configHocMode()
         }
 
         setting_proxy.setOnClickListener {

@@ -90,7 +90,7 @@ class SystemShareActivity : AccountSwipeBaseActivity(), IContactsCallback {
     }
 
     override fun onSelect(recipient: Recipient) {
-        val dialog = ChatForwardDialog()
+        val dialog = ChatForwardDialog(accountContext)
                 .setRecipients(listOf(recipient))
                 .setIsGroup(recipient.isGroupRecipient)
                 .setIsShare(true)
