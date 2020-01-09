@@ -14,22 +14,9 @@ import com.bcm.route.annotation.Route
 
 @Route(routePath = ARouterConstants.Activity.VERIFY_PASSWORD)
 class VerifyKeyActivity : AccountSwipeBaseActivity() {
-    companion object {
-        const val BACKUP_JUMP_ACTION = "BACKUP_JUMP_ACTION"
-        const val NEED_FINISH = "NEED_FINISH"
-        const val LOGIN_PROFILE = 3
-    }
-
-    private var controlType: Int = 0
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        controlType = intent.getIntExtra(BACKUP_JUMP_ACTION, 0)
-        if (controlType == LOGIN_PROFILE) {
-            disableDefaultTransitionAnimation()
-            overridePendingTransition(R.anim.common_popup_alpha_in, R.anim.common_popup_alpha_out)
-        } else {
-            disableStatusBarLightMode()
-        }
+        disableDefaultTransitionAnimation()
+        overridePendingTransition(R.anim.common_popup_alpha_in, R.anim.common_popup_alpha_out)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_verify)
@@ -38,8 +25,6 @@ class VerifyKeyActivity : AccountSwipeBaseActivity() {
 
     fun initView() {
         val arg = intent.extras
-        arg?.putBoolean(NEED_FINISH, true)
-
         val f = LoginVerifyPinFragment()
         arg?.putString(RegistrationActivity.RE_LOGIN_ID, intent.getStringExtra(RegistrationActivity.RE_LOGIN_ID))
         initFragment(R.id.register_container, f, arg)

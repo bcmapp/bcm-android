@@ -2,7 +2,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:id="@+id/register_container"
              android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="@drawable/me_login_bg">
+             android:layout_height="match_parent">
 
 </FrameLayout>
