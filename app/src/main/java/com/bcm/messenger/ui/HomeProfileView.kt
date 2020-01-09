@@ -67,7 +67,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
 
     private var isAccountBackup = true
 
-    var chatUnread = 0
+    var chatUnread =  0
         set(value) {
             if (field != value) {
                 field = value

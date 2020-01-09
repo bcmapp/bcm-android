@@ -88,11 +88,7 @@ open class BaseFragment : Fragment() {
     }
 
     open fun onNewIntent() {
-        val accountContextObj: AccountContext? = arguments?.getSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext
-        if (accountContextObj != null) {
-            ALog.w(TAG, "onNewIntent, new accountContextObj: ${accountContextObj.uid}")
-            setAccountContext(accountContextObj)
-        }
+
     }
 
     fun <T : Fragment> initFragment(@IdRes target: Int,

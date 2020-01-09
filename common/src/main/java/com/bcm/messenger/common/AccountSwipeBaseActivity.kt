@@ -60,15 +60,6 @@ open class AccountSwipeBaseActivity : SwipeBaseActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        val accountContextObj: AccountContext? = intent?.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext
-        if (accountContextObj != null) {
-            ALog.w(TAG, "onNewIntent, new accountContextObj: ${accountContextObj.uid}")
-            setAccountContext(accountContextObj)
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         updateScreenshotSecurity()
