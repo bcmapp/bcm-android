@@ -88,7 +88,7 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
 
         fun openChooseDialog() {
             val popBuilder = AmePopup.bottom.newBuilder()
-            if (!mForLocal && !recipient.isLogin) {
+            if (!mForLocal && !recipient.isContextLogin) {
                 popBuilder.withPopItem(AmeBottomPopup.PopupItem(getString(R.string.common_save_to_album)) {
                     PermissionUtil.checkStorage(this) { granted ->
                         if (granted) {

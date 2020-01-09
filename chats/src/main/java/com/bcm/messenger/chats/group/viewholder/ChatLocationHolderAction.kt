@@ -13,6 +13,7 @@ import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.route.api.BcmRouter
 
 /**
@@ -32,7 +33,7 @@ class ChatLocationHolderAction(accountContext: AccountContext) : BaseChatHolderA
                 .putString(ARouterConstants.PARAM.MAP.TITLE, data.title)
                 .putString(ARouterConstants.PARAM.MAP.ADDRESS, data.address)
                 .setActivityOptionsCompat(compat)
-                .navigation(v.context)
+                .startBcmActivity(accountContext, v.context)
     }
 
     override fun bindData(message: AmeGroupMessageDetail, body: MapShareView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {

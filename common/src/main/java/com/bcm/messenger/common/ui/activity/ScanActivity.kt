@@ -29,6 +29,7 @@ import com.bcm.messenger.common.ui.scan.CameraManager
 import com.bcm.messenger.common.ui.scan.ScannerView
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmFileUtils
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.BitmapUtils
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.permission.PermissionUtil
@@ -319,7 +320,7 @@ class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, Ac
             switchTorch(!mTorchOn)
         }
         scan_qr_btn.setOnClickListener {
-            BcmRouter.getInstance().get(ARouterConstants.Activity.ME_QR).navigation(this)
+            BcmRouter.getInstance().get(ARouterConstants.Activity.ME_QR).startBcmActivity(accountContext,this)
         }
         switchTorch(mTorchOn)
 

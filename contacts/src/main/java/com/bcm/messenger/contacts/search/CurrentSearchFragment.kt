@@ -20,6 +20,7 @@ import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.activity.SearchActivity
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.contacts.R
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
@@ -93,7 +94,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
                 val recipient = data.tag as? Recipient ?: return
                 BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND)
                         .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)
-                        .navigation(context)
+                        .startBcmActivity(accountContext, context)
             }
 
         })

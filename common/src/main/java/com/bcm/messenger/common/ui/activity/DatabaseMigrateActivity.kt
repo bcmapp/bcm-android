@@ -12,6 +12,7 @@ import com.bcm.messenger.common.database.migrate.IDatabaseMigration
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.setStatusBarLightMode
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
@@ -118,7 +119,7 @@ class DatabaseMigrateActivity : AppCompatActivity() {
         val migration: IDatabaseMigration = DatabaseMigration
         migration.clearFlag()
 
-        BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH).navigation()
+        BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH).startBcmActivity(accountContext)
         finish()
     }
 

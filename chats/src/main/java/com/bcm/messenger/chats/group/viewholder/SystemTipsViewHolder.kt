@@ -3,7 +3,6 @@ package com.bcm.messenger.chats.group.viewholder
 import android.content.Context
 import android.text.SpannableStringBuilder
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.ARouterConstants
@@ -17,6 +16,7 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.BaseAccountHolder
 import com.bcm.messenger.common.utils.getColor
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -107,7 +107,8 @@ class SystemTipsViewHolder(accountContext: AccountContext, containerView: View) 
                 }
                 BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_JOIN_CHECK)
                         .putLong(ARouterConstants.PARAM.PARAM_INDEX_ID, messageRecord.indexId)
-                        .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, messageRecord.gid).navigation(context)
+                        .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, messageRecord.gid)
+                        .startBcmActivity(accountContext, context)
             }
 
         }else {

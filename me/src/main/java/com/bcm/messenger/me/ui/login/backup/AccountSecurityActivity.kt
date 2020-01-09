@@ -73,9 +73,9 @@ class AccountSecurityActivity : SwipeBaseActivity() {
             }
 
             if (AmeLoginLogic.getAccountList().isNotEmpty()) {
-                BcmRouter.getInstance().get(ARouterConstants.Activity.ME_KEYBOX).navigation(this)
+                BcmRouter.getInstance().get(ARouterConstants.Activity.ME_KEYBOX).startBcmActivity(accountContext, this)
             } else {
-                BcmRouter.getInstance().get(ARouterConstants.Activity.ME_KEYBOX_GUIDE).navigation(this)
+                BcmRouter.getInstance().get(ARouterConstants.Activity.ME_KEYBOX_GUIDE).startBcmActivity(accountContext, this)
             }
         }
 

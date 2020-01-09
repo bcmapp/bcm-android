@@ -32,6 +32,7 @@ import com.bcm.messenger.common.utils.AppUtil.getString
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.front
 import com.bcm.messenger.common.utils.sp2Px
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
@@ -59,7 +60,7 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
 
     private var recipient:Recipient? = null
     private var currentName = ""
-    private var accountContext:AccountContext? = null
+    private var accountContext: AccountContext? = null
 
     constructor(context: Context) : super(context, null)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -105,9 +106,13 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
 
     private fun jump() {
         if (PROXY_TRY == state) {
-            BcmRouter.getInstance().get(ARouterConstants.Activity.PROXY_SETTING)
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .navigation()
+            val a = this.accountContext
+            if (a != null) {
+                BcmRouter.getInstance().get(ARouterConstants.Activity.PROXY_SETTING)
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .startBcmActivity(a)
+            }
+
         } else if (OFFLINE == state) {
             val adhocProvider = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
             adhocProvider?.configHocMode()

@@ -18,6 +18,7 @@ import com.bcm.messenger.common.provider.accountmodule.IGroupModule
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.base64Encode
 import com.bcm.messenger.common.utils.format
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
@@ -71,7 +72,7 @@ class GroupModuleImp : IGroupModule {
                     if (!succeed || needConfirm) {
                         AmeAppLifecycle.hideLoading()
                         BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_JOIN_REQUEST)
-                                .putString(ARouterConstants.PARAM.GROUP_SHARE.GROUP_SHARE_CONTENT, groupShareContent.toString()).navigation(context)
+                                .putString(ARouterConstants.PARAM.GROUP_SHARE.GROUP_SHARE_CONTENT, groupShareContent.toString()).startBcmActivity(accountContext, context)
                         callback?.invoke(true)
                     }else {
                         GroupLogic.get(accountContext).joinGroupByShareCode(groupShareContent.groupId, groupShareContent.shareCode, groupShareContent.shareSignature, eKey) {succeed, error ->

@@ -161,7 +161,8 @@ class ContactModuleImp : IContactModule {
             }
             groupProvider.queryGroupInfo(shareContent.groupId) {groupInfo ->
                 if (groupInfo == null || groupInfo.role == AmeGroupMemberInfo.VISITOR) {
-                    BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_SHARE_DESCRIPTION).putString(ARouterConstants.PARAM.GROUP_SHARE.GROUP_SHARE_CONTENT, shareContent.toString()).navigation(context)
+                    BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_SHARE_DESCRIPTION).putString(ARouterConstants.PARAM.GROUP_SHARE.GROUP_SHARE_CONTENT, shareContent.toString())
+                            .startBcmActivity(accountContext, context)
                     callback?.invoke(true)
                 }else {
                     AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,

@@ -18,6 +18,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.createScreenShot
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.AppContextHolder
@@ -145,7 +146,7 @@ class MyQRFragment : BaseFragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError { }
                 .subscribe {
-                    BcmRouter.getInstance().get(ARouterConstants.Activity.FORWARD).putString("__uri", it).navigation()
+                    BcmRouter.getInstance().get(ARouterConstants.Activity.FORWARD).putString("__uri", it).startBcmActivity(accountContext)
                 }
     }
 

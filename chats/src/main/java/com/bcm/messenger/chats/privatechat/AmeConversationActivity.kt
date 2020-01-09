@@ -402,7 +402,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
             override fun onTitle(multiSelect: Boolean) {
                 if (!mRecipient.isFriend) {
                     hideInput()
-                    BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND).putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address).navigation(this@AmeConversationActivity)
+                    BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND).putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address).startBcmActivity(accountContext, this@AmeConversationActivity)
                 }
             }
 
@@ -543,7 +543,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                     }
                 }))
 
-        if (!mRecipient.isGroupRecipient && !mRecipient.isLogin) {
+        if (!mRecipient.isGroupRecipient && !mRecipient.isContextLogin) {
             bottom_panel.addOptionItem(
                     BottomPanelItem(getString(R.string.chats_more_option_call), R.drawable.chats_icon_call, object : BottomPanelClickListener {
                         override fun onClick(name: String, view: View) {
@@ -568,7 +568,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                                     if (!granted) {
                                         return@checkLocationPermission
                                     }
-                                    BcmRouter.getInstance().get(ARouterConstants.Activity.MAP).navigation(this@AmeConversationActivity, PICK_LOCATION)
+                                    BcmRouter.getInstance().get(ARouterConstants.Activity.MAP).startBcmActivity(accountContext, this@AmeConversationActivity, PICK_LOCATION)
                                 }
                             }
                         }
@@ -585,7 +585,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                         }
                     }
                 }))
-        if (!mRecipient.isLogin) {
+        if (!mRecipient.isContextLogin) {
             bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_shredder), R.drawable.chats_72_recall, object : BottomPanelClickListener {
                 override fun onClick(name: String, view: View) {
                     checkRecipientBlock {
@@ -723,7 +723,7 @@ class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
                         .get(ARouterConstants.Activity.CHAT_USER_PATH)
                         .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address)
                         .putLong(ARouterConstants.PARAM.PARAM_THREAD, mConversationModel?.getThreadId() ?: 0L)
-                        .navigation(this, DELETE_REQUEST_CODE)
+                        .startBcmActivity(accountContext, this, DELETE_REQUEST_CODE)
             }, 200)
         }
     }

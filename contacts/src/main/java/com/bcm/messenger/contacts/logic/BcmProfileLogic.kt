@@ -1082,7 +1082,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
 
         for (data in taskDataList) {
             val recipient = data.recipient
-            if (recipient.isLogin) {
+            if (recipient.isContextLogin) {
                 recipient.setNeedRefreshProfile(!isSuccess)
             } else {
                 recipient.setNeedRefreshProfile(if (isSuccess) false else recipient.needRefreshProfile())
@@ -1181,7 +1181,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             allowStrangerChanged = true
         }
 
-        if (recipient.isLogin && needUpdateProfileKey) {
+        if (recipient.isContextLogin && needUpdateProfileKey) {
             ALog.i(TAG, "need download ProfileKeys")
             if (downloadProfileKeys(context, recipient, privacyProfile)) {
                 return true
@@ -1241,7 +1241,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                 Repository.getRecipientRepo(mAccountContext)?.setSupportFeatures(recipient, supportFeatures.orEmpty())
             }
 
-            if (recipient.isLogin) {
+            if (recipient.isContextLogin) {
                 if (supportFeatures != AMELogin.mySupport.toString()) {
                     AmeModuleCenter.login().refreshMySupport2Server(mAccountContext)
                     ALog.i(TAG, "refreshMySupport2Server")
@@ -1275,7 +1275,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             }
 
             if (privacyChanged) {
-                if (recipient.isLogin) {
+                if (recipient.isContextLogin) {
                     AmeModuleCenter.user(recipient.address.context())?.saveAccount(recipient, privacyProfile)
 
                     updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
@@ -1292,7 +1292,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         } catch (e: Exception) {
             ALog.e(TAG, "handleIndividualRecipient error", e)
         } finally {
-            if (recipient.isLogin) {
+            if (recipient.isContextLogin) {
                 PrivacyProfileUpgrader(this).checkNeedUpgrade(recipient)
             }
         }

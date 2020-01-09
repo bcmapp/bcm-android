@@ -22,6 +22,7 @@ import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
@@ -248,7 +249,7 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
                     val r = mRecipient ?: return
                     BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND)
                             .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, r.address)
-                            .navigation(activity)
+                            .startBcmActivity(accountContext, activity)
                 }
             })
 

@@ -20,6 +20,7 @@ import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.getString
 import com.bcm.messenger.common.utils.sp2Px
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_contact_card_view.view.*
@@ -45,13 +46,13 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
         }
         contact_action.setOnClickListener {
             mRecipient?.let {
-                if (!it.isLogin && (it.relationship == RecipientRepo.Relationship.STRANGER || it.relationship == RecipientRepo.Relationship.REQUEST)) {
+                if (!it.isContextLogin && (it.relationship == RecipientRepo.Relationship.STRANGER || it.relationship == RecipientRepo.Relationship.REQUEST)) {
                     BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND)
                             .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, it.address)
                             .putString(ARouterConstants.PARAM.PARAM_NICK, mContactContent?.nickName)
-                            .navigation(context)
+                            .startBcmActivity(it.address.context(), context)
                 }else {
-                    AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(AMELogin.majorContext, HomeTopEvent(true,
+                    AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(it.address.context(), HomeTopEvent(true,
                             HomeTopEvent.ConversationEvent.fromPrivateConversation(it.address.serialize(),false)))
                 }
             }
@@ -99,7 +100,7 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
         }
         contact_portrait.setPhoto(recipient, name, IndividualAvatarView.NAME_CARD_TYPE)
 
-        if (!recipient.isLogin && (recipient.relationship == RecipientRepo.Relationship.STRANGER || recipient.relationship == RecipientRepo.Relationship.REQUEST)) {
+        if (!recipient.isContextLogin && (recipient.relationship == RecipientRepo.Relationship.STRANGER || recipient.relationship == RecipientRepo.Relationship.REQUEST)) {
             contact_action.text = getString(R.string.chats_contact_card_add_action)
         }else {
             contact_action.text = getString(R.string.chats_contact_card_chat_action)

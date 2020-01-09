@@ -180,7 +180,7 @@ class BcmContactLogic(val accountContext: AccountContext): AppForeground.IForegr
             return
         }
 
-        if (recipient.relationship == RecipientRepo.Relationship.FOLLOW && !recipient.isBackgroundRequestAddFriendFlag && !recipient.isLogin) {
+        if (recipient.relationship == RecipientRepo.Relationship.FOLLOW && !recipient.isBackgroundRequestAddFriendFlag && !recipient.isContextLogin) {
             recipient.isBackgroundRequestAddFriendFlag = true
             ALog.d(TAG, "checkRequestFriendForOldVersion recipient: ${recipient.address} is follow")
             if (!mBackgroundRequestQueue.contains(recipient)) {

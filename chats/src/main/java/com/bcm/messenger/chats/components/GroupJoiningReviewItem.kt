@@ -17,6 +17,7 @@ import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.getString
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.setDrawableLeft
 import com.bcm.route.api.BcmRouter
@@ -78,7 +79,7 @@ class GroupJoiningReviewItem @JvmOverloads constructor(context: Context, attrs: 
             }
         }
         join_member_all_item.setOnClickListener {
-            BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_JOIN_CHECK).putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, mRequestData?.gid ?: -1).navigation(context)
+            BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_JOIN_CHECK).putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, mRequestData?.gid ?: -1).startBcmActivity(AMELogin.majorContext, context)
         }
     }
 

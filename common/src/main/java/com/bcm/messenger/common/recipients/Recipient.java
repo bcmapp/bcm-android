@@ -542,7 +542,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
         return false;
     }
 
-    public boolean isLogin() {
+    public boolean isContextLogin() {
         return address.isCurrentLogin();
     }
 
@@ -885,7 +885,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
      * @return
      */
     public synchronized boolean isFriend() {
-        return mRelationship == RecipientRepo.Relationship.FRIEND || isLogin();
+        return mRelationship == RecipientRepo.Relationship.FRIEND || isContextLogin();
     }
 
     @Nullable
