@@ -89,13 +89,10 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
             if (reLoginUid?.isNotEmpty() == true) {
                 verify_pin_input_go.isEnabled = false
                 AmeLoginLogic.login(reLoginUid, pin) { succeed, exception, error ->
-                    stopAnim()
-                    verify_pin_input_go?.isEnabled = true
-
                     if (succeed) {
-                        login_success_header?.text = resources.getString(R.string.me_login_successful)
-                        login_success_layout?.visibility = View.VISIBLE
-                        showAnimatorForView(login_success_done_button)
+                        verify_pin_tips.text = resources.getString(R.string.me_login_successful)
+                        ViewUtils.fadeIn(verify_pin_tips, 250)
+
                         AmeDispatcher.mainThread.dispatch({
                             val accountContext = AmeModuleCenter.login().getAccountContext(reLoginUid)
                             val context = AppContextHolder.APP_CONTEXT
@@ -104,10 +101,13 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
                                     putExtra(DatabaseMigrateActivity.IS_LOGIN_PROGRESS, true)
                                 })
                             } else {
-                                gotoHomeActivity(accountContext, false)
+                                gotoHomeActivity(AMELogin.majorContext, false)
                             }
                         }, 1500)
                     } else {
+                        stopAnim()
+                        verify_pin_input_go?.isEnabled = true
+
                         ALog.e(TAG, "decodeAndLogin error$error, retry: $retry", exception)
                         val failedByFunction = when (exception) {
                             is AmeLoginErrorPasswordException,

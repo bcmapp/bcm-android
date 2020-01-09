@@ -267,7 +267,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         return viewPagerAdapter.getCurrentView(home_profile_view_pager.currentItem)?.getCurrentContext()
     }
 
-    fun checkAccountLogined(): Boolean {
+    fun checkAccountLogin(): Boolean {
         return viewPagerAdapter.getCurrentView(home_profile_view_pager.currentItem)?.isLogin ?: false
     }
 
@@ -277,6 +277,12 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
     fun reloadAccountList() {
         viewPagerAdapter.loadAccounts()
+    }
+
+    fun checkBackupStatus() {
+        shownViews.forEach {
+            it.checkAccountBackup()
+        }
     }
 
     private fun deleteAccount(uid: String) {

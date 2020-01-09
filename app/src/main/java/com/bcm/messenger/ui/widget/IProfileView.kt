@@ -7,8 +7,12 @@ import com.bcm.messenger.common.recipients.Recipient
  * Created by Kin on 2020/1/2
  */
 const val centerPosition = 0.20588236f
-const val leftPosition = -0.79411764f
-const val rightPosition = 1.20588236f
+const val leftPosition = -0.7941176f
+const val rightPosition = 1.2058823f
+
+//const val centerPosition = 0.20588236f
+//const val leftPosition = -0.79411764f
+//const val rightPosition = 1.20588236f
 
 interface IProfileView {
     var isActive: Boolean
@@ -40,6 +44,8 @@ interface IProfileView {
     fun getCurrentContext(): AccountContext?
 
     fun getCurrentRecipient(): Recipient?
+
+    fun checkAccountBackup()
 
     fun positionChanged(position: Float) {
         val innerPos = when {

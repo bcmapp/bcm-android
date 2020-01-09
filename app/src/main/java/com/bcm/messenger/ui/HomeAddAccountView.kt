@@ -153,6 +153,9 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
         return null
     }
 
+    override fun checkAccountBackup() {
+    }
+
     private fun showActionSheet() {
         val builder = AmePopup.bottom.newBuilder()
                 .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_str_scan_to_login)) {

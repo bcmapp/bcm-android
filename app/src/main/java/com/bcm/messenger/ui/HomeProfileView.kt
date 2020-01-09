@@ -21,10 +21,13 @@ import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getScreenWidth
 import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.ui.scan.NewScanActivity
 import com.bcm.messenger.me.ui.setting.SettingActivity
 import com.bcm.messenger.ui.widget.IProfileView
 import com.bcm.messenger.ui.widget.centerPosition
+import com.bcm.messenger.ui.widget.leftPosition
+import com.bcm.messenger.ui.widget.rightPosition
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.logger.ALog
@@ -62,15 +65,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     private lateinit var recipient: Recipient
     private lateinit var accountItem: HomeAccountItem
 
-    var isAccountBackup = true
-        set(value) {
-            field = value
-            if (home_profile_more.visibility == View.VISIBLE && !value) {
-                home_profile_backup_icon.visibility = View.VISIBLE
-            } else {
-                home_profile_backup_icon.visibility = View.GONE
-            }
-        }
+    private var isAccountBackup = true
 
     var chatUnread = 0
         set(value) {
@@ -93,6 +88,8 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
 //        recipient.removeListener(this)
         recipient = Recipient.from(accountItem.accountContext, accountItem.account.uid, true)
         recipient.addListener(this)
+
+        isAccountBackup = accountItem.account.backupTime > 0
 
         setProfile()
     }
@@ -337,12 +334,12 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         if (!isActive) {
             val pos = listener?.checkPosition() ?: 0f
             if (pos < 0f) {
-                onViewPositionChanged(-1f, 0f)
+                onViewPositionChanged(leftPosition, 0f)
             } else {
-                onViewPositionChanged(1f, 0f)
+                onViewPositionChanged(rightPosition, 0f)
             }
         } else {
-            onViewPositionChanged(0f, 1f)
+            onViewPositionChanged(centerPosition, 1f)
         }
     }
 
@@ -374,7 +371,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             } else {
                 dp10 + (badgeMarginStart * (1 - percent)).toInt()
             }
-            setMargins(leftMargin, dp10 + (badgeMarginEnd * (1 - percent)).toInt(), marginEnd, bottomMargin)
+            topMargin = dp10 + (badgeMarginEnd * (1 - percent)).toInt()
         }
 
         setPagerChangedAlpha(percent)
@@ -392,6 +389,17 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             recipient
         } else {
             null
+        }
+    }
+
+    override fun checkAccountBackup() {
+        val backupTime = AmeLoginLogic.accountHistory.getBackupTime(accountItem.accountContext.uid)
+        isAccountBackup = backupTime > 0
+        if (!isAccountBackup) {
+            home_profile_backup_icon.visibility = View.VISIBLE
+        } else {
+            home_profile_backup_icon.visibility = View.GONE
+            accountItem.account.backupTime = backupTime
         }
     }
 

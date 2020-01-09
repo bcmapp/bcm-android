@@ -211,7 +211,9 @@ class ConstraintPullDownLayout @JvmOverloads constructor(context: Context, attrs
                         touchEvent = true
 
                         // 判断移动方向
-                        moveDirection = if (scrollY > 0) MOVE_DOWN else MOVE_UP
+                        if (moveDirection == MOVE_NONE) {
+                            moveDirection = if (scrollY > 0) MOVE_DOWN else MOVE_UP
+                        }
                         // 设置TopView的高度
                         var newHeight = topViewOriginHeight + scrollY.toInt()
                         if (newHeight > topViewMaxHeight) newHeight = topViewMaxHeight

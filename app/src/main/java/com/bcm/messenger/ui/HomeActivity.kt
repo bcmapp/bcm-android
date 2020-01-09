@@ -213,7 +213,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
             if (SchemeLaunchHelper.hasIntent()) {
                 checkSchemeLaunch()
             }
-            checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(accountContext.uid) > 0)
+            checkBackupNotice()
         }
 
         // check need fetch profile or avatar
@@ -337,7 +337,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
     private fun initRecipientData() {
         updateRecipientData(accountRecipient)
-        checkBackupNotice(AmeLoginLogic.accountHistory.getBackupTime(accountContext.uid) > 0)
+        checkBackupNotice()
     }
 
     private fun updateRecipientData(recipient: Recipient) {
@@ -416,7 +416,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
                 val marginTop = (gapSize.toFloat() * percentage).toInt() + dp10
 
                 if (!checked) {
-                    isCurrentLogin = home_profile_layout.checkAccountLogined()
+                    isCurrentLogin = home_profile_layout.checkAccountLogin()
                 }
 
                 home_toolbar_avatar.layoutParams = (home_toolbar_avatar.layoutParams as ConstraintLayout.LayoutParams).apply {
@@ -628,9 +628,9 @@ class HomeActivity : AccountSwipeBaseActivity() {
         }.start()
     }
 
-    private fun checkBackupNotice(isHasBackup: Boolean) {
-        home_toolbar_badge.isAccountBackup = isHasBackup
-//        home_profile_layout.isAccountBackup = isHasBackup
+    private fun checkBackupNotice() {
+        home_toolbar_badge.isAccountBackup = AmeLoginLogic.accountHistory.getBackupTime(accountContext.uid) > 0
+        home_profile_layout.checkBackupStatus()
     }
 
     private fun checkShowIntroPage() {
