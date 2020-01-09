@@ -6,7 +6,7 @@ import android.text.TextWatcher
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.chats_activity_join_request.*
  * Created by wjh on 2019/6/3
  */
 @Route(routePath = ARouterConstants.Activity.GROUP_JOIN_REQUEST)
-class GroupToJoinRequestActivity : SwipeBaseActivity(), RecipientModifiedListener {
+class GroupToJoinRequestActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
 
     private val TAG = "GroupToJoinRequestActivity"
     private var mSelf: Recipient? = null

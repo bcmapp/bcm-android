@@ -9,7 +9,7 @@ import android.os.Bundle
 /**
  * Created by bcm.social.01 on 2018/11/8.
  */
-open class FullTransSwipeBaseActivity : SwipeBaseActivity() {
+open class FullTransSwipeBaseActivity : AccountSwipeBaseActivity() {
     private val TAG = "FullTransSwipeBaseActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {

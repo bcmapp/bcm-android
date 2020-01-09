@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.fragment.ITransferAction
@@ -25,7 +25,7 @@ import com.bcm.route.api.BcmRouter
  * ling created in 2018/5/17
  */
 @Route(routePath = ARouterConstants.Activity.WALLET_SEND_TRANSACTION)
-class SendTransactionActivity : SwipeBaseActivity() {
+class SendTransactionActivity : AccountSwipeBaseActivity() {
 
     private var mWalletDisplay: WalletDisplay? = null
     private var mTransferAction: ITransferAction? = null

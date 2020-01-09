@@ -7,13 +7,13 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import kotlinx.android.synthetic.main.chats_qr_display_activity.*
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 
 /**
  * Display QRCode scan result
  */
 @Route(routePath = ARouterConstants.Activity.QR_DISPLAY)
-class QRCodeDisplayActivity : SwipeBaseActivity() {
+class QRCodeDisplayActivity : AccountSwipeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

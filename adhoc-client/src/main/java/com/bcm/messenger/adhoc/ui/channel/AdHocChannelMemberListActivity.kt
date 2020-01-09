@@ -11,9 +11,8 @@ import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.chats.components.recyclerview.SelectionDataSource
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -27,7 +26,7 @@ import kotlinx.android.synthetic.main.adhoc_channel_member_list_activity.*
 /**
  *
  */
-class AdHocChannelMemberListActivity: SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<ChannelUserInfo> {
+class AdHocChannelMemberListActivity: AccountSwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<ChannelUserInfo> {
     private val dataSource = object : SelectionDataSource<ChannelUserInfo>() {
         override fun getItemId(position: Int): Long {
             return EncryptUtils.byteArrayToLong(getData(position).uid.toByteArray())

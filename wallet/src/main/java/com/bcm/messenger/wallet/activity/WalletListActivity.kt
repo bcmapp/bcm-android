@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.wallet_list_activity.*
  * 某种数字货币的列表页面
  * Created by wjh on 2018/5/28
  */
-class WalletListActivity : SwipeBaseActivity() {
+class WalletListActivity : AccountSwipeBaseActivity() {
 
     private lateinit var mAdapter: WalletListAdapter
     private lateinit var mCoinType: String

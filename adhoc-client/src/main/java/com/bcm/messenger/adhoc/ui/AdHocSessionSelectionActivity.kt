@@ -24,13 +24,13 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.adhoc_session_selection_activity.*
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.emoji.EmojiTextView
 
 /**
  * adhoc session select activity
  */
-class AdHocSessionSelectionActivity: SwipeBaseActivity(),AmeRecycleViewAdapter.IViewHolderDelegate<AdHocSession> {
+class AdHocSessionSelectionActivity: AccountSwipeBaseActivity(),AmeRecycleViewAdapter.IViewHolderDelegate<AdHocSession> {
 
     private val TAG = "AdHocSessionSelectionActivity"
     private var mMultiSelectMode: Boolean = false

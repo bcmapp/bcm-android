@@ -15,7 +15,7 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -37,7 +37,7 @@ import org.greenrobot.eventbus.Subscribe
 
  * Created by bcm.social.01 on 2018/5/25.
  */
-class ChatGroupMemberListActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<AmeGroupMemberInfo> {
+class ChatGroupMemberListActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<AmeGroupMemberInfo> {
     private var editMode = false
     private var memberList: ArrayList<AmeGroupMemberInfo> = ArrayList()
     private lateinit var memberDataSource: SelectionDataSource<AmeGroupMemberInfo>

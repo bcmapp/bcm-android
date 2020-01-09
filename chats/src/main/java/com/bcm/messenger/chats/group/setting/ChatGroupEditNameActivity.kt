@@ -10,7 +10,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
@@ -18,15 +18,12 @@ import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.utility.InputLengthFilter
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.chats_activity_edit_group_name.*
 
 /**
  * Created by Kin on 2019/7/4
  */
-class ChatGroupEditNameActivity : SwipeBaseActivity() {
+class ChatGroupEditNameActivity : AccountSwipeBaseActivity() {
     private lateinit var groupModel: GroupViewModel
     private var gid = 0L
     private var groupName = ""

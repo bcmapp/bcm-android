@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ARouterConstants.Activity.APP_DEV_SETTING
-import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.bcmhttp.conncheck.IMServerConnectionChecker
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -299,7 +298,7 @@ class DevSettingsActivity : AppCompatActivity() {
             if (checkIpChars(list[0]) && ipSegments.size != 4){
                 return false
             }
-        } catch (e:NumberFormatException) {
+        } catch (e:Throwable) {
             return false
         }
         return true

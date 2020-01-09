@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.api.IContactsAction
 import com.bcm.messenger.common.api.IContactsCallback
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
@@ -28,7 +28,7 @@ import java.lang.ref.WeakReference
 /**
  * Create a new chat
  */
-class NewChatActivity : SwipeBaseActivity() {
+class NewChatActivity : AccountSwipeBaseActivity() {
 
     private lateinit var mContactSelection: IContactsAction
 

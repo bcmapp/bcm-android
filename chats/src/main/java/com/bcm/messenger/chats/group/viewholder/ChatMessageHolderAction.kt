@@ -3,12 +3,11 @@ package com.bcm.messenger.chats.group.viewholder
 import android.text.Layout
 import android.text.StaticLayout
 import android.view.View
-import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.components.BigContentRecycleFragment
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
@@ -44,7 +43,7 @@ open class ChatMessageHolderAction(accountContext: AccountContext) : BaseChatHol
             val detail = mMessageDetail
             if (detail != null && detail !is AmeHistoryMessageDetail) {
                 view?.hideKeyboard()
-                BigContentRecycleFragment.showBigContent(view?.context as? SwipeBaseActivity
+                BigContentRecycleFragment.showBigContent(view?.context as? AccountSwipeBaseActivity
                         ?: return, detail.gid, detail.indexId)
             }
         }

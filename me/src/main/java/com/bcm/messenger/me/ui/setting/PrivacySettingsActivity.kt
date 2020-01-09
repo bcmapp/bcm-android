@@ -2,7 +2,7 @@ package com.bcm.messenger.me.ui.setting
 
 import android.content.Intent
 import android.os.Bundle
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.me_activity_privacy_settings.*
 /**
  * Created by Kin on 2020/1/8
  */
-class PrivacySettingsActivity : SwipeBaseActivity() {
+class PrivacySettingsActivity : AccountSwipeBaseActivity() {
     private val REQUEST_SETTING = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {

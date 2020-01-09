@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AppUtil
@@ -27,7 +27,7 @@ import java.util.*
 /**
  * Created by wjh on 2018/05/25
  */
-class TransactionDetailActivity : SwipeBaseActivity() {
+class TransactionDetailActivity : AccountSwipeBaseActivity() {
 
     private lateinit var mTransactionDetail: TransactionDisplay
 

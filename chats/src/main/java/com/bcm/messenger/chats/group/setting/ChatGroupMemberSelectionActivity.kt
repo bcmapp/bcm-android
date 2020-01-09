@@ -10,9 +10,8 @@ import com.bcm.messenger.chats.components.recyclerview.SelectionDataSource
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
 import kotlinx.android.synthetic.main.chats_group_member_list.*
@@ -24,7 +23,7 @@ import org.greenrobot.eventbus.Subscribe
  * Created by bcm.social.01 on 2018/5/25.
  */
 
-class ChatGroupMemberSelectionActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<AmeGroupMemberInfo> {
+class ChatGroupMemberSelectionActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<AmeGroupMemberInfo> {
 
     private lateinit var memberDataSource: SelectionDataSource<AmeGroupMemberInfo>
     private lateinit var groupModel: GroupViewModel

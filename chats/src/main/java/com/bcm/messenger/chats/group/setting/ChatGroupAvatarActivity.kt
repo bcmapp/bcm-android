@@ -8,7 +8,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
@@ -31,7 +31,7 @@ import java.io.File
 /**
  * Created by Kin on 2019/7/4
  */
-class ChatGroupAvatarActivity : SwipeBaseActivity() {
+class ChatGroupAvatarActivity : AccountSwipeBaseActivity() {
     private val TAG = "ChatGroupAvatarActivity"
 
     private lateinit var groupModel: GroupViewModel

@@ -17,7 +17,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.util.TTSUtil
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.MessageRecord
@@ -45,7 +45,7 @@ class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
 
     companion object {
 
-        fun showBigContent(activity: SwipeBaseActivity, gid: Long, indexId: Long) {
+        fun showBigContent(activity: AccountSwipeBaseActivity, gid: Long, indexId: Long) {
             val f = BigContentRecycleFragment()
             val arg = Bundle()
             arg.putLong(GID, gid)
@@ -62,7 +62,7 @@ class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
             activity.hideKeyboard()
         }
 
-        fun showBigContent(activity: SwipeBaseActivity, threadId: Long, id: Long, masterSecret: MasterSecret) {
+        fun showBigContent(activity: AccountSwipeBaseActivity, threadId: Long, id: Long, masterSecret: MasterSecret) {
             val f = BigContentRecycleFragment()
             val arg = Bundle()
             arg.putLong(THREAD_ID, threadId)

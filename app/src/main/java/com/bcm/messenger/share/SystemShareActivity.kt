@@ -7,7 +7,7 @@ import com.bcm.messenger.R
 import com.bcm.messenger.chats.components.ChatForwardDialog
 import com.bcm.messenger.chats.forward.ForwardRecentFragment
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.api.IContactsCallback
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.mms.GlideRequests
@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit
  * Created by Kin on 2018/10/8
  */
 @Route(routePath = ARouterConstants.Activity.SYSTEM_SHARE)
-class SystemShareActivity : SwipeBaseActivity(), IContactsCallback {
+class SystemShareActivity : AccountSwipeBaseActivity(), IContactsCallback {
     private val TAG = "SystemShareActivity"
 
     private lateinit var glideRequest: GlideRequests

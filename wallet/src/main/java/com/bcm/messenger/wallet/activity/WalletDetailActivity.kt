@@ -7,7 +7,7 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -36,7 +36,7 @@ import kotlinx.android.synthetic.main.wallet_detail_activity.*
  * 对应币种钱包的详细页面
  * Created by wjh on 2018/5/18
  */
-class WalletDetailActivity : SwipeBaseActivity() {
+class WalletDetailActivity : AccountSwipeBaseActivity() {
 
     private val TAG = "WalletDetailActivity"
 

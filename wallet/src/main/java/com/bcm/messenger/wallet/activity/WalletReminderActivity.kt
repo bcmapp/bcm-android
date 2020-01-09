@@ -4,12 +4,12 @@ import android.os.Bundle
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.wallet.R
 import kotlinx.android.synthetic.main.wallet_reminder_activity.*
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 
 /**
  * Created by wjh on 2018/6/2
  */
-class WalletReminderActivity : SwipeBaseActivity() {
+class WalletReminderActivity : AccountSwipeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

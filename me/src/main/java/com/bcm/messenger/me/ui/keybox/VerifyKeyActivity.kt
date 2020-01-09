@@ -3,7 +3,7 @@ package com.bcm.messenger.me.ui.keybox
 import android.content.Intent
 import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.common.utils.startBcmActivity
@@ -15,7 +15,7 @@ import com.bcm.messenger.me.ui.pinlock.PinInputActivity
 import com.bcm.route.annotation.Route
 
 @Route(routePath = ARouterConstants.Activity.VERIFY_PASSWORD)
-class VerifyKeyActivity : SwipeBaseActivity() {
+class VerifyKeyActivity : AccountSwipeBaseActivity() {
     companion object {
         const val ACCOUNT_ID = "account_id"
         const val BACKUP_JUMP_ACTION = "BACKUP_JUMP_ACTION"

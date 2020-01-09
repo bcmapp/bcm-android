@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.contacts_activity_request_friend.*
  * Created by wjh on 2018/02/28
  */
 @Route(routePath = ARouterConstants.Activity.REQUEST_FRIEND)
-class RequestAddFriendActivity : SwipeBaseActivity(), RecipientModifiedListener {
+class RequestAddFriendActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
 
     private var mRecipient: Recipient? = null
     private var mUseDefaultHint: Boolean = true

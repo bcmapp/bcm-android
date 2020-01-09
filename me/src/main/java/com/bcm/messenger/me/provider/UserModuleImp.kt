@@ -580,7 +580,7 @@ class UserModuleImp : IUserModule
                     .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.from(accountContext, uid))
                     .putString(ARouterConstants.PARAM.PARAM_CLIENT_INFO, info)
                     .putString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID, uid)
-                    .navigation(activity)
+                    .startBcmActivity(accountContext, activity)
         }
 
     }

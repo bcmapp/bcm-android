@@ -13,7 +13,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * 
  * Created by wjh on 2019/6/6
  */
-class GroupShareSettingsActivity : SwipeBaseActivity() {
+class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
 
     private val TAG = "GroupShareSettingsActivity"
     private lateinit var mGroupModel: GroupViewModel

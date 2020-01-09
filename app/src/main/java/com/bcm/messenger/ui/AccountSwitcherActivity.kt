@@ -3,11 +3,14 @@ package com.bcm.messenger.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.route.annotation.Route
+import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.activity_account_switcher.*
 
 /**
@@ -55,5 +58,13 @@ class AccountSwitcherActivity : AppCompatActivity() {
 
             }
         })
+
+        if(!AppUtil.isReleaseBuild()) {
+            switcher_env_setting.visibility = View.VISIBLE
+        }
+
+        switcher_env_setting.setOnClickListener {
+            BcmRouter.getInstance().get(ARouterConstants.Activity.APP_DEV_SETTING).navigation(this)
+        }
     }
 }

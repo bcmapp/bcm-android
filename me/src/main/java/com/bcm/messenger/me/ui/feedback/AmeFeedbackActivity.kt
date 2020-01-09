@@ -7,7 +7,7 @@ import android.text.TextWatcher
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoConstants
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
 import com.bcm.messenger.common.imagepicker.bean.SelectedModel
@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.me_activity_help.*
  * Created by bcm.social.01 on 2018/6/21.
  */
 @Route(routePath = ARouterConstants.Activity.FEEDBACK)
-class AmeFeedbackActivity : SwipeBaseActivity() {
+class AmeFeedbackActivity : AccountSwipeBaseActivity() {
     private lateinit var viewModel: FeedBackViewModel
     private var screenshotAdapter: FeedBackScreenshotAdapter? = null
 

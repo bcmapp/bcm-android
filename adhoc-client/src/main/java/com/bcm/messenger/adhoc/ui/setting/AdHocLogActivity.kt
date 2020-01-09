@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.sdk.AdHocSDK
 import com.bcm.messenger.adhoc.sdk.LogData
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
 import com.bcm.messenger.common.utils.dp2Px
@@ -25,7 +25,7 @@ import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.adhoc_channel_log_activity.*
 import java.text.SimpleDateFormat
 
-class AdHocLogActivity: SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<LogData> {
+class AdHocLogActivity: AccountSwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<LogData> {
     private val dataSource = AdHocSDK.getLogSource()
     private val sdf = SimpleDateFormat("HH:mm:ss.SSS")
     private var canAutoScroll = true

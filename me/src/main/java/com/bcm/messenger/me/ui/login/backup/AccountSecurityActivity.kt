@@ -8,7 +8,7 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.me_activity_acount_security.*
  * Created by wjh on 2018/6/6
  */
 @Route(routePath = ARouterConstants.Activity.ME_ACCOUNT)
-class AccountSecurityActivity : SwipeBaseActivity() {
+class AccountSecurityActivity : AccountSwipeBaseActivity() {
 
     private val SAFETY_VERIFY_CODE = 1
 

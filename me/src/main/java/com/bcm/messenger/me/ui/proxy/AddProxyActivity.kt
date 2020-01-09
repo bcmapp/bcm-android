@@ -1,7 +1,7 @@
 package com.bcm.messenger.me.ui.proxy
 
 import android.os.Bundle
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.me.R
@@ -11,7 +11,7 @@ import com.bcm.netswitchy.proxy.ProxyManager
 import com.bcm.netswitchy.proxy.proxyconfig.ProxyParamsParser
 import kotlinx.android.synthetic.main.me_activity_add_proxy.*
 
-class AddProxyActivity : SwipeBaseActivity() {
+class AddProxyActivity : AccountSwipeBaseActivity() {
     companion object {
         const val EDIT_PROXY_NAME = "edit_proxy_name"
     }

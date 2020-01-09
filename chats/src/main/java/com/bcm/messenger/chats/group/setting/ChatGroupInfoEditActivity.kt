@@ -6,7 +6,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.ui.CommonSettingItem
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -22,7 +22,7 @@ import org.greenrobot.eventbus.Subscribe
  
  * Created by bcm.social.01 on 2018/5/29.
  */
-class ChatGroupProfileActivity : SwipeBaseActivity() {
+class ChatGroupProfileActivity : AccountSwipeBaseActivity() {
     companion object {
         private const val TAG = "GroupInfoEditActivity"
 

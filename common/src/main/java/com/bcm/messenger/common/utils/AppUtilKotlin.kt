@@ -39,7 +39,7 @@ import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BaseFragment
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.utility.AppContextHolder
@@ -99,17 +99,17 @@ fun Activity.startBcmActivityForResult(accountContext: AccountContext, intent: I
     startActivityForResult(intent, requestCode, options)
 }
 
-fun SwipeBaseActivity.startBcmActivity(intent: Intent) {
+fun AccountSwipeBaseActivity.startBcmActivity(intent: Intent) {
     checkIntent(accountContext, intent)
     startActivity(intent)
 }
 
-fun SwipeBaseActivity.startBcmActivityForResult(intent: Intent, requestCode: Int) {
+fun AccountSwipeBaseActivity.startBcmActivityForResult(intent: Intent, requestCode: Int) {
     checkIntent(accountContext, intent)
     startActivityForResult(intent, requestCode)
 }
 
-fun SwipeBaseActivity.startBcmActivityForResult(intent: Intent, requestCode: Int, options: Bundle?) {
+fun AccountSwipeBaseActivity.startBcmActivityForResult(intent: Intent, requestCode: Int, options: Bundle?) {
     checkIntent(accountContext, intent)
     startActivityForResult(intent, requestCode, options)
 }

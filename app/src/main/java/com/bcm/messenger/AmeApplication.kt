@@ -260,7 +260,7 @@ class AmeApplication : MultiDexApplication() {
                 ApplicationService.impl = IApplicationlImpl.Stub.asInterface(service)
                 //如果服务已经连接上，要检测一下防窥屏设置（因为服务有延后，所以可能当时的activity还没来得及设置）
                 val curActivity = AmeAppLifecycle.current()
-                if (curActivity is SwipeBaseActivity) {
+                if (curActivity is AccountSwipeBaseActivity) {
                     curActivity.updateScreenshotSecurity()
                 }
             }

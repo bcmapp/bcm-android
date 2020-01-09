@@ -18,7 +18,7 @@ import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.chats.mediabrowser.ui.MediaBrowserActivity
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.corebean.BcmReviewGroupJoinRequest
@@ -44,7 +44,7 @@ import java.lang.ref.WeakReference
 /**
  * Created by bcm.social.01 on 2018/6/1.
  */
-class ChatGroupSettingActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<AmeGroupMemberInfo> {
+class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<AmeGroupMemberInfo> {
     companion object {
         private const val TAG = "ChatGroupSetting"
     }

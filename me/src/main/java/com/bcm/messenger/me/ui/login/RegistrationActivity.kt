@@ -46,33 +46,14 @@ class RegistrationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_registration)
 
-        if (intent.getBooleanExtra(CREATE_ACCOUNT_ID, false)) {
-            handleFirstGoToLogin(null)
-        } else {
-            val lastLoginUid = AmeLoginLogic.accountHistory.getLastLoginUid()
-            handleFirstGoToLogin(lastLoginUid)
-        }
-    }
+        val f = StartupFragment()
+        val arg = Bundle()
+        arg.putBoolean(CREATE_ACCOUNT_ID, intent.getBooleanExtra(CREATE_ACCOUNT_ID, false))
+        f.arguments = arg
+        supportFragmentManager.beginTransaction()
+                .add(R.id.register_container, f, "startup")
+                .commitNowAllowingStateLoss()
 
-    private fun handleFirstGoToLogin(lastLoginUid: String?) {
-        if (!lastLoginUid.isNullOrEmpty()) {
-            val f = ReloginFragment()
-            val arg = Bundle()
-            arg.putString(RE_LOGIN_ID, lastLoginUid)
-            f.arguments = arg
-
-            supportFragmentManager.beginTransaction()
-                    .add(R.id.register_container, f, "relogin")
-                    .commitNowAllowingStateLoss()
-        } else {
-            val f = StartupFragment()
-            val arg = Bundle()
-            arg.putBoolean(CREATE_ACCOUNT_ID, intent.getBooleanExtra(CREATE_ACCOUNT_ID, false))
-            f.arguments = arg
-            supportFragmentManager.beginTransaction()
-                    .add(R.id.register_container, f, "startup")
-                    .commitNowAllowingStateLoss()
-        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

@@ -7,13 +7,13 @@ import android.text.TextWatcher
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocSessionLogic
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.showKeyboard
 import com.bcm.messenger.common.utils.startBcmActivity
 import kotlinx.android.synthetic.main.adhoc_chanel_join_activity.*
 
-class AdHocJoinChannelActivity: SwipeBaseActivity(), TextWatcher {
+class AdHocJoinChannelActivity: AccountSwipeBaseActivity(), TextWatcher {
 
     override fun onDestroy() {
         super.onDestroy()

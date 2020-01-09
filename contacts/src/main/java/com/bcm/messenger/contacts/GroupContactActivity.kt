@@ -2,7 +2,7 @@ package com.bcm.messenger.contacts
 
 import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.common.utils.startBcmActivity
@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.contacts_activity_group_contact.*
  * Created by wjh on 2019/7/1
  */
 @Route(routePath = ARouterConstants.Activity.GROUP_CONTACT_MAIN)
-class GroupContactActivity : SwipeBaseActivity() {
+class GroupContactActivity : AccountSwipeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

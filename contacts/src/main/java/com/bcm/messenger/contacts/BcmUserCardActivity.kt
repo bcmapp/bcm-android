@@ -3,7 +3,7 @@ package com.bcm.messenger.contacts
 import android.os.Bundle
 import android.view.View
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.database.model.ProfileKeyModel
@@ -25,7 +25,7 @@ import com.bcm.route.api.BcmRouter
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.contacts_activity_contact_card.*
 
-class BcmUserCardActivity: SwipeBaseActivity(), RecipientModifiedListener {
+class BcmUserCardActivity: AccountSwipeBaseActivity(), RecipientModifiedListener {
 
     private var mRecipient: Recipient? = null
     private var groupMemberInfo: AmeGroupMemberInfo? = null

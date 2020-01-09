@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import androidx.lifecycle.Observer
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -39,7 +39,7 @@ import java.io.FileOutputStream
 /**
  * Created by wjh on 1018/05/19
  */
-class AssetsReceiveActivity : SwipeBaseActivity() {
+class AssetsReceiveActivity : AccountSwipeBaseActivity() {
 
     private lateinit var mWalletDisplay: WalletDisplay
     private var mQrContent: String? = null

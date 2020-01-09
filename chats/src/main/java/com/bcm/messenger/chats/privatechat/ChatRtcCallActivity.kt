@@ -15,7 +15,7 @@ import com.bcm.messenger.chats.components.ChatRtcCallScreen
 import com.bcm.messenger.chats.privatechat.webrtc.CameraState
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.checkOverlaysPermission
 import com.bcm.messenger.common.utils.requestOverlaysPermission
@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.chats_activity_webrtc_call.*
  * Created by wjh on 2018/04/16
  */
 @Route(routePath = ARouterConstants.Activity.CHAT_CALL_PATH)
-class ChatRtcCallActivity : SwipeBaseActivity() {
+class ChatRtcCallActivity : AccountSwipeBaseActivity() {
 
     companion object {
         private const val TAG = "ChatRtcCallActivity"

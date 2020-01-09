@@ -9,8 +9,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
-import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -25,7 +24,7 @@ import org.greenrobot.eventbus.Subscribe
 /**
  * 
  */
-class ChatGroupNoticeActivity : SwipeBaseActivity(), RecipientModifiedListener {
+class ChatGroupNoticeActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
 
     companion object {
         private const val TAG = "GroupNoticeActivity"

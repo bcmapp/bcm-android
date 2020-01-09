@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.api.IContactsAction
 import com.bcm.messenger.common.api.IContactsCallback
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
@@ -33,7 +33,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 @Route(routePath = ARouterConstants.Activity.CHAT_GROUP_CREATE)
-class ChatGroupCreateActivity : SwipeBaseActivity(), IContactsCallback {
+class ChatGroupCreateActivity : AccountSwipeBaseActivity(), IContactsCallback {
 
     companion object {
         private const val TAG = "ChatTTCreateActivity"

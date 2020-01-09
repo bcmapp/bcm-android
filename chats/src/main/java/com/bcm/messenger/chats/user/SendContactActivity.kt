@@ -9,7 +9,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.bean.SendContactEvent
 import com.bcm.messenger.chats.components.ChatSendContactDialog
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.api.IContactsAction
 import com.bcm.messenger.common.api.IContactsCallback
 import com.bcm.messenger.common.core.Address
@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.chats_activity_send_contact.*
  * Created by Kin on 2018/8/15
  */
 @Route(routePath = ARouterConstants.Activity.CONTACT_SEND)
-class SendContactActivity : SwipeBaseActivity(), IContactsCallback {
+class SendContactActivity : AccountSwipeBaseActivity(), IContactsCallback {
 
     private val TAG = "SendContactActivity"
     private lateinit var chatRecipient: Recipient

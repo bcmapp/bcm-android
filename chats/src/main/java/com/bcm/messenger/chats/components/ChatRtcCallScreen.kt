@@ -22,7 +22,7 @@ import com.bcm.messenger.chats.privatechat.webrtc.CameraState
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcViewModel
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
@@ -120,7 +120,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {
-        this.accountContext = (context as SwipeBaseActivity).accountContext
+        this.accountContext = (context as AccountSwipeBaseActivity).accountContext
         initialize()
     }
 

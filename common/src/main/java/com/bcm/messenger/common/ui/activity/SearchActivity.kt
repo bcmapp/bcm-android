@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.R
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.api.ISearchAction
 import com.bcm.messenger.common.api.ISearchCallback
 import com.bcm.messenger.common.finder.BcmFinderManager
@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.common_activity_search.*
  * 
  * @created by wjh 2019-04-04
  */
-class SearchActivity : SwipeBaseActivity(), ISearchCallback {
+class SearchActivity : AccountSwipeBaseActivity(), ISearchCallback {
 
     companion object {
         private const val TAG = "SearchActivity"

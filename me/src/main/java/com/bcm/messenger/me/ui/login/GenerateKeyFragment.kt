@@ -7,19 +7,13 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
-import android.os.Handler
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.crypto.IdentityKeyUtil
-import com.bcm.messenger.common.preferences.SuperPreferences
-import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.ui.IndividualAvatarView
-import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
-import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getScreenHeight
+import com.bcm.messenger.common.utils.getStatusBarHeight
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.provider.UserModuleImp
@@ -27,272 +21,17 @@ import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.HexUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
-import com.bcm.messenger.utility.logger.ALog
-import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.me_generate_key_fragment_2.*
 import kotlinx.android.synthetic.main.me_key_load_anim_layout.*
-import kotlinx.android.synthetic.main.me_layout_relogin.*
-import kotlinx.android.synthetic.main.me_startup_fragment.*
-import org.whispersystems.libsignal.ecc.Curve
 import org.whispersystems.libsignal.ecc.ECKeyPair
-import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
-class ReloginFragment : AbsRegistrationFragment() {
-
-    private val TAG = "ReloginFragment"
-    private var keyPair: ECKeyPair? = null
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.me_layout_relogin, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initView()
-        val uid = arguments?.getString(RegistrationActivity.RE_LOGIN_ID) ?: ""
-        if (!TextUtils.isEmpty(uid)) {
-            fetchProfile(uid)
-        }
-    }
-
-    fun initView() {
-        relogin_avatar.setOnClickListener {
-            relogin_layout.visibility = View.GONE
-            gotoReloginInputPin()
-        }
-
-        create_account.setOnClickListener {
-            AmePopup.tipLoading.show(this.activity)
-            Observable.create(ObservableOnSubscribe<ECKeyPair> {
-                try {
-                    it.onNext(Curve.generateKeyPair())
-                } catch (ex: Exception) {
-                    it.onError(ex)
-                } finally {
-                    it.onComplete()
-                }
-            }).subscribeOn(Schedulers.computation())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        keyPair = it
-                        if (keyPair != null) {
-                            AmeLoginLogic.queryChallengeTarget(it) { target ->
-
-                                AmePopup.tipLoading.dismiss()
-                                if (target != null) {
-                                    activity?.apply {
-                                        val f = GenerateKeyFragment2()
-                                        val arg = Bundle()
-                                        arg.putInt("action", 1)
-                                        arg.putString("target", target)
-                                        f.arguments = arg
-                                        supportFragmentManager.beginTransaction()
-                                                .replace(R.id.register_container, f, "generate_key_2")
-                                                .addToBackStack("generate_key_2")
-                                                .commitAllowingStateLoss()
-                                        f.setKeyPair(it)
-                                    }
-                                }
-
-                            }
-                        } else {
-                            AmePopup.tipLoading.dismiss()
-                        }
-                    }, {
-                        AmePopup.tipLoading.dismiss()
-                        ALog.e(TAG, it.toString())
-                    })
-        }
-
-        switch_account.setOnClickListener {
-            activity?.apply {
-                AmePopup.bottom.newBuilder()
-                        .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_keybox)) {
-                            if (AmeLoginLogic.getAccountList().isNotEmpty()) {
-                                BcmRouter.getInstance().get(ARouterConstants.Activity.ME_KEYBOX).navigation()
-                            } else {
-                                BcmRouter.getInstance().get(ARouterConstants.Activity.ME_KEYBOX_GUIDE).navigation()
-                            }
-                        })
-                        .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_str_scan_to_login)) {
-                            try {
-                                BcmRouter.getInstance().get(ARouterConstants.Activity.SCAN_NEW)
-                                        .putInt(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_ACCOUNT)
-                                        .navigation(activity, RegistrationActivity.REQUEST_CODE_SCAN_QR_LOGIN)
-
-
-                            } catch (ex: Exception) {
-                                ALog.e(TAG, "start ScanActivity error", ex)
-                            }
-                        })
-                        .withDoneTitle(getString(R.string.common_cancel))
-                        .show(this)
-            }
-        }
-    }
-
-    private fun gotoReloginInputPin() {
-        activity?.apply {
-            val f = LoginVerifyPinFragment()
-            val arg = Bundle()
-            arg.putString(RegistrationActivity.RE_LOGIN_ID, arguments?.getString(RegistrationActivity.RE_LOGIN_ID)
-                    ?: "")
-            f.arguments = arg
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.register_container, f)
-                    .addToBackStack("sms")
-                    .commit()
-        }
-    }
-
-    private fun fetchProfile(uid: String) {
-        val account = AmeLoginLogic.accountHistory.getAccount(uid)
-
-        val realUid: String? = account?.uid
-        val name: String? = account?.name
-        val avatar: String? = account?.avatar
-
-        ALog.d(TAG, "fetchProfile uid: $uid, name: $name, avatar: $avatar")
-        if (!realUid.isNullOrEmpty()) {
-            relogin_avatar.setPhoto(realUid, name?:realUid.front(), avatar?:"")
-        }
-    }
-}
-
-class StartupFragment : AbsRegistrationFragment() {
-
-    private val TAG = "StartupFragment"
-    private var keyPair: ECKeyPair? = null
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.me_startup_fragment, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initView()
-
-        if (arguments?.getBoolean(RegistrationActivity.CREATE_ACCOUNT_ID, false) == true) {
-            createAccount()
-        } else {
-            showLogoAnimation()
-        }
-
-        SuperPreferences.setTablessIntroductionFlag(AppContextHolder.APP_CONTEXT)
-    }
-
-    private fun initView() {
-        startup_create.setOnClickListener {
-            createAccount()
-        }
-
-        startup_scan.setOnClickListener {
-
-            BcmRouter.getInstance().get(ARouterConstants.Activity.SCAN_NEW)
-                    .putInt(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_ACCOUNT)
-                    .navigation(activity, RegistrationActivity.REQUEST_CODE_SCAN_QR_LOGIN)
-        }
-        startup_keybox.setOnClickListener {
-            if (AmeLoginLogic.getAccountList().isNotEmpty()) {
-                BcmRouter.getInstance().get(ARouterConstants.Activity.ME_KEYBOX).navigation()
-            } else {
-                BcmRouter.getInstance().get(ARouterConstants.Activity.ME_KEYBOX_GUIDE).navigation()
-            }
-        }
-    }
-
-    private fun createAccount() {
-        AmePopup.tipLoading.show(this.activity)
-        Observable.create(ObservableOnSubscribe<ECKeyPair> {
-            try {
-                it.onNext(Curve.generateKeyPair())
-            } finally {
-                it.onComplete()
-            }
-        }).subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    keyPair = it
-                    if (keyPair != null) {
-                        AmeLoginLogic.queryChallengeTarget(it) { target ->
-
-                            AmePopup.tipLoading.dismiss()
-                            if (target != null) {
-                                activity?.apply {
-                                    val f = GenerateKeyFragment2()
-                                    val arg = Bundle()
-                                    arg.putInt("action", 1)
-                                    arg.putString("target", target)
-                                    f.arguments = arg
-                                    supportFragmentManager.beginTransaction()
-                                            .replace(R.id.register_container, f, "generate_key_2")
-                                            .addToBackStack("generate_key_2")
-                                            .commitAllowingStateLoss()
-                                    f.setKeyPair(it)
-                                }
-                            }
-                        }
-                    } else {
-                        AmePopup.tipLoading.dismiss()
-                    }
-                }, {
-                    AmePopup.tipLoading.dismiss()
-                    ALog.e(TAG, it.toString())
-                })
-    }
-
-    private fun showLogoAnimation() {
-        AnimatorSet().apply {
-            duration = 500
-            play(ObjectAnimator.ofFloat(startup_icon, "scaleX", 0f, 1f))
-                    .with(ObjectAnimator.ofFloat(startup_icon, "scaleY", 0f, 1f))
-                    .with(ObjectAnimator.ofFloat(startup_icon, "translationY", 300f, 0f))
-                    .with(ObjectAnimator.ofFloat(startup_icon, "alpha", 0f, 1f))
-            addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    showBlinkAnimation()
-                }
-            })
-        }.start()
-    }
-
-    private fun showBlinkAnimation() {
-        Handler().postDelayed({
-            (startup_icon?.drawable as? AnimationDrawable)?.start()
-            showButtonAnimation()
-        }, 500)
-    }
-
-    private fun showButtonAnimation() {
-        startup_create?.visibility = View.VISIBLE
-        startup_scan?.visibility = View.VISIBLE
-        startup_keybox?.visibility = View.VISIBLE
-        AnimatorSet().apply {
-            duration = 500
-            play(ObjectAnimator.ofFloat(startup_create, "scaleX", 0f, 1.1f, 0.9f, 1f))
-                    .with(ObjectAnimator.ofFloat(startup_create, "scaleY", 0f, 1.1f, 0.9f, 1f))
-                    .with(ObjectAnimator.ofFloat(startup_scan, "scaleX", 0f, 1.1f, 0.9f, 1f))
-                    .with(ObjectAnimator.ofFloat(startup_scan, "scaleY", 0f, 1.1f, 0.9f, 1f))
-                    .with(ObjectAnimator.ofFloat(startup_keybox, "scaleX", 0f, 1.1f, 0.9f, 1f))
-                    .with(ObjectAnimator.ofFloat(startup_keybox, "scaleY", 0f, 1.1f, 0.9f, 1f))
-        }.start()
-    }
-}
-
-fun AnimatorSet.addToList(list: ArrayList<AnimatorSet>): AnimatorSet {
-    list.add(this)
-    return this
-}
-
-class GenerateKeyFragment2 : AbsRegistrationFragment() {
+class GenerateKeyFragment : AbsRegistrationFragment() {
 
     private var action = -1
     private var keyPair: ECKeyPair? = null
@@ -691,7 +430,7 @@ class GenerateKeyFragment2 : AbsRegistrationFragment() {
                                 .before(ObjectAnimator.ofFloat(key_link_next, "scaleY", 0f, 1.0f, 0.8f, 0.9f))
                         addListener(object : AnimatorListenerAdapter() {
                             override fun onAnimationEnd(animation: Animator?) {
-                                val keyPair = this@GenerateKeyFragment2.keyPair
+                                val keyPair = this@GenerateKeyFragment.keyPair
                                 if (null != keyPair) {
                                     val pubArray = keyPair.publicKey.serialize()
                                     anim_text_one?.setText(HexUtil.toString(pubArray))
@@ -773,6 +512,11 @@ class GenerateKeyFragment2 : AbsRegistrationFragment() {
                         playTogether(x, y, ObjectAnimator.ofFloat(anim_letter_tv, "alpha", 0f, 1f))
                     }.addToList(animatorSetList).start()
                 }
+    }
+
+    fun AnimatorSet.addToList(list: ArrayList<AnimatorSet>): AnimatorSet {
+        list.add(this)
+        return this
     }
 
     override fun onDestroyView() {

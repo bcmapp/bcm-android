@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -40,7 +40,7 @@ import java.util.*
  * Created by bcm.social.01 on 2017/7/4.
  */
 @Route(routePath = ARouterConstants.Activity.NOTE)
-class AmeNoteActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<BcmNote> {
+class AmeNoteActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<BcmNote> {
     private lateinit var noteLogic:AmeNoteLogic
     private val dataSource = object :ListDataSource<BcmNote>() {
         override fun getItemId(position: Int): Long {

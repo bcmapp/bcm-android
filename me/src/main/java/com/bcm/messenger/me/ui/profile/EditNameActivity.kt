@@ -7,7 +7,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.me_fragment_edit_name.*
  * Created by Kin on 2018/9/7
  */
 @Route(routePath = ARouterConstants.Activity.EDIT_NAME)
-class EditNameActivity : SwipeBaseActivity(), RecipientModifiedListener {
+class EditNameActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
     private val TAG = "EditNameActivity"
 
     private lateinit var recipient: Recipient

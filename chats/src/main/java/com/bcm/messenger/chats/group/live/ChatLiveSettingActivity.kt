@@ -3,13 +3,13 @@ package com.bcm.messenger.chats.group.live
 import android.os.Bundle
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.chats_activity_live_settings.*
 
-class ChatLiveSettingActivity : SwipeBaseActivity(), LinkSetImpl {
+class ChatLiveSettingActivity : AccountSwipeBaseActivity(), LinkSetImpl {
 
     private val TAG = "ChatLiveSettingActivity"
     private var previewFragment: ChatLivePreviewFragment? = null

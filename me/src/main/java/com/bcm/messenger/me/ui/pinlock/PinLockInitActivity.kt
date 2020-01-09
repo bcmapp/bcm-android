@@ -6,13 +6,13 @@ import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmePinLogic
 import kotlinx.android.synthetic.main.me_activity_init_pin_lock.*
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.utils.startBcmActivity
 
 /**
  * bcm.social.01 2018/10/10.
  */
-class PinLockInitActivity : SwipeBaseActivity() {
+class PinLockInitActivity : AccountSwipeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

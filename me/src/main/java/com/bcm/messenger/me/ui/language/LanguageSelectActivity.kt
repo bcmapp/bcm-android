@@ -19,9 +19,9 @@ import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.CommonSettingItem
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_item_language_select.view.*
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 
-class LanguageSelectActivity : SwipeBaseActivity() {
+class LanguageSelectActivity : AccountSwipeBaseActivity() {
 
     private var adapter: LanguageSelectAdapter? = null
     private var languageViewModel: LanguageViewModel? = null

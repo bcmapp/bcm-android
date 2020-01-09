@@ -12,13 +12,13 @@ import com.bcm.messenger.common.provider.IAMapModule
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 import kotlinx.android.synthetic.main.chats_activity_map_preview.*
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 
 /**
  * Created by zjl on 2018/6/22.
  */
 @Route(routePath = ARouterConstants.Activity.MAP_PREVIEW)
-class MapPreviewActivity : SwipeBaseActivity() {
+class MapPreviewActivity : AccountSwipeBaseActivity() {
 
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0

@@ -5,14 +5,14 @@ import android.os.Bundle
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.sdk.AdHocConnState
 import com.bcm.messenger.adhoc.sdk.AdHocSDK
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import kotlinx.android.synthetic.main.adhoc_dev_setting_view.*
 
-class AdHocDevSettingActivity: SwipeBaseActivity(), AdHocSDK.IAdHocSDKEventListener {
+class AdHocDevSettingActivity: AccountSwipeBaseActivity(), AdHocSDK.IAdHocSDKEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

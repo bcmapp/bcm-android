@@ -24,7 +24,7 @@ import com.bcm.messenger.chats.util.AttachmentUtils
 import com.bcm.messenger.chats.util.ScreenshotManager
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.audio.AudioSlidePlayer
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -82,7 +82,7 @@ import java.util.concurrent.TimeUnit
  * Created by lishuangling
  */
 @Route(routePath = ARouterConstants.Activity.CHAT_CONVERSATION_PATH)
-class AmeConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
+class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
 
     companion object {
 

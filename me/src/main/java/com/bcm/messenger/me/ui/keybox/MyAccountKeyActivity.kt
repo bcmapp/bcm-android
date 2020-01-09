@@ -13,7 +13,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.core.content.FileProvider
 import com.bcm.messenger.common.BuildConfig
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -45,7 +45,7 @@ import java.util.*
 /**
  * Created by zjl on 2018/10/30.
  */
-class MyAccountKeyActivity : SwipeBaseActivity() {
+class MyAccountKeyActivity : AccountSwipeBaseActivity() {
 
     private val TAG = "MyAccountKeyActivity"
 

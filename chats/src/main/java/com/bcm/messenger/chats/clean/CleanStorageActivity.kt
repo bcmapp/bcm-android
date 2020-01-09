@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.mediabrowser.ui.MediaBrowserActivity
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.bean.ConversationStorage
 import com.bcm.messenger.common.recipients.Recipient
@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.chats_activity_clean_storage.*
  * bcm.social.01 2018/11/21.
  */
 @Route(routePath = ARouterConstants.Activity.CLEAN_STORAGE)
-class CleanStorageActivity : SwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<Address> {
+class CleanStorageActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.IViewHolderDelegate<Address> {
 
     private val TAG = "CleanStorageActivity"
     private var allConversationStorage = ConversationStorage(0, 0, 0)

@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.bcm.route.annotation.Route
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.route.api.BcmRouter
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.route.annotation.Route
+import com.bcm.route.api.BcmRouter
 
 /**
  *

@@ -2,7 +2,7 @@ package com.bcm.messenger.contacts
 
 import android.os.Bundle
 import android.view.View
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -23,7 +23,7 @@ import java.lang.Exception
 /**
  * Created by Kin on 2019/5/17
  */
-class FriendRequestHandleActivity : SwipeBaseActivity(), RecipientModifiedListener {
+class FriendRequestHandleActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
     private val TAG = "FriendRequestHandleActivity"
 
     private lateinit var request: BcmFriendRequest

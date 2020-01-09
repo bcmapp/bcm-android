@@ -3,7 +3,7 @@ package com.bcm.messenger.me.ui.pinlock
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.me_activity_pin_lock_setting.*
 /**
  * bcm.social.01 2018/10/10.
  */
-class PinLockSettingActivity : SwipeBaseActivity() {
+class PinLockSettingActivity : AccountSwipeBaseActivity() {
     companion object {
         const val CHECK_PIN_FOR_SWITCH_FINGER_PRINT = 10
     }

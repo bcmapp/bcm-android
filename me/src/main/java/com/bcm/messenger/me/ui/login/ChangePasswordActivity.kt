@@ -1,10 +1,10 @@
 package com.bcm.messenger.me.ui.login
 
 import android.os.Bundle
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.me.R
 
-class ChangePasswordActivity : SwipeBaseActivity() {
+class ChangePasswordActivity : AccountSwipeBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_change_password)

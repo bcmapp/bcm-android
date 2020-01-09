@@ -9,7 +9,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.*
@@ -20,7 +20,7 @@ import org.greenrobot.eventbus.Subscribe
 /**
  *
  */
-class ChatGroupNoticeEditActivity : SwipeBaseActivity() {
+class ChatGroupNoticeEditActivity : AccountSwipeBaseActivity() {
     companion object {
         private const val TAG = "GroupNoticeActivity"
     }

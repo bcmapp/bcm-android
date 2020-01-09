@@ -6,12 +6,12 @@ import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.me.R
 import kotlinx.android.synthetic.main.me_activity_notification_setting.*
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 
 /**
  * Created by Kin on 2018/11/20
  */
-class NotificationSettingActivity : SwipeBaseActivity() {
+class NotificationSettingActivity : AccountSwipeBaseActivity() {
     private val TAG = "NotificationSettingActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {

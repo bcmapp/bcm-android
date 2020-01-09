@@ -17,7 +17,7 @@ import com.bcm.messenger.R
 import com.bcm.messenger.adapter.HomeAccountAdapter
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -305,7 +305,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
     private fun checkOnlineAccount(): Boolean {
         if (AmeModuleCenter.login().minorUidList().size == 2) {
-            AmePopup.result.notice((context as SwipeBaseActivity), getString(R.string.tabless_ui_account_reach_max_size))
+            AmePopup.result.notice((context as AccountSwipeBaseActivity), getString(R.string.tabless_ui_account_reach_max_size))
             return false
         }
         return true

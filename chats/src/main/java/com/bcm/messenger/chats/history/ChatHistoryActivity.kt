@@ -17,7 +17,7 @@ import com.bcm.messenger.chats.group.viewholder.OutgoingHistoryViewHolder
 import com.bcm.messenger.chats.group.viewholder.SystemTipsViewHolder
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
@@ -39,7 +39,7 @@ import java.util.*
 /**
  * Created by Kin on 2018/10/24
  */
-class ChatHistoryActivity : SwipeBaseActivity() {
+class ChatHistoryActivity : AccountSwipeBaseActivity() {
 
     private val TAG = "ChatHistoryActivity"
 

@@ -21,7 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.R
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -48,7 +48,7 @@ import java.util.*
  * 
  * Created by wjh on 2018/06/06
  */
-class ScanActivity : SwipeBaseActivity(), TextureView.SurfaceTextureListener, ActivityCompat.OnRequestPermissionsResultCallback {
+class ScanActivity : AccountSwipeBaseActivity(), TextureView.SurfaceTextureListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     companion object {
         private const val TAG = "ScanActivity"

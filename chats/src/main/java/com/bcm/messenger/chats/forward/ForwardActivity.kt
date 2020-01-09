@@ -14,7 +14,7 @@ import com.bcm.messenger.chats.privatechat.logic.MessageSender
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.chats.util.AttachmentUtils
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.repositories.ThreadRepo
 import com.bcm.messenger.common.mms.*
@@ -33,7 +33,7 @@ import io.reactivex.schedulers.Schedulers
 import java.io.File
 
 @Route(routePath = ARouterConstants.Activity.FORWARD)
-class ForwardActivity : SwipeBaseActivity() {
+class ForwardActivity : AccountSwipeBaseActivity() {
 
     companion object {
         private const val TAG = "ForwardActivity"

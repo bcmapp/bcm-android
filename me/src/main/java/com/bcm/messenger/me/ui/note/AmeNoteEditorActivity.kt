@@ -7,7 +7,7 @@ import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
@@ -25,7 +25,7 @@ import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.me_note_editor_activity.*
 import java.lang.ref.WeakReference
 
-class AmeNoteEditorActivity : SwipeBaseActivity() {
+class AmeNoteEditorActivity : AccountSwipeBaseActivity() {
     companion object {
         const val TOPIC_ID = "note_topic_id"
     }

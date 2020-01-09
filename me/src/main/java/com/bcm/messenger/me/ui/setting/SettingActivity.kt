@@ -1,6 +1,5 @@
 package com.bcm.messenger.me.ui.setting
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -9,7 +8,7 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AmeNotification
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.preferences.TextSecurePreferences
@@ -48,7 +47,7 @@ import java.util.*
  * Created by zjl on 2018/4/27.
  */
 @Route(routePath = ARouterConstants.Activity.SETTINGS)
-class SettingActivity : SwipeBaseActivity(), RecipientModifiedListener {
+class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
     private val TAG = "SettingActivity"
 
     private val REQUEST_SETTING = 100

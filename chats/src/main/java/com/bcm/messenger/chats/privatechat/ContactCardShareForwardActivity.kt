@@ -6,7 +6,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.privatechat.logic.MessageSender
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
@@ -27,7 +27,7 @@ import io.reactivex.schedulers.Schedulers
  * Created by wjh on 2019/6/14
  */
 @Route(routePath = ARouterConstants.Activity.CONTACT_SHARE_FORWARD)
-class ContactCardShareForwardActivity : SwipeBaseActivity() {
+class ContactCardShareForwardActivity : AccountSwipeBaseActivity() {
 
     private val TAG = "ContactCardShareForwardActivity"
     private var mFromAddress: Address? = null

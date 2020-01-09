@@ -13,10 +13,8 @@ import com.bcm.messenger.adhoc.logic.*
 import com.bcm.messenger.adhoc.util.AdHocUtil
 import com.bcm.messenger.chats.components.recyclerview.WrapContentGridLayoutManager
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -37,7 +35,7 @@ import kotlinx.android.synthetic.main.adhoc_activity_channel_setting.*
 /**
  * Created by wjh on 2019/7/30
  */
-class AdHocChannelSettingActivity : SwipeBaseActivity(),
+class AdHocChannelSettingActivity : AccountSwipeBaseActivity(),
         RecipientModifiedListener,
         AmeRecycleViewAdapter.IViewHolderDelegate<ChannelUserInfo>,
         AdHocChannelLogic.IAdHocChannelListener {

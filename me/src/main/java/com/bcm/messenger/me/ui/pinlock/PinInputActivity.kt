@@ -9,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.*
@@ -28,7 +28,7 @@ import kotlin.collections.ArrayList
  * Created by zjl on 2018/10/9.
  */
 @Route(routePath = ARouterConstants.Activity.PIN_INPUT)
-class PinInputActivity : SwipeBaseActivity() {
+class PinInputActivity : AccountSwipeBaseActivity() {
     companion object {
         const val INPUT_STYPE = "input_style"
         const val INPUT_SIZE = "input_size"
@@ -49,14 +49,14 @@ class PinInputActivity : SwipeBaseActivity() {
         const val DISABLE_PIN = 6
         const val CHECK_PIN = 7
 
-        fun router(activity: SwipeBaseActivity, pinSize: Int, viewStyle: Int) {
+        fun router(activity: AccountSwipeBaseActivity, pinSize: Int, viewStyle: Int) {
             val intent = Intent(activity, PinInputActivity::class.java)
             intent.putExtra(INPUT_STYPE, viewStyle)
             intent.putExtra(INPUT_SIZE, pinSize)
             activity.startBcmActivity(activity.accountContext, intent)
         }
 
-        fun routerChangedPin(activity: SwipeBaseActivity, newPinStyle: Int) {
+        fun routerChangedPin(activity: AccountSwipeBaseActivity, newPinStyle: Int) {
             val intent = Intent(activity, PinInputActivity::class.java)
             intent.putExtra(INPUT_STYPE, CHANGE_PIN)
             intent.putExtra(INPUT_SIZE, AmePinLogic.lengthOfPin())
@@ -64,7 +64,7 @@ class PinInputActivity : SwipeBaseActivity() {
             activity.startBcmActivity(activity.accountContext, intent)
         }
 
-        fun routerCheckPin(activity: SwipeBaseActivity, requestCode: Int) {
+        fun routerCheckPin(activity: AccountSwipeBaseActivity, requestCode: Int) {
             val intent = Intent(activity, PinInputActivity::class.java)
             intent.putExtra(INPUT_STYPE, CHECK_PIN)
             intent.putExtra(INPUT_SIZE, AmePinLogic.lengthOfPin())

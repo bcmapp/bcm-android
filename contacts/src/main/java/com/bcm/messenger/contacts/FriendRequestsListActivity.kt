@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.grouprepository.room.entity.BcmFriendRequest
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.contacts_item_friend_request.view.*
  * Created by Kin on 2019/5/17
  */
 @Route(routePath = ARouterConstants.Activity.FRIEND_REQUEST_LIST)
-class FriendRequestsListActivity : SwipeBaseActivity() {
+class FriendRequestsListActivity : AccountSwipeBaseActivity() {
     private val TAG = "FriendRequestsListActivity"
 
     private lateinit var viewModel: FriendRequestsListViewModel

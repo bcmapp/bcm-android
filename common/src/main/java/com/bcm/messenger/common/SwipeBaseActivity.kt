@@ -14,6 +14,7 @@ import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.preferences.TextSecurePreferences
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IUmengModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -36,25 +37,12 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     private lateinit var mHelper: SwipeBackActivityHelper
 
-    private lateinit var accountContextObj: AccountContext
-    private lateinit var accountRecipientObj: Recipient
-
     private var disableDefaultTransition = false
     private var disabledClipboardCheck = false
     private var disabledLightStatusBar = false
 
     private var checkDisposable: Disposable? = null
     private var checkStartTime = System.currentTimeMillis()
-
-    val accountContext get() = accountContextObj
-    val accountRecipient get() = accountRecipientObj
-
-    private var mModifiedListener = RecipientModifiedListener { recipient ->
-        if (accountRecipientObj == recipient) {
-            accountRecipientObj = recipient
-            onLoginRecipientRefresh()
-        }
-    }
 
     private val idleHandler = MessageQueue.IdleHandler {
         if (!disabledLightStatusBar) {
@@ -78,15 +66,6 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         super.onCreate(savedInstanceState)
         ALog.d(TAG, "onCreate: $localClassName")
         window.setTranslucentStatus()
-        val accountContextObj: AccountContext? = intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext
-        if (accountContextObj != null) {
-            setAccountContext(accountContextObj)
-        }
-        if (!checkHasAccountContext()) {
-            ALog.w(TAG, "accountContextObj is null, finish")
-            finish()
-            return
-        }
 
         mHelper = SwipeBackActivityHelper(this)
         mHelper.onActivityCreate()
@@ -95,15 +74,6 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         Looper.myQueue().addIdleHandler(idleHandler)
 
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onActivityCreate(this)
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        val accountContextObj: AccountContext? = intent?.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext
-        if (accountContextObj != null) {
-            ALog.w(TAG, "onNewIntent, new accountContextObj: ${accountContextObj.uid}")
-            setAccountContext(accountContextObj)
-        }
     }
 
     override fun finish() {
@@ -125,7 +95,6 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     override fun onResume() {
         super.onResume()
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onActivityResume(this)
-        updateScreenshotSecurity()
         if (!disabledClipboardCheck && ClipboardUtil.clipboardChanged) {
             checkClipboardDelay()
         }
@@ -145,9 +114,6 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     override fun onDestroy() {
         super.onDestroy()
         Looper.myQueue().removeIdleHandler(idleHandler)
-        if (::accountRecipientObj.isInitialized) {
-            accountRecipientObj.removeListener(mModifiedListener)
-        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -189,31 +155,6 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         super.applyOverrideConfiguration(overrideConfiguration)
     }
 
-    protected open fun onLoginRecipientRefresh() {
-
-    }
-
-    fun getMasterSecret(): MasterSecret = BCMEncryptUtils.getMasterSecret(accountContextObj) ?: throw Exception("getMasterSecret is null")
-
-    fun setAccountContext(context: AccountContext) {
-        if (!::accountContextObj.isInitialized || accountContextObj != context) {
-            accountContextObj = context
-            setAccountRecipient(Recipient.login(context))
-        }
-    }
-
-    private fun checkHasAccountContext(): Boolean {
-        return ::accountContextObj.isInitialized
-    }
-
-    private fun setAccountRecipient(recipient: Recipient) {
-        if (::accountRecipientObj.isInitialized) {
-            accountRecipientObj.removeListener(mModifiedListener)
-        }
-        accountRecipientObj = recipient
-        accountRecipientObj.addListener(mModifiedListener)
-    }
-
     /**
      * Disable default activity transition animation if you want to specify a custom one.
      * MUST invoke before invoking super.onCreate(Bundle), and then invoke overridePendingTransition(Int, Int)
@@ -230,42 +171,14 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         disabledLightStatusBar = true
     }
 
-    fun <T : Fragment> initFragment(@IdRes target: Int,
+    open fun <T : Fragment> initFragment(@IdRes target: Int,
                                             fragment: T,
                                             extras: Bundle?): T {
-        val newArg = Bundle().apply {
-            putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContextObj)
-        }
-        if (extras != null) {
-            newArg.putAll(extras)
-        }
-        fragment.arguments = newArg
+        fragment.arguments = extras
         supportFragmentManager.beginTransaction()
                 .replace(target, fragment)
                 .commitAllowingStateLoss()
         return fragment
-    }
-
-    fun updateScreenshotSecurity() {
-        if (isScreenSecurityEnabled(this)) {
-            ALog.i(TAG, "updateScreenshotSecurity setWindowSecure")
-            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
-        } else {
-            ALog.i(TAG, "updateScreenshotSecurity clearWindowSecure")
-            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        }
-    }
-
-    private fun isScreenSecurityEnabled(context: Context): Boolean {
-        return try {
-            if (AppUtil.isMainProcess()) {
-                TextSecurePreferences.isScreenSecurityEnabled(accountContextObj)
-            } else {
-                ApplicationService.impl?.isScreenSecurityEnabled == true
-            }
-        } catch (e: Exception) {
-            true
-        }
     }
 
     /**

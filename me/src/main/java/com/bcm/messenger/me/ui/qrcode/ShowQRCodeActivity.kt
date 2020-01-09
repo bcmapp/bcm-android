@@ -2,7 +2,7 @@ package com.bcm.messenger.me.ui.qrcode
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -26,7 +26,7 @@ import java.lang.ref.WeakReference
 /**
  * Created by bcm.social.01 on 2018/9/20.
  */
-class ShowQRCodeActivity : SwipeBaseActivity()  {
+class ShowQRCodeActivity : AccountSwipeBaseActivity()  {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.me_activity_show_qr_code)

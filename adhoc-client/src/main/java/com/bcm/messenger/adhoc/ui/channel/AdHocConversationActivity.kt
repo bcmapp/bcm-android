@@ -18,7 +18,7 @@ import com.bcm.messenger.chats.bean.BottomPanelItem
 import com.bcm.messenger.chats.util.AttachmentUtils
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoConstants
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
@@ -49,7 +49,7 @@ import java.io.File
  * Created by wjh on 2019/7/27
  */
 @Route(routePath = ARouterConstants.Activity.ADHOC_CONVERSATION)
-class AdHocConversationActivity : SwipeBaseActivity() {
+class AdHocConversationActivity : AccountSwipeBaseActivity() {
 
     companion object {
         private const val TAG = "AdHocConversationActivity"

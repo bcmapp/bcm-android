@@ -3,7 +3,7 @@ package com.bcm.messenger.wallet.activity
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.utility.logger.ALog
@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.wallet_currency_activity.*
 /**
  * Created by wjh on 2018/6/2
  */
-class CurrencyActivity : SwipeBaseActivity() {
+class CurrencyActivity : AccountSwipeBaseActivity() {
     private val TAG = "CurrencyActivity"
 
     private var mWalletModel: WalletViewModel? = null

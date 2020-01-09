@@ -9,7 +9,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.mediabrowser.ui.MediaBrowserActivity
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.database.repositories.Repository
@@ -38,7 +38,7 @@ import kotlinx.android.synthetic.main.chats_user_activity.*
 import java.util.concurrent.TimeUnit
 
 @Route(routePath = ARouterConstants.Activity.CHAT_USER_PATH)
-class ChatUserPageActivity : SwipeBaseActivity(), RecipientModifiedListener {
+class ChatUserPageActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
 
     companion object {
         const val TAG = "ChatUserPageActivity"

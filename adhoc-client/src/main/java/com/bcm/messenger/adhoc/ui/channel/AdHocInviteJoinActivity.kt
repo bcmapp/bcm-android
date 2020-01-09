@@ -9,7 +9,7 @@ import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.adhoc.logic.AdHocMessageLogic
 import com.bcm.messenger.adhoc.ui.AdHocSessionSelectionActivity
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.adhoc_activity_invite_join.*
  * Invite Join Offline chat
  * Created by wjh on 2019-08-19
  */
-class AdHocInviteJoinActivity : SwipeBaseActivity() {
+class AdHocInviteJoinActivity : AccountSwipeBaseActivity() {
     private val SELECT_SESSION_REQ = 1000
     private var sessionId = ""
     private var channel: AdHocChannel? = null

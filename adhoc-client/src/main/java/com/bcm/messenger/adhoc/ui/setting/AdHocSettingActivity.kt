@@ -7,7 +7,7 @@ import android.text.SpannableStringBuilder
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocSetting
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.AmeAppLifecycle
@@ -21,7 +21,7 @@ import com.bcm.messenger.utility.wifi.WiFiUtil
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.adhoc_setting_activity.*
 
-class AdHocSettingActivity : SwipeBaseActivity() {
+class AdHocSettingActivity : AccountSwipeBaseActivity() {
     private val TAG = "AdHocSettingActivity"
     private val REQUEST_ENABLE_BLE = 1000
     private var checking = false

@@ -20,7 +20,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.me_activity_block_users.*
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import java.util.concurrent.CopyOnWriteArrayList
@@ -28,7 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 /**
  * Created by cangwang
  */
-class BlockUsersActivity : SwipeBaseActivity() {
+class BlockUsersActivity : AccountSwipeBaseActivity() {
 
     private val TAG = "BlockUserActivity"
     private var isEdit = false

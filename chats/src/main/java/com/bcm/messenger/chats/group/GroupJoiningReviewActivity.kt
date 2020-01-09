@@ -9,7 +9,7 @@ import com.bcm.messenger.chats.components.GroupJoiningReviewItem
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.corebean.BcmGroupJoinRequest
 import com.bcm.messenger.common.core.corebean.BcmGroupJoinStatus
 import com.bcm.messenger.common.core.corebean.BcmReviewGroupJoinRequest
@@ -26,7 +26,7 @@ import org.greenrobot.eventbus.ThreadMode
  * Created by wjh on 2019/6/3
  */
 @Route(routePath = ARouterConstants.Activity.GROUP_JOIN_CHECK)
-class GroupJoiningReviewActivity : SwipeBaseActivity() {
+class GroupJoiningReviewActivity : AccountSwipeBaseActivity() {
 
     private val TAG = "GroupJoiningReviewActivity"
     private var mGroupModel: GroupViewModel? = null

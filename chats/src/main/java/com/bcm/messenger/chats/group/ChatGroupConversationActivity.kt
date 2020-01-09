@@ -31,7 +31,7 @@ import com.bcm.messenger.chats.user.SendContactActivity
 import com.bcm.messenger.chats.util.AttachmentUtils
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.audio.AudioSlidePlayer
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
@@ -85,7 +85,7 @@ import kotlin.math.max
  * Created by zjl on 2018/5/11.
  */
 @Route(routePath = ARouterConstants.Activity.CHAT_GROUP_CONVERSATION)
-class ChatGroupConversationActivity : SwipeBaseActivity(), RecipientModifiedListener {
+class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
 
     companion object {
         const val TAG = "TTConversationActivity"

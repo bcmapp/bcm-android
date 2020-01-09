@@ -5,7 +5,7 @@ import android.text.SpannableStringBuilder
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.BcmShareCodeStatus
 import com.bcm.messenger.common.mms.GlideApp
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
  * Created by wjh on 2019/6/15
  */
 @Route(routePath = ARouterConstants.Activity.GROUP_SHARE_DESCRIPTION)
-class GroupShareDescriptionActivity : SwipeBaseActivity() {
+class GroupShareDescriptionActivity : AccountSwipeBaseActivity() {
 
     private val TAG = "GroupShareDescription"
     private var mShareContent: AmeGroupMessage.GroupShareContent? = null

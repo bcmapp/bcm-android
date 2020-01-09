@@ -86,7 +86,7 @@
         android:paddingEnd="20dp"
         android:paddingStart="20dp"
         android:paddingTop="@dimen/common_vertical_gap"
-        android:text="@string/me_keybox"
+        android:text="Env Setting"
         android:textAllCaps="false"
         android:textColor="@color/common_color_white"
         android:textSize="14sp"

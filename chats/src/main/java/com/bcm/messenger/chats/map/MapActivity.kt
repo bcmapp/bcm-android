@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.api.MapActionCallback
 import com.bcm.messenger.common.api.MapBaseInterface
 import com.bcm.messenger.common.core.LocationItem
@@ -36,7 +36,7 @@ import kotlinx.android.synthetic.main.chats_activity_map.*
  * Created by zjl on 2018/5/14.
  */
 @Route(routePath = ARouterConstants.Activity.MAP)
-class MapActivity : SwipeBaseActivity(), MapActionCallback {
+class MapActivity : AccountSwipeBaseActivity(), MapActionCallback {
 
     private val TAG = "MapActivity"
 

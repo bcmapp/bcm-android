@@ -7,7 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.audio.GlobalRinger
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -19,7 +19,7 @@ import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import kotlinx.android.synthetic.main.me_note_unlock_activity.*
 import java.lang.ref.WeakReference
 
-class AmeNoteUnlockActivity : SwipeBaseActivity() {
+class AmeNoteUnlockActivity : AccountSwipeBaseActivity() {
     private lateinit var unlockAnim: Animator
     private lateinit var globalRinger: GlobalRinger
     private lateinit var noteLogic: AmeNoteLogic

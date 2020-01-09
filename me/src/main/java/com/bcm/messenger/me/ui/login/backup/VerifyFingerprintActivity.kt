@@ -3,7 +3,7 @@ package com.bcm.messenger.me.ui.login.backup
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.fragment.VerifyPasswordFragment
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -12,7 +12,7 @@ import com.bcm.messenger.utility.logger.ALog
 /**
  * Created by Kin on 2018/9/3
  */
-class VerifyFingerprintActivity : SwipeBaseActivity() {
+class VerifyFingerprintActivity : AccountSwipeBaseActivity() {
     private val TAG = "VerifyFingerprintActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {

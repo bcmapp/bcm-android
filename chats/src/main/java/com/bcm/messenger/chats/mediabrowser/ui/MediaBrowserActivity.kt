@@ -19,7 +19,7 @@ import com.bcm.messenger.chats.mediabrowser.IMediaBrowserMenuProxy
 import com.bcm.messenger.chats.mediabrowser.MediaHandleViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.AmeAppLifecycle
@@ -35,7 +35,7 @@ import kotlinx.android.synthetic.main.chats_media_browser_activity.*
  * Created by zjl on 2018/10/16.
  */
 @Route(routePath = ARouterConstants.Activity.CHAT_MEDIA_BROWSER)
-class MediaBrowserActivity : SwipeBaseActivity() {
+class MediaBrowserActivity : AccountSwipeBaseActivity() {
     companion object {
         fun router(accountContext: AccountContext, address:Address, deleteMode:Boolean = false){
             BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_MEDIA_BROWSER)

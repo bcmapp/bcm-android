@@ -15,7 +15,8 @@ import com.bcm.messenger.chats.thread.MessageListFragment
 import com.bcm.messenger.chats.thread.MessageListTitleView
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
+import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
@@ -52,7 +53,7 @@ import java.util.concurrent.TimeUnit
  * Created by zjl on 2018/2/27.
  */
 @Route(routePath = ARouterConstants.Activity.APP_HOME_PATH)
-class HomeActivity : SwipeBaseActivity() {
+class HomeActivity : AccountSwipeBaseActivity() {
     companion object {
         private const val TAG = "HomeActivity"
 

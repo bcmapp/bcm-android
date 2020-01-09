@@ -3,7 +3,7 @@ package com.bcm.messenger.me.ui.setting
 import android.os.Bundle
 import android.view.View
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.SwipeBaseActivity
+import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.getColorCompat
@@ -20,7 +20,7 @@ import java.util.*
 /**
  * Created by zjl on 2018/5/4.
  */
-class AboutActivity : SwipeBaseActivity() {
+class AboutActivity : AccountSwipeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
