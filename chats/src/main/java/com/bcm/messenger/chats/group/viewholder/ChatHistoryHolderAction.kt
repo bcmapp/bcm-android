@@ -11,6 +11,7 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.logger.ALog
 
 /**
@@ -27,7 +28,7 @@ class ChatHistoryHolderAction(accountContext: AccountContext) : BaseChatHolderAc
             putExtra(ChatHistoryActivity.CHAT_HISTORY_GID, messageRecord.gid)
             putExtra(ChatHistoryActivity.MESSAGE_INDEX_ID, messageRecord.indexId)
         }
-        v.context.startActivity(intent)
+        v.context.startBcmActivity(accountContext, intent)
     }
 
     override fun bindData(message: AmeGroupMessageDetail, body: HistoryView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {

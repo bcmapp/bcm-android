@@ -26,8 +26,8 @@ import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.chats.util.*
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.AccountSwipeBaseActivity
+import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.api.BindableConversationItem
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
@@ -567,7 +567,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                         .putString(ARouterConstants.PARAM.MAP.TITLE, content.title)
                         .putString(ARouterConstants.PARAM.MAP.ADDRESS, content.address)
                         .setActivityOptionsCompat(compat)
-                        .navigation(v.context)
+                        .startBcmActivity(getAccountContext(), v.context)
             }
         }
         mapShareView.setOnLongClickListener {
@@ -696,7 +696,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
             specialNotifyText?.text = span
             specialNotifyText?.setOnClickListener {
                 BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND)
-                        .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, messageRecipient.address).navigation(context)
+                        .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, messageRecipient.address).startBcmActivity(getAccountContext(), context)
             }
         }
     }

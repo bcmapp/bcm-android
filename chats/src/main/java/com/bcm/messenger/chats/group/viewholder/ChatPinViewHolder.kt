@@ -142,12 +142,11 @@ class ChatPinViewHolder(accountContext: AccountContext, itemView: View) : BaseAc
     }
 
     private fun checkMessageLength(message: String): String {
-        val text = if (message.length > 40) {
+        return if (message.length > 40) {
             message.substring(0, 40) + "…"
         } else {
             message
         }
-        return text
     }
 
 }

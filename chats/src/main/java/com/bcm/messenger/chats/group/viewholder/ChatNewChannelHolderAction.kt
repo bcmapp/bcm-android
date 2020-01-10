@@ -15,6 +15,7 @@ import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.GroupUtil
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.route.api.BcmRouter
 
@@ -56,7 +57,7 @@ class ChatNewChannelHolderAction(accountContext: AccountContext) : BaseChatHolde
                     .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, gid)
                     .putBoolean(ARouterConstants.PARAM.PRIVATE_CHAT.IS_ARCHIVED_EXTRA, true)
                     .putInt(ARouterConstants.PARAM.PRIVATE_CHAT.DISTRIBUTION_TYPE_EXTRA, ThreadRepo.DistributionTypes.NEW_GROUP)
-                    .navigation(AmeAppLifecycle.current())
+                    .startBcmActivity(accountContext, AmeAppLifecycle.current())
         },250)
     }
 
