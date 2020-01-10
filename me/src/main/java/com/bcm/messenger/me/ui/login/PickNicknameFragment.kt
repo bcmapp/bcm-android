@@ -79,9 +79,15 @@ class PickNicknameFragment : AbsRegistrationFragment() {
                     AmePopup.loading.dismiss()
                     AmePopup.result.failure(activity, getString(R.string.me_text_register_failed))
                     AmeDispatcher.mainThread.dispatch({
-                        BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
-                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                .navigation(activity)
+                        if (AmeModuleCenter.login().accountSize() > 0) {
+                            BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_SWITCHER)
+                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK))
+                                    .navigation()
+                        } else {
+                            BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
+                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK))
+                                    .navigation()
+                        }
                     },1500)
                 }
             }

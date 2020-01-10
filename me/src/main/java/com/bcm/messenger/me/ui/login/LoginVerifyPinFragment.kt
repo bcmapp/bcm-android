@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
@@ -34,8 +35,8 @@ import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.netswitchy.proxy.IProxyStateChanged
 import com.bcm.netswitchy.proxy.ProxyManager
+import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_fragment_verify_password.*
-import kotlinx.android.synthetic.main.me_layout_login_success.*
 
 /**
  * ling created in 2018/6/7
@@ -155,6 +156,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
     }
 
     override fun onProxyConnecting(proxyName: String, isOfficial: Boolean) {
+        ALog.i(TAG, "onProxyConnectFinished")
         val tip = if (isOfficial) {
             getString(R.string.login_try_user_proxy_using_xxx, proxyName)
         } else {
@@ -165,6 +167,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
     }
 
     override fun onProxyConnectFinished() {
+        ALog.i(TAG, "onProxyConnectFinished")
         val context = this.context
         if (context != null && context is Activity) {
             if (context.isFinishing || context.isDestroyed) {
@@ -176,7 +179,9 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
                 decodeAndLogin(verify_pin_input_text.text.toString())
             } else {
                 tryingProxy = 0
+                ViewUtils.fadeIn(verify_pin_error, 250)
                 verify_pin_error.text = getString(R.string.login_login_failed)
+                verify_pin_tips.text = ""
             }
         }
     }
@@ -205,19 +210,12 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
         verify_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
                 val act = activity ?: return
-                if (uid != null) {
-                    if (AMELogin.isLogin) {
-                        act.finish()
-                    } else {
-                        act.hideKeyboard()
-                        val intent = Intent(act, RegistrationActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
-                        act.finish()
-                    }
-                } else {
-                    act.apply { supportFragmentManager.popBackStack() }
+                if (!AMELogin.isLogin) {
+                    BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_SWITCHER)
+                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .navigation()
                 }
+                act.finish()
             }
         })
         val action = arguments?.getInt(ACTION, 0)

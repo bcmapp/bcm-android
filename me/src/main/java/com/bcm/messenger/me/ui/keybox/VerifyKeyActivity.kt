@@ -3,6 +3,7 @@ package com.bcm.messenger.me.ui.keybox
 import android.content.Intent
 import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.hideKeyboard
@@ -41,6 +42,10 @@ class VerifyKeyActivity : AccountSwipeBaseActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onAccountContextSwitch(newAccountContext: AccountContext) {
+
     }
 
     override fun finish() {

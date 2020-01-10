@@ -142,7 +142,7 @@ object SwitchAccount {
                                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                                             .startBcmActivity(AMELogin.majorContext)
                                 } else {
-                                    BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
+                                    BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_SWITCHER)
                                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                                             .navigation()
                                 }

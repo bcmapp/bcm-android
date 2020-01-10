@@ -111,14 +111,16 @@ class DestroyCheckPasswordFragment : BaseFragment() {
                 activity?.let {
                     MeConfirmDialog.showConfirm(it, it.getString(R.string.me_destroy_account_confirm_title),
                             it.getString(R.string.me_destroy_account_confirm_notice), it.getString(R.string.me_destroy_account_confirm_button)) { _ ->
-                        if (AMELogin.isLogin) {
-                            BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
-                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                    .startBcmActivity(AMELogin.majorContext, it)
-                        } else {
-                            BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
-                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                    .navigation(it)
+                        if (!AMELogin.isLogin) {
+                            if (AmeModuleCenter.login().accountSize() > 0) {
+                                BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_SWITCHER)
+                                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK))
+                                        .navigation()
+                            } else {
+                                BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
+                                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK))
+                                        .navigation()
+                            }
                         }
                         it.finish()
                     }
