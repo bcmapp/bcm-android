@@ -13,6 +13,7 @@ import com.bcm.messenger.login.bean.AmeAccountData
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.fingerprint.BiometricVerifyUtil
 import com.bcm.messenger.me.logic.AmePinLogic
+import com.bcm.messenger.me.logic.PinData
 import kotlinx.android.synthetic.main.me_activity_pin_lock_setting.*
 
 /**
@@ -65,15 +66,15 @@ class PinLockSettingActivity : AccountSwipeBaseActivity() {
         me_pin_lock_auto.setOnClickListener {
             AmePopup.bottom.newBuilder()
                     .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_pin_lock_instantly)) {
-                        AmePinLogic.setAppLockTime(AmeAccountData.APP_LOCK_INSTANTLY)
+                        AmePinLogic.setAppLockTime(PinData.APP_LOCK_INSTANTLY)
                         updateSetting()
                     })
                     .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_pin_lock_5_minutes)) {
-                        AmePinLogic.setAppLockTime(AmeAccountData.APP_LOCK_5_MIN)
+                        AmePinLogic.setAppLockTime(PinData.APP_LOCK_5_MIN)
                         updateSetting()
                     })
                     .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_pin_lock_one_hour)) {
-                        AmePinLogic.setAppLockTime(AmeAccountData.APP_LOCK_ONE_HOUR)
+                        AmePinLogic.setAppLockTime(PinData.APP_LOCK_ONE_HOUR)
                         updateSetting()
                     })
                     .withDoneTitle(getString(R.string.common_cancel))
@@ -89,8 +90,8 @@ class PinLockSettingActivity : AccountSwipeBaseActivity() {
         }
 
         val text = when (AmePinLogic.appLockTime()) {
-            AmeAccountData.APP_LOCK_5_MIN -> getString(R.string.me_pin_lock_5_minutes)
-            AmeAccountData.APP_LOCK_INSTANTLY -> getString(R.string.me_pin_lock_instantly)
+            PinData.APP_LOCK_5_MIN -> getString(R.string.me_pin_lock_5_minutes)
+            PinData.APP_LOCK_INSTANTLY -> getString(R.string.me_pin_lock_instantly)
             else -> getString(R.string.me_pin_lock_one_hour)
         }
 

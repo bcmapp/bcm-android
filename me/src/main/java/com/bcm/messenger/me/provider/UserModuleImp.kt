@@ -652,6 +652,18 @@ class UserModuleImp : IUserModule
         }
     }
 
+    override fun clearAccountPin() {
+        AmePinLogic.clearAccountPin()
+    }
+
+    override fun majorHasPin(): Boolean {
+        return AmePinLogic.majorHasPin()
+    }
+
+    override fun anyAccountHasPin(): Boolean {
+        return AmePinLogic.anyAccountHasPin()
+    }
+
     override fun logoutMenu() {
         val activity = AmeAppLifecycle.current() ?: return
         if (activity.isFinishing || activity.isDestroyed) {

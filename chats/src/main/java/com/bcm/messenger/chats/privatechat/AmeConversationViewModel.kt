@@ -459,7 +459,7 @@ class AmeConversationViewModel(
                                     content = getString(R.string.chats_message_decrypt_fail_change_device)
                                     okTitle = getString(R.string.chats_resend)
                                     cancelTitle = getString(R.string.chats_cancel)
-                                    ok = { _ ->
+                                    ok = {
                                         // Resend
                                         resendLastDecryptFailMessages(time)
                                     }

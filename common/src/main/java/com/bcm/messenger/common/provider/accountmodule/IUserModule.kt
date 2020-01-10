@@ -75,6 +75,12 @@ interface IUserModule : IAmeAccountModule {
      */
     fun showPinLock()
 
+    fun clearAccountPin()
+
+    fun majorHasPin(): Boolean
+
+    fun anyAccountHasPin(): Boolean
+
     /**
      *  show login out menu
      */

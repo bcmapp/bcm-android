@@ -67,5 +67,9 @@
     <string name="title_update_info" formatted="false">تحديث المعلومات (v%s)</string>
     <string name="OK">حسنًا</string>
     <string name="upgrade">ترقية</string>
+    <string name="account_pin_clear_tip_content">PIN lock has been upgraded to App lock, PIN locks of other accounts will be cleared.</string>
+    <string name="account_pin_clear_tip_major_content">PIN lock has been upgraded to App lock, and the PIN lock of the current account has been automatically set as App PIN.</string>
+    <string name="account_pin_clear_tip_major_ok">Reset App Lock</string>
+    <string name="account_pin_clear_tip_ok">Set App Lock</string>
 
 </resources>

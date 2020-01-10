@@ -395,5 +395,6 @@
     <string name="me_add_proxy_edit_title">Edit Proxy</string>
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>
+    <string name="me_enter_pin_to_unlock">Enter PIN to Unlock</string>
 
 </resources>

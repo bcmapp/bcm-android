@@ -7,8 +7,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.chats.R
-import com.bcm.messenger.chats.group.logic.GroupLogic
-import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
@@ -19,7 +17,6 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
 import com.bcm.messenger.common.utils.startBcmActivity
-import com.bcm.messenger.utility.AppContextHolder
 import org.greenrobot.eventbus.EventBus
 import java.lang.ref.WeakReference
 

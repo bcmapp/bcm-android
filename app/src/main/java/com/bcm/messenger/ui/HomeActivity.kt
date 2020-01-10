@@ -25,12 +25,14 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.BcmRecyclerView
 import com.bcm.messenger.common.ui.CommonShareView
 import com.bcm.messenger.common.ui.ConstraintPullDownLayout
+import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.BcmPopupMenu
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.utils.pixel.PixelManager
 import com.bcm.messenger.logic.SchemeLaunchHelper
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.ui.scan.NewScanActivity
+import com.bcm.messenger.me.ui.setting.PrivacySettingsActivity
 import com.bcm.messenger.me.utils.BcmUpdateUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.MultiClickObserver
@@ -207,6 +209,8 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        checkPinUpgrade()
+
         if (!checkAdHocMode()) {
             checkClipboardDelay()
             if (SchemeLaunchHelper.hasIntent()) {
@@ -644,5 +648,40 @@ class HomeActivity : AccountSwipeBaseActivity() {
             messageListFragment?.updateAccountContext(accountContext)
         }
         home_profile_layout.reloadAccountList()
+    }
+
+    private fun checkPinUpgrade() {
+        val user = AmeModuleCenter.user(accountContext) ?: return
+
+        if (user.isPinLocked()) {
+            return
+        }
+
+        var content = ""
+        var okTitle = ""
+        if (user.majorHasPin()) {
+            content = getString(R.string.account_pin_clear_tip_major_content)
+            okTitle = getString(R.string.account_pin_clear_tip_major_ok)
+
+            user.clearAccountPin()
+        } else if (user.anyAccountHasPin()) {
+            content = getString(R.string.account_pin_clear_tip_content)
+            okTitle = getString(R.string.account_pin_clear_tip_ok)
+
+            user.clearAccountPin()
+        }
+
+        if (content.isNotEmpty()) {
+            AmePopup.center.newBuilder()
+                    .withCancelable(false)
+                    .withTitle(getString(R.string.common_alert_tip))
+                    .withContent(content)
+                    .withOkTitle(okTitle)
+                    .withOkListener {
+                        startBcmActivity(Intent(this, PrivacySettingsActivity::class.java))
+                    }
+                    .withCancelTitle(getString(R.string.common_understood))
+                    .show(this)
+        }
     }
 }

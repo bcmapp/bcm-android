@@ -3,18 +3,21 @@ package com.bcm.messenger.common.ui.popup.centerpopup
 import android.app.Activity
 import android.app.Application
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.R
+import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.common_center_popup_base_layout.*
 import java.lang.ref.WeakReference
 
 /**
- * 
+ *
  * Created by bcm.social.01 on 2018/5/31.
  */
 class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
@@ -28,67 +31,67 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
     class Builder {
         private val config = PopConfig()
 
-        fun withTitle(title:String):Builder{
+        fun withTitle(title: String): Builder {
             config.title = title
             return this
         }
 
-        fun withContent(content:String):Builder{
+        fun withContent(content: String): Builder {
             config.content = content
             return this
         }
 
-        fun withCancelTitle(title:String):Builder{
+        fun withCancelTitle(title: String): Builder {
             config.cancelTitle = title
             return this
         }
 
-        fun withOkTitle(title:String):Builder{
+        fun withOkTitle(title: String): Builder {
             config.okTitle = title
             return this
         }
 
-        fun withWarningTitle(title:String):Builder{
+        fun withWarningTitle(title: String): Builder {
             config.warningTitle = title
             return this
         }
 
-        fun withOkListener(listener:(v:View)->Unit):Builder{
+        fun withOkListener(listener: () -> Unit): Builder {
             config.ok = listener
             return this
         }
 
-        fun withCancelListener(listener:(v:View)->Unit):Builder{
+        fun withCancelListener(listener: () -> Unit): Builder {
             config.cancel = listener
             return this
         }
 
-        fun withWarningListener(listener:(v:View)->Unit):Builder{
+        fun withWarningListener(listener: () -> Unit): Builder {
             config.warning = listener
             return this
         }
 
-        fun withContentAlignment(contentAlignment:Int): Builder {
+        fun withContentAlignment(contentAlignment: Int): Builder {
             config.contentAlignment = contentAlignment
             return this
         }
 
-        fun withCancelable(cancelable:Boolean):Builder{
+        fun withCancelable(cancelable: Boolean): Builder {
             config.cancelable = cancelable
             return this
         }
 
-        fun withTopMost(topMost:Boolean):Builder {
+        fun withTopMost(topMost: Boolean): Builder {
             config.topMost = topMost
             return this
         }
 
-        fun withCustomView(customViewCreator: CustomViewCreator):Builder {
+        fun withCustomView(customViewCreator: CustomViewCreator): Builder {
             config.viewCreator = customViewCreator
             return this
         }
 
-        fun withDismissListener(listener: () -> Unit): Builder{
+        fun withDismissListener(listener: () -> Unit): Builder {
             config.dismissListener = listener
             return this
         }
@@ -99,7 +102,7 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
     }
 
 
-    private var popup: PopupWindow? = null
+    private var popup: ICenterPop? = null
     private var attachActivity: WeakReference<Activity>? = null
 
     fun newBuilder(): Builder {
@@ -118,40 +121,46 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
             activity.application.registerActivityLifecycleCallbacks(this)
             attachActivity = WeakReference(activity)
 
-            val popup = PopupWindow()
+            val popup = if (config.viewCreator != null
+                    || config.contentAlignment != View.TEXT_ALIGNMENT_CENTER
+                    || config.topMost) {
+                PopupWindow() as ICenterPop
+            } else {
+                AlertWindow(config)
+            }
+
             popup.config = config
-            popup.centerPopup = this
             this.popup = popup
 
             try {
-                popup.show(activity.supportFragmentManager, activity.javaClass.simpleName)
+                popup.show(activity, activity.javaClass.simpleName)
             } catch (ex: Exception) {
                 ALog.e("AmeCenterPopup", "show error", ex)
                 config.dismissListener.invoke()
                 this.popup = null
             }
 
-        }else {
+        } else {
             ALog.w("AmeCenterPopup", "show fail, activity is no ready")
             config.dismissListener.invoke()
         }
     }
 
     /**
-     * 
+     *
      */
     fun dismiss() {
         dismissInner(popup)
     }
 
-    fun dismissInner(window: PopupWindow?) {
+    fun dismissInner(window: ICenterPop?) {
         try {
             if (popup == window) {
                 attachActivity?.get()?.application?.unregisterActivityLifecycleCallbacks(this)
                 attachActivity = null
 
-                if (window?.isVisible == true) {
-                    window.dismiss()
+                if (window?.showing == true) {
+                    window.destroy()
                 }
                 window?.config?.dismissListener?.invoke()
                 popup = null
@@ -167,9 +176,81 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
         fun onDetachView()
     }
 
-    class PopupWindow : DialogFragment() {
-        var config: PopConfig? = null
-        var centerPopup: AmeCenterPopup? = null
+
+    interface ICenterPop {
+        var config: AmeCenterPopup.PopConfig
+        fun show(fragmentActivity: FragmentActivity, tag: String)
+        fun destroy()
+        val showing: Boolean
+    }
+
+    class AlertWindow(override var config: PopConfig) : ICenterPop {
+        private var alertDialog: AlertDialog? = null
+
+        override val showing: Boolean
+            get() = alertDialog?.isShowing == true
+
+        override fun show(fragmentActivity: FragmentActivity, tag: String) {
+            val builder = AlertDialog.Builder(fragmentActivity)
+            if (!config.title.isNullOrEmpty()) {
+                builder.setTitle(config.title)
+            }
+
+            if (!config.content.isNullOrEmpty()) {
+                builder.setMessage(config.content)
+            }
+
+            if (!config.cancelable) {
+                builder.setCancelable(config.cancelable)
+            }
+
+            if (!config.cancelTitle.isNullOrEmpty()) {
+                builder.setNegativeButton(config.cancelTitle) { dialog, which -> config.cancel.invoke() }
+            }
+
+            if (!config.okTitle.isNullOrEmpty()) {
+                builder.setPositiveButton(config.okTitle) { dialog, which -> config.ok.invoke() }
+            }
+
+            if (!config.warningTitle.isNullOrEmpty()) {
+                builder.setNeutralButton(config.warningTitle) { dialog, which -> config.warning.invoke() }
+            }
+
+            builder.setOnDismissListener {
+                AmePopup.center.dismissInner(this)
+                config.dismissListener()
+            }
+
+            alertDialog = builder.show()
+        }
+
+        override fun destroy() {
+            try {
+                alertDialog?.dismiss()
+                alertDialog = null
+            } catch (e: Throwable) {
+            }
+        }
+    }
+
+    class PopupWindow : DialogFragment(), ICenterPop {
+        private lateinit var configData: PopConfig
+        override var config: PopConfig
+            get() = configData
+            set(value) {
+                configData = value
+            }
+
+        override fun show(fragmentActivity: FragmentActivity, tag: String) {
+            super.show(fragmentActivity.supportFragmentManager, tag)
+        }
+
+        override fun destroy() {
+            dismiss()
+        }
+
+        override val showing: Boolean
+            get() = isVisible
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
             return inflater.inflate(R.layout.common_center_popup_base_layout, container, false)
@@ -187,8 +268,8 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
 
         override fun onDestroy() {
             super.onDestroy()
-            centerPopup?.dismissInner(this)
-            config?.viewCreator?.onDetachView()
+            AmePopup.center.dismissInner(this)
+            config.viewCreator?.onDetachView()
         }
 
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -239,7 +320,7 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
                 common_popup_cancel.text = config.cancelTitle
                 common_popup_cancel.setOnClickListener {
                     dismiss()
-                    config.cancel.invoke(it)
+                    config.cancel.invoke()
                 }
             } else {
                 common_popup_cancel.visibility = View.GONE
@@ -250,7 +331,7 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
                 common_popup_ok.text = config.okTitle
                 common_popup_ok.setOnClickListener {
                     dismiss()
-                    config.ok.invoke(it)
+                    config.ok.invoke()
                 }
             } else {
                 common_popup_ok.visibility = View.GONE
@@ -261,7 +342,7 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
                 common_popup_warning.text = config.warningTitle
                 common_popup_warning.setOnClickListener {
                     dismiss()
-                    config.warning.invoke(it)
+                    config.warning.invoke()
                 }
             } else {
                 common_popup_warning.visibility = View.GONE
@@ -305,9 +386,9 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
     class PopConfig {
         var title: String? = null
         var content: String? = null
-        var ok: (v: View) -> Unit = { instance().dismiss()}
-        var cancel: (v: View) -> Unit = { instance().dismiss() }
-        var warning: (v: View) -> Unit = { instance().dismiss() }
+        var ok: () -> Unit = { instance().dismiss() }
+        var cancel: () -> Unit = { instance().dismiss() }
+        var warning: () -> Unit = { instance().dismiss() }
         var okTitle: String? = null
         var cancelTitle: String? = null
         var warningTitle: String? = null

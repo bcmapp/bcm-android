@@ -19,7 +19,6 @@ import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.keybox.MyAccountKeyActivity
-import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog

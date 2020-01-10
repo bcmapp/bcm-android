@@ -202,11 +202,11 @@ class PinInputActivity : AccountSwipeBaseActivity() {
                 pin_input_title.text = getString(R.string.me_new_pin)
             }
             VERIFY_UNLOCK -> {
-                pin_input_title.visibility = View.INVISIBLE
                 input_back.visibility = View.GONE
                 input_verify.visibility = View.VISIBLE
                 pin_word_size.visibility = View.GONE
                 pin_word_size.text = getString(R.string.me_forget_pin)
+                pin_input_title.text = getString(R.string.me_enter_pin_to_unlock)
 
                 input_verify.setOnClickListener {
                     if (!isFingerShow) {

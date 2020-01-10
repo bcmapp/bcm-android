@@ -3,16 +3,16 @@ package com.bcm.messenger.login.logic
 import android.os.Environment
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.login.bean.AmeAccountData
-import com.bcm.messenger.utility.*
+import com.bcm.messenger.utility.AmeTimeUtil
+import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
+import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.proguard.NotGuard
 import com.bcm.messenger.utility.storage.SPEditor
@@ -241,10 +241,10 @@ class AmeAccountHistory {
     }
 
     fun getLastLoginUid(): String {
-        return storage.get(AME_LAST_LOGIN,"")
+        return storage.get(AME_LAST_LOGIN, "")
     }
 
-    fun setAdHocUid(uid:String) {
+    fun setAdHocUid(uid: String) {
         storage.set(AME_ADHOC_UID, uid)
     }
 
@@ -263,7 +263,7 @@ class AmeAccountHistory {
 
     fun saveAccount(data: AmeAccountData, replace: Boolean = true): Boolean {
         if (data.signalPassword.isNotEmpty()) {
-            accountContextMap[data.uid] = AccountContext(data.uid, genToken(data.uid,data.signalPassword), data.signalPassword)
+            accountContextMap[data.uid] = AccountContext(data.uid, genToken(data.uid, data.signalPassword), data.signalPassword)
         }
         return saveAccount(data.uid, data, replace)
     }
@@ -415,10 +415,32 @@ class AmeAccountHistory {
 
         val minorList = minorAccountUids
         for (i in minorList) {
-            loginContextList.add(getAccountContext(i)?:continue)
+            loginContextList.add(getAccountContext(i) ?: continue)
         }
 
         return loginContextList
+    }
+
+
+    fun majorHasPin(): Boolean {
+        return majorAccountData()?.pin?.isNotEmpty() == true
+    }
+
+    fun anyAccountHasPin(): Boolean {
+        return accountMap.values.toList().any {
+            it.pin.isNotEmpty()
+        }
+    }
+
+    fun clearPin() {
+        accountMap.values.toList().forEach {
+            it.pin = ""
+            it.enableFingerprint = false
+            it.pinLockTime = 0
+            it.lengthOfPin = 0
+        }
+
+        saveAccountHistory()
     }
 
     data class OldBackupState(val time: Long, val version: Int) : NotGuard {

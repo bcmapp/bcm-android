@@ -452,6 +452,7 @@
     <string name="me_add_proxy_edit_title">编辑代理</string>
     <string name="me_add_proxy_action_save">保存</string>
     <string name="me_proxy_connecing_to_server">正在连接服务器…</string>
+    <string name="me_enter_pin_to_unlock">解锁</string>
 
 
 </resources>

@@ -4,11 +4,9 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.Application
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.R
-import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeResultPopup
@@ -42,7 +40,7 @@ object AmeAppLifecycle : Application.ActivityLifecycleCallbacks {
         return weakRefCurrentFocusActivity?.get() ?: return weakRefCurrentStartActivity?.get()
     }
 
-    fun show(title: String, okListener:(v:View)->Unit) {
+    fun show(title: String, okListener: () -> Unit) {
         val config = AmeCenterPopup.PopConfig()
         config.title = title
         config.ok = okListener
@@ -57,7 +55,7 @@ object AmeAppLifecycle : Application.ActivityLifecycleCallbacks {
         }
     }
 
-    fun show(title: String, okTitle:String?, cancelTitle:String, okListener: (v: View) -> Unit) {
+    fun show(title: String, okTitle:String?, cancelTitle:String, okListener: () -> Unit) {
         val config = AmeCenterPopup.PopConfig()
         config.title = title
         config.ok = okListener

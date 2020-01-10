@@ -19,8 +19,9 @@ class AmeAccountData : NotGuard {
     var lastLoginTime: Long = 0
     var pin: String = ""
     var lengthOfPin: Int = 0
+    var pinLockTime: Int = 5 //pin lock enable time(app background run time)
     var enableFingerprint: Boolean = false
-    var pinLockTime: Int = APP_LOCK_5_MIN //pin lock enable time(app background run time)
+
     var passwordHint: String = ""
     var mode: Int = ACCOUNT_MODE_NORMAL
 
@@ -61,10 +62,5 @@ class AmeAccountData : NotGuard {
         const val ACCOUNT_MODE_BACKUP = 1
 
         const val TAG = "AmeAccountData"
-
-        //app lock time
-        const val APP_LOCK_5_MIN = 5
-        const val APP_LOCK_INSTANTLY = 0
-        const val APP_LOCK_ONE_HOUR = 60
     }
 }
