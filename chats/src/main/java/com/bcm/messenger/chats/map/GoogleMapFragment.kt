@@ -9,9 +9,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.map.bean.GoogleLocation
-import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.api.MapActionCallback
 import com.bcm.messenger.common.api.MapBaseInterface
 import com.bcm.messenger.common.bcmhttp.TPHttp
@@ -35,7 +35,6 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.RuntimeRemoteException
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -54,7 +53,7 @@ import kotlin.math.sqrt
  * google map fragment
  * Created by zjl on 2018/6/25.
  */
-class GoogleMapFragment : BaseFragment(), OnMapReadyCallback, MapBaseInterface, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+class GoogleMapFragment : Fragment(), OnMapReadyCallback, MapBaseInterface, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private val TAG = "GoogleMapFragment"
     private var mapFragment: SupportMapFragment? = null

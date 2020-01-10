@@ -16,19 +16,19 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.api.BcmJSInterface
-import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.common.ui.NestedScrollWebView
-import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.messenger.utility.logger.ALog
 
 /**
  * web fragment
  * Created by wjh on 2019-09-21
  */
-open class BaseWebFragment : BaseFragment() {
+open class BaseWebFragment : Fragment() {
 
     interface OnWebActionListener {
         fun onPageLoad(finished: Boolean, url: String?, favicon: Bitmap?)
