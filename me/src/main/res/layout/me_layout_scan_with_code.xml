@@ -6,8 +6,9 @@
 
     <TextView
         android:id="@+id/scan_tab_other"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:maxLines="2"
         android:ellipsize="end"
         android:gravity="center"
         android:layout_marginEnd="5dp"
@@ -28,8 +29,9 @@
 
     <TextView
         android:id="@+id/scan_tab_my"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:maxLines="2"
         android:ellipsize="end"
         android:gravity="center"
         android:layout_marginStart="5dp"
