@@ -57,7 +57,7 @@ class MessageListAdapter(context: Context,
     private var batchMode = false
     private val batchSet = Collections.synchronizedSet(HashSet<Long>())
     private var mHeaderSearch: Int = 0
-    private var mHeaderMultiDevice = 0
+    //private var mHeaderMultiDevice = 0
     private var mHeaderRequest = 0
 
     private var mFriendUnhandledCount = 0
@@ -68,7 +68,7 @@ class MessageListAdapter(context: Context,
             setHasStableIds(true)
             this.inflater = LayoutInflater.from(context)
             mHeaderSearch = addHeader()
-            mHeaderMultiDevice = addHeader()
+            //mHeaderMultiDevice = addHeader()
             mHeaderRequest = addHeader()
 
             notifyMainChanged()
@@ -80,6 +80,7 @@ class MessageListAdapter(context: Context,
 
     fun updateMasterSecret(masterSecret: MasterSecret) {
         this.masterSecret = masterSecret
+
         setDataList(listOf())
     }
 

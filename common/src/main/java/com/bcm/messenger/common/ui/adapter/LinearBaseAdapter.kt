@@ -324,12 +324,18 @@ abstract class LinearBaseAdapter<T : Any>(context: Context? = null) :
     open fun onCreateHeaderHolder(parent: ViewGroup, viewType: Int): ViewHolder<T> {
         val data = mHeaderList.find { it.type == viewType }
         val itemView = data?.view ?: View(parent.context)
+        if (itemView.parent != null) {
+            (itemView.parent as? ViewGroup)?.removeView(itemView)
+        }
         return ViewHolder(itemView)
     }
 
     open fun onCreateFooterHolder(parent: ViewGroup, viewType: Int): ViewHolder<T> {
         val data = mFooterList.find { it.type == viewType }
         val itemView = data?.view ?: View(parent.context)
+        if (itemView.parent != null) {
+            (itemView.parent as? ViewGroup)?.removeView(itemView)
+        }
         return ViewHolder(itemView)
     }
 
