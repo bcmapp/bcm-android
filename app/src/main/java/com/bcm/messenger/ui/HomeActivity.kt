@@ -457,7 +457,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
                         val ctx = home_profile_layout.getCloseAccount()
                         if (ctx != null && ctx.uid != accountContext.uid) {
                             AmeModuleCenter.login().setMajorAccount(ctx)
-                            home_profile_layout.reSortAccountList()
+                            home_profile_layout.resortAccountList()
                         } else {
                             home_profile_layout.checkCurrentPage(accountRecipient.address.serialize())
                         }
@@ -490,8 +490,8 @@ class HomeActivity : AccountSwipeBaseActivity() {
                     ConstraintPullDownLayout.MOVE_DOWN -> {
                         if (home_profile_layout.visibility != View.VISIBLE) {
                             home_profile_layout.visibility = View.VISIBLE
-                            home_profile_layout.resetMargin()
                             home_profile_layout.showAllViewsWithAnimation()
+                            home_profile_layout.resetMargin()
                         }
                     }
                 }

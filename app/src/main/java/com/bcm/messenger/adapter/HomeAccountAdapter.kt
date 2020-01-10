@@ -36,7 +36,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
 
     private val TAG = "HomeAccountAdapter"
     private val accountList = mutableListOf<HomeAccountItem>()
-    private val views = mutableMapOf<Int, IProfileView>()
+    val views = mutableMapOf<Int, IProfileView>()
     var lastActivePos = 0
         private set
 
@@ -50,10 +50,11 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
     } - 120.dp2Px()
 
     init {
-        loadAccounts()
+        loadAccounts(true)
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        ALog.i(TAG, "instantiateItem position = $position")
         val account = accountList[position]
         val view: IProfileView = if (account.type == TYPE_ADD) {
             HomeAddAccountView(context).apply {
@@ -113,6 +114,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        ALog.i(TAG, "destroyItem position = $position")
         container.removeView(`object` as View)
         views.remove(position)
     }
@@ -122,6 +124,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
     }
 
     fun setActiveView(currentPos: Int) {
+        ALog.i(TAG, "Set active view position = $currentPos")
         views[lastActivePos]?.isActive = false
         views[currentPos]?.isActive = true
         lastActivePos = currentPos
@@ -144,6 +147,10 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
         return -1
     }
 
+    fun accountListIsEmpty(): Boolean {
+        return accountList.size <= 1
+    }
+
     private val comparator = Comparator<HomeAccountItem> { o1, o2 ->
         if (o1.type == o2.type) {
             when {
@@ -156,7 +163,8 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
         }
     }
 
-    fun reSortAccounts() {
+    fun resortAccounts() {
+        ALog.i(TAG, "Resort account list")
         Observable.create<List<HomeAccountItem>> {
             val dataList = accountList.toMutableList()
             dataList.sortWith(comparator)
@@ -173,7 +181,8 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
                 })
     }
 
-    fun loadAccounts() {
+    fun loadAccounts(firstLoad: Boolean = false) {
+        ALog.i(TAG, "Load accounts")
         Observable.create<List<HomeAccountItem>> {
             val dataList = mutableListOf<HomeAccountItem>()
             val list = AmeLoginLogic.getAccountList()
@@ -193,16 +202,20 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    ALog.i(TAG, "Load accounts success, size = ${it.size}")
                     accountList.clear()
                     accountList.addAll(it)
                     notifyDataSetChanged()
-                    listener?.onAccountLoadSuccess()
+                    if (firstLoad) {
+                        listener?.onAccountLoadSuccess()
+                    }
                 }, {
                     ALog.e(TAG, "Load accounts error", it)
                 })
     }
 
     fun deleteAccount(uid: String) {
+        ALog.i(TAG, "Delete account")
         var isChanged = false
         for (item in accountList) {
             if (item.account.uid == uid) {
@@ -213,11 +226,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
             }
         }
         if (isChanged) {
-            views.values.forEach {
-                if ((it as View).tag == uid) {
-                    it.tag = ""
-                }
-            }
+            ALog.i(TAG, "Found account to delete")
             if (lastActivePos >= accountList.size) {
                 lastActivePos--
             }

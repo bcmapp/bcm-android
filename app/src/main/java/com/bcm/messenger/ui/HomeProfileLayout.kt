@@ -27,7 +27,6 @@ import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
 import com.bcm.messenger.me.ui.login.RegistrationActivity
 import com.bcm.messenger.ui.widget.HomeProfilePageTransformer
 import com.bcm.messenger.ui.widget.HomeViewPager
-import com.bcm.messenger.ui.widget.IProfileView
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
@@ -51,7 +50,6 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     private val statusBarHeight = context.getStatusBarHeight()
     private var listener: HomeProfileListener? = null
     private val viewPagerAdapter = HomeAccountAdapter(context)
-    private var shownViews = emptyList<IProfileView>()
 
     var chatUnread = 0
         set(value) {
@@ -140,11 +138,15 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
             }
 
             override fun onAccountLoadSuccess() {
+                if (viewPagerAdapter.accountListIsEmpty()) {
+                    home_profile_view_pager.setCurrentItem(0, false)
+                } else {
+                    home_profile_view_pager.setCurrentItem(1, false)
+                }
             }
 
             override fun onResortSuccess() {
                 home_profile_view_pager.setCurrentItem(1, false)
-//                viewPagerAdapter.setActiveView(1)
             }
 
             override fun onViewClickLogin(uid: String) {
@@ -167,7 +169,6 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
             override fun onPageSelected(position: Int) {
                 viewPagerAdapter.setActiveView(position)
-                shownViews = viewPagerAdapter.getCurrentShownViews()
                 listener?.onViewChanged(viewPagerAdapter.getCurrentView(position)?.getCurrentRecipient())
             }
         })
@@ -184,14 +185,14 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
     fun setViewsAlpha(alpha: Float) {
         home_profile_exit.alpha = alpha
-        shownViews.forEach {
+        viewPagerAdapter.views.values.forEach {
             it.setViewsAlpha(alpha)
         }
     }
 
     fun showAllViewsWithAnimation() {
         showAnimation().start()
-        shownViews.forEach {
+        viewPagerAdapter.views.values.forEach {
             it.showAllViewsWithAnimation()
         }
     }
@@ -210,7 +211,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
     fun hideAllViews() {
         home_profile_exit.visibility = View.GONE
-        shownViews.forEach {
+        viewPagerAdapter.views.values.forEach {
             it.hideAllViews()
         }
     }
@@ -224,7 +225,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     fun resetMargin() {
-        shownViews.forEach {
+        viewPagerAdapter.views.values.forEach {
             it.resetMargin()
         }
     }
@@ -239,7 +240,6 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
             val index = viewPagerAdapter.checkIndex(uid)
             if (index != -1) {
                 home_profile_view_pager.setCurrentItem(index, false)
-                viewPagerAdapter.setActiveView(index)
             }
         }
     }
@@ -261,15 +261,15 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     fun checkAccountLogin(): Boolean {
-        if (shownViews.isEmpty()) {
-            home_profile_view_pager.setCurrentItem(1, false)
-            viewPagerAdapter.setActiveView(1)
-        }
+//        if (viewPagerAdapter.views.isEmpty()) {
+//            home_profile_view_pager.setCurrentItem(0, false)
+//            viewPagerAdapter.setActiveView(0)
+//        }
         return viewPagerAdapter.getCurrentView(home_profile_view_pager.currentItem)?.isLogin ?: false
     }
 
-    fun reSortAccountList() {
-        viewPagerAdapter.reSortAccounts()
+    fun resortAccountList() {
+        viewPagerAdapter.resortAccounts()
     }
 
     fun reloadAccountList() {
@@ -277,7 +277,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     fun checkBackupStatus() {
-        shownViews.forEach {
+        viewPagerAdapter.views.values.forEach {
             it.checkAccountBackup()
         }
     }

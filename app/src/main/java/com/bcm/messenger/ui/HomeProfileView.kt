@@ -322,15 +322,15 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     override fun resetMargin() {
-        home_profile_avatar_layout.layoutParams = (home_profile_avatar_layout.layoutParams as LayoutParams).apply {
-            marginStart = 0
-            marginEnd = 0
-            topMargin = 60.dp2Px()
-        }
         home_profile_avatar.layoutParams = (home_profile_avatar.layoutParams as LayoutParams).apply {
             marginStart = 0
             marginEnd = 0
         }
+
+        home_profile_avatar_layout.layoutParams = (home_profile_avatar_layout.layoutParams as LayoutParams).apply {
+            this.topMargin = 60.dp2Px()
+        }
+
         if (!isActive) {
             val pos = listener?.checkPosition() ?: 0f
             if (pos < 0f) {

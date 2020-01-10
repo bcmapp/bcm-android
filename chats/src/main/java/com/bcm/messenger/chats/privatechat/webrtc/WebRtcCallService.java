@@ -739,7 +739,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
     private void handleRemoteIceCandidate(Intent intent) {
         ALog.w(TAG, "remoteIce candidate...");
-        if (!this.accountContext.equals(getAccountContextFromIntent(intent))) {
+        if (this.accountContext == null || !this.accountContext.equals(getAccountContextFromIntent(intent))) {
             return;
         }
 
@@ -1089,7 +1089,8 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         CallState currentState = this.callState.get();
         ALog.i(TAG, "handleLocalHangup: " + currentState);
 
-        if (!this.accountContext.equals(getAccountContextFromIntent(intent))) {
+        if (this.accountContext == null || !this.accountContext.equals(getAccountContextFromIntent(intent))) {
+            ALog.w(TAG, "Account context is null or not equals to the intent's one");
             return;
         }
 
@@ -1438,8 +1439,10 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                                                       @NonNull final Recipient recipient,
                                                       @NonNull final SignalServiceCallMessage callMessage) {
 
+        ALog.i(TAG, "Send message");
         if (recipient.getAddress().toString().equals(accountContext.getUid())) {
             // Don't send call message to major
+            ALog.w(TAG, "Recipient is not the same");
             return null;
         }
 
@@ -1541,6 +1544,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                 Intent intent2 = new Intent(this, WebRtcCallService.class);
                 intent2.setAction(ACTION_REMOTE_HANGUP);
                 intent2.putExtra(EXTRA_CALL_ID, this.callId);
+                intent2.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, this.accountContext);
                 AppUtilKotlinKt.startForegroundServiceCompat(this, intent2);
 
                 break;
@@ -1649,6 +1653,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                 Intent intent = new Intent(this, WebRtcCallService.class);
                 intent.setAction(ACTION_REMOTE_HANGUP);
                 intent.putExtra(EXTRA_CALL_ID, dataMessage.getHangup().getId());
+                intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, this.accountContext);
                 AppUtilKotlinKt.startForegroundServiceCompat(this, intent);
             } else if (dataMessage.hasVideoStreamingStatus()) {
                 ALog.w(TAG, "hasVideoStreamingStatus...");
