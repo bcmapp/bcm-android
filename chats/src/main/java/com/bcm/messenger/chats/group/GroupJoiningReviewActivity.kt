@@ -43,8 +43,6 @@ class GroupJoiningReviewActivity : AccountSwipeBaseActivity() {
         } else {
             mGroupModel?.readJoinRequest(mJoiningRequestList)
         }
-
-        EventBus.getDefault().unregister(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +64,6 @@ class GroupJoiningReviewActivity : AccountSwipeBaseActivity() {
         mMessageId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_INDEX_ID, 0)
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1L)
         mGroupModel = GroupLogic.get(accountContext).getModel(groupId)
-        EventBus.getDefault().register(this)
 
         initJoiningRequestList()
     }

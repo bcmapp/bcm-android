@@ -49,7 +49,6 @@ class ChatGroupNoticeActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
     }
 
     override fun onDestroy() {
-        EventBus.getDefault().unregister(this)
         if (::recipient.isInitialized) {
             recipient.removeListener(this)
         }
@@ -62,7 +61,6 @@ class ChatGroupNoticeActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
         setContentView(R.layout.chats_group_activity_group_notice)
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
 
-        EventBus.getDefault().register(this)
         val groupModel = GroupLogic.get(accountContext).getModel(groupId)
         if (null == groupModel) {
             finish()

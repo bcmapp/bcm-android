@@ -33,6 +33,7 @@ import com.bcm.messenger.me.logic.AmeNoteLogic
 import com.bcm.messenger.me.logic.AmePinLogic
 import com.bcm.messenger.me.logic.FeedbackReport
 import com.bcm.messenger.me.ui.keybox.SwitchAccount
+import com.bcm.messenger.me.ui.login.RegistrationActivity
 import com.bcm.messenger.me.ui.note.AmeNoteActivity
 import com.bcm.messenger.me.ui.note.AmeNoteUnlockActivity
 import com.bcm.messenger.me.utils.MeConfirmDialog
@@ -81,7 +82,7 @@ class UserModuleImp : IUserModule
     }
 
 
-    fun getNote():AmeNoteLogic {
+    fun getNote(): AmeNoteLogic {
         return noteLogic
     }
 
@@ -539,106 +540,13 @@ class UserModuleImp : IUserModule
             ALog.i(TAG, "handleAccountExceptionLogout 2 ${event.type}")
             try {
                 when (event.type) {
-                    AccountKickedEvent.TYPE_EXPIRE -> handleTokenExpire(activity)
-                    AccountKickedEvent.TYPE_EXCEPTION_LOGIN -> handleForceLogout(activity, event.data)
-                    AccountKickedEvent.TYPE_ACCOUNT_GONE -> handleAccountGone(activity)
+                    AccountKickedEvent.TYPE_EXPIRE -> AccountForceLogout.handleTokenExpire(accountContext, activity)
+                    AccountKickedEvent.TYPE_EXCEPTION_LOGIN -> AccountForceLogout.handleForceLogout(accountContext, event.data)
+                    AccountKickedEvent.TYPE_ACCOUNT_GONE -> AccountForceLogout.handleAccountGone(accountContext, activity)
                 }
             } catch (ex: Exception) {
                 ALog.e(TAG, "handleAccountExceptionLogout error", ex)
             }
-        }
-    }
-
-    private fun handleForceLogout(activity: Activity, info: String?) {
-        expireDispose?.dispose()
-        expireDispose = null
-
-        if (!AMELogin.isLogin) {
-            return
-        }
-
-        val uid = accountContext.uid
-        ALog.i(TAG, "handleForceLogout 1")
-        if (kickOutDispose == null) {
-            ALog.i(TAG, "handleForceLogout 2")
-            kickOutDispose = Observable.create<Recipient> {
-                ALog.i(TAG, "handleForceLogout 3")
-                AmeModuleCenter.login().quit(accountContext, clearHistory = false, withLogOut = false)
-                it.onComplete()
-            }.subscribeOn(AmeDispatcher.singleScheduler)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnError {
-                        ALog.e(TAG, "handleForceLogout", it)
-                        kickOutDispose = null
-                    }
-                    .doOnComplete { kickOutDispose = null }
-                    .subscribe()
-
-            AmePopup.center.dismiss()
-            BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_DESTROY)
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, Address.from(accountContext, uid))
-                    .putString(ARouterConstants.PARAM.PARAM_CLIENT_INFO, info)
-                    .putString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID, uid)
-                    .startBcmActivity(accountContext, activity)
-        }
-
-    }
-
-    private fun handleTokenExpire(activity: Activity) {
-        if (!AMELogin.isLogin) {
-            return
-        }
-
-        if (expireDispose == null && kickOutDispose == null) {
-            expireDispose = Observable.create<Recipient> {
-                ALog.i(TAG, "handleTokenExpire 1")
-                if (AMELogin.isLogin) {
-                    AmeModuleCenter.login().quit(accountContext, clearHistory = false, withLogOut = false)
-                } else {
-                    throw java.lang.Exception("not login")
-                }
-
-                it.onComplete()
-            }.delaySubscription(3000, TimeUnit.MILLISECONDS, AmeDispatcher.singleScheduler)
-                    .subscribeOn(AmeDispatcher.singleScheduler)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnError {
-                        ALog.e(TAG, "handleTokenExpire", it)
-                        expireDispose = null
-                    }
-                    .doOnComplete { expireDispose = null }
-                    .subscribe {
-                        AmeAppLifecycle.show(activity.getString(R.string.me_logout_with_expire)) {
-                            BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
-                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                    .navigation(activity)
-                        }
-                    }
-        }
-    }
-
-    private fun handleAccountGone(activity: Activity) {
-        val self = try {
-            Recipient.login(accountContext)
-        } catch (ex: Exception) {
-            null
-        } ?: return
-
-        AmeDispatcher.io.dispatch {
-            AmeModuleCenter.login().quit(accountContext, false)
-            AmeLoginLogic.accountHistory.deleteAccount(self.address.serialize())
-        }
-
-        MeConfirmDialog.showConfirm(activity, activity.getString(R.string.me_destroy_account_confirm_title),
-                activity.getString(R.string.me_destroy_account_warning_notice), activity.getString(R.string.me_destroy_account_confirm_button)) {
-
-            AmeModuleCenter.onLogOutSucceed(accountContext)
-
-            BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    .navigation(activity)
-            activity.finish()
         }
     }
 

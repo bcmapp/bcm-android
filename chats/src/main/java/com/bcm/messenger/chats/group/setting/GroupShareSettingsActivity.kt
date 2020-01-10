@@ -50,18 +50,12 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
     private var mGroupChangedEventHandling = AtomicBoolean(false)
     private var mShareQRLoading = false
 
-    override fun onDestroy() {
-        super.onDestroy()
-        EventBus.getDefault().unregister(this)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chats_activity_group_share_settings)
 
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
 
-        EventBus.getDefault().register(this)
         val groupModel = GroupLogic.get(accountContext).getModel(groupId)
         if (null == groupModel) {
             finish()

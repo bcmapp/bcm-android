@@ -72,7 +72,6 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
         this.mGroupModel = model
 
         mGroupModel.setThreadId(intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, -1))
-        EventBus.getDefault().register(this)
         initView()
     }
 
@@ -580,11 +579,6 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
                 chats_group_control_avatar.showGroupAvatar(accountContext, mGroupModel.groupId(), path = event.avatarPath)
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        EventBus.getDefault().unregister(this)
     }
 
     override fun getViewHolderType(adapter: AmeRecycleViewAdapter<AmeGroupMemberInfo>, position: Int, data: AmeGroupMemberInfo): Int {

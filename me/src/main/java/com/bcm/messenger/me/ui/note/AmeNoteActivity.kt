@@ -57,7 +57,6 @@ class AmeNoteActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.IViewH
         }
 
         noteLogic = (AmeModuleCenter.user(accountContext) as UserModuleImp).getNote()
-        EventBus.getDefault().register(this)
 
         note_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
@@ -100,7 +99,6 @@ class AmeNoteActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.IViewH
 
     override fun onDestroy() {
         super.onDestroy()
-        EventBus.getDefault().unregister(this)
         noteLogic.lock()
     }
 

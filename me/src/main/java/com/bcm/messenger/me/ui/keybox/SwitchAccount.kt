@@ -137,10 +137,12 @@ object SwitchAccount {
                             .subscribe {
                                 AmePopup.loading.dismiss()
 
-                                AmeModuleCenter.onLogOutSucceed(accountContext)
-
-                                if (!AMELogin.isLogin) {
-                                    BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_SWITCHER)
+                                if (AMELogin.isLogin) {
+                                    BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
+                                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            .startBcmActivity(AMELogin.majorContext)
+                                } else {
+                                    BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                                             .navigation()
                                 }

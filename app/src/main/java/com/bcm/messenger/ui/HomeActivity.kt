@@ -18,7 +18,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.BaseFragment
-import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
+import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -45,9 +45,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.home_profile_layout.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import java.util.concurrent.TimeUnit
 
 /**
@@ -76,8 +73,6 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        EventBus.getDefault().register(this)
         setSwipeBackEnable(false)
 
         setContentView(R.layout.activity_home)
@@ -169,8 +164,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        EventBus.getDefault().unregister(this)
-        unreadObserver.unInit()
+        RxBus.unSubscribe(TAG)
         ClipboardUtil.unInitClipboardUtil()
         titleView.unInit()
     }
@@ -608,14 +602,14 @@ class HomeActivity : AccountSwipeBaseActivity() {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(event: AccountLoginStateChangedEvent) {
-        if (accountContext != AMELogin.majorContext) {
-            setAccountContext(AMELogin.majorContext)
-            titleView.updateContext(accountContext)
-            home_toolbar_avatar.showRecipientAvatar(accountRecipient)
-            messageListFragment?.updateAccountContext(accountContext)
-        }
+    override fun onAccountContextSwitch(newAccountContext: AccountContext) {
+        setAccountContext(AMELogin.majorContext)
+        titleView.updateContext(accountContext)
+        home_toolbar_avatar.showRecipientAvatar(accountRecipient)
+        messageListFragment?.updateAccountContext(accountContext)
+    }
+
+    override fun onLoginStateChanged() {
         home_profile_layout.reloadAccountList()
     }
 

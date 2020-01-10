@@ -237,8 +237,8 @@
     <string name="me_other_profile_avatar_reset_notice">%s की डिसप्ले प्रोफ़ाइल हटाएं।</string>
     <!--Destroy Account-->
     <string name="me_destroy_force_logout_title">जबर्दस्ती लॉगआउट</string>
-    <string name="me_destroy_force_logout_content">एक दूसरी डिवाइस (नीचे दी गई) ने इस खाते में सफलतापूर्वक लॉगिन किया। </string>
-    <string name="me_destroy_force_logout_tips">यदि यह आप नहीं हैं, तो आपका खाता कुंजी या पासवर्ड लीक हो गया है। </string>
+    <string name="me_destroy_force_logout_content">Another device has successfully logged in to account</string>
+    <string name="me_destroy_force_logout_tips">. If it is not you, your Account Key and password may be leaked. </string>
     <string name="me_destroy_account_str">खाता नष्ट करें</string>
     <string name="me_destroy_account_content">कृपया ध्यान दें कि आपके खातें में सब कुछ, जिसमें आपके संपर्क, प्रोफाइलें, सेटिंग और आपके वैलेट की डिजिटल संपत्तियां, नष्ट हो जाएंगी, और इस कार्रवाई को वापस पूर्ववत नहीं किया जा सकता।</string>
     <string name="me_destroy_account_notice">मैं परिणाम से वाकिफ़ हूं और कानूनी शर्तों से सहमत हूं।</string>
@@ -397,5 +397,6 @@
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>
     <string name="me_enter_pin_to_unlock">Enter PIN to Unlock</string>
+    <string name="me_force_log_out_log_back_in">Log Back In</string>
 
 </resources>

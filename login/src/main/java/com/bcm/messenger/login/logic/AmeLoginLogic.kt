@@ -20,6 +20,7 @@ import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.gcm.FcmUtil
 import com.bcm.messenger.common.preferences.TextSecurePreferences
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IUmengModule
@@ -205,10 +206,8 @@ object AmeLoginLogic {
      * quit account
      */
     fun quit(accountContext: AccountContext, clearHistory: Boolean, withLogOut: Boolean = true) {
-
         if (accountContext.isLogin) {
             ALog.i(TAG, "quit clearHistory: $clearHistory, withLogout: $withLogOut")
-
             try {
                 handleLocalLogout(accountContext, AppContextHolder.APP_CONTEXT)
 
@@ -379,10 +378,12 @@ object AmeLoginLogic {
                     val sign = BCMPrivateKeyUtils.sign(priKey, uid)
                     ALog.logForSecret(TAG, "unregister uid: $uid, sign: $sign")
 
-                    AmeLoginCore.unregister(getAccountContext(uid), URLEncoder.encode(sign))
+                    val accountContext:AccountContext = getAccountContext(uid)
+                    AmeLoginCore.unregister(accountContext, URLEncoder.encode(sign))
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.io())
                             .doOnNext {
+                                quit(accountContext, true)
                                 accountHistory.deleteAccount(uid)
                             }
                             .observeOn(AndroidSchedulers.mainThread())

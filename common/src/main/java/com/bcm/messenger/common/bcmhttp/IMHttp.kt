@@ -13,17 +13,23 @@ import java.util.concurrent.TimeUnit
 
 object IMHttp: AccountContextMap<BaseHttp>({
     val http = BaseHttp()
-    val sslFactory = IMServerSSL()
-    val client = OkHttpClient.Builder()
-            .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
-            .hostnameVerifier(BaseHttp.trustAllHostVerify())
+    val client = IMHttp.baseHttpClient.newBuilder()
             .addInterceptor(BcmAuthHeaderInterceptor(it))
             .addInterceptor(RedirectInterceptorHelper.imServerInterceptor)
             .addInterceptor(IMServerErrorCodeInterceptor())
             .addInterceptor(AccountMetricsInterceptor(it))
-            .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
-            .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
             .build()
     http.setClient(client)
     http
-})
+}) {
+    val baseHttpClient:OkHttpClient
+    init {
+        val sslFactory = IMServerSSL()
+        baseHttpClient = OkHttpClient.Builder()
+                .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
+                .hostnameVerifier(BaseHttp.trustAllHostVerify())
+                .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .build()
+    }
+}

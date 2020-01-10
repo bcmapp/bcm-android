@@ -16,6 +16,7 @@ import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.setStatusBarLightMode
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.utils.MeConfirmDialog
@@ -110,17 +111,15 @@ class DestroyCheckPasswordFragment : BaseFragment() {
                 activity?.let {
                     MeConfirmDialog.showConfirm(it, it.getString(R.string.me_destroy_account_confirm_title),
                             it.getString(R.string.me_destroy_account_confirm_notice), it.getString(R.string.me_destroy_account_confirm_button)) { _ ->
-
                         if (AMELogin.isLogin) {
-                            ALog.e(TAG, "登录态还没释放完")
-                            return@showConfirm
+                            BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
+                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                    .startBcmActivity(AMELogin.majorContext, it)
+                        } else {
+                            BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
+                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                    .navigation(it)
                         }
-                        AmeModuleCenter.onLogOutSucceed(AMELogin.majorContext)
-
-                        BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
-                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                .navigation(it)
-
                         it.finish()
                     }
                 }

@@ -236,8 +236,8 @@
     <string name="me_other_profile_avatar_reset_notice">مسح الأفاتار الخاص بـ %s</string>
     <!--Destroy Account-->
     <string name="me_destroy_force_logout_title">تسجيل خروج قسري</string>
-    <string name="me_destroy_force_logout_content">قام جهاز آخر (موضح أدناه) بتسجيل الدخول بنجاح إلى هذا الحساب. </string>
-    <string name="me_destroy_force_logout_tips">إذا لم يكن أنت، قد يكون هناك تسريب لمفتاح حسابك وكلمة السر خاصتك. </string>
+    <string name="me_destroy_force_logout_content">Another device has successfully logged in to account</string>
+    <string name="me_destroy_force_logout_tips">. If it is not you, your Account Key and password may be leaked. </string>
     <string name="me_destroy_account_str">تدمير الحساب</string>
     <string name="me_destroy_account_content">يرجى ملاحظة أن كل شيء في حسابك، بما في ذلك جهات الاتصال والملفات الشخصية والإعدادات والأصول الرقمية في محفظتك، سيتم إتلافها، ولا يمكن التراجع عن هذا الإجراء.</string>
     <string name="me_destroy_account_notice">أنا مدرك للعواقب وأوافق على الشروط القانونية.</string>
@@ -398,5 +398,6 @@
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>
     <string name="me_enter_pin_to_unlock">Enter PIN to Unlock</string>
+    <string name="me_force_log_out_log_back_in">Log Back In</string>
 
 </resources>

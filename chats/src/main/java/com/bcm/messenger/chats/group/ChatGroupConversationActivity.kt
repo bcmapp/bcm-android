@@ -113,14 +113,12 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
     override fun onDestroy() {
         ALog.d(TAG, "onDestroy")
         liveController?.onDestroy()
-        EventBus.getDefault().unregister(this)
         groupModel?.destroy()
         super.onDestroy()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        EventBus.getDefault().register(this)
         setContentView(R.layout.chats_tt_conversation_activity)
         initView()
         initData()

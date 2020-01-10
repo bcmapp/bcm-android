@@ -45,19 +45,25 @@ object ChatHttp : AccountContextMap<ChatHttp.ChatHttpImpl> ({
     private const val MESSAGE_PATH = "/v1/messages/%s"
     private const val AWS_UPLOAD_INFO_PATH = "/v1/attachments/s3/upload_certification"
 
+    private val baseHttpClient:OkHttpClient
+
+    init {
+        val sslFactory = IMServerSSL()
+        baseHttpClient = OkHttpClient.Builder()
+                .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
+                .hostnameVerifier(BaseHttp.trustAllHostVerify())
+                .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .build()
+    }
 
     class ChatHttpImpl(accountContext: AccountContext) : SyncHttpWrapper(BcmBaseHttp()) {
         init {
-            val sslFactory = IMServerSSL()
-            val client = OkHttpClient.Builder()
-                    .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
-                    .hostnameVerifier(BaseHttp.trustAllHostVerify())
+            val client = baseHttpClient.newBuilder()
                     .addInterceptor(BcmAuthHeaderInterceptor(accountContext))
                     .addInterceptor(RedirectInterceptorHelper.imServerInterceptor)
                     .addInterceptor(IMServerErrorCodeInterceptor())
                     .addInterceptor(AccountMetricsInterceptor(accountContext))
-                    .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
-                    .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                     .build()
             setClient(client)
         }

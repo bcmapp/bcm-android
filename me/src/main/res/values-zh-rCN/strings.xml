@@ -282,8 +282,8 @@
 
     <!--Destroy Account-->
     <string name="me_destroy_force_logout_title">强制登出</string>
-    <string name="me_destroy_force_logout_content">另一个设备（显示如下）已成功登陆此账号。</string>
-    <string name="me_destroy_force_logout_tips">若这不是你的操作，你的账户密钥及密码可能已被泄漏。</string>
+    <string name="me_destroy_force_logout_content">另一台设备已成功登录到帐户</string>
+    <string name="me_destroy_force_logout_tips">。 如果这不是你的操作，你的帐户密钥和密码可能会泄露。</string>
     <string name="me_destroy_account_str">销毁账户</string>
     <string name="me_destroy_account_content">注销账户后，你账户的一切，包括聊天记录、联系人、个人资料以及钱包里的虚拟资产等，都将被一并销毁，无法恢复。请确认知悉销毁后果。</string>
     <string name="me_destroy_account_notice">我知晓后果并同意相关法律条款。</string>
@@ -453,6 +453,7 @@
     <string name="me_add_proxy_action_save">保存</string>
     <string name="me_proxy_connecing_to_server">正在连接服务器…</string>
     <string name="me_enter_pin_to_unlock">解锁</string>
+    <string name="me_force_log_out_log_back_in">重新登录</string>
 
 
 </resources>

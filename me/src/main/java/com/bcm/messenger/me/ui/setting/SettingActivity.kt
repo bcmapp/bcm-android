@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AmeNotification
 import com.bcm.messenger.common.AccountSwipeBaseActivity
-import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -60,7 +59,6 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        EventBus.getDefault().unregister(this)
         RxBus.unSubscribe(TAG_SSR)
         mChatModule?.finishAllConversationStorageQuery()
         if (::recipient.isInitialized) {
@@ -71,8 +69,6 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_settings)
-
-        EventBus.getDefault().register(this)
 
         mChatModule = AmeModuleCenter.chat(accountContext)
         recipient = Recipient.from(accountContext, accountContext.uid, true)
@@ -277,8 +273,7 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(e: AccountLoginStateChangedEvent) {
+    override fun onLoginStateChanged() {
         if (!accountContext.isLogin) {
             finish()
         }

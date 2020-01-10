@@ -275,9 +275,9 @@
     <string name="me_other_profile_avatar_reset_notice">Clear the display Avatar for %s</string>
 
     <!--Destroy Account-->
-    <string name="me_destroy_force_logout_title">Forced Log Out</string>
-    <string name="me_destroy_force_logout_content">The device shown below has successfully logged into this account. </string>
-    <string name="me_destroy_force_logout_tips">If it is not you, your Account Key and password may be leaked. </string>
+    <string name="me_destroy_force_logout_title">Forced Logout</string>
+    <string name="me_destroy_force_logout_content">Another device has successfully logged in to account</string>
+    <string name="me_destroy_force_logout_tips">. If it is not you, your Account Key and password may be leaked. </string>
     <string name="me_destroy_account_str">Destroy Account</string>
     <string name="me_destroy_account_content">Please be noted that everything in your account, including your contacts, profiles, settings, and digital assets in your wallet, will be destroyed, and this action can NOT be undone.</string>
     <string name="me_destroy_account_notice">I am aware of the consequences and I agree with the legal terms.</string>
@@ -451,6 +451,7 @@
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>
     <string name="me_enter_pin_to_unlock">Enter PIN to Unlock</string>
+    <string name="me_force_log_out_log_back_in">Log Back In</string>
 
 
 </resources>

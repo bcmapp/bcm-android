@@ -39,8 +39,6 @@ class ChatGroupProfileActivity : AccountSwipeBaseActivity() {
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
         role = intent.getLongExtra(ROLE, AmeGroupMemberInfo.VISITOR)
 
-        EventBus.getDefault().register(this)
-
         val groupModel = GroupLogic.get(accountContext).getModel(groupId)
         if (null == groupModel) {
             finish()
@@ -80,11 +78,6 @@ class ChatGroupProfileActivity : AccountSwipeBaseActivity() {
         }
 
         updateGroupInfo()
-    }
-
-    override fun onDestroy() {
-        EventBus.getDefault().unregister(this)
-        super.onDestroy()
     }
 
     private fun updateGroupInfo() {

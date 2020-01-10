@@ -9,20 +9,20 @@
         style="@style/CommonTitleBarStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/force_logout_title"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="45dp"
+        android:layout_marginEnd="45dp"
+        android:gravity="center"
         android:text="@string/me_destroy_force_logout_title"
         android:textColor="@color/common_color_black"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:gravity="left"
-        android:layout_marginTop="45dp"
-        android:layout_marginEnd="45dp"
-        android:layout_marginStart="45dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/force_logout_title_bar" />
@@ -31,9 +31,9 @@
         android:id="@+id/force_logout_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="45dp"
         android:layout_marginStart="45dp"
         android:layout_marginTop="45dp"
+        android:layout_marginEnd="45dp"
         android:gravity="left"
         android:text="@string/me_destroy_force_logout_content"
         android:textColor="@color/common_color_black_60"
@@ -42,35 +42,113 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/force_logout_title" />
 
-
-    <TextView
-        android:id="@+id/force_logout_understand_btn"
-        android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:layout_marginBottom="101dp"
-        android:layout_marginEnd="45dp"
-        android:layout_marginStart="45dp"
-        android:gravity="center"
-        android:background="@drawable/common_blue_bg"
-        android:text="@string/common_understood"
-        android:textColor="@color/common_color_white"
-        android:textSize="14sp"
+    <ImageView
+        android:id="@+id/force_logout_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="118dp"
+        android:src="@drawable/force_logout_arrow_grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/force_logout_content" />
+
+    <com.bcm.messenger.common.ui.IndividualAvatarView
+        android:id="@+id/force_logout_avatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginTop="90dp"
+        android:src="@drawable/common_recipient_photo_default_small"
+        app:layout_constraintEnd_toStartOf="@id/force_logout_arrow"
+        app:layout_constraintTop_toBottomOf="@id/force_logout_content" />
+
+    <TextView
+        android:id="@+id/force_logout_name"
+        android:layout_width="135dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:gravity="center"
+        android:textColor="@color/common_color_black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/force_logout_avatar"
+        app:layout_constraintStart_toStartOf="@id/force_logout_avatar"
+        app:layout_constraintTop_toBottomOf="@id/force_logout_avatar" />
+
+    <ImageView
+        android:id="@+id/force_logout_phone"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="90dp"
+        android:layout_marginStart="24dp"
+        android:src="@drawable/force_logout_phone"
+        app:layout_constraintStart_toEndOf="@id/force_logout_arrow"
+        app:layout_constraintTop_toBottomOf="@id/force_logout_content" />
+
+    <TextView
+        android:id="@+id/force_logout_phone_name"
+        android:layout_width="135dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:gravity="center"
+        android:textColor="@color/common_color_black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/force_logout_phone"
+        app:layout_constraintStart_toStartOf="@id/force_logout_phone"
+        app:layout_constraintTop_toBottomOf="@id/force_logout_phone" />
 
     <TextView
         android:id="@+id/force_logout_destroy_btn"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginEnd="45dp"
         android:layout_marginStart="45dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/common_white_bg"
+        android:gravity="center"
         android:text="@string/me_destroy_account_str"
         android:textColor="@color/common_content_warning_color"
         android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/force_logout_re_login"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/common_button_light_bg"
         android:gravity="center"
-        android:background="@drawable/common_white_bg"
-        app:layout_constraintTop_toBottomOf="@id/force_logout_understand_btn"
+        android:textStyle="bold"
+        android:text="@string/me_force_log_out_log_back_in"
+        android:textColor="@color/common_color_379BFF"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@id/force_logout_destroy_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/force_logout_understand_btn"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/common_blue_bg"
+        android:gravity="center"
+        android:text="@string/common_understood"
+        android:textColor="@color/common_color_white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/force_logout_re_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

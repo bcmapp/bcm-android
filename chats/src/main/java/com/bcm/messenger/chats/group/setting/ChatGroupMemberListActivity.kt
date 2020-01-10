@@ -55,7 +55,6 @@ class ChatGroupMemberListActivity : AccountSwipeBaseActivity(), AmeRecycleViewAd
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
         val editMode = intent.getBooleanExtra(EDIT_MODE, false)
 
-        EventBus.getDefault().register(this)
         val groupModel = GroupLogic.get(accountContext).getModel(groupId)
         if (null == groupModel) {
             finish()
@@ -75,7 +74,6 @@ class ChatGroupMemberListActivity : AccountSwipeBaseActivity(), AmeRecycleViewAd
 
     override fun onDestroy() {
         super.onDestroy()
-        EventBus.getDefault().unregister(this)
     }
 
     override fun onPause() {

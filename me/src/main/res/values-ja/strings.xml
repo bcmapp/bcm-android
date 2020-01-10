@@ -265,8 +265,8 @@
 
     <!--Destroy Account-->
     <string name="me_destroy_force_logout_title">強制ログアウト</string>
-    <string name="me_destroy_force_logout_content">他の端末 (下に表示されています)がこのアカウントにログインしました。</string>
-    <string name="me_destroy_force_logout_tips">もしこの操作があなたによるものでないなら、恐らくあなたのアカウントキーとパスワードが流出しています。</string>
+    <string name="me_destroy_force_logout_content">Another device has successfully logged in to account</string>
+    <string name="me_destroy_force_logout_tips">. If it is not you, your Account Key and password may be leaked. </string>
     <string name="me_destroy_account_str">アカウントを破壊</string>
     <string name="me_destroy_account_content">連絡先、プロフィール、設定、ウォレット内のデジタル資産など、アカウント内のすべてが破棄され、この操作を元に戻すことはできません。</string>
     <string name="me_destroy_account_notice">私は利用規約の内容を理解して同意します。</string>
@@ -437,6 +437,7 @@
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>
     <string name="me_enter_pin_to_unlock">Enter PIN to Unlock</string>
+    <string name="me_force_log_out_log_back_in">Log Back In</string>
 
 
 </resources>

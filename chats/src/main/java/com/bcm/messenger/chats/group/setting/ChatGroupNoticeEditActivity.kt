@@ -67,8 +67,6 @@ class ChatGroupNoticeEditActivity : AccountSwipeBaseActivity() {
             }
         })
 
-        EventBus.getDefault().register(this)
-
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
         val groupModel = GroupLogic.get(accountContext).getModel(groupId)
         if (groupModel == null) {
@@ -107,11 +105,6 @@ class ChatGroupNoticeEditActivity : AccountSwipeBaseActivity() {
             title_bar.setRightClickable(false)
             title_bar.setRightTextColor(getColorCompat(R.color.common_color_A6B3BF))
         }
-    }
-
-    override fun onDestroy() {
-        EventBus.getDefault().unregister(this)
-        super.onDestroy()
     }
 
 

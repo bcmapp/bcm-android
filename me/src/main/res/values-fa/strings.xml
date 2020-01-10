@@ -236,8 +236,8 @@
     <string name="me_other_profile_avatar_reset_notice">نماش آواتار برای %s پاک سازی شود</string>
     <!--Destroy Account-->
     <string name="me_destroy_force_logout_title">خروج اجباری</string>
-    <string name="me_destroy_force_logout_content">دستگاه دیگری (مطابق زیر) با موفقیت به این حساب وارد شده است. </string>
-    <string name="me_destroy_force_logout_tips">اگر شما نیستید، شاید کلید حساب و رمزعبورتان هک شده باشد. </string>
+    <string name="me_destroy_force_logout_content">Another device has successfully logged in to account</string>
+    <string name="me_destroy_force_logout_tips">. If it is not you, your Account Key and password may be leaked. </string>
     <string name="me_destroy_account_str">از بین بردن حساب</string>
     <string name="me_destroy_account_content">لطفاً توجه کنید که کلیه محتواهای حساب شما، از جمله مخاطبین، پروفایل‌ها، تنظیمات و دارایی‌های دیجیتال در کیف پول شما از بین خواهد رفت، و این عمل قابل بازگشت نیست.</string>
     <string name="me_destroy_account_notice">از عواقب آن مطلع هستم و ضوابط قانونی را می‌پذیرم.</string>
@@ -395,5 +395,6 @@
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>
     <string name="me_enter_pin_to_unlock">Enter PIN to Unlock</string>
+    <string name="me_force_log_out_log_back_in">Log Back In</string>
 
 </resources>

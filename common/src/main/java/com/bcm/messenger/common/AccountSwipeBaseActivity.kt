@@ -1,18 +1,21 @@
 package com.bcm.messenger.common
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.preferences.TextSecurePreferences
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.logger.ALog
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 open class AccountSwipeBaseActivity : SwipeBaseActivity() {
 
@@ -33,6 +36,7 @@ open class AccountSwipeBaseActivity : SwipeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        EventBus.getDefault().register(this)
         val accountContextObj: AccountContext? = intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext
         if (accountContextObj != null) {
             setAccountContext(accountContextObj)
@@ -42,6 +46,11 @@ open class AccountSwipeBaseActivity : SwipeBaseActivity() {
             finish()
             return
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
     }
 
     override fun onResume() {
@@ -102,6 +111,23 @@ open class AccountSwipeBaseActivity : SwipeBaseActivity() {
             ALog.i(TAG, "updateScreenshotSecurity clearWindowSecure")
             window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(event: AccountLoginStateChangedEvent) {
+        if (accountContext != AMELogin.majorContext) {
+            onAccountContextSwitch(AMELogin.majorContext)
+        }
+
+        onLoginStateChanged()
+    }
+
+    protected open fun onAccountContextSwitch(newAccountContext: AccountContext) {
+        finish()
+    }
+
+    protected open fun onLoginStateChanged() {
+
     }
 
     protected open fun onLoginRecipientRefresh() {

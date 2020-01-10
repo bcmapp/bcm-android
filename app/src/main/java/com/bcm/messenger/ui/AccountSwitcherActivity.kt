@@ -9,6 +9,10 @@ import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.login.logic.AmeLoginLogic
+import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
+import com.bcm.messenger.me.ui.login.RegistrationActivity
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.activity_account_switcher.*
@@ -25,8 +29,15 @@ class AccountSwitcherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_account_switcher)
-
         initView()
+
+        val uid = intent.getStringExtra(ARouterConstants.PARAM.PARAM_UID)?:""
+        if (uid.isNotEmpty()) {
+            val intent = Intent(this, VerifyKeyActivity::class.java).apply {
+                putExtra(RegistrationActivity.RE_LOGIN_ID, uid)
+            }
+            startBcmActivity(AmeLoginLogic.getAccountContext(uid), intent)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

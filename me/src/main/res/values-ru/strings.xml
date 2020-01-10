@@ -236,8 +236,8 @@
     <string name="me_other_profile_avatar_reset_notice">Очистить отображ. аватар для %s</string>
     <!--Destroy Account-->
     <string name="me_destroy_force_logout_title">Принуд. выход</string>
-    <string name="me_destroy_force_logout_content">Другое устройство (см. ниже) успешно выполнило вход в этот аккаунт. </string>
-    <string name="me_destroy_force_logout_tips">Если это не вы, возможно, ключ аккаунта и пароль в чужих руках.</string>
+    <string name="me_destroy_force_logout_content">Another device has successfully logged in to account</string>
+    <string name="me_destroy_force_logout_tips">. If it is not you, your Account Key and password may be leaked. </string>
     <string name="me_destroy_account_str">Уничт. аккаунт</string>
     <string name="me_destroy_account_content">Обратите внимание, что все содержимое аккаунту, в т.ч. контакты, профили, настройки и цифровые активы в кошельке, будут уничтожены, и отменить это действие НЕЛЬЗЯ.</string>
     <string name="me_destroy_account_notice">Я осознаю последствия и принимаю юридические условия.</string>
@@ -396,5 +396,6 @@
     <string name="me_add_proxy_action_save">Save</string>
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>
     <string name="me_enter_pin_to_unlock">Enter PIN to Unlock</string>
+    <string name="me_force_log_out_log_back_in">Log Back In</string>
 
 </resources>

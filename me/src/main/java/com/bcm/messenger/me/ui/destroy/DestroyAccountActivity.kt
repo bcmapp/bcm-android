@@ -23,9 +23,7 @@ class DestroyAccountActivity : AppCompatActivity() {
 
         val fragment = ForcedLogOutFragment()
         val arg = Bundle()
-        arg.putSerializable(ARouterConstants.PARAM.PARAM_ADDRESS, intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ADDRESS))
         arg.putString(ARouterConstants.PARAM.PARAM_CLIENT_INFO, intent.getStringExtra(ARouterConstants.PARAM.PARAM_CLIENT_INFO))
-        arg.putString(ARouterConstants.PARAM.PARAM_ACCOUNT_ID, intent.getStringExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_ID))
         arg.putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT))
         fragment.arguments = arg
         supportFragmentManager.beginTransaction()

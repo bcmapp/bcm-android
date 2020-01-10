@@ -13,17 +13,10 @@ import java.util.concurrent.TimeUnit
 
 class WebSocketHttp(accountContext: AccountContext):BaseHttp() {
     init {
-        val sslFactory = IMServerSSL()
-        val client  = OkHttpClient.Builder()
-                .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
-                .hostnameVerifier(trustAllHostVerify())
+        val client  = IMHttp.baseHttpClient.newBuilder()
                 .addInterceptor(BcmAuthHeaderInterceptor(accountContext))
                 .addInterceptor(RedirectInterceptorHelper.imServerInterceptor)
-                .connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
-                .readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
-                .writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .build()
-
         setClient(client)
     }
 
