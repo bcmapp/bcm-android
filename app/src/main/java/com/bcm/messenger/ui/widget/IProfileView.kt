@@ -47,6 +47,8 @@ interface IProfileView {
 
     fun checkAccountBackup()
 
+    fun setUnreadCount(unreadCount: Int)
+
     fun positionChanged(position: Float) {
         val innerPos = when {
             position < leftPosition -> leftPosition

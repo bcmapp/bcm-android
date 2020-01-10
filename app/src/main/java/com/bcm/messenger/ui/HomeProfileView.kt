@@ -17,7 +17,6 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
-import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getScreenWidth
 import com.bcm.messenger.common.utils.startBcmActivity
@@ -30,7 +29,6 @@ import com.bcm.messenger.ui.widget.leftPosition
 import com.bcm.messenger.ui.widget.rightPosition
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
-import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.home_profile_view.view.*
 import kotlin.math.min
@@ -66,22 +64,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     private lateinit var accountItem: HomeAccountItem
 
     private var isAccountBackup = true
-
-    var chatUnread =  0
-        set(value) {
-            if (field != value) {
-                field = value
-                updateHomeUnread(field + friendReqUnread)
-            }
-        }
-
-    var friendReqUnread = 0
-        set(value) {
-            if (field != value) {
-                field = value
-                updateHomeUnread(field + chatUnread)
-            }
-        }
+    private var unreadCount = 0
 
     fun setAccountItem(accountItem: HomeAccountItem) {
         this.accountItem = accountItem
@@ -92,12 +75,6 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         isAccountBackup = accountItem.account.backupTime > 0
 
         setProfile()
-    }
-
-    private fun updateHomeUnread(unread: Int) {
-        ALog.i(TAG, "updateHomeUnread: $unread")
-        home_profile_unread.unreadCount = unread
-        AmePushProcess.updateAppBadge(AppContextHolder.APP_CONTEXT, unread)
     }
 
     private fun showAnimation() = AnimatorSet().apply {
@@ -403,6 +380,11 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             home_profile_backup_icon.visibility = View.GONE
             accountItem.account.backupTime = backupTime
         }
+    }
+
+    override fun setUnreadCount(unreadCount: Int) {
+        this.unreadCount = unreadCount
+        home_profile_unread.unreadCount = unreadCount
     }
 
     private fun logoutPagerChangedAlpha(alpha: Float) {

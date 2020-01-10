@@ -13,11 +13,12 @@ import com.bcm.messenger.R
 import com.bcm.messenger.chats.NewChatActivity
 import com.bcm.messenger.chats.thread.MessageListFragment
 import com.bcm.messenger.chats.thread.MessageListTitleView
+import com.bcm.messenger.chats.thread.MessageListUnreadObserver
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
-import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -58,11 +59,6 @@ class HomeActivity : AccountSwipeBaseActivity() {
     companion object {
         private const val TAG = "HomeActivity"
 
-        private const val TAB_CHAT = 0
-        private const val TAB_CONTACT = 1
-        private const val TAB_ME = 2
-        private const val TAB_ADHOC = 3
-
         const val REQ_SCAN_ACCOUNT = 1001
         const val REQ_SCAN_LOGIN = 1002
     }
@@ -75,6 +71,8 @@ class HomeActivity : AccountSwipeBaseActivity() {
     private lateinit var titleView: MessageListTitleView
     private var mWaitForShortLink: Boolean = false //是否等待短链生成
     private var messageListFragment: MessageListFragment? = null
+
+    private val unreadObserver = MessageListUnreadObserver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,36 +103,12 @@ class HomeActivity : AccountSwipeBaseActivity() {
             }
         }
 
-        RxBus.subscribe<HomeTabEvent>(TAG) {
-            ALog.i(TAG, "receive HomeTabEvent position: ${it.position}, figure: ${it.showFigure}")
-            val adhocMode = AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true
-            when (it.position) {
-                TAB_CHAT -> {
-                    if ((it.showFigure != null || it.showDot != null) && !adhocMode) {
-                        home_profile_layout?.chatUnread = it.showFigure ?: 0
-                    }
-                }
-                TAB_CONTACT -> {
-                    if ((it.showFigure != null || it.showDot != null) && !adhocMode) {
-                        home_profile_layout?.friendReqUnread = it.showFigure ?: 0
-                    }
-                }
-                TAB_ME -> {
-                }
-                TAB_ADHOC -> {
-                    if ((it.showFigure != null || it.showDot != null) && adhocMode) {
-                        home_profile_layout?.friendReqUnread = 0
-                        home_profile_layout?.chatUnread = it.showFigure ?: 0
-                    }
-                }
-            }
-        }
+        initUnreadObserver()
 
         checkSchemeLaunch()
 
         initClipboardUtil()
         checkAdHocMode()
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -176,17 +150,11 @@ class HomeActivity : AccountSwipeBaseActivity() {
             mPixelManager = PixelManager.Builder().target(PixelActivity::class.java).build()
             mPixelManager?.start(AppContextHolder.APP_CONTEXT)
 
-            home_profile_layout?.friendReqUnread = 0
-            home_profile_layout?.chatUnread = 0
-
             return true
         } else {
             if (null != adHocMainFragment) {
                 val removeFragment = supportFragmentManager.beginTransaction()
                 removeFragment.remove(adHocMainFragment).commitNow()
-
-                home_profile_layout?.friendReqUnread = 0
-                home_profile_layout?.chatUnread = 0
             }
 
             home_adhoc_main.visibility = View.GONE
@@ -202,7 +170,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().unregister(this)
-        RxBus.unSubscribe(TAG)
+        unreadObserver.unInit()
         ClipboardUtil.unInitClipboardUtil()
         titleView.unInit()
     }
@@ -225,6 +193,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
         } else {
             AmeModuleCenter.contact(accountContext)?.checkNeedDownloadAvatarWithAll(accountRecipient)
         }
+        unreadObserver.onResume()
     }
 
     override fun onPause() {
@@ -683,5 +652,89 @@ class HomeActivity : AccountSwipeBaseActivity() {
                     .withCancelTitle(getString(R.string.common_understood))
                     .show(this)
         }
+    }
+
+    private fun initUnreadObserver() {
+        unreadObserver.setListener(object : MessageListUnreadObserver.UnreadCountChangeListener {
+            private val unreadMap = mutableMapOf<AccountContext, MessageListUnreadObserver.UnreadCountEntity>()
+
+            override fun onChatUnreadCountChanged(accountContext: AccountContext, unreadCount: Int) {
+                var entity = unreadMap[accountContext]
+                if (entity == null) {
+                    entity = MessageListUnreadObserver.UnreadCountEntity()
+                    unreadMap[accountContext] = entity
+                }
+                entity.chatUnread = unreadCount
+
+                val showUnread = when {
+                    entity.chatUnread > 0 -> entity.chatUnread
+                    entity.friendUnhandle > 0 -> entity.friendUnhandle
+                    else -> 0
+                }
+                home_profile_layout.setUnreadCount(accountContext, showUnread)
+
+                updateHomeBadge()
+            }
+
+            override fun onFriendUnreadCountChanged(accountContext: AccountContext, unreadCount: Int, unhandledCount: Int) {
+                var entity1 = unreadMap[accountContext]
+                if (entity1 == null) {
+                    entity1 = MessageListUnreadObserver.UnreadCountEntity()
+                    unreadMap[accountContext] = entity1
+                }
+                entity1.friendUnread = unreadCount
+                entity1.friendUnhandle = unhandledCount
+
+                val showUnread = when {
+                    entity1.chatUnread > 0 -> entity1.chatUnread
+                    entity1.friendUnhandle > 0 -> entity1.friendUnhandle
+                    else -> 0
+                }
+                home_profile_layout.setUnreadCount(accountContext, showUnread)
+                if (accountContext == this@HomeActivity.accountContext) {
+                    messageListFragment?.updateFriendRequest(entity1.friendUnhandle, entity1.friendUnread)
+                }
+
+                updateHomeBadge()
+            }
+
+            override fun onAdHocUnreadCountChanged(accountContext: AccountContext, unreadCount: Int) {
+                var entity2 = unreadMap[accountContext]
+                if (entity2 == null) {
+                    entity2 = MessageListUnreadObserver.UnreadCountEntity()
+                    unreadMap[accountContext] = entity2
+                }
+                entity2.adHocUnread = unreadCount
+
+                updateHomeBadge()
+            }
+
+            override fun onAccountListChanged() {
+                unreadMap.clear()
+                updateHomeBadge()
+            }
+
+            private fun updateHomeBadge() {
+                var unread = 0
+                val backgroundUnreadList = mutableListOf<AccountContext>()
+                unreadMap.forEach {
+                    unread += it.value.chatUnread
+                    unread += it.value.friendUnread
+                    unread += it.value.adHocUnread
+
+                    if (it.key != AMELogin.majorContext) {
+                        val value = it.value
+                        if (value.chatUnread > 0 || value.friendUnhandle > 0) {
+                            backgroundUnreadList.add(it.key)
+                        }
+                    }
+                }
+
+                home_toolbar_unread_view.updateUnreadAccounts(backgroundUnreadList)
+                AmePushProcess.updateAppBadge(AppContextHolder.APP_CONTEXT, unread)
+            }
+        })
+
+        unreadObserver.init()
     }
 }

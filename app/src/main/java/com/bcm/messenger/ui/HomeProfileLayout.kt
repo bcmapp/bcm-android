@@ -17,20 +17,16 @@ import com.bcm.messenger.R
 import com.bcm.messenger.adapter.HomeAccountAdapter
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
 import com.bcm.messenger.me.ui.login.RegistrationActivity
 import com.bcm.messenger.ui.widget.HomeProfilePageTransformer
 import com.bcm.messenger.ui.widget.HomeViewPager
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
-import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.home_profile_layout.view.*
 
 /**
@@ -50,27 +46,6 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     private val statusBarHeight = context.getStatusBarHeight()
     private var listener: HomeProfileListener? = null
     private val viewPagerAdapter = HomeAccountAdapter(context)
-
-    var chatUnread = 0
-        set(value) {
-            if (field != value) {
-                field = value
-                updateHomeUnread(field + friendReqUnread)
-            }
-        }
-
-    var friendReqUnread = 0
-        set(value) {
-            if (field != value) {
-                field = value
-                updateHomeUnread(field + chatUnread)
-            }
-        }
-
-    private fun updateHomeUnread(unread: Int) {
-        ALog.i(TAG, "updateHomeUnread: $unread")
-        AmePushProcess.updateAppBadge(AppContextHolder.APP_CONTEXT, unread)
-    }
 
     private fun showAnimation() = AnimatorSet().apply {
         val updateListener = ValueAnimator.AnimatorUpdateListener {
@@ -286,6 +261,14 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
+    fun setUnreadCount(accountContext: AccountContext, unreadCount: Int) {
+        viewPagerAdapter.views.values.forEach {
+            if (it.getCurrentContext() == accountContext) {
+                it.setUnreadCount(unreadCount)
+            }
+        }
+    }
+
     private fun deleteAccount(uid: String) {
         AlertDialog.Builder(context)
                 .setMessage(R.string.tabless_ui_delete_account_content)
@@ -311,7 +294,10 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
     private fun checkOnlineAccount(): Boolean {
         if (AmeModuleCenter.login().minorUidList().size == 2) {
-            AmePopup.result.notice((context as AccountSwipeBaseActivity), getString(R.string.tabless_ui_account_reach_max_size))
+            AlertDialog.Builder(context)
+                    .setMessage(R.string.tabless_ui_account_reach_max_size)
+                    .setPositiveButton(R.string.common_understood, null)
+                    .show()
             return false
         }
         return true

@@ -163,7 +163,7 @@ class AdHocMainFragment: BaseFragment(),
         AdHocMessageLogic.get(accountContext)
         AdHocSessionLogic.get(accountContext).setListener(this)
         dataSource.updateDataSource(listOf(createSearchBarSessionData()) + AdHocSessionLogic.get(accountContext).getSessionList())
-        RxBus.post(HomeTabEvent(HomeTabEvent.TAB_ADHOC, false, AdHocSessionLogic.get(accountContext).getUnReadSessionCount()))
+        RxBus.post(HomeTabEvent(accountContext, HomeTabEvent.TAB_ADHOC, false, AdHocSessionLogic.get(accountContext).getUnReadSessionCount()))
 
         deviceStateListener.setListener(this)
         deviceStateListener.init()
@@ -422,7 +422,7 @@ class AdHocMainFragment: BaseFragment(),
     override fun onSessionListChanged() {
         AmeDispatcher.mainThread.dispatch {
             dataSource.updateDataSource(listOf(createSearchBarSessionData()) + AdHocSessionLogic.get(accountContext).getSessionList())
-            RxBus.post(HomeTabEvent(HomeTabEvent.TAB_ADHOC, false, AdHocSessionLogic.get(accountContext).getUnReadSessionCount()))
+            RxBus.post(HomeTabEvent(accountContext, HomeTabEvent.TAB_ADHOC, false, AdHocSessionLogic.get(accountContext).getUnReadSessionCount()))
         }
     }
 
@@ -469,7 +469,7 @@ class AdHocMainFragment: BaseFragment(),
     override fun onReady() {
         AmeDispatcher.mainThread.dispatch {
             dataSource.updateDataSource(listOf(createSearchBarSessionData()) + AdHocSessionLogic.get(accountContext).getSessionList())
-            RxBus.post(HomeTabEvent(HomeTabEvent.TAB_ADHOC, false, AdHocSessionLogic.get(accountContext).getUnReadSessionCount()))
+            RxBus.post(HomeTabEvent(accountContext, HomeTabEvent.TAB_ADHOC, false, AdHocSessionLogic.get(accountContext).getUnReadSessionCount()))
         }
     }
 

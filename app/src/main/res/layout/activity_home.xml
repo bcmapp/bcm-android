@@ -42,6 +42,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <com.bcm.messenger.chats.thread.MessageListUnreadView
+                android:id="@+id/home_toolbar_unread_view"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_marginStart="65dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/home_toolbar_chat"
+                app:layout_constraintStart_toStartOf="parent" />
+
             <ImageView
                 android:id="@+id/home_toolbar_chat"
                 android:layout_width="40dp"

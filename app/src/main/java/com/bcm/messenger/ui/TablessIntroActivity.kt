@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.R
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.mms.GlideApp
+import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.utils.setTranslucentStatus
 import kotlinx.android.synthetic.main.activity_tabless_intro.*
 
@@ -30,6 +31,7 @@ class TablessIntroActivity : AppCompatActivity() {
                 .into(tabless_gif)
 
         tabless_confirm.setOnClickListener {
+            SuperPreferences.setTablessIntroductionFlag(this@TablessIntroActivity)
             finish()
         }
     }

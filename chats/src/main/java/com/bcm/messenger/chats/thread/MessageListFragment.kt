@@ -21,10 +21,8 @@ import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.database.repositories.ThreadRepo
-import com.bcm.messenger.common.event.FriendRequestEvent
 import com.bcm.messenger.common.event.GroupInfoCacheReadyEvent
 import com.bcm.messenger.common.event.GroupListChangedEvent
-import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.grouprepository.events.GroupInfoUpdateNotify
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.recipients.Recipient
@@ -37,9 +35,6 @@ import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.chats_fragment_message_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -101,7 +96,6 @@ class MessageListFragment : BaseFragment() {
         super.onResume()
         ALog.d(TAG, "onResume")
         chats_app_notification_layout.checkNotice()
-        checkUnhandledRequest()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -145,14 +139,9 @@ class MessageListFragment : BaseFragment() {
         viewModel = ViewModelProviders.of(this, ThreadModelFactory(accountContext)).get(ThreadListViewModel::class.java)
         viewModel.threadLiveData.observe(this, Observer { data ->
             ALog.i(TAG, "updateThread, size: ${data.data.size}")
-            RxBus.post(HomeTabEvent(HomeTabEvent.TAB_CHAT, false, data.unread, false))
             mAdapter?.setThreadList(data.data)
             showShadeView(false)
         })
-
-        RxBus.subscribe<FriendRequestEvent>(TAG) {
-            checkUnhandledRequest(it.unreadCount)
-        }
 
         AmePushProcess.checkSystemBannerNotice()
         PushUtil.loadSystemMessages(accountContext)
@@ -317,29 +306,15 @@ class MessageListFragment : BaseFragment() {
         }
     }
 
-    private fun checkUnhandledRequest(unreadCount: Int = 0) {
-        Observable.create<Pair<Int, Int>> {
-            val requestDao = Repository.getFriendRequestRepo(accountContext)
-            var unread = unreadCount
-            if (unread == 0) {
-                unread = requestDao?.queryUnreadCount() ?: 0
-            }
-            it.onNext(Pair(requestDao?.queryUnhandledCount() ?: 0, unread))
-            it.onComplete()
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    ALog.i(TAG, "checkUnHandledFriendRequest, unHandled: ${it.first}, unread: ${it.second}")
-                    mAdapter?.updateFriendRequest(it.first, it.second)
-                    RxBus.post(HomeTabEvent(HomeTabEvent.TAB_CONTACT, showFigure = it.second))
-                }
-    }
-
     fun updateAccountContext(accountContext: AccountContext) {
         setAccountContext(accountContext)
         val masterSecret = accountContext.masterSecret?:return
         mAdapter?.updateMasterSecret(masterSecret)
         viewModel.updateAccountContext(accountContext)
+    }
+
+    fun updateFriendRequest(unhandled: Int, unread: Int) {
+        mAdapter?.updateFriendRequest(unhandled, unread)
     }
 
 }

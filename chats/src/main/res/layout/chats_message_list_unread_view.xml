@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="12dp"
+    android:background="@color/common_color_white"
+    android:orientation="horizontal">
+
+    <com.bcm.messenger.common.ui.IndividualAvatarView
+        android:id="@+id/unread_avatar_1"
+        android:layout_width="12dp"
+        android:layout_height="12dp" />
+
+    <com.bcm.messenger.common.ui.IndividualAvatarView
+        android:id="@+id/unread_avatar_2"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="5dp"/>
+
+    <ImageView
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="5dp"
+        android:src="@drawable/common_right_arrow_icon"/>
+
+</merge>

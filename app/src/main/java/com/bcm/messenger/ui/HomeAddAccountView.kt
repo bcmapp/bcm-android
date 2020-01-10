@@ -9,12 +9,12 @@ import android.content.Intent
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -156,6 +156,9 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
     override fun checkAccountBackup() {
     }
 
+    override fun setUnreadCount(unreadCount: Int) {
+    }
+
     private fun showActionSheet() {
         val builder = AmePopup.bottom.newBuilder()
                 .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_str_scan_to_login)) {
@@ -201,7 +204,10 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
 
     private fun checkOnlineAccount(): Boolean {
         if (AmeModuleCenter.login().minorUidList().size == 2) {
-            AmePopup.result.notice((context as AccountSwipeBaseActivity), getString(R.string.tabless_ui_account_reach_max_size))
+            AlertDialog.Builder(context)
+                    .setMessage(R.string.tabless_ui_account_reach_max_size)
+                    .setPositiveButton(R.string.common_understood, null)
+                    .show()
             return false
         }
         return true
