@@ -28,6 +28,7 @@ public class SuperPreferences {
     private static final String HEIGHT_KEYBOARD_PORTRAIT = "height_keyboard_portrait";
     private static final String HEIGHT_KEYBOARD_LANDSCAPE = "height_keyboard_landscape";
     private static final String TABLESS_INTRODUCTION_FLAG = "tabless_introduction_flag";
+    private static final String TABLESS_ACCOUNT_SWITCH_FLAG = "tabless_account_switch_flag";
 
 
     public static final String METRICS = "metrics";
@@ -173,10 +174,10 @@ public class SuperPreferences {
     }
 
     public static boolean getTablessIntroductionFlag(Context context) {
-        return context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).getBoolean(TABLESS_INTRODUCTION_FLAG, false);
+        return context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).getBoolean(TABLESS_ACCOUNT_SWITCH_FLAG, false);
     }
 
     public static void setTablessIntroductionFlag(Context context) {
-        context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putBoolean(TABLESS_INTRODUCTION_FLAG, true).apply();
+        context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putBoolean(TABLESS_ACCOUNT_SWITCH_FLAG, true).apply();
     }
 }

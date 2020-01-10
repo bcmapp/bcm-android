@@ -81,7 +81,9 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
 
     override fun setViewsAlpha(alpha: Float) {
         home_add_view_add.alpha = alpha
-        home_add_view_title.alpha = alpha
+        if (isActive) {
+            home_add_view_title.alpha = alpha
+        }
     }
 
     override fun showAllViewsWithAnimation() {

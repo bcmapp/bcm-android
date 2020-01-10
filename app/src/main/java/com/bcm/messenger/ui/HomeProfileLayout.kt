@@ -139,13 +139,16 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
             override fun onAccountLoadSuccess() {
                 if (viewPagerAdapter.accountListIsEmpty()) {
+                    viewPagerAdapter.setActiveView(0)
                     home_profile_view_pager.setCurrentItem(0, false)
                 } else {
+                    viewPagerAdapter.setActiveView(1)
                     home_profile_view_pager.setCurrentItem(1, false)
                 }
             }
 
             override fun onResortSuccess() {
+                viewPagerAdapter.setActiveView(1)
                 home_profile_view_pager.setCurrentItem(1, false)
             }
 
@@ -239,6 +242,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         if (currentView != null && !currentView.isLogin) {
             val index = viewPagerAdapter.checkIndex(uid)
             if (index != -1) {
+                viewPagerAdapter.setActiveView(index)
                 home_profile_view_pager.setCurrentItem(index, false)
             }
         }

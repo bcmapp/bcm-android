@@ -396,7 +396,9 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         val backupTime = AmeLoginLogic.accountHistory.getBackupTime(accountItem.accountContext.uid)
         isAccountBackup = backupTime > 0
         if (!isAccountBackup) {
-            home_profile_backup_icon.visibility = View.VISIBLE
+            if (isLogin) {
+                home_profile_backup_icon.visibility = View.VISIBLE
+            }
         } else {
             home_profile_backup_icon.visibility = View.GONE
             accountItem.account.backupTime = backupTime

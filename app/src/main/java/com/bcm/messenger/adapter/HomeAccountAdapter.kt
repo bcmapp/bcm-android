@@ -207,6 +207,9 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
                     accountList.addAll(it)
                     notifyDataSetChanged()
                     if (firstLoad) {
+                        if (it.size > 1) {
+                            setActiveView(1)
+                        }
                         listener?.onAccountLoadSuccess()
                     }
                 }, {

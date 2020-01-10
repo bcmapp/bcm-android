@@ -250,6 +250,7 @@ public class Repository {
             try {
                 repo.userDatabase.close();
                 repo.clear();
+                repositoryHashMap.remove(accountContext);
             } catch (Throwable tr) {
                 ALog.e(TAG, "Close database failed!", tr);
             }
