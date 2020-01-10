@@ -215,7 +215,7 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
                         }
                         intent.action = Intent.ACTION_OPEN_DOCUMENT
                         try {
-                            activity.startBcmActivityForResult(accountContext, intent, requestCode)
+                            activity.startActivityForResult(intent, requestCode)
                             return
                         } catch (e: Throwable) {
                             ALog.e(TAG, "couldn't complete ACTION_OPEN_DOCUMENT, no activity found. falling back.", e)

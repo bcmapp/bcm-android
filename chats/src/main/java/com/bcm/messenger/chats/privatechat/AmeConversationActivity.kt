@@ -538,7 +538,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                         intent.action = Intent.ACTION_OPEN_DOCUMENT
                         intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                         try {
-                            activity.startBcmActivityForResult(accountContext, intent, requestCode)
+                            activity.startActivityForResult(intent, requestCode)
                             return
                         } catch (anfe: ActivityNotFoundException) {
                             Log.w(TAG, "couldn't complete ACTION_OPEN_DOCUMENT, no activity found. falling back.")
