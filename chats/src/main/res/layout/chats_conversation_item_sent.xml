@@ -151,7 +151,6 @@
                     android:textColor="@color/common_color_white"
                     android:textColorLink="@color/common_color_white"
                     android:textSize="@dimen/chats_conversation_item_body_text_size"
-                    android:letterSpacing="0.01"
                     android:ellipsize="end"
                     tools:text="testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest" />
 

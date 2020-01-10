@@ -21,6 +21,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.privatechat.webrtc.CameraState
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcViewModel
+import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.mms.GlideApp
@@ -613,7 +614,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             val intent = Intent(context, WebRtcCallService::class.java)
             intent.action = WebRtcCallService.ACTION_SET_MUTE_AUDIO
             intent.putExtra(WebRtcCallService.EXTRA_MUTE, isMute)
-            context.startForegroundServiceCompat(intent)
+            callRtcService(intent)
 
         } catch (ex: Exception) {
             ALog.e(TAG, "handleSetMuteAudio error", ex)
@@ -626,7 +627,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             val intent = Intent(context, WebRtcCallService::class.java)
             intent.action = WebRtcCallService.ACTION_SET_MUTE_VIDEO
             intent.putExtra(WebRtcCallService.EXTRA_MUTE, true)
-            context.startForegroundServiceCompat(intent)
+            callRtcService(intent)
 
             mActionRightView.setType(ChatRtcCallItem.TYPE_SPEAKER)
             mActionRightView.setChecked(false)
@@ -656,7 +657,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
         try {
             val intent = Intent(context, WebRtcCallService::class.java)
             intent.action = WebRtcCallService.ACTION_FLIP_CAMERA
-            context.startForegroundServiceCompat(intent)
+            callRtcService(intent)
         } catch (e: Exception) {
             ALog.e(TAG, "switch camera direction error", e)
         }
@@ -670,7 +671,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             val intent = Intent(context, WebRtcCallService::class.java)
             intent.action = WebRtcCallService.ACTION_SET_MUTE_VIDEO
             intent.putExtra(WebRtcCallService.EXTRA_MUTE, false)
-            context.startForegroundServiceCompat(intent)
+            callRtcService(intent)
             mActionRightView.setType(ChatRtcCallItem.TYPE_SWITCH)
 
             handleSpeaker(isSpeakerOn)
@@ -687,7 +688,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
             val intent = Intent(context, WebRtcCallService::class.java)
             intent.action = WebRtcCallService.ACTION_ANSWER_CALL
-            context.startForegroundServiceCompat(intent)
+            callRtcService(intent)
 
         } catch (ex: Exception) {
             ALog.e(TAG, "handleAcceptCall error", ex)
@@ -701,7 +702,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             if (event.state == WebRtcViewModel.State.CALL_INCOMING) {
                 val intent = Intent(context, WebRtcCallService::class.java)
                 intent.action = WebRtcCallService.ACTION_LOCAL_HANGUP
-                context.startForegroundServiceCompat(intent)
+                callRtcService(intent)
                 setCard(event.recipient, resources.getString(R.string.common_phone_ending_call))
                 postDelayed({
                     mListener?.onEnd(mRecipient)
@@ -710,7 +711,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             } else {
                 val intent = Intent(context, WebRtcCallService::class.java)
                 intent.action = WebRtcCallService.ACTION_LOCAL_HANGUP
-                context.startForegroundServiceCompat(intent)
+                callRtcService(intent)
             }
 
         } catch (ex: Exception) {
@@ -725,7 +726,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             if (event.state == WebRtcViewModel.State.CALL_INCOMING) {
                 val intent = Intent(context, WebRtcCallService::class.java)
                 intent.action = WebRtcCallService.ACTION_DENY_CALL
-                context.startForegroundServiceCompat(intent)
+                callRtcService(intent)
                 setCard(event.recipient, resources.getString(R.string.common_phone_ending_call))
                 postDelayed({
                     mListener?.onEnd(mRecipient)
@@ -734,6 +735,11 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
         } catch (e: Throwable) {
             ALog.e(TAG, "handleDenyCall error", e)
         }
+    }
+
+    private fun callRtcService(intent: Intent) {
+        intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+        context.startForegroundServiceCompat(intent)
     }
 
     private fun handleIncomingCall(event: WebRtcViewModel) {

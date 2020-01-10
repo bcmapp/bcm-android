@@ -88,6 +88,7 @@ class ChatRtcCallActivity : AccountSwipeBaseActivity() {
             }else {
                 val intent = Intent(this, WebRtcCallService::class.java)
                 intent.action = WebRtcCallService.ACTION_GRANTED_AUDIO
+                intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
                 startForegroundServiceCompat(intent)
             }
         }

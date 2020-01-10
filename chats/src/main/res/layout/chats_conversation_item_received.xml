@@ -170,7 +170,6 @@
                     android:textColor="@color/chats_conversation_item_received_color"
                     android:textColorLink="@color/common_app_primary_color"
                     android:textSize="@dimen/chats_conversation_item_body_text_size"
-                    android:letterSpacing="0.01"
                     android:ellipsize="end"
                     tools:text="boopsspgjejgespgjspj" />
 

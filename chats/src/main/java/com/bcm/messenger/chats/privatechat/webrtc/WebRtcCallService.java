@@ -1469,7 +1469,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         if (remoteAddress == null) {
             throw new Exception("No recipient in intent!");
         }
-        return Recipient.from(getAccountContextFromIntent(intent), remoteAddress.serialize(), true);
+        return Recipient.from(remoteAddress, true);
     }
 
     private long getCallId(Intent intent) {
@@ -1507,7 +1507,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     }
 
     private AccountContext getAccountContextFromIntent(Intent intent) {
-        return intent.getParcelableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT);
+        return (AccountContext)intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT);
     }
 
     @Nullable
