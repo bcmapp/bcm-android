@@ -5,6 +5,7 @@ import android.content.Intent
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.event.HomeTopEvent
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.logic.EnvSettingLogic
@@ -90,6 +91,6 @@ class AmeAppModuleImpl : IAmeAppModule {
             putExtra(ARouterConstants.PARAM.PARAM_DATA, event.toString())
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        AppContextHolder.APP_CONTEXT.startBcmActivity(accountContext, intent)
+        AppContextHolder.APP_CONTEXT.startBcmActivity(AMELogin.majorContext, intent)
     }
 }

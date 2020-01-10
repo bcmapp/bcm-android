@@ -166,7 +166,7 @@ class SchemeLaunchHelper(val context: Context) {
                 val event = GsonUtils.fromJson<HomeTopEvent>(data, object : TypeToken<HomeTopEvent>() {}.type)
                 fun continueAction() {
                     if (event.finishTop) {
-                        BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH).navigation(current)
+                        BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH).startBcmActivity(AMELogin.majorContext, current)
                     }
 
                     val con = event.chatEvent
@@ -263,7 +263,7 @@ class SchemeLaunchHelper(val context: Context) {
                     shareContent.shareCode, shareContent.shareSignature, shareContent.timestamp, eKeyByteArray) { success ->
                 if (!success) {
                     val homeIntent = Intent(context, HomeActivity::class.java)
-                    context.startBcmActivity(accountContext, homeIntent)
+                    context.startBcmActivity(AMELogin.majorContext, homeIntent)
                 }
             }
         } else {

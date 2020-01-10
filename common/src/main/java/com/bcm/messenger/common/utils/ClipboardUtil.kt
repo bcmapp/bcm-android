@@ -154,7 +154,7 @@ object ClipboardUtil {
                     groupProvider?.doGroupJoin(activity, groupShareContent.groupId, groupShareContent.groupName, groupShareContent.groupIcon, groupShareContent.shareCode,
                             groupShareContent.shareSignature, groupShareContent.timestamp, eKeyByteArray) { success ->
                         if (!success) {
-                            BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH).navigation(activity)
+                            BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH).startBcmActivity(AMELogin.majorContext ,activity)
                         }
                     }
                     return true

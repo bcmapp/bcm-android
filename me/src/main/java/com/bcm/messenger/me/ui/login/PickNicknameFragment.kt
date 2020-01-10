@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
@@ -69,7 +70,7 @@ class PickNicknameFragment : AbsRegistrationFragment() {
                     new_nickname.postDelayed({
                         BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
                                 .putBoolean(ARouterConstants.PARAM.PARAM_LOGIN_FROM_REGISTER, true)
-                                .startBcmActivity(accountContext, activity)
+                                .startBcmActivity(AMELogin.majorContext, activity)
                         activity?.finish()
                     }, 2000)
 

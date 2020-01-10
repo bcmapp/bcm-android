@@ -8,10 +8,12 @@ import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocSetting
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountSwipeBaseActivity
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.ble.BleUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -167,7 +169,7 @@ class AdHocSettingActivity : AccountSwipeBaseActivity() {
         BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
                 .putBoolean(ARouterConstants.PARAM.PARAM_LOGIN_FROM_REGISTER, false)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .navigation(this)
+                .startBcmActivity(AMELogin.majorContext, this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
