@@ -29,7 +29,6 @@ class VerifyKeyActivity : AccountSwipeBaseActivity() {
         val f = LoginVerifyPinFragment()
         arg?.putString(RegistrationActivity.RE_LOGIN_ID, intent.getStringExtra(RegistrationActivity.RE_LOGIN_ID))
         initFragment(R.id.register_container, f, arg)
-
     }
 
     override fun onBackPressed() {

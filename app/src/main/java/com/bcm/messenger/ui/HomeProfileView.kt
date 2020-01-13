@@ -17,9 +17,7 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
-import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getScreenWidth
-import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.ui.scan.NewScanActivity
 import com.bcm.messenger.me.ui.setting.SettingActivity
@@ -47,6 +45,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         fun onClickDelete(uid: String)
         fun onClickLogin(uid: String)
         fun checkPosition(): Float
+        fun onClickToSwipe(pagePosition: Int)
     }
 
     private var listener: ProfileViewCallback? = null
@@ -54,9 +53,11 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     override var isActive = false
     override var isLogin = false
     override var position = 0f
+    override var pagePosition = 0
 
     private val dp10 = 10.dp2Px()
-    private val avatarMargin = (AppContextHolder.APP_CONTEXT.getScreenWidth() - 120.dp2Px()) / 2
+    private val dp60 = 60.dp2Px()
+    private val avatarMargin = (AppContextHolder.APP_CONTEXT.getScreenWidth() - 100.dp2Px()) / 2
     private val badgeMarginEnd = (160.dp2Px() * 0.3f / 2).toInt() - dp10
     private val badgeMarginStart = 150.dp2Px() - badgeMarginEnd - 37.dp2Px()
 
@@ -124,6 +125,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
                 return@setOnClickListener
             }
             if (!isActive) {
+                listener?.onClickToSwipe(pagePosition)
                 return@setOnClickListener
             }
             if (isLogin) {
@@ -216,13 +218,13 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
 
     private fun inactiveSetAlpha(alpha: Float) {
         home_profile_avatar.alpha = alpha
+        home_profile_unread.alpha = alpha
     }
 
     private fun activeSetAlpha(alpha: Float) {
         home_profile_avatar.alpha = 1f
         home_profile_name.alpha = alpha
-        home_profile_qr.alpha = alpha
-        home_profile_more.alpha = alpha
+        home_profile_setting_layout.alpha = alpha
         home_profile_backup_icon.alpha = alpha
         home_profile_unread.alpha = alpha
         home_profile_func_layout.alpha = alpha
@@ -248,8 +250,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         home_profile_login.visibility = View.VISIBLE
         home_profile_name.visibility = View.VISIBLE
 
-        home_profile_qr.visibility = View.INVISIBLE
-        home_profile_more.visibility = View.INVISIBLE
+        home_profile_setting_layout.visibility = View.INVISIBLE
         home_profile_func_layout.visibility = View.INVISIBLE
         home_profile_unread.visibility = View.INVISIBLE
         home_profile_backup_icon.visibility = View.INVISIBLE
@@ -264,8 +265,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         home_profile_login.visibility = View.GONE
 
         home_profile_name.visibility = View.VISIBLE
-        home_profile_qr.visibility = View.VISIBLE
-        home_profile_more.visibility = View.VISIBLE
+        home_profile_setting_layout.visibility = View.VISIBLE
         home_profile_func_layout.visibility = View.VISIBLE
         home_profile_unread.visibility = View.VISIBLE
         home_profile_backup_icon.visibility = View.INVISIBLE
@@ -279,8 +279,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         home_profile_login.visibility = View.GONE
 
         home_profile_name.visibility = View.VISIBLE
-        home_profile_qr.visibility = View.VISIBLE
-        home_profile_more.visibility = View.VISIBLE
+        home_profile_setting_layout.visibility = View.VISIBLE
         home_profile_func_layout.visibility = View.VISIBLE
         home_profile_unread.visibility = View.VISIBLE
         if (isAccountBackup) {
@@ -296,10 +295,8 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
 
     override fun hideAllViews() {
         home_profile_name.visibility = View.GONE
-        home_profile_qr.visibility = View.GONE
-        home_profile_more.visibility = View.GONE
+        home_profile_setting_layout.visibility = View.GONE
         home_profile_func_layout.visibility = View.GONE
-        home_profile_backup_icon.visibility = View.GONE
         home_profile_avatar.visibility = View.GONE
         home_profile_unread.visibility = View.GONE
         home_profile_login.visibility = View.GONE
@@ -312,7 +309,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
 
     override fun setMargin(topMargin: Int) {
         home_profile_avatar_layout.layoutParams = (home_profile_avatar_layout.layoutParams as LayoutParams).apply {
-            this.topMargin = 60.dp2Px() + topMargin / 2
+            this.topMargin = dp60 + topMargin / 2
         }
     }
 
@@ -323,7 +320,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         }
 
         home_profile_avatar_layout.layoutParams = (home_profile_avatar_layout.layoutParams as LayoutParams).apply {
-            this.topMargin = 60.dp2Px()
+            this.topMargin = dp60
         }
 
         if (!isActive) {
@@ -347,7 +344,8 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     }
 
     override fun onViewPositionChanged(position: Float, percent: Float) {
-        val scale = 0.7f + 0.3f * percent
+        val avatarScale = 0.7f + 0.3f * percent
+        val badgeScale = 0.8f + 0.2f * percent
         val curAvatarMargin = avatarMargin * (1 - percent)
 
         home_profile_avatar.layoutParams = (home_profile_avatar.layoutParams as LayoutParams).apply {
@@ -357,8 +355,8 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
                 marginEnd = curAvatarMargin.toInt()
             }
         }
-        home_profile_avatar.scaleX = scale
-        home_profile_avatar.scaleY = scale
+        home_profile_avatar.scaleX = avatarScale
+        home_profile_avatar.scaleY = avatarScale
 
         home_profile_unread.layoutParams = (home_profile_unread.layoutParams as LayoutParams).apply {
             marginEnd = if (position < centerPosition) {
@@ -368,6 +366,8 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             }
             topMargin = dp10 + (badgeMarginEnd * (1 - percent)).toInt()
         }
+        home_profile_unread.scaleX = badgeScale
+        home_profile_unread.scaleY = badgeScale
 
         setPagerChangedAlpha(percent)
     }
@@ -418,8 +418,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
 
     private fun loginPagerChangedAlpha(alpha: Float) {
         home_profile_name.alpha = alpha
-        home_profile_qr.alpha = alpha
-        home_profile_more.alpha = alpha
+        home_profile_setting_layout.alpha = alpha
         home_profile_func_layout.alpha = alpha
     }
 

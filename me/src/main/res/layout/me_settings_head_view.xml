@@ -62,22 +62,24 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="1dp"
             android:layout_marginEnd="10dp"
+            android:drawablePadding="5dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/common_color_606060"
+            android:textColor="@color/common_color_C2C2C2"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/head_view_qr"
             app:layout_constraintStart_toEndOf="@+id/head_view_avatar"
             app:layout_constraintTop_toBottomOf="@id/head_view_name"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="ID: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
 
         <ImageView
             android:id="@+id/head_view_qr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
-            android:src="@drawable/me_qr_icon_black"
+            android:src="@drawable/me_qr_icon_grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/head_view_arrow"
             app:layout_constraintTop_toTopOf="parent" />
@@ -93,5 +95,15 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/common_line_height"
+        android:background="@color/common_line_color"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,13 +2,17 @@ package com.bcm.messenger.ui.widget
 
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.getScreenWidth
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.logger.ALog
 
 /**
  * Created by Kin on 2020/1/2
  */
-const val centerPosition = 0.20588236f
-const val leftPosition = -0.7941176f
-const val rightPosition = 1.2058823f
+val centerPosition = 60f.dp2Px() / (AppContextHolder.APP_CONTEXT.getScreenWidth() - 120.dp2Px())
+val leftPosition = centerPosition - 1
+val rightPosition = centerPosition + 1
 
 //const val centerPosition = 0.20588236f
 //const val leftPosition = -0.79411764f
@@ -18,6 +22,7 @@ interface IProfileView {
     var isActive: Boolean
     var isLogin: Boolean
     var position: Float
+    var pagePosition: Int
 
     fun initView()
 
@@ -50,6 +55,8 @@ interface IProfileView {
     fun setUnreadCount(unreadCount: Int)
 
     fun positionChanged(position: Float) {
+        ALog.i("IProfileView", "position = $position")
+
         val innerPos = when {
             position < leftPosition -> leftPosition
             position > rightPosition -> rightPosition

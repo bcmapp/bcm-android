@@ -43,13 +43,15 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
 
     interface AddAccountViewListener {
         fun onClickDebugImport()
+        fun onClickToSwipe(pagePosition: Int)
     }
 
     override var isActive = false
     override var isLogin = false
     override var position = 0f
+    override var pagePosition = 0
 
-    private val avatarMargin = (AppContextHolder.APP_CONTEXT.getScreenWidth() - 120.dp2Px()) / 2
+    private val avatarMargin = (AppContextHolder.APP_CONTEXT.getScreenWidth() - 100.dp2Px()) / 2
 
     private var listener: AddAccountViewListener? = null
 
@@ -80,6 +82,10 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
 
     override fun initView() {
         home_add_view_add.setOnClickListener {
+            if (!isActive) {
+                listener?.onClickToSwipe(pagePosition)
+                return@setOnClickListener
+            }
             showActionSheet()
         }
 
@@ -213,6 +219,7 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
 
                 AmeLoginLogic.accountHistory.import()
                 ToastUtil.show(context, "Import succeed")
+                listener?.onClickDebugImport()
             }).withPopItem(AmeBottomPopup.PopupItem("Export Account(For debug)") {
                 ALog.i(TAG, "Clicked debug export account")
 

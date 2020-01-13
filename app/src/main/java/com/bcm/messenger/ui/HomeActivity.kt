@@ -398,9 +398,9 @@ class HomeActivity : AccountSwipeBaseActivity() {
                     height != 0 && height != topViewHeight -> {
                         if (isCurrentLogin) {
                             home_toolbar_avatar.setPrivateElevation(32f.dp2Px())
+                            home_toolbar_avatar.getIndividualAvatarView().hideCoverText()
                             if (home_toolbar_avatar.visibility == View.GONE) {
                                 home_toolbar_avatar.visibility = View.VISIBLE
-                                home_toolbar_avatar.getIndividualAvatarView().hideCoverText()
                                 home_profile_layout.hideAvatar()
                             }
                         } else {

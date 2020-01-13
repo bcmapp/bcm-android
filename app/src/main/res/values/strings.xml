@@ -92,6 +92,7 @@
     <string name="tabless_ui_delete_account_str_remote">Remove</string>
     <string name="tabless_ui_account_reach_max_size">Up to 3 accounts can be online at the same time. To login to a new account, please log out of an online one first.</string>
     <string name="tabless_ui_import_account">Import Account</string>
+    <string name="tabless_ui_add_account">Add Account</string>
 
     <!-- Dev Settings -->
     <string name="dev_settings_title">Dev Settings</string>

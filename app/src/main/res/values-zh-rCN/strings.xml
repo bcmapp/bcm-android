@@ -72,6 +72,7 @@
     <string name="tabless_ui_delete_account_str_remote">立即删除</string>
     <string name="tabless_ui_account_reach_max_size">支持最多3个账号同时在线。若需登录一个新账号，请先退出一个在线账号。</string>
     <string name="tabless_ui_import_account">导入账号</string>
+    <string name="tabless_ui_add_account">添加账号</string>
 
     <!-- Dev Settings -->
     <string name="dev_settings_title">开发设置</string>

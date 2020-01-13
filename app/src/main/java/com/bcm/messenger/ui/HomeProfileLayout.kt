@@ -135,6 +135,15 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
             override fun onViewClickDelete(uid: String) {
                 deleteAccount(uid)
             }
+
+            override fun onClickToSwipe(pagePosition: Int) {
+                val currentPos = home_profile_view_pager.currentItem
+                if (pagePosition > currentPos) {
+                    home_profile_view_pager.currentItem = currentPos + 1
+                } else if (pagePosition < currentPos) {
+                    home_profile_view_pager.currentItem = currentPos - 1
+                }
+            }
         }
         home_profile_view_pager.adapter = viewPagerAdapter
         home_profile_view_pager.setPageTransformer(false, HomeProfilePageTransformer())
@@ -231,9 +240,14 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         AmeLoginLogic.saveBackupFromExportModelWithWarning(qrCode) { accountId ->
             if (!accountId.isNullOrEmpty()){
                 ALog.i(TAG, "Has QR code")
-                viewPagerAdapter.loadAccounts()
-                if (toLogin) {
-                    loginAccount(accountId)
+                val index = viewPagerAdapter.checkAccountIsLogin(accountId)
+                if (index == -1) {
+                    viewPagerAdapter.loadAccounts()
+                    if (toLogin) {
+                        loginAccount(accountId)
+                    }
+                } else {
+                    home_profile_view_pager.currentItem = index
                 }
             }
         }

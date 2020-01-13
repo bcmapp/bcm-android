@@ -32,6 +32,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
         fun onResortSuccess()
         fun onViewClickLogin(uid: String)
         fun onViewClickDelete(uid: String)
+        fun onClickToSwipe(pagePosition: Int)
     }
 
     private val TAG = "HomeAccountAdapter"
@@ -59,6 +60,15 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
         val view: IProfileView = if (account.type == TYPE_ADD) {
             HomeAddAccountView(context).apply {
                 isActive = position == lastActivePos
+                setListener(object : HomeAddAccountView.AddAccountViewListener {
+                    override fun onClickDebugImport() {
+                        loadAccounts()
+                    }
+
+                    override fun onClickToSwipe(pagePosition: Int) {
+                        listener?.onClickToSwipe(pagePosition)
+                    }
+                })
             }
         } else {
             HomeProfileView(context).apply {
@@ -89,9 +99,14 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
                             else -> 1f
                         }
                     }
+
+                    override fun onClickToSwipe(pagePosition: Int) {
+                        listener?.onClickToSwipe(pagePosition)
+                    }
                 })
             }
         }
+        view.pagePosition = position
         view.initView()
         when {
             position < lastActivePos -> view.positionChanged(leftPosition)
@@ -149,6 +164,16 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
 
     fun accountListIsEmpty(): Boolean {
         return accountList.size <= 1
+    }
+
+    fun checkAccountIsLogin(uid: String): Int {
+        accountList.forEachIndexed { index, it ->
+            if (it.account.uid == uid && it.accountContext.isLogin) {
+                return index
+            }
+        }
+
+        return -1
     }
 
     private val comparator = Comparator<HomeAccountItem> { o1, o2 ->

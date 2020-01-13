@@ -18,6 +18,7 @@ import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmePinLogic
@@ -33,6 +34,7 @@ import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.RomUtil
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.utility.setDrawableLeft
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_activity_settings.*
@@ -84,6 +86,7 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
         notification_noticer.checkNotice()
         privacy_pin_lock.setTip(if (AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip),
                 contentColor = getColorCompat(R.color.common_content_second_color))
+        checkBackup()
     }
 
     private fun initView() {
@@ -285,6 +288,15 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
     override fun onLoginStateChanged() {
         if (!accountContext.isLogin) {
             finish()
+        }
+    }
+
+    private fun checkBackup() {
+        val hadBackup = AmeLoginLogic.accountHistory.getBackupTime(recipient.address.serialize()) > 0
+        if (hadBackup) {
+            head_view_id.setCompoundDrawables(null, null, null, null)
+        } else {
+            head_view_id.setDrawableLeft(R.drawable.common_not_backup_icon)
         }
     }
 }

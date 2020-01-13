@@ -60,7 +60,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
         getRealScreenHeight()
     }
 
-    private val gapSize = (topViewHeight - statusBarHeight - 426.dp2Px()) / 3 + 40.dp2Px() - 52.dp2Px()
+    private val gapSize = (topViewHeight - statusBarHeight - 446.dp2Px()) / 3 + 40.dp2Px() - 52.dp2Px()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.me_fragment_verify_password, container, false)
