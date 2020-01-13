@@ -93,6 +93,12 @@ class PrivacySettingsActivity : AccountSwipeBaseActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        privacy_pin_lock.setTip(if (AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip),
+                contentColor = getColorCompat(R.color.common_content_second_color))
+    }
+
     private fun initData() {
         updateStrangerState()
 

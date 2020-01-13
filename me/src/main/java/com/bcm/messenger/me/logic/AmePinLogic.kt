@@ -35,12 +35,14 @@ object AmePinLogic : AppForeground.IForegroundEvent {
         pinData = PinData.fromString(storage.get(PIN_STORAGE, ""))
 
         AmeLoginLogic.getMajorAccount()?.apply {
-            val oldPinData = PinData()
-            oldPinData.pin = pin
-            oldPinData.lengthOfPin = lengthOfPin
-            oldPinData.enableFingerprint = enableFingerprint
-            oldPinData.pinLockTime = pinLockTime
-            oldPin = oldPinData
+            if (pin.isNotEmpty()) {
+                val oldPinData = PinData()
+                oldPinData.pin = pin
+                oldPinData.lengthOfPin = lengthOfPin
+                oldPinData.enableFingerprint = enableFingerprint
+                oldPinData.pinLockTime = pinLockTime
+                oldPin = oldPinData
+            }
         }
     }
 
@@ -141,7 +143,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
 
     fun appLockTime(): Int {
         val oldPinData = oldPin
-        if (oldPinData != null) {
+        if (oldPinData != null && oldPinData.pin.isNotEmpty()) {
             return oldPinData.pinLockTime
         }
         return pinData.pinLockTime
