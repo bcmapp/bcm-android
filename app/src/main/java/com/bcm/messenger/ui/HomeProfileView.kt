@@ -57,8 +57,8 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
 
     private val dp10 = 10.dp2Px()
     private val avatarMargin = (AppContextHolder.APP_CONTEXT.getScreenWidth() - 120.dp2Px()) / 2
-    private val badgeMarginEnd = (160.dp2Px() * 0.3f / 2).toInt()
-    private val badgeMarginStart = 150.dp2Px() - badgeMarginEnd - 27.dp2Px()
+    private val badgeMarginEnd = (160.dp2Px() * 0.3f / 2).toInt() - dp10
+    private val badgeMarginStart = 150.dp2Px() - badgeMarginEnd - 37.dp2Px()
 
     private lateinit var recipient: Recipient
     private lateinit var accountItem: HomeAccountItem
@@ -123,6 +123,9 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
+            if (!isActive) {
+                return@setOnClickListener
+            }
             if (isLogin) {
                 listener?.onClickExit()
             } else {
@@ -151,6 +154,9 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
+            if (!isActive) {
+                return@setOnClickListener
+            }
             BcmRouter.getInstance()
                     .get(ARouterConstants.Activity.WALLET_MAIN)
                     .startBcmActivity(accountItem.accountContext)
@@ -159,10 +165,16 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
+            if (!isActive) {
+                return@setOnClickListener
+            }
             AmeModuleCenter.user(accountItem.accountContext)?.gotoDataNote(context, accountItem.accountContext)
         }
         home_profile_air_chat_icon.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            if (!isActive) {
                 return@setOnClickListener
             }
             val adhocModule = AmeModuleCenter.adhoc(accountItem.accountContext)

@@ -579,7 +579,11 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
     override fun onModified(recipient: Recipient) {
         if (mRecipient == recipient) {
-            doUpdateCallCard(recipient, mStatus)
+            if (accountContext != AMELogin.majorContext) {
+                doUpdateCallCardInactive(recipient)
+            } else {
+                doUpdateCallCard(recipient, mStatus)
+            }
         }
     }
 

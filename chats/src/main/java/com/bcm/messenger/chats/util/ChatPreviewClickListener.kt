@@ -18,7 +18,6 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
@@ -74,7 +73,7 @@ open class ChatPreviewClickListener(private val accountContext: AccountContext) 
                 intent.addCategory(Intent.CATEGORY_DEFAULT)
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 intent.setDataAndType(uri, finalContentType)
-                gotoActivity(context, intent, null)
+                gotoActivity(context, intent, null, false)
             }
         }
 
@@ -138,7 +137,7 @@ open class ChatPreviewClickListener(private val accountContext: AccountContext) 
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             intent.setDataAndType(slide.getPartUri(), slide.contentType)
             val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(v.context as Activity, v, ShareElements.Activity.MEDIA_PREIVEW + messageRecord.id).toBundle()
-            gotoActivity(v.context, intent, bundle)
+            gotoActivity(v.context, intent, bundle, true)
 
         } else if (slide.dataUri != null) {
             val publicUri = PartAuthority.getAttachmentPublicUri(slide.getPartUri())
@@ -178,7 +177,7 @@ open class ChatPreviewClickListener(private val accountContext: AccountContext) 
             }
             val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(v.context as Activity, Pair(v, "${ShareElements.Activity.MEDIA_PREIVEW}${messageRecord.indexId}")).toBundle()
 
-            gotoActivity(v.context, intent, bundle)
+            gotoActivity(v.context, intent, bundle, true)
             return
         }
 
@@ -199,7 +198,7 @@ open class ChatPreviewClickListener(private val accountContext: AccountContext) 
                 intent.putExtra(MediaViewActivity.DATA_TYPE, MediaViewActivity.TYPE_SINGLE)
                 intent.putExtra(MediaViewActivity.MEDIA_URI, messageRecord.attachmentUri)
                 val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(v.context as Activity, Pair(v, "${ShareElements.Activity.MEDIA_PREIVEW}${messageRecord.indexId}")).toBundle()
-                gotoActivity(v.context, intent, bundle)
+                gotoActivity(v.context, intent, bundle, true)
                 return
             }
 
@@ -228,16 +227,17 @@ open class ChatPreviewClickListener(private val accountContext: AccountContext) 
 
             doForOtherFile(v.context, publicUri, contentType, null)
         }
-
     }
 
-    private fun gotoActivity(context: Context, intent: Intent, bundle: Bundle?) {
+    private fun gotoActivity(context: Context, intent: Intent, bundle: Bundle?, isSelfActivity: Boolean) {
         try {
-            if (context is Activity) {
+            if (context !is Activity) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            if (isSelfActivity) {
                 context.startBcmActivity(accountContext, intent, bundle)
             } else {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startBcmActivity(accountContext, intent, bundle)
+                context.startActivity(intent)
             }
         } catch (ex: Exception) {
             ALog.e(TAG, "gotoActivity error", ex)
