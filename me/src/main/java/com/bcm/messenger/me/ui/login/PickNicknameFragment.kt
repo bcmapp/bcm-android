@@ -75,7 +75,6 @@ class PickNicknameFragment : AbsRegistrationFragment() {
                                     .putBoolean(ARouterConstants.PARAM.PARAM_LOGIN_FROM_REGISTER, true)
                                     .startBcmActivity(AMELogin.majorContext)
                         } else {
-                            EventBus.getDefault().post(NewAccountAddedEvent(uid))
                             activity?.finish()
                         }
                     }, 2000)

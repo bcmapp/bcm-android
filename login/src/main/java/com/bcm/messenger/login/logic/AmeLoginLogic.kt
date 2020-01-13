@@ -18,6 +18,7 @@ import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.repositories.IdentityRepo
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.deprecated.DatabaseFactory
+import com.bcm.messenger.common.event.NewAccountAddedEvent
 import com.bcm.messenger.common.gcm.FcmUtil
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
@@ -42,6 +43,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import org.greenrobot.eventbus.EventBus
 import org.whispersystems.libsignal.IdentityKey
 import org.whispersystems.libsignal.IdentityKeyPair
 import org.whispersystems.libsignal.ecc.Curve
@@ -112,7 +114,7 @@ object AmeLoginLogic {
      * @return true login, false not login
      */
     fun isLogin(uid: String): Boolean {
-        if (accountHistory.isLogin(uid)){
+        if (accountHistory.isLogin(uid)) {
             return true
         }
 
@@ -378,7 +380,7 @@ object AmeLoginLogic {
                     val sign = BCMPrivateKeyUtils.sign(priKey, uid)
                     ALog.logForSecret(TAG, "unregister uid: $uid, sign: $sign")
 
-                    val accountContext:AccountContext = getAccountContext(uid)
+                    val accountContext: AccountContext = getAccountContext(uid)
                     AmeLoginCore.unregister(accountContext, URLEncoder.encode(sign))
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.io())
@@ -585,7 +587,7 @@ object AmeLoginLogic {
             Optional.absent()
         }
 
-        this.gcmToken = if(gcmToken.isPresent) {
+        this.gcmToken = if (gcmToken.isPresent) {
             gcmToken.get()
         } else {
             ""
@@ -624,6 +626,8 @@ object AmeLoginLogic {
         } else {
             accountHistory.setMinorAccountUid(accountData.uid)
         }
+
+        EventBus.getDefault().post(NewAccountAddedEvent(uid))
     }
 
     private fun initCreatePhrase(accountContext: AccountContext, ecKeyPair: ECKeyPair) {
@@ -687,9 +691,9 @@ object AmeLoginLogic {
                     val accountData = backupData.toAccountData()
                     accountData.version = AmeAccountData.V4
                     uid = accountData.uid
-                    if (!accountHistory.saveAccount(accountData, replace) && !replace) {
-                        exist = true
-                    }
+
+                    exist = accountHistory.getAccount(uid) != null
+                    accountHistory.saveAccount(accountData, replace)
                 }
             } catch (jse: JsonSyntaxException) {
                 ALog.logForSecret(TAG, "saveBackupFromExportModelWithWarning error", jse)
@@ -708,6 +712,9 @@ object AmeLoginLogic {
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    if (null != it.accountId && !it.isExist) {
+                        EventBus.getDefault().post(NewAccountAddedEvent(it.accountId))
+                    }
 
                     callback(it.accountId, it.isExist, it.error)
                 }, {
