@@ -156,7 +156,7 @@ class MessageListAdapter(context: Context,
 //                TODO: Waiting merge
 //            }
             mHeaderRequest -> {
-                FriendRequestViewHolder(masterSecret.accountContext, LayoutInflater.from(getContext()).inflate(R.layout.chats_message_list_header_friend_requset, parent, false))
+                FriendRequestViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.chats_message_list_header_friend_requset, parent, false))
             }
             else -> {
                 super.onCreateHeaderHolder(parent, viewType)
@@ -294,13 +294,13 @@ class MessageListAdapter(context: Context,
 
     }
 
-    inner class FriendRequestViewHolder(accountContext: AccountContext, itemView: View) : ViewHolder<ThreadRecord>(itemView) {
+    inner class FriendRequestViewHolder(itemView: View) : ViewHolder<ThreadRecord>(itemView) {
         init {
             itemView.header_friend_request.visibility = View.GONE
             itemView.setOnClickListener {
                 BcmRouter.getInstance()
                         .get(ARouterConstants.Activity.FRIEND_REQUEST_LIST)
-                        .putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
+                        .putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, AMELogin.majorContext)
                         .navigation(getContext())
             }
         }

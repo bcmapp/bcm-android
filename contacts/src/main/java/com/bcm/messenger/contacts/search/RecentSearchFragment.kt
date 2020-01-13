@@ -72,7 +72,7 @@ class RecentSearchFragment() : BaseFragment() {
                 if (a is ISearchCallback) {
                     a.onSelect(type, r.address.serialize())
                 }
-                AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
+                AmeModuleCenter.app().gotoHome(accountContext, HomeTopEvent(true,
                         HomeTopEvent.ConversationEvent.fromPrivateConversation(r.address.serialize(), true)))
 
             }
@@ -81,7 +81,7 @@ class RecentSearchFragment() : BaseFragment() {
                 if (a is ISearchCallback) {
                     a.onSelect(type, g.gid.toString())
                 }
-                AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
+                AmeModuleCenter.app().gotoHome(accountContext, HomeTopEvent(true,
                         HomeTopEvent.ConversationEvent.fromGroupConversation(g.gid)))
             }
             else -> {}

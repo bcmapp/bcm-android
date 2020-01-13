@@ -70,6 +70,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
     private var messageListFragment: MessageListFragment? = null
 
     private val unreadObserver = MessageListUnreadObserver()
+    private val unreadMap = mutableMapOf<AccountContext, MessageListUnreadObserver.UnreadCountEntity>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -607,6 +608,12 @@ class HomeActivity : AccountSwipeBaseActivity() {
         titleView.updateContext(accountContext)
         home_toolbar_avatar.showRecipientAvatar(accountRecipient)
         messageListFragment?.updateAccountContext(accountContext)
+
+        val unreadStatus = unreadMap[accountContext]?:return
+        if (accountContext == this@HomeActivity.accountContext) {
+            messageListFragment?.updateFriendRequest(unreadStatus.friendUnhandle, unreadStatus.friendUnread)
+        }
+
     }
 
     override fun onLoginStateChanged() {
@@ -650,8 +657,6 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
     private fun initUnreadObserver() {
         unreadObserver.setListener(object : MessageListUnreadObserver.UnreadCountChangeListener {
-            private val unreadMap = mutableMapOf<AccountContext, MessageListUnreadObserver.UnreadCountEntity>()
-
             override fun onChatUnreadCountChanged(accountContext: AccountContext, unreadCount: Int) {
                 var entity = unreadMap[accountContext]
                 if (entity == null) {
@@ -724,6 +729,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
                     }
                 }
 
+                titleView.enableGuide(backgroundUnreadList.isEmpty())
                 home_toolbar_unread_view.updateUnreadAccounts(backgroundUnreadList)
                 AmePushProcess.updateAppBadge(AppContextHolder.APP_CONTEXT, unread)
             }

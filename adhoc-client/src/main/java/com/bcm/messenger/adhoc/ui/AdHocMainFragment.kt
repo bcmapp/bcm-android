@@ -101,7 +101,7 @@ class AdHocMainFragment: BaseFragment(),
         deviceStateListener = AdHocDeviceStateListener(accountContext)
         adHocStep = AdHocConnectingStep(accountContext)
 
-        adHocRequire = AdHocDeviceRequire(view.context as Activity)
+        adHocRequire = AdHocDeviceRequire(accountContext, view.context as Activity)
         adHocRequire.require()
 
         adhoc_main_toolbar.setListener(object : CommonTitleBar2.TitleBarClickListener(){

@@ -4,6 +4,8 @@ import android.app.Activity
 import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.util.ScreenUtil
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.utils.AppUtil
@@ -14,7 +16,7 @@ import com.bcm.messenger.utility.gps.GPSUtil
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.wifi.WiFiUtil
 
-class AdHocDeviceRequire(private val activity: Activity) : WiFiUtil.IWiFiStateNotify,
+class AdHocDeviceRequire(accountContext: AccountContext, private val activity: Activity) : WiFiUtil.IWiFiStateNotify,
         BleUtil.IBleStateNotify,
         GPSUtil.IGPSStateNotify,
         ScreenUtil.IScreenStateListener, AppForeground.IForegroundEvent {
@@ -23,7 +25,7 @@ class AdHocDeviceRequire(private val activity: Activity) : WiFiUtil.IWiFiStateNo
     private var checking: Boolean = false
     private var needRequire: Boolean = false
     private var screenOn: Boolean = true
-    private val provider = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
+    private val provider = AmeModuleCenter.adhoc(accountContext)
 
     fun require() {
         needRequire = true

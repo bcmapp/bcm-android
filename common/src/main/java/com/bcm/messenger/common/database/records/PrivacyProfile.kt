@@ -1,6 +1,7 @@
 package com.bcm.messenger.common.database.records
 
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.utils.dp2Px
@@ -20,8 +21,8 @@ class PrivacyProfile : NotGuard {
         const val CURRENT_VERSION = 1
 
         fun getShortLinkHost(): String {
-            val provider = AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)
-            return if (provider?.testEnvEnable() == true && !provider.lbsEnable()) {
+            val provider = AmeModuleCenter.app()
+            return if (provider.testEnvEnable() && !provider.lbsEnable()) {
                 "https://39.108.124.60:9200/member/"
             }else {
                 "https://s.bcm.social/member/"

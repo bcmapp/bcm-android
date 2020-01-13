@@ -2,7 +2,7 @@
 <com.bcm.messenger.chats.thread.MessageListTitleView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <com.bcm.messenger.common.ui.emoji.EmojiTextView
         android:layout_width="match_parent"
@@ -11,6 +11,7 @@
         android:ellipsize="end"
         android:textSize="20sp"
         android:gravity="left|center_vertical" />
+
     <com.bcm.messenger.common.ui.emoji.EmojiTextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

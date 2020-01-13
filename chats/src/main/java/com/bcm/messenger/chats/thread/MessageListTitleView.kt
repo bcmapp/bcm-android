@@ -61,6 +61,7 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
     private var recipient:Recipient? = null
     private var currentName = ""
     private var accountContext: AccountContext? = null
+    private var guideEnable = true
 
     constructor(context: Context) : super(context, null)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -105,6 +106,11 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
         updateName()
     }
 
+    fun enableGuide(enable: Boolean) {
+        guideEnable = enable
+        updateStatusLines()
+    }
+
     private fun jump() {
         if (PROXY_TRY == state) {
             val a = this.accountContext
@@ -115,8 +121,11 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
             }
 
         } else if (OFFLINE == state) {
-            val adhocProvider = AmeProvider.get<IAdHocModule>(ARouterConstants.Provider.PROVIDER_AD_HOC)
-            adhocProvider?.configHocMode()
+            val a = this.accountContext
+            if (a != null) {
+                val adhocProvider = AmeModuleCenter.adhoc(a)
+                adhocProvider?.configHocMode()
+            }
         }
     }
 
@@ -150,16 +159,8 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
         update()
     }
 
-    private fun update() {
-        val state = getState()
-        if (state == this.state) {
-            return
-        }
-
-        this.state = state
-
-        isEnabled = (state == OFFLINE || state == PROXY_TRY)
-        if (isEnabled) {
+    private fun updateStatusLines() {
+        if (isEnabled && guideEnable) {
             getChildAt(0).isEnabled = true
             getChildAt(1).isEnabled = true
 
@@ -172,6 +173,17 @@ class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySta
             (getChildAt(0) as TextView).maxLines = 1
             (getChildAt(1) as TextView).maxLines = 1
         }
+    }
+
+    private fun update() {
+        val state = getState()
+        if (state == this.state) {
+            return
+        }
+
+        this.state = state
+
+        updateStatusLines()
 
         val spanText = when (state) {
             OFFLINE -> {

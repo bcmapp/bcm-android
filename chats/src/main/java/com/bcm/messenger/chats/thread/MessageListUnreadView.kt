@@ -46,7 +46,7 @@ class MessageListUnreadView @JvmOverloads constructor(context: Context, attrs: A
                 unread_avatar_1.setPhoto(Recipient.from(accountContext1, accountContext1.uid, true))
                 unread_avatar_1.visibility = View.VISIBLE
 
-                val accountContext2 = unreadAccountList[0]
+                val accountContext2 = unreadAccountList[1]
                 unread_avatar_2.setPhoto(Recipient.from(accountContext2, accountContext2.uid, true))
                 unread_avatar_2.visibility = View.VISIBLE
             }
