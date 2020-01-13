@@ -256,14 +256,6 @@ class ScanFragment : Fragment(), TextureView.SurfaceTextureListener {
             cameraThread.start()
             cameraHandler = Handler(cameraThread.looper)
 
-            PermissionUtil.checkCamera(this) { granted ->
-                if (granted) {
-                    maybeOpenCamera()
-                } else {
-                    finish()
-                }
-            }
-
             RxBus.subscribe<NewScanActivity.ScanResumeEvent>(TAG) {
                 maybeOpenCamera()
             }
@@ -301,7 +293,14 @@ class ScanFragment : Fragment(), TextureView.SurfaceTextureListener {
     override fun onResume() {
         super.onResume()
         ALog.d(TAG, "onResume")
-        maybeOpenCamera()
+        val c = context ?: return
+        PermissionUtil.checkCamera(c) { granted ->
+            if (granted) {
+                maybeOpenCamera()
+            } else {
+                activity?.finish()
+            }
+        }
     }
 
     override fun onPause() {
