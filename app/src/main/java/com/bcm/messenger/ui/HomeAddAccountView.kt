@@ -18,11 +18,13 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getScreenWidth
 import com.bcm.messenger.common.utils.getString
 import com.bcm.messenger.common.utils.isReleaseBuild
+import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.ui.widget.IProfileView
 import com.bcm.messenger.ui.widget.centerPosition
 import com.bcm.messenger.utility.AppContextHolder
@@ -193,9 +195,11 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
                 })
         if (!isReleaseBuild()) {
             builder.withPopItem(AmeBottomPopup.PopupItem("Import Account(For debug)") {
-
+                AmeLoginLogic.accountHistory.import()
+                ToastUtil.show(context, "Import succeed")
             }).withPopItem(AmeBottomPopup.PopupItem("Export Account(For debug)") {
-
+                AmeLoginLogic.accountHistory.export()
+                ToastUtil.show(context, "Export succeed")
             })
         }
         builder.withDoneTitle(getString(R.string.common_cancel))
