@@ -1038,18 +1038,24 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         }
     }
 
-
-
-
     @Synchronized
     fun finishJob(job: Runnable) {
 
         if (job is ProfileFetchJob) {
             ALog.i(TAG, "finish profile job")
             mProfileJob = null
+
+            if (mHighProfileQueue.size > 0 || mProfileQueue.size > 0) {
+                handleFetchProfile()
+            }
+
         } else {
             ALog.i(TAG, "finish avatar job")
             mAvatarJob = null
+
+            if (mHighAvatarQueue.size > 0 || mAvatarQueue.size > 0) {
+                handleDownloadAvatar()
+            }
         }
     }
 
