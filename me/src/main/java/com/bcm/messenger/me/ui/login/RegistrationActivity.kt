@@ -6,9 +6,12 @@ import android.os.Bundle
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.route.annotation.Route
+import com.bcm.route.api.BcmRouter
 
 /**
  * Created by ling
@@ -58,9 +61,18 @@ class RegistrationActivity : AppCompatActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (supportFragmentManager.backStackEntryCount > 0) {
+            if (supportFragmentManager.backStackEntryCount > 1) {
                 supportFragmentManager.popBackStack()
                 return true
+            } else {
+                if (AMELogin.isLogin || AmeModuleCenter.login().accountSize() > 0) {
+                    finish()
+                    return true
+                } else {
+                    BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
+                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .navigation()
+                }
             }
         }
         return super.onKeyDown(keyCode, event)
