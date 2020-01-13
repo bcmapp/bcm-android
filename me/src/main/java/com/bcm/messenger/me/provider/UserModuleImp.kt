@@ -67,9 +67,6 @@ class UserModuleImp : IUserModule
         , AppForeground.IForegroundEvent {
     private val TAG = "UserProviderImp"
 
-    private var expireDispose: Disposable? = null
-    private var kickOutDispose: Disposable? = null
-
     private var kickEvent: AccountKickedEvent? = null
     private lateinit var noteLogic: AmeNoteLogic
 
@@ -81,7 +78,6 @@ class UserModuleImp : IUserModule
         this.accountContext = context
     }
 
-
     fun getNote(): AmeNoteLogic {
         return noteLogic
     }
@@ -90,7 +86,8 @@ class UserModuleImp : IUserModule
         noteLogic = AmeNoteLogic(accountContext)
         AmeModuleCenter.serverDaemon(accountContext).setForceLogoutListener(this)
         AppForeground.listener.addListener(this)
-        AmePinLogic.initLogic()
+
+        noteLogic.refreshCurrentUser()
     }
 
     override fun uninitModule() {

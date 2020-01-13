@@ -8,6 +8,7 @@ import com.bcm.messenger.common.grouprepository.room.dao.NoteRecordDao
 import com.bcm.messenger.common.grouprepository.room.entity.NoteRecord
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.me.bean.BcmNote
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.Base64
@@ -105,13 +106,15 @@ class AmeNoteLogic(private val accountContext: AccountContext) : AppForeground.I
                 }
     }
 
-    fun addNote(topic: String, noteContent: String, editPosition: Int, result: (succeed: Boolean, topicId: String, error: String) -> Unit) {
+    fun addNote(topic: String, noteContent: String, editPosition: Int, result: (succeed: Boolean, topicId: String, error: String) -> Unit): String {
         if (topic.isBlank() && noteContent.isBlank()) {
-            return
+            return ""
         }
 
+        ACLog.i(accountContext, TAG, "adding note")
+
+        val note = BcmNote(genNoteTopicId())
         AmeDispatcher.io.dispatch {
-            val note = BcmNote(genNoteTopicId())
             if (topic.isNotBlank()) {
                 note.topic = topic
             } else {
@@ -132,13 +135,13 @@ class AmeNoteLogic(private val accountContext: AccountContext) : AppForeground.I
 
             if (noteContent.isNotBlank()) {
                 if (!saveToFile(note.topicId, noteContent, dbNote)) {
-                    ALog.i(TAG, "addNote save to file failed")
+                    ACLog.i(accountContext, TAG, "addNote save to file failed")
                 }
             }
 
             getDao().saveNote(dbNote)
 
-            ALog.i(TAG, "new note ${note.topicId}")
+            ACLog.i(accountContext, TAG, "new note ${note.topicId}")
             AmeDispatcher.mainThread.dispatch {
                 notesList.add(note)
                 resortNoteList()
@@ -146,6 +149,8 @@ class AmeNoteLogic(private val accountContext: AccountContext) : AppForeground.I
                 result(true, note.topicId, "")
             }
         }
+
+        return note.topicId
     }
 
     private fun resortNoteList() {
@@ -309,7 +314,7 @@ class AmeNoteLogic(private val accountContext: AccountContext) : AppForeground.I
         return ""
     }
 
-    private fun genNoteTopicId():String {
+    private fun genNoteTopicId(): String {
         return Base64.encodeBytes(BCMPrivateKeyUtils.getSecretBytes(16), Base64.URL_SAFE)
     }
 
@@ -428,7 +433,7 @@ class AmeNoteLogic(private val accountContext: AccountContext) : AppForeground.I
     }
 
     private fun getDao(): NoteRecordDao {
-        return Repository.getNoteRecordRepo(accountContext)?:throw Exception("db not initial")
+        return Repository.getNoteRecordRepo(accountContext) ?: throw Exception("db not initial")
     }
 
     private fun encodeTopic(topic: String): String {

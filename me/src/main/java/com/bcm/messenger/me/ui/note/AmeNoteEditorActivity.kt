@@ -173,12 +173,13 @@ class AmeNoteEditorActivity : AccountSwipeBaseActivity() {
         val newNote = note_edit.text.toString()
         if (newNote.isNotBlank() && initContentHash != EncryptUtils.encryptSHA1ToString(newNote)) {
             val weakThis = WeakReference(this)
+
             if (topicId.isBlank()) {
-                noteLogic.addNote("", newNote, note_edit.selectionStart) { succeed, topicId, error ->
+                topicId = noteLogic.addNote("", newNote, note_edit.selectionStart) { _, topicId, _ ->
                     weakThis.get()?.updateTopic(topicId)
                 }
             } else {
-                noteLogic.updateNote(topicId, newNote, note_edit.selectionStart) { succeed, error ->
+                noteLogic.updateNote(topicId, newNote, note_edit.selectionStart) { _, _ ->
                     weakThis.get()?.updateTopic(weakThis.get()?.topicId ?: "")
                 }
             }

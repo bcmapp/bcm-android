@@ -11,30 +11,30 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ACLog {
     public static void d(AccountContext context, String tag, String log) {
-        ALog.d(tag, log, null);
+        ALog.d(context.getTag() + tag, log, null);
     }
 
     public static void d(AccountContext context, String tag, String log, Throwable e) {
-        ALog.d(tag, log, e);
+        ALog.d(context.getTag() + tag, log, e);
     }
 
     public static void i(AccountContext context, String tag, String log) {
-        ALog.i(tag, log);
+        ALog.i(context.getTag() + tag, log);
     }
 
     public static void w(AccountContext context, String tag, String log) {
-        ALog.w(tag, log);
+        ALog.w(context.getTag() + tag, log);
     }
 
     public static void e(AccountContext context, String tag, String log){
-        ALog.e(tag, log, null);
+        ALog.e(context.getTag() + tag, log, null);
     }
 
     public static void e(AccountContext context, String tag, String log, @Nullable Throwable throwable){
-        ALog.e(tag, log, throwable);
+        ALog.e(context.getTag() + tag, log, throwable);
     }
 
     public static void e(AccountContext context, String tag, @Nullable Throwable throwable){
-        ALog.e(tag, "", throwable);
+        ALog.e(context.getTag() + tag, "", throwable);
     }
 }
