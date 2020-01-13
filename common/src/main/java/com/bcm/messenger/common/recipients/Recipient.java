@@ -486,6 +486,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
         }finally {
             this.resolving = false;
             RecipientProvider.Companion.updateCache(this);
+
             //check FOLLOW relationship
             IContactModule module = AmeModuleCenter.INSTANCE.contact(address.context());
             if (module != null) {

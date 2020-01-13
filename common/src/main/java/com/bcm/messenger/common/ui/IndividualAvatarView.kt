@@ -663,23 +663,25 @@ class IndividualAvatarView : CardView {
                     .into(it)
         }
 
-        accountContext?:return
-        val contactModule = AmeModuleCenter.contact(accountContext)
-        if (recipient?.needRefreshProfile() == true) {
-            contactModule?.checkNeedFetchProfile(recipient, callback = object : IContactModule.IProfileCallback {
-                override fun onDone(recipient: Recipient, viaJob: Boolean) {
-                    val avatar = recipient.getPrivacyAvatar(desireHD)
-                    if (avatar.isNullOrEmpty()) {
-                        ALog.i(TAG, "requestPhoto check need download Avatar desireHD: $desireHD, size: $size")
-                        contactModule.checkNeedDownloadAvatar(desireHD, recipient)
+        accountContext ?: return
+        if (recipient?.isGroupRecipient == false) {
+            val contactModule = AmeModuleCenter.contact(accountContext)
+            if (recipient.needRefreshProfile()) {
+                contactModule?.checkNeedFetchProfile(recipient, callback = object : IContactModule.IProfileCallback {
+                    override fun onDone(recipient: Recipient, viaJob: Boolean) {
+                        val avatar = recipient.getPrivacyAvatar(desireHD)
+                        if (avatar.isNullOrEmpty()) {
+                            ALog.i(TAG, "requestPhoto check need download Avatar desireHD: $desireHD, size: $size")
+                            contactModule.checkNeedDownloadAvatar(desireHD, recipient)
+                        }
                     }
+                })
+            } else  {
+                val avatar = recipient.getPrivacyAvatar(desireHD)
+                if (avatar.isNullOrEmpty()) {
+                    ALog.i(TAG, "requestPhoto check need download Avatar desireHD: $desireHD, size: $size")
+                    contactModule?.checkNeedDownloadAvatar(desireHD, recipient)
                 }
-            })
-        } else if (recipient != null) {
-            val avatar = recipient.getPrivacyAvatar(desireHD)
-            if (avatar.isNullOrEmpty()) {
-                ALog.i(TAG, "requestPhoto check need download Avatar desireHD: $desireHD, size: $size")
-                contactModule?.checkNeedDownloadAvatar(desireHD, recipient)
             }
         }
     }

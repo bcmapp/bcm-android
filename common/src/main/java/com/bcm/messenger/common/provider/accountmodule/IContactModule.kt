@@ -63,7 +63,7 @@ interface IContactModule : IAmeAccountModule {
 
     fun updateProfileKey(context: Context, recipient: Recipient, profileKeyModel: ProfileKeyModel)
 
-    fun fetchProfile(recipient: Recipient, callback: (success: Boolean) -> Unit): Disposable
+    fun fetchProfile(recipient: Recipient, callback: (success: Boolean) -> Unit): Disposable?
 
     fun checkNeedFetchProfile(vararg recipients: Recipient, callback: IProfileCallback?)
 

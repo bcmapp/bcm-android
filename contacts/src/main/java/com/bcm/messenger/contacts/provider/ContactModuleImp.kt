@@ -362,6 +362,9 @@ class ContactModuleImp : IContactModule {
 
 
     override fun checkNeedRequestAddFriend(context: Context, recipient: Recipient) {
+        if (recipient.isGroupRecipient) {
+            return
+        }
         mContactLogic.checkRequestFriendForOldVersion(recipient)
     }
 
@@ -393,8 +396,12 @@ class ContactModuleImp : IContactModule {
         mProfileLogic.updateProfileKey(context, recipient, profileKeyModel)
     }
 
-    override fun fetchProfile(recipient: Recipient, callback: (success: Boolean) -> Unit): Disposable {
+    override fun fetchProfile(recipient: Recipient, callback: (success: Boolean) -> Unit): Disposable? {
         ALog.d(TAG, "fetchProfile accountContext: $accountContext recipient: ${recipient.address}")
+        if (recipient.isGroupRecipient) {
+            callback.invoke(false)
+            return null
+        }
         return mProfileLogic.fetchProfileWithNoQueue(recipient, callback)
     }
 

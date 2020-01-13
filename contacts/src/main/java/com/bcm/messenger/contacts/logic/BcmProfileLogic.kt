@@ -729,6 +729,9 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         AmeDispatcher.io.dispatch {
             var need = false
             for (r in recipients) {
+                if (r.isGroupRecipient) {
+                    continue
+                }
                 if (doAvatarDownloadCheck(r, if (isHd) TYPE_AVATAR_HD else TYPE_AVATAR_LD)) {
                     need = true
                 }
@@ -744,6 +747,9 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         AmeDispatcher.io.dispatch {
             var need = false
             for (r in recipients) {
+                if (r.isGroupRecipient) {
+                    continue
+                }
                 if (doAvatarDownloadCheck(r, TYPE_AVATAR_LD)) {
                     need = true
                 }
