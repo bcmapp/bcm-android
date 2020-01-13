@@ -40,7 +40,7 @@
     <dimen name="chats_webrtc_call_mini_height">192dp</dimen>
     <dimen name="chats_webrtc_call_mini_x">15dp</dimen>
     <dimen name="chats_webrtc_call_mini_y">71dp</dimen>
-    <dimen name="chats_webrtc_call_photo_size">120dp</dimen>
+    <dimen name="chats_webrtc_call_photo_size">160dp</dimen>
     <dimen name="chats_webrtc_call_local_width">102dp</dimen>
     <dimen name="chats_webrtc_call_local_height">132dp</dimen>
     <dimen name="chats_group_avatar_size">56dp</dimen>

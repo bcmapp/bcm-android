@@ -26,7 +26,7 @@ import com.bcm.route.annotation.Route
 import kotlinx.android.synthetic.main.chats_activity_webrtc_call.*
 
 /**
- * 
+ *
  * Created by wjh on 2018/04/16
  */
 @Route(routePath = ARouterConstants.Activity.CHAT_CALL_PATH)
@@ -80,12 +80,12 @@ class ChatRtcCallActivity : AccountSwipeBaseActivity() {
         initializeResources()
         WebRtcCallService.clearWebRtcCallType()
 
-        PermissionUtil.checkAudio(this) {granted ->
+        PermissionUtil.checkAudio(this) { granted ->
             if (!granted) {
                 chats_rtc_screen?.hangup()
                 finish()
 
-            }else {
+            } else {
                 val intent = Intent(this, WebRtcCallService::class.java)
                 intent.action = WebRtcCallService.ACTION_GRANTED_AUDIO
                 intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
@@ -109,7 +109,7 @@ class ChatRtcCallActivity : AccountSwipeBaseActivity() {
     override fun onBackPressed() {
         if (isEnd) {
             super.onBackPressed()
-        }else {
+        } else {
             handleOverlayPermission(true)
         }
     }
@@ -123,17 +123,16 @@ class ChatRtcCallActivity : AccountSwipeBaseActivity() {
                 }
                 finish()
             }
-        }else {
+        } else {
             AlertDialog.Builder(this).setMessage(getString(R.string.chats_call_no_overlay_permission_message))
-                    .setPositiveButton(getString(R.string.chats_call_no_overlay_permission_handle)) { dialog, which ->
+                    .setPositiveButton(getString(R.string.chats_call_no_overlay_permission_handle)) { dialog, _ ->
                         dialog.dismiss()
                         requestOverlaysPermission(REQUEST_OVERLAYS_PERMISSION)
-
                     }
-                    .setNeutralButton(getString(R.string.chats_call_no_overlay_permission_wait)) {dialog, which ->
+                    .setNeutralButton(getString(R.string.chats_call_no_overlay_permission_wait)) { dialog, _ ->
                         dialog.dismiss()
                     }
-                    .setNegativeButton(getString(R.string.chats_call_no_overlay_permission_cancel)) {dialog, which ->
+                    .setNegativeButton(getString(R.string.chats_call_no_overlay_permission_cancel)) { dialog, _ ->
                         dialog.dismiss()
                         if (isFinish) {
                             chats_rtc_screen?.hangup()

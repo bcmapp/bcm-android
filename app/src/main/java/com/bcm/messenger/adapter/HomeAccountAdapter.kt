@@ -205,12 +205,14 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
                     ALog.i(TAG, "Load accounts success, size = ${it.size}")
                     accountList.clear()
                     accountList.addAll(it)
-                    notifyDataSetChanged()
                     if (firstLoad) {
                         if (it.size > 1) {
                             setActiveView(1)
                         }
+                        notifyDataSetChanged()
                         listener?.onAccountLoadSuccess()
+                    } else {
+                        notifyDataSetChanged()
                     }
                 }, {
                     ALog.e(TAG, "Load accounts error", it)

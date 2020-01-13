@@ -14,8 +14,6 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.privatechat.webrtc.CameraState
@@ -25,6 +23,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.mms.GlideApp
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -37,11 +36,11 @@ import com.bcm.messenger.utility.permission.PermissionUtil
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import kotlinx.android.synthetic.main.chats_webrtc_call_screen.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.webrtc.SurfaceViewRenderer
-import org.whispersystems.libsignal.IdentityKey
 import kotlin.math.absoluteValue
 
 /**
@@ -68,26 +67,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
     }
 
-    private lateinit var mLocalRenderLayout: ChatRenderLayout
-    private lateinit var mRemoteRenderLayout: ChatRenderLayout
-
-    private lateinit var mActiveLayout: View
-    private lateinit var mPassiveLayout: View
-
     private var mRecipient: Recipient? = null
-
-    private lateinit var mPhotoView: IndividualAvatarView
-    private lateinit var mCallNameView: TextView
-    private lateinit var mPhotoBackground: ImageView
-    private lateinit var mEndView: ChatRtcCallItem
-    private lateinit var mVideoView: ChatRtcCallItem
-    private lateinit var mActionLeftView: ChatRtcCallItem
-    private lateinit var mActionRightView: ChatRtcCallItem
-    private lateinit var mAcceptView: ChatRtcCallItem
-    private lateinit var mDeclineView: ChatRtcCallItem
-    private lateinit var mSmallStatusItem: TextView
-    private lateinit var mMinimizeView: ImageView
-    private lateinit var mPassTimeView: TextView
 
     private var mMiniMode: Boolean = false
     private var mPassTime: Long = 0
@@ -166,21 +146,20 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
         if (isClick) {
             ALog.d("TAG", "performClick call event: ${mCallEvent?.state}")
             if (!mMiniMode && mCallEvent?.state == WebRtcViewModel.State.CALL_CONNECTED) {
-                if (mVideoView.visibility == View.VISIBLE) {
-                    mVideoView.visibility = View.GONE
-                    mActionLeftView.visibility = View.GONE
-                    mActionRightView.visibility = View.GONE
-                    mEndView.visibility = View.GONE
-                    mMinimizeView.visibility = View.GONE
-                    mPassTimeView.visibility = View.GONE
+                if (rtc_video_btn.visibility == View.VISIBLE) {
+                    rtc_video_btn.visibility = View.GONE
+                    rtc_left_btn.visibility = View.GONE
+                    rtc_right_btn.visibility = View.GONE
+                    rtc_end_btn.visibility = View.GONE
+                    rtc_screen_minimize_iv.visibility = View.GONE
+                    rtc_title.visibility = View.GONE
                 } else {
-                    mVideoView.visibility = View.VISIBLE
-                    mActionLeftView.visibility = View.VISIBLE
-                    mActionRightView.visibility = View.VISIBLE
-                    mEndView.visibility = View.VISIBLE
-                    mMinimizeView.visibility = View.VISIBLE
-                    mPassTimeView.visibility = View.VISIBLE
-
+                    rtc_video_btn.visibility = View.VISIBLE
+                    rtc_left_btn.visibility = View.VISIBLE
+                    rtc_right_btn.visibility = View.VISIBLE
+                    rtc_end_btn.visibility = View.VISIBLE
+                    rtc_screen_minimize_iv.visibility = View.VISIBLE
+                    rtc_title.visibility = View.VISIBLE
                 }
             }
             performClick()
@@ -211,31 +190,20 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     private fun initialize() {
         View.inflate(context, R.layout.chats_webrtc_call_screen, this)
 
-        this.mLocalRenderLayout = findViewById(R.id.local_render_layout)
-        this.mLocalRenderLayout.setRadius(6f.dp2Px())
-        this.mRemoteRenderLayout = findViewById(R.id.remote_render_layout)
+        local_render_layout.setRadius(6f.dp2Px())
 
-        this.mMinimizeView = findViewById(R.id.rtc_screen_minimize_iv)
-        this.mPhotoView = findViewById(R.id.rtc_photo)
-        this.mCallNameView = findViewById(R.id.rtc_name)
-        this.mPhotoBackground = findViewById(R.id.rtc_photo_background)
-
-        this.mPassiveLayout = findViewById(R.id.rtc_passive_layout)
-        this.mActiveLayout = findViewById(R.id.rtc_active_layout)
-
-        this.mMinimizeView.setOnClickListener {
+        rtc_screen_minimize_iv.setOnClickListener {
             mListener?.onMinimize()
         }
 
-        this.mVideoView = findViewById(R.id.rtc_video_btn)
-        this.mVideoView.setType(ChatRtcCallItem.TYPE_VIDEO, false)
-        this.mVideoView.setOnControlActionListener(object : ChatRtcCallItem.OnControlActionListener {
+        rtc_video_btn.setType(ChatRtcCallItem.TYPE_VIDEO, false)
+        rtc_video_btn.setOnControlActionListener(object : ChatRtcCallItem.OnControlActionListener {
             override fun onChecked(type: Int, isChecked: Boolean): Boolean {
                 val granted = PermissionUtil.checkCamera(context)
                 if (!granted) {
                     PermissionUtil.checkCamera(context) { granted ->
                         if (granted) {
-                            mVideoView.setChecked(isChecked)
+                            rtc_video_btn.setChecked(isChecked)
                         }
                     }
 
@@ -243,22 +211,17 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                     handleVideoAction(isChecked)
                 }
                 return granted
-
             }
-
         })
 
-        this.mActionLeftView = findViewById(R.id.rtc_left_btn)
-        this.mActionLeftView.setType(ChatRtcCallItem.TYPE_MUTE)
-        this.mActionLeftView.setOnControlActionListener(object : ChatRtcCallItem.OnControlActionListener {
-
+        rtc_left_btn.setType(ChatRtcCallItem.TYPE_MUTE)
+        rtc_left_btn.setOnControlActionListener(object : ChatRtcCallItem.OnControlActionListener {
             override fun onChecked(type: Int, isChecked: Boolean): Boolean {
-
                 val granted = PermissionUtil.checkAudio(context)
                 if (!granted) {
                     PermissionUtil.checkAudio(context) { granted ->
                         if (granted) {
-                            mActionLeftView.setChecked(isChecked)
+                            rtc_left_btn.setChecked(isChecked)
                         }
                     }
                 } else {
@@ -267,11 +230,9 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
                 return granted
             }
-
         })
-
-        this.mActionRightView = findViewById(R.id.rtc_right_btn)
-        this.mActionRightView.setOnControlActionListener(object : ChatRtcCallItem.OnControlActionListener {
+        
+        rtc_right_btn.setOnControlActionListener(object : ChatRtcCallItem.OnControlActionListener {
             override fun onChecked(type: Int, isChecked: Boolean): Boolean {
 
                 val granted = if (type == ChatRtcCallItem.TYPE_SPEAKER) {
@@ -284,64 +245,54 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                     if (type == ChatRtcCallItem.TYPE_SPEAKER) {
                         PermissionUtil.checkAudio(context) {
                             if (it) {
-                                mActionRightView.setChecked(isChecked)
+                                rtc_right_btn.setChecked(isChecked)
                             }
                         }
                     } else {
                         PermissionUtil.checkCamera(context) {
                             if (it) {
-                                mActionRightView.setChecked(isChecked)
+                                rtc_right_btn.setChecked(isChecked)
                             }
                         }
                     }
-
                 } else {
                     handleRightButtonAction(type, isChecked)
                 }
 
                 return granted
-
             }
-
         })
-
-        this.mEndView = findViewById(R.id.rtc_end_btn)
-        this.mEndView.setType(ChatRtcCallItem.TYPE_END)
-        this.mEndView.setOnClickListener {
+        
+        rtc_end_btn.setType(ChatRtcCallItem.TYPE_END)
+        rtc_end_btn.setOnClickListener {
             handleEndCall()
         }
 
-        this.mAcceptView = findViewById(R.id.rtc_accept_btn)
-        this.mAcceptView.setType(ChatRtcCallItem.TYPE_ACCEPT)
-        this.mAcceptView.setOnClickListener {
+        rtc_accept_btn.setType(ChatRtcCallItem.TYPE_ACCEPT)
+        rtc_accept_btn.setOnClickListener {
             handleAcceptCall()
         }
-
-        this.mDeclineView = findViewById(R.id.rtc_decline_btn)
-        this.mDeclineView.setType(ChatRtcCallItem.TYPE_DECLINE)
-        this.mDeclineView.setOnClickListener {
+        
+        rtc_decline_btn.setType(ChatRtcCallItem.TYPE_DECLINE)
+        rtc_decline_btn.setOnClickListener {
             handleDenyCall()
         }
 
-        this.mSmallStatusItem = findViewById(R.id.rtc_small_control_btn)
-        this.mSmallStatusItem.setOnClickListener {
+        rtc_small_control_btn.setOnClickListener {
             handleEndCall()
         }
 
-        this.mPassTimeView = findViewById(R.id.rtc_time_tv)
+        rtc_left_btn.isEnabled = false
+        rtc_right_btn.isEnabled = false
+        rtc_video_btn.isEnabled = false
 
-        this.mActionLeftView.isEnabled = false
-        this.mActionRightView.isEnabled = false
-        this.mVideoView.isEnabled = false
+        local_render_layout.isHidden = true
+        remote_render_layout.isHidden = true
 
-        this.mLocalRenderLayout.isHidden = true
-        this.mRemoteRenderLayout.isHidden = true
+        remote_render_layout.isClickable = false
+        local_render_layout.isClickable = false
 
-        this.mRemoteRenderLayout.isClickable = false
-        this.mLocalRenderLayout.isClickable = false
-
-        this.mVideoView.setIconSize(40.dp2Px())
-
+        rtc_video_btn.setIconSize(40.dp2Px())
     }
 
     fun getCurrentRecipient(): Recipient? {
@@ -392,49 +343,49 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
         mLastSwitchStatus = mLocalVideoStatus.activeDirection == CameraState.Direction.FRONT
         mMiniMode = miniMode
 
-        mActionLeftView.setChecked(!event.isMicrophoneEnabled)
+        rtc_left_btn.setChecked(!event.isMicrophoneEnabled)
 
         ALog.d(TAG, "setCallState, mini: $miniMode, hasLocalVideo: $mLocalVideoStatus")
         if (mMiniMode) {
-            mMinimizeView.visibility = View.GONE
-            mVideoView.visibility = View.GONE
-            mPhotoView.visibility = View.GONE
-            mCallNameView.visibility = View.GONE
-            mPassTimeView.visibility = View.GONE
-            mActiveLayout.visibility = View.GONE
-            mPassiveLayout.visibility = View.GONE
+            rtc_screen_minimize_iv.visibility = View.GONE
+            rtc_video_btn.visibility = View.GONE
+            rtc_photo.visibility = View.GONE
+            rtc_name.visibility = View.GONE
+            rtc_title.visibility = View.GONE
+            rtc_active_layout.visibility = View.GONE
+            rtc_passive_layout.visibility = View.GONE
 
-            mSmallStatusItem.visibility = View.VISIBLE
+            rtc_small_control_btn.visibility = View.VISIBLE
             val drawable: Drawable = if (mLocalVideoStatus != CameraState.UNKNOWN) {
                 getDrawable(R.drawable.chats_message_call_video_sent)
             } else {
                 getDrawable(R.drawable.chats_message_call_audio_sent)
             }
             drawable.setBounds(0, 0, 13.dp2Px(), 13.dp2Px())
-            this.mSmallStatusItem.setCompoundDrawables(drawable, null, null, null)
+            rtc_small_control_btn.setCompoundDrawables(drawable, null, null, null)
 
             setLocalVideoShow(false)
             setRemoteVideoShow(mHasRemoteVideo)
 
         } else {
-            mMinimizeView.visibility = View.VISIBLE
-            mVideoView.visibility = View.VISIBLE
-            mSmallStatusItem.visibility = View.GONE
+            rtc_screen_minimize_iv.visibility = View.VISIBLE
+            rtc_video_btn.visibility = View.VISIBLE
+            rtc_small_control_btn.visibility = View.GONE
 
             if (mHasRemoteVideo) {
-                mPhotoView.visibility = View.GONE
-                mCallNameView.visibility = View.GONE
+                rtc_photo.visibility = View.GONE
+                rtc_name.visibility = View.GONE
             } else {
-                mPhotoView.visibility = View.VISIBLE
-                mCallNameView.visibility = View.VISIBLE
+                rtc_photo.visibility = View.VISIBLE
+                rtc_name.visibility = View.VISIBLE
             }
 
             if (event.state == WebRtcViewModel.State.CALL_INCOMING) {
-                mPassiveLayout.visibility = View.VISIBLE
-                mActiveLayout.visibility = View.GONE
+                rtc_passive_layout.visibility = View.VISIBLE
+                rtc_active_layout.visibility = View.GONE
             } else {
-                mPassiveLayout.visibility = View.GONE
-                mActiveLayout.visibility = View.VISIBLE
+                rtc_passive_layout.visibility = View.GONE
+                rtc_active_layout.visibility = View.VISIBLE
             }
 
             setRemoteVideoShow(mHasRemoteVideo)
@@ -465,123 +416,142 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
     fun updateSpeakerState() {
 
-        if (mActionRightView.getType() == ChatRtcCallItem.TYPE_SPEAKER) {
-            mActionRightView.isEnabled = !checkPluginHeadsets()
-            ALog.i(TAG, "updateSpeakerState, isEnable: ${mActionRightView.isEnabled}")
+        if (rtc_right_btn.getType() == ChatRtcCallItem.TYPE_SPEAKER) {
+            rtc_right_btn.isEnabled = !checkPluginHeadsets()
+            ALog.i(TAG, "updateSpeakerState, isEnable: ${rtc_right_btn.isEnabled}")
         } else {
-            mActionRightView.isEnabled = true
+            rtc_right_btn.isEnabled = true
         }
-    }
-
-    private fun setUntrustedIdentity(personInfo: Recipient?, untrustedIdentity: IdentityKey?) {
-
     }
 
     private fun setLocalVideoShow(show: Boolean) {
         ALog.d(TAG, "setLocalVideoShow: $show")
-        if (show && this.mLocalRenderLayout.isHidden) {
-            this.mLocalRenderLayout.isHidden = false
-            this.mLocalRenderLayout.getSurface()?.setMirror(true)
-            this.mLocalRenderLayout.getSurface()?.setZOrderMediaOverlay(true)
-        } else if (!show && !this.mLocalRenderLayout.isHidden) {
-            this.mLocalRenderLayout.isHidden = true
+        if (show && local_render_layout.isHidden) {
+            local_render_layout.isHidden = false
+            local_render_layout.getSurface()?.setMirror(true)
+            local_render_layout.getSurface()?.setZOrderMediaOverlay(true)
+        } else if (!show && !local_render_layout.isHidden) {
+            local_render_layout.isHidden = true
 
         }
         checkUserInfoShow()
-        this.mPassTimeView.visibility = if (show && !mMiniMode) View.VISIBLE else View.GONE
-        this.mVideoView.setChecked(show)
+        rtc_title.visibility = if (!show && !mMiniMode) View.VISIBLE else View.GONE
+        rtc_video_btn.setChecked(show)
     }
 
     private fun setRemoteVideoShow(show: Boolean) {
         ALog.d(TAG, "setRemoteVideoShow: $show")
         mHasRemoteVideo = show
-        if (show && this.mRemoteRenderLayout.isHidden) {
-            this.mRemoteRenderLayout.isHidden = false
+        if (show && remote_render_layout.isHidden) {
+            remote_render_layout.isHidden = false
 
-        } else if (!show && !this.mRemoteRenderLayout.isHidden) {
-            this.mRemoteRenderLayout.isHidden = true
+        } else if (!show && !remote_render_layout.isHidden) {
+            remote_render_layout.isHidden = true
         }
 
         if (mMiniMode) {
-            this.mRemoteRenderLayout.getSurface()?.setMirror(true)
+            remote_render_layout.getSurface()?.setMirror(true)
         } else {
-            this.mRemoteRenderLayout.getSurface()?.setMirror(false)
+            remote_render_layout.getSurface()?.setMirror(false)
         }
 
         checkUserInfoShow()
-        this.mPassTimeView.visibility = if (show && !mMiniMode) View.VISIBLE else View.GONE
+        rtc_title.visibility = if (!show && !mMiniMode) View.VISIBLE else View.GONE
     }
 
     private fun checkUserInfoShow() {
-        if (!mRemoteRenderLayout.isHidden || !mLocalRenderLayout.isHidden || mMiniMode) {
-            this.mPhotoView.visibility = View.INVISIBLE
-            this.mCallNameView.visibility = View.INVISIBLE
+        if (!remote_render_layout.isHidden || !local_render_layout.isHidden || mMiniMode) {
+            rtc_photo.visibility = View.INVISIBLE
+            rtc_name.visibility = View.INVISIBLE
 
         } else {
-            this.mPhotoView.visibility = View.VISIBLE
-            this.mCallNameView.visibility = View.VISIBLE
+            rtc_photo.visibility = View.VISIBLE
+            rtc_name.visibility = View.VISIBLE
         }
     }
 
     private fun setCallPassTime(passTime: Long) {
         mPassTime = passTime
         val timeString = DateUtils.convertTimingMinuteAndSecond(passTime)
-        this.mPassTimeView.text = timeString
-        this.mSmallStatusItem.text = timeString
-        this.mCallNameView.text = SpannableStringBuilder(mRecipient?.name ?: "")
-                .append("\n")
-                .append(StringAppearanceUtil.applyAppearance(timeString, 14.dp2Px()))
+        rtc_title.text = timeString
+        rtc_small_control_btn.text = timeString
+//        rtc_name.text = SpannableStringBuilder(mRecipient?.name ?: "")
+//                .append("\n")
+//                .append(StringAppearanceUtil.applyAppearance(timeString, 14.dp2Px()))
+    }
+
+    private fun doUpdateCallCardInactive(recipient: Recipient) {
+        try {
+            rtc_inactive_contact_layout.visibility = View.VISIBLE
+            rtc_contact_layout.visibility = View.GONE
+
+            val selfRecipient = Recipient.from(accountContext, accountContext.uid, true)
+            rtc_to_photo.setPhoto(selfRecipient)
+            rtc_to_name.text = selfRecipient.name
+
+            rtc_from_photo.setPhoto(recipient)
+            rtc_from_name.text = recipient.name
+
+            setBackgroundPhoto(recipient)
+        } catch (tr: Throwable) {
+            ALog.e(TAG, "ChatRtcCallScreen show image error", tr)
+        }
     }
 
     private fun doUpdateCallCard(recipient: Recipient, status: String?) {
         try {
-            mPhotoView.setPhoto(recipient)
-            val request = GlideApp.with(context.applicationContext).asBitmap()
-            val w = context.getScreenWidth()
-            val h = context.getScreenHeight()
-            val loadObj = if (!recipient.localAvatar.isNullOrEmpty()) {
-                recipient.localAvatar
-            } else if (!recipient.bcmAvatar.isNullOrEmpty()) {
-                recipient.bcmAvatar
-            } else {
-                IndividualAvatarView.getDefaultPortraitUrl(recipient.address.serialize())
-            }
-            request.load(loadObj)
-            request.diskCacheStrategy(DiskCacheStrategy.ALL)
-            request.override(w, h)
+            rtc_inactive_contact_layout.visibility = View.GONE
+            rtc_contact_layout.visibility = View.VISIBLE
 
-            request.into(object : SimpleTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    ALog.d(TAG, "onResourceReady")
-                    applyBitmap(resource)
-                }
-
-                override fun onLoadFailed(errorDrawable: Drawable?) {
-                    ALog.d(TAG, "onLoadFailed")
-                    val errorBitmap = BitmapFactory.decodeResource(resources, R.drawable.common_recipient_photo_default_big)
-                    applyBitmap(errorBitmap)
-                }
-
-                private fun applyBitmap(bitmap: Bitmap) {
-                    try {
-                        val newBitmap = bitmap.copy(bitmap.config, true)
-                        if (newBitmap == null) {
-                            mPhotoBackground.setImageDrawable(null)
-                        } else {
-                            mPhotoBackground.setImageBitmap(newBitmap.blurBitmap(context, 25f))
-                            mPhotoBackground.setColorFilter(context.getColorCompat(R.color.chats_rct_call_background_filter), PorterDuff.Mode.SRC_OVER)
-                        }
-                    } catch (ex: Exception) {
-                        ALog.e(TAG, "doUpdateCallCard error", ex)
-                    }
-                }
-
-            })
-
+            rtc_photo.setPhoto(recipient)
+            rtc_name.text = recipient.name
+            setBackgroundPhoto(recipient)
         } catch (ex: Exception) {
             ALog.e(TAG, "ChatRtcCallScreen show image error", ex)
         }
-        mCallNameView.text = recipient.name
+    }
+
+    private fun setBackgroundPhoto(recipient: Recipient) {
+        val request = GlideApp.with(context.applicationContext).asBitmap()
+        val w = context.getScreenWidth()
+        val h = context.getScreenHeight()
+        val loadObj = if (!recipient.localAvatar.isNullOrEmpty()) {
+            recipient.localAvatar
+        } else if (!recipient.bcmAvatar.isNullOrEmpty()) {
+            recipient.bcmAvatar
+        } else {
+            IndividualAvatarView.getDefaultPortraitUrl(recipient.address.serialize())
+        }
+        request.load(loadObj)
+        request.diskCacheStrategy(DiskCacheStrategy.ALL)
+        request.override(w, h)
+
+        request.into(object : SimpleTarget<Bitmap>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                ALog.d(TAG, "onResourceReady")
+                applyBitmap(resource)
+            }
+
+            override fun onLoadFailed(errorDrawable: Drawable?) {
+                ALog.d(TAG, "onLoadFailed")
+                val errorBitmap = BitmapFactory.decodeResource(resources, R.drawable.common_recipient_photo_default_big)
+                applyBitmap(errorBitmap)
+            }
+
+            private fun applyBitmap(bitmap: Bitmap) {
+                try {
+                    val newBitmap = bitmap.copy(bitmap.config, true)
+                    if (newBitmap == null) {
+                        rtc_photo_background.setImageDrawable(null)
+                    } else {
+                        rtc_photo_background.setImageBitmap(newBitmap.blurBitmap(context, 25f))
+                        rtc_photo_background.setColorFilter(context.getColorCompat(R.color.chats_rct_call_background_filter), PorterDuff.Mode.SRC_OVER)
+                    }
+                } catch (ex: Exception) {
+                    ALog.e(TAG, "doUpdateCallCard error", ex)
+                }
+            }
+        })
     }
 
 
@@ -594,11 +564,16 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             mRecipient?.removeListener(this)
             mRecipient = recipient
             mRecipient?.addListener(this)
-            doUpdateCallCard(recipient, status)
 
             if (recipient.getPrivacyAvatar(true).isNullOrEmpty()) {
                 AmeModuleCenter.contact(accountContext)?.checkNeedDownloadAvatar(true, recipient)
             }
+        }
+
+        if (status.isNullOrEmpty() && accountContext != AMELogin.majorContext) {
+            doUpdateCallCardInactive(recipient)
+        } else {
+            doUpdateCallCard(recipient, status)
         }
     }
 
@@ -629,8 +604,8 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             intent.putExtra(WebRtcCallService.EXTRA_MUTE, true)
             callRtcService(intent)
 
-            mActionRightView.setType(ChatRtcCallItem.TYPE_SPEAKER)
-            mActionRightView.setChecked(false)
+            rtc_right_btn.setType(ChatRtcCallItem.TYPE_SPEAKER)
+            rtc_right_btn.setChecked(false)
 
             handleSpeaker(false)
         } catch (ex: Exception) {
@@ -672,7 +647,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             intent.action = WebRtcCallService.ACTION_SET_MUTE_VIDEO
             intent.putExtra(WebRtcCallService.EXTRA_MUTE, false)
             callRtcService(intent)
-            mActionRightView.setType(ChatRtcCallItem.TYPE_SWITCH)
+            rtc_right_btn.setType(ChatRtcCallItem.TYPE_SWITCH)
 
             handleSpeaker(isSpeakerOn)
         } catch (ex: Exception) {
@@ -713,7 +688,6 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                 intent.action = WebRtcCallService.ACTION_LOCAL_HANGUP
                 callRtcService(intent)
             }
-
         } catch (ex: Exception) {
             ALog.e(TAG, "handleEndCall error", ex)
         }
@@ -743,23 +717,23 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     }
 
     private fun handleIncomingCall(event: WebRtcViewModel) {
-        mVideoView.visibility = View.GONE
+        rtc_video_btn.visibility = View.GONE
         setCard(event.recipient, "")
     }
 
     private fun handleOutgoingCall(event: WebRtcViewModel) {
-        mVideoView.visibility = View.GONE
-        mPassTimeView.visibility = View.GONE
-        mActionLeftView.visibility = View.GONE
-        mActionRightView.visibility = View.GONE
+        rtc_video_btn.visibility = View.GONE
+        rtc_title.visibility = View.GONE
+        rtc_left_btn.visibility = View.GONE
+        rtc_right_btn.visibility = View.GONE
         setCard(event.recipient, resources.getString(R.string.common_phone_dialing))
     }
 
     private fun handleTerminate(recipient: Recipient?) {
         ALog.w(TAG, "handleTerminate called")
-        mVideoView.visibility = View.GONE
-        mActiveLayout.visibility = View.GONE
-        mPassiveLayout.visibility = View.GONE
+        rtc_video_btn.visibility = View.GONE
+        rtc_active_layout.visibility = View.GONE
+        rtc_passive_layout.visibility = View.GONE
         setCard(recipient, resources.getString(R.string.common_phone_ending_call))
         EventBus.getDefault().removeStickyEvent(WebRtcViewModel::class.java)
         post {
@@ -769,19 +743,19 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
     private fun handleCallRinging(event: WebRtcViewModel) {
         ALog.d(TAG, "handleCallRinging")
-        mVideoView.visibility = View.GONE
-        mPassTimeView.visibility = View.GONE
-        mActionLeftView.visibility = View.GONE
-        mActionRightView.visibility = View.GONE
+        rtc_video_btn.visibility = View.GONE
+        rtc_title.visibility = View.GONE
+        rtc_left_btn.visibility = View.GONE
+        rtc_right_btn.visibility = View.GONE
         setCard(event.recipient, resources.getString(R.string.common_phone_ringing))
     }
 
     private fun handleCallBusy(event: WebRtcViewModel) {
         ALog.d(TAG, "handleCallBusy")
-        mVideoView.visibility = View.GONE
-        mPassTimeView.visibility = View.GONE
-        mActionLeftView.visibility = View.GONE
-        mActionRightView.visibility = View.GONE
+        rtc_video_btn.visibility = View.GONE
+        rtc_title.visibility = View.GONE
+        rtc_left_btn.visibility = View.GONE
+        rtc_right_btn.visibility = View.GONE
         setCard(event.recipient, resources.getString(R.string.common_phone_busy))
         post {
             mListener?.onEnd(mRecipient)
@@ -791,23 +765,24 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     private fun handleCallConnected(event: WebRtcViewModel) {
         ALog.d(TAG, "handleCallConnected")
         if (mMiniMode) {
-            mVideoView.visibility = View.GONE
+            rtc_video_btn.visibility = View.GONE
         } else {
-            mVideoView.visibility = View.VISIBLE
+            rtc_video_btn.visibility = View.VISIBLE
         }
-        mActionLeftView.visibility = View.VISIBLE
-        mActionRightView.visibility = View.VISIBLE
+        rtc_left_btn.visibility = View.VISIBLE
+        rtc_right_btn.visibility = View.VISIBLE
 
         setCard(event.recipient, resources.getString(R.string.common_phone_connected))
         setLocalAndRemoteRender(WebRtcCallService.localRenderer, WebRtcCallService.remoteRenderer)
 
-        this.mActionLeftView.isEnabled = true
-        this.mVideoView.isEnabled = true
-        this.mActionRightView.isEnabled = true
+        rtc_left_btn.isEnabled = true
+        rtc_video_btn.isEnabled = true
+        rtc_right_btn.isEnabled = true
         updateSpeakerState()
 
         setCallPassTime(mPassTime)
         if (mCountRunnable == null) {
+            rtc_title.visibility = View.VISIBLE
             mCountRunnable = Runnable {
                 setCallPassTime(mPassTime + 1000)
                 postDelayed(mCountRunnable, 1000L)
@@ -823,9 +798,9 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     }
 
     private fun handleRecipientUnavailable(event: WebRtcViewModel) {
-        mVideoView.visibility = View.GONE
-        mPassiveLayout.visibility = View.GONE
-        mActiveLayout.visibility = View.GONE
+        rtc_video_btn.visibility = View.GONE
+        rtc_passive_layout.visibility = View.GONE
+        rtc_active_layout.visibility = View.GONE
         setCard(event.recipient, resources.getString(R.string.common_phone_recipient_unavailable))
         post {
             mListener?.onEnd(mRecipient)
@@ -833,9 +808,9 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     }
 
     private fun handleServerFailure(event: WebRtcViewModel) {
-        mVideoView.visibility = View.GONE
-        mPassiveLayout.visibility = View.GONE
-        mActiveLayout.visibility = View.GONE
+        rtc_video_btn.visibility = View.GONE
+        rtc_passive_layout.visibility = View.GONE
+        rtc_active_layout.visibility = View.GONE
         setCard(event.recipient, resources.getString(R.string.common_phone_network_failed))
         post {
             mListener?.onEnd(mRecipient)
@@ -843,9 +818,9 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     }
 
     private fun handleNoSuchUser(event: WebRtcViewModel) {
-        mVideoView.visibility = View.GONE
-        mPassiveLayout.visibility = View.GONE
-        mActiveLayout.visibility = View.GONE
+        rtc_video_btn.visibility = View.GONE
+        rtc_passive_layout.visibility = View.GONE
+        rtc_active_layout.visibility = View.GONE
         handleTerminate(event.recipient)
         post {
             mListener?.onUnknown(event.recipient)
@@ -853,12 +828,10 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     }
 
     private fun handleUntrustedIdentity(event: WebRtcViewModel) {
-        mVideoView.visibility = View.GONE
-        mPassiveLayout.visibility = View.GONE
-        mActiveLayout.visibility = View.GONE
-        val theirIdentity = event.identityKey
+        rtc_video_btn.visibility = View.GONE
+        rtc_passive_layout.visibility = View.GONE
+        rtc_active_layout.visibility = View.GONE
         val recipient = event.recipient
-        setUntrustedIdentity(recipient, theirIdentity)
         post {
             mListener?.onUntrusted(recipient)
         }
@@ -884,8 +857,8 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
     private fun setLocalAndRemoteRender(localRenderer: SurfaceViewRenderer?, remoteRenderer: SurfaceViewRenderer?) {
         ALog.d(TAG, "setLocalAndRemoteRender")
-        mLocalRenderLayout.setSurface(localRenderer)
-        mRemoteRenderLayout.setSurface(remoteRenderer)
+        local_render_layout.setSurface(localRenderer)
+        remote_render_layout.setSurface(remoteRenderer)
 
     }
 
