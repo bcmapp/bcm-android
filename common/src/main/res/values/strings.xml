@@ -317,7 +317,7 @@
     <string name="common_chats_message_delete_friend_description">You\'ve deleted %s from your BCM contact</string>
     <string name="common_chats_you_recalled_message">You have unsent a message</string>
     <string name="common_chats_partner_clear_history_tip">%s has cleared chat history</string>
-    <string name="common_chats_you_clear_history_tip">Clearation sucessed</string>
+    <string name="common_chats_you_clear_history_tip">Clearation succeeded</string>
     <string name="common_chats_you_clearing_history_tip">The chat history are being cleared on both of your devices</string>
     <string name="common_chats_you_clear_history_fail_tip">Clearation failed</string>
     <string name="common_chats_he_recalled_message">%s has unsent a message</string>

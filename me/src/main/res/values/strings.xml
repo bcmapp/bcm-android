@@ -346,7 +346,7 @@
     <string name="me_new_pin">New PIN</string>
     <string name="me_enter_current_pin">Enter your current PIN</string>
     <string name="me_set_pin_successfully">Set PIN Successfully</string>
-    <string name="me_fingerprint_unlock_successful">Fingerprint unlock successfully</string>
+    <string name="me_fingerprint_unlock_successful">Fingerprint unlocked successfully</string>
     <string name="me_fingerprint_unlock_fail">Fingerprint unlock fail</string>
     <string name="me_pin_not_matched">PINs Not Matched</string>
     <string name="me_forget_pin_detail">Use password to change or clear your PIN.</string>
