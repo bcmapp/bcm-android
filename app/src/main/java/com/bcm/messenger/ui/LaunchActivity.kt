@@ -102,35 +102,31 @@ class LaunchActivity : AppCompatActivity() {
         ALog.i(TAG, "routeToHome")
         SchemeLaunchHelper.storeSchemeIntent(null)
         intent.component = ComponentName(this, HomeActivity::class.java)
-        startBcmActivity(AMELogin.majorContext, intent)
-        delayFinish()
+        startBcmActivity(AMELogin.majorContext, intent.apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
     }
 
     private fun routeToRegister() {
         if (AmeModuleCenter.login().accountSize() > 0) {
             ALog.i(TAG, "routeToLogin")
             BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_SWITCHER)
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .navigation()
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    .navigation(this)
         } else {
             ALog.i(TAG, "routeToRegister")
             SchemeLaunchHelper.storeSchemeIntent(intent)
-            startActivity(Intent(this, RegistrationActivity::class.java))
+            startActivity(Intent(this, RegistrationActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
         }
-
-        delayFinish()
     }
 
     private fun routeToDatabaseMigrate() {
         ALog.i(TAG, "Route to database migrate")
         SchemeLaunchHelper.storeSchemeIntent(intent)
-        startActivity(Intent(this, DatabaseMigrateActivity::class.java))
-        delayFinish()
-    }
-
-    private fun delayFinish() {
-        AmeDispatcher.mainThread.dispatch({
-            finish()
-        }, 2000)
+        startActivity(Intent(this, DatabaseMigrateActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
     }
 }

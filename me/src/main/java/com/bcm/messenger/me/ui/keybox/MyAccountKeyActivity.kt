@@ -99,7 +99,6 @@ class MyAccountKeyActivity : AccountSwipeBaseActivity() {
         val genKeyTime = AmeLoginLogic.accountHistory.getGenKeyTime(accountContext.uid)
         val backupTime = AmeLoginLogic.accountHistory.getBackupTime(accountContext.uid)
 
-        // 新老帐号兼容
         val account = AmeLoginLogic.getAccount(accountContext.uid)
         if (account != null) {
             createAccountQRCodeWithAccountData(account)

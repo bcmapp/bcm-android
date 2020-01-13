@@ -432,7 +432,7 @@
     <string name="chats_history_message_contact">[名片]</string>
     <string name="chats_history_message_link">[链接]</string>
     <string name="chats_history_message_channel">[订阅群]</string>
-    <string name="chats_unable_invite_expired_accounts">不能邀请过期的帐号</string>
+    <string name="chats_unable_invite_expired_accounts">不能邀请过期的账号</string>
     <string name="chats_forward_result_fail">发送失败</string>
     <string name="chats_keep_senders_names">合并发送</string>
     <string name="chats_max_forward_error">超过转发条数限制</string>

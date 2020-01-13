@@ -396,5 +396,6 @@
     <string name="me_proxy_connecing_to_server">Connecting to Server…</string>
     <string name="me_enter_pin_to_unlock">Enter PIN to Unlock</string>
     <string name="me_force_log_out_log_back_in">Log Back In</string>
+    <string name="me_import_account">Import Account</string>
 
 </resources>

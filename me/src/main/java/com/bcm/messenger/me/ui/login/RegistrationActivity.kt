@@ -22,27 +22,46 @@ class RegistrationActivity : AppCompatActivity() {
         private const val TAG = "RegistrationActivity"
         const val RE_LOGIN_ID = "RE_LOGIN_ID"
         const val REQUEST_CODE_SCAN_QR_LOGIN = 10013
+        const val REQUEST_CODE_SCAN_QR_IMPORT = 10014
         const val CREATE_ACCOUNT_ID = "CREATE_ACCOUNT"
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_SCAN_QR_LOGIN && resultCode == Activity.RESULT_OK) {
-            val scanResult = data?.getStringExtra(ARouterConstants.PARAM.SCAN.SCAN_RESULT) ?: return
-            AmeLoginLogic.saveBackupFromExportModelWithWarning(scanResult, true) { id ->
-                if (!id.isNullOrEmpty()) {
-                    val f = LoginVerifyPinFragment()
-                    val arg = Bundle()
-                    arg.putString(RE_LOGIN_ID, id)
-                    f.arguments = arg
-                    supportFragmentManager.beginTransaction()
-                            .replace(R.id.register_container, f)
-                            .addToBackStack("sms")
-                            .commit()
+        if (resultCode == Activity.RESULT_OK) {
+            val action: (uid: String) -> Unit = when (requestCode) {
+                REQUEST_CODE_SCAN_QR_LOGIN -> {
+                    {
+                        if (it.isNotEmpty()) {
+                            val f = LoginVerifyPinFragment()
+                            val arg = Bundle()
+                            arg.putString(RE_LOGIN_ID, it)
+                            f.arguments = arg
+                            supportFragmentManager.beginTransaction()
+                                    .replace(R.id.register_container, f)
+                                    .addToBackStack("sms")
+                                    .commit()
+                        }
+                    }
                 }
+                REQUEST_CODE_SCAN_QR_IMPORT -> {
+                    {
+                        if (it.isNotEmpty()) {
+                            BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_SWITCHER)
+                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                    .navigation(this)
+                        }
+                    }
+                }
+                else -> return
             }
 
+            val scanResult = data?.getStringExtra(ARouterConstants.PARAM.SCAN.SCAN_RESULT) ?: return
+            AmeLoginLogic.saveBackupFromExportModelWithWarning(scanResult, true) { uid ->
+                action(uid?:"")
+            }
         }
+
     }
 
     public override fun onCreate(savedInstanceState: Bundle?) {

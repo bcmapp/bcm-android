@@ -56,11 +56,17 @@ class StartupFragment : AbsRegistrationFragment() {
         }
 
         startup_scan.setOnClickListener {
-
             BcmRouter.getInstance().get(ARouterConstants.Activity.SCAN_NEW)
                     .putInt(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_ACCOUNT)
                     .navigation(activity, RegistrationActivity.REQUEST_CODE_SCAN_QR_LOGIN)
         }
+
+        startup_import.setOnClickListener {
+            BcmRouter.getInstance().get(ARouterConstants.Activity.SCAN_NEW)
+                    .putInt(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_ACCOUNT)
+                    .navigation(activity, RegistrationActivity.REQUEST_CODE_SCAN_QR_IMPORT)
+        }
+
         startup_keybox.setOnClickListener {
             BcmRouter.getInstance().get(ARouterConstants.Activity.APP_DEV_SETTING).navigation(context)
         }

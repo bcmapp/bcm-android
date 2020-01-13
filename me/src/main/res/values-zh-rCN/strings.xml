@@ -239,7 +239,7 @@
     <string name="me_profile_picture">头像</string>
     <string name="me_profile_nickname">昵称</string>
     <string name="me_profile_add_me">添加我为好友</string>
-    <string name="me_text_account_created">帐号创建成功</string>
+    <string name="me_text_account_created">账号创建成功</string>
     <string name="me_profile_account_title">我的账户密钥</string>
     <string name="me_profile_change_pwd_title">更改密码</string>
     <string name="me_profile_alias_save_success">昵称修改成功</string>
@@ -296,7 +296,7 @@
     <string name="me_destroy_account_confirm_notice">此账户已被销毁，无法再次登录。</string>
     <string name="me_destroy_account_confirm_button">知道了</string>
     <string name="me_destroy_account_warning_notice">此账户已被销毁，你现被强制退出。</string>
-    <string name="me_logout_with_expire">你的帐号登录状态已过期，请重新登录</string>
+    <string name="me_logout_with_expire">你的账号登录状态已过期，请重新登录</string>
     <string name="me_destroy_account_success">账户已被销毁</string>
 
     <!--Settings-->
@@ -378,7 +378,7 @@
     <string name="me_request_pin_for_identity_verification">开启App或者查看账户密钥二维码前会要求PIN码作为身份验证。</string>
     <string name="me_enable_pin_lock">启用PIN码</string>
     <string name="me_note_forget_the_pin">注：如果你忘记了PIN码，你需要卸载并重装此应用。所有的聊天记录会一并消失。</string>
-    <string name="me_logout_clear_tip">清除当前帐号的聊天记录</string>
+    <string name="me_logout_clear_tip">清除当前账号的聊天记录</string>
     <string name="me_logout_tip_title">确认退出此设备吗？</string>
     <string name="me_logout_tip_out">登出</string>
 
@@ -392,7 +392,7 @@
     <string name="me_mark_as_backed_up_detail">请确认你已完成备份。</string>
     <string name="me_qr_code_copied">已复制二维码</string>
     <string name="me_store_safely">请将其保存到合适的地方。</string>
-    <string name="me_chats_are_you_sure_to_switch">确认切换帐号登录吗?</string>
+    <string name="me_chats_are_you_sure_to_switch">确认切换账号登录吗?</string>
     <string name="me_switch_action_text">切换</string>
 
     <string name="me_backup_after_change_pwd_notice">更改密码后，请备份你的更新后的账号密钥。</string>
@@ -455,6 +455,7 @@
     <string name="me_proxy_connecing_to_server">正在连接服务器…</string>
     <string name="me_enter_pin_to_unlock">解锁</string>
     <string name="me_force_log_out_log_back_in">重新登录</string>
+    <string name="me_import_account">导入账号</string>
 
 
 </resources>
