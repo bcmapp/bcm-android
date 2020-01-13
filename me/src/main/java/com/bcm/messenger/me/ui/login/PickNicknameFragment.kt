@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.event.NewAccountAddedEvent
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -17,6 +18,7 @@ import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_fragment_pick_nickname_layout.*
+import org.greenrobot.eventbus.EventBus
 import org.whispersystems.libsignal.ecc.ECKeyPair
 
 class PickNicknameFragment : AbsRegistrationFragment() {
@@ -61,17 +63,21 @@ class PickNicknameFragment : AbsRegistrationFragment() {
                     AmePopup.loading.dismiss()
 
                     val uid = BCMPrivateKeyUtils.provideUid(keyPair.publicKey.serialize())
-                    val accountContext = AmeModuleCenter.login().getAccountContext(uid)
                     val f = RegisterSucceedFragment()
                     activity?.supportFragmentManager?.beginTransaction()
                             ?.replace(R.id.register_container, f)
                             ?.commitAllowingStateLoss()
 
                     new_nickname.postDelayed({
-                        BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
-                                .putBoolean(ARouterConstants.PARAM.PARAM_LOGIN_FROM_REGISTER, true)
-                                .startBcmActivity(AMELogin.majorContext, activity)
-                        activity?.finish()
+                        if (AmeModuleCenter.login().getLoginAccountContextList().size == 1) {
+                            BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
+                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                    .putBoolean(ARouterConstants.PARAM.PARAM_LOGIN_FROM_REGISTER, true)
+                                    .startBcmActivity(AMELogin.majorContext)
+                        } else {
+                            EventBus.getDefault().post(NewAccountAddedEvent(uid))
+                            activity?.finish()
+                        }
                     }, 2000)
 
                 }

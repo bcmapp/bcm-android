@@ -205,7 +205,6 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
                     ALog.i(TAG, "Clicked create account")
                     BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                             .putBoolean("CREATE_ACCOUNT", true)
-                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                             .navigation()
                 })
         if (!isReleaseBuild()) {
