@@ -270,7 +270,7 @@
     <string name="me_setting_data_stoarge_calulating_tip">Расчет…</string>
     <string name="me_setting_clear_cache_title">Очистить кэш</string>
     <string name="me_setting_security_head">БЕЗОПАСН.</string>
-    <string name="me_setting_pin_lock_title">Блок. PIN</string>
+    <string name="me_setting_pin_lock_title">Блок. APP</string>
     <string name="me_setting_pin_on_tip">Вкл.</string>
     <string name="me_setting_pin_off_tip">Выкл.</string>
     <string name="me_setting_privacy_head">ПОВЫШ. УР. ЗАЩИТЫ</string>

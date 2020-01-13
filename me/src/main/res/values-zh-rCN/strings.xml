@@ -301,7 +301,8 @@
 
     <!--Settings-->
     <string name="me_settings_notification_disabled">通知栏通知已关闭。你想开启消息通知吗？</string>
-    <string name="me_setting_general_head">通用</string>
+    <string name="me_setting_general_head">应用设置</string>
+    <string name="me_setting_account_setting_head">账户设置</string>
     <string name="me_setting_title">设置</string>
     <string name="me_setting_notifications_head">通知</string>
     <string name="me_setting_notification_title">通知</string>
@@ -318,7 +319,7 @@
     <string name="me_setting_data_stoarge_calulating_tip">正在统计…</string>
     <string name="me_setting_clear_cache_title">清理缓存</string>
     <string name="me_setting_security_head">安全</string>
-    <string name="me_setting_pin_lock_title">PIN锁</string>
+    <string name="me_setting_pin_lock_title">APP锁</string>
     <string name="me_setting_pin_on_tip">开</string>
     <string name="me_setting_pin_off_tip">关</string>
     <string name="me_setting_privacy_head">隐私增强</string>

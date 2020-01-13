@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.me_activity_privacy_settings.*
  * Created by Kin on 2020/1/8
  */
 class PrivacySettingsActivity : AccountSwipeBaseActivity() {
-    private val REQUEST_SETTING = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,17 +70,6 @@ class PrivacySettingsActivity : AccountSwipeBaseActivity() {
             }
         }
 
-        privacy_pin_lock.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-            if (AmePinLogic.hasPin()) {
-                startBcmActivityForResult(Intent(this, PinLockSettingActivity::class.java), REQUEST_SETTING)
-            } else {
-                startBcmActivityForResult(Intent(this, PinLockInitActivity::class.java), REQUEST_SETTING)
-            }
-        }
-
         privacy_rtc_p2p.setSwitchEnable(false)
         privacy_rtc_p2p.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
@@ -93,17 +81,9 @@ class PrivacySettingsActivity : AccountSwipeBaseActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        privacy_pin_lock.setTip(if (AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip),
-                contentColor = getColorCompat(R.color.common_content_second_color))
-    }
-
     private fun initData() {
         updateStrangerState()
 
-        privacy_pin_lock.setTip(if (AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip),
-                contentColor = getColorCompat(R.color.common_content_second_color))
         privacy_rtc_p2p.setSwitchStatus(TextSecurePreferences.isTurnOnly(accountContext))
     }
 

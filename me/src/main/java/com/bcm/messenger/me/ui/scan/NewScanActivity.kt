@@ -12,6 +12,7 @@ import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.RxBus
+import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -66,6 +67,8 @@ class NewScanActivity : AppCompatActivity() {
             handleScanResult(scanResult.result)
         }
         initFragment()
+
+        window.setStatusBarLightMode()
     }
 
     override fun onBackPressed() {

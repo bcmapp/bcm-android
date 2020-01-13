@@ -132,6 +132,12 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
                 listener?.onClickLogin(recipient.address.serialize())
             }
         }
+        home_profile_login.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            listener?.onClickLogin(recipient.address.serialize())
+        }
         home_profile_delete.setOnClickListener {
             listener?.onClickDelete(recipient.address.serialize())
         }

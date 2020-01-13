@@ -20,9 +20,12 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
+import com.bcm.messenger.me.logic.AmePinLogic
 import com.bcm.messenger.me.ui.feedback.AmeFeedbackActivity
 import com.bcm.messenger.me.ui.language.LanguageSelectActivity
 import com.bcm.messenger.me.ui.language.LanguageViewModel
+import com.bcm.messenger.me.ui.pinlock.PinLockInitActivity
+import com.bcm.messenger.me.ui.pinlock.PinLockSettingActivity
 import com.bcm.messenger.me.ui.profile.ProfileActivity
 import com.bcm.messenger.me.ui.proxy.ProxySettingActivity
 import com.bcm.messenger.me.utils.BcmUpdateUtil
@@ -34,9 +37,6 @@ import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_activity_settings.*
 import kotlinx.android.synthetic.main.me_settings_head_view.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -82,6 +82,8 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
     override fun onResume() {
         super.onResume()
         notification_noticer.checkNotice()
+        privacy_pin_lock.setTip(if (AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip),
+                contentColor = getColorCompat(R.color.common_content_second_color))
     }
 
     private fun initView() {
@@ -91,7 +93,7 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
             }
         })
 
-        setting_head_view.setOnClickListener {
+        head_view_info_layout.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
@@ -159,11 +161,15 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
                     .startBcmActivity(accountContext, this, REQUEST_SETTING)
         }
 
-        setting_adhoc.setOnClickListener {
+        privacy_pin_lock.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            AmeModuleCenter.adhoc(accountContext)?.configHocMode()
+            if (AmePinLogic.hasPin()) {
+                startBcmActivityForResult(Intent(this, PinLockSettingActivity::class.java), REQUEST_SETTING)
+            } else {
+                startBcmActivityForResult(Intent(this, PinLockInitActivity::class.java), REQUEST_SETTING)
+            }
         }
 
         setting_proxy.setOnClickListener {
@@ -245,6 +251,9 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
                 weakThis.get()?.setting_about?.hideTip()
             }
         }
+
+        privacy_pin_lock.setTip(if (AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip),
+                contentColor = getColorCompat(R.color.common_content_second_color))
     }
 
     private fun initHeadView() {

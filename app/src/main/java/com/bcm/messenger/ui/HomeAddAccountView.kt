@@ -41,11 +41,17 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
     : ConstraintLayout(context, attrs, defStyleAttr), IProfileView {
     private val TAG = "HomeAddAccountView"
 
+    interface AddAccountViewListener {
+        fun onClickDebugImport()
+    }
+
     override var isActive = false
     override var isLogin = false
     override var position = 0f
 
     private val avatarMargin = (AppContextHolder.APP_CONTEXT.getScreenWidth() - 120.dp2Px()) / 2
+
+    private var listener: AddAccountViewListener? = null
 
     private fun showAnimation() = AnimatorSet().apply {
         val updateListener = ValueAnimator.AnimatorUpdateListener {
@@ -159,6 +165,10 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
     }
 
     override fun setUnreadCount(unreadCount: Int) {
+    }
+
+    fun setListener(listener: AddAccountViewListener) {
+        this.listener = listener
     }
 
     private fun showActionSheet() {

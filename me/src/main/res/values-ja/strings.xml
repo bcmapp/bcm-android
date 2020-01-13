@@ -301,7 +301,7 @@
     <string name="me_setting_data_stoarge_calulating_tip">Calculating…</string>
     <string name="me_setting_clear_cache_title">Clear Cache</string>
     <string name="me_setting_security_head">セキュリティ</string>
-    <string name="me_setting_pin_lock_title">PINロック</string>
+    <string name="me_setting_pin_lock_title">APPロック</string>
     <string name="me_setting_pin_on_tip">On</string>
     <string name="me_setting_pin_off_tip">Off</string>
     <string name="me_setting_privacy_head">プライバシー</string>

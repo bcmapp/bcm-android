@@ -335,7 +335,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
             private val dp120 = 120.dp2Px()
             private val dp75 = 75.dp2Px()
             private val dp6 = 6.dp2Px()
-            private val gapSize = (topViewHeight - statusBarHeight - 426.dp2Px()) / 3 + 30.dp2Px()
+            private val gapSize = (topViewHeight - statusBarHeight - 446.dp2Px()) / 3 + 30.dp2Px()
 
             private val avatarMaxSize = 160.dp2Px()
             private val avatarStartMaxMargin = (screenWidth - avatarMaxSize) / 2 - dp15

@@ -295,7 +295,8 @@
 
     <!--Settings-->
     <string name="me_setting_title">Settings</string>
-    <string name="me_setting_general_head">GENERAL</string>
+    <string name="me_setting_general_head">APP SETTINGS</string>
+    <string name="me_setting_account_setting_head">ACCOUNT_SETTINGS</string>
     <string name="me_setting_notifications_head">NOTIFICATIONS</string>
     <string name="me_settings_notification_disabled">BCM checked the notification is disabled. Would you like to enable the notification?</string>
     <string name="me_setting_notification_title">Notifications</string>
@@ -312,7 +313,7 @@
     <string name="me_setting_data_stoarge_calulating_tip">Calculating…</string>
     <string name="me_setting_clear_cache_title">Clear Cache</string>
     <string name="me_setting_security_head">SECURITY</string>
-    <string name="me_setting_pin_lock_title">PIN Lock</string>
+    <string name="me_setting_pin_lock_title">APP Lock</string>
     <string name="me_setting_pin_on_tip">On</string>
     <string name="me_setting_pin_off_tip">Off</string>
     <string name="me_setting_privacy_head">PRIVACY ENHANCEMENT</string>
