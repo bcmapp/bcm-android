@@ -27,6 +27,7 @@ import com.bcm.messenger.ui.widget.HomeProfilePageTransformer
 import com.bcm.messenger.ui.widget.HomeViewPager
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
+import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.home_profile_layout.view.*
 
 /**
@@ -213,6 +214,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     fun checkCurrentPage(uid: String) {
+        ALog.i(TAG, "Check current page is major user.")
         val currentView = viewPagerAdapter.getCurrentView(home_profile_view_pager.currentItem)
         if (currentView != null && !currentView.isLogin) {
             val index = viewPagerAdapter.checkIndex(uid)
@@ -224,9 +226,11 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     fun analyseQrCode(data: Intent?, toLogin: Boolean) {
+        ALog.i(TAG, "Analyse QR code")
         val qrCode = data?.getStringExtra(ARouterConstants.PARAM.SCAN.SCAN_RESULT) ?: return
         AmeLoginLogic.saveBackupFromExportModelWithWarning(qrCode) { accountId ->
             if (!accountId.isNullOrEmpty()){
+                ALog.i(TAG, "Has QR code")
                 viewPagerAdapter.loadAccounts()
                 if (toLogin) {
                     loginAccount(accountId)
@@ -270,6 +274,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private fun deleteAccount(uid: String) {
+        ALog.i(TAG, "Clicked delete account")
         AlertDialog.Builder(context)
                 .setMessage(R.string.tabless_ui_delete_account_content)
                 .setPositiveButton(
@@ -282,6 +287,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private fun loginAccount(uid: String) {
+        ALog.i(TAG, "Clicked login account")
         if (!checkOnlineAccount()) {
             return
         }
@@ -294,6 +300,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
     private fun checkOnlineAccount(): Boolean {
         if (AmeModuleCenter.login().minorUidList().size == 2) {
+            ALog.i(TAG, "Current has 3 users online, cannot login or create account.")
             AlertDialog.Builder(context)
                     .setMessage(R.string.tabless_ui_account_reach_max_size)
                     .setPositiveButton(R.string.common_understood, null)

@@ -10,6 +10,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
+import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.imagepicker.widget.CropRoundCornerTransform
 import com.bcm.messenger.common.mms.DecryptableStreamUriLoader
@@ -17,8 +18,7 @@ import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.MediaUtil
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.logger.ALog
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -53,16 +53,17 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
 
     init {
         View.inflate(context, R.layout.chats_pin_view, this)
-        mMaxWidth = AppUtil.dp2Px(resources, 40)
-        mMaxHeight = AppUtil.dp2Px(resources, 40)
-        mImageRadius = AppUtil.dp2Px(resources, 2)
+        mMaxWidth = 40.dp2Px()
+        mMaxHeight = 40.dp2Px()
+        mImageRadius = 2.dp2Px()
 
         pin_close?.setOnClickListener {
             mListener?.onClose()
         }
     }
 
-    fun setGroupMessage(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail, glideRequests: GlideRequests, listener: OnChatPinActionListener) {
+    fun setGroupMessage(accountContext: AccountContext, masterSecret: MasterSecret, messageRecord: AmeGroupMessageDetail,
+                        glideRequests: GlideRequests, listener: OnChatPinActionListener) {
         this.messageDetailRecord = messageRecord
         this.glideRequests = glideRequests
         this.mListener = listener
@@ -70,8 +71,8 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
         when (messageRecord.message.type) {
             AmeGroupMessage.TEXT -> setText()
             AmeGroupMessage.AUDIO -> setAudio()
-            AmeGroupMessage.IMAGE -> setImage(accountContext)
-            AmeGroupMessage.VIDEO -> setVideo(accountContext)
+            AmeGroupMessage.IMAGE -> setImage(accountContext, masterSecret)
+            AmeGroupMessage.VIDEO -> setVideo(accountContext, masterSecret)
             AmeGroupMessage.LINK -> setLink()
             AmeGroupMessage.FILE -> setFile()
             AmeGroupMessage.NEWSHARE_CHANNEL -> setNewShareChannel()
@@ -105,37 +106,56 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
         chat_pin_content.text = resources.getString(R.string.chats_pin_audio)
     }
 
-    private fun setImage(accountContext: AccountContext) {
+    private fun setImage(accountContext: AccountContext, masterSecret: MasterSecret) {
         chat_pin_recipient_photo.visibility = View.INVISIBLE
         chats_pin_image.visibility = View.VISIBLE
         chat_pin_content.text = resources.getString(R.string.chats_pin_image)
 
         messageDetailRecord?.let {
             val content = it.message.content as? AmeGroupMessage.ThumbnailContent
-            MessageFileHandler.downloadThumbnail(accountContext, it, object : MessageFileHandler.MessageFileCallback {
-                override fun onResult(success: Boolean, uri: Uri?) {
-                    it.isThumbnailDownloading = false
-                    if (success && glideRequests != null && content != null)
-                        buildThumbnailRequest(glideRequests!!, uri, content.mimeType)
+            if (content != null) {
+                if (it.getThumbnailPartUri(accountContext) != null) {
+                    buildThumbnailRequest(glideRequests!!,
+                            DecryptableStreamUriLoader.DecryptableUri(masterSecret, it.getThumbnailPartUri(accountContext)!!),
+                            content.mimeType)
+                } else {
+                    MessageFileHandler.downloadThumbnail(accountContext, it, object : MessageFileHandler.MessageFileCallback {
+                        override fun onResult(success: Boolean, uri: Uri?) {
+                            it.isThumbnailDownloading = false
+                            if (success && glideRequests != null) {
+                                buildThumbnailRequest(glideRequests!!, DecryptableStreamUriLoader.DecryptableUri(masterSecret, uri!!), content.mimeType)
+                            }
+                        }
+                    })
                 }
-            })
+            }
         }
     }
 
-    private fun setVideo(accountContext: AccountContext) {
+    private fun setVideo(accountContext: AccountContext, masterSecret: MasterSecret) {
         chat_pin_recipient_photo.visibility = View.INVISIBLE
         chats_pin_image.visibility = View.VISIBLE
         chats_pin_video_icon.visibility = View.VISIBLE
         chat_pin_content.text = resources.getString(R.string.chats_pin_video)
+
         messageDetailRecord?.let {
             val content = it.message.content as? AmeGroupMessage.VideoContent
-            MessageFileHandler.downloadThumbnail(accountContext, it, object : MessageFileHandler.MessageFileCallback {
-                override fun onResult(success: Boolean, uri: Uri?) {
-                    it.isThumbnailDownloading = false
-                    if (success && glideRequests != null && content != null)
-                        buildThumbnailRequest(glideRequests!!, uri, content.mimeType)
+            if (content != null) {
+                if (it.getThumbnailPartUri(accountContext) != null) {
+                    buildThumbnailRequest(glideRequests!!,
+                            DecryptableStreamUriLoader.DecryptableUri(masterSecret, it.getThumbnailPartUri(accountContext)!!),
+                            content.mimeType)
+                } else {
+                    MessageFileHandler.downloadThumbnail(accountContext, it, object : MessageFileHandler.MessageFileCallback {
+                        override fun onResult(success: Boolean, uri: Uri?) {
+                            it.isThumbnailDownloading = false
+                            if (success && glideRequests != null) {
+                                buildThumbnailRequest(glideRequests!!, DecryptableStreamUriLoader.DecryptableUri(masterSecret, uri!!), content.mimeType)
+                            }
+                        }
+                    })
                 }
-            })
+            }
         }
     }
 
@@ -146,10 +166,10 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
         messageDetailRecord?.let {
             val content = it.message.content as? AmeGroupMessage.FileContent
             chats_pin_image.setBackgroundResource(R.drawable.chats_message_file_icon_grey)
-            chats_pin_image.setImageDrawable(AmeGroupMessage.FileContent.getTypeDrawable(content?.fileName
-                    ?: content?.url
-                    ?: "", content?.mimeType, AppUtil.dp2Px(resources, 20), AppUtil.sp2Px(resources, 12),
-                    AppUtil.getColor(resources, R.color.common_content_warning_color)))
+            chats_pin_image.setImageDrawable(AmeGroupMessage.FileContent.getTypeDrawable(
+                    content?.fileName ?: content?.url ?: "",
+                    content?.mimeType, 20.dp2Px(), 12.sp2Px(),
+                    getColor(R.color.common_content_warning_color)))
             chat_pin_content.text = content?.fileName ?: ""
         }
     }
@@ -171,8 +191,8 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
         chat_pin_content.text = resources.getString(R.string.chats_pin_contact)
         messageDetailRecord?.let {
             val content = it.message.content as? AmeGroupMessage.ContactContent
-            content?.uid?.let {
-                val recipient = Recipient.from(AMELogin.majorContext, it, true)
+            content?.uid?.let { uid ->
+                val recipient = Recipient.from(AMELogin.majorContext, uid, true)
                 recipient.addListener(this)
                 chat_pin_recipient_photo.setPhoto(recipient)
             }
@@ -210,8 +230,7 @@ class ChatPinView @JvmOverloads constructor(context: Context, attrs: AttributeSe
             buildThumbnail(mPlaceHolderResource)
         }
 
-        val placeholder = chats_pin_image.drawable
-                ?: chats_pin_image.context.getDrawable(mPlaceHolderResource)
+        val placeholder = chats_pin_image.drawable ?: chats_pin_image.context.getDrawable(mPlaceHolderResource)
 
         ALog.d(TAG, "buildThumbnailRequest loadObj: $loadObj")
         when {

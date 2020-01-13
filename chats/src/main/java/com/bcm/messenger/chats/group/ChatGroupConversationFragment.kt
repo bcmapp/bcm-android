@@ -698,7 +698,7 @@ class ChatGroupConversationFragment : BaseFragment() {
     private fun showPinLayout(targetScrollMessage: AmeGroupMessageDetail) {
         group_pin_layout?.visibility = View.VISIBLE
         group_pin_layout?.post {
-            group_pin_layout?.setGroupMessage(accountContext, targetScrollMessage, glideRequests, object : ChatPinView.OnChatPinActionListener {
+            group_pin_layout?.setGroupMessage(accountContext, getMasterSecret(), targetScrollMessage, glideRequests, object : ChatPinView.OnChatPinActionListener {
 
                 override fun onContentClick() {
                     fetchAndScrollTo(targetScrollMessage.serverIndex, AmeGroupMessageDetail.LABEL_PIN)

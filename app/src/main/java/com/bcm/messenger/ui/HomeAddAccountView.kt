@@ -167,6 +167,8 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
                     if (!checkOnlineAccount()) {
                         return@PopupItem
                     }
+
+                    ALog.i(TAG, "Clicked scan to login")
                     try {
                         BcmRouter.getInstance().get(ARouterConstants.Activity.SCAN_NEW)
                                 .putInt(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_ACCOUNT)
@@ -176,6 +178,7 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
                     }
                 })
                 .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.tabless_ui_import_account)) {
+                    ALog.i(TAG, "Clicked import account")
                     try {
                         BcmRouter.getInstance().get(ARouterConstants.Activity.SCAN_NEW)
                                 .putInt(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_ACCOUNT)
@@ -188,6 +191,8 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
                     if (!checkOnlineAccount()) {
                         return@PopupItem
                     }
+
+                    ALog.i(TAG, "Clicked create account")
                     BcmRouter.getInstance().get(ARouterConstants.Activity.USER_REGISTER_PATH)
                             .putBoolean("CREATE_ACCOUNT", true)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -195,9 +200,13 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
                 })
         if (!isReleaseBuild()) {
             builder.withPopItem(AmeBottomPopup.PopupItem("Import Account(For debug)") {
+                ALog.i(TAG, "Clicked debug import account")
+
                 AmeLoginLogic.accountHistory.import()
                 ToastUtil.show(context, "Import succeed")
             }).withPopItem(AmeBottomPopup.PopupItem("Export Account(For debug)") {
+                ALog.i(TAG, "Clicked debug export account")
+
                 AmeLoginLogic.accountHistory.export()
                 ToastUtil.show(context, "Export succeed")
             })
@@ -208,6 +217,7 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
 
     private fun checkOnlineAccount(): Boolean {
         if (AmeModuleCenter.login().minorUidList().size == 2) {
+            ALog.i(TAG, "Current has 3 users online, cannot login or create account.")
             AlertDialog.Builder(context)
                     .setMessage(R.string.tabless_ui_account_reach_max_size)
                     .setPositiveButton(R.string.common_understood, null)
