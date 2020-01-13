@@ -19,6 +19,7 @@ class AccountContext(val uid: String, val token: String, val password: String) :
     val genTime get() = AmeModuleCenter.login().genTime(uid)
     val registrationId: Int get() = AmeModuleCenter.login().registrationId(uid)
     val signalingKey: String get() = AmeModuleCenter.login().signalingKey(uid) ?: ""
+    val tag get() = masterSecret?.tag?:"NLogin"
 
     val masterSecret:MasterSecret? get()  {
         return AccountMasterSecret.get(this)

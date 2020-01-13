@@ -47,6 +47,7 @@ public class MasterSecret implements Parcelable, NotGuard {
     private final SecretKeySpec encryptionKey;
     private final SecretKeySpec macKey;
     private final AccountContext accountContext;
+    private final String tag;
 
     public static final Parcelable.Creator<MasterSecret> CREATOR = new Parcelable.Creator<MasterSecret>() {
         @Override
@@ -64,6 +65,7 @@ public class MasterSecret implements Parcelable, NotGuard {
         this.accountContext = accountContext;
         this.encryptionKey = encryptionKey;
         this.macKey = macKey;
+        this.tag = Integer.toString(accountContext.hashCode());
     }
 
     private MasterSecret(Parcel in) {
@@ -76,10 +78,19 @@ public class MasterSecret implements Parcelable, NotGuard {
         this.accountContext = (AccountContext) in.readSerializable();
         this.encryptionKey = new SecretKeySpec(encryptionKeyBytes, "AES");
         this.macKey = new SecretKeySpec(macKeyBytes, "HmacSHA1");
+        if (null != accountContext) {
+            this.tag = Integer.toString(accountContext.hashCode());
+        } else  {
+            this.tag = "unknown";
+        }
 
         // SecretKeySpec does an internal copy in its constructor.
         Arrays.fill(encryptionKeyBytes, (byte) 0x00);
         Arrays.fill(macKeyBytes, (byte) 0x00);
+    }
+
+    public String getTag() {
+        return this.tag;
     }
 
 

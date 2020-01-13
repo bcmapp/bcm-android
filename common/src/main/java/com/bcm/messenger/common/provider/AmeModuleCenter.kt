@@ -102,9 +102,10 @@ object AmeModuleCenter {
     }
 
     fun onLoginSucceed(accountContext: AccountContext) {
+        ALog.i("AmeModuleCenter", "AccountLogin ${accountContext.tag}")
 
         accountJobMgr(accountContext)
-        ALog.logForSecret("AmeModuleCenter", "updateAccount ${accountContext.uid}")
+        ALog.logForSecret("AmeModuleCenter", "updateAccount ${accountContext.tag} ${accountContext.uid}")
         AmeFileUploader.initDownloadPath(AppContextHolder.APP_CONTEXT)
         ReportUtils.setGUid(accountContext.uid)
 

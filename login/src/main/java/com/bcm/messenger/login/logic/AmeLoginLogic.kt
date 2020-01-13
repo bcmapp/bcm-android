@@ -207,7 +207,7 @@ object AmeLoginLogic {
      */
     fun quit(accountContext: AccountContext, clearHistory: Boolean, withLogOut: Boolean = true) {
         if (accountContext.isLogin) {
-            ALog.i(TAG, "quit clearHistory: $clearHistory, withLogout: $withLogOut")
+            ALog.i(TAG, "AccountQuit ${accountContext.tag} clearHistory: $clearHistory, withLogout: $withLogOut")
             try {
                 handleLocalLogout(accountContext, AppContextHolder.APP_CONTEXT)
 
@@ -507,6 +507,7 @@ object AmeLoginLogic {
         saveAccountData(registrationId, uid, ecKeyPair, signalKey, signalPassword, password, passwordHint)
 
         val accountContext = getAccountContext(uid)
+
         initCreatePhrase(accountContext, ecKeyPair)
 
         AmeModuleCenter.onLoginSucceed(accountContext)

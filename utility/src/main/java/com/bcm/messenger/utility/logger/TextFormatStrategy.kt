@@ -15,26 +15,19 @@ class TextFormatStrategy(builder: Builder) : FormatStrategy {
     private var date: Date?
     private var dateFormat: SimpleDateFormat?
     private var logStrategy: LogStrategy?
-    private var tag: String
 
     init {
         date = builder.date
         dateFormat = builder.dateFormat
         logStrategy = builder.logStrategy
-        tag = builder.tag
     }
 
     override fun log(priority: Int, onceOnlyTag: String?, message: String?) {
         val logStrategy = this.logStrategy ?: return
 
-        val tag = formatTag(onceOnlyTag)
-
         date?.time = System.currentTimeMillis()
 
         val builder = StringBuilder()
-
-        // machine-readable date/time
-        builder.append(date?.time?.toString())
 
         // human-readable date/time
         builder.append(SEPARATOR)
@@ -45,8 +38,10 @@ class TextFormatStrategy(builder: Builder) : FormatStrategy {
         builder.append(logLevel(priority))
 
         // tag
-        builder.append(SEPARATOR)
-        builder.append(tag)
+        if (onceOnlyTag?.isNotEmpty() == true) {
+            builder.append(SEPARATOR)
+            builder.append(onceOnlyTag)
+        }
 
         builder.append(SEPARATOR)
         builder.append(message)
@@ -54,13 +49,7 @@ class TextFormatStrategy(builder: Builder) : FormatStrategy {
         // new line
         builder.append(NEW_LINE)
 
-        logStrategy.log(priority, tag, builder.toString())
-    }
-
-    private fun formatTag(tag: String?): String {
-        return if (!tag.isNullOrEmpty() && tag != this.tag) {
-            this.tag + "_" + tag
-        } else this.tag
+        logStrategy.log(priority,"", builder.toString())
     }
 
     class Builder {
@@ -68,7 +57,6 @@ class TextFormatStrategy(builder: Builder) : FormatStrategy {
         internal var date: Date? = null
         internal var dateFormat: SimpleDateFormat? = null
         internal var logStrategy: LogStrategy? = null
-        internal var tag = "PRETTY_LOGGER"
 
         fun date(date: Date): Builder {
             this.date = date
@@ -82,11 +70,6 @@ class TextFormatStrategy(builder: Builder) : FormatStrategy {
 
         fun logStrategy(logStrategy: LogStrategy?): Builder {
             this.logStrategy = logStrategy
-            return this
-        }
-
-        fun tag(tag: String): Builder {
-            this.tag = tag
             return this
         }
 
@@ -111,14 +94,14 @@ class TextFormatStrategy(builder: Builder) : FormatStrategy {
         }
 
         internal fun logLevel(value: Int): String {
-            when (value) {
-                Logger.VERBOSE -> return "VERBOSE"
-                Logger.DEBUG -> return "DEBUG"
-                Logger.INFO -> return "INFO"
-                Logger.WARN -> return "WARN"
-                Logger.ERROR -> return "ERROR"
-                Logger.ASSERT -> return "ASSERT"
-                else -> return "UNKNOWN"
+            return when (value) {
+                Logger.VERBOSE -> "VERBOSE"
+                Logger.DEBUG -> "DEBUG"
+                Logger.INFO -> "INFO"
+                Logger.WARN -> "WARN"
+                Logger.ERROR -> "ERROR"
+                Logger.ASSERT -> "ASSERT"
+                else -> "UNKNOWN"
             }
         }
     }

@@ -29,7 +29,6 @@ object AmeLogConfig {
 
             val cvsFormatStrategy = TextFormatStrategy.newBuilder()
                     .logStrategy(logStrategy)
-                    .tag("BCM")
                     .build()
             Logger.addLogAdapter(AmeDiskLoggerAdapter(cvsFormatStrategy, level))
         } catch ( e:Throwable) {
