@@ -260,7 +260,13 @@ class AmeConversationAdapter(val context: Context, val masterSecret: MasterSecre
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            MESSAGE_TYPE_STICKY -> object : RecyclerView.ViewHolder(mStickyNotificationView ?: View(context)) {}
+            MESSAGE_TYPE_STICKY -> {
+                val item = mStickyNotificationView ?: View(context)
+                if (item.parent != null) {
+                    (item.parent as? ViewGroup)?.removeView(item)
+                }
+                object : RecyclerView.ViewHolder(item) {}
+            }
             MESSAGE_TYPE_INCOMING -> ViewHolder(inflater.inflate(R.layout.chats_conversation_item_received, parent, false))
             MESSAGE_TYPE_OUTGOING -> ViewHolder(inflater.inflate(R.layout.chats_conversation_item_sent, parent, false))
             else -> ViewHolder(inflater.inflate(R.layout.chats_conversation_item_status, parent, false))

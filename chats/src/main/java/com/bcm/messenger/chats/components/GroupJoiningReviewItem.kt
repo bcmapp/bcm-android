@@ -2,6 +2,7 @@ package com.bcm.messenger.chats.components
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.group.logic.GroupLogic
@@ -37,7 +38,7 @@ class GroupJoiningReviewItem @JvmOverloads constructor(context: Context, attrs: 
     private var mUnReadCount: Int = 0
 
     init {
-        View.inflate(context, R.layout.chats_item_group_joining_check, this)
+        LayoutInflater.from(context).inflate(R.layout.chats_item_group_joining_check, this, false)
         val p = resources.getDimensionPixelSize(R.dimen.common_horizontal_gap)
         setPadding(p, p, p, p)
 
