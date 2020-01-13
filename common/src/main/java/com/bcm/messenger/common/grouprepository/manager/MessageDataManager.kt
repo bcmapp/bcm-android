@@ -582,15 +582,6 @@ object MessageDataManager {
         return getDao(accountContext)?.queryExistMessageByMids(gid, minMid, maxMid)?.toList()?: listOf()
     }
 
-    //
-    fun queryMinReadMessage(accountContext: AccountContext, gid: Long): GroupMessage? {
-        val groupList = getDao(accountContext)?.queryMinReadMessage(gid, 1)
-        if (groupList != null && groupList.size > 0) {
-            return groupList[0]
-        }
-        return null
-    }
-
     private fun notifyThreadUpdate(accountContext: AccountContext, gid: Long) {
         Repository.getThreadRepo(accountContext)?.updateByNewGroup(gid)
     }

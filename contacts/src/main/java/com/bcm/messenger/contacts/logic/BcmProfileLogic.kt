@@ -14,7 +14,6 @@ import com.bcm.messenger.common.core.AddressUtil
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.common.core.*
 import com.bcm.messenger.common.database.model.ProfileKeyModel
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
@@ -27,8 +26,6 @@ import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.IdentityUtil
 import com.bcm.messenger.utility.*
 import com.bcm.messenger.utility.Base64
-import com.bcm.messenger.utility.bcmhttp.exception.NoContentException
-import com.bcm.messenger.utility.bcmhttp.callback.FileDownCallback
 import com.bcm.messenger.utility.bcmhttp.exception.NoContentException
 import com.bcm.messenger.utility.bcmhttp.facade.AmeEmpty
 import com.bcm.messenger.utility.bcmhttp.facade.SyncHttpWrapper
@@ -45,7 +42,6 @@ import org.json.JSONObject
 import org.whispersystems.libsignal.IdentityKey
 import org.whispersystems.libsignal.ecc.DjbECPublicKey
 import org.whispersystems.signalservice.api.profiles.ISignalProfile
-import org.whispersystems.signalservice.api.push.exceptions.PushNetworkException
 import java.io.File
 import java.io.FileOutputStream
 import java.lang.ref.WeakReference
