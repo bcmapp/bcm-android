@@ -37,7 +37,6 @@ import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.setDrawableRight
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_group_setting_activity.*
-import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.lang.ref.WeakReference
 
@@ -162,7 +161,7 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_JOIN_CHECK).putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, mGroupModel.groupId()).navigation(this)
+            BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_JOIN_CHECK).putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, mGroupModel.groupId()).startBcmActivity(accountContext, this)
         }
 
         approval_joining_item.setOnClickListener {
