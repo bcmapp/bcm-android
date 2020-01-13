@@ -2,6 +2,7 @@ package com.bcm.messenger.chats.group.viewholder
 
 import android.text.Layout
 import android.text.StaticLayout
+import android.text.TextUtils
 import android.view.View
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.components.BigContentRecycleFragment
@@ -28,6 +29,7 @@ open class ChatMessageHolderAction(accountContext: AccountContext) : BaseChatHol
 
     companion object {
 
+        @Volatile
         private var BODY_MAX_WIDTH = 0
 
         fun getBodyMaxWidth(): Int {
@@ -65,7 +67,8 @@ open class ChatMessageHolderAction(accountContext: AccountContext) : BaseChatHol
 
         body.setOnClickListener(mMultiClickObserver)
 
-        val staticLayout = StaticLayout(body.text, body.paint, getBodyMaxWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
+        val staticLayout = StaticLayout(text, 0, text.length, body.paint, getBodyMaxWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false,
+                TextUtils.TruncateAt.END, getBodyMaxWidth())
         val w = ChatViewHolder.requestFitWidth(staticLayout)
         if (w > 0) {
             val lp = body.layoutParams

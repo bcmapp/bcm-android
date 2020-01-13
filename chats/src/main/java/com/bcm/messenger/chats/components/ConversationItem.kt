@@ -70,6 +70,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
 
         private const val TAG = "ConversationItem"
 
+        @Volatile
         private var BODY_MAX_WIDTH = 0
 
         fun getBodyMaxWidth(): Int {
@@ -413,13 +414,16 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
 
         bodyTextView?.let {
             interceptLink(it, messageRecord.isOutgoing())
-            val staticLayout = StaticLayout(it.text
-                    ?: "", it.paint, getBodyMaxWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
+            val text = it.text ?: ""
+            val staticLayout = StaticLayout(text, 0, text.length, it.paint, getBodyMaxWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false,
+                    TextUtils.TruncateAt.END, getBodyMaxWidth())
             val w = requestFitWidth(staticLayout)
-            val lp = it.layoutParams
-            if (lp != null) {
-                lp.width = w + it.paddingStart + it.paddingEnd
-                it.layoutParams = lp
+            if (w > 0) {
+                val lp = it.layoutParams
+                if (lp != null) {
+                    lp.width = w + it.paddingStart + it.paddingEnd
+                    it.layoutParams = lp
+                }
             }
         }
 
