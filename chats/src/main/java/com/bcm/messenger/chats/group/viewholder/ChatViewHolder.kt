@@ -466,7 +466,7 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
             ALog.i(TAG, "visitor can't showItemPopWindow")
             return
         }
-        val pinVisible = messageRecord.isSendSuccess && groupModel.myRole() == AmeGroupMemberInfo.OWNER
+        val pinVisible = (messageRecord.isSendSuccess || !messageRecord.isSendByMe) && groupModel.myRole() == AmeGroupMemberInfo.OWNER
         val isHistory = messageRecord is AmeHistoryMessageDetail
         val hasPin = pinVisible && groupModel.getGroupInfo().pinMid == messageRecord.serverIndex
         ConversationItemPopWindow.ItemPopWindowBuilder(context)

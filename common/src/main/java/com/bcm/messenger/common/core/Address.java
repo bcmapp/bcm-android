@@ -134,7 +134,7 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
 
     @Override
     public String toString() {
-        return context + "_" + address;
+        return address;
     }
 
     public String serialize() {
