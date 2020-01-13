@@ -137,16 +137,13 @@ object SwitchAccount {
                             .subscribe {
                                 AmePopup.loading.dismiss()
 
-                                if (AMELogin.isLogin) {
-                                    BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
-                                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                                            .startBcmActivity(AMELogin.majorContext)
-                                } else {
+                                if (!AMELogin.isLogin) {
                                     BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_SWITCHER)
-                                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                                            .navigation()
+                                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                            .navigation(activity)
+                                } else {
+                                    activity.finish()
                                 }
-                                activity.finish()
                             }
 
                 }).withCancelable(true)
