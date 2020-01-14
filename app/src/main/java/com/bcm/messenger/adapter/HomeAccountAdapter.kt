@@ -29,6 +29,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
     interface AdapterListener {
         fun onViewClickedClose()
         fun onAccountLoadSuccess()
+        fun onReloadSuccess()
         fun onResortSuccess()
         fun onViewClickLogin(uid: String)
         fun onViewClickDelete(uid: String)
@@ -113,7 +114,6 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
             position == lastActivePos -> view.positionChanged(centerPosition)
             position > lastActivePos -> view.positionChanged(rightPosition)
         }
-        (view as View).tag = Pair(position, account.account.uid)
 
         container.addView(view as View, ViewGroup.LayoutParams(width, height))
         views[position] = view
@@ -145,8 +145,15 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
         lastActivePos = currentPos
     }
 
-    fun getCurrentShownViews(): List<IProfileView> {
-        return views.values.toList()
+    fun refreshUI() {
+        views.values.forEach {
+            it.initView()
+            when {
+                it.pagePosition < lastActivePos -> it.positionChanged(leftPosition)
+                it.pagePosition == lastActivePos -> it.positionChanged(centerPosition)
+                it.pagePosition > lastActivePos -> it.positionChanged(rightPosition)
+            }
+        }
     }
 
     fun getCurrentView(currentPos: Int): IProfileView? {
@@ -238,6 +245,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
                         listener?.onAccountLoadSuccess()
                     } else {
                         notifyDataSetChanged()
+                        listener?.onReloadSuccess()
                     }
                 }, {
                     ALog.e(TAG, "Load accounts error", it)

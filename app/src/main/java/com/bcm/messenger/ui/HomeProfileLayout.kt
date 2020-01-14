@@ -17,6 +17,8 @@ import com.bcm.messenger.R
 import com.bcm.messenger.adapter.HomeAccountAdapter
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.event.NewAccountAddedEvent
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.*
@@ -29,6 +31,9 @@ import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.home_profile_layout.view.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 /**
  * Created by Kin on 2019/12/30
@@ -47,6 +52,30 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     private val statusBarHeight = context.getStatusBarHeight()
     private var listener: HomeProfileListener? = null
     private val viewPagerAdapter = HomeAccountAdapter(context)
+
+    private var toScrollUid = ""
+    private var isStop = false
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        EventBus.getDefault().unregister(this)
+    }
+
+    fun onResume() {
+        isStop = false
+        if (toScrollUid.isNotEmpty()) {
+            scrollToSpecificUser()
+        }
+    }
+
+    fun onStop() {
+        isStop = true
+    }
 
     private fun showAnimation() = AnimatorSet().apply {
         val updateListener = ValueAnimator.AnimatorUpdateListener {
@@ -120,6 +149,12 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
                 } else {
                     viewPagerAdapter.setActiveView(1)
                     home_profile_view_pager.setCurrentItem(1, false)
+                }
+            }
+
+            override fun onReloadSuccess() {
+                if (toScrollUid.isNotEmpty()) {
+                    scrollToSpecificUser()
                 }
             }
 
@@ -240,14 +275,15 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         AmeLoginLogic.saveBackupFromExportModelWithWarning(qrCode) { accountId ->
             if (!accountId.isNullOrEmpty()){
                 ALog.i(TAG, "Has QR code")
-                val index = viewPagerAdapter.checkAccountIsLogin(accountId)
+                val index = viewPagerAdapter.checkIndex(accountId)
+                toScrollUid = accountId
                 if (index == -1) {
-                    viewPagerAdapter.loadAccounts()
-                    if (toLogin) {
+                    reloadAccountList()
+                    if (toLogin && !AMELogin.accountContext(accountId).isLogin) {
                         loginAccount(accountId)
                     }
                 } else {
-                    home_profile_view_pager.currentItem = index
+                    scrollToSpecificUser()
                 }
             }
         }
@@ -258,10 +294,6 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     fun checkAccountLogin(): Boolean {
-//        if (viewPagerAdapter.views.isEmpty()) {
-//            home_profile_view_pager.setCurrentItem(0, false)
-//            viewPagerAdapter.setActiveView(0)
-//        }
         return viewPagerAdapter.getCurrentView(home_profile_view_pager.currentItem)?.isLogin ?: false
     }
 
@@ -321,5 +353,28 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
             return false
         }
         return true
+    }
+
+    private fun scrollToSpecificUser() {
+        val index = viewPagerAdapter.checkIndex(toScrollUid)
+        if (index > 0) {
+            ALog.i(TAG, "Scroll to index $index")
+            viewPagerAdapter.setActiveView(index)
+            if (!isStop) {
+                home_profile_view_pager.setCurrentItem(index, false)
+                toScrollUid = ""
+                viewPagerAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(event: NewAccountAddedEvent) {
+        ALog.i(TAG, "On event new account add")
+        toScrollUid = event.newAccountUid
+        val ac = AMELogin.accountContext(event.newAccountUid)
+        if (!ac.isLogin) {
+            reloadAccountList()
+        }
     }
 }

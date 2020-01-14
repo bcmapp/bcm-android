@@ -101,7 +101,7 @@ class ChatForwardDialog(private val accountContext: AccountContext) : DialogFrag
                             ?.into(forward_image_preview)
                 } else {
                     val ms = masterSecret
-                    if (ms != null && uri != null) {
+                    if (uri != null) {
                         glideRequests?.asBitmap()
                                 ?.load(DecryptableStreamUriLoader.DecryptableUri(ms, uri))
                                 ?.error(R.drawable.common_image_broken_img)
@@ -135,7 +135,7 @@ class ChatForwardDialog(private val accountContext: AccountContext) : DialogFrag
                     }
                 } else {
                     val ms = masterSecret
-                    if (ms != null && uri != null) {
+                    if (uri != null) {
                         glideRequests?.asBitmap()
                                 ?.load(DecryptableStreamUriLoader.DecryptableUri(ms, uri))
                                 ?.error(R.drawable.common_video_place_square_img)
@@ -190,7 +190,7 @@ class ChatForwardDialog(private val accountContext: AccountContext) : DialogFrag
             1 -> {
                 if (recipients[0].isGroupRecipient) {
                     val gid = recipients[0].groupId
-                    forward_single_avatar.showGroupAvatar(masterSecret.accountContext, gid)
+                    forward_single_avatar.showGroupAvatar(accountContext, gid)
                     val groupInfo = GroupLogic.get(accountContext).getGroupInfo(gid)
                     forward_single_name.text = groupInfo?.displayName ?: ""
                 } else {
@@ -242,18 +242,18 @@ class ChatForwardDialog(private val accountContext: AccountContext) : DialogFrag
             forwardHistory = true
             forward_mode_text.isActivated = true
             if (dialogType == FORWARD_GROUP_MULTIPLE) {
-                forward_history_layout.setHistoryData(masterSecret.accountContext, groupMessageList, true)
+                forward_history_layout.setHistoryData(accountContext, groupMessageList, true)
             } else {
-                forward_history_layout.setHistoryData(masterSecret.accountContext, privateMessageList, true)
+                forward_history_layout.setHistoryData(accountContext, privateMessageList, true)
             }
         } else {
             forward_mode_text.setDrawableLeft(R.drawable.chats_forward_unchecked)
             forwardHistory = false
             forward_mode_text.isActivated = false
             if (dialogType == FORWARD_GROUP_MULTIPLE) {
-                forward_history_layout.setHistoryData(masterSecret.accountContext, groupMessageList, false)
+                forward_history_layout.setHistoryData(accountContext, groupMessageList, false)
             } else {
-                forward_history_layout.setHistoryData(masterSecret.accountContext, privateMessageList, false)
+                forward_history_layout.setHistoryData(accountContext, privateMessageList, false)
             }
         }
     }
@@ -278,7 +278,7 @@ class ChatForwardDialog(private val accountContext: AccountContext) : DialogFrag
     private inner class AvatarAdapter : RecyclerView.Adapter<MultiAvatarViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MultiAvatarViewHolder {
             val view = layoutInflater.inflate(R.layout.chats_forward_multi_avatar, parent, false)
-            return MultiAvatarViewHolder(masterSecret.accountContext, view)
+            return MultiAvatarViewHolder(accountContext, view)
         }
 
         override fun getItemCount() = recipients.size

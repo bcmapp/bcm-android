@@ -5,7 +5,6 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getScreenWidth
 import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.utility.logger.ALog
 
 /**
  * Created by Kin on 2020/1/2
@@ -55,8 +54,6 @@ interface IProfileView {
     fun setUnreadCount(unreadCount: Int)
 
     fun positionChanged(position: Float) {
-        ALog.i("IProfileView", "position = $position")
-
         val innerPos = when {
             position < leftPosition -> leftPosition
             position > rightPosition -> rightPosition

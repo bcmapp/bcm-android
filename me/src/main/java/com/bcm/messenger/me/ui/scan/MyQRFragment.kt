@@ -15,10 +15,7 @@ import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.common.utils.BcmFileUtils
-import com.bcm.messenger.common.utils.createScreenShot
-import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.AppContextHolder
@@ -104,7 +101,7 @@ class MyQRFragment : BaseFragment() {
                             ALog.e(TAG, "initQrCode error", it)
                             qr_code_image?.setImageDrawable(null)
                         })
-            }else {
+            } else {
                 AmeModuleCenter.contact(accountContext)?.updateShareLink(AppContextHolder.APP_CONTEXT, recipient) {
                 }
             }
@@ -114,7 +111,9 @@ class MyQRFragment : BaseFragment() {
     private fun saveQRCode() {
         val bitmap = qr_code_layout.createScreenShot()
         Observable.create<String> {
-            val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM-QR-Code.jpg", AmeFileUploader.DCIM_DIRECTORY)
+            val path = BcmFileUtils.saveBitmap2File(bitmap,
+                    "BCM-QR-Code-${DateUtils.formatDefaultTime(System.currentTimeMillis())}.jpg",
+                    AmeFileUploader.DCIM_DIRECTORY)
             if (path == null) {
                 it.onError(Exception("Save QR code error"))
                 return@create
@@ -123,13 +122,12 @@ class MyQRFragment : BaseFragment() {
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError {
-                    AmePopup.result.failure(activity, getString(R.string.me_save_fail), true)
-                }
-                .subscribe {
+                .subscribe({
                     MediaScannerConnection.scanFile(activity, arrayOf(it), arrayOf(BcmFileUtils.IMAGE_PNG), null)
                     AmePopup.result.succeed(activity, getString(R.string.me_save_success), true)
-                }
+                }, {
+                    AmePopup.result.failure(activity, getString(R.string.me_save_fail), true)
+                })
     }
 
     private fun forwardToChats() {
@@ -144,10 +142,10 @@ class MyQRFragment : BaseFragment() {
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { }
-                .subscribe {
+                .subscribe({
                     BcmRouter.getInstance().get(ARouterConstants.Activity.FORWARD).putString("__uri", it).startBcmActivity(accountContext)
-                }
+                }, {
+                })
     }
 
     private fun shareToOtherApp() {
@@ -162,15 +160,15 @@ class MyQRFragment : BaseFragment() {
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { }
-                .subscribe {
+                .subscribe({
                     val intent = Intent(Intent.ACTION_SEND).apply {
                         type = "image/*"
                         putExtra(Intent.EXTRA_STREAM, it)
                     }
                     val shareIntent = Intent.createChooser(intent, getString(R.string.me_backup_share_to))
                     startActivity(shareIntent)
-                }
+                }, {
+                })
     }
 
 }

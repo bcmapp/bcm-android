@@ -171,6 +171,8 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        home_profile_layout.onResume()
+
         checkPinUpgrade()
 
         if (!checkAdHocMode()) {
@@ -188,6 +190,11 @@ class HomeActivity : AccountSwipeBaseActivity() {
             AmeModuleCenter.contact(accountContext)?.checkNeedDownloadAvatarWithAll(accountRecipient)
         }
         unreadObserver.onResume()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        home_profile_layout.onStop()
     }
 
     override fun onPause() {
@@ -471,6 +478,9 @@ class HomeActivity : AccountSwipeBaseActivity() {
         home_pull_down_layout.setCallback(callback)
 
         home_toolbar_avatar.setOnClickListener {
+            home_pull_down_layout.expandTopViewAndCallback()
+        }
+        home_toolbar_unread_view.setOnClickListener {
             home_pull_down_layout.expandTopViewAndCallback()
         }
 

@@ -233,6 +233,7 @@ class SchemeLaunchHelper(val context: Context) {
         intent.component = ComponentName(context, SystemShareActivity::class.java)
         intent.putExtra(ARouterConstants.PARAM.PARAM_ENTER_ANIM, R.anim.common_slide_from_bottom_fast)
         intent.putExtra(ARouterConstants.PARAM.PARAM_EXIT_ANIM, R.anim.common_slide_to_bottom_fast)
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         context.startBcmActivity(accountContext, intent)
     }
 
