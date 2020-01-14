@@ -82,6 +82,7 @@ class HomeAddAccountView @JvmOverloads constructor(context: Context,
 
     override fun initView() {
         home_add_view_add.setOnClickListener {
+            ALog.i(TAG, "Click add account")
             if (!isActive) {
                 listener?.onClickToSwipe(pagePosition)
                 return@setOnClickListener

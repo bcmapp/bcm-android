@@ -12,7 +12,6 @@ import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.RxBus
-import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -63,12 +62,11 @@ class NewScanActivity : AppCompatActivity() {
         intent.putExtra(ARouterConstants.PARAM.PARAM_EXIT_ANIM, R.anim.common_slide_to_bottom_fast)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_scan)
-        RxBus.subscribe<ScanResultEvent>(TAG) {scanResult ->
+        RxBus.subscribe<ScanResultEvent>(TAG) { scanResult ->
             handleScanResult(scanResult.result)
         }
-        initFragment()
 
-        window.setStatusBarLightMode()
+        initFragment()
     }
 
     override fun onBackPressed() {
@@ -111,9 +109,7 @@ class NewScanActivity : AppCompatActivity() {
                 tran.add(R.id.scan_container_root, ScanWithCodeContainerFragment().apply {
                     arguments = Bundle().apply {
                         putSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT))
-
                     }
-
                 })
             }
             else -> {
@@ -131,19 +127,17 @@ class NewScanActivity : AppCompatActivity() {
                         AmeDispatcher.mainThread.dispatch({
                             finish()
                         }, 500)
-                    }else {
+                    } else {
                         RxBus.post(ScanResumeEvent())
                     }
                 }
-
-            }else {
+            } else {
                 val result = Intent()
                 result.putExtra(ARouterConstants.PARAM.SCAN.SCAN_RESULT, scanResult.text)
                 setResult(Activity.RESULT_OK, result)
                 finish()
             }
-
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "scan result error", ex)
         }
     }

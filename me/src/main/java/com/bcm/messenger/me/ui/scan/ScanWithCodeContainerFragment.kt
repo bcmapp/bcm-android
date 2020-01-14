@@ -11,6 +11,7 @@ import androidx.viewpager.widget.ViewPager
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.me.R
 import kotlinx.android.synthetic.main.me_fragment_container_scan_and_code.*
 
@@ -51,7 +52,7 @@ class ScanWithCodeContainerFragment : BaseFragment() {
             container_pager.setCurrentItem(1, false)
         }
 
-        val fms = listOf<Fragment>(ScanFragment().apply {
+        val fms = listOf(ScanFragment().apply {
             arguments = Bundle().apply {
                 putAll(this@ScanWithCodeContainerFragment.arguments)
             }
@@ -90,6 +91,8 @@ class ScanWithCodeContainerFragment : BaseFragment() {
         val selectIndex = arguments?.getInt(ARouterConstants.PARAM.SCAN.TAB) ?: 0
         selectTab(selectIndex)
         container_pager.setCurrentItem(selectIndex, false)
+
+        activity?.window?.setStatusBarLightMode()
     }
 
     private fun selectTab(index: Int) {

@@ -115,7 +115,6 @@ class PinInputActivity : AccountSwipeBaseActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        disableStatusBarLightMode()
         super.onCreate(savedInstanceState)
         setSwipeBackEnable(false)
 

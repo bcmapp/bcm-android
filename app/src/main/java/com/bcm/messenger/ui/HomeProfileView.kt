@@ -27,6 +27,7 @@ import com.bcm.messenger.ui.widget.leftPosition
 import com.bcm.messenger.ui.widget.rightPosition
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.home_profile_view.view.*
 import kotlin.math.min
@@ -121,6 +122,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         }
 
         home_profile_avatar.setOnClickListener {
+            ALog.i(TAG, "Click avatar")
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
@@ -135,15 +137,18 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             }
         }
         home_profile_login.setOnClickListener {
+            ALog.i(TAG, "Click login")
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
             listener?.onClickLogin(recipient.address.serialize())
         }
         home_profile_delete.setOnClickListener {
+            ALog.i(TAG, "Click delete")
             listener?.onClickDelete(recipient.address.serialize())
         }
         home_profile_qr.setOnClickListener {
+            ALog.i(TAG, "Click QR")
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
@@ -153,12 +158,14 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             })
         }
         home_profile_more.setOnClickListener {
+            ALog.i(TAG, "Click more button")
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
             context.startBcmActivity(accountItem.accountContext, Intent(context, SettingActivity::class.java))
         }
         home_profile_wallet_icon.setOnClickListener {
+            ALog.i(TAG, "Click wallet")
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
@@ -170,6 +177,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
                     .startBcmActivity(accountItem.accountContext)
         }
         home_profile_vault_icon.setOnClickListener {
+            ALog.i(TAG, "Click data vault")
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
@@ -179,6 +187,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             AmeModuleCenter.user(accountItem.accountContext)?.gotoDataNote(context, accountItem.accountContext)
         }
         home_profile_air_chat_icon.setOnClickListener {
+            ALog.i(TAG, "Click air chat")
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
@@ -311,6 +320,9 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
         home_profile_avatar_layout.layoutParams = (home_profile_avatar_layout.layoutParams as LayoutParams).apply {
             this.topMargin = dp60 + topMargin / 2
         }
+        home_profile_func_layout.layoutParams = (home_profile_func_layout.layoutParams as LayoutParams).apply {
+            this.bottomMargin = -topMargin / 2
+        }
     }
 
     override fun resetMargin() {
@@ -321,6 +333,9 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
 
         home_profile_avatar_layout.layoutParams = (home_profile_avatar_layout.layoutParams as LayoutParams).apply {
             this.topMargin = dp60
+        }
+        home_profile_func_layout.layoutParams = (home_profile_func_layout.layoutParams as LayoutParams).apply {
+            this.bottomMargin = 0
         }
 
         if (!isActive) {

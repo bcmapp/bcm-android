@@ -18,29 +18,38 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/tabless_gif"
+    <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/tabless_phone_frame"
         app:layout_constraintEnd_toEndOf="@+id/tabless_phone_frame"
         app:layout_constraintStart_toStartOf="@+id/tabless_phone_frame"
-        app:layout_constraintTop_toTopOf="@+id/tabless_phone_frame"
-        app:srcCompat="@drawable/home_tabless_intro_gif" />
+        app:layout_constraintTop_toTopOf="@+id/tabless_phone_frame">
+
+        <ImageView
+            android:id="@+id/tabless_gif"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/home_tabless_intro_gif" />
+
+    </androidx.cardview.widget.CardView>
 
     <ImageView
         android:id="@+id/tabless_phone_frame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="60dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="60dp"
         android:layout_marginBottom="40dp"
         app:layout_constraintBottom_toTopOf="@+id/tabless_confirm"
+        app:layout_constraintDimensionRatio="1:2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tabless_title"
