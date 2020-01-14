@@ -86,10 +86,10 @@ class ChatHistoryActivity : AccountSwipeBaseActivity() {
                 return when (viewType) {
                     R.layout.chats_tip_message_item -> SystemTipsViewHolder(accountContext, inflater.inflate(viewType, parent, false))
                     R.layout.chats_group_conversation_sent_item -> OutgoingHistoryViewHolder(accountContext, inflater.inflate(viewType, parent, false)).apply {
-                        setCanLongClick(false)
+                        setCanLongClick(true)
                     }
                     else -> IncomeHistoryViewHolder(accountContext, inflater.inflate(viewType, parent, false)).apply {
-                        setCanLongClick(false)
+                        setCanLongClick(true)
                     }
                 }
 

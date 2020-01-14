@@ -461,14 +461,15 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
     }
 
     private fun showItemPopWindow(context: Context, anchorView: View, messageRecord: AmeGroupMessageDetail) {
-        val groupModel = GroupLogic.get(accountContext).getModel(messageRecord.gid) ?: return
-        if (groupModel.myRole() == AmeGroupMemberInfo.VISITOR) {
+        val groupModel = GroupLogic.get(accountContext).getModel(messageRecord.gid)
+        if (null != groupModel && groupModel.myRole() == AmeGroupMemberInfo.VISITOR) {
             ALog.i(TAG, "visitor can't showItemPopWindow")
             return
         }
-        val pinVisible = (messageRecord.isSendSuccess || !messageRecord.isSendByMe) && groupModel.myRole() == AmeGroupMemberInfo.OWNER
+
+        val pinVisible = (messageRecord.isSendSuccess || !messageRecord.isSendByMe) && null != groupModel && groupModel.myRole() == AmeGroupMemberInfo.OWNER
         val isHistory = messageRecord is AmeHistoryMessageDetail
-        val hasPin = pinVisible && groupModel.getGroupInfo().pinMid == messageRecord.serverIndex
+        val hasPin = pinVisible && (null != groupModel && groupModel.getGroupInfo().pinMid == messageRecord.serverIndex)
         ConversationItemPopWindow.ItemPopWindowBuilder(context)
                 .withAnchorView(anchorView)
                 .withForwardable(messageRecord.isForwardable && !isHistory)
