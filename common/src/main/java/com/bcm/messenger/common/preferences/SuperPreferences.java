@@ -2,6 +2,7 @@ package com.bcm.messenger.common.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 
@@ -29,6 +30,11 @@ public class SuperPreferences {
     private static final String HEIGHT_KEYBOARD_LANDSCAPE = "height_keyboard_landscape";
     private static final String TABLESS_INTRODUCTION_FLAG = "tabless_introduction_flag";
     private static final String TABLESS_ACCOUNT_SWITCH_FLAG = "tabless_account_switch_flag";
+
+    public static final String RINGTONE_PREF = "pref_key_ringtone";
+    private static final String VIBRATE_PREF = "pref_key_vibrate";
+    private static final String NOTIFICATION_PREF = "pref_key_enable_notifications";
+    public static final String SCREEN_SECURITY_PREF = "pref_screen_security";
 
 
     public static final String METRICS = "metrics";
@@ -179,5 +185,37 @@ public class SuperPreferences {
 
     public static void setTablessIntroductionFlag(Context context) {
         context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putBoolean(TABLESS_ACCOUNT_SWITCH_FLAG, true).apply();
+    }
+
+    public static void setScreenSecurityEnabled(Context context, boolean value) {
+        context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putBoolean(SCREEN_SECURITY_PREF, value).apply();
+    }
+
+    public static boolean isScreenSecurityEnabled(Context context) {
+        return context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).getBoolean(SCREEN_SECURITY_PREF, false);
+    }
+
+    public static boolean isNotificationsEnabled(Context context) {
+        return context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).getBoolean(NOTIFICATION_PREF, true);
+    }
+
+    public static void setNotificationsEnabled(Context context, boolean value) {
+        context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putBoolean(NOTIFICATION_PREF, value).apply();
+    }
+
+    public static String getNotificationRingtone(Context context) {
+        return context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).getString(RINGTONE_PREF, Settings.System.DEFAULT_NOTIFICATION_URI.toString());
+    }
+
+    public static void setNotificationRingtone(Context context, String ringtoneUri) {
+        context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putString(RINGTONE_PREF, ringtoneUri).apply();
+    }
+
+    public static boolean isNotificationVibrateEnabled(Context context) {
+        return context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).getBoolean(VIBRATE_PREF, true);
+    }
+
+    public static void setNotificationVibrateEnabled(Context context, boolean value) {
+        context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putBoolean(VIBRATE_PREF, value).apply();
     }
 }

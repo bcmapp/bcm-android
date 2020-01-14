@@ -7,7 +7,7 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
-import com.bcm.messenger.common.preferences.TextSecurePreferences
+import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
@@ -94,7 +94,7 @@ open class AccountSwipeBaseActivity : SwipeBaseActivity() {
     private fun isScreenSecurityEnabled(context: Context): Boolean {
         return try {
             if (AppUtil.isMainProcess()) {
-                TextSecurePreferences.isScreenSecurityEnabled(accountContext)
+                SuperPreferences.isScreenSecurityEnabled(context)
             } else {
                 ApplicationService.impl?.isScreenSecurityEnabled == true
             }

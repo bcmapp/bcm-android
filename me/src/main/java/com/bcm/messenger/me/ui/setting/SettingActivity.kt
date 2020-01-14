@@ -10,7 +10,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AmeNotification
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.preferences.SuperPreferences
-import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.accountmodule.IChatModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -189,8 +188,8 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
                 return@setOnClickListener
             }
 
-            val newSecureEnable = !TextSecurePreferences.isScreenSecurityEnabled(accountContext)
-            TextSecurePreferences.setScreenSecurityEnabled(accountContext, newSecureEnable)
+            val newSecureEnable = !SuperPreferences.isScreenSecurityEnabled(this)
+            SuperPreferences.setScreenSecurityEnabled(this, newSecureEnable)
             setting_screen_secure.setSwitchStatus(newSecureEnable)
             updateScreenshotSecurity()
             if (newSecureEnable) {
@@ -244,7 +243,7 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
             setting_storage?.setTip(StringAppearanceUtil.formatByteSizeString(it.storageUsed()), contentColor = tipColor)
         }
 
-        setting_screen_secure.setSwitchStatus(TextSecurePreferences.isScreenSecurityEnabled(accountContext))
+        setting_screen_secure.setSwitchStatus(SuperPreferences.isScreenSecurityEnabled(this))
 
         val weakThis = WeakReference(this)
         BcmUpdateUtil.checkUpdate { hasUpdate, _, _ ->

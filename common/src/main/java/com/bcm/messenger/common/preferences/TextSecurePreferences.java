@@ -2,8 +2,6 @@ package com.bcm.messenger.common.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.provider.Settings;
-import android.text.TextUtils;
 
 import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
@@ -26,11 +24,6 @@ public class TextSecurePreferences {
     private static final String TAG = TextSecurePreferences.class.getSimpleName();
 
     public static final String THREAD_TRIM_LENGTH = "pref_trim_length";
-
-    public static final String RINGTONE_PREF = "pref_key_ringtone";
-    private static final String VIBRATE_PREF = "pref_key_vibrate";
-    private static final String NOTIFICATION_PREF = "pref_key_enable_notifications";
-    public static final String SCREEN_SECURITY_PREF = "pref_screen_security";
 
     private static final String THREAD_TRIM_ENABLED = "pref_trim_threads";
 
@@ -163,38 +156,6 @@ public class TextSecurePreferences {
 
     public static String getSignalingKey(AccountContext accountContext) {
         return getStringPreference(accountContext, SIGNALING_KEY_PREF, "");
-    }
-
-    public static void setScreenSecurityEnabled(AccountContext accountContext, boolean value) {
-        setBooleanPreference(accountContext, SCREEN_SECURITY_PREF, value);
-    }
-
-    public static boolean isScreenSecurityEnabled(AccountContext accountContext) {
-        return getBooleanPreference(accountContext, SCREEN_SECURITY_PREF, false);
-    }
-
-    public static boolean isNotificationsEnabled(AccountContext accountContext) {
-        return getBooleanPreference(accountContext, NOTIFICATION_PREF, true);
-    }
-
-    public static void setNotificationsEnabled(AccountContext accountContext, boolean value) {
-        setBooleanPreference(accountContext, NOTIFICATION_PREF, value);
-    }
-
-    public static String getNotificationRingtone(AccountContext accountContext) {
-        return getStringPreference(accountContext, RINGTONE_PREF, Settings.System.DEFAULT_NOTIFICATION_URI.toString());
-    }
-
-    public static void setNotificationRingtone(AccountContext accountContext, String ringtoneUri) {
-        setStringPreference(accountContext, RINGTONE_PREF, ringtoneUri);
-    }
-
-    public static boolean isNotificationVibrateEnabled(AccountContext accountContext) {
-        return getBooleanPreference(accountContext, VIBRATE_PREF, true);
-    }
-
-    public static void setNotificationVibrateEnabled(AccountContext accountContext, boolean value) {
-        setBooleanPreference(accountContext, VIBRATE_PREF, value);
     }
 
 

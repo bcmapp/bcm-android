@@ -16,6 +16,7 @@ import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.deprecated.RecipientDatabase
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
+import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -244,7 +245,7 @@ object AmePushProcess {
     fun processPush(accountContext: AccountContext, notify: BcmData?) {
 
         if (AMELogin.isLogin && null != notify) {
-            if (TextSecurePreferences.isNotificationsEnabled(accountContext) &&
+            if (SuperPreferences.isNotificationsEnabled(AppContextHolder.APP_CONTEXT) &&
                     TextSecurePreferences.isDatabaseMigrated(accountContext)) {
                 Observable.create<Unit> {
                     if (needShowOffline()) {
@@ -467,14 +468,14 @@ object AmePushProcess {
         if (System.currentTimeMillis() - lastNotifyTime > 6000) {
             lastNotifyTime = System.currentTimeMillis()
 
-            val defaultRingtone = TextSecurePreferences.getNotificationRingtone(accountContext)
+            val defaultRingtone = SuperPreferences.getNotificationRingtone(AppContextHolder.APP_CONTEXT)
             if (ringtone != null) {
                 builder.setSound(ringtone)
             } else if (!defaultRingtone.isNullOrEmpty()) {
                 builder.setSound(Uri.parse(defaultRingtone))
             }
 
-            val defaultVibrate = TextSecurePreferences.isNotificationVibrateEnabled(accountContext)
+            val defaultVibrate = SuperPreferences.isNotificationVibrateEnabled(AppContextHolder.APP_CONTEXT)
             if ((vibrate == RecipientDatabase.VibrateState.ENABLED || vibrate == RecipientDatabase.VibrateState.DEFAULT) && defaultVibrate) {
                 builder.setDefaults(Notification.DEFAULT_VIBRATE)
             }
@@ -492,7 +493,7 @@ object AmePushProcess {
                     return
                 }
 
-                if (TextSecurePreferences.isNotificationsEnabled(accountContext)) {
+                if (SuperPreferences.isNotificationsEnabled(AppContextHolder.APP_CONTEXT)) {
                     setAlarm(accountContext, builder, recipient.ringtone, recipient.vibrate ?: RecipientDatabase.VibrateState.DEFAULT)
                 }
 
