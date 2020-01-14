@@ -19,7 +19,7 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.logic.AmeLoginLogic
-import com.bcm.messenger.me.ui.scan.NewScanActivity
+import com.bcm.messenger.me.ui.qrcode.BcmMyQRCodeActivity
 import com.bcm.messenger.me.ui.setting.SettingActivity
 import com.bcm.messenger.ui.widget.IProfileView
 import com.bcm.messenger.ui.widget.centerPosition
@@ -152,10 +152,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            it.context.startBcmActivity(accountItem.accountContext, Intent(it.context, NewScanActivity::class.java).apply {
-                putExtra(ARouterConstants.PARAM.SCAN.SCAN_TYPE, ARouterConstants.PARAM.SCAN.TYPE_CONTACT)
-                putExtra(ARouterConstants.PARAM.SCAN.HANDLE_DELEGATE, true)
-            })
+            it.context.startBcmActivity(accountItem.accountContext, Intent(it.context, BcmMyQRCodeActivity::class.java))
         }
         home_profile_more.setOnClickListener {
             ALog.i(TAG, "Click more button")
