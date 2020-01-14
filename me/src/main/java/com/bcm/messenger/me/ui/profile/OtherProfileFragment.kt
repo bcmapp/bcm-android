@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.Address
@@ -16,7 +17,9 @@ import com.bcm.messenger.common.ui.CommonSettingItem
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
+import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.me.R
@@ -104,6 +107,16 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
             handleReset()
         }
 
+        profile_id_copy.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+
+            AppUtil.saveCodeToBoard(context, recipient.address.serialize())
+            AmePopup.result.succeed(it.context as FragmentActivity, getString(R.string.common_copied))
+        }
+
+        profile_id_content.text = recipient.address.serialize()
 
         profile_title_bar?.setCenterText(getString(R.string.me_local_profile_title))
         profile_name_item?.showRightIcon(CommonSettingItem.RIGHT_NONE)

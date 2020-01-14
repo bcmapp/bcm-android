@@ -79,6 +79,43 @@
         app:layout_constraintTop_toBottomOf="@id/profile_photo_item" />
 
     <LinearLayout
+        android:id="@+id/profile_account_uid"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_name_item"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:textSize="17sp"
+            android:textColor="@color/common_color_black"
+            android:text="ID"/>
+        <TextView
+            android:id="@+id/profile_id_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="@color/common_color_black_30"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/profile_id_copy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/common_color_379BFF"
+            android:padding="15dp"
+            android:text="@string/common_invite_share_copy"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/profile_display_control_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -90,7 +127,7 @@
         android:background="@drawable/common_item_ripple_bg"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_name_item">
+        app:layout_constraintTop_toBottomOf="@id/profile_account_uid">
 
         <TextView
             android:id="@+id/profile_display_head"
