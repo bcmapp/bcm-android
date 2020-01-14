@@ -31,6 +31,7 @@ import com.bcm.messenger.utility.bcmhttp.facade.AmeEmpty
 import com.bcm.messenger.utility.bcmhttp.facade.SyncHttpWrapper
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.utility.network.NetworkUtil
 import com.bcm.messenger.utility.proguard.NotGuard
 import com.example.bleserver.Base62
 import io.reactivex.Observable
@@ -38,6 +39,7 @@ import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import org.json.JSONException
 import org.json.JSONObject
 import org.whispersystems.libsignal.IdentityKey
 import org.whispersystems.libsignal.ecc.DjbECPublicKey
@@ -242,8 +244,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                     val privacyProfile = recipient.privacyProfile
                     if (recipient.needRefreshProfile() || (if (forName) privacyProfile.nameKey.isNullOrEmpty() else privacyProfile.avatarKey.isNullOrEmpty())) {
                         getProfiles(listOf(TaskData(recipient, TYPE_PROFILE, true)))
-                    }
-                    else {
+                    } else {
                         Observable.just(true)
                     }
                 }
@@ -256,26 +257,26 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .flatMap { toUpload ->
-            val recipient = handledRecipient.resolve()
-            val privacyProfile = recipient.privacyProfile
-            if (toUpload) {
-                val encryptName = getPrivacyContent(name, privacyProfile.nameKey, privacyProfile.version)
-                ALog.d(TAG, "address: ${handledRecipient.address}, nick: $name, setEncryptName: $encryptName")
+                    val recipient = handledRecipient.resolve()
+                    val privacyProfile = recipient.privacyProfile
+                    if (toUpload) {
+                        val encryptName = getPrivacyContent(name, privacyProfile.nameKey, privacyProfile.version)
+                        ALog.d(TAG, "address: ${handledRecipient.address}, nick: $name, setEncryptName: $encryptName")
 
-                val path = String.format(UPLOAD_ENCRYPT_NAME_PATH, URLEncoder.encode(encryptName))
-                RxIMHttp.get(mAccountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(path), "", AmeEmpty::class.java)
-                        .subscribeOn(AmeDispatcher.ioScheduler)
-                        .observeOn(AmeDispatcher.ioScheduler)
-                        .map {
-                            privacyProfile.name = name
-                            privacyProfile.encryptedName = encryptName
-                            Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, privacyProfile)
-                            true
-                        }
-            } else {
-                Observable.just(false)
-            }
-        }.observeOn(AndroidSchedulers.mainThread())
+                        val path = String.format(UPLOAD_ENCRYPT_NAME_PATH, URLEncoder.encode(encryptName))
+                        RxIMHttp.get(mAccountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(path), "", AmeEmpty::class.java)
+                                .subscribeOn(AmeDispatcher.ioScheduler)
+                                .observeOn(AmeDispatcher.ioScheduler)
+                                .map {
+                                    privacyProfile.name = name
+                                    privacyProfile.encryptedName = encryptName
+                                    Repository.getRecipientRepo(mAccountContext)?.setPrivacyProfile(recipient, privacyProfile)
+                                    true
+                                }
+                    } else {
+                        Observable.just(false)
+                    }
+                }.observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     callback.invoke(it)
                     if (it) {
@@ -496,7 +497,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                 .flatMap {
                     if (it) {
                         run()
-                    }else {
+                    } else {
                         Observable.just(false)
                     }
                 }
@@ -766,24 +767,24 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         r.privacyProfile.let {
             val hdNeed = !it.avatarKey.isNullOrEmpty() && (it.isAvatarHdOld || (!it.encryptedAvatarHD.isNullOrEmpty() && it.avatarHDUri.isNullOrEmpty()))
             val ldNeed = !it.avatarKey.isNullOrEmpty() && (it.isAvatarLdOld || (!it.encryptedAvatarLD.isNullOrEmpty() && it.avatarLDUri.isNullOrEmpty()))
-            val targetType = when(type) {
+            val targetType = when (type) {
                 TYPE_AVATAR_BOTH -> if (hdNeed && ldNeed) {
                     TYPE_AVATAR_BOTH
-                }else if (hdNeed) {
+                } else if (hdNeed) {
                     TYPE_AVATAR_HD
-                }else if (ldNeed) {
+                } else if (ldNeed) {
                     TYPE_AVATAR_LD
-                }else {
+                } else {
                     null
                 }
                 TYPE_AVATAR_HD -> if (hdNeed) {
                     type
-                }else {
+                } else {
                     null
                 }
                 TYPE_AVATAR_LD -> if (ldNeed) {
                     type
-                }else {
+                } else {
                     null
                 }
                 else -> null
@@ -854,8 +855,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                     ALog.d(TAG, "checkProfileKeyCompleteOrUpload nameKey: ${privacyProfile.nameKey}")
                     keyUpload = true
                 }
-            }
-            else {
+            } else {
                 if (privacyProfile.avatarKey.isNullOrEmpty()) {
                     val oneTimeKeyPair = BCMPrivateKeyUtils.generateKeyPair()
                     val avatarKey = Base64.encodeBytes(BCMEncryptUtils.calculateMySelfAgreementKey(mAccountContext, oneTimeKeyPair.privateKey.serialize()))
@@ -871,7 +871,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                     if (forName) {
                         privacyProfile.nameKey = ""
                         privacyProfile.namePubKey = ""
-                    }else {
+                    } else {
                         privacyProfile.avatarKey = ""
                         privacyProfile.avatarPubKey = ""
                     }
@@ -891,15 +891,15 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         return true
     }
 
-    private fun downloadProfileKeys(context:Context, recipient: Recipient, privacyProfile: PrivacyProfile): Boolean {
+    private fun downloadProfileKeys(context: Context, recipient: Recipient, privacyProfile: PrivacyProfile): Boolean {
         var profileKeyString = ""
         try {
             val wrapper = SyncHttpWrapper(IMHttp.get(mAccountContext))
             profileKeyString = wrapper.get<String>(BcmHttpApiHelper.getApi(PROFILE_KEY_PATH), null, String::class.java)
 
-        }catch (ex: NoContentException) {
+        } catch (ex: NoContentException) {
             ALog.e(TAG, "downloadProfileKeys getProfileKeys error", ex)
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             return false
         }
 
@@ -907,7 +907,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             ALog.d(TAG, "downloadProfileKeys getProfileKey: $profileKeyString")
             val json = if (profileKeyString.isEmpty()) {
                 JSONObject()
-            }else {
+            } else {
                 JSONObject(JSONObject(profileKeyString).optString("encrypt")
                         ?: throw Exception("profileKey is null"))
             }
@@ -1061,7 +1061,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         if (mAvatarJob?.get() == null) {
 
             ALog.i(TAG, "handleDownloadAvatar")
-            val job = AvatarDownloadJob(AppContextHolder.APP_CONTEXT, mAccountContext,this)
+            val job = AvatarDownloadJob(AppContextHolder.APP_CONTEXT, mAccountContext, this)
             mAvatarJob = WeakReference(job)
             Util.newThreadedExecutor(2).submit(job)
 
@@ -1076,7 +1076,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         if (mProfileJob?.get() == null) {
 
             ALog.i(TAG, "handleFetchProfile")
-            val job = ProfileFetchJob(AppContextHolder.APP_CONTEXT, mAccountContext,this)
+            val job = ProfileFetchJob(AppContextHolder.APP_CONTEXT, mAccountContext, this)
             mProfileJob = WeakReference(job)
             Util.newThreadedExecutor(2).submit(job)
 
@@ -1108,7 +1108,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
     }
 
     internal fun handlePrivacyProfileChanged(context: Context, recipient: Recipient, privacyProfile: PrivacyProfile,
-                                    newEncryptName: String?, newEncryptAvatarLD: String?, newEncryptAvatarHD: String?, allowStranger: Boolean): Boolean {
+                                             newEncryptName: String?, newEncryptAvatarLD: String?, newEncryptAvatarHD: String?, allowStranger: Boolean): Boolean {
 
         var needUpdateProfileKey = false
         var nameChanged = false
@@ -1303,6 +1303,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             if (recipient.isLogin) {
                 PrivacyProfileUpgrader(this).checkNeedUpgrade(recipient)
             }
+            recipient.release()
         }
 
         return privacyChanged || plaintextChanged
@@ -1323,6 +1324,34 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                 })
     }
 
+    fun fetchProfileWithNoQueue(uid: String): Recipient? {
+        try {
+            val recipientDao = Repository.getRecipientRepo(AMELogin.majorContext)
+            if (null != recipientDao?.getRecipient(uid)) {
+                return Recipient.from(mAccountContext, uid, false)
+            }
+
+            if (!NetworkUtil.isConnected()) {
+                return null
+            }
+            val syncHttp = SyncHttpWrapper(IMHttp.get(mAccountContext))
+            val profileString = syncHttp.put<String>(BcmHttpApiHelper.getApi(PROFILES_PLAINTEXT_PATH)
+                    , "{\"contacts\":[\"${uid}\"]}"
+                    , String::class.java)
+            val profileJson = if (profileString.isEmpty()) null else JSONObject(profileString).optJSONObject("profiles")
+            if (null != profileJson) {
+                saveRecipient(uid, true, profileJson)
+                val recipientDao = Repository.getRecipientRepo(AMELogin.majorContext)
+                if (null != recipientDao?.getRecipient(uid)) {
+                    return Recipient.from(mAccountContext, uid, false)
+                }
+            }
+        } catch (e: JSONException) {
+            ALog.e(TAG, "fetchProfileWithNoQueue1", e)
+        }
+        return null
+    }
+
     internal fun getProfiles(dataList: List<TaskData>): Observable<Boolean> {
         val builder = StringBuilder()
         for (e164Number in dataList) {
@@ -1338,7 +1367,6 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .map {
-
                     val profileJson = if (it.isEmpty()) null else JSONObject(it).optJSONObject("profiles")
                     if (profileJson == null) {
                         ALog.d(TAG, "job run result: $it")
@@ -1346,18 +1374,10 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                     } else {
                         ALog.d(TAG, "getProfiles json: $profileJson")
                         dataList.forEach { data ->
-                            val recipient = data.recipient.resolve()
-                            val detail = profileJson.optString(recipient.address.serialize())
-                            ALog.d(TAG, "fetch uid: ${recipient.address}, profile : $detail")
-                            val profileData = if (!detail.isNullOrEmpty()) {
-                                GsonUtils.fromJson(detail, PlaintextServiceProfile::class.java)
-                            }else {
-                                PlaintextServiceProfile()
-                            }
-                            handleIndividualRecipient(AppContextHolder.APP_CONTEXT, recipient, profileData, data.forceUpdate)
-                            recipient.setNeedRefreshProfile(false)
+                            saveRecipient(data.recipient.address.serialize(), data.forceUpdate, profileJson)
                         }
                     }
+
                     true
                 }.doOnError {
                     dataList.forEach {
@@ -1366,6 +1386,15 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                 }
     }
 
-
+    private fun saveRecipient(uid: String, forceUpdate: Boolean, profileJson: JSONObject) {
+        val detail = profileJson.optString(uid)
+        ALog.d(TAG, "fetch uid: ${uid}, profile : $detail")
+        if (!detail.isNullOrEmpty()) {
+            val recipient = Recipient.from(mAccountContext, uid, false).resolve()
+            val profileData = GsonUtils.fromJson(detail, PlaintextServiceProfile::class.java)
+            handleIndividualRecipient(AppContextHolder.APP_CONTEXT, recipient, profileData, forceUpdate)
+            recipient.setNeedRefreshProfile(false)
+        }
+    }
 }
 

@@ -11,5 +11,6 @@ enum class BcmFinderType {
     GROUP,        //
     GROUP_MEMBER, //
     GROUP_CHAT,   //
-    AIR_CHAT //
+    AIR_CHAT, //
+    USER_ID,
 }

@@ -78,4 +78,5 @@
     <string name="contacts_user_unblock_success">تم إلغاء الحظر عن مستخدم الدردشة</string>
     <string name="contacts_user_block_fail">فشل في حظر مستخدم الدردشة</string>
     <string name="contacts_user_unblock_fail">فشل إلغاء حظر مستخدم الدردشة</string>
+    <string name="contacts_please_check_and_try_again">Please check and try again</string>
 </resources>

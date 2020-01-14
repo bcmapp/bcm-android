@@ -78,4 +78,5 @@
     <string name="contacts_user_unblock_success">Польз. чата разблок.</string>
     <string name="contacts_user_block_fail">Польз. чата не заблок.</string>
     <string name="contacts_user_unblock_fail">Польз. чата не разблок.</string>
+    <string name="contacts_please_check_and_try_again">Please check and try again</string>
 </resources>

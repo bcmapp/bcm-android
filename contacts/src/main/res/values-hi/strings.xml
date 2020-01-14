@@ -78,4 +78,5 @@
     <string name="contacts_user_unblock_success">चैट यूज़र अनब्लॉक है</string>
     <string name="contacts_user_block_fail">चैट यूज़र ब्लॉक विफल</string>
     <string name="contacts_user_unblock_fail">चैट यूज़र अनब्लॉक विफल</string>
+    <string name="contacts_please_check_and_try_again">Please check and try again</string>
 </resources>

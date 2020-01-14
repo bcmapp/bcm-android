@@ -85,5 +85,6 @@
     <string name="contacts_user_unblock_success">已解除屏蔽</string>
     <string name="contacts_user_block_fail">屏蔽失败</string>
     <string name="contacts_user_unblock_fail">解除屏蔽失败</string>
+    <string name="contacts_please_check_and_try_again">请检查并重试</string>
 
 </resources>

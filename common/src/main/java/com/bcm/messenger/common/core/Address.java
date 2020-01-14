@@ -10,7 +10,11 @@ import androidx.annotation.Nullable;
 
 import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.utils.GroupUtil;
+import com.bcm.messenger.utility.EncryptUtils;
+import com.bcm.messenger.utility.logger.ALog;
 import com.bcm.messenger.utility.proguard.NotGuard;
+
+import org.whispersystems.signalservice.internal.util.Base58;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -38,6 +42,17 @@ public class Address implements Parcelable, Comparable<Address>, NotGuard {
     public static final Address UNKNOWN = new Address(new AccountContext(UNKNOWN_STRING, "", ""), UNKNOWN_STRING);
 
     private static final String TAG = "Address";
+
+    public static Boolean isUid(String uid) {
+        if (uid.length() == 34 || uid.length() == 33) {
+            try {
+                return Base58.decodeChecked(uid).length == 21;
+            } catch (Throwable e) {
+                ALog.e(TAG, "isUid", e);
+            }
+        }
+        return false;
+    }
 
     @NonNull
     private final AccountContext context;

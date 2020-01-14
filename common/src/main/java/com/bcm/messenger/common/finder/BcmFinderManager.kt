@@ -295,6 +295,14 @@ object BcmFinderManager: AccountContextMap<BcmFinderManager.BcmFinderManagerImpl
                     result.title = AppContextHolder.APP_CONTEXT.getString(R.string.common_current_search_adhoc_title)
                     result
                 }
+                BcmFinderType.USER_ID -> {
+                    val result = SearchItemData()
+                    result.tag = data.source
+                    result.type = type
+                    result.moreDescription = ""
+                    result.title = "BCM ID"
+                    result
+                }
                 else -> null
             }
         }

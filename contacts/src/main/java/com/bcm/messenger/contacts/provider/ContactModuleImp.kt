@@ -405,6 +405,10 @@ class ContactModuleImp : IContactModule {
         return mProfileLogic.fetchProfileWithNoQueue(recipient, callback)
     }
 
+    override fun fetchProfile(uid: String): Recipient? {
+        return mProfileLogic.fetchProfileWithNoQueue(uid)
+    }
+
     override fun checkNeedFetchProfile(vararg recipients: Recipient, callback: IContactModule.IProfileCallback?) {
         mProfileLogic.checkNeedFetchProfile(*recipients, callback = object : BcmProfileLogic.ProfileFetchCallback {
             override fun onDone(recipient: Recipient, viaJob: Boolean) {

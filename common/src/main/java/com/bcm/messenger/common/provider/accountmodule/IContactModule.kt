@@ -65,6 +65,8 @@ interface IContactModule : IAmeAccountModule {
 
     fun fetchProfile(recipient: Recipient, callback: (success: Boolean) -> Unit): Disposable?
 
+    fun fetchProfile(uid:String): Recipient?
+
     fun checkNeedFetchProfile(vararg recipients: Recipient, callback: IProfileCallback?)
 
     fun checkNeedFetchProfileAndIdentity(vararg recipients: Recipient, callback: IProfileCallback?)

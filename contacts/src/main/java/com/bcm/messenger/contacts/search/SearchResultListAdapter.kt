@@ -105,7 +105,7 @@ class SearchResultListAdapter(context: Context, val mListener: SearchActionListe
             }
 
             when(sd.type) {
-                BcmFinderType.ADDRESS_BOOK -> {
+                BcmFinderType.ADDRESS_BOOK, BcmFinderType.USER_ID -> {
                     val r = sd.tag as Recipient
                     r.addListener(this)
                     if (r.isFriend) {

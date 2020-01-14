@@ -485,6 +485,8 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
 
         }finally {
             this.resolving = false;
+            release();
+
             RecipientProvider.Companion.updateCache(this);
 
             //check FOLLOW relationship
@@ -1157,6 +1159,12 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
             }
         }
         return this;
+    }
+
+    public synchronized void release() {
+        try {
+            notifyAll();
+        } catch (Throwable e) { }
     }
 
     public synchronized boolean isResolving() {

@@ -16,6 +16,7 @@ import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.finder.BcmFinderType
 import com.bcm.messenger.common.finder.SearchItemData
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.recipients.Recipient
@@ -36,7 +37,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
 
     private var mKeyword = ""
     private var mSearchLimit = false
-    private var mTypes: Array<BcmFinderType> = arrayOf(BcmFinderType.ADDRESS_BOOK, BcmFinderType.GROUP)
+    private var mTypes: Array<BcmFinderType> = arrayOf(BcmFinderType.ADDRESS_BOOK, BcmFinderType.GROUP, BcmFinderType.USER_ID)
     private var mAdapter: SearchResultListAdapter? = null
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -61,12 +62,12 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
             override fun onSelect(data: SearchItemData) {
                 val a = activity
                 when(data.type) {
-                    BcmFinderType.ADDRESS_BOOK -> {
+                    BcmFinderType.ADDRESS_BOOK, BcmFinderType.USER_ID -> {
                         val r = data.tag as Recipient
                         if (a is ISearchCallback) {
                             a.onSelect(data.type, r.address.serialize())
                         }
-                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
+                        AmeModuleCenter.app().gotoHome(accountContext, HomeTopEvent(true,
                                 HomeTopEvent.ConversationEvent.fromPrivateConversation(r.address.serialize(), true)))
 
                     }
@@ -75,7 +76,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
                         if (a is ISearchCallback) {
                             a.onSelect(data.type, g.gid.toString())
                         }
-                        AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
+                        AmeModuleCenter.app().gotoHome(accountContext, HomeTopEvent(true,
                                 HomeTopEvent.ConversationEvent.fromGroupConversation(g.gid)))
                     }
                     else -> {}
@@ -122,9 +123,14 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
         val callback: (result: List<SearchItemData>) -> Unit = { resultList ->
             if (keyword == mKeyword) {
                 mAdapter?.setSearchResult(resultList, keyword)
-                search_list?.postDelayed({
+                search_list?.post {
                     hideLoading()
-                }, 200)
+                    if (mAdapter?.itemCount == 0) {
+                        showEmpty()
+                    } else {
+                        hideEmpty()
+                    }
+                }
             }
         }
         showLoading()
@@ -151,6 +157,14 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
         }catch (ex: Exception) {
             ALog.e(TAG, "hideLoading ex", ex)
         }
+    }
+
+    private fun showEmpty() {
+        search_shade.showContent(getString(R.string.contacts_result_from_remote_empty), getString(R.string.contacts_please_check_and_try_again))
+    }
+
+    private fun hideEmpty() {
+        search_shade.hide()
     }
 
 }

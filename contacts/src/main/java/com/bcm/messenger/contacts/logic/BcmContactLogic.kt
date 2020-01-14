@@ -19,6 +19,7 @@ import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.RxBus
 import com.bcm.messenger.contacts.net.BcmContactCore
 import com.bcm.messenger.contacts.search.BcmContactFinder
+import com.bcm.messenger.contacts.search.BcmUserIdFinder
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
 import com.bcm.messenger.utility.GsonUtils
@@ -71,6 +72,7 @@ class BcmContactLogic(val accountContext: AccountContext): AppForeground.IForegr
     private val contactFinder = BcmContactFinder()
 
     private val cache = BcmContactCache(accountContext)
+    private val userIdFinder = BcmUserIdFinder(accountContext)
 
     private var mObserver: Observer<List<RecipientSettings>> = Observer {
         onContactListChanged(it)
@@ -94,6 +96,7 @@ class BcmContactLogic(val accountContext: AccountContext): AppForeground.IForegr
         fun doAfterFirstSync() {
             AmeModuleCenter.serverDaemon(accountContext).addConnectionListener(this)
             BcmFinderManager.get(accountContext).registerFinder(contactFinder)
+            BcmFinderManager.get(accountContext).registerFinder(userIdFinder)
             if (mLocalLiveData == null) {
                 mLocalLiveData = Repository.getRecipientRepo(accountContext)?.getRecipientsLiveData()
                 mLocalLiveData?.observeForever(mObserver)

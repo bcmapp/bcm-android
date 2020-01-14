@@ -42,6 +42,10 @@ object AmePinLogic : AppForeground.IForegroundEvent {
                 oldPinData.enableFingerprint = enableFingerprint
                 oldPinData.pinLockTime = pinLockTime
                 oldPin = oldPinData
+
+                pinData.lengthOfPin = oldPinData.lengthOfPin
+                pinData.enableFingerprint = oldPinData.enableFingerprint
+                pinData.pinLockTime = oldPinData.pinLockTime
             }
         }
     }

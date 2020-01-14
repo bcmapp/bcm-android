@@ -96,5 +96,6 @@
     <string name="contacts_user_unblock_success">ブロックをアンロック</string>
     <string name="contacts_user_block_fail">ブロック失敗</string>
     <string name="contacts_user_unblock_fail">ブロック解除失敗</string>
+    <string name="contacts_please_check_and_try_again">Please check and try again</string>
 
 </resources>

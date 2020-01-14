@@ -95,7 +95,7 @@
     <string name="contacts_user_unblock_success">Chat User is Unblock</string>
     <string name="contacts_user_block_fail">Chat User Block failed</string>
     <string name="contacts_user_unblock_fail">Chat User Unblock failed</string>
+    <string name="contacts_please_check_and_try_again">Please check and try again</string>
 
-    
 
 </resources>
