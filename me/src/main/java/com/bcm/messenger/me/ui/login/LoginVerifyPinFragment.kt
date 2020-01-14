@@ -209,13 +209,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
     private fun initViews() {
         verify_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
-                val act = activity ?: return
-                if (!AMELogin.isLogin) {
-                    BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_SWITCHER)
-                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                            .navigation()
-                }
-                act.finish()
+                activity?.finish()
             }
         })
         val action = arguments?.getInt(ACTION, 0)

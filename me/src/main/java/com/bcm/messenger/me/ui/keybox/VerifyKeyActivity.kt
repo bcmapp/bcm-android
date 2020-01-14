@@ -2,6 +2,7 @@ package com.bcm.messenger.me.ui.keybox
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.AccountSwipeBaseActivity
@@ -31,16 +32,12 @@ class VerifyKeyActivity : AccountSwipeBaseActivity() {
         initFragment(R.id.register_container, f, arg)
     }
 
-    override fun onBackPressed() {
-        if (!AMELogin.isLogin) {
-            hideKeyboard()
-            BcmRouter.getInstance().get(ARouterConstants.Activity.ACCOUNT_SWITCHER)
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .navigation()
-            this.finish()
-        } else {
-            super.onBackPressed()
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish()
+            return true
         }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onAccountContextSwitch(newAccountContext: AccountContext) {

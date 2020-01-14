@@ -306,7 +306,6 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
             return
         }
         val intent = Intent(context, VerifyKeyActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
             putExtra(RegistrationActivity.RE_LOGIN_ID, uid)
         }
         context.startBcmActivity(AmeLoginLogic.getAccountContext(uid), intent)
