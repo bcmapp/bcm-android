@@ -2,7 +2,6 @@ package com.bcm.messenger.common.utils.log;
 
 import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.utility.logger.ALog;
-import com.orhanobut.logger.Logger;
 
 import org.jetbrains.annotations.Nullable;
 

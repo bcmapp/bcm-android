@@ -2,14 +2,11 @@ package com.bcm.messenger.common
 
 import com.bcm.messenger.common.crypto.AccountMasterSecret
 import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.crypto.MasterSecretUtil
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.proguard.NotGuard
 import java.io.Serializable
 
-class AccountContext(val uid: String, val token: String, val password: String) : Serializable,  Comparable<AccountContext>, NotGuard {
+class AccountContext(val uid: String, val token: String, val password: String) : Serializable, Comparable<AccountContext>, NotGuard {
     companion object {
         private const val serialVersionUID = 1L
     }
@@ -19,11 +16,12 @@ class AccountContext(val uid: String, val token: String, val password: String) :
     val genTime get() = AmeModuleCenter.login().genTime(uid)
     val registrationId: Int get() = AmeModuleCenter.login().registrationId(uid)
     val signalingKey: String get() = AmeModuleCenter.login().signalingKey(uid) ?: ""
-    val tag get() = masterSecret?.tag?:"NLogin"
+    val tag get() = masterSecret?.tag ?: "NLogin"
 
-    val masterSecret:MasterSecret? get()  {
-        return AccountMasterSecret.get(this)
-    }
+    val masterSecret: MasterSecret?
+        get() {
+            return AccountMasterSecret.get(this)
+        }
 
     var isSignedPreKeyRegistered: Boolean
         set(value) {

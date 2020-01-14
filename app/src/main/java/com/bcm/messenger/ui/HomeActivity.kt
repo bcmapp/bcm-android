@@ -590,9 +590,9 @@ class HomeActivity : AccountSwipeBaseActivity() {
     }
 
     private fun checkShowIntroPage() {
-//        if (!SuperPreferences.getTablessIntroductionFlag(this)) {
+        if (!SuperPreferences.getTablessIntroductionFlag(this)) {
             startActivity(Intent(this, TablessIntroActivity::class.java))
-//        }
+        }
     }
 
     private fun recycleFragments() {
