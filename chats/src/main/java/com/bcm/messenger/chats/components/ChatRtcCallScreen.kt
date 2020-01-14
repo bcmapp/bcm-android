@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.os.Build
-import android.text.SpannableStringBuilder
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -30,7 +29,6 @@ import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.permission.PermissionUtil
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -863,7 +861,6 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
         ALog.d(TAG, "setLocalAndRemoteRender")
         local_render_layout.setSurface(localRenderer)
         remote_render_layout.setSurface(remoteRenderer)
-
     }
 
     private fun handleVideoAction(switchStatus: Boolean) {
@@ -922,5 +919,4 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             ALog.e(TAG, "ChatRtcCallScreen got pass time error", ex)
         }
     }
-
 }

@@ -17,14 +17,11 @@ import com.bcm.messenger.common.database.repositories.ThreadRepo
 import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.base64Decode
 import com.bcm.messenger.common.utils.startBcmActivity
-import com.bcm.messenger.common.provider.accountmodule.IChatModule
 import com.bcm.messenger.contacts.FriendRequestsListActivity
 import com.bcm.messenger.share.SystemShareActivity
 import com.bcm.messenger.ui.HomeActivity
@@ -148,7 +145,7 @@ class SchemeLaunchHelper(val context: Context) {
                         doForGroupJoinShortLink(accountContext, schemeData)
                     }
                     else -> {
-                        if (path.startsWith("/h5/")) {
+                        if (path?.startsWith("/h5/") == true) {
                             doForWeb(schemeData)
                         }
                     }

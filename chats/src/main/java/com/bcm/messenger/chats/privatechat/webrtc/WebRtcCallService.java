@@ -161,6 +161,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
     static final int NOTIFICATION_IMPORTANT = 2;
     private static int sCurrentCallType = -1;
+
     public static void checkHasWebRtcCall(AccountContext accountContext) {
         if (sCurrentCallType != -1) {
             startCallActivity(accountContext, sCurrentCallType);
@@ -259,7 +260,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
         registerUncaughtExceptionHandler();
         registerWiredHeadsetStateReceiver();
-
     }
 
     @Override
@@ -677,7 +677,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                 }
             }
         });
-
     }
 
     private void handleResponseMessage(Intent intent) {
@@ -895,8 +894,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     }
 
     /**
-     *
-     *
      * @param intent
      */
     private void handleBusyCall(Intent intent) throws Exception {
@@ -909,8 +906,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     }
 
     /**
-     *
-     *
      * @param intent
      */
     private void handleBusyMessage(Intent intent) throws Exception {
@@ -929,6 +924,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             return;
         }
 
+        mIncoming.set(false);
         sendMessage(WebRtcViewModel.State.CALL_BUSY, recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
         insertMissedCall(this.accountContext, recipient, NOTIFICATION_IMPORTANT);
 
@@ -943,7 +939,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             AppUtilKotlinKt.startForegroundServiceCompat(WebRtcCallService.this, intent1);
             return null;
         }, FINISH_BUSY_DELAY);
-
     }
 
     private void handleCheckTimeout(Intent intent) {
@@ -985,8 +980,12 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     }
 
     private void insertMissedCall(@NonNull AccountContext accountContext, @NonNull Recipient recipient, int notifyType) {
-        if (!mMsgInserted.getAndSet(true)) {
+        if (!mMsgInserted.get()) {
             ALog.logForSecret(TAG, "insertMissedCall address: " + recipient.getAddress() + ", incoming: " + mIncoming);
+
+            if (accountContext == this.accountContext) {
+                mMsgInserted.set(true);
+            }
 
             PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
             if (chatRepo != null) {
@@ -1000,15 +999,19 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                     EventBus.getDefault().post(new MessageReceiveNotifyEvent(accountContext, recipient.getAddress().serialize(), result.getSecond()));
                 }
             }
-        }else {
+        } else {
             ALog.logForSecret(TAG, "insertMissedCall fail, has inserted, address: " + recipient.getAddress() + ", incoming: " + mIncoming);
 
         }
     }
 
     private void insertMissedCallFromHangup(@NonNull AccountContext accountContext, @NonNull Recipient recipient, boolean remoteHangup) {
-        if (!mMsgInserted.getAndSet(true)) {
+        if (!mMsgInserted.get()) {
             ALog.logForSecret(TAG, "insertMissedCallFromHangup address: " + recipient.getAddress() + ", incoming: " + mIncoming + ", remoteHangup: " + remoteHangup);
+
+            if (accountContext == this.accountContext) {
+                mMsgInserted.set(true);
+            }
 
             PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
             if (chatRepo != null) {
@@ -1022,7 +1025,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                     EventBus.getDefault().post(new MessageReceiveNotifyEvent(accountContext, recipient.getAddress().serialize(), result.getSecond()));
                 }
             }
-        }else {
+        } else {
             ALog.logForSecret(TAG, "insertMissedCallFromHangup fail, has inserted, address: " + recipient.getAddress() + ", incoming: " + mIncoming + ", remoteHangup: " + remoteHangup);
         }
     }
@@ -1510,7 +1513,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     }
 
     private AccountContext getAccountContextFromIntent(Intent intent) {
-        return (AccountContext)intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT);
+        return (AccountContext) intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT);
     }
 
     @Nullable
