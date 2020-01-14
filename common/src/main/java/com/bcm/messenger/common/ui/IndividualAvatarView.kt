@@ -293,7 +293,7 @@ class IndividualAvatarView : CardView {
     }
 
     override fun setRadius(radius: Float) {
-        if (mRadius != radius) {
+        if (mRadius != radius || mOval) {
             mOval = false
             mRadius = radius
             super.setRadius(radius)

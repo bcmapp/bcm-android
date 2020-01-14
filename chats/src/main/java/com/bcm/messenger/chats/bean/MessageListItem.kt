@@ -324,6 +324,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
     }
 
     private fun setPrivate(accountContext: AccountContext, threadRecord: ThreadRecord, anim: Boolean) {
+        this.groupId = 0
         this.lastThread = threadRecord
         this.recipient = threadRecord.getRecipient(accountContext)
         this.recipient?.addListener(this)

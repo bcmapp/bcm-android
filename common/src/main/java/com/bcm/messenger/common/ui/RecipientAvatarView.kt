@@ -193,9 +193,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         background = null
 
         member_single_avatar.setPhoto(groupRecipient)
-        member_single_avatar.post {
-            member_single_avatar.radius = width / 4f
-        }
+        member_single_avatar.radius = width / 4f
     }
 
     private fun createBackground(cornerRadius: Float): Drawable {
@@ -211,7 +209,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
 
     override fun onModified(recipient: Recipient) {
         val accountContext = this.accountContext
-        if (null != accountContext) {
+        if (null != accountContext && recipient.address.context() == accountContext) {
             if (this.privateRecipient == recipient) {
                 setRecipientAvatar()
             } else if (this.groupRecipient == recipient) {
