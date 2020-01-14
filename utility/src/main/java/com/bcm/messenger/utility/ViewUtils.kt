@@ -1,5 +1,6 @@
 package com.bcm.messenger.utility
 
+import android.app.Activity
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
@@ -89,19 +90,22 @@ object ViewUtils {
         return anim
     }
 
-    fun fadeIn(view: View, duration: Int) {
+    fun fadeIn(view: View?, duration: Int) {
         animateIn(view, getAlphaAnimation(0f, 1f, duration))
     }
 
-    fun fadeOut(view: View, duration: Int): ListenableFuture<Boolean> {
+    fun fadeOut(view: View?, duration: Int): ListenableFuture<Boolean>? {
         return fadeOut(view, duration, View.GONE)
     }
 
-    fun fadeOut(view: View, duration: Int, visibility: Int): ListenableFuture<Boolean> {
+    fun fadeOut(view: View?, duration: Int, visibility: Int): ListenableFuture<Boolean>? {
         return animateOut(view, getAlphaAnimation(1f, 0f, duration), visibility)
     }
 
-    fun animateOut(view: View, animation: Animation, visibility: Int): ListenableFuture<Boolean> {
+    fun animateOut(view: View?, animation: Animation, visibility: Int): ListenableFuture<Boolean>? {
+        if (view == null || (view.context as? Activity)?.isFinishing != false || (view.context as? Activity)?.isDestroyed != false) {
+            return null
+        }
         val future = SettableFuture<Boolean>()
         if (view.visibility == visibility) {
             future.set(true)
@@ -124,7 +128,11 @@ object ViewUtils {
         return future
     }
 
-    fun animateIn(view: View, animation: Animation) {
+    fun animateIn(view: View?, animation: Animation) {
+        if (view == null || (view.context as? Activity)?.isFinishing != false || (view.context as? Activity)?.isDestroyed != false) {
+            return
+        }
+
         if (view.visibility == View.VISIBLE) return
 
         view.clearAnimation()
@@ -133,7 +141,6 @@ object ViewUtils {
         view.visibility = View.VISIBLE
         view.startAnimation(animation)
     }
-
 }
 
 

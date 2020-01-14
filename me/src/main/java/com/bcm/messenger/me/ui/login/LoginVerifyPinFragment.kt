@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
@@ -35,7 +34,6 @@ import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.netswitchy.proxy.IProxyStateChanged
 import com.bcm.netswitchy.proxy.ProxyManager
-import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_fragment_verify_password.*
 
 /**
@@ -278,8 +276,10 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
     }
 
     private fun stopAnim() {
-        ViewUtils.fadeOut(verify_pin_loading, 250)
-        ViewUtils.fadeIn(verify_pin_input_go, 250)
-        verify_pin_loading.stopAnim()
+        if (activity?.isDestroyed == true || activity?.isFinishing == true) {
+            ViewUtils.fadeOut(verify_pin_loading, 250)
+            ViewUtils.fadeIn(verify_pin_input_go, 250)
+            verify_pin_loading.stopAnim()
+        }
     }
 }
