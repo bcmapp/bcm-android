@@ -6,15 +6,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
-import com.bcm.messenger.common.ui.popup.ToastUtil
-import com.bcm.messenger.common.utils.isReleaseBuild
-import com.bcm.messenger.common.utils.saveTextToBoard
+import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.common.utils.startBcmActivityForResult
 import com.bcm.messenger.login.logic.AmeLoginLogic
@@ -26,7 +26,6 @@ import com.bcm.messenger.me.ui.keybox.SwitchAccount
 import com.bcm.messenger.me.ui.login.ChangePasswordActivity
 import com.bcm.messenger.me.ui.login.backup.VerifyFingerprintActivity
 import com.bcm.messenger.me.ui.qrcode.BcmMyQRCodeActivity
-import com.bcm.messenger.utility.InputLengthFilter
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.me_fragment_my_profile.*
@@ -147,15 +146,16 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
         }
 
         profile_title_bar?.setCenterText(getString(R.string.me_profile_title))
-        profile_id_item?.setTip(InputLengthFilter.filterString(getAccountRecipient().address.serialize(), 15), 0)
-        if (!isReleaseBuild()) {
-            // 非正式包允许长按复制ID，方便查问题
-            profile_id_item?.setOnLongClickListener {
-                it.context.saveTextToBoard(getAccountRecipient().address.serialize())
-                ToastUtil.show(it.context, "User ID has been copied to clipboard")
-                return@setOnLongClickListener true
+        profile_id_copy.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
             }
+
+            AppUtil.saveCodeToBoard(context, recipient.address.serialize())
+            AmePopup.result.succeed(it.context as FragmentActivity, getString(R.string.common_copied))
         }
+
+        profile_id_content.text = recipient.address.serialize()
 
         profile_qr_item?.setOnClickListener {
             val intent = Intent(activity, BcmMyQRCodeActivity::class.java)

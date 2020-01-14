@@ -76,17 +76,42 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profile_photo_item" />
 
-    <com.bcm.messenger.common.ui.CommonSettingItem
-        android:id="@+id/profile_id_item"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/profile_account_uid"
+        android:layout_width="0dp"
         android:layout_height="52dp"
-        app:setting_item_right="none"
-        app:setting_item_name="@string/me_id_title"
-        app:setting_item_name_color="@color/common_color_black"
-        app:setting_item_tip_color="@color/common_content_second_color"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_name_item" />
+        app:layout_constraintTop_toBottomOf="@id/profile_name_item"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:textSize="17sp"
+            android:textColor="@color/common_color_black"
+            android:text="ID"/>
+        <TextView
+            android:id="@+id/profile_id_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="@color/common_color_black_30"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/profile_id_copy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/common_color_379BFF"
+            android:padding="15dp"
+            android:text="@string/common_invite_share_copy"/>
+    </LinearLayout>
 
 
     <com.bcm.messenger.common.ui.CommonSettingItem
@@ -100,7 +125,7 @@
         app:setting_item_right="none"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_id_item" />
+        app:layout_constraintTop_toBottomOf="@id/profile_account_uid" />
 
     <com.bcm.messenger.common.ui.CommonSettingItem
         android:id="@+id/profile_account_item"
