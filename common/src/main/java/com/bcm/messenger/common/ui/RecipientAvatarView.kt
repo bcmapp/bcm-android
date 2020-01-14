@@ -65,7 +65,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
     
     fun showRecipientAvatar(recipient: Recipient) {
         if (recipient.isGroupRecipient) {
-            showGroupAvatar(recipient)
+            showGroupAvatar(recipient.address.context(), recipient.groupId)
         } else {
             showPrivateAvatar(recipient)
         }

@@ -618,7 +618,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
         home_toolbar_avatar.showRecipientAvatar(accountRecipient)
         messageListFragment?.updateAccountContext(accountContext)
 
-        val unreadStatus = unreadMap[accountContext]?:return
+        val unreadStatus = unreadMap[accountContext] ?: return
         if (accountContext == this@HomeActivity.accountContext) {
             messageListFragment?.updateFriendRequest(unreadStatus.friendUnhandle, unreadStatus.friendUnread)
         }

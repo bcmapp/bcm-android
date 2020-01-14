@@ -67,7 +67,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.chats_conversation_activity.*
 import kotlinx.android.synthetic.main.chats_conversation_input_panel.view.*
 import me.imid.swipebacklayout.lib.SwipeBackLayout
-import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File

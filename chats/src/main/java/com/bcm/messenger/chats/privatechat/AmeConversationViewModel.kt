@@ -58,14 +58,12 @@ class AmeConversationViewModel(
     }
 
     companion object {
-
         private const val TAG = "AmeConversationViewModel"
         private const val PAGE_COUNT = 100
 
         private const val NO_NEED_TO_SHOW = 0
         private const val SHOW_RESEND = 1
         private const val SHOW_NOT_FOUND = 2
-
     }
 
     private lateinit var repository: Repository

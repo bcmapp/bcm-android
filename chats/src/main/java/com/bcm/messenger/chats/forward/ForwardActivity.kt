@@ -21,6 +21,7 @@ import com.bcm.messenger.common.mms.*
 import com.bcm.messenger.common.provider.IForwardSelectProvider.ForwardSelectCallback
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -96,9 +97,6 @@ class ForwardActivity : AccountSwipeBaseActivity() {
         val indexIdList = intent.getLongArrayExtra(MULTI_INDEX_ID)
         if (indexIdList != null && indexIdList.isNotEmpty()) {
             viewModel.fetchSuccess.observe(this, Observer {
-                if (it == true) {
-
-                }
             })
             when (gid) {
                 ARouterConstants.PRIVATE_TEXT_CHAT, ARouterConstants.PRIVATE_MEDIA_CHAT -> viewModel.getMultiplePrivateMessages(getMasterSecret(), indexIdList)
@@ -126,6 +124,11 @@ class ForwardActivity : AccountSwipeBaseActivity() {
     }
 
     fun clickContact(recipient: Recipient) {
+        if (!recipient.isFriend && !recipient.privacyProfile.allowStranger) {
+            ToastUtil.show(this, getString(R.string.common_chats_stranger_disturb_notice, recipient.name))
+            return
+        }
+
         viewModel.selectRecipients.clear()
         viewModel.selectRecipients.add(recipient)
         handleDone()
