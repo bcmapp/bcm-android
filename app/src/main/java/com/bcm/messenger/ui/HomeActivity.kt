@@ -18,6 +18,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.BaseFragment
+import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
