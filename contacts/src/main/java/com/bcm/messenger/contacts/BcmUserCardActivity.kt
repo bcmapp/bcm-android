@@ -179,19 +179,16 @@ class BcmUserCardActivity: AccountSwipeBaseActivity(), RecipientModifiedListener
             friend_chat.setTextColor(getColorCompat(R.color.common_color_379BFF))
         } else {
             friend_chat.isEnabled = false
-            friend_chat.setTextColor(getColorCompat(R.color.common_color_white))
+            friend_chat.setTextColor(getColorCompat(R.color.common_app_gray_color))
         }
 
         if (!allowAdd) {
             friend_add.visibility = View.GONE
-            friend_chat.setBackgroundResource(R.drawable.contacts_friend_card_add_bg)
-            friend_chat.setTextColor(getColorCompat(R.color.common_color_white))
             anchor_friend_type.visibility = View.GONE
         } else {
             friend_add.isEnabled = true
             friend_add.visibility = View.VISIBLE
-            friend_chat.setBackgroundResource(R.drawable.contacts_friend_card_chat_bg)
-            friend_chat.setTextColor(getColorCompat(R.color.common_color_379BFF))
+
             anchor_friend_type.visibility = View.VISIBLE
         }
     }
