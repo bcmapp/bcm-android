@@ -111,10 +111,10 @@ class UserModuleImp : IUserModule
                     ALog.e("ForceLogout", "onClientForceLogout fail", ex)
                     null
                 }
-                AccountKickedEvent(AccountKickedEvent.TYPE_EXCEPTION_LOGIN, deviceInfo)
+                AccountKickedEvent(accountContext, AccountKickedEvent.TYPE_EXCEPTION_LOGIN, deviceInfo)
             }
             KickEvent.ACCOUNT_GONE -> {
-                AccountKickedEvent(AccountKickedEvent.TYPE_ACCOUNT_GONE)
+                AccountKickedEvent(accountContext, AccountKickedEvent.TYPE_ACCOUNT_GONE)
             }
         }
 
@@ -533,7 +533,7 @@ class UserModuleImp : IUserModule
         ALog.i(TAG, "handleAccountExceptionLogout ${event.type}")
         val activity = AmeAppLifecycle.current() ?: return
         ALog.i(TAG, "handleAccountExceptionLogout 1 ${event.type}")
-        if (AMELogin.isLogin) {
+        if (event.accountContext == accountContext) {
             ALog.i(TAG, "handleAccountExceptionLogout 2 ${event.type}")
             try {
                 when (event.type) {

@@ -3,9 +3,12 @@ package com.bcm.messenger.common.server
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.WebSocketHttp
 import com.bcm.messenger.common.core.BcmHttpApiHelper
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.InvalidProtocolBufferException
 import com.orhanobut.logger.Logger
+import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
@@ -14,6 +17,7 @@ import org.whispersystems.libsignal.util.Pair
 import org.whispersystems.signalservice.internal.util.concurrent.SettableFuture
 import org.whispersystems.signalservice.internal.websocket.WebSocketProtos
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 class ServerConnection(private val accountContext: AccountContext, private val userAgent: String) {
 
@@ -27,7 +31,7 @@ class ServerConnection(private val accountContext: AccountContext, private val u
     private var webSocketHttp: WebSocketHttp = WebSocketHttp(accountContext)
     private var client: WebSocket? = null
     private var protoDataEvent: IServerProtoDataEvent? = null
-    private var websocketEvent = WebsocketConnectionListener()
+    private var websocketEvent = WebsocketConnectionListener(false)
 
     private var connectState = ConnectState.INIT
 
@@ -36,6 +40,8 @@ class ServerConnection(private val accountContext: AccountContext, private val u
     private var connectToken = 0
 
     private var connectingTime = 0L
+
+    private var retryDisposable:Disposable? = null
 
     fun setConnectionListener(listener: IServerProtoDataEvent?) {
         protoDataEvent = listener
@@ -57,11 +63,17 @@ class ServerConnection(private val accountContext: AccountContext, private val u
         return connectState == ConnectState.CONNECTED
     }
 
-    fun connect(token:Int = 0): Boolean {
+    fun connect(token: Int = 0): Boolean {
         Logger.i("$TAG WSC connect()...")
+        retryDisposable?.dispose()
 
-        connectingTime = 0
+        return connectImpl(false, token)
+    }
+
+    private fun connectImpl(forRetry: Boolean, token: Int): Boolean {
         if (isDisconnect()) {
+            connectingTime = 0
+
             connectToken = token
             updateConnectState(ConnectState.CONNECTING)
 
@@ -70,7 +82,7 @@ class ServerConnection(private val accountContext: AccountContext, private val u
 
             connectingTime = System.currentTimeMillis()
             websocketEvent.destroyed = true
-            websocketEvent = WebsocketConnectionListener()
+            websocketEvent = WebsocketConnectionListener(forRetry)
             this.client = webSocketHttp.connect(url, userAgent, websocketEvent)
         }
         return true
@@ -178,7 +190,8 @@ class ServerConnection(private val accountContext: AccountContext, private val u
         connectState = ConnectState.DISCONNECTED
     }
 
-    inner class WebsocketConnectionListener(var destroyed:Boolean = false): WebSocketListener() {
+    inner class WebsocketConnectionListener(private val forRetry: Boolean, var destroyed: Boolean = false) : WebSocketListener() {
+        private var connected = false
         override fun onOpen(webSocket: WebSocket?, response: Response?) {
             if (destroyed) {
                 ALog.i(TAG, "ignore onOpen")
@@ -189,6 +202,8 @@ class ServerConnection(private val accountContext: AccountContext, private val u
             connectingTime = 0
 
             updateConnectState(ConnectState.CONNECTED)
+
+            connected = true
             connectToken = 0
         }
 
@@ -233,6 +248,7 @@ class ServerConnection(private val accountContext: AccountContext, private val u
             }
             ALog.e(TAG, "onFailure()", t)
 
+            val connected = this.connected
             if (response != null) {
                 val code = response.code()
                 ALog.w(TAG, "onFailure() code: $code")
@@ -249,6 +265,17 @@ class ServerConnection(private val accountContext: AccountContext, private val u
 
             if (!isDisconnect()) {
                 clearConnection(1000, "OK")
+            }
+
+            if (connected || !forRetry ) {
+                retryDisposable = Observable.create<Boolean> {
+                    if (accountContext.isLogin && !destroyed) {
+                        connectImpl(true, connectToken)
+                    }
+                }.delaySubscription(1000, TimeUnit.MILLISECONDS)
+                        .subscribeOn(AmeDispatcher.singleScheduler)
+                        .observeOn(AmeDispatcher.singleScheduler)
+                        .subscribe ({},{})
             }
         }
 
