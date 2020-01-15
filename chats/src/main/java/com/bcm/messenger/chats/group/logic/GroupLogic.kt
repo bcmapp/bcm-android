@@ -1167,6 +1167,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
         @Subscribe
         fun onEvent(e: GroupInfoUpdateNotify) {
             listenerRef.get()?.onGroupInfoChanged(e.groupInfo)
+            getShareLink(e.groupInfo.gid){_,_->}
         }
 
         @Subscribe
@@ -1299,6 +1300,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AmeDispatcher.ioScheduler)
                     .map {
+                        getShareLink(event.gid){_,_->}
                         if (it.isNotEmpty()) {
                             val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, event.gid)
                                     ?: return@map
@@ -1316,7 +1318,8 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             }
                         }
                         throw GroupException("GroupShareSettingRefreshEvent update group info failed")
-                    }.subscribe({
+                    }
+                    .subscribe({
                         ALog.i(TAG, "GroupShareSettingRefreshEvent ${event.gid} succeed")
                     }, {
                         ALog.e(TAG, "GroupShareSettingRefreshEvent ", it)
