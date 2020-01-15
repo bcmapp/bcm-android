@@ -34,7 +34,6 @@ object GroupInfoTransform {
         }
 
         ameGroupInfo.shareEnable = entity.shareEnabled == 1
-        ameGroupInfo.shareCode = entity.shareCode?:""
         ameGroupInfo.needConfirm = entity.needOwnerConfirm == 1
 
         ameGroupInfo.memberSyncState = GroupMemberSyncState.valueOf(entity.member_sync_state)

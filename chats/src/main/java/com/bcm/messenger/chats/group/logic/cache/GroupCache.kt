@@ -244,8 +244,6 @@ class GroupCache(private val accountContext: AccountContext, val cacheReady: () 
         val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
         if (null != groupInfo) {
             getGroupInfo(gid)?.shareEnable = shareEnable == 1
-            getGroupInfo(gid)?.shareCode = shareCode
-
 
             groupInfo.shareEnabled = shareEnable
             groupInfo.shareCodeSetting = shareSetting

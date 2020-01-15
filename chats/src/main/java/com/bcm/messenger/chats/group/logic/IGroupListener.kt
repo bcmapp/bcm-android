@@ -11,5 +11,6 @@ interface IGroupListener {
     fun onMemberLeave(gid:Long, memberList:List<AmeGroupMemberInfo>){}
     fun onMemberUpdate(gid:Long, memberList:List<AmeGroupMemberInfo>){}
     fun onMemberJoin(gid:Long, memberList:List<AmeGroupMemberInfo>){}
-    fun onGroupShareSettingChanged(gid: Long, shareCode:String, shareEnable:Boolean, needConfirm:Boolean){}
+    fun onGroupShareSettingChanged(gid: Long, shareEnable:Boolean, needConfirm:Boolean){}
+    fun onGroupShareLinkChanged(gid: Long, link:String){}
 }

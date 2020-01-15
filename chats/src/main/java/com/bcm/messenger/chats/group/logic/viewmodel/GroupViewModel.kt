@@ -14,10 +14,7 @@ import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
-import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.orhanobut.logger.Logger
@@ -524,7 +521,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
     fun enableShareGroup(result: (succeed: Boolean, error: String?) -> Unit) {
         GroupLogic.get(accountContext).updateShareSetting(groupId, true) { succeed, shareCode, error ->
             if (succeed) {
-                modelCache.updateShareSetting(true, shareCode)
+                modelCache.updateShareSetting(true)
             }
             post(GroupInfoChangedEvent(groupId))
             result(succeed, error)
@@ -539,7 +536,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
     fun disableShareGroup(result: (succeed: Boolean, error: String?) -> Unit) {
         GroupLogic.get(accountContext).updateShareSetting(groupId, false) { succeed, shareCode, error ->
             if (succeed) {
-                modelCache.updateShareSetting(false, shareCode)
+                modelCache.updateShareSetting(false)
             }
             post(GroupInfoChangedEvent(groupId))
             result(succeed, error)
@@ -700,10 +697,16 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
 
     }
 
-    override fun onGroupShareSettingChanged(gid: Long, shareCode: String, shareEnable: Boolean, needConfirm: Boolean) {
+    override fun onGroupShareSettingChanged(gid: Long, shareEnable: Boolean, needConfirm: Boolean) {
         if (gid == groupId) {
             modelCache.updateNeedConfirmSetting(needConfirm)
-            modelCache.updateShareSetting(shareEnable, shareCode)
+            modelCache.updateShareSetting(shareEnable)
+        }
+    }
+
+    override fun onGroupShareLinkChanged(gid: Long, link: String) {
+        if (gid == groupId) {
+            modelCache.updateShareLink(link)
         }
     }
 

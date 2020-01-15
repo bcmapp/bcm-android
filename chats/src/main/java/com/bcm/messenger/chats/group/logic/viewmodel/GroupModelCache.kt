@@ -302,10 +302,13 @@ class GroupModelCache(private val accountContext: AccountContext, group: AmeGrou
         return count
     }
 
-    fun updateShareSetting(shareEnable: Boolean, shareCode: String) {
+    fun updateShareSetting(shareEnable: Boolean) {
         val gInfo = this.info
         gInfo.shareEnable = shareEnable
-        gInfo.shareCode = shareCode
+    }
+
+    fun updateShareLink(link:String) {
+        this.info.shareLink = link
     }
 
     fun updateNeedConfirmSetting(needConfirm:Boolean) {

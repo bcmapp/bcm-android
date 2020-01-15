@@ -30,7 +30,6 @@ public class AmeGroupInfo {
     private Long role;// AmeGroupMemberInfo role
     private LegitimateState legitimateState;
     private long pinMid;
-    private String shareCode;
     private Boolean hasPin;
     private Boolean shareEnable;
     private Boolean needConfirm;
@@ -101,14 +100,6 @@ public class AmeGroupInfo {
 
     public void setMemberSyncState(GroupMemberSyncState memberSyncState) {
         this.memberSyncState = memberSyncState;
-    }
-
-    public String getShareCode() {
-        return shareCode;
-    }
-
-    public void setShareCode(String shareCode) {
-        this.shareCode = shareCode;
     }
 
     public Boolean getShareEnable() {

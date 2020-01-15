@@ -1300,7 +1300,9 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AmeDispatcher.ioScheduler)
                     .map {
-                        getShareLink(event.gid){_,_->}
+                        getShareLink(event.gid){_,_->
+
+                        }
                         if (it.isNotEmpty()) {
                             val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, event.gid)
                                     ?: return@map
@@ -1325,7 +1327,6 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
                                 AmeDispatcher.mainThread.dispatch {
                                     listenerRef.get()?.onGroupShareSettingChanged(groupInfo.gid
-                                            , groupInfo.shareCode
                                             , groupInfo.shareEnabled == 1
                                             , groupInfo.needOwnerConfirm == 1)
                                 }
@@ -1378,7 +1379,11 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
         private val SHARE_LINK = "qr_code";
         private fun updateShareLink(gid: Long, link: String) {
-            updateGroupExtension(gid, SHARE_LINK, link.toByteArray())
+            updateGroupExtension(gid, SHARE_LINK, link.toByteArray()) {
+                if (it) {
+                    listenerRef.get()?.onGroupShareLinkChanged(gid, link)
+                }
+            }
         }
 
         private fun getShareLink(gid: Long, result: (succeed: Boolean, link: String) -> Unit) {
@@ -1388,6 +1393,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     groupCache.updateShareLink(gid, link)
                 }
                 AmeDispatcher.mainThread.dispatch {
+                    listenerRef.get()?.onGroupShareLinkChanged(gid, link)
                     result(succeed, link)
                 }
             }
@@ -1441,7 +1447,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .observeOn(AmeDispatcher.ioScheduler)
         }
 
-        private fun updateGroupExtension(gid: Long, key: String, data: ByteArray?) {
+        private fun updateGroupExtension(gid: Long, key: String, data: ByteArray?, result: (succeed: Boolean) -> Unit) {
             Observable.create<ByteArray> {
                 val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
                         ?: throw GroupException("group info not exist")
@@ -1466,11 +1472,13 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .flatMap {
                         GroupManagerCore.updateGroupExtension(accountContext, gid, key, it)
                                 .subscribeOn(AmeDispatcher.ioScheduler)
-                    }.observeOn(AmeDispatcher.ioScheduler)
+                    }.observeOn(AmeDispatcher.mainScheduler)
                     .subscribe({
                         ACLog.i(accountContext, TAG, "updateGroupExtension succeed:$it")
+                        result(true)
                     }, {
                         ACLog.e(accountContext, TAG, "updateGroupExtension", it)
+                        result(false)
                     })
         }
 
