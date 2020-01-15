@@ -46,6 +46,7 @@ public class AttachmentServer implements Runnable {
     private final ServerSocket socket;
     private final int port;
     private final String auth;
+    private Thread playThread;
 
     private volatile boolean isRunning;
 
@@ -71,11 +72,16 @@ public class AttachmentServer implements Runnable {
 
     public void start() {
         isRunning = true;
-        new Thread(this).start();
+        if (playThread != null && !playThread.isInterrupted()) {
+            playThread.interrupt();
+        }
+        playThread = new Thread(this);
+        playThread.start();
     }
 
     public void stop() {
         isRunning = false;
+        playThread.interrupt();
     }
 
     @Override

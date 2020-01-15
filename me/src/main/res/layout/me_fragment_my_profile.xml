@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/profile_title_bar"
@@ -16,12 +16,12 @@
         android:id="@+id/profile_photo_item"
         android:layout_width="match_parent"
         android:layout_height="72dp"
+        android:background="@drawable/common_item_ripple_bg"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
-        android:background="@drawable/common_item_ripple_bg"
-        app:layout_constraintTop_toBottomOf="@+id/profile_title_bar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/profile_title_bar">
 
         <TextView
             android:id="@+id/profile_photo_title"
@@ -30,38 +30,38 @@
             android:text="@string/me_profile_picture"
             android:textColor="@color/common_color_black"
             android:textSize="17sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.bcm.messenger.common.ui.IndividualAvatarView
             android:id="@+id/profile_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginEnd="5dp"
             android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
             android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/profile_icon_arrow"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/profile_icon_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/common_right_arrow_icon"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:layout_width="0dp"
             android:layout_height="@dimen/common_line_height"
             android:background="@color/common_line_color"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -69,115 +69,131 @@
         android:id="@+id/profile_name_item"
         android:layout_width="match_parent"
         android:layout_height="52dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_photo_item"
         app:setting_item_name="@string/me_profile_nickname"
         app:setting_item_name_color="@color/common_color_black"
-        app:setting_item_tip_color="@color/common_content_second_color"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_photo_item" />
+        app:setting_item_tip_color="@color/common_content_second_color" />
 
     <LinearLayout
         android:id="@+id/profile_account_uid"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_name_item"
-        >
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_name_item">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            android:textSize="17sp"
+            android:text="ID"
             android:textColor="@color/common_color_black"
-            android:text="ID"/>
+            android:textSize="17sp" />
+
         <TextView
             android:id="@+id/profile_id_content"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="17sp"
-            android:maxLines="1"
+            android:layout_weight="1"
             android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="@color/common_color_black_30"
-            android:layout_weight="1"/>
+            android:textSize="17sp" />
+
         <TextView
             android:id="@+id/profile_id_copy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="17sp"
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="10dp"
+            android:text="@string/common_invite_share_copy"
             android:textColor="@color/common_color_379BFF"
-            android:padding="15dp"
-            android:text="@string/common_invite_share_copy"/>
+            android:textSize="17sp" />
+
     </LinearLayout>
 
+    <View
+        android:id="@+id/profile_id_line"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/common_line_height"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@color/common_line_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_account_uid" />
 
     <com.bcm.messenger.common.ui.CommonSettingItem
         android:id="@+id/profile_qr_item"
         android:layout_width="match_parent"
         android:layout_height="52dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_id_line"
         app:setting_item_name="@string/me_profile_add_me"
         app:setting_item_name_color="@color/common_color_black"
-        app:setting_item_tip_color="@color/common_content_second_color"
-        app:setting_item_right_custom="@drawable/common_qr_code_black_icon"
         app:setting_item_right="none"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_account_uid" />
+        app:setting_item_right_custom="@drawable/common_qr_code_black_icon"
+        app:setting_item_tip_color="@color/common_content_second_color" />
 
     <com.bcm.messenger.common.ui.CommonSettingItem
         android:id="@+id/profile_account_item"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_qr_item"
         app:setting_item_name="@string/me_profile_account_title"
         app:setting_item_name_color="@color/common_color_black"
-        app:setting_item_tip_color="@color/common_content_warning_color"
         app:setting_item_right="arrow"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_qr_item" />
+        app:setting_item_tip_color="@color/common_content_warning_color" />
 
     <com.bcm.messenger.common.ui.CommonSettingItem
         android:id="@+id/profile_change_pwd_item"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_account_item"
         app:setting_item_name="@string/me_profile_change_pwd_title"
         app:setting_item_name_color="@color/common_color_black"
-        app:setting_item_right="arrow"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_account_item" />
+        app:setting_item_right="arrow" />
 
     <TextView
         android:id="@+id/profile_logout_btn"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:text="@string/me_log_out"
-        android:textSize="17sp"
-        android:textColor="@color/common_color_white"
-        android:gravity="center"
-        android:background="@drawable/common_red_bg"
         android:layout_marginStart="45dp"
         android:layout_marginEnd="45dp"
-        android:layout_marginBottom="100dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/common_red_bg"
+        android:gravity="center"
+        android:text="@string/me_log_out"
+        android:textColor="@color/common_color_white"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toTopOf="@id/profile_destroy_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/profile_destroy_btn"
         android:layout_width="0dp"
         android:layout_height="52dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/common_white_bg"
+        android:gravity="center"
         android:text="@string/me_destroy_account_str"
         android:textColor="@color/common_color_ff3737"
         android:textSize="13sp"
-        android:layout_marginStart="45dp"
-        android:layout_marginEnd="45dp"
-        android:gravity="center"
-        android:background="@drawable/common_white_bg"
-        app:layout_constraintTop_toBottomOf="@id/profile_logout_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

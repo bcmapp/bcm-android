@@ -86,7 +86,6 @@ class StartupFragment : AbsRegistrationFragment() {
                     keyPair = it
                     if (keyPair != null) {
                         AmeLoginLogic.queryChallengeTarget(it) { target ->
-
                             AmePopup.tipLoading.dismiss()
                             if (target != null) {
                                 activity?.apply {
@@ -95,10 +94,12 @@ class StartupFragment : AbsRegistrationFragment() {
                                     arg.putInt("action", 1)
                                     arg.putString("target", target)
                                     f.arguments = arg
-                                    supportFragmentManager.beginTransaction()
+                                    val transaction = supportFragmentManager.beginTransaction()
                                             .replace(R.id.register_container, f, "generate_key_2")
-                                            .addToBackStack("generate_key_2")
-                                            .commitAllowingStateLoss()
+                                    if (arguments?.getBoolean(RegistrationActivity.CREATE_ACCOUNT_ID, false) != true) {
+                                        transaction.addToBackStack("generate_key_2")
+                                    }
+                                    transaction.commitAllowingStateLoss()
                                     f.setKeyPair(it)
                                 }
                             }

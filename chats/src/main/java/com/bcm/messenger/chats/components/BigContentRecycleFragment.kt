@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.util.TTSUtil
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -41,12 +42,12 @@ import java.util.*
  *
  * ling created in 2018/6/20
  **/
-class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
+class BigContentRecycleFragment(accountContext: AccountContext) : BaseFragment(), TextToSpeech.OnInitListener {
 
     companion object {
 
         fun showBigContent(activity: AccountSwipeBaseActivity, gid: Long, indexId: Long) {
-            val f = BigContentRecycleFragment()
+            val f = BigContentRecycleFragment(activity.accountContext)
             val arg = Bundle()
             arg.putLong(GID, gid)
             arg.putLong(INDEX_ID, indexId)
@@ -63,7 +64,7 @@ class BigContentRecycleFragment : BaseFragment(), TextToSpeech.OnInitListener {
         }
 
         fun showBigContent(activity: AccountSwipeBaseActivity, threadId: Long, id: Long, masterSecret: MasterSecret) {
-            val f = BigContentRecycleFragment()
+            val f = BigContentRecycleFragment(activity.accountContext)
             val arg = Bundle()
             arg.putLong(THREAD_ID, threadId)
             arg.putLong(INDEX_ID, id)

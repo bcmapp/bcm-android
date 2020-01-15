@@ -104,6 +104,7 @@ public class AttachmentDownloadJob extends MasterSecretJob {
         }
 
         if (!accountContext.getUid().equals(AMELogin.INSTANCE.getMajorUid())) {
+            repo.setTransferState(record, AttachmentDbModel.TransferState.PENDING);
             ALog.w(TAG, "Current user is not a major user");
             return;
         }

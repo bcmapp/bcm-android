@@ -61,7 +61,6 @@ class RegistrationActivity : AppCompatActivity() {
                 action(uid?:"")
             }
         }
-
     }
 
     public override fun onCreate(savedInstanceState: Bundle?) {

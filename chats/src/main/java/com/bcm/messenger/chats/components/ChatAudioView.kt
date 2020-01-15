@@ -76,7 +76,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
             if (mPrivateMessage?.isMediaDeleted() == true || mGroupMessage?.isFileDeleted == true) {
                 return@setOnClickListener
             }
-            if (mPrivateMessage?.isMediaFailed() == true || mGroupMessage?.isFileDownloadFail == true) {
+            if (mPrivateMessage?.isMediaFailed() == true || mPrivateMessage?.isMediaPending() == true || mGroupMessage?.isFileDownloadFail == true) {
                 if (mPrivateMessage != null) {
                     downloadListener?.onClick(v, mPrivateMessage!!)
                 } else if (mGroupMessage != null) {
@@ -346,7 +346,6 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
 
 
     fun doDownloadAction() {
-
         PermissionUtil.checkStorage(context) { granted ->
             if (granted) {
                 val data = mPrivateMessage ?: mGroupMessage ?: return@checkStorage
@@ -355,7 +354,6 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
                 }
             }
         }
-
     }
 
 
