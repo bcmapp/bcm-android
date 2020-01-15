@@ -700,6 +700,13 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
 
     }
 
+    override fun onGroupShareSettingChanged(gid: Long, shareCode: String, shareEnable: Boolean, needConfirm: Boolean) {
+        if (gid == groupId) {
+            modelCache.updateNeedConfirmSetting(needConfirm)
+            modelCache.updateShareSetting(shareEnable, shareCode)
+        }
+    }
+
     override fun onMemberUpdate(gid: Long, memberList: List<AmeGroupMemberInfo>) {
         if (gid == groupId && memberList.isNotEmpty()) {
             memberList.forEach {

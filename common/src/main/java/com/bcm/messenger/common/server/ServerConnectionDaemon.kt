@@ -182,7 +182,6 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
                     .subscribe({
                         val conn = serverConn
 
-                        //，
                         if ((null == conn || conn.isDisconnect() || conn.isTimeout())
                                 && !retryCalled
                                 && NetworkUtil.isConnected()) {

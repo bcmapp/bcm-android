@@ -698,7 +698,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         }
                     } else {
                         AmeDispatcher.io.dispatch {
-                            updateShareLink(groupId, link)
+                            groupCache.updateShareLink(groupId, link)
                         }
                     }
                 }
@@ -1304,17 +1304,32 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         if (it.isNotEmpty()) {
                             val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, event.gid)
                                     ?: return@map
-                            if (groupInfo.owner == it[0].uid) {
-                                if (GroupShareSettingUtil.parseIntoGroupInfo(it[0].identityKey,
-                                                event.shareSetting,
-                                                event.shareSettingSign,
-                                                event.shareConfirmSign,
-                                                groupInfo.infoSecret, event.needConfirm, groupInfo)) {
-                                    groupCache.saveGroupInfo(groupInfo)
-                                    return@map
+                            if (GroupShareSettingUtil.parseIntoGroupInfo(it[0].identityKey,
+                                            event.shareSetting,
+                                            event.shareSettingSign,
+                                            event.shareConfirmSign,
+                                            groupInfo.infoSecret, event.needConfirm, groupInfo)) {
+
+                                groupCache.updateShareSetting(groupInfo.gid,
+                                        groupInfo.shareEnabled,
+                                        groupInfo.shareEpoch,
+                                        groupInfo.shareCode,
+                                        groupInfo.shareCodeSetting,
+                                        groupInfo.shareCodeSettingSign,
+                                        groupInfo.shareSettingAndConfirmSign,
+                                        groupInfo.ephemeralKey?:"")
+
+                                groupCache.updateNeedConfirm(groupInfo.gid,
+                                        groupInfo.needOwnerConfirm,
+                                        groupInfo.shareSettingAndConfirmSign)
+
+                                AmeDispatcher.mainThread.dispatch {
+                                    listenerRef.get()?.onGroupShareSettingChanged(groupInfo.gid
+                                            , groupInfo.shareCode
+                                            , groupInfo.shareEnabled == 1
+                                            , groupInfo.needOwnerConfirm == 1)
                                 }
-                            } else {
-                                ALog.e(TAG, "GroupShareSettingRefreshEvent failed:group owner changed")
+                                return@map
                             }
                         }
                         throw GroupException("GroupShareSettingRefreshEvent update group info failed")
@@ -1420,6 +1435,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         ALog.d(TAG, "createGroupShareShortUrl index: ${pair.first}")
                         val shareLink = AmeGroupMessage.GroupShareContent.toShortLink(pair.first, Base62.encode(pair.second))
                         groupCache.updateShareLink(groupId, shareLink)
+                        updateShareLink(groupId, shareLink)
                         shareLink
                     }
                     .observeOn(AmeDispatcher.ioScheduler)
@@ -1478,10 +1494,10 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         keyMap
                     }.observeOn(AmeDispatcher.ioScheduler)
                     .subscribe({
-                        ACLog.i(accountContext, TAG, "updateGroupExtension succeed:$it")
+                        ACLog.i(accountContext, TAG, "getGroupExtension succeed:$it")
                         result(true, it)
                     }, {
-                        ACLog.e(accountContext, TAG, "updateGroupExtension", it)
+                        ACLog.e(accountContext, TAG, "getGroupExtension", it)
                         result(false, mapOf())
                     })
         }
