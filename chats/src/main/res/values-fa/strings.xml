@@ -553,13 +553,13 @@
     <string name="chats_recipient_stranger_role">غریبه</string>
     <!-- 群分享和进群相关 -->
     <string name="chats_group_new_join_request_description">[Joining Request]</string>
-    <string name="chats_group_setting_invite_join_title">دعوت به عضویت در گروه</string>
+    <string name="chats_group_setting_share_group">Share Group</string>
     <string name="chats_group_setting_joining_request_title">درخواست‌های عضویت</string>
     <string name="chats_group_setting_joining_approval_title">تأییدیه عضویت</string>
     <string name="chats_group_setting_joining_approval_subtitle">با فعال کردن، کلیه درخواست‌های عضویت در گروه باید دوطرفه تأیید شود. </string>
     <string name="chats_group_setting_default_name">چت گروهی</string>
-    <string name="chats_group_share_setting_enable_title">دعوت به عضویت در گروه</string>
-    <string name="chats_group_share_setting_enable_subtitle">افراد با این لینک یا کد QR می‌توانند فوراً به گروه ملحق شوند؛ لطفاً در اشتراک‌گذاری آن دقت کنید. </string>
+    <string name="chats_group_share_setting_enable_title">Join Group by QR Code</string>
+    <string name="chats_group_share_setting_enable_subtitle">Allow people to join the group by scanning a QR code, which is visible to the whole group.</string>
     <string name="chats_group_share_activity_title">دعوت به عضویت</string>
     <string name="chats_group_share_revoke_action">لغو</string>
     <string name="chats_group_share_revoke_confirm_title">برای لغو لینک مطمئن هستید؟ کاربران دیگر نمی‌توانند با لینک لغوشده به این گروه بپیوندند.</string>
@@ -642,5 +642,6 @@
     <string name="chats_media_view_image_expire">این تصویر منقضی یا پاک شده است</string>
     <string name="chats_media_view_video_expire">این ویدیئو منقضی یا پاک شده است</string>
     <string name="chats_media_view_audio_expire">پیام صوتی منقضی شده</string>
+    <string name="chats_disabled_by_admin">Disabled by admin</string>
 
 </resources>

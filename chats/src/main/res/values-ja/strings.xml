@@ -601,13 +601,13 @@
 
     <!-- 群分享和进群相关 -->
     <string name="chats_group_new_join_request_description">[グループ加入申請]</string>
-    <string name="chats_group_setting_invite_join_title">グループ加入の招待</string>
+    <string name="chats_group_setting_share_group">Share Group</string>
     <string name="chats_group_setting_joining_request_title">グループ加入申請</string>
     <string name="chats_group_setting_joining_approval_title">グループ加入確認</string>
     <string name="chats_group_setting_joining_approval_subtitle">開いた後、すべてのグループ加入申請は手で確認する必要があります。</string>
     <string name="chats_group_setting_default_name">グループチャット</string>
-    <string name="chats_group_share_setting_enable_title">グループ加入招待</string>
-    <string name="chats_group_share_setting_enable_subtitle">このリンクやQRコードで直接グループ加入ことができますので、慎重にシェアしてください。</string>
+    <string name="chats_group_share_setting_enable_title">Join Group by QR Code</string>
+    <string name="chats_group_share_setting_enable_subtitle">Allow people to join the group by scanning a QR code, which is visible to the whole group.</string>
     <string name="chats_group_share_activity_title">グループ加入申請</string>
     <string name="chats_group_share_revoke_action">撤回</string>
     <string name="chats_group_share_revoke_confirm_title">このリンクを削除しますか？ユーザは削除されたリンクでグループ加入することができません。</string>
@@ -691,5 +691,6 @@
     <string name="chats_media_view_image_expire">画像の期限が切れたり削除されたりしています</string>
     <string name="chats_media_view_video_expire">ビデオの期限が切れたり削除されたりしています</string>
     <string name="chats_media_view_audio_expire">音声チャットメッセージの期限が切れ</string>
+    <string name="chats_disabled_by_admin">Disabled by admin</string>
 
 </resources>

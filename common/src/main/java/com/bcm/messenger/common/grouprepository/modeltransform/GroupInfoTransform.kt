@@ -8,18 +8,16 @@ import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
 object GroupInfoTransform {
     fun transformToModel(entity: GroupInfo): AmeGroupInfo {
         val ameGroupInfo = AmeGroupInfo()
-        ameGroupInfo.subscriberEnabled = (entity.broadcast > 0)
         ameGroupInfo.gid = entity.gid
         ameGroupInfo.shareContent = entity.share_content
         ameGroupInfo.iconUrl = entity.iconUrl
         ameGroupInfo.name = entity.name
         ameGroupInfo.mute = (entity.notification_enable != GroupInfo.NOTIFICATION_ENABLE)
-        ameGroupInfo.subscriberCount = entity.subscriber_count
         ameGroupInfo.memberCount = entity.member_count
         ameGroupInfo.createTime = entity.createTime
         ameGroupInfo.owner = entity.owner
         ameGroupInfo.permission = entity.permission
-        ameGroupInfo.channelURL = entity.share_url
+        ameGroupInfo.shareLink = entity.shareLink
         ameGroupInfo.channelKey = entity.channel_key
         ameGroupInfo.key = entity.currentKey
         ameGroupInfo.role = entity.role

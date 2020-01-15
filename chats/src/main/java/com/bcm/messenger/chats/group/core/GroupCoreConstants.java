@@ -25,6 +25,7 @@ public class GroupCoreConstants {
     public static final String JOIN_GROUP_BY_CODE = "/v1/group/deliver/join_group_by_code";
     public static final String CHECK_QR_CODE_VALID = "/v1/group/deliver/is_qr_code_valid";
     public static final String GROUP_SHORT_SHARE = "/v1/opaque_data"; //short link create url
+    public static final String GROUP_EXTENSION = "/v1/group/extension";
 
 
     public static final String GET_GROUP_KEYS = "/v3/group/deliver/group_keys";

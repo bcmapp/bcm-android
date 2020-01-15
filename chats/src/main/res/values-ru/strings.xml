@@ -552,13 +552,13 @@
     <string name="chats_recipient_stranger_role">Незнаком.</string>
     <!-- 群分享和进群相关 -->
     <string name="chats_group_new_join_request_description">[Запрос вступ.]</string>
-    <string name="chats_group_setting_invite_join_title">Пригласить в группу</string>
+    <string name="chats_group_setting_share_group">Share Group</string>
     <string name="chats_group_setting_joining_request_title">Запросы вступл.</string>
     <string name="chats_group_setting_joining_approval_title">Утвержд. вступления</string>
     <string name="chats_group_setting_joining_approval_subtitle">Включите для утвержд. вручную запросов на вступ. в группу.</string>
     <string name="chats_group_setting_default_name">Груп. чат</string>
-    <string name="chats_group_share_setting_enable_title">Пригласить в группу</string>
-    <string name="chats_group_share_setting_enable_subtitle">Люди могут сразу вступать в эту группу по ссылке или QR-коду, делитесь ими осторожно.</string>
+    <string name="chats_group_share_setting_enable_title">Join Group by QR Code</string>
+    <string name="chats_group_share_setting_enable_subtitle">Allow people to join the group by scanning a QR code, which is visible to the whole group.</string>
     <string name="chats_group_share_activity_title">Пригл. вступить</string>
     <string name="chats_group_share_revoke_action">Отозв.</string>
     <string name="chats_group_share_revoke_confirm_title">Отозвать ссылку? Пользователи не смогут вступать в группу по отозванной ссылке.</string>
@@ -641,5 +641,6 @@
     <string name="chats_media_view_image_expire">Это изображение устарело или удалено</string>
     <string name="chats_media_view_video_expire">Это видео устарело или удалено</string>
     <string name="chats_media_view_audio_expire">Старое аудиосообщение</string>
+    <string name="chats_disabled_by_admin">Disabled by admin</string>
 
 </resources>

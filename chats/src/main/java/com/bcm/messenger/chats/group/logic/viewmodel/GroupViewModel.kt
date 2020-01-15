@@ -560,35 +560,26 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
 
     @SuppressLint("CheckResult")
     fun getGroupShareData(groupId: Long, callback: (shareContent: AmeGroupMessage.GroupShareContent?) -> Unit) {
-        Observable.create<GroupInfo> {
+        Observable.create<AmeGroupMessage.GroupShareContent> {
             val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, groupId)
                     ?: throw Exception("getGroupInfo null")
-            it.onNext(groupInfo)
+
+            val eKey = if (groupInfo.isNewGroup) {
+                groupInfo.ephemeralKey
+            } else {
+                null
+            }
+
+            val shareContent = AmeGroupMessage.GroupShareContent(groupId, groupInfo.name, groupInfo.iconUrl, groupInfo.shareCode
+                    ?: "", groupInfo.shareCodeSettingSign
+                    ?: "", eKey, System.currentTimeMillis(), groupInfo.shareLink)
+            it.onNext(shareContent)
             it.onComplete()
 
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ groupInfo ->
-                    if (groupInfo.shareLink.isNullOrEmpty()) {
-                        ALog.d(TAG, "getGroupShareData group share link not exist, to create new")
-                        GroupLogic.get(accountContext).createGroupShareShortUrl(groupId) { shareContent ->
-                            val link = shareContent?.shareLink
-                            callback.invoke(shareContent)
-                        }
-
-                    } else {
-                        ALog.d(TAG, "getGroupShareData group share link is exist, just gen share QR: ${groupInfo.shareLink}")
-                        val ekey = if (groupInfo.isNewGroup) {
-                            groupInfo.ephemeralKey
-                        } else {
-                            null
-                        }
-                        val shareContent = AmeGroupMessage.GroupShareContent(groupId, groupInfo.name, groupInfo.iconUrl, groupInfo.shareCode
-                                ?: "", groupInfo.shareCodeSettingSign
-                                ?: "", ekey, System.currentTimeMillis(), groupInfo.shareLink)
-                        callback.invoke(shareContent)
-                    }
-
+                .subscribe({ shareContent ->
+                    callback(shareContent)
                 }, {
                     ALog.e(TAG, "getGroupShareShortQR error", it)
                     callback.invoke(null)

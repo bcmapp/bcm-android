@@ -34,11 +34,8 @@ class GroupInfoEntity : NotGuard {
     var permission: Int = 0
     var broadcast: Int = 0
     var member_cn: Int = 0
-    var channel: String? = null
     var encrypted_key: String? = null
-    var encrypted: Int = 0//0:not encrypted，1:encrypted
     var role = 0//1:group owner，2:manager，3:member，4: subscriber
-    var plain_channel_key: String? = null
     var notice: NoticeBean? = null//group announcement
     @SerializedName("encrypted_notice")
     var encryptedNotice: String? = null // Base64 encoded
@@ -69,7 +66,6 @@ class GroupInfoEntity : NotGuard {
         dbGroupInfo.owner = owner
         dbGroupInfo.broadcast = broadcast
         dbGroupInfo.share_content = intro
-        dbGroupInfo.share_url = channel
         dbGroupInfo.gid = gid
         dbGroupInfo.role = role.toLong()
         dbGroupInfo.member_sync_state = GroupMemberSyncState.DIRTY.toString()

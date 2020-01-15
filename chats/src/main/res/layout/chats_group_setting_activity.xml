@@ -118,11 +118,11 @@
                 app:setting_item_right="arrow"/>
 
             <com.bcm.messenger.common.ui.CommonSettingItem
-                android:id="@+id/invite_join_item"
+                android:id="@+id/share_group_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:setting_item_line="true"
-                app:setting_item_name="@string/chats_group_setting_invite_join_title"
+                app:setting_item_name="@string/chats_group_setting_share_group"
                 app:setting_item_head="@string/chats_group_setting_admin_actions_title"
                 app:setting_item_right="none"
                 app:setting_item_right_custom="@drawable/chats_group_setting_invite_icon"/>

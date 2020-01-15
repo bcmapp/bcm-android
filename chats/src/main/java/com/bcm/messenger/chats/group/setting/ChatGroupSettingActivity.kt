@@ -148,7 +148,7 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
             }
         }
 
-        invite_join_item.setOnClickListener {
+        share_group_item.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
@@ -339,12 +339,6 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
                 return@setOnClickListener
             }
             goToGroupInfoEdit(mGroupModel.groupId(), mGroupModel.myRole())
-        }
-
-        if (mGroupModel.myRole() == AmeGroupMemberInfo.OWNER) {
-            invite_join_item.visibility = View.VISIBLE
-        } else {
-            invite_join_item.visibility = View.GONE
         }
 
         leave_group_item.setName(resources.getString(R.string.chats_group_setting_leave_head))

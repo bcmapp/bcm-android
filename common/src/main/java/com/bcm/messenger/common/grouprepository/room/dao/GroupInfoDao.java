@@ -36,16 +36,6 @@ public interface GroupInfoDao {
     List<GroupInfo> loadGroupInfoListByGid(long[] gidList);
 
     /**
-     * shareUrl
-     *
-     * @param shareUrl
-     * @return
-     */
-    @Query("SELECT * FROM " + GroupInfo.TABLE_NAME + " WHERE " + "share_url" + " = :shareUrl ")
-    GroupInfo loadGroupInfoByShareUrl(String shareUrl);
-
-
-    /**
      * @return
      */
     @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET `key` = :key, key_version =:keyVersion WHERE gid = :gid")

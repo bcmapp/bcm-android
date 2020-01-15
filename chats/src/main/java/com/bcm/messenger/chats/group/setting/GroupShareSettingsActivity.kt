@@ -72,29 +72,37 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
 
             override fun onClickRight() {
                 ALog.d(TAG, "do revoke")
-                doForRevoke()
+                if (mGroupModel.myRole() == AmeGroupMemberInfo.OWNER) {
+                    doForRevoke()
+                }
             }
         })
 
-        group_share_enable_item.setSwitchEnable(false)
-        group_share_enable_item.setSwitchStatus(mGroupModel.isShareGroupEnable())
-        group_share_enable_item.setOnClickListener {
-            val switch = !group_share_enable_item.getSwitchStatus()
-            doForShareEnable(switch)
+        if (mGroupModel.myRole() == AmeGroupMemberInfo.OWNER) {
+            group_share_enable_item.setSwitchEnable(false)
+            group_share_enable_item.setSwitchStatus(mGroupModel.isShareGroupEnable())
+            group_share_enable_item.setOnClickListener {
+                val switch = !group_share_enable_item.getSwitchStatus()
+                doForShareEnable(switch)
+            }
+        } else {
+            group_share_enable_item.visibility = View.GONE
         }
+
 
         group_share_name.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            goToGroupInfoEdit(mGroupModel.groupId(), AmeGroupMemberInfo.OWNER)
+            goToGroupInfoEdit(mGroupModel.groupId(), mGroupModel.myRole())
 
         }
         group_share_arrow.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            goToGroupInfoEdit(mGroupModel.groupId(), AmeGroupMemberInfo.OWNER)
+            goToGroupInfoEdit(mGroupModel.groupId(), mGroupModel.myRole())
+
         }
 
         group_share_forward_btn.setOnClickListener {
@@ -124,6 +132,7 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
             AppUtil.saveCodeToBoard(this@GroupShareSettingsActivity, link)
             AmePopup.result.succeed(this@GroupShareSettingsActivity, getString(R.string.chats_group_share_copy_success), true)
         }
+
         group_share_save_btn.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
@@ -143,26 +152,44 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
         val groupInfo = mGroupModel.getGroupInfo()
         group_share_name.text = if (groupInfo.name.isNullOrEmpty()) {
             getString(R.string.common_chats_group_default_name)
-        } else {
+        }else {
             groupInfo.name
         }
         group_share_logo.showGroupAvatar(accountContext, mGroupModel.groupId(), false)
-
     }
 
     private fun switchGroupShareQR(toShow: Boolean) {
-        if (toShow) {
-            group_share_qr_layout?.visibility = View.VISIBLE
-            group_share_action_layout?.visibility = View.VISIBLE
-            title_bar.setRightText(getString(R.string.chats_group_share_revoke_action))
-            checkLoadShareQr()
+        group_share_forward_btn.isEnabled = toShow
+        group_share_copy_btn.isEnabled = toShow
+        group_share_save_btn.isEnabled = toShow
 
+        if (mGroupModel.myRole() == AmeGroupMemberInfo.OWNER) {
+            group_admin_disable_tip.visibility = View.GONE
+            if (toShow) {
+                group_share_qr_layout?.visibility = View.VISIBLE
+                group_share_action_layout?.visibility = View.VISIBLE
+                title_bar.setRightText(getString(R.string.chats_group_share_revoke_action))
+                checkLoadShareQr()
+
+            } else {
+                mGroupShareContent = null
+                group_share_qr_layout?.visibility = View.GONE
+                group_share_action_layout?.visibility = View.GONE
+                title_bar.hideRightViews()
+            }
         } else {
-            mGroupShareContent = null
-            group_share_qr_layout?.visibility = View.GONE
-            group_share_action_layout?.visibility = View.GONE
             title_bar.hideRightViews()
+            group_share_action_layout?.visibility = View.VISIBLE
+            group_share_qr_layout?.visibility = View.VISIBLE
+            if (toShow) {
+                group_admin_disable_tip.visibility = View.GONE
+                checkLoadShareQr()
+            } else {
+                group_admin_disable_tip.visibility = View.VISIBLE
+                mGroupShareContent = null
+            }
         }
+
     }
 
     private fun checkLoadShareQr() {

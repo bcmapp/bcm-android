@@ -598,13 +598,13 @@
 
     <!-- 群分享和进群相关 -->
     <string name="chats_group_new_join_request_description">[Joining Request]</string>
-    <string name="chats_group_setting_invite_join_title">Invite to Join Group</string>
+    <string name="chats_group_setting_share_group">Share Group</string>
     <string name="chats_group_setting_joining_request_title">Joining Requests</string>
     <string name="chats_group_setting_joining_approval_title">Approval of Joining</string>
     <string name="chats_group_setting_joining_approval_subtitle">Turn on to manually approve all join-group applications. </string>
     <string name="chats_group_setting_default_name">Group Chat</string>
-    <string name="chats_group_share_setting_enable_title">Invite to Join Group</string>
-    <string name="chats_group_share_setting_enable_subtitle">People can join this group instantly with this link or QR code, please share it with caution. </string>
+    <string name="chats_group_share_setting_enable_title">Join Group by QR Code</string>
+    <string name="chats_group_share_setting_enable_subtitle">Allow people to join the group by scanning a QR code, which is visible to the whole group.</string>
     <string name="chats_group_share_activity_title">Invite to Join</string>
     <string name="chats_group_share_revoke_action">Revoke</string>
     <string name="chats_group_share_revoke_confirm_title">Are you sure to revoke the link? Users can no longer join this group by the revoked link.</string>
@@ -688,5 +688,6 @@
     <string name="chats_media_view_image_expire">This image is expired or deleted</string>
     <string name="chats_media_view_video_expire">This video is expired or deleted</string>
     <string name="chats_media_view_audio_expire">Expired audio message</string>
+    <string name="chats_disabled_by_admin">Disabled by admin</string>
 
 </resources>

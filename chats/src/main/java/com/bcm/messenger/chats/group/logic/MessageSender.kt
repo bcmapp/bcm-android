@@ -241,7 +241,7 @@ class MessageSender(private val mAccountContext: AccountContext) {
             message = AmeGroupMessage(AmeGroupMessage.NEWSHARE_CHANNEL,
                     AmeGroupMessage.NewShareChannelContent(groupInfo.channelKey
                             ?: "",
-                            groupInfo.channelURL, groupInfo.name, groupInfo.gid, groupInfo.iconUrl, groupInfo.shareContent))
+                            groupInfo.shareLink, groupInfo.name, groupInfo.gid, groupInfo.iconUrl, groupInfo.shareContent))
         }, callback)
     }
 

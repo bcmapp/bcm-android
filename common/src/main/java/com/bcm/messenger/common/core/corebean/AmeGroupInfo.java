@@ -20,13 +20,10 @@ public class AmeGroupInfo {
     private String channelKey;
     private int permission;
     private String iconUrl;
-    private Long lastMessageId;
     private long createTime;
     private int memberCount;
-    private int subscriberCount;
-    private String channelURL; //
+    private String shareLink; //
     private String shareContent;//
-    private Boolean subscriberEnabled;
     private Boolean stickOnTop;
     private Boolean mute;
     private int status;//
@@ -212,14 +209,6 @@ public class AmeGroupInfo {
     }
 
 
-    public Long getLastMessageId() {
-        return lastMessageId;
-    }
-
-    public void setLastMessageId(Long lastMessageId) {
-        this.lastMessageId = lastMessageId;
-    }
-
     public long getCreateTime() {
         return createTime;
     }
@@ -236,20 +225,12 @@ public class AmeGroupInfo {
         this.status = status;
     }
 
-    public String getChannelURL() {
-        return channelURL;
+    public String getShareLink() {
+        return shareLink;
     }
 
-    public void setChannelURL(String channelURL) {
-        this.channelURL = channelURL;
-    }
-
-    public Boolean getSubscriberEnabled() {
-        return subscriberEnabled;
-    }
-
-    public void setSubscriberEnabled(Boolean subscriberEnabled) {
-        this.subscriberEnabled = subscriberEnabled;
+    public void setShareLink(String shareLink) {
+        this.shareLink = shareLink;
     }
 
     public Boolean getStickOnTop() {
@@ -266,14 +247,6 @@ public class AmeGroupInfo {
 
     public void setMemberCount(int memberCount) {
         this.memberCount = memberCount;
-    }
-
-    public int getSubscriberCount() {
-        return subscriberCount;
-    }
-
-    public void setSubscriberCount(int subscriberCount) {
-        this.subscriberCount = subscriberCount;
     }
 
     public Boolean getMute() {

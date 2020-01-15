@@ -231,14 +231,6 @@ public class GroupInfo {
         this.subscriber_count = subscriber_count;
     }
 
-    public String getShare_url() {
-        return share_url;
-    }
-
-    public void setShare_url(String share_url) {
-        this.share_url = share_url;
-    }
-
     public int getNotification_enable() {
         return notification_enable;
     }
@@ -557,6 +549,14 @@ public class GroupInfo {
 
     public void setCurrentKeyVersion(long currentKeyVersion) {
         this.currentKeyVersion = currentKeyVersion;
+    }
+
+    public String getShare_url() {
+        return share_url;
+    }
+
+    public void setShare_url(String share_url) {
+        this.share_url = share_url;
     }
 
 

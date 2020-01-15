@@ -16,10 +16,10 @@ import com.bcm.messenger.chats.group.logic.secure.*
 import com.bcm.messenger.chats.group.logic.sync.GroupMemberSyncManager
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.ServerResult
 import com.bcm.messenger.common.core.corebean.*
+import com.bcm.messenger.common.crypto.ECCCipher
 import com.bcm.messenger.common.crypto.GroupProfileDecryption
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.database.repositories.ThreadRepo
@@ -41,6 +41,7 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.*
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -57,6 +58,7 @@ import org.whispersystems.curve25519.Curve25519
 import org.whispersystems.libsignal.ecc.DjbECPublicKey
 import org.whispersystems.libsignal.util.guava.Optional
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 
@@ -281,7 +283,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
                         val format = ByteArrayOutputStream()
                         format.write(stash.shareSetting.toByteArray().base64Decode())
-                        format.write("0".toByteArray())
+                        format.write("1".toByteArray())
                         val shareConfirmSignByteArray = BCMEncryptUtils.signWithMe(accountContext, format.toByteArray())
                                 ?: throw Exception("sign confirm failed")
                         stash.shareConfirmSign = shareConfirmSignByteArray.base64Encode().format()
@@ -336,13 +338,12 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         dbGroupInfo.owner = accountContext.uid
                         dbGroupInfo.broadcast = broadcast
                         dbGroupInfo.share_content = shareContent
-                        dbGroupInfo.share_url = ""
                         dbGroupInfo.role = AmeGroupMemberInfo.OWNER
                         dbGroupInfo.member_sync_state = GroupMemberSyncState.DIRTY.toString()
                         dbGroupInfo.illegal = GroupInfo.LEGITIMATE_GROUP
-                        dbGroupInfo.needOwnerConfirm = 0
+                        dbGroupInfo.needOwnerConfirm = 1
                         dbGroupInfo.shareEpoch = 1
-                        dbGroupInfo.shareEnabled = 0
+                        dbGroupInfo.shareEnabled = 1
                         dbGroupInfo.shareCode = ""
                         dbGroupInfo.version = 3
 
@@ -449,7 +450,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
                         val format = ByteArrayOutputStream()
                         format.write(EncryptUtils.base64Decode(shareSetting.toByteArray()))
-                        format.write("0".toByteArray())
+                        format.write("1".toByteArray())
                         val shareConfirmSignByteArray = BCMEncryptUtils.signWithMe(accountContext, format.toByteArray())
                         shareConfirmSign = String(EncryptUtils.base64Encode(shareConfirmSignByteArray))
 
@@ -480,16 +481,15 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             dbGroupInfo.owner = accountContext.uid
                             dbGroupInfo.broadcast = broadcast
                             dbGroupInfo.share_content = shareContent
-                            dbGroupInfo.share_url = ""
                             dbGroupInfo.gid = it.data.gid
                             dbGroupInfo.role = AmeGroupMemberInfo.OWNER
                             dbGroupInfo.member_sync_state = GroupMemberSyncState.DIRTY.toString()
                             dbGroupInfo.illegal = GroupInfo.LEGITIMATE_GROUP
                             dbGroupInfo.currentKey = Base64.encodeBytes(groupPassword)
                             dbGroupInfo.infoSecret = Base64.encodeBytes(groupSecret)
-                            dbGroupInfo.needOwnerConfirm = 0
+                            dbGroupInfo.needOwnerConfirm = 1
                             dbGroupInfo.shareEpoch = 1
-                            dbGroupInfo.shareEnabled = 0
+                            dbGroupInfo.shareEnabled = 1
                             dbGroupInfo.shareCode = ""
                             dbGroupInfo.shareCodeSetting = shareSetting
                             dbGroupInfo.shareCodeSettingSign = shareSettingSign
@@ -678,16 +678,39 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         val messageAckState = GroupAckState(it.second.gid, it.second.last_mid, it.second.last_ack_mid)
 
                         checkGroupKeyValidState(listOf(groupId))
+
+                        checkGroupShareLink(groupId, dbGroupInfo.role)
                         GroupInfoResult(ameGroup, messageAckState)
                     }
+        }
+
+        private fun checkGroupShareLink(groupId: Long, role: Long) {
+            getShareLink(groupId) {
+                succeed, link ->
+                if (succeed) {
+                    if (role == AmeGroupMemberInfo.OWNER) {
+                        if (link != getGroupInfo(groupId)?.shareLink) {
+                            ACLog.i(accountContext, TAG, "checkGroupShareLink regen link")
+                            genShareLink(groupId)
+                                    .subscribeOn(AmeDispatcher.ioScheduler)
+                                    .observeOn(AmeDispatcher.ioScheduler)
+                                    .subscribe({},{})
+                        }
+                    } else {
+                        AmeDispatcher.io.dispatch {
+                            updateShareLink(groupId, link)
+                        }
+                    }
+                }
+            }
         }
 
 
         private data class GroupInfoResult(val info: AmeGroupInfo, val ackState: GroupAckState)
 
         private fun parseGroupInfo(info: GroupInfoEntity, ownerIdentityKey: String?, parseCount: Boolean): GroupInfo {
-            info.channel = ""
-            val dbGroupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, info.gid) ?: GroupInfo()
+            val dbGroupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, info.gid)
+                    ?: GroupInfo()
 
             val oldSecretKey = dbGroupInfo.infoSecret
             info.toDbGroup(accountContext, dbGroupInfo, ownerIdentityKey, parseCount)
@@ -879,11 +902,11 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             GroupManagerCore.updateGroup(accountContext, gid, null, avatar)
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AmeDispatcher.ioScheduler)
-                    .map {
-                        ALog.i(TAG, "result:${it.code},  msg:${it.msg}")
+                    .flatMap {
                         if (it.isSuccess) {
-                            GroupInfoDataManager.updateGroupShareShortLink(accountContext, gid, "")
                             groupCache.updateGroupAvatar(gid, avatar)
+                            genShareLink(gid)
+                                    .subscribeOn(AmeDispatcher.ioScheduler)
                         } else {
                             if (110005 == it.code) {
                                 throw GroupException(AppContextHolder.APP_CONTEXT.getString(R.string.chats_group_name_too_long))
@@ -891,8 +914,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                                 throw GroupException(it.msg)
                             }
                         }
-                    }
-                    .observeOn(AmeDispatcher.mainScheduler)
+                    }.observeOn(AmeDispatcher.ioScheduler)
                     .subscribe({
                         result(true, "")
                     }, {
@@ -932,10 +954,10 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                 groupCache.removeGroupInfo(groupId)
                 groupCache.updateRole(groupId, AmeGroupMemberInfo.VISITOR)
 
-                val recipientRepo = Repository.getRecipientRepo(accountContext)?:return@dispatch
+                val recipientRepo = Repository.getRecipientRepo(accountContext) ?: return@dispatch
                 recipientRepo.leaveGroup(listOf(groupId))
 
-                val threadRepo = Repository.getThreadRepo(accountContext)?:return@dispatch
+                val threadRepo = Repository.getThreadRepo(accountContext) ?: return@dispatch
                 threadRepo.cleanConversationContentForGroup(threadRepo.getThreadIdIfExist(Recipient.recipientFromNewGroupId(accountContext, groupId)), groupId)
             }
         }
@@ -1336,6 +1358,131 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             }
         }
 
+        private val SHARE_LINK = "qr_code";
+        private fun updateShareLink(gid: Long, link: String) {
+            updateGroupExtension(gid, SHARE_LINK, link.toByteArray())
+        }
+
+        private fun getShareLink(gid: Long, result: (succeed: Boolean, link: String) -> Unit) {
+            getGroupExtension(gid, listOf(SHARE_LINK)) { succeed, data ->
+                val link = data[SHARE_LINK]?.format() ?: ""
+                if (succeed) {
+                    groupCache.updateShareLink(gid, link)
+                }
+                AmeDispatcher.mainThread.dispatch {
+                    result(succeed, link)
+                }
+            }
+        }
+
+        @SuppressLint("CheckResult")
+        fun genShareLink(groupId: Long): Observable<String> {
+            return Observable.create<Pair<String, Long>> {
+                val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, groupId)
+                        ?: throw Exception("groupInfo is null")
+                val eKey = if (groupInfo.isNewGroup) {
+                    groupInfo.ephemeralKey
+                } else {
+                    null
+                }
+
+                if (groupInfo.role != AmeGroupMemberInfo.OWNER) {
+                    throw GroupException("I'm not the owner")
+                }
+
+                val shareContent = AmeGroupMessage.GroupShareContent(groupId, groupInfo.name, groupInfo.iconUrl, groupInfo.shareCode
+                        ?: "", groupInfo.shareCodeSettingSign
+                        ?: "", eKey, System.currentTimeMillis(), null)
+                val jsonString = shareContent.toShortJson()
+                if (jsonString.isEmpty()) {
+                    throw Exception("createGroupShareShortUrl fail")
+                }
+                ALog.d(TAG, "createGroupShareShortUrl jsonString: $jsonString")
+                val lKey = BCMEncryptUtils.murmurHash3(0xFBA4C795, jsonString.toByteArray())
+                ALog.d(TAG, "createGroupShareShortUrl hash: $lKey")
+
+                val cipherData = Base64.encodeBytes(BCMEncryptUtils.encryptByAES256(jsonString.toByteArray(), lKey.toString().toByteArray()))
+
+                it.onNext(Pair(cipherData, lKey))
+                it.onComplete()
+            }.subscribeOn(AmeDispatcher.ioScheduler)
+                    .observeOn(AmeDispatcher.ioScheduler)
+                    .flatMap { pair ->
+                        GroupManagerCore.createGroupShareShortUrl(accountContext, pair.first)
+                                .subscribeOn(AmeDispatcher.ioScheduler)
+                                .map { Pair(it, pair.second) }
+                    }
+                    .observeOn(AmeDispatcher.ioScheduler)
+                    .map { pair ->
+                        ALog.d(TAG, "createGroupShareShortUrl index: ${pair.first}")
+                        val shareLink = AmeGroupMessage.GroupShareContent.toShortLink(pair.first, Base62.encode(pair.second))
+                        groupCache.updateShareLink(groupId, shareLink)
+                        shareLink
+                    }
+                    .observeOn(AmeDispatcher.ioScheduler)
+        }
+
+        private fun updateGroupExtension(gid: Long, key: String, data: ByteArray?) {
+            Observable.create<ByteArray> {
+                val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
+                        ?: throw GroupException("group info not exist")
+
+                if (groupInfo.role != AmeGroupMemberInfo.OWNER) {
+                    throw GroupException("I'm not the owner")
+                }
+
+                if (groupInfo.groupPublicKey == null) {
+                    throw GroupException("info secret not exist")
+                }
+
+                val cipherData = if (null != data) {
+                    ECCCipher.encrypt(groupInfo.groupPublicKey.publicKey(), data)
+                } else {
+                    ByteArray(0)
+                }
+                it.onNext(cipherData)
+                it.onComplete()
+            }.subscribeOn(AmeDispatcher.ioScheduler)
+                    .observeOn(AmeDispatcher.ioScheduler)
+                    .flatMap {
+                        GroupManagerCore.updateGroupExtension(accountContext, gid, key, it)
+                                .subscribeOn(AmeDispatcher.ioScheduler)
+                    }.observeOn(AmeDispatcher.ioScheduler)
+                    .subscribe({
+                        ACLog.i(accountContext, TAG, "updateGroupExtension succeed:$it")
+                    }, {
+                        ACLog.e(accountContext, TAG, "updateGroupExtension", it)
+                    })
+        }
+
+        private fun getGroupExtension(gid: Long, keys: List<String>, result: (succeed: Boolean, map: Map<String, ByteArray>) -> Unit) {
+            GroupManagerCore.getGroupExtension(accountContext, gid, keys)
+                    .subscribeOn(AmeDispatcher.ioScheduler)
+                    .observeOn(AmeDispatcher.ioScheduler)
+                    .map {
+                        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
+                                ?: throw GroupException("group info not exist")
+                        val keyMap = mutableMapOf<String, ByteArray>()
+                        it.forEach { i ->
+                            try {
+                                val data = ECCCipher.decrypt(groupInfo.groupPrivateKey.privateKey(), i.value)
+                                keyMap[i.key] = data
+                            } catch (e: IOException) {
+                                ACLog.e(accountContext, TAG, "$gid parse extension failed ${i.key}")
+                            }
+                        }
+
+                        keyMap
+                    }.observeOn(AmeDispatcher.ioScheduler)
+                    .subscribe({
+                        ACLog.i(accountContext, TAG, "updateGroupExtension succeed:$it")
+                        result(true, it)
+                    }, {
+                        ACLog.e(accountContext, TAG, "updateGroupExtension", it)
+                        result(false, mapOf())
+                    })
+        }
+
         fun reviewJoinRequest(gid: Long, list: List<BcmReviewGroupJoinRequest>, result: (succeed: Boolean, error: String) -> Unit) {
             AmeDispatcher.io.dispatch {
                 val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
@@ -1672,7 +1819,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     if (isCurrentModel(kicked)) {
                         getModel(kicked)?.checkSync()
                     }
-                    if (getThreadDB()?.getThreadIdIfExist(GroupUtil.addressFromGid(accountContext, kicked).serialize())?:0 > 0) {
+                    if (getThreadDB()?.getThreadIdIfExist(GroupUtil.addressFromGid(accountContext, kicked).serialize()) ?: 0 > 0) {
                         MessageDataManager.systemNotice(accountContext, kicked, AmeGroupMessage.SystemContent(AmeGroupMessage.SystemContent.TIP_GROUP_ILLEGAL))
                     }
                 }
@@ -1780,61 +1927,6 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         result(true, "")
                     }
         }
-
-
-        @SuppressLint("CheckResult")
-        fun createGroupShareShortUrl(groupId: Long, callback: (shareContent: AmeGroupMessage.GroupShareContent?) -> Unit) {
-
-            var hashOut: Long = 0L
-            var shareContentOut: AmeGroupMessage.GroupShareContent? = null
-            Observable.create<String> {
-                val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, groupId)
-                        ?: throw Exception("groupInfo is null")
-                val eKey = if (groupInfo.isNewGroup) {
-                    groupInfo.ephemeralKey
-                } else {
-                    null
-                }
-
-                val shareContent = AmeGroupMessage.GroupShareContent(groupId, groupInfo.name, groupInfo.iconUrl, groupInfo.shareCode
-                        ?: "", groupInfo.shareCodeSettingSign
-                        ?: "", eKey, System.currentTimeMillis(), null)
-                val jsonString = shareContent.toShortJson()
-                if (jsonString.isEmpty()) {
-                    throw Exception("createGroupShareShortUrl fail")
-                }
-                ALog.d(TAG, "createGroupShareShortUrl jsonString: $jsonString")
-                val hash = BCMEncryptUtils.murmurHash3(0xFBA4C795, jsonString.toByteArray())
-                ALog.d(TAG, "createGroupShareShortUrl hash: $hash")
-                hashOut = hash
-                shareContentOut = shareContent
-                it.onNext(Base64.encodeBytes(BCMEncryptUtils.encryptByAES256(jsonString.toByteArray(), hash.toString().toByteArray())))
-                it.onComplete()
-            }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io())
-                    .flatMap { encryptJson ->
-                        ALog.d(TAG, "createGroupShareShortUrl encryptJson: $encryptJson")
-                        GroupManagerCore.createGroupShareShortUrl(accountContext, encryptJson)
-                    }
-                    .observeOn(Schedulers.io())
-                    .map { index ->
-                        ALog.d(TAG, "createGroupShareShortUrl index: $index")
-                        val shareLink = AmeGroupMessage.GroupShareContent.toShortLink(index, Base62.encode(hashOut))
-                        GroupInfoDataManager.updateGroupShareShortLink(accountContext, groupId, shareLink)
-                        shareLink
-                    }
-                    .observeOn(AmeDispatcher.mainScheduler)
-                    .subscribe({ shortLink ->
-                        shareContentOut?.shareLink = shortLink
-                        callback.invoke(shareContentOut)
-                    }, {
-                        ALog.e(TAG, "createGroupShareShortUrl error", it)
-                        callback.invoke(null)
-                    })
-
-        }
-
 
         fun updateNeedConfirm(gid: Long, needConfirm: Boolean, result: (succeed: Boolean, error: String?) -> Unit) {
             AmeDispatcher.io.dispatch {
@@ -1957,15 +2049,17 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             shareConfirmSign,
                             encEphemeralKey,
                             encInfoSecret, groupInfo.isNewGroup)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(Schedulers.io())
-                            .doOnNext {
+                            .subscribeOn(AmeDispatcher.ioScheduler)
+                            .observeOn(AmeDispatcher.ioScheduler)
+                            .flatMap {
                                 groupCache.updateShareSetting(gid, shareEnable, shareEpoch, shareCode, shareSetting, shareSettingSign, shareConfirmSign, ek.base64Encode().format())
                                 broadcastShareSettingRefresh(gid)
+
+                                genShareLink(gid)
+                                        .subscribeOn(AmeDispatcher.ioScheduler)
                             }
                             .observeOn(AmeDispatcher.mainScheduler)
                             .subscribe({
-
                                 result(true, shareCode, "")
                             }, {
                                 ALog.e(TAG, "updateShareSetting", it)
@@ -2301,7 +2395,8 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
         fun uploadEncryptedNameAndNotice(groupId: Long, result: (succeed: Boolean) -> Unit) {
             Observable.create<Pair<Optional<String>, Optional<String>>> {
-                val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, groupId) ?: throw Exception()
+                val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, groupId)
+                        ?: throw Exception()
 
                 val tempKey = BCMPrivateKeyUtils.generateKeyPair()
                 val groupPublicKey = groupInfo.groupPublicKey?.publicKey32()
@@ -2387,11 +2482,11 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .flatMap {
                         GroupManagerCore.updateGroup(accountContext, gid, it, null)
                                 .subscribeOn(AmeDispatcher.ioScheduler)
-                    }.map {
-                        ALog.i(TAG, "result:${it.code},  msg:${it.msg}")
+                    }.flatMap {
                         if (it.isSuccess) {
-                            GroupInfoDataManager.updateGroupShareShortLink(accountContext, gid, "")
                             groupCache.updateGroupName(gid, name)
+                            genShareLink(gid)
+                                    .subscribeOn(AmeDispatcher.ioScheduler)
                         } else {
                             if (110005 == it.code) {
                                 throw GroupException(AppContextHolder.APP_CONTEXT.getString(R.string.chats_group_name_too_long))

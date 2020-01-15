@@ -31,7 +31,7 @@ class CreateGroupRequest: NotGuard {
     @SerializedName("share_and_owner_confirm_sig")
     var shareConfirmSign:String? = null
     @SerializedName("owner_confirm")
-    var needConfirm:Int = 0
+    var needConfirm:Int = 1
     @SerializedName("encrypted_group_info_secret")
     var encryptedSecret:String? = null
     @SerializedName("encrypted_ephemeral_key")

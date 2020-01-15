@@ -330,4 +330,11 @@ class GroupCache(private val accountContext: AccountContext, val cacheReady: () 
             GroupInfoDataManager.updateGroupAvatar(accountContext, gid, newIcon)
         }
     }
+
+    fun updateShareLink(gid: Long, link: String) {
+        val groupInfo = getGroupInfo(gid)?:return
+        groupInfo.shareLink = link
+
+        GroupInfoDataManager.updateGroupShareShortLink(accountContext, gid, link)
+    }
 }

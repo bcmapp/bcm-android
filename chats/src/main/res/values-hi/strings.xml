@@ -552,13 +552,13 @@
     <string name="chats_recipient_stranger_role">अजनबी</string>
     <!-- 群分享和进群相关 -->
     <string name="chats_group_new_join_request_description">[शामिल होने का आग्रह]</string>
-    <string name="chats_group_setting_invite_join_title">ग्रूप से जुड़ने के लिए आमंत्रित करें</string>
+    <string name="chats_group_setting_share_group">Share Group</string>
     <string name="chats_group_setting_joining_request_title">शामिल होने का आग्रह</string>
     <string name="chats_group_setting_joining_approval_title">शामिल होने की स्वीकृति</string>
     <string name="chats_group_setting_joining_approval_subtitle">चालू कर सभी शामिल होने के आवेदनों को मैनुअली स्वीकृति दें। </string>
     <string name="chats_group_setting_default_name">ग्रूप चैट</string>
-    <string name="chats_group_share_setting_enable_title">ग्रूप से जुड़ने के लिए आमंत्रित करें</string>
-    <string name="chats_group_share_setting_enable_subtitle">इस लिंक या क्यूआर कोड के साथ लोग तुरंत इस ग्रूप में शामिल हो सकते हैं, कृपया इसे सावधानी से शेयर करें। </string>
+    <string name="chats_group_share_setting_enable_title">गJoin Group by QR Code</string>
+    <string name="chats_group_share_setting_enable_subtitle">Allow people to join the group by scanning a QR code, which is visible to the whole group.</string>
     <string name="chats_group_share_activity_title">शामिल होने के लिए आमंत्रित करें</string>
     <string name="chats_group_share_revoke_action">वापस लें</string>
     <string name="chats_group_share_revoke_confirm_title">क्या आप सचमुच इस लिंक को वापस लेना चाहते हैं? वापस लिए गए लिंक से उपयोगकर्ता इस ग्रूप में शामिल नहीं हो सकेंगे।</string>
@@ -641,5 +641,6 @@
     <string name="chats_media_view_image_expire">यह चित्र एक्सपायर हो गया है या डिलीट हो गया है</string>
     <string name="chats_media_view_video_expire">यह वीडियो एक्सपायर हो गया है या डिलीट हो गया है</string>
     <string name="chats_media_view_audio_expire">एक्सपायर हुए ऑडिए मैसेज</string>
+    <string name="chats_disabled_by_admin">Disabled by admin</string>
 
 </resources>

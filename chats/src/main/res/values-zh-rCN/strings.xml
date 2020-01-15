@@ -581,13 +581,13 @@
 
     <!-- 群分享和进群相关 -->
     <string name="chats_group_new_join_request_description">[入群申请]</string>
-    <string name="chats_group_setting_invite_join_title">邀请加入群组</string>
+    <string name="chats_group_setting_share_group">分享群聊</string>
     <string name="chats_group_setting_joining_request_title">入群请求</string>
     <string name="chats_group_setting_joining_approval_title">入群确认</string>
     <string name="chats_group_setting_joining_approval_subtitle">开启后，所有的入群申请需要手动确认。</string>
     <string name="chats_group_setting_default_name">群聊</string>
-    <string name="chats_group_share_setting_enable_title">邀请加入群组</string>
-    <string name="chats_group_share_setting_enable_subtitle">通过此链接或二维码可直接加入群组，请慎重分享。</string>
+    <string name="chats_group_share_setting_enable_title">扫码入群</string>
+    <string name="chats_group_share_setting_enable_subtitle">允许通过扫描二维码加入群组，该码对整个群组可见的。</string>
     <string name="chats_group_share_activity_title">邀请进群</string>
     <string name="chats_group_share_revoke_action">撤销</string>
     <string name="chats_group_share_revoke_confirm_title">确认销毁此链接吗？用户将无法再通过撤销的链接加入群组。</string>
@@ -671,5 +671,6 @@
     <string name="chats_media_view_image_expire">图片已过期或已被删除</string>
     <string name="chats_media_view_video_expire">视频已过期或已被删除</string>
     <string name="chats_media_view_audio_expire">语音消息过期</string>
+    <string name="chats_disabled_by_admin">管理员已禁用</string>
 
 </resources>

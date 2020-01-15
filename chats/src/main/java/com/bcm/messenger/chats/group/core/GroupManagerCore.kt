@@ -11,9 +11,13 @@ import com.bcm.messenger.common.core.ServerResult
 import com.bcm.messenger.common.core.corebean.GroupKeyMode
 import com.bcm.messenger.common.core.corebean.IdentityKeyInfo
 import com.bcm.messenger.common.core.corebean.ProfilesResult
+import com.bcm.messenger.common.crypto.ECCipherProto
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.grouprepository.room.entity.JoinGroupReqComment
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.utils.base64Decode
+import com.bcm.messenger.common.utils.base64Encode
+import com.bcm.messenger.common.utils.format
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.bcmhttp.facade.AmeEmpty
@@ -74,18 +78,18 @@ object GroupManagerCore {
             obj.put("share_qr_code_setting", shareSetting)
             obj.put("share_sig", shareSettingSign)
             obj.put("share_and_owner_confirm_sig", shareConfirmSign)
-            obj.put("owner_confirm", 0)
+            obj.put("owner_confirm", 1)
 
             if (!TextUtils.isEmpty(ownerInfoSecret)) {
                 obj.put("owner_group_info_secret", ownerInfoSecret)
             }
 
             if (memberSecrets !=
-                    null && memberSecrets.size > 0) {
+                    null && memberSecrets.isNotEmpty()) {
                 obj.put("member_group_info_secrets", JSONArray(memberSecrets))
             }
 
-            if (memberKeys != null && memberKeys.size > 0) {
+            if (memberKeys != null && memberKeys.isNotEmpty()) {
                 obj.put("member_keys", JSONArray(memberKeys))
             }
 
@@ -384,7 +388,49 @@ object GroupManagerCore {
         }
 
         return RxIMHttp.get(accountContext).put(BcmHttpApiHelper.getApi(GroupCoreConstants.UPDATE_GROUP_URL_V3)
-                ,obj.toString(),AmeEmpty::class.java)
+                , obj.toString(), AmeEmpty::class.java)
+    }
+
+
+    private data class UpdateGroupExtensionReq(val gid: Long, val extensions: Map<String, String>) : NotGuard
+    fun updateGroupExtension(accountContext: AccountContext, gid: Long, key: String, cipherData: ByteArray): Observable<Boolean> {
+        if (key.isEmpty()) {
+            return Observable.just(true)
+        }
+
+        val value = if (cipherData.isNotEmpty()) {
+            cipherData.base64Encode().format()
+        } else {
+            ""
+        }
+
+        val req = UpdateGroupExtensionReq(gid, mapOf(Pair(key, value)))
+        return RxIMHttp.get(accountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(GroupCoreConstants.GROUP_EXTENSION)
+                , GsonUtils.toJson(req), AmeEmpty::class.java)
+                .map {
+                    true
+                }
+    }
+
+    private data class GetGroupExtensionReq(val gid: Long, val extensionKeys: List<String>) : NotGuard
+    private data class GetGroupExtensionRes(val gid: Long, val extensions: Map<String,String>) : NotGuard
+    fun getGroupExtension(accountContext: AccountContext, gid: Long, keys: List<String>): Observable<Map<String, ByteArray>> {
+        if (keys.isEmpty()) {
+            return Observable.just(mapOf())
+        }
+
+        val req = GetGroupExtensionReq(gid, keys)
+        return RxIMHttp.get(accountContext).post<GetGroupExtensionRes>(BcmHttpApiHelper.getApi(GroupCoreConstants.GROUP_EXTENSION)
+                , GsonUtils.toJson(req), GetGroupExtensionRes::class.java)
+                .map {
+                    val result = mutableMapOf<String, ByteArray>()
+                    it.extensions.forEach { i ->
+                        if (i.value.isNotEmpty()) {
+                            result[i.key] = i.value.base64Decode()
+                        }
+                    }
+                    result
+                }
     }
 
     fun reviewJoinRequestByOwner(accountContext: AccountContext, gid: Long, reviewList: List<BcmGroupReviewAccept>, newGroup: Boolean): Observable<AmeEmpty> {
