@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.utility.logger.ALog

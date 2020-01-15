@@ -73,6 +73,10 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (accountContext != AMELogin.majorContext) {
+            setAccountContext(AMELogin.majorContext)
+        }
+
         setSwipeBackEnable(false)
 
         setContentView(R.layout.activity_home)
@@ -429,7 +433,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
                         }
 
                         val ctx = home_profile_layout.getCloseAccount()
-                        if (ctx != null && ctx.uid != accountContext.uid) {
+                        if (ctx != null && ctx.uid != AMELogin.majorUid) {
                             AmeModuleCenter.login().setMajorAccount(ctx)
                             home_profile_layout.resortAccountList()
                         } else {
