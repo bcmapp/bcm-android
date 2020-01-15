@@ -34,7 +34,6 @@ import com.bcm.messenger.common.BuildConfig;
 import com.bcm.messenger.common.attachments.AttachmentId;
 import com.bcm.messenger.common.core.AmeGroupMessage;
 import com.bcm.messenger.common.crypto.MasterSecret;
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils;
 import com.bcm.messenger.common.database.records.AttachmentRecord;
 import com.bcm.messenger.common.database.repositories.AttachmentRepo;
 import com.bcm.messenger.common.database.repositories.Repository;

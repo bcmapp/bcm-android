@@ -283,9 +283,6 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
             intent.removeExtra(Browser.EXTRA_APPLICATION_ID)
         }
         try {
-            if (!intent.hasExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)) {
-                intent.putExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT, accountContext)
-            }
             super.startActivity(intent)
         } catch (e: Exception) {
             ToastUtil.show(this, getString(R.string.chats_there_is_no_app_available_to_handle_this_link_on_your_device))

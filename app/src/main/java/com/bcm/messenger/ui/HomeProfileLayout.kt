@@ -17,6 +17,7 @@ import com.bcm.messenger.R
 import com.bcm.messenger.adapter.HomeAccountAdapter
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.event.AccountLogoutEvent
 import com.bcm.messenger.common.event.NewAccountAddedEvent
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -364,6 +365,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
                 home_profile_view_pager.setCurrentItem(index, false)
                 toScrollUid = ""
                 viewPagerAdapter.notifyDataSetChanged()
+                listener?.onViewChanged(viewPagerAdapter.getCurrentView(index)?.getCurrentRecipient())
             }
         }
     }
@@ -376,5 +378,10 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         if (!ac.isLogin) {
             reloadAccountList()
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(event: AccountLogoutEvent) {
+        toScrollUid = event.accountUid
     }
 }

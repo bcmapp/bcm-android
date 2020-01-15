@@ -26,7 +26,6 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
-import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.utility.AppContextHolder
@@ -228,7 +227,7 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
             }
 
         } else {
-            ToastUtil.show(AppContextHolder.APP_CONTEXT, AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_select_file_first))
+            ToastUtil.show(AppContextHolder.APP_CONTEXT, getString(R.string.chats_select_file_first))
         }
     }
 
@@ -246,10 +245,10 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
                             content.append(f.name)
                         }
                     }
-                    content.append(AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_save_fail))
-                    AmeAppLifecycle.failure(AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_save_fail), true)
+                    content.append(getString(R.string.chats_save_fail))
+                    AmeAppLifecycle.failure(getString(R.string.chats_save_fail), true)
                 } else {
-                    AmeAppLifecycle.succeed(AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_save_success), true)
+                    AmeAppLifecycle.succeed(getString(R.string.chats_save_success), true)
                 }
                 adapter?.notifyDataSetChanged()
                 mediaHandleViewModel?.clearSelectionList()
@@ -268,7 +267,7 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
                 }
 
             } else {
-                ToastUtil.show(AppContextHolder.APP_CONTEXT, AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_select_file_first))
+                ToastUtil.show(AppContextHolder.APP_CONTEXT, getString(R.string.chats_select_file_first))
             }
         }
     }
@@ -297,12 +296,12 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
                         content.append(f.name)
                     }
                 }
-                content.append(AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_delete_fail))
+                content.append(getString(R.string.chats_delete_fail))
                 AmeAppLifecycle.failure(content.toString(), true)
 
                 selectionList.removeAll(fail)
             } else {
-                AmeAppLifecycle.succeed(AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_delete_success), true)
+                AmeAppLifecycle.succeed(getString(R.string.chats_delete_success), true)
             }
 
             mediaData?.let {

@@ -211,8 +211,8 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
             buildNotFoundHolderThumbnail(show = true, hasThumbnail = false)
         } else {
             buildNotFoundHolderThumbnail(false)
-            buildPlaceHolderThumbnail(uri == null)
             if (useReplace) {
+                buildPlaceHolderThumbnail(uri == null)
                 when {
                     uri != null -> buildThumbnailRequest(glideRequests,
                             DecryptableUri(masterSecret, uri),
@@ -475,6 +475,7 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
 
                             override fun onResourceReady(resource: GifDrawable, model: Any, target: Target<GifDrawable>, dataSource: DataSource, isFirstResource: Boolean): Boolean {
                                 changeShowSize(resource)
+                                thumbnail_holder.setImageDrawable(null)
                                 return false
                             }
                         })
@@ -493,6 +494,7 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
                             override fun onResourceReady(resource: Drawable, model: Any, target: Target<Drawable>, dataSource: DataSource, isFirstResource: Boolean): Boolean {
                                 ALog.i(TAG, "onResourceReady")
                                 changeShowSize(resource)
+                                thumbnail_holder.setImageDrawable(null)
                                 return false
                             }
                         })
@@ -500,7 +502,6 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
                         .into(thumbnail_image)
             }
         }
-
     }
 
     private fun displayControl(state: Int) {
@@ -622,5 +623,4 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
             }
         }
     }
-
 }

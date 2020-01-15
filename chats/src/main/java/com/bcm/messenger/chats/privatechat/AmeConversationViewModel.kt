@@ -772,8 +772,12 @@ class AmeConversationViewModel(
             val data: AmeConversationData
             synchronized(this) {
                 for (i in mMessageList.indices) {
-                    if (mMessageList[i].id == record.id) {
+                    val oldRecord = mMessageList[i]
+                    if (oldRecord.id == record.id) {
                         mMessageList[i] = record
+                        if (oldRecord.dateSent < record.dateSent) {
+                            mMessageList.sortByDescending { msg -> msg.dateSent }
+                        }
                         break
                     }
                 }

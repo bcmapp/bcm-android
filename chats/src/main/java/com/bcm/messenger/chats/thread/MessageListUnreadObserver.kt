@@ -80,6 +80,7 @@ class MessageListUnreadObserver {
             it.first.removeObserver(it.second)
         }
         observers.clear()
+        listener?.onAccountListChanged()
 
         loginAccounts = AmeLoginLogic.accountHistory.getAllLoginContext()
         loginAccounts.forEach {
@@ -145,7 +146,7 @@ class MessageListUnreadObserver {
                     tl.forEach { r ->
                         ALog.d(TAG, "uid: ${r.uid}, unread: ${r.unreadCount}")
                         if (!r.getRecipient(accountContext).isMuted && r.unreadCount > 0) {
-                            unreadCount++
+                            unreadCount += r.unreadCount
                         }
                     }
                     it.onNext(unreadCount)

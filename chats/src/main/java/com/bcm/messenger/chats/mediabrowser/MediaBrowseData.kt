@@ -8,7 +8,6 @@ import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.DecryptableStreamUriLoader
@@ -27,12 +26,12 @@ import java.lang.ref.WeakReference
  * Created by wjh on 2018/10/15
  */
 data class MediaBrowseData(val name: String,
-                      val mediaType: String,
-                      val time: Long,//create time
-                      val msgSource: Any,//body
-                      val fromGroup: Boolean,
-                      var selected: Boolean = false
-                    ) {
+                           val mediaType: String,
+                           val time: Long,//create time
+                           val msgSource: Any,//body
+                           val fromGroup: Boolean,
+                           var selected: Boolean = false
+) {
 
     private var viewRef: WeakReference<ImageView>? = null
     private var backgroundRef: WeakReference<View?>? = null
@@ -60,7 +59,7 @@ data class MediaBrowseData(val name: String,
             return
         }
 
-        accountContext?:return
+        accountContext ?: return
 
         ALog.d("MediaBrowseData", "setThumbnail")
         viewRef = WeakReference(view)
@@ -211,7 +210,8 @@ data class MediaBrowseData(val name: String,
         } else {
             val record = msgSource as? MessageRecord
             if (record?.hasAttachments() == true) {
-                val attachment = record.getMediaAttachment() ?: return ConversationStorage.TYPE_UN_SUPPORT
+                val attachment = record.getMediaAttachment()
+                        ?: return ConversationStorage.TYPE_UN_SUPPORT
                 if (attachment.isImage()) {
                     return ConversationStorage.TYPE_IMAGE
                 } else if (attachment.isVideo()) {

@@ -36,7 +36,7 @@ class FileBrowserViewHolder(private val accountContext: AccountContext, itemView
         mData = data
         mediaBrowseData = data.data
         mediaBrowseData?.let {
-            it.setThumbnail(null, itemView.browser_file_img_background, itemView.browser_file_img, 40.dp2Px(), 20.dp2Px(), R.drawable.chats_message_file_icon_grey)
+            it.setThumbnail(accountContext, itemView.browser_file_img_background, itemView.browser_file_img, 40.dp2Px(), 20.dp2Px(), R.drawable.chats_message_file_icon_grey)
             itemView.browser_file_name.text = it.name
             itemView.browser_file_sub_content.text = DateUtils.formatFileTime(it.time)
         }

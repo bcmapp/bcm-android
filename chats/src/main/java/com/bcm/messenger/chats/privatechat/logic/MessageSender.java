@@ -206,16 +206,17 @@ public class MessageSender {
                               @NonNull AccountContext accountContext,
                               @NonNull MessageRecord messageRecord) {
         try {
-            long messageId = messageRecord.getId();
-            long expiresIn = messageRecord.getExpiresTime();
             Recipient recipient = messageRecord.getRecipient(accountContext);
+            long messageId = messageRecord.getId();
+            long expiresIn = recipient.getExpireMessages() * 1000;
 
             if (recipient.isFriend() || recipient.isAllowStranger()) {
                 PrivateChatRepo repo = Repository.getChatRepo(accountContext);
                 if (repo == null) {
                     return;
                 }
-                repo.updateDateSentForResending(messageRecord.getId(), AmeTimeUtil.INSTANCE.getMessageSendTime());
+                repo.updateDateSentForResending(messageId, AmeTimeUtil.INSTANCE.getMessageSendTime());
+                repo.updateExpiresTime(messageId, expiresIn);
                 if (messageRecord.isMediaMessage()) {
                     sendMediaMessage(context, accountContext, recipient, messageId, expiresIn);
                 } else {

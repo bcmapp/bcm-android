@@ -251,7 +251,7 @@ object BcmChatCore {
         val builder = DataMessage.newBuilder()
         val pointers = createAttachmentPointers(accountContext, message.attachments, isSupportAws)
 
-        if (!pointers.isEmpty()) {
+        if (pointers.isNotEmpty()) {
             builder.addAllAttachments(pointers)
         }
 

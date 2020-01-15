@@ -188,7 +188,7 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
             when {
                 o1.accountContext.uid == AMELogin.majorUid -> -1
                 o2.accountContext.uid == AMELogin.majorUid -> 1
-                else -> o1.account.lastLoginTime.compareTo(o2.account.lastLoginTime)
+                else -> -(o1.account.lastLoginTime - o2.account.lastLoginTime).toInt()
             }
         } else {
             o1.type - o2.type

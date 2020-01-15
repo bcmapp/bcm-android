@@ -230,7 +230,6 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
                                     else -> dialog.cancel()
                                 }
                             }.create().show()
-
                 }
             }
         }
@@ -284,7 +283,6 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
                 this.datalist = datalist
                 itemUpdateCallback.invoke(0, originCount)
             }
-
         }
 
         val adapter = AmeRecycleViewAdapter(this, mDataSource)
@@ -303,7 +301,7 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
 
     private fun updateGroupInfoViews() {
         group_control_name?.text = mGroupModel.groupName()
-        if (isBgLight) {
+        if (lightMode) {
             group_control_name.setTextColor(getColorCompat(R.color.common_color_black))
             group_control_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
         } else {
@@ -319,12 +317,10 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
                         window.setStatusBarLightMode()
                         group_control_name.setTextColor(getColorCompat(R.color.common_color_black))
                         group_control_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
-
-                    } else {
+                    } else if (!lightMode) {
                         chats_group_setting_title.setLeftIcon(R.drawable.common_back_arrow_white_icon)
                         group_control_name.setTextColor(getColorCompat(R.color.common_color_white))
                         group_control_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
-
                     }
                 }
         }
@@ -389,7 +385,6 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
 
     private fun updateJoiningRequestsView() {
         if (mGroupModel.myRole() == AmeGroupMemberInfo.OWNER) {
-
             if (mGroupModel.isNeedOwnerJoinConfirm()) {
                 joining_request_item.visibility = View.VISIBLE
                 val count = mGroupModel.getJoinRequestCount()
@@ -409,7 +404,6 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
 
                 } else {
                     joining_request_item.setTip("", 0, getColorCompat(R.color.common_content_second_color))
-
                 }
             } else {
                 joining_request_item.visibility = View.GONE
@@ -417,7 +411,6 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
         } else {
             joining_request_item.visibility = View.GONE
         }
-
     }
 
     private fun updateApprovalJoiningView() {

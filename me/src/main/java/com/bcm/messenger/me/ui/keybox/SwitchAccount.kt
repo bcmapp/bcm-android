@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.event.AccountLogoutEvent
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
@@ -31,6 +32,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import org.greenrobot.eventbus.EventBus
 
 /**
  * bcm.social.01 2018/11/6.
@@ -131,7 +133,6 @@ object SwitchAccount {
                         } finally {
                             it.onComplete()
                         }
-
                     }).subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe {
@@ -142,6 +143,7 @@ object SwitchAccount {
                                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                             .navigation(activity)
                                 } else {
+                                    EventBus.getDefault().post(AccountLogoutEvent(accountContext.uid))
                                     activity.finish()
                                 }
                             }

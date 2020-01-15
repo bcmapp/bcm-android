@@ -82,7 +82,7 @@ class AmeAppModuleImpl : IAmeAppModule {
             intent.putExtra(Intent.EXTRA_TEXT, text)
             intent.putExtra(ARouterConstants.PARAM.PARAM_ENTER_ANIM, R.anim.common_slide_from_bottom_fast)
             intent.putExtra(ARouterConstants.PARAM.PARAM_EXIT_ANIM, R.anim.common_slide_to_bottom_fast)
-            activity.startActivity(intent)
+            activity.startBcmActivity(AMELogin.majorContext, intent)
         }
     }
 

@@ -32,14 +32,13 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.chats_activity_group_share_settings.*
-import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * 
+ *
  * Created by wjh on 2019/6/6
  */
 class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
@@ -66,7 +65,6 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
     }
 
     private fun initView() {
-
         title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
                 onBackPressed()
@@ -97,7 +95,6 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
                 return@setOnClickListener
             }
             goToGroupInfoEdit(mGroupModel.groupId(), AmeGroupMemberInfo.OWNER)
-
         }
 
         group_share_forward_btn.setOnClickListener {
@@ -109,8 +106,10 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
                 AmePopup.result.failure(this@GroupShareSettingsActivity, getString(R.string.chats_group_share_forward_fail), true)
                 return@setOnClickListener
             }
-            BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_SHARE_FORWARD).putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, mGroupModel.groupId())
-                    .putString(ARouterConstants.PARAM.GROUP_SHARE.GROUP_SHARE_CONTENT, shareContent.toString()).navigation(this)
+            BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_SHARE_FORWARD)
+                    .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, mGroupModel.groupId())
+                    .putString(ARouterConstants.PARAM.GROUP_SHARE.GROUP_SHARE_CONTENT, shareContent.toString())
+                    .startBcmActivity(accountContext, this)
         }
         group_share_copy_btn.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
@@ -126,7 +125,6 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
             AmePopup.result.succeed(this@GroupShareSettingsActivity, getString(R.string.chats_group_share_copy_success), true)
         }
         group_share_save_btn.setOnClickListener {
-
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
@@ -143,10 +141,10 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
 
     private fun initGroupInfoView() {
         val groupInfo = mGroupModel.getGroupInfo()
-        group_share_name.text = if (groupInfo?.name.isNullOrEmpty()) {
+        group_share_name.text = if (groupInfo.name.isNullOrEmpty()) {
             getString(R.string.common_chats_group_default_name)
-        }else {
-            groupInfo?.name
+        } else {
+            groupInfo.name
         }
         group_share_logo.showGroupAvatar(accountContext, mGroupModel.groupId(), false)
 
@@ -168,7 +166,7 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
     }
 
     private fun checkLoadShareQr() {
-        val groupInfo = mGroupModel.getGroupInfo() ?: return
+        val groupInfo = mGroupModel.getGroupInfo()
         if (mShareQRLoading) {
             return
         }
@@ -200,7 +198,7 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
             weakSelf.get()?.mGroupShareContent = shareContent
             AmeDispatcher.io.dispatch {
                 weakSelf.get()?.mShareQRLoading = false
-                val bitmap = getBitmap(shareContent?.shareLink?:return@dispatch)
+                val bitmap = getBitmap(shareContent?.shareLink ?: return@dispatch)
                 AmeDispatcher.mainThread.dispatch {
                     weakSelf.get()?.setQrComplete(bitmap)
                 }
@@ -214,7 +212,7 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
         if (qr != null) {
             group_share_qr.setImageBitmap(qr)
             group_share_loading.visibility = View.GONE
-        }else {
+        } else {
             group_share_qr.setImageResource(0)
             group_share_loading.setImageResource(R.drawable.common_refresh_black_icon)
             group_share_loading.setOnClickListener {
@@ -226,13 +224,12 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
         }
     }
 
-    private fun getBitmap(shareLink:String): Bitmap {
+    private fun getBitmap(shareLink: String): Bitmap {
         val qrEncoder = QREncoder(shareLink, dimension = 250.dp2Px(), charset = "utf-8")
         return qrEncoder.encodeAsBitmap()
     }
 
     private fun doForSaveShareUrl() {
-
         val bitmap = group_share_qr_layout.createScreenShot()
         Observable.create<String> {
             val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM_GROUP_SHARE_CARD_${mGroupModel.groupId()}.jpg", AmeFileUploader.DCIM_DIRECTORY)
@@ -244,18 +241,15 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError {
-                    AmeAppLifecycle.failure(getString(R.string.chats_group_share_save_fail), true)
-                }
-                .subscribe {
-                    
+                .subscribe({
                     MediaScannerConnection.scanFile(this, arrayOf(it), arrayOf(BcmFileUtils.IMAGE_PNG), null)
                     AmeAppLifecycle.succeed(getString(R.string.chats_group_share_save_success), true)
-                }
+                }, {
+                    AmeAppLifecycle.failure(getString(R.string.chats_group_share_save_fail), true)
+                })
     }
 
     private fun doForRevoke() {
-
         val joiningRequest = mGroupModel.getJoinRequestList()
         if (joiningRequest.isEmpty()) {
             AmePopup.bottom.newBuilder().withTitle(getString(R.string.chats_group_share_revoke_confirm_title))
@@ -284,66 +278,57 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
             thirdText = StringAppearanceUtil.applyAppearance(this, thirdText, true)
             AlertDialog.Builder(this).setTitle(getString(R.string.chats_group_share_revoke_pending_request_confirm_title))
                     .setItems(arrayOf(oneText, twoText, thirdText)) { dialog, which ->
-                when(which) {
-                    0 -> {
-                        AmeAppLifecycle.showLoading()
-                        mGroupModel.reviewJoinRequests(joiningRequest.map {
-                            BcmReviewGroupJoinRequest(it.uid, it.reqId,true)
-                        }) {succeed, error ->
-                            ALog.d(TAG, "doForRevoke review true success: $succeed, error: $error")
-                            if (succeed) {
-                                mGroupModel.refreshShareData { succeed, error ->
-                                    ALog.d(TAG, "doForRevoke success: $succeed, error: $error")
-                                    AmeAppLifecycle.hideLoading()
+                        when (which) {
+                            0 -> {
+                                AmeAppLifecycle.showLoading()
+                                mGroupModel.reviewJoinRequests(joiningRequest.map {
+                                    BcmReviewGroupJoinRequest(it.uid, it.reqId, true)
+                                }) { succeed, error ->
+                                    ALog.d(TAG, "doForRevoke review true success: $succeed, error: $error")
                                     if (succeed) {
-                                        AmeAppLifecycle.succeed(getString(R.string.chats_group_share_revoke_success), true)
-                                        switchGroupShareQR(mGroupModel.isShareGroupEnable())
-
+                                        mGroupModel.refreshShareData { succeed, error ->
+                                            ALog.d(TAG, "doForRevoke success: $succeed, error: $error")
+                                            AmeAppLifecycle.hideLoading()
+                                            if (succeed) {
+                                                AmeAppLifecycle.succeed(getString(R.string.chats_group_share_revoke_success), true)
+                                                switchGroupShareQR(mGroupModel.isShareGroupEnable())
+                                            } else {
+                                                AmeAppLifecycle.failure(getString(R.string.chats_group_share_revoke_fail), true)
+                                            }
+                                        }
                                     } else {
+                                        AmeAppLifecycle.hideLoading()
                                         AmeAppLifecycle.failure(getString(R.string.chats_group_share_revoke_fail), true)
-
                                     }
                                 }
-                            }else {
-                                AmeAppLifecycle.hideLoading()
-                                AmeAppLifecycle.failure(getString(R.string.chats_group_share_revoke_fail), true)
-
                             }
-                        }
-                    }
-                    1 -> {
-                        AmeAppLifecycle.showLoading()
-                        mGroupModel.reviewJoinRequests(joiningRequest.map {
-                            BcmReviewGroupJoinRequest(it.uid, it.reqId,false)
-                        }) {succeed, error ->
-                            ALog.d(TAG, "doForRevoke review false success: $succeed, error: $error")
-                            if (succeed) {
-                                mGroupModel.refreshShareData { succeed, error ->
-                                    ALog.d(TAG, "doForRevoke success: $succeed, error: $error")
-                                    AmeAppLifecycle.hideLoading()
+                            1 -> {
+                                AmeAppLifecycle.showLoading()
+                                mGroupModel.reviewJoinRequests(joiningRequest.map {
+                                    BcmReviewGroupJoinRequest(it.uid, it.reqId, false)
+                                }) { succeed, error ->
+                                    ALog.d(TAG, "doForRevoke review false success: $succeed, error: $error")
                                     if (succeed) {
-                                        AmeAppLifecycle.succeed(getString(R.string.chats_group_share_revoke_success), true)
-                                        switchGroupShareQR(mGroupModel.isShareGroupEnable())
-
+                                        mGroupModel.refreshShareData { succeed, error ->
+                                            ALog.d(TAG, "doForRevoke success: $succeed, error: $error")
+                                            AmeAppLifecycle.hideLoading()
+                                            if (succeed) {
+                                                AmeAppLifecycle.succeed(getString(R.string.chats_group_share_revoke_success), true)
+                                                switchGroupShareQR(mGroupModel.isShareGroupEnable())
+                                            } else {
+                                                AmeAppLifecycle.failure(getString(R.string.chats_group_share_revoke_fail), true)
+                                            }
+                                        }
                                     } else {
+                                        AmeAppLifecycle.hideLoading()
                                         AmeAppLifecycle.failure(getString(R.string.chats_group_share_revoke_fail), true)
-
                                     }
                                 }
-                            }else {
-                                AmeAppLifecycle.hideLoading()
-                                AmeAppLifecycle.failure(getString(R.string.chats_group_share_revoke_fail), true)
-
                             }
+                            else -> dialog.cancel()
                         }
-                    }
-                    else -> dialog.cancel()
-                }
-            }.create().show()
-
+                    }.create().show()
         }
-
-
     }
 
     private fun doForShareEnable(enable: Boolean) {
@@ -356,12 +341,10 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
                     AmeAppLifecycle.succeed(getString(R.string.chats_group_setting_share_enable_success), true)
                     group_share_enable_item.setSwitchStatus(enable)
                     switchGroupShareQR(true)
-
-                }else {
+                } else {
                     AmeAppLifecycle.failure(getString(R.string.chats_group_setting_share_enable_fail), true)
                 }
             }
-
         } else {
             val joiningRequest = mGroupModel.getJoinRequestList()
             if (joiningRequest.isEmpty()) {
@@ -376,12 +359,10 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
                                     AmeAppLifecycle.succeed(getString(R.string.chats_group_setting_share_enable_success), true)
                                     group_share_enable_item.setSwitchStatus(enable)
                                     switchGroupShareQR(false)
-
-                                }else {
+                                } else {
                                     AmeAppLifecycle.failure(getString(R.string.chats_group_setting_share_enable_fail), true)
                                 }
                             }
-
                         })
                         .withDoneTitle(getString(R.string.common_cancel))
                         .show(this)
@@ -392,61 +373,60 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
                 thirdText = StringAppearanceUtil.applyAppearance(this, thirdText, true)
                 AlertDialog.Builder(this).setTitle(getString(R.string.chats_group_share_disable_pending_request_confirm_title))
                         .setItems(arrayOf(oneText, twoText, thirdText)) { dialog, which ->
-                    when(which) {
-                        0 -> {
-                            AmeAppLifecycle.showLoading()
-                            mGroupModel.reviewJoinRequests(joiningRequest.map {
-                                BcmReviewGroupJoinRequest(it.uid, it.reqId,true)
-                            }) {succeed, error ->
-                                ALog.d(TAG, "doForShareEnable enable: $enable, review success: $succeed, error: $error")
-                                if (succeed) {
-                                    mGroupModel.disableShareGroup { succeed, error ->
-                                        ALog.d(TAG, "disableShareGroup success: $succeed, error: $error")
-                                        AmeAppLifecycle.hideLoading()
+                            when (which) {
+                                0 -> {
+                                    AmeAppLifecycle.showLoading()
+                                    mGroupModel.reviewJoinRequests(joiningRequest.map {
+                                        BcmReviewGroupJoinRequest(it.uid, it.reqId, true)
+                                    }) { succeed, error ->
+                                        ALog.d(TAG, "doForShareEnable enable: $enable, review success: $succeed, error: $error")
                                         if (succeed) {
-                                            AmeAppLifecycle.succeed(getString(R.string.chats_group_setting_share_enable_success), true)
-                                            group_share_enable_item.setSwitchStatus(enable)
-                                            switchGroupShareQR(false)
+                                            mGroupModel.disableShareGroup { succeed, error ->
+                                                ALog.d(TAG, "disableShareGroup success: $succeed, error: $error")
+                                                AmeAppLifecycle.hideLoading()
+                                                if (succeed) {
+                                                    AmeAppLifecycle.succeed(getString(R.string.chats_group_setting_share_enable_success), true)
+                                                    group_share_enable_item.setSwitchStatus(enable)
+                                                    switchGroupShareQR(false)
 
-                                        }else {
+                                                } else {
+                                                    AmeAppLifecycle.failure(getString(R.string.chats_group_setting_share_enable_fail), true)
+                                                }
+                                            }
+                                        } else {
+                                            AmeAppLifecycle.hideLoading()
                                             AmeAppLifecycle.failure(getString(R.string.chats_group_setting_share_enable_fail), true)
                                         }
                                     }
-                                }else {
-                                    AmeAppLifecycle.hideLoading()
-                                    AmeAppLifecycle.failure(getString(R.string.chats_group_setting_share_enable_fail), true)
                                 }
-                            }
-                        }
-                        1 -> {
-                            AmeAppLifecycle.showLoading()
-                            mGroupModel.reviewJoinRequests(joiningRequest.map {
-                                BcmReviewGroupJoinRequest(it.uid, it.reqId,false)
-                            }) {succeed, error ->
-                                ALog.d(TAG, "doForShareEnable enable: $enable, review success: $succeed, error: $error")
-                                if (succeed) {
-                                    mGroupModel.disableShareGroup { succeed, error ->
-                                        ALog.d(TAG, "disableShareGroup success: $succeed, error: $error")
-                                        AmeAppLifecycle.hideLoading()
+                                1 -> {
+                                    AmeAppLifecycle.showLoading()
+                                    mGroupModel.reviewJoinRequests(joiningRequest.map {
+                                        BcmReviewGroupJoinRequest(it.uid, it.reqId, false)
+                                    }) { succeed, error ->
+                                        ALog.d(TAG, "doForShareEnable enable: $enable, review success: $succeed, error: $error")
                                         if (succeed) {
-                                            AmeAppLifecycle.succeed(getString(R.string.chats_group_setting_share_enable_success), true)
-                                            group_share_enable_item.setSwitchStatus(enable)
-                                            switchGroupShareQR(false)
+                                            mGroupModel.disableShareGroup { succeed, error ->
+                                                ALog.d(TAG, "disableShareGroup success: $succeed, error: $error")
+                                                AmeAppLifecycle.hideLoading()
+                                                if (succeed) {
+                                                    AmeAppLifecycle.succeed(getString(R.string.chats_group_setting_share_enable_success), true)
+                                                    group_share_enable_item.setSwitchStatus(enable)
+                                                    switchGroupShareQR(false)
 
-                                        }else {
+                                                } else {
+                                                    AmeAppLifecycle.failure(getString(R.string.chats_group_setting_share_enable_fail), true)
+                                                }
+                                            }
+                                        } else {
+                                            AmeAppLifecycle.hideLoading()
                                             AmeAppLifecycle.failure(getString(R.string.chats_group_setting_share_enable_fail), true)
                                         }
                                     }
-                                }else {
-                                    AmeAppLifecycle.hideLoading()
-                                    AmeAppLifecycle.failure(getString(R.string.chats_group_setting_share_enable_fail), true)
                                 }
+                                else -> dialog.cancel()
                             }
-                        }
-                        else -> dialog.cancel()
-                    }
-                }.create().show()
-
+                        }.create().show()
             }
         }
     }

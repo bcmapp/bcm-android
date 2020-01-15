@@ -37,7 +37,7 @@ import kotlinx.android.synthetic.main.chats_media_browser_activity.*
 @Route(routePath = ARouterConstants.Activity.CHAT_MEDIA_BROWSER)
 class MediaBrowserActivity : AccountSwipeBaseActivity() {
     companion object {
-        fun router(accountContext: AccountContext, address:Address, deleteMode:Boolean = false){
+        fun router(accountContext: AccountContext, address: Address, deleteMode: Boolean = false) {
             BcmRouter.getInstance().get(ARouterConstants.Activity.CHAT_MEDIA_BROWSER)
                     .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
                     .putBoolean(BROWSER_MODE, deleteMode)
@@ -57,14 +57,14 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
     }
 
     private var currentPage = -1
-    private lateinit var address:Address
+    private lateinit var address: Address
     private var indexId = -1L
     private var isDeleteMode = false
     private var mediaFragment: MediaBrowserFragment? = null
     private var fileFragment: FileBrowserFragment? = null
 
     private lateinit var viewModel: MediaHandleViewModel
-    private lateinit var menuProxyList:ArrayList<IMediaBrowserMenuProxy>
+    private lateinit var menuProxyList: ArrayList<IMediaBrowserMenuProxy>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,11 +77,11 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
         initPages()
         initSelection()
 
-        media_browser_media_title.setOnClickListener{
+        media_browser_media_title.setOnClickListener {
             showMediaPager()
         }
 
-        media_browser_file_title.setOnClickListener{
+        media_browser_file_title.setOnClickListener {
             showFilePager()
         }
 
@@ -90,7 +90,7 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
         }
         selectBtnChange(SELECT_ALL)
 
-        if (isDeleteMode){
+        if (isDeleteMode) {
             browser_share_img.visibility = View.GONE
             browser_save_img.visibility = View.GONE
             selection_size_view.visibility = View.VISIBLE
@@ -191,12 +191,12 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
         viewModel.selection.observe(this, object : Observer<MediaHandleViewModel.SelectionState> {
             var selecting = false
             override fun onChanged(it: MediaHandleViewModel.SelectionState?) {
-                if(null != it){
-                    if (it.selecting != selecting){
+                if (null != it) {
+                    if (it.selecting != selecting) {
                         selecting = it.selecting
                         selectionStateChanged(selecting)
                     }
-                    if (isDeleteMode){
+                    if (isDeleteMode) {
                         updateSelectionFileSize(it)
                     }
                 }
@@ -205,11 +205,10 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
         })
 
         browser_share_img.setOnClickListener {
-            if (viewModel.selection.value?.selectionList?.isNotEmpty() == true){
-                if(viewModel.selection.value?.selectionList?.size?:0 < 15){
+            if (viewModel.selection.value?.selectionList?.isNotEmpty() == true) {
+                if (viewModel.selection.value?.selectionList?.size ?: 0 < 15) {
                     currentMenuProxy().forward()
-                }
-                else {
+                } else {
                     AmeAppLifecycle.failure(getString(R.string.chats_max_forward_error), true)
                 }
             } else {
@@ -218,31 +217,29 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
         }
 
         browser_delete_img.setOnClickListener {
-            if (viewModel.selection.value?.selectionList?.isNotEmpty() == true){
+            if (viewModel.selection.value?.selectionList?.isNotEmpty() == true) {
                 currentMenuProxy().delete()
-            }
-            else {
+            } else {
                 AmeAppLifecycle.failure(getString(R.string.chats_select_file_first), true)
             }
         }
         browser_save_img.setOnClickListener {
-            if (viewModel.selection.value?.selectionList?.isNotEmpty() == true){
+            if (viewModel.selection.value?.selectionList?.isNotEmpty() == true) {
                 currentMenuProxy().save()
-            }
-            else {
+            } else {
                 AmeAppLifecycle.failure(getString(R.string.chats_select_file_first), true)
             }
         }
     }
 
     private fun updateSelectionFileSize(it: MediaHandleViewModel.SelectionState?) {
-        val size = it?.fileByteSize?:0
+        val size = it?.fileByteSize ?: 0
         val text = StringAppearanceUtil.formatByteSizeString(size)
         selection_size_view.text = text
     }
 
     private fun selectionStateChanged(selecting: Boolean) {
-        if (isDeleteMode){
+        if (isDeleteMode) {
             media_browser_more_layout.visibility = View.VISIBLE
             return
         }
@@ -260,20 +257,20 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
         return menuProxyList[currentPage]
     }
 
-    private fun refresh(){
+    private fun refresh() {
 
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         val newAddress = intent?.getParcelableExtra<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
-        if (null != newAddress && address != newAddress){
+        if (null != newAddress && address != newAddress) {
             address = newAddress
             refresh()
         }
     }
 
-    private fun showMediaPager(){
+    private fun showMediaPager() {
         showPage(IMAGE_PAGE)
     }
 
@@ -285,10 +282,10 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
         showPage(LINK_PAGE)
     }
 
-    private fun getTitleView(page:Int): TextView {
-        return when(page){
+    private fun getTitleView(page: Int): TextView {
+        return when (page) {
             IMAGE_PAGE -> media_browser_media_title
-            FILE_PAGE ->media_browser_file_title
+            FILE_PAGE -> media_browser_file_title
             else -> media_browser_link_title
         }
     }
@@ -339,8 +336,8 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
     }
 
 
-    private fun enableOption(image: ImageView, enable:Boolean) {
-        if (enable){
+    private fun enableOption(image: ImageView, enable: Boolean) {
+        if (enable) {
             image.clearColorFilter()
         } else {
             val greyFilter = PorterDuffColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY)
@@ -350,7 +347,7 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (viewModel.isSelecting() && !isDeleteMode ) {
+        if (viewModel.isSelecting() && !isDeleteMode) {
             viewModel.setSelecting(false)
         } else
             super.onBackPressed()

@@ -19,7 +19,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -59,7 +58,7 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
         val address = arguments?.getParcelable<Address>(ARouterConstants.PARAM.PARAM_ADDRESS)
         indexId = arguments?.getLong(ARouterConstants.PARAM.PARAM_INDEX_ID) ?: -1L
         val act = activity
-        if (null == address || null == act){
+        if (null == address || null == act) {
             return
         }
         val handleViewModel = ViewModelProviders.of(act).get(MediaHandleViewModel::class.java)
@@ -70,7 +69,7 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
             val recipient = Recipient.from(accountContext, address.serialize(), true)
             ThreadListViewModel.getThreadId(recipient) {
                 threadId = it
-                if (null != masterSecret && threadId >= 0){
+                if (null != masterSecret && threadId >= 0) {
                     model.init(threadId, masterSecret)
                     init(view.context, address, model, handleViewModel)
                 }
@@ -87,7 +86,7 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
     private fun init(context: Context, address: Address, viewModel: BaseMediaBrowserViewModel, handleViewModel: MediaHandleViewModel) {
         //
         media_browser_recycler_view.layoutManager = GridLayoutManager(context, 3)
-        val browserAdapter = MediaBrowserAdapter(viewModel, handleViewModel, no_conten_page, isDeleteMode, context) { dataList ->
+        val browserAdapter = MediaBrowserAdapter(accountContext, handleViewModel, no_conten_page, isDeleteMode, context) { dataList ->
             indexId.let {
                 for ((index, data) in dataList.withIndex()) {
                     if (data.msgSource is MessageRecord) {
@@ -104,9 +103,8 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
         }
         browserAdapter.beActive = beActive
         media_browser_recycler_view.adapter = browserAdapter
-        browserAdapter.onDataClicked = {
-            v, data ->
-            if (!address.isGroup){
+        browserAdapter.onDataClicked = { v, data ->
+            if (!address.isGroup) {
                 showPrivateMediaView(v, data)
             } else {
                 showGroupMediaView(v, data)
@@ -115,17 +113,13 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
         this.browserAdapter = browserAdapter
         this.viewModel = viewModel
 
-        handleViewModel.selection.observe(this, object : Observer<MediaHandleViewModel.SelectionState> {
-
-            override fun onChanged(it: MediaHandleViewModel.SelectionState?) {
-
-                if (null != it && beActive) {
-                    browserAdapter.isInSelecting = it.selecting
-                    when {
-                        browserAdapter.itemCount == 0 -> callback?.invoke(MediaBrowserActivity.NONE_OBJECT)
-                        it.selectionList.size == browserAdapter.itemCount -> callback?.invoke(MediaBrowserActivity.SELECT_ALL)
-                        else -> callback?.invoke(MediaBrowserActivity.DESELECT_ALL)
-                    }
+        handleViewModel.selection.observe(this, Observer<MediaHandleViewModel.SelectionState> {
+            if (null != it && beActive) {
+                browserAdapter.isInSelecting = it.selecting
+                when {
+                    browserAdapter.itemCount == 0 -> callback?.invoke(MediaBrowserActivity.NONE_OBJECT)
+                    it.selectionList.size == browserAdapter.itemCount -> callback?.invoke(MediaBrowserActivity.SELECT_ALL)
+                    else -> callback?.invoke(MediaBrowserActivity.DESELECT_ALL)
                 }
             }
         })
@@ -135,6 +129,9 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
                 browserAdapter.updateAdapterData(map)
             }
         })
+        viewModel.loadMedia(BaseMediaBrowserViewModel.TYPE_MEDIA) {
+            browserAdapter.updateAdapterData(it)
+        }
     }
 
     private fun showPrivateMediaView(mediaView: View, data: MediaBrowseData) {
@@ -142,7 +139,7 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
         val msg = data.msgSource as? MessageRecord
         val attachment = msg?.getMediaAttachment()
         val act = activity
-        if (null != attachment && null != act && !act.isFinishing){
+        if (null != attachment && null != act && !act.isFinishing) {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             intent.putExtra(MediaViewActivity.THREAD_ID, msg.threadId)
             intent.putExtra(MediaViewActivity.INDEX_ID, msg.id)
@@ -155,7 +152,7 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
         }
     }
 
-    private fun showGroupMediaView(mediaView: View, data:MediaBrowseData){
+    private fun showGroupMediaView(mediaView: View, data: MediaBrowseData) {
         val intent = Intent(context, MediaViewActivity::class.java)
         val msg = data.msgSource as? AmeGroupMessageDetail
         val act = activity
@@ -176,14 +173,14 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
         val list = mHandleViewModel?.selection?.value?.selectionList
         if (list?.isNotEmpty() == true) {
             val fileData = list[0]
-            AmeModuleCenter.chat(accountContext)?.forwardMessage(activity ?: return, fileData.fromGroup,
-                    if(fileData.fromGroup) gid else threadId, list.map { it.msgSource }.toSet()) {
-                if(it.isEmpty()) {
+            AmeModuleCenter.chat(accountContext)?.forwardMessage(activity
+                    ?: return, fileData.fromGroup,
+                    if (fileData.fromGroup) gid else threadId, list.map { it.msgSource }.toSet()) {
+                if (it.isEmpty()) {
                     mHandleViewModel?.clearSelectionList()
                     mHandleViewModel?.setSelecting(false)
                 }
             }
-
         }
     }
 
@@ -218,7 +215,7 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
                                 AmeAppLifecycle.failure(AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_delete_fail), true)
                             } else {
                                 val safeThis = weakThis.get()
-                                if (null != safeThis && !safeThis.isDetached){
+                                if (null != safeThis && !safeThis.isDetached) {
                                     weakThis.get()?.browserAdapter?.delete(list)
                                     weakThis.get()?.mHandleViewModel?.setSelecting(false)
                                 }

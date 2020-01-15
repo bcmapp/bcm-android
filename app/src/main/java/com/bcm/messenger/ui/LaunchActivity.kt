@@ -125,7 +125,7 @@ class LaunchActivity : AppCompatActivity() {
     private fun routeToDatabaseMigrate() {
         ALog.i(TAG, "Route to database migrate")
         SchemeLaunchHelper.storeSchemeIntent(intent)
-        startActivity(Intent(this, DatabaseMigrateActivity::class.java).apply {
+        startBcmActivity(AMELogin.majorContext, Intent(this, DatabaseMigrateActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         })
     }

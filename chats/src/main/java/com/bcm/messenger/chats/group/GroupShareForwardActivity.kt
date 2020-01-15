@@ -51,7 +51,7 @@ class GroupShareForwardActivity : AccountSwipeBaseActivity() {
                 override fun onClickContact(recipient: Recipient) {
                     if (recipient.isGroupRecipient) {
                         doForwardForGroup(GroupUtil.gidFromAddress(recipient.address))
-                    }else {
+                    } else {
                         doForwardForPrivate(recipient)
                     }
                 }
@@ -59,9 +59,8 @@ class GroupShareForwardActivity : AccountSwipeBaseActivity() {
             forwardProvider.setContactSelectContainer(R.id.activity_forward_root)
             forwardProvider.setGroupSelectContainer(R.id.activity_forward_root)
         }
-        supportFragmentManager.beginTransaction()
-                .add(R.id.activity_forward_root, forwardProvider as Fragment)
-                .commit()
+
+        initFragment(R.id.activity_forward_root, forwardProvider as Fragment, null)
     }
 
     override fun finish() {
@@ -75,19 +74,19 @@ class GroupShareForwardActivity : AccountSwipeBaseActivity() {
             AmeAppLifecycle.showLoading()
             GroupMessageLogic.get(accountContext).messageSender.sendGroupShareMessage(toGroupId, AmeGroupMessage.GroupShareContent.fromJson(mGroupShareString),
                     object : com.bcm.messenger.chats.group.logic.MessageSender.SenderCallback {
-                override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
-                    ALog.d(TAG, "doForwardForGroup result: $isSuccess")
-                    AmeAppLifecycle.hideLoading()
-                    if (isSuccess) {
-                        AmeAppLifecycle.succeed(getString(R.string.chats_group_share_forward_success), true) {
-                            finish()
+                        override fun call(messageDetail: AmeGroupMessageDetail?, indexId: Long, isSuccess: Boolean) {
+                            ALog.d(TAG, "doForwardForGroup result: $isSuccess")
+                            AmeAppLifecycle.hideLoading()
+                            if (isSuccess) {
+                                AmeAppLifecycle.succeed(getString(R.string.chats_group_share_forward_success), true) {
+                                    finish()
+                                }
+                            } else {
+                                AmeAppLifecycle.failure(getString(R.string.chats_group_share_forward_fail), true)
+                            }
                         }
-                    } else {
-                        AmeAppLifecycle.failure(getString(R.string.chats_group_share_forward_fail), true)
-                    }
-                }
-            })
-        }catch (ex: Exception) {
+                    })
+        } catch (ex: Exception) {
             ALog.e(TAG, "doForwardForGroup error", ex)
         }
     }
@@ -98,11 +97,8 @@ class GroupShareForwardActivity : AccountSwipeBaseActivity() {
         val ameGroupMessage = AmeGroupMessage(AmeGroupMessage.GROUP_SHARE_CARD, AmeGroupMessage.GroupShareContent.fromJson(mGroupShareString)).toString()
         val message = OutgoingLocationMessage(toRecipient, ameGroupMessage, (toRecipient.expireMessages * 1000).toLong())
         Observable.create(ObservableOnSubscribe<Long> {
-            it.onNext(MessageSender.send(this, accountContext, message, -1L) {
-
-            })
+            it.onNext(MessageSender.send(this, accountContext, message, -1L, null))
             it.onComplete()
-
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({

@@ -404,6 +404,11 @@ class PrivateChatRepo(
         updateMessage(messageId)
     }
 
+    fun updateExpiresTime(messageId: Long, time: Long) {
+        chatDao.updateExpiresTime(messageId, time)
+        updateMessage(messageId)
+    }
+
     fun setMessagePendingInsecureSmsFallback(messageId: Long) {
         updateStatus(messageId, BASE_TYPE_MASK, BASE_PENDING_INSECURE_SMS_FALLBACK)
     }

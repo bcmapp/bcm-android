@@ -66,15 +66,14 @@ class PrivateMediaBrowseModel(accountContext: AccountContext) : BaseMediaBrowser
         checkValid()
 
         fun createMediaBrowseData(result: MutableMap<String, MutableList<MediaBrowseData>>, record: MessageRecord) {
-            val data = getBrowseData(AppContextHolder.APP_CONTEXT, browseType, record)
-                    ?: return
+            val data = getBrowseData(AppContextHolder.APP_CONTEXT, browseType, record) ?: return
             val key = formatMapKey(data)
             val list = result[key] ?: mutableListOf()
             list.add(data)
             result[key] = list
         }
 
-        Observable.create(ObservableOnSubscribe<Map<String, MutableList<MediaBrowseData>>> {
+        Observable.create<Map<String, MutableList<MediaBrowseData>>> {
             ALog.d(TAG, "loadMedia $browseType")
             var result: MutableMap<String, MutableList<MediaBrowseData>>? = null
             val records: List<MessageRecord>
@@ -116,11 +115,13 @@ class PrivateMediaBrowseModel(accountContext: AccountContext) : BaseMediaBrowser
                 it.onComplete()
             }
 
-        }).subscribeOn(Schedulers.io())
+        }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { result ->
+                .subscribe({ result ->
                     callback.invoke(result)
-                }
+                }, {
+                    it.printStackTrace()
+                })
     }
 
     @SuppressLint("CheckResult")

@@ -1,7 +1,6 @@
 package com.bcm.messenger.common.database.dao
 
 import androidx.room.*
-import com.bcm.messenger.common.database.model.AttachmentDbModel
 import com.bcm.messenger.common.database.model.PrivateChatDbModel
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.database.repositories.BASE_FAIL_CANNOT_DECRYPT_TYPE
@@ -118,5 +117,6 @@ interface PrivateChatDao {
     @Query("UPDATE ${PrivateChatDbModel.TABLE_NAME} SET read = 0 WHERE id = :id")
     fun updateMessageUnread(id: Long)
 
-
+    @Query("UPDATE ${PrivateChatDbModel.TABLE_NAME} SET expires_time = :time WHERE id = :id")
+    fun updateExpiresTime(id: Long, time: Long)
 }

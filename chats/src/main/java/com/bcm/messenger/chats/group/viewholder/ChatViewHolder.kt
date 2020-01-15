@@ -46,10 +46,7 @@ import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.emoji.EmojiTextView
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
-import com.bcm.messenger.common.utils.AmeAppLifecycle
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.BcmGroupNameUtil
-import com.bcm.messenger.common.utils.getString
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -549,7 +546,7 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
             putExtra(ForwardActivity.INDEX_ID, messageRecord.indexId)
             putExtra(ForwardActivity.GID, messageRecord.gid)
         }
-        context.startActivity(intent)
+        context.startBcmActivity(accountContext, intent)
     }
 
     fun getView(indexId: Long): View? {
