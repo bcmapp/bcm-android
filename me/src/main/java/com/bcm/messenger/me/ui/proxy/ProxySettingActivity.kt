@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountSwipeBaseActivity
+import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
 import com.bcm.messenger.common.ui.adapter.ListDataSource
@@ -30,7 +31,7 @@ import kotlinx.android.synthetic.main.me_activity_proxy.*
 import java.lang.StringBuilder
 
 @Route(routePath = ARouterConstants.Activity.PROXY_SETTING)
-class ProxySettingActivity : AccountSwipeBaseActivity()
+class ProxySettingActivity : SwipeBaseActivity()
         , AmeRecycleViewAdapter.IViewHolderDelegate<ProxyItem>
         , IProxyStateChanged {
     private val dataSource = object : ListDataSource<ProxyItem>() {
