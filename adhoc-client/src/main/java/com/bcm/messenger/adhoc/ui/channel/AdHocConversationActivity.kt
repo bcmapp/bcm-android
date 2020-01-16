@@ -63,7 +63,6 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
 
     private var mSession: String = ""
     private var mFragment: AdHocConversationFragment? = null
-    private var mSelf: Recipient? = null
 
     override fun onActivityReenter(resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK && data != null) {
@@ -165,12 +164,6 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
     }
 
     private fun initViewAndResource() {
-        try {
-            mSelf = Recipient.major()
-        }catch (ex: Exception) {
-            finish()
-            return
-        }
         mSession = intent.getStringExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION) ?: ""
         AdHocMessageLogic.get(accountContext).initModel(this, mSession)
         mFragment = initFragment(R.id.fragment_content, AdHocConversationFragment(), null)
@@ -211,7 +204,7 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
             }
 
             override fun onMessageSend(message: CharSequence, atList: Set<String>) {
-                AdHocMessageLogic.get(accountContext).send(mSession, mSelf?.name ?: "", message.toString(), atList)
+                AdHocMessageLogic.get(accountContext).send(mSession, accountContext.name, message.toString(), atList)
             }
 
             override fun onEmojiPanelShow(show: Boolean) {
@@ -362,7 +355,7 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    AdHocMessageLogic.get(accountContext).send(mSession, mSelf?.name ?: "", it)
+                    AdHocMessageLogic.get(accountContext).send(mSession, accountContext.name, it)
                 }, {
                     ALog.e(TAG, "handleSendAudio error", it)
                 })
@@ -400,7 +393,7 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
                     val delay = if (index == 0) 0L else 1000L
                     index++
                     AmeDispatcher.mainThread.dispatch({
-                        AdHocMessageLogic.get(accountContext).send(mSession, mSelf?.name ?: "", it)
+                        AdHocMessageLogic.get(accountContext).send(mSession, accountContext.name, it)
                     }, delay)
 
                 }, {
@@ -443,7 +436,7 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    AdHocMessageLogic.get(accountContext).send(mSession, mSelf?.name ?: "", it)
+                    AdHocMessageLogic.get(accountContext).send(mSession, accountContext.name, it)
 
                 }) { throwable ->
                     ALog.e(TAG, "handleSendDocument error", throwable)
@@ -483,7 +476,7 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
                     val delay = if (index > 0) 1000L else 0L
                     index++
                     AmeDispatcher.mainThread.dispatch({
-                        AdHocMessageLogic.get(accountContext).send(mSession, mSelf?.name ?: "", it)
+                        AdHocMessageLogic.get(accountContext).send(mSession, accountContext.name, it)
 
                     }, delay)
 

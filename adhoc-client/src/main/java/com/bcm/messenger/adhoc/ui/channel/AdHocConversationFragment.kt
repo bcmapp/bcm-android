@@ -79,7 +79,7 @@ class AdHocConversationFragment : BaseFragment() {
                 try {
                     val message = AdHocMessageDetail(0, targetSession, AdHocMessageLogic.get(accountContext).myAdHocId() ?: return).apply {
                         sendByMe = true
-                        nickname = Recipient.major().name
+                        nickname = accountContext.name
                         setMessageBodyJson(mCurrentForwardText ?: "")
                         val content = getMessageBody()?.content
                         if (content is AmeGroupMessage.AttachmentContent) {

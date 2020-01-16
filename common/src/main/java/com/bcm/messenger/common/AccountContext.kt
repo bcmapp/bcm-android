@@ -11,6 +11,7 @@ class AccountContext(val uid: String, val token: String, val password: String) :
         private const val serialVersionUID = 1L
     }
 
+    val name get() = AmeModuleCenter.login().name(uid)
     val isLogin get() = AmeModuleCenter.login().isAccountLogin(uid)
     val accountDir: String get() = AmeModuleCenter.login().accountDir(uid)
     val genTime get() = AmeModuleCenter.login().genTime(uid)

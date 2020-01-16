@@ -4,6 +4,7 @@ import com.bcm.messenger.adhoc.R
 import com.bcm.messenger.adhoc.logic.AdHocChannelLogic
 import com.bcm.messenger.adhoc.sdk.AdHocSDK
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -84,7 +85,7 @@ class AdHocConnectingStep(private val accountContext: AccountContext) {
         val clientConnected = AdHocSDK.getNetSnapshot().clientSet.isNotEmpty()
         val serverConnected = AdHocSDK.getNetSnapshot().myIp.isNotEmpty()
         if (clientConnected || serverConnected) {
-            return Recipient.major().name
+            return accountContext.name
         }
 
         return when(currentStep) {
@@ -103,7 +104,7 @@ class AdHocConnectingStep(private val accountContext: AccountContext) {
             STEP.CONNECTED -> AppUtil.getString(R.string.adhoc_main_title_connected)
             STEP.CONNECTING_FAILED -> AppUtil.getString(R.string.adhoc_main_title_connect_failed)
             else -> {
-                Recipient.major().name
+                accountContext.name
             }
         }
     }

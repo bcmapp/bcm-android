@@ -93,7 +93,7 @@ class AdHocMessageLogic(private val accountContext: AccountContext) : AdHocSessi
 
     fun myAdHocId(): String? {
         return try {
-            Recipient.major().address.serialize()
+            accountContext.uid
         } catch (ex: Exception) {
             null
         }
@@ -413,8 +413,7 @@ class AdHocMessageLogic(private val accountContext: AccountContext) : AdHocSessi
                         when (queueData.ready.get()) {
                             AdHocSessionStatus.READY.ordinal -> {
                                 count++
-                                val self = Recipient.major()
-                                send(m.sessionId, self.name, m) { new ->
+                                send(m.sessionId, accountContext.name, m) { new ->
                                     response(complete.addAndGet(1))
                                 }
                             }

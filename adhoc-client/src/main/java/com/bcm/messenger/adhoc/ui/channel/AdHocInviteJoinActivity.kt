@@ -76,7 +76,7 @@ class AdHocInviteJoinActivity : AccountSwipeBaseActivity() {
             val newChannel = this.channel
             if (newChannel != null && !newSessionId.isNullOrEmpty()) {
                 val myName = try {
-                    Recipient.major().name
+                    accountContext.name
                 }catch (ex: Exception) {
                     null
                 }

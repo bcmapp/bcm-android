@@ -22,8 +22,7 @@ object EnvSettingLogic {
     val EnvList = arrayOf(
             RELEASE_HOST,
             "39.108.124.60:8080",
-            "47.75.146.142:8070",
-            "157.255.229.119:8080")
+            "47.75.146.142:8070")
 
     fun getEnvSetting(): EnvSetting {
         return getEnvSetting(AppUtil.isReleaseBuild())

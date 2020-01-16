@@ -899,7 +899,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     class GroupShareContent(val groupId: Long, val groupName: String?, val groupIcon: String?, val shareCode: String, val shareSignature: String, val ekey: String?, val timestamp: Long, var shareLink: String?) : Content() {
 
         companion object {
-            private const val SHARE_SHORT_LINK_DEV = "http://157.255.229.119:8082/groups/"
+            private const val SHARE_SHORT_LINK_DEV = "http://47.90.96.58:8082/groups/"
             private const val SHARE_SHORT_LINK = "https://s.bcm.social/groups/"
             private const val SHARE_LINK = "https:///bcm.social/native/joingroup/new_chat_page"
             private const val SHARE_SCHEME_URL = "bcmobile://www.bcm-im.com/native/joingroup/new_chat_page"

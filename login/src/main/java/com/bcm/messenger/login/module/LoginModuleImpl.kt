@@ -15,6 +15,7 @@ import com.bcm.messenger.common.server.ConnectState
 import com.bcm.messenger.common.server.IServerConnectStateListener
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AmePushProcess
+import com.bcm.messenger.common.utils.front
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.login.logic.CreateSignedPreKeyJob
 import com.bcm.messenger.utility.AppContextHolder
@@ -334,5 +335,9 @@ class LoginModuleImpl : ILoginModule
 
     override fun accountSize(): Int {
         return AmeLoginLogic.getAccountList().size
+    }
+
+    override fun name(uid: String): String {
+        return AmeLoginLogic.getAccount(uid)?.name?:uid.front()
     }
 }

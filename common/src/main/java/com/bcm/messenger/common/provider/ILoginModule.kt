@@ -105,4 +105,6 @@ interface ILoginModule : IAmeModule {
     fun setMajorAccount(accountContext: AccountContext)
 
     fun accountSize(): Int
+
+    fun name(uid: String): String
 }
