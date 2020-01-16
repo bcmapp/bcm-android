@@ -10,6 +10,7 @@ import android.os.Environment
 import android.os.IBinder
 import android.webkit.WebView
 import androidx.multidex.MultiDexApplication
+import com.bcm.messenger.utility.ScreenUtil
 import com.bcm.messenger.common.*
 import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSManager
 import com.bcm.messenger.common.bcmhttp.conncheck.IMServerConnectionChecker
@@ -72,6 +73,7 @@ class AmeApplication : MultiDexApplication() {
 
         AppContextHolder.init(this)
         AppForeground.init(this)
+        ScreenUtil.init(this)
 
         NetworkUtil.init(this)
 

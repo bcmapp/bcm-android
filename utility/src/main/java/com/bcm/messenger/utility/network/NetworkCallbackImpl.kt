@@ -22,6 +22,10 @@ class NetworkCallbackImpl(private val type:String, network:Network?): Connectivi
         this.callback = callback
     }
 
+    fun updateNetwork(network: Network) {
+        this.connectNetwork = network
+    }
+
     override fun onAvailable(network: Network) {
         super.onAvailable(network)
         ALog.i(TAG, "$type onAvailable ")

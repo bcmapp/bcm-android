@@ -2,12 +2,9 @@ package com.bcm.messenger.adhoc.ui
 
 import android.app.Activity
 import com.bcm.messenger.adhoc.R
-import com.bcm.messenger.adhoc.util.ScreenUtil
-import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.utility.ScreenUtil
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.accountmodule.IAdHocModule
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.ble.BleUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -29,7 +26,6 @@ class AdHocDeviceRequire(accountContext: AccountContext, private val activity: A
 
     fun require() {
         needRequire = true
-        ScreenUtil.init(activity)
         ScreenUtil.addListener(this)
         GPSUtil.stateNotify.addListener(this)
         WiFiUtil.stateNotify.addListener(this)
@@ -44,7 +40,6 @@ class AdHocDeviceRequire(accountContext: AccountContext, private val activity: A
         WiFiUtil.stateNotify.removeListener(this)
         BleUtil.stateNotify.removeListener(this)
         AppForeground.listener.removeListener(this)
-        ScreenUtil.unInit(activity)
         ScreenUtil.removeListener(this)
     }
 

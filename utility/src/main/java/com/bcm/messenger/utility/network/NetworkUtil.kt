@@ -8,11 +8,13 @@ import android.net.NetworkRequest
 import android.net.wifi.WifiManager
 import android.telephony.TelephonyManager
 import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.ScreenUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
+import com.bcm.messenger.utility.logger.ALog
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-object NetworkUtil: NetworkCallbackImpl.StatusCallback {
+object NetworkUtil: NetworkCallbackImpl.StatusCallback, ScreenUtil.IScreenStateListener {
     private lateinit var wiFiCallback: NetworkCallbackImpl
     private lateinit var mobileCallback: NetworkCallbackImpl
     private val listenerSet = Collections.newSetFromMap(ConcurrentHashMap<INetworkConnectionListener, Boolean>())
@@ -67,6 +69,8 @@ object NetworkUtil: NetworkCallbackImpl.StatusCallback {
 
         val mobileRequest = mobileBuilder.build()
         cm.registerNetworkCallback(mobileRequest, mobileCallback)
+
+        ScreenUtil.addListener(this)
     }
 
 
@@ -145,4 +149,41 @@ object NetworkUtil: NetworkCallbackImpl.StatusCallback {
         } catch (ex: Exception) { }
         return NetType.NONE
     }
+
+    override fun onScreenStateChanged(on: Boolean) {
+        if (on && !isConnected()) {
+            var wiFiNetwork:Network? = null
+            var mobileNetwork:Network? = null
+
+            val cm = AppContextHolder.APP_CONTEXT.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val activeNetworkInfo = cm.activeNetworkInfo
+            val networkList = cm.allNetworks
+
+            if (activeNetworkInfo != null && activeNetworkInfo.isConnected && networkList?.isNotEmpty() == true) {
+                if (activeNetworkInfo.type == ConnectivityManager.TYPE_WIFI) {
+                    wiFiNetwork = networkList.last()
+                } else {
+                    mobileNetwork = networkList.last()
+                }
+            }
+
+            if (null != wiFiNetwork) {
+                wiFiCallback.updateNetwork(wiFiNetwork)
+                listenerSet.forEach {
+                    it.onNetWorkStateChanged()
+                }
+                ALog.i("NetworkUtil", "WiFi worked")
+            }
+
+            if (null != mobileNetwork) {
+                mobileCallback.updateNetwork(mobileNetwork)
+                listenerSet.forEach {
+                    it.onNetWorkStateChanged()
+                }
+
+                ALog.i("NetworkUtil", "mobile worked")
+            }
+        }
+    }
+
 }

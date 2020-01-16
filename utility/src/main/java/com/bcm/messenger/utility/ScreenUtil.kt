@@ -1,4 +1,4 @@
-package com.bcm.messenger.adhoc.util
+package com.bcm.messenger.utility
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -36,7 +36,7 @@ object ScreenUtil {
         context.unregisterReceiver(receiver)
     }
 
-    fun addListener(listener:IScreenStateListener) {
+    fun addListener(listener: IScreenStateListener) {
         listenerSet.add(listener)
     }
 
