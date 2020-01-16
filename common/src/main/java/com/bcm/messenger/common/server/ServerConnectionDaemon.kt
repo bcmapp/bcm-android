@@ -205,7 +205,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
                 return true
             }
 
-            val serverConn = ServerConnection(accountContext, BuildConfig.USER_AGENT)
+            val serverConn = ServerConnection(accountContext, daemonScheduler.scheduler, BuildConfig.USER_AGENT)
             serverConn.setConnectionListener(this)
             this.serverConn = serverConn
 

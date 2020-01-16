@@ -617,12 +617,12 @@ class HomeActivity : AccountSwipeBaseActivity() {
     }
 
     override fun onAccountContextSwitch(newAccountContext: AccountContext) {
-        setAccountContext(AMELogin.majorContext)
-        titleView.updateContext(accountContext)
+        setAccountContext(newAccountContext)
+        titleView.updateContext(newAccountContext)
         home_toolbar_avatar.showRecipientAvatar(accountRecipient)
-        messageListFragment?.updateAccountContext(accountContext)
+        messageListFragment?.updateAccountContext(newAccountContext)
 
-        val unreadStatus = unreadMap[accountContext] ?: return
+        val unreadStatus = unreadMap[newAccountContext] ?: return
         if (accountContext == this@HomeActivity.accountContext) {
             messageListFragment?.updateFriendRequest(unreadStatus.friendUnhandle, unreadStatus.friendUnread)
         }

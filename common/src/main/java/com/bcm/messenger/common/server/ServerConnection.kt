@@ -8,6 +8,7 @@ import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.InvalidProtocolBufferException
 import com.orhanobut.logger.Logger
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -19,7 +20,7 @@ import org.whispersystems.signalservice.internal.websocket.WebSocketProtos
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class ServerConnection(private val accountContext: AccountContext, private val userAgent: String) {
+class ServerConnection(private val accountContext: AccountContext, private val scheduler: Scheduler, private val userAgent: String) {
 
     private val RESPONSE_REFUSE = 403
     private val RESPONSE_GONE = 410
@@ -31,7 +32,7 @@ class ServerConnection(private val accountContext: AccountContext, private val u
     private var webSocketHttp: WebSocketHttp = WebSocketHttp(accountContext)
     private var client: WebSocket? = null
     private var protoDataEvent: IServerProtoDataEvent? = null
-    private var websocketEvent = WebsocketConnectionListener(false)
+    private var websocketEvent = WebsocketConnectionListener(false, true, scheduler)
 
     private var connectState = ConnectState.INIT
 
@@ -82,7 +83,7 @@ class ServerConnection(private val accountContext: AccountContext, private val u
 
             connectingTime = System.currentTimeMillis()
             websocketEvent.destroyed = true
-            websocketEvent = WebsocketConnectionListener(forRetry)
+            websocketEvent = WebsocketConnectionListener(forRetry, false, scheduler)
             this.client = webSocketHttp.connect(url, userAgent, websocketEvent)
         }
         return true
@@ -190,7 +191,7 @@ class ServerConnection(private val accountContext: AccountContext, private val u
         connectState = ConnectState.DISCONNECTED
     }
 
-    inner class WebsocketConnectionListener(private val forRetry: Boolean, var destroyed: Boolean = false) : WebSocketListener() {
+    inner class WebsocketConnectionListener(private val forRetry: Boolean, var destroyed: Boolean = false, private val scheduler: Scheduler) : WebSocketListener() {
         private var connected = false
         override fun onOpen(webSocket: WebSocket?, response: Response?) {
             if (destroyed) {
@@ -273,8 +274,8 @@ class ServerConnection(private val accountContext: AccountContext, private val u
                         connectImpl(true, connectToken)
                     }
                 }.delaySubscription(1000, TimeUnit.MILLISECONDS)
-                        .subscribeOn(AmeDispatcher.singleScheduler)
-                        .observeOn(AmeDispatcher.singleScheduler)
+                        .subscribeOn(scheduler)
+                        .observeOn(scheduler)
                         .subscribe ({},{})
             }
         }
