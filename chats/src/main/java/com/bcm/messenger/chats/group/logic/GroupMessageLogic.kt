@@ -344,6 +344,8 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
             var memberListChanged = false
 
             var decryptFailCount = 0
+            var decryptFailLastMid = 0L
+            var decryptFailLastTime = 0L
             for (msg in messages) {
                 val fetchGroupMessage = if (msg.type == 1 || msg.type == 2) {
                     if (msg.status == GroupMessageEntity.STATUS_RECALLED) {
@@ -359,7 +361,6 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                     groupMessage.create_time = msg.createTime
                     groupMessage.from_uid = msg.getFinalSource(groupInfo)
                     groupMessage.text = msg.text
-                    MessageDataManager.insertFetchedMessages(accountContext, groupMessage)
                     groupMessage
                 } else if (msg.type == 4) {
                     val memberChangeMessage = Gson().fromJson<AmeGroupMemberChanged.MemberChangeMessage>(msg.text, object : TypeToken<AmeGroupMemberChanged.MemberChangeMessage>() {
@@ -401,7 +402,6 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                         memberListChanged = true
                     }
 
-                    MessageDataManager.insertFetchedMessages(accountContext, groupMessage)
                     groupMessage
                 } else if (msg.type == 6) {
                     val groupMessage = GroupMessage()
@@ -410,7 +410,6 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                     groupMessage.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
                     groupMessage.create_time = msg.createTime
                     groupMessage.from_uid = msg.getFinalSource(groupInfo)
-                    MessageDataManager.insertFetchedMessages(accountContext, groupMessage)
                     groupMessage
 
                 } else {
@@ -420,20 +419,22 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                     groupMessage.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
                     groupMessage.create_time = msg.createTime
                     groupMessage.from_uid = msg.getFinalSource(groupInfo)
-                    MessageDataManager.insertFetchedMessages(accountContext, groupMessage)
                     groupMessage
                 }
 
                 if (null != fetchGroupMessage) {
+                    MessageDataManager.insertFetchedMessages(accountContext, fetchGroupMessage)
                     if (fetchGroupMessage.content_type == AmeGroupMessage.DECRYPT_FAIL.toInt()) {
                         ++decryptFailCount
+                        decryptFailLastMid = msg.mid
+                        decryptFailLastTime = msg.createTime
                     }
                     fetchList.add(fetchGroupMessage)
                 }
             }
 
             if (decryptFailCount > 0) {
-                failCounter.updateFailCount(gid, decryptFailCount)
+                failCounter.updateFailCount(gid, decryptFailCount, decryptFailLastMid, decryptFailLastTime)
             }
 
             if (memberListChanged) {
@@ -463,8 +464,6 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
             val groupMessage = GroupMessageTransform.transformToEntity(detail)
             groupMessage.content_type = message.type.toInt()
             groupMessage.is_confirm = GroupMessage.CONFIRM_MESSAGE
-
-            MessageDataManager.insertFetchedMessages(accountContext, groupMessage)
 
             return groupMessage
         }
@@ -534,6 +533,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
             } else {
                 detail.apply {
                     this.gid = gid
+                    this.serverIndex = msg.mid
                     sendTime = AmeTimeUtil.getMessageSendTime()
                     sendState = AmeGroupMessageDetail.SendState.SEND_FAILED
                     senderId = detail.senderId
@@ -547,9 +547,6 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                 group.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
                 group
             }
-
-            MessageDataManager.insertFetchedMessages(accountContext, groupMessage)
-
             doControlMessage(gid, detail.message.content)
 
             return groupMessage
@@ -589,7 +586,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
         }
 
             if (from <= lastMid && lastMid > lastMidCache[gid] ?: 0) {
-                failCounter.updateFailCount(gid, 0)
+                failCounter.updateFailCount(gid, 0, 0, 0)
                 lastMidCache[gid] = lastMid
                 MessageDataManager.insertFetchingMessages(accountContext, gid, from, lastMid)
                 offlineSyncManager.sync(gid, from, lastMid)

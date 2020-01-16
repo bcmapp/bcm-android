@@ -155,7 +155,7 @@ class GroupMessageReceiver(private val accountContext: AccountContext) : IServer
             detail.sendState = AmeGroupMessageDetail.SendState.SEND_SUCCESS
         }
 
-        detail.setExtContent(AmeGroupMessageDetail.ExtensionContent(serverMessage.content))
+        detail.extContent = AmeGroupMessageDetail.ExtensionContent(serverMessage.content)
 
         EventBus.getDefault().post(GroupMessageEvent(accountContext, detail))
     }
