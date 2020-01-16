@@ -15,6 +15,7 @@ import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.startBcmActivityForResult
 import kotlinx.android.synthetic.main.adhoc_activity_invite_join.*
 
 /**
@@ -50,7 +51,7 @@ class AdHocInviteJoinActivity : AccountSwipeBaseActivity() {
                             val intent = Intent(this@AdHocInviteJoinActivity, AdHocSessionSelectionActivity::class.java).apply {
                                 putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, sessionId)
                             }
-                            startActivityForResult(intent, SELECT_SESSION_REQ)
+                            startBcmActivityForResult(intent, SELECT_SESSION_REQ)
                         })
                         .withDoneTitle(getString(R.string.common_cancel))
                         .withCancelable(false)

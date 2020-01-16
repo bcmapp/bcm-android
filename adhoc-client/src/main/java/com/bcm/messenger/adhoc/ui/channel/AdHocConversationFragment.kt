@@ -24,6 +24,8 @@ import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonConversationAdapter
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.startBcmActivityForResult
 import com.bcm.messenger.utility.Util
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.adhoc_activity_conversation.*
@@ -227,7 +229,7 @@ class AdHocConversationFragment : BaseFragment() {
                 val intent = Intent(context, AdHocSessionSelectionActivity::class.java).apply {
                     putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, mAdHocModel?.getSessionId())
                 }
-                startActivityForResult(intent, FORWARD_REQUEST)
+                startBcmActivityForResult(intent, FORWARD_REQUEST)
             }
 
             override fun onClearHistory() {

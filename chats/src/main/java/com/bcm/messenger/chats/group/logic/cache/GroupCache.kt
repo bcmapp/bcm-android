@@ -14,7 +14,6 @@ import com.bcm.messenger.common.grouprepository.modeltransform.GroupInfoTransfor
 import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMember
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe

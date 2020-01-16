@@ -30,6 +30,7 @@ import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.setStatusBarLightMode
+import com.bcm.messenger.common.utils.startBcmActivityForResult
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.BitmapUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -183,7 +184,7 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
             override fun onRight() {
                 hideInput()
                 layout_container?.postDelayed( {
-                    startActivityForResult(Intent(this@AdHocConversationActivity, AdHocChannelSettingActivity::class.java).apply {
+                    startBcmActivityForResult(Intent(this@AdHocConversationActivity, AdHocChannelSettingActivity::class.java).apply {
                         putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, mSession)
                     }, REQUEST_SETTING)
 
