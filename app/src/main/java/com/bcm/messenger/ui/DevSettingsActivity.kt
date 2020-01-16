@@ -123,7 +123,7 @@ class DevSettingsActivity : AppCompatActivity() {
 
             val dirs = arrayOf("messages%s.db", "new_group%s", "user_%s.db")
             for (i in dirs) {
-                val name = String.format(i, AMELogin.majorContext)
+                val name = String.format(i, AMELogin.majorUid)
                 val dbFile = AppContextHolder.APP_CONTEXT.getDatabasePath(name)
                 val diskPath = Environment.getExternalStorageDirectory().absolutePath
                 val dbDestPath= diskPath + File.separatorChar + ARouterConstants.SDCARD_ROOT_FOLDER + File.separatorChar + name
