@@ -34,78 +34,78 @@ import java.io.File
  */
 open class AdHocPreviewClickListener(private val accountContext: AccountContext) : ChatComponentListener {
 
-    companion object {
-        private val TAG = "AdHocPreviewClickListener"
+    private val TAG = "AdHocPreviewClickListener"
 
-        private fun doForAdHoc(accountContext: AccountContext, v: View, messageRecord: AdHocMessageDetail) {
+    private fun doForAdHoc(v: View, messageRecord: AdHocMessageDetail) {
 
-            if (AdHocPreviewActivity.isContentTypeSupported(messageRecord.getContentType())) {
-                val intent = Intent(v.context, AdHocPreviewActivity::class.java)
-                intent.putExtra(AdHocPreviewActivity.SESSION_ID, messageRecord.sessionId)
-                intent.putExtra(AdHocPreviewActivity.INDEX_ID, messageRecord.indexId)
-                intent.putExtra(AdHocPreviewActivity.DATA_TYPE, messageRecord.getContentType())
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(v.context as Activity, v, "${ShareElements.Activity.MEDIA_PREIVEW}${messageRecord.indexId}").toBundle()
-                gotoActivity(accountContext, v.context, intent, bundle)
+        if (AdHocPreviewActivity.isContentTypeSupported(messageRecord.getContentType())) {
+            val intent = Intent(v.context, AdHocPreviewActivity::class.java)
+            intent.putExtra(AdHocPreviewActivity.SESSION_ID, messageRecord.sessionId)
+            intent.putExtra(AdHocPreviewActivity.INDEX_ID, messageRecord.indexId)
+            intent.putExtra(AdHocPreviewActivity.DATA_TYPE, messageRecord.getContentType())
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(v.context as Activity, v, "${ShareElements.Activity.MEDIA_PREIVEW}${messageRecord.indexId}").toBundle()
+            gotoActivity(v.context, intent, bundle, true)
+        } else {
+            val uri = messageRecord.toAttachmentUri() ?: return
+            doForOtherUri(v.context, uri, messageRecord.getContentType())
+        }
+    }
+
+    private fun doForOtherUri(context: Context, uri: Uri, mimeType: String?) {
+
+        fun handle(uri: Uri, path: String?) {
+            ALog.i(TAG, "doForOtherUri: $uri, path: $path")
+            AmeAppLifecycle.hideLoading()
+
+            if (path != null && AppUtil.isApkFile(context, path)) {
+                context.startActivity(Intent(context, ApkInstallRequestActivity::class.java).apply {
+                    putExtra(ARouterConstants.PARAM.PARAM_APK, path)
+                })
             } else {
-                val uri = messageRecord.toAttachmentUri() ?: return
-                doForOtherUri(accountContext, v.context, uri, messageRecord.getContentType())
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.addCategory(Intent.CATEGORY_DEFAULT)
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                val type = if (mimeType.isNullOrEmpty()) {
+                    BcmFileUtils.getMimeType(context, path)
+                } else {
+                    mimeType
+                }
+                intent.setDataAndType(uri, type)
+                gotoActivity(context, intent, null, false)
             }
         }
 
-        private fun doForOtherUri(accountContext: AccountContext, context: Context, uri: Uri, mimeType: String?) {
+        AmeAppLifecycle.showLoading()
+        Observable.create<Pair<Uri, String?>> {
+            val filePath = BcmFileUtils.getFileAbsolutePath(context, uri)
+                    ?: throw Exception("get file path fail")
+            val targetUri = FileProvider.getUriForFile(context, BuildConfig.BCM_APPLICATION_ID + ".fileprovider", File(filePath))
+            it.onNext(Pair(targetUri, filePath))
+            it.onComplete()
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    handle(it.first, it.second)
+                }, {
+                    ALog.e(TAG, "doForOtherUri error", it)
+                    handle(uri, null)
+                })
+    }
 
-            fun handle(uri: Uri, path: String?) {
-                ALog.i(TAG, "doForOtherUri: $uri, path: $path")
-                AmeAppLifecycle.hideLoading()
-
-                if (path != null && AppUtil.isApkFile(context, path)) {
-                    context.startActivity(Intent(context, ApkInstallRequestActivity::class.java).apply {
-                        putExtra(ARouterConstants.PARAM.PARAM_APK, path)
-                    })
-                } else {
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.addCategory(Intent.CATEGORY_DEFAULT)
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    val type = if (mimeType.isNullOrEmpty()) {
-                        BcmFileUtils.getMimeType(context, path)
-                    } else {
-                        mimeType
-                    }
-                    intent.setDataAndType(uri, type)
-                    gotoActivity(accountContext, context, intent, null)
-                }
+    private fun gotoActivity(context: Context, intent: Intent, bundle: Bundle?, isSelfActivity: Boolean) {
+        try {
+            if (context !is Activity) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-
-            AmeAppLifecycle.showLoading()
-            Observable.create<Pair<Uri, String?>> {
-                val filePath = BcmFileUtils.getFileAbsolutePath(context, uri)
-                        ?: throw Exception("get file path fail")
-                val targetUri = FileProvider.getUriForFile(context, BuildConfig.BCM_APPLICATION_ID + ".fileprovider", File(filePath))
-                it.onNext(Pair(targetUri, filePath))
-                it.onComplete()
-            }.subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        handle(it.first, it.second)
-                    }, {
-                        ALog.e(TAG, "doForOtherUri error", it)
-                        handle(uri, null)
-                    })
-        }
-
-        private fun gotoActivity(accountContext: AccountContext, context: Context, intent: Intent, bundle: Bundle?) {
-            try {
-                if (context is Activity) {
-                    context.startBcmActivity(accountContext, intent, bundle)
-                } else {
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startBcmActivity(accountContext, intent, bundle)
-                }
-            } catch (ex: Exception) {
-                ALog.e(TAG, "gotoActivity error", ex)
-                ToastUtil.show(context, context.getString(R.string.chats_there_is_no_app_available_to_handle_this_link_on_your_device))
+            if (isSelfActivity) {
+                context.startBcmActivity(accountContext, intent, bundle)
+            } else {
+                context.startActivity(intent)
             }
+        } catch (ex: Exception) {
+            ALog.e(TAG, "gotoActivity error", ex)
+            ToastUtil.show(context, context.getString(R.string.chats_there_is_no_app_available_to_handle_this_link_on_your_device))
         }
     }
 
@@ -113,7 +113,7 @@ open class AdHocPreviewClickListener(private val accountContext: AccountContext)
     override fun onClick(v: View, data: Any) {
         try {
             if (data is AdHocMessageDetail) {
-                doForAdHoc(accountContext, v, data)
+                doForAdHoc(v, data)
             }
         } catch (ex: Exception) {
             ALog.e(TAG, "onClick error", ex)

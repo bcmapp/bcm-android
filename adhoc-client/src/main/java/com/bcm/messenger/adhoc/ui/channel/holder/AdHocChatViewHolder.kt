@@ -47,9 +47,7 @@ import io.reactivex.schedulers.Schedulers
  * Created by wjh on 2019/7/27
  */
 class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : ConversationContentViewHolder<AdHocMessageDetail>(accountContext, layout), View.OnLongClickListener {
-
     companion object {
-
         private const val TAG = "AdHocChatViewHolder"
 
         fun interceptTextLink(bodyView: TextView, isOutgoing: Boolean, bodyText: CharSequence): CharSequence {
@@ -81,8 +79,7 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
 
                 bodyView.text = spannableStringBuilder
                 return spannableStringBuilder
-
-            }else {
+            } else {
                 bodyView.text = bodyText
             }
             return bodyText
@@ -171,11 +168,11 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
     }
 
     override fun bindViewAction(message: AdHocMessageDetail, glideRequests: GlideRequests, batchSelected: MutableSet<AdHocMessageDetail>?): IConversationContentAction<AdHocMessageDetail>? {
-        var child: View? = null
+        var child: View?
         for (i in 0 until (mBodyContainer?.childCount ?: 0)) {
             child = mBodyContainer?.getChildAt(i)
             if (child is ViewStub) {
-            }else {
+            } else {
                 child?.visibility = View.GONE
             }
         }
@@ -184,16 +181,17 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
 
     private fun bindAction(message: AdHocMessageDetail, glideRequests: GlideRequests, batchSelected: MutableSet<AdHocMessageDetail>?): IConversationContentAction<AdHocMessageDetail>? {
 
-        fun <T>getInflateView(resId: Int) : T {
-            return when (val view = itemView.findViewById<View>(resId)){
+        fun <T> getInflateView(resId: Int): T {
+            return when (val view = itemView.findViewById<View>(resId)) {
                 is ViewStub -> view.inflate() as T
                 else -> view as T
             }
         }
+
         val type = message.getMessageBodyType()
         var v: View? = null
         var action = mActionArray[type]
-        when(type) {
+        when (type) {
             AmeGroupMessage.TEXT -> {
                 v = getInflateView(R.id.conversation_message)
                 if (action == null) {
@@ -250,14 +248,14 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
         if (message.sendByMe) {
             mPhotoView?.visibility = View.GONE
             mNickView?.visibility = View.GONE
-        }  else {
+        } else {
             val session = AdHocSessionLogic.get(accountContext).getSession(message.sessionId)
             if (session != null && session.isChannel()) {
                 mPhotoView?.visibility = View.VISIBLE
                 mNickView?.visibility = View.VISIBLE
                 mNickView?.text = message.nickname
                 mPhotoView?.setPhoto(Recipient.from(Address.from(accountContext, message.fromId), true), message.nickname, IndividualAvatarView.DEFAULT_PHOTO_TYPE)
-            }else {
+            } else {
                 mPhotoView?.visibility = View.GONE
                 mNickView?.visibility = View.GONE
             }
@@ -265,13 +263,13 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
     }
 
     override fun updateBackground(message: AdHocMessageDetail, action: IConversationContentAction<AdHocMessageDetail>?) {
-        if(action == null) {
+        if (action == null) {
             return
         }
         val mainView = action.getDisplayView() ?: return
         when {
             message.isSending || message.isAttachmentDownloading -> {
-                if(mainView.animation?.isInitialized != true) {
+                if (mainView.animation?.isInitialized != true) {
                     mBreatheAnim.duration = 1000
                     mBreatheAnim.repeatCount = Animation.INFINITE
                     mBreatheAnim.repeatMode = Animation.REVERSE
@@ -295,7 +293,7 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
     override fun updateAlert(message: AdHocMessageDetail, action: IConversationContentAction<AdHocMessageDetail>?) {
         if (message.isSending || message.success) {
             mAlertView?.setNone()
-        }else {
+        } else {
             mAlertView?.setFailed()
         }
     }
@@ -305,7 +303,7 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
             mSelectView?.visibility = View.GONE
             mAlertView?.isClickable = true
             mCellClickView?.visibility = View.GONE
-        }else {
+        } else {
             mSelectView?.visibility = View.VISIBLE
             mAlertView?.isClickable = false
             mSelectView?.isChecked = isSelect
@@ -321,7 +319,6 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
     }
 
     private fun onLongClickAction(view: View, action: IConversationContentAction<AdHocMessageDetail>) {
-
         val messageDetail = action.getCurrent() ?: return
         ConversationItemPopWindow.ItemPopWindowBuilder(view.context)
                 .withAnchorView(view)
@@ -336,7 +333,7 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
                     override fun onCopy() {
                         when {
                             messageDetail.getMessageBody()?.isText() == true -> AppUtil.saveCodeToBoard(view.context, messageDetail.getMessageBody()?.content?.getDescribe(0, accountContext).toString())
-                            messageDetail.getMessageBody()?.isLink() == true-> AppUtil.saveCodeToBoard(view.context, messageDetail.getMessageBody()?.content?.getDescribe(0, accountContext).toString())
+                            messageDetail.getMessageBody()?.isLink() == true -> AppUtil.saveCodeToBoard(view.context, messageDetail.getMessageBody()?.content?.getDescribe(0, accountContext).toString())
                             else -> return
                         }
                         AmeAppLifecycle.succeed(getString(R.string.common_copied), true)
@@ -366,7 +363,6 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
 
                     override fun onReply() {
                     }
-
                 }).build()
 
     }
