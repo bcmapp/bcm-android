@@ -275,7 +275,8 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         keyConfig.version = self.privacyProfile.version
                         val profileKeys = EncryptUtils.aes256EncryptAndBase64(keyConfig.toString(), channelKey.toByteArray())
 
-                        val shareSettingJson = GsonUtils.toJson(GroupShareSettingEntity(0, "", 1))
+                        val shareCode= EncryptUtils.base64Encode(EncryptUtils.getSecretBytes(16)).format()
+                        val shareSettingJson = GsonUtils.toJson(GroupShareSettingEntity(1, shareCode, 1))
                         stash.shareSetting = EncryptUtils.aes256EncryptAndBase64(shareSettingJson, stash.groupInfoSecretPlainBytes)
 
                         val shareSettingSignArray = BCMEncryptUtils.signWithMe(accountContext, EncryptUtils.base64Decode(stash.shareSetting.toByteArray()))
@@ -442,7 +443,8 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         keyConfig.version = self.privacyProfile.version
                         val profileKeys = EncryptUtils.aes256EncryptAndBase64(keyConfig.toString(), channel_key.toByteArray())
 
-                        val shareSettingJson = GsonUtils.toJson(GroupShareSettingEntity(0, "", 1))
+                        val shareCode= EncryptUtils.base64Encode(EncryptUtils.getSecretBytes(16)).format()
+                        val shareSettingJson = GsonUtils.toJson(GroupShareSettingEntity(1, shareCode, 1))
                         shareSetting = EncryptUtils.aes256EncryptAndBase64(shareSettingJson, groupSecret)
 
                         val shareSettingSignArray = BCMEncryptUtils.signWithMe(accountContext, EncryptUtils.base64Decode(shareSetting.toByteArray()))
@@ -468,7 +470,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.io())
 
-                    }.flatMap<GroupInfoResult> {
+                    }.flatMap<ServerResult<CreateGroupResult>> {
                         if (it.isSuccess) {
                             val dbGroupInfo = GroupInfo()
                             dbGroupInfo.member_count = inviteList.size - unknownUserList.size - strangerList.size
@@ -502,12 +504,20 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             if (strangerList.isNotEmpty()) {
                                 inviteStrangerNotify(it.data.gid, strangerList)
                             }
-                            queryGroupInfoImpl(it.data.gid)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(Schedulers.io())
+
+                            val gid = it.data.gid
+                            genShareLink(gid)
+                                    .subscribeOn(AmeDispatcher.ioScheduler)
+                                    .map { _ ->
+                                        it
+                                    }
                         } else {
                             throw GroupException(it.msg)
                         }
+                    }
+                    .flatMap {
+                        queryGroupInfoImpl(it.data.gid)
+                                .subscribeOn(AmeDispatcher.ioScheduler)
                     }.observeOn(AmeDispatcher.ioScheduler)
                     .map<GroupInfoResult> {
                         GroupMessageLogic.get(accountContext).syncOfflineMessage(it.info.gid, it.ackState.lastMid, it.ackState.lastAckMid)
@@ -689,7 +699,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                 succeed, link ->
                 if (succeed) {
                     if (role == AmeGroupMemberInfo.OWNER) {
-                        if (link != getGroupInfo(groupId)?.shareLink) {
+                        if (link.isEmpty() || link != getGroupInfo(groupId)?.shareLink) {
                             ACLog.i(accountContext, TAG, "checkGroupShareLink regen link")
                             genShareLink(groupId)
                                     .subscribeOn(AmeDispatcher.ioScheduler)
@@ -1414,6 +1424,23 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     throw GroupException("I'm not the owner")
                 }
 
+                if (1 != groupInfo.shareEnabled) {
+                    throw GroupException("group not share")
+                }
+
+                if (TextUtils.isEmpty(groupInfo.shareLink) && groupInfo.needOwnerConfirm != 1 ) {
+                    updateNeedConfirm(groupId, true){
+                        succeed, _ ->
+                        if (succeed) {
+                            AmeDispatcher.mainThread.dispatch {
+                                listenerRef.get()?.onGroupShareSettingChanged(groupInfo.gid
+                                        , shareEnable = true
+                                        , needConfirm = true)
+                            }
+                        }
+                    }
+                }
+
                 val shareContent = AmeGroupMessage.GroupShareContent(groupId, groupInfo.name, groupInfo.iconUrl, groupInfo.shareCode
                         ?: "", groupInfo.shareCodeSettingSign
                         ?: "", eKey, System.currentTimeMillis(), null)
@@ -1949,10 +1976,10 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         }
 
                     }
-                    .subscribe {
+                    .subscribe ({
                         ALog.i(TAG, "joinGroupByShareCode succeed")
                         result(true, "")
-                    }
+                    }, {})
         }
 
         fun updateNeedConfirm(gid: Long, needConfirm: Boolean, result: (succeed: Boolean, error: String?) -> Unit) {

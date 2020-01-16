@@ -79,8 +79,8 @@ class AmeApplication : MultiDexApplication() {
         initBcmRouter()
         AmeConfigure.init(!isReleaseBuild)
 
-        initLog()
         initCrash()
+        initLog()
         initLanguage()
 
         AmeProvider.get<IAFModule>(ARouterConstants.Provider.PROVIDER_AFLIB)?.onAppInit(this)

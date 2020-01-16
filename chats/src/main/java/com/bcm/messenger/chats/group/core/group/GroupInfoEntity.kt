@@ -141,9 +141,9 @@ class GroupInfoEntity : NotGuard {
             val encEk = encrypted_ephemeral_key
             if (!encEk.isNullOrEmpty()) {
                 val ek = encEk.toByteArray().base64Decode()
-                        .aesDecode(dbGroupInfo.infoSecret.toByteArray().base64Decode())?.base64Encode()?.format()
-                if (ek?.length == 64) {
-                    dbGroupInfo.ephemeralKey = ek
+                        .aesDecode(dbGroupInfo.infoSecret.toByteArray().base64Decode())
+                if (ek?.size == 64) {
+                    dbGroupInfo.ephemeralKey = ek.base64Encode().format()
                 }
             }
         }
