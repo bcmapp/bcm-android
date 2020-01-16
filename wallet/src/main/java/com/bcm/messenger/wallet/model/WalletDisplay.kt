@@ -19,6 +19,9 @@ class WalletDisplay(baseWallet: BCMWallet, amount: String, type: Byte = NORMAL) 
 
     fun setManager(manager: BCMWalletManagerContainer.BCMWalletManager?) {
         mManager = manager
+        if (manager != null) {
+            baseWallet.setManager(manager)
+        }
     }
 
     fun freshAddress(): String {

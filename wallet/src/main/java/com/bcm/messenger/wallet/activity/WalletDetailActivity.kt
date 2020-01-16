@@ -90,7 +90,6 @@ class WalletDetailActivity : AccountSwipeBaseActivity() {
             loadTransactionList()
         }
 
-        //跳转到收款页面
         detail_receive.setOnClickListener {
             AmePopup.loading.show(this@WalletDetailActivity, false)
             AmeDispatcher.io.dispatch{
@@ -109,7 +108,6 @@ class WalletDetailActivity : AccountSwipeBaseActivity() {
 
         }
 
-        //跳转到转账页面
         detail_transfer.setOnClickListener {
             AmePopup.loading.show(this@WalletDetailActivity, false)
             AmeDispatcher.io.dispatch{

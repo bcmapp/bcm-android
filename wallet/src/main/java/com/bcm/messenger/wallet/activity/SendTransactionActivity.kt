@@ -29,6 +29,7 @@ class SendTransactionActivity : AccountSwipeBaseActivity() {
 
     private var mWalletDisplay: WalletDisplay? = null
     private var mTransferAction: ITransferAction? = null
+    private var mWalletModel: WalletViewModel? = null
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -42,8 +43,11 @@ class SendTransactionActivity : AccountSwipeBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.wallet_send_transaction_activity)
 
+        mWalletModel = WalletViewModel.of(this, accountContext)
+
         val walletDisplay = intent.getParcelableExtra<WalletDisplay>(ARouterConstants.PARAM.WALLET.WALLET_COIN)
         mWalletDisplay = walletDisplay
+        walletDisplay.setManager(mWalletModel?.getManager())
 
         val fragment = if (walletDisplay.baseWallet.coinType == WalletSettings.BTC) {
             SendBitcoinFragment()
