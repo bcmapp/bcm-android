@@ -290,6 +290,11 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
+    fun resetPosition() {
+        viewPagerAdapter.setActiveView(1)
+        home_profile_view_pager.setCurrentItem(1, false)
+    }
+
     fun getCloseAccount(): AccountContext? {
         return viewPagerAdapter.getCurrentView(home_profile_view_pager.currentItem)?.getCurrentContext()
     }
