@@ -1424,11 +1424,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     throw GroupException("I'm not the owner")
                 }
 
-                if (1 != groupInfo.shareEnabled) {
-                    throw GroupException("group not share")
-                }
-
-                if (TextUtils.isEmpty(groupInfo.shareLink) && groupInfo.needOwnerConfirm != 1 ) {
+                if (TextUtils.isEmpty(groupInfo.shareLink) && groupInfo.needOwnerConfirm != 1 && groupInfo.shareEnabled == 1 ) {
                     updateNeedConfirm(groupId, true){
                         succeed, _ ->
                         if (succeed) {
