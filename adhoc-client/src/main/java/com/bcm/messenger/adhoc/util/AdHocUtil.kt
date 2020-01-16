@@ -19,7 +19,7 @@ object AdHocUtil {
     }
 
     fun officialCid(): String {
-        return toCid(AdHocChannel.OFFICIAL_CHANNEL, AdHocChannel.OFFICIAL_PWD)
+        return AdHocChannel.OFFICIAL.cid
     }
 
     fun officialSessionId(): String {

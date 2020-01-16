@@ -162,17 +162,6 @@ class AdHocSessionCache(private val accountContext: AccountContext, ready:(list:
         })
     }
 
-    fun getChannel(sessionId: String):AdHocChannel? {
-        val cid = getSession(sessionId)?.cid
-        if (cid?.isNotEmpty() == true) {
-            val channel =  channelDao().queryChannel(cid)
-            if (null != channel) {
-                return AdHocChannel(channel.cid, channel.channelName, channel.passwd)
-            }
-        }
-        return null
-    }
-
     @Throws(Exception::class)
     private fun messageDao(): AdHocMessageDao {
         return Repository.getAdHocMessageRepo(accountContext) ?: throw Exception("getMessageDao fail")

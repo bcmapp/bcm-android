@@ -18,7 +18,11 @@ class AdHocChannelCache(private val accountContext: AccountContext, ready:()->Un
         Observable.create<Map<String, AdHocChannel>> { em ->
             val channelList = HashMap<String, AdHocChannel>()
             getDao().loadAllChannel().forEach {
-                val chanel = AdHocChannel(it.cid, it.channelName, it.passwd)
+                val chanel = if(it.cid == AdHocChannel.OFFICIAL.cid) {
+                    AdHocChannel.OFFICIAL
+                }else{
+                    AdHocChannel(it.cid, it.channelName, it.passwd)
+                }
                 channelList[chanel.cid] = chanel
             }
             em.onNext(channelList)
@@ -43,7 +47,12 @@ class AdHocChannelCache(private val accountContext: AccountContext, ready:()->Un
     fun addChannel(channelName: String, passwd: String): Boolean {
         val cid = AdHocChannel.cid(channelName, passwd)
         if (null == getChannel(cid)) {
-            channelList[cid] = AdHocChannel(cid, channelName, passwd)
+            channelList[cid] = if(cid == AdHocChannel.OFFICIAL.cid) {
+                AdHocChannel.OFFICIAL
+            }else{
+                AdHocChannel(cid, channelName, passwd)
+            }
+
             AmeDispatcher.io.dispatch {
                 val dbChannel = AdHocChannelInfo(cid, channelName, passwd)
                 getDao().saveChannel(dbChannel)
@@ -55,7 +64,11 @@ class AdHocChannelCache(private val accountContext: AccountContext, ready:()->Un
     }
 
     fun getChannel(cid: String): AdHocChannel? {
-        return channelList[cid]
+        return if(cid == AdHocChannel.OFFICIAL.cid) {
+            AdHocChannel.OFFICIAL
+        } else {
+            channelList[cid]
+        }
     }
 
     fun getChannelList(): List<AdHocChannel> {
