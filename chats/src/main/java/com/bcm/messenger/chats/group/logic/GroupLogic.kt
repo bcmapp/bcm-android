@@ -356,10 +356,17 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         if (stash.strangersList.isNotEmpty()) {
                             inviteStrangerNotify(stash.groupInfo.gid, stash.strangersList)
                         }
-                        queryGroupInfoImpl(stash.groupInfo.gid)
-                                .subscribeOn(AmeDispatcher.ioScheduler)
 
+                        genShareLink(dbGroupInfo.gid)
+                                .subscribeOn(AmeDispatcher.ioScheduler)
+                                .map {
+                                    stash
+                                }
                     }.observeOn(AmeDispatcher.ioScheduler)
+                    .flatMap {
+                        queryGroupInfoImpl(it.groupInfo.gid)
+                                .subscribeOn(AmeDispatcher.ioScheduler)
+                    }
                     .map<GroupInfoResult> {
                         GroupMessageLogic.get(accountContext).syncOfflineMessage(it.info.gid, it.ackState.lastMid, it.ackState.lastAckMid)
                         it
