@@ -130,7 +130,6 @@ class GroupInfoEntity : NotGuard {
                     dbGroupInfo.shareCodeSetting = ""
                     dbGroupInfo.shareCodeSettingSign = ""
                     dbGroupInfo.shareSettingAndConfirmSign = ""
-                    dbGroupInfo.shareLink = ""
                 }
             }
         } catch (e:Exception) {

@@ -37,7 +37,6 @@ object GroupShareSettingUtil {
                             dbGroupInfo.shareCode = setting.share_code
                             dbGroupInfo.shareEnabled = setting.share_enabled
                             dbGroupInfo.shareEpoch = setting.share_epoch
-                            dbGroupInfo.shareLink = ""
 
                             ALog.i("GroupInfoEntity", "parse group:${dbGroupInfo.gid} info succeed")
                             return true
@@ -52,7 +51,6 @@ object GroupShareSettingUtil {
                             dbGroupInfo.shareCodeSetting = ""
                             dbGroupInfo.shareCodeSettingSign = ""
                             dbGroupInfo.shareSettingAndConfirmSign = ""
-                            dbGroupInfo.shareLink = ""
                         }
                     } else {
                         ALog.i("GroupInfoEntity", "parse group:${dbGroupInfo.gid} epoch error")

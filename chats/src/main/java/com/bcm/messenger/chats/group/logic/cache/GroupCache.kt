@@ -117,7 +117,6 @@ class GroupCache(private val accountContext: AccountContext, val cacheReady: () 
                     dbGroup.shareSettingAndConfirmSign = ""
                     dbGroup.shareEpoch = 0
                     dbGroup.shareEnabled = 0
-                    dbGroup.shareLink = ""
                     otherGroupList[group.gid] = group
                     myGroupList.remove(group.gid)
                 }
@@ -251,7 +250,6 @@ class GroupCache(private val accountContext: AccountContext, val cacheReady: () 
             groupInfo.shareEpoch = shareEpoch
             groupInfo.shareCode = shareCode
             groupInfo.ephemeralKey = ephemeralKey
-            groupInfo.shareLink = ""
 
             GroupInfoDataManager.insertGroupInfo(accountContext, groupInfo)
         }
