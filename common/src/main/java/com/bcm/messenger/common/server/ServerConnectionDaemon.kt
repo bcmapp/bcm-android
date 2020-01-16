@@ -14,6 +14,7 @@ import com.bcm.messenger.common.metrics.COUNTER_TOPIC_BCM_SERVER
 import com.bcm.messenger.common.metrics.COUNTER_WEBSOCKET_FAIL
 import com.bcm.messenger.common.metrics.COUNTER_WEBSOCKET_SUCCESS
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.listener.SafeWeakListeners
@@ -97,7 +98,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
     }
 
     override fun startDaemon() {
-        ALog.i(TAG, "startDaemon")
+        ACLog.w(accountContext, TAG, "startDaemon")
         singleScheduler.scheduleDirect {
             stop()
             start()
@@ -105,7 +106,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
     }
 
     override fun stopDaemon() {
-        ALog.i(TAG, "stopDaemon")
+        ACLog.w(accountContext, TAG, "stopDaemon")
         singleScheduler.scheduleDirect {
             stop()
         }
@@ -116,14 +117,14 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
     }
 
     override fun startConnection() {
-        ALog.i(TAG, "startConnection")
+        ACLog.w(accountContext, TAG, "startConnection")
         singleScheduler.scheduleDirect {
             doConnection(CONN_METRICS_TOKEN)
         }
     }
 
     override fun stopConnection() {
-        ALog.i(TAG, "stopConnection")
+        ACLog.w(accountContext, TAG, "stopConnection")
         singleScheduler.scheduleDirect {
             serverConn?.setConnectionListener(null)
             serverConn?.disconnect()
@@ -136,7 +137,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
     }
 
     override fun checkConnection(manual: Boolean) {
-        ALog.i(TAG, "checkConnection network connected:${NetworkUtil.isConnected()}")
+        ACLog.w(accountContext, TAG, "checkConnection network connected:${NetworkUtil.isConnected()}")
         singleScheduler.scheduleDirect {
             if (!isDaemonRunning()) {
                 return@scheduleDirect
@@ -148,7 +149,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
             }
 
             if (serverConn?.isConnected() == true) {
-                ALog.i(TAG, "service connected")
+                ACLog.w(accountContext, TAG, "service connected")
                 return@scheduleDirect
             }
 
@@ -170,10 +171,10 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
                         val conn = serverConn
                         if (null == conn || conn.isDisconnect()) {
                             onServiceConnected(accountContext, connectToken, ConnectState.DISCONNECTED)
-                            ALog.i(TAG, "checkConnection disconnected")
+                            ACLog.w(accountContext, TAG, "checkConnection disconnected")
                         } else if (conn.isConnected()) {
                             onServiceConnected(accountContext, connectToken, ConnectState.CONNECTED)
-                            ALog.i(TAG, "checkConnection connected")
+                            ACLog.w(accountContext, TAG, "checkConnection connected")
                         } else {
                             Logger.i("$TAG checkConnection ${conn.state()}")
                         }
@@ -297,9 +298,9 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
 
         if (null == conn || conn.isDisconnect() || conn.isTimeout()) {
             if (!doConnection(CONN_DEFAULT_TOKEN)) {
-                ALog.w(TAG, "daemonRun params error ${hostUri.length}")
+                ACLog.w(accountContext, TAG, "daemonRun params error ${hostUri.length}")
             } else {
-                ALog.i(TAG, "daemonRun try reconnecting")
+                ACLog.w(accountContext, TAG, "daemonRun try reconnecting")
             }
             onServiceConnected(accountContext, CONN_DEFAULT_TOKEN, conn?.state()
                     ?: ConnectState.DISCONNECTED)
@@ -308,12 +309,12 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
                 if (conn.sendKeepAlive()) {
                     lastKeepTime = System.currentTimeMillis()
                 } else {
-                    ALog.w(TAG, "keep alive failed")
+                    ACLog.w(accountContext, TAG, "keep alive failed")
                 }
             }
 
         } else {
-            ALog.i(TAG, "daemonRun connecting")
+            ACLog.w(accountContext, TAG, "daemonRun connecting")
         }
     }
 
@@ -343,7 +344,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
     }
 
     override fun onServiceConnected(accountContext: AccountContext, connectToken: Int, state: ConnectState) {
-        ALog.i(TAG, "onServiceConnected $state token:$connectToken")
+        ACLog.w(accountContext, TAG, "onServiceConnected $state token:$connectToken")
         if (this.status != state) {
             this.status = state
 
@@ -378,14 +379,14 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
                 }
                 sendResponse(response)
             } catch (e: Throwable) {
-                ALog.e(TAG, "onMessageArrive", e)
+                ACLog.e(accountContext, TAG, "onMessageArrive", e)
             }
         }
         return true
     }
 
     override fun onClientForceLogout(accountContext: AccountContext, info: String?, type: KickEvent) {
-        ALog.i(TAG, "onClientForceLogout $type $info")
+        ACLog.w(accountContext, TAG, "onClientForceLogout $type $info")
         stopDaemon()
         this.forceLogoutListener?.onClientForceLogout(accountContext, info, type)
         onServiceConnected(accountContext, CONN_DEFAULT_TOKEN, ConnectState.DISCONNECTED)

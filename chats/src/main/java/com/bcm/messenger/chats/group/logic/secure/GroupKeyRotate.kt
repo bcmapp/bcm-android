@@ -5,6 +5,7 @@ import com.bcm.messenger.chats.group.core.GroupManagerCore
 import com.bcm.messenger.chats.group.core.group.RefreshKeyResEntity
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.common.utils.split
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -32,18 +33,18 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
     }
 
     fun rotateGroup(gidList: List<Long>) {
-        ALog.i(TAG, "rotateGroup list invoke")
+        ACLog.i(accountContext,  TAG, "rotateGroup list invoke")
 
         AmeDispatcher.singleScheduler.scheduleDirect {
             val syncList = gidList.filter { !rotatingMap.containsKey(it) }
             val syncingLit = gidList.filter { rotatingMap.containsKey(it) }
 
             if (syncingLit.isNotEmpty()) {
-                ALog.i(TAG, "key rotating ${syncingLit.size}")
+                ACLog.i(accountContext,  TAG, "key rotating ${syncingLit.size}")
             }
 
             if (syncList.isEmpty()) {
-                ALog.i(TAG, "all group key rotating ${syncingLit.size}")
+                ACLog.i(accountContext,  TAG, "all group key rotating ${syncingLit.size}")
                 return@scheduleDirect
             }
 
@@ -58,7 +59,7 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
     }
 
     fun rotateGroup(gid: Long): Observable<RefreshKeyResEntity> {
-        ALog.i(TAG, "rotateGroup invoke")
+        ACLog.i(accountContext,  TAG, "rotateGroup invoke")
         return Observable.create<RefreshKeyResEntity> {
             val result = RefreshKeyResEntity()
             result.succeed = listOf(gid)
@@ -75,7 +76,7 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
 
     @SuppressLint("UseSparseArrays", "CheckResult")
     private fun rotateGroupImpl(gidList: List<Long>, delay: Long) {
-        ALog.i(TAG, "rotateGroupImpl invoke")
+        ACLog.i(accountContext,  TAG, "rotateGroupImpl invoke")
 
         val syncList = gidList.toMutableList()
         // No more than 10 keys can be refreshed
@@ -93,16 +94,16 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
         val checkComplete: (syncList: List<Long>) -> Unit = {
             if (syncList.isNotEmpty()) {
                 if (delay > 15000) {
-                    ALog.e(TAG, "rotateGroup refresh group key failed ${syncList.size}")
+                    ACLog.e(accountContext,  TAG, "rotateGroup refresh group key failed ${syncList.size}")
                     for (i in syncList) {
                         rotatingMap.remove(i)
                     }
                 } else {
-                    ALog.e(TAG, "rotateGroup refresh group key retry ${syncList.size}, delay:${delay + 3000}")
+                    ACLog.e(accountContext,  TAG, "rotateGroup refresh group key retry ${syncList.size}, delay:${delay + 3000}")
                     rotateGroupImpl(syncList, delay + 3000)
                 }
             } else {
-                ALog.i(TAG, "rotateGroup refresh group key all succeed")
+                ACLog.i(accountContext,  TAG, "rotateGroup refresh group key all succeed")
             }
         }
 
@@ -111,7 +112,7 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.singleScheduler)
                 .doOnError {
-                    ALog.e(TAG, "rotateGroup refresh group key failed", it)
+                    ACLog.e(accountContext,  TAG, "rotateGroup refresh group key failed", it)
                     if (accountContext.isLogin) {
                         checkComplete(syncList)
                     }
@@ -127,7 +128,7 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
                         return@subscribe
                     }
 
-                    ALog.i(TAG, "rotateGroup refresh group key succeed ${it.succeed?.size}, failed:${it.failed?.size}")
+                    ACLog.i(accountContext,  TAG, "rotateGroup refresh group key succeed ${it.succeed?.size}, failed:${it.failed?.size}")
 
                     syncList.removeAll(it.succeed ?: listOf())
 
@@ -150,14 +151,14 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
         if (rotateMap.isEmpty()) {
             return
         }
-        ALog.i(TAG, "waitForRotateFinishedCall invoke")
+        ACLog.i(accountContext,  TAG, "waitForRotateFinishedCall invoke")
 
         Observable.just(rotateMap)
                 .delaySubscription(15, TimeUnit.SECONDS, AmeDispatcher.ioScheduler)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.singleScheduler)
                 .doOnError {
-                    ALog.e(TAG, "waitForRotateFinishedCall", it)
+                    ACLog.e(accountContext,  TAG, "waitForRotateFinishedCall", it)
                 }
                 .subscribe {
                     if (!accountContext.isLogin) {
@@ -173,12 +174,12 @@ class GroupKeyRotate(private val accountContext: AccountContext) {
                         rotateGroup(failedRotates)
                     }
 
-                    ALog.i(TAG, "waitForRotateFinishedCall failed size:${failedRotates.size}")
+                    ACLog.i(accountContext,  TAG, "waitForRotateFinishedCall failed size:${failedRotates.size}")
                 }
     }
 
     fun rotateFinished(gid: Long) {
-        ALog.i(TAG, "rotateFinished invoke")
+        ACLog.i(accountContext,  TAG, "rotateFinished invoke")
         AmeDispatcher.singleScheduler.scheduleDirect {
             rotatingMap.remove(gid)
         }

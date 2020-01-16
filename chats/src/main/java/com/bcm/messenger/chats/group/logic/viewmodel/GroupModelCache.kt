@@ -10,6 +10,7 @@ import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.GroupMemberManager
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupJoinRequestTransform
 import com.bcm.messenger.common.provider.AMELogin
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -64,7 +65,7 @@ class GroupModelCache(private val accountContext: AccountContext, group: AmeGrou
                     isCacheReady = true
                     cacheReady()
                 }, {
-                    ALog.e("GroupModelCache", "init", it)
+                    ACLog.e(accountContext,  "GroupModelCache", "init", it)
                 })
     }
 
@@ -97,7 +98,7 @@ class GroupModelCache(private val accountContext: AccountContext, group: AmeGrou
                     ALog.i("GroupModelCache", "reloadMemberList finish")
                     finished()
                 }, {
-                    ALog.e("GroupModelCache", "reloadMemberList", it)
+                    ACLog.e(accountContext,  "GroupModelCache", "reloadMemberList", it)
                 })
     }
 
@@ -284,7 +285,7 @@ class GroupModelCache(private val accountContext: AccountContext, group: AmeGrou
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError {
-                    ALog.e("GroupModelCache", "refreshJoinRequestCache failed", it)
+                    ACLog.e(accountContext,  "GroupModelCache", "refreshJoinRequestCache failed", it)
                 }.subscribe {
                     joinRequestList.clear()
                     joinRequestList.addAll(it)

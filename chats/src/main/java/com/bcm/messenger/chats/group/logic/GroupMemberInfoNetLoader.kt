@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import com.bcm.messenger.chats.group.core.GroupMemberCore
 import com.bcm.messenger.chats.group.core.group.GroupMemberEntity
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.common.utils.md5
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -114,7 +115,7 @@ class GroupMemberInfoNetLoader(private val accountContext: AccountContext) {
         val requestState = loadMap[key]
         loadMap.remove(key)
         if (requestState == null || requestState.subscriberList.isEmpty()) {
-            ALog.w("GroupMemberInfoNetLoader", "error loader state")
+            ACLog.w(accountContext, "GroupMemberInfoNetLoader", "error loader state")
             return
         }
 
@@ -132,7 +133,7 @@ class GroupMemberInfoNetLoader(private val accountContext: AccountContext) {
         val requestState = listLoadMap[key]
         listLoadMap.remove(key)
         if (requestState == null || requestState.subscriberList.isEmpty()) {
-            ALog.w("GroupMemberInfoNetLoader", "error loader state")
+            ACLog.w(accountContext, "GroupMemberInfoNetLoader", "error loader state")
             return
         }
 

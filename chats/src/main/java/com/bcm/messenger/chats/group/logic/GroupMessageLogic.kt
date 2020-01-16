@@ -34,6 +34,7 @@ import com.bcm.messenger.common.ui.grouprepository.events.GroupKeyRefreshComplet
 import com.bcm.messenger.common.ui.grouprepository.events.GroupKeyRefreshStartEvent
 import com.bcm.messenger.common.utils.AccountContextMap
 import com.bcm.messenger.common.utils.AmePushProcess
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AmeURLUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -117,7 +118,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
 
             val groupInfo = GroupLogic.get(accountContext).getGroupInfo(e.message.gid)
             if (groupInfo == null) {
-                ALog.w(TAG, "receiveGroupMessage, but not have groupInfo, ignore gid: ${e.message.gid}")
+                ACLog.w(accountContext, TAG, "receiveGroupMessage, but not have groupInfo, ignore gid: ${e.message.gid}")
                 return
             }
             val isAtMe = e.message.extContent?.isAtAll == true || e.message.extContent?.atList?.contains(e.accountContext.uid) == true
@@ -125,7 +126,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                 val bcmData = AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, 0,null, AmePushProcess.GroupNotifyData(e.message.serverIndex, e.message.gid, isAtMe), null, null))
                 AmePushProcess.processPush(e.accountContext, bcmData)
             } else {
-                ALog.e(TAG, "receive group message and DECRYPT_FAIL---gid " + e.message.gid)
+                ACLog.e(accountContext, TAG, "receive group message and DECRYPT_FAIL---gid " + e.message.gid)
             }
 
             handleReceiveGroupMessage(e.message)
@@ -138,11 +139,11 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                 return
             }
 
-            ALog.i(TAG, "GroupMessageMissedEvent ${e.gid}")
+            ACLog.i(accountContext, TAG, "GroupMessageMissedEvent ${e.gid}")
             GroupLogic.get(accountContext).queryGroupInfo(e.gid)
                     .observeOn(AmeDispatcher.ioScheduler)
                     .doOnError {
-                        ALog.e(TAG, "GroupMessageMissedEvent sync failed")
+                        ACLog.e(accountContext, TAG, "GroupMessageMissedEvent sync failed")
                     }
                     .subscribe()
         }
@@ -158,7 +159,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                 ALog.d(TAG, "GroupKeyRefreshStartEvent this message is not for me")
                 return
             }
-            ALog.i(TAG, "GroupKeyRefreshStartEvent coming ${e.gid} ${e.mid}")
+            ACLog.i(accountContext, TAG, "GroupKeyRefreshStartEvent coming ${e.gid} ${e.mid}")
             GroupLogic.get(accountContext).uploadGroupKeys(e.gid, e.mid, e.mode)
         }
 
@@ -169,15 +170,15 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                 return
             }
 
-            ALog.i(TAG, "GroupKeyRefreshCompleteEvent sync key coming")
+            ACLog.i(accountContext, TAG, "GroupKeyRefreshCompleteEvent sync key coming")
             GroupLogic.get(accountContext).getKeyRotate().rotateFinished(e.gid)
 
             GroupLogic.get(accountContext).syncGroupKeyList(e.gid, listOf(e.version))
                     .doOnError {
-                        ALog.e(TAG, "GroupKeyRefreshCompleteEvent", it)
+                        ACLog.e(accountContext, TAG, "GroupKeyRefreshCompleteEvent", it)
                     }
                     .subscribe {
-                        ALog.i(TAG, "GroupKeyRefreshCompleteEvent succeed")
+                        ACLog.i(accountContext, TAG, "GroupKeyRefreshCompleteEvent succeed")
                     }
         }
 
@@ -192,7 +193,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
                     .subscribe({
-                        ALog.i(TAG, "offline message state ${it.msg}, ${it.code}")
+                        ACLog.i(accountContext, TAG, "offline message state ${it.msg}, ${it.code}")
                         if (!accountContext.isLogin) {
                             offlineMessageSyncing = false
                             return@subscribe
@@ -245,7 +246,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                         }
                     }, {
                         offlineMessageSyncing = false
-                        ALog.e(TAG, "syncOfflineMessage", it)
+                        ACLog.e(accountContext, TAG, "syncOfflineMessage", it)
                     })
         }
 
@@ -270,13 +271,13 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                 }
                 true
             } catch (ex: Exception) {
-                ALog.e(TAG, "offlineSync error", ex)
+                ACLog.e(accountContext, TAG, "offlineSync error", ex)
                 false
             }
         }
 
         override fun onOfflineMessageSyncFinished(gid: Long) {
-            ALog.i(TAG, "sync $gid offline message finish")
+            ACLog.i(accountContext, TAG, "sync $gid offline message finish")
 
             ackReporter.groupMessageSyncReady(gid)
 
@@ -307,10 +308,10 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
             val result: MessageDataManager.InsertMessageResult = MessageDataManager.insertReceiveMessage(accountContext, groupMessage)?:return
             when (result.resultCode) {
                 MessageDataManager.InsertMessageResult.REPLAY_MESSAGE -> {
-                    ALog.e(TAG, "message replay " + message.serverIndex)
+                    ACLog.e(accountContext, TAG, "message replay " + message.serverIndex)
                 }
                 MessageDataManager.InsertMessageResult.UPDATE_SUCCESS -> {
-                    ALog.e(TAG, "message update " + message.serverIndex)
+                    ACLog.e(accountContext, TAG, "message update " + message.serverIndex)
                 }
                 else -> {
                     if (groupMessage.is_confirm == GroupMessage.CONFIRM_MESSAGE) {
@@ -566,7 +567,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
             val localMax = MessageDataManager.queryMixMid(accountContext, gid)
             var from = lastAck + 1
 
-            ALog.i(TAG, "syncOfflineMessage start $gid last:$lastMid  ack:$lastAck, localmax:$localMax")
+            ACLog.i(accountContext, TAG, "syncOfflineMessage start $gid last:$lastMid  ack:$lastAck, localmax:$localMax")
 
         // If the last ack is smaller than the id of the local record, it means that some records are not read
         if (from < localMax) {
@@ -578,7 +579,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                 for (i in list) {
                     if (i - pre != 1L) {
                         pre += 1
-                        ALog.i(TAG, "adjust gid:$gid $pre")
+                        ACLog.i(accountContext, TAG, "adjust gid:$gid $pre")
                         break
                     }
                     pre = i
@@ -605,7 +606,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
         @SuppressLint("CheckResult")
         fun readAllMessage(groupId: Long, threadId: Long, lastSeen: Long) {
             Observable.create(ObservableOnSubscribe<Void> {
-                ALog.d(TAG, "readAllMessage threadId: $threadId, groupId: $groupId")
+                ACLog.d(accountContext, TAG, "readAllMessage threadId: $threadId, groupId: $groupId")
                 Repository.getThreadRepo(accountContext)?.setGroupRead(threadId, groupId, lastSeen)
                 val lastAckMid = MessageDataManager.queryMixMid(accountContext, groupId)
                 if (lastAckMid > 0) {
@@ -615,7 +616,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
             }).subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
                     .subscribe({}, {
-                        ALog.e(TAG, it)
+                        ACLog.e(accountContext, TAG, it)
                     })
         }
 
@@ -625,7 +626,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
         }
 
         fun systemNotice(groupId: Long, content: AmeGroupMessage.SystemContent, read: Boolean = true, visible: Boolean = true): Long {
-            ALog.d(TAG, "systemNotice groupId: $groupId read: $read")
+            ACLog.d(accountContext, TAG, "systemNotice groupId: $groupId read: $read")
             return MessageDataManager.systemNotice(accountContext, groupId, content, read, visible)
         }
 

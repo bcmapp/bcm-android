@@ -245,7 +245,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             stash.strangersList = inviteList.filter { !filterList.contains(it) }
                         }
 
-                        ALog.i(TAG, "create group invited ${stash.inviteList.size} stranger:${stash.strangersList.size}")
+                        ACLog.i(accountContext, TAG, "create group invited ${stash.inviteList.size} stranger:${stash.strangersList.size}")
 
                         if (stash.validList.isEmpty()) {
                             throw GroupException(AppContextHolder.APP_CONTEXT.getString(R.string.chats_invalid_user_in_create_list))
@@ -417,7 +417,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         strangerList.addAll(list.map { it.uid })
                         strangerList.removeAll(validUserList.map { it.uid })
 
-                        ALog.i(TAG, "create group invited ${validUserList.size} unknown:${unknownUserList.size} stranger:${strangerList.size}")
+                        ACLog.i(accountContext, TAG, "create group invited ${validUserList.size} unknown:${unknownUserList.size} stranger:${strangerList.size}")
 
                         if (validUserList.isEmpty()) {
                             throw GroupException(AppContextHolder.APP_CONTEXT.getString(R.string.chats_invalid_user_in_create_list))
@@ -554,7 +554,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     }
                     .observeOn(AmeDispatcher.mainScheduler)
                     .subscribe({
-                        ALog.i(TAG, "getGroupInfo group id $groupId")
+                        ACLog.i(accountContext, TAG, "getGroupInfo group id $groupId")
                         EventBus.getDefault().post(GroupListChangedEvent(groupId, it.info.role == AmeGroupMemberInfo.VISITOR))
                         result?.invoke(it.info, it.ackState, "")
                     }, {
@@ -581,13 +581,13 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                 return
             }
 
-            ALog.i(TAG, "queryGroupInfoByGids")
+            ACLog.i(accountContext, TAG, "queryGroupInfoByGids")
             GroupManagerCore.getGroupInfoByGids(accountContext, gidList)
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AmeDispatcher.ioScheduler)
                     .map<List<GroupInfoEntity>> {
                         if (it.isSuccess) {
-                            ALog.i(TAG, "queryGroupInfoByGids succeed ${it.data?.groups?.size}")
+                            ACLog.i(accountContext, TAG, "queryGroupInfoByGids succeed ${it.data?.groups?.size}")
                             if (it.data?.groups?.isNotEmpty() == true) {
                                 return@map it.data.groups
                             }
@@ -612,7 +612,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             if (TextUtils.isEmpty(dbGroupInfo.channel_key)
                                     && TextUtils.isEmpty(dbGroupInfo.currentKey)
                                     && !dbGroupInfo.isNewGroup) {
-                                ALog.i(TAG, "error group: key not found, waiting key")
+                                ACLog.i(accountContext, TAG, "error group: key not found, waiting key")
                             }
                             gList.add(dbGroupInfo)
                         }
@@ -662,7 +662,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .map {
                         val dbGroupInfo = parseGroupInfo(it.second, it.first?.identityKey, true)
                         if (TextUtils.isEmpty(dbGroupInfo.currentKey) && TextUtils.isEmpty(dbGroupInfo.channel_key)) {
-                            ALog.i(TAG, "error group: key not found")
+                            ACLog.i(accountContext, TAG, "error group: key not found")
                         }
 
                         if ((it.third.status and 0x1L) == 0L) {
@@ -728,7 +728,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             if (dbGroupInfo.role == AmeGroupMemberInfo.OWNER) {
                 if ((oldSecretKey != dbGroupInfo.infoSecret || TextUtils.isEmpty(dbGroupInfo.shareCodeSetting))) {
                     updateShareSetting(dbGroupInfo.gid, false) { succeed, shareCode, error ->
-                        ALog.i(TAG, "parseGroupInfo adjust group info succeed:$succeed $error")
+                        ACLog.i(accountContext, TAG, "parseGroupInfo adjust group info succeed:$succeed $error")
                     }
                 } else if (groupCache.isBroadcastSharingData(info.gid)) {
                     broadcastShareSettingRefresh(info.gid)
@@ -839,7 +839,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         }
                     }.observeOn(AmeDispatcher.ioScheduler)
                     .map { stash ->
-                        ALog.i(TAG, "inviteGroup succeed")
+                        ACLog.i(accountContext, TAG, "inviteGroup succeed")
 
                         if (stash.friendList.isNotEmpty()) {
                             val memberInfos = ArrayList<AmeGroupMemberInfo>()
@@ -905,7 +905,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
         fun updateGroupAvatar(gid: Long, avatar: String, result: (isSuccess: Boolean, error: String?) -> Unit): Boolean {
             if (gid <= 0) {
-                ALog.w(TAG, "Gid is smaller than or equals 0")
+                ACLog.w(accountContext, TAG, "Gid is smaller than or equals 0")
                 return false
             }
 
@@ -941,7 +941,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AmeDispatcher.ioScheduler)
                     .map {
-                        ALog.i(TAG, "leaveGroup succeed")
+                        ACLog.i(accountContext, TAG, "leaveGroup succeed")
                         leaveSucceed(groupId)
                     }
                     .observeOn(AmeDispatcher.mainScheduler)
@@ -983,7 +983,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AmeDispatcher.ioScheduler)
                     .map<AmeGroupMemberInfo> {
-                        ALog.i(TAG, "getGroupMemberInfo succeed")
+                        ACLog.i(accountContext, TAG, "getGroupMemberInfo succeed")
 
                         val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, groupId)
                         val channelKey = groupInfo?.channel_key
@@ -1069,7 +1069,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     }
                     .observeOn(AmeDispatcher.mainScheduler)
                     .subscribe({ result ->
-                        ALog.i(TAG, "muteGroup result ${result.code}")
+                        ACLog.i(accountContext, TAG, "muteGroup result ${result.code}")
                         callback.invoke(result.isSuccess, result.msg)
                     }, { throwable ->
                         ALog.e(TAG, "muteGroup", throwable)
@@ -1081,7 +1081,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             val channelKey = getGroupInfo(gid)?.channelKey
 
             if (null == channelKey || channelKey.isEmpty()) {
-                ALog.i(TAG, "updateMyMemberInfo failed, key is null or empty")
+                ACLog.i(accountContext, TAG, "updateMyMemberInfo failed, key is null or empty")
                 return
             }
 
@@ -1112,7 +1112,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         }
                     }.observeOn(AmeDispatcher.ioScheduler)
                     .subscribe({
-                        ALog.i(TAG, "updateMyMemberInfo succeed")
+                        ACLog.i(accountContext, TAG, "updateMyMemberInfo succeed")
                         result(true, "")
                     }, {
                         ALog.logForSecret(TAG, "updateMyMemberInfo failed", it)
@@ -1148,7 +1148,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AmeDispatcher.ioScheduler)
                     .map {
-                        ALog.i(TAG, "deleteMember result:succeed")
+                        ACLog.i(accountContext, TAG, "deleteMember result:succeed")
                         val deletedList = ArrayList<AmeGroupMemberInfo>()
                         for (u in list) {
                             if (uidList.contains(u.uid)) {
@@ -1185,7 +1185,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             val change = e.changed
             when {
                 change.isMyJoin() -> {
-                    ALog.i(TAG, "join group")
+                    ACLog.i(accountContext, TAG, "join group")
                     queryGroupInfo(change.groupId) { ameGroup, ackState, error ->
                         AmeDispatcher.io.dispatch {
                             if (null != ameGroup && null != ackState) {
@@ -1269,18 +1269,18 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
         @Subscribe
         fun onEvent(event: GroupRefreshKeyEvent) {
-            ALog.i(TAG, "GroupRefreshKeyEvent ${event.gid} coming")
+            ACLog.i(accountContext, TAG, "GroupRefreshKeyEvent ${event.gid} coming")
             queryGroupInfo(event.gid) { ameGroup, ackState, error ->
                 AmeDispatcher.io.dispatch {
                     if (null != ameGroup && null != ackState) {
                         val groupKey = BCMEncryptUtils.decryptGroupPassword(accountContext, event.groupKey).first
                         val groupSecret = BCMEncryptUtils.decryptGroupPassword(accountContext, event.groupInfoSecret).first
                         if (groupKey.isEmpty() || groupSecret.isEmpty()) {
-                            ALog.i(TAG, "GroupRefreshKeyEvent ${event.gid} keysize:${groupKey.length} secret size:${groupSecret.length}")
+                            ACLog.i(accountContext, TAG, "GroupRefreshKeyEvent ${event.gid} keysize:${groupKey.length} secret size:${groupSecret.length}")
                         } else {
                             groupCache.updateKey(event.gid, 0, groupKey)
                             groupCache.updateGroupInfoKey(event.gid, groupSecret)
-                            ALog.i(TAG, "GroupRefreshKeyEvent ${event.gid} done")
+                            ACLog.i(accountContext, TAG, "GroupRefreshKeyEvent ${event.gid} done")
                         }
 
                         GroupMessageLogic.get(accountContext).syncOfflineMessage(ameGroup.gid, ackState.lastMid, ackState.lastAckMid)
@@ -1294,7 +1294,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
         @Subscribe
         fun onEvent(event: GroupJoinReviewRequestEvent) {
-            ALog.i(TAG, "GroupJoinReviewRequestEvent ${event.gid}")
+            ACLog.i(accountContext, TAG, "GroupJoinReviewRequestEvent ${event.gid}")
             GroupMessageLogic.get(accountContext).syncJoinReqMessage(event.gid)
         }
 
@@ -1302,7 +1302,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
         fun onEvent(event: GroupShareSettingRefreshEvent) {
             val owner = GroupInfoDataManager.queryOneGroupInfo(accountContext, event.gid)?.owner
             if (owner == null || owner.isEmpty()) {
-                ALog.w(TAG, "GroupShareSettingRefreshEvent ${event.gid}  group info is null")
+                ACLog.w(accountContext, TAG, "GroupShareSettingRefreshEvent ${event.gid}  group info is null")
                 return
             }
 
@@ -1346,9 +1346,9 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         throw GroupException("GroupShareSettingRefreshEvent update group info failed")
                     }
                     .subscribe({
-                        ALog.i(TAG, "GroupShareSettingRefreshEvent ${event.gid} succeed")
+                        ACLog.i(accountContext, TAG, "GroupShareSettingRefreshEvent ${event.gid} succeed")
                     }, {
-                        ALog.e(TAG, "GroupShareSettingRefreshEvent ", it)
+                        ACLog.e(accountContext, TAG, "GroupShareSettingRefreshEvent ", it)
                     })
 
         }
@@ -1381,7 +1381,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         .subscribe({
                             result(true, "")
                         }, {
-                            ALog.e(TAG, "autoReviewJoinRequest failed", it)
+                            ACLog.e(accountContext, TAG, "autoReviewJoinRequest failed", it)
                             result(false, "")
                         })
             }
@@ -1444,9 +1444,9 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                 if (jsonString.isEmpty()) {
                     throw Exception("createGroupShareShortUrl fail")
                 }
-                ALog.d(TAG, "createGroupShareShortUrl jsonString: $jsonString")
+                ACLog.d(accountContext, TAG, "createGroupShareShortUrl jsonString: $jsonString")
                 val lKey = BCMEncryptUtils.murmurHash3(0xFBA4C795, jsonString.toByteArray())
-                ALog.d(TAG, "createGroupShareShortUrl hash: $lKey")
+                ACLog.d(accountContext, TAG, "createGroupShareShortUrl hash: $lKey")
 
                 val cipherData = Base64.encodeBytes(BCMEncryptUtils.encryptByAES256(jsonString.toByteArray(), lKey.toString().toByteArray()))
 
@@ -1461,7 +1461,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     }
                     .observeOn(AmeDispatcher.ioScheduler)
                     .map { pair ->
-                        ALog.d(TAG, "createGroupShareShortUrl index: ${pair.first}")
+                        ACLog.d(accountContext, TAG, "createGroupShareShortUrl index: ${pair.first}")
                         val shareLink = AmeGroupMessage.GroupShareContent.toShortLink(pair.first, Base62.encode(pair.second))
                         groupCache.updateShareLink(groupId, shareLink)
                         updateShareLink(groupId, shareLink)
@@ -1585,7 +1585,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                                 BcmGroupJoinManager.updateJoinRequests(accountContext, reqList)
                             }
                             .doOnError {
-                                ALog.e(TAG, "reviewJoinRequest failed", it)
+                                ACLog.e(accountContext, TAG, "reviewJoinRequest failed", it)
                                 result(false, AppUtil.getString(R.string.common_error_failed))
                             }
                             .subscribe {
@@ -1593,7 +1593,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             }
 
                 } else {
-                    ALog.e(TAG, "reviewJoinRequest failed ")
+                    ACLog.e(accountContext, TAG, "reviewJoinRequest failed ")
                     result(false, AppUtil.getString(R.string.common_error_failed))
                 }
             }
@@ -1606,7 +1606,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .observeOn(Schedulers.io())
                     .delaySubscription(delay, TimeUnit.MILLISECONDS, Schedulers.io())
                     .flatMap { result ->
-                        ALog.i(TAG, "fetchJoinRequestList $gid review list:${result.size} succeed:true")
+                        ACLog.i(accountContext, TAG, "fetchJoinRequestList $gid review list:${result.size} succeed:true")
                         if (result.isEmpty()) {
                             throw GroupException("pending list is empty")
                         }
@@ -1654,9 +1654,9 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         fetchResult(true, it)
                     }, {
                         if (it is GroupException) {
-                            ALog.i(TAG, "fetchJoinRequestList ${it.err}")
+                            ACLog.i(accountContext, TAG, "fetchJoinRequestList ${it.err}")
                         } else {
-                            ALog.e(TAG, "$gid fetchJoinRequestList failed", it)
+                            ACLog.e(accountContext, TAG, "$gid fetchJoinRequestList failed", it)
                         }
                         fetchResult(false, listOf())
                     })
@@ -1693,7 +1693,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         exist.comment = v[0].comment
                         exist.timestamp = v[0].timestamp
                         BcmGroupJoinManager.updateJoinRequests(accountContext, listOf(exist))
-                        ALog.i(TAG, "join request exist 1, ignore $gid")
+                        ACLog.i(accountContext, TAG, "join request exist 1, ignore $gid")
                         continue
                     }
                 }
@@ -1721,7 +1721,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         Repository.getRecipientRepo(accountContext)?.updateProfileName(recipient, comment.name)
                     }
                 } catch (e: Exception) {
-                    ALog.e("saveJoinRequestName", "wrong json format ${req.gid}")
+                    ACLog.e(accountContext, "saveJoinRequestName", "wrong json format ${req.gid}")
                 }
 
             }
@@ -1776,7 +1776,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .subscribe({
                         result(true, "")
                     }, {
-                        ALog.e(TAG, "updateGroupNotice", it)
+                        ACLog.e(accountContext, TAG, "updateGroupNotice", it)
                         result(false, "")
                     })
         }
@@ -1814,7 +1814,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
                 if (finish) {
                     groupCache.setGroupMemberState(gid, GroupMemberSyncState.FINISH)
-                    ALog.i(TAG, "syncGroupMember finish $gid")
+                    ACLog.i(accountContext, TAG, "syncGroupMember finish $gid")
                 }
 
                 if (firstPage || finish) {
@@ -1837,7 +1837,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     try {
                         syncGroupMember(gid, fromUid, fromTime, sync)
                     } catch (e: Exception) {
-                        ALog.e(TAG, "checkAndSyncGroupMemberList", e)
+                        ACLog.e(accountContext, TAG, "checkAndSyncGroupMemberList", e)
                         setGroupMemberDirty(gid)
                     }
                 }
@@ -1900,11 +1900,11 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
                     .doOnError {
-                        ALog.e(TAG, "checkJoinGroupNeedConfirm failed", it)
+                        ACLog.e(accountContext, TAG, "checkJoinGroupNeedConfirm failed", it)
                         val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
                         AmeDispatcher.mainThread.dispatch {
                             if (null != groupInfo && !TextUtils.isEmpty(groupInfo.infoSecret)) {
-                                ALog.i(TAG, "checkJoinGroupNeedConfirm return local flag ${groupInfo.needOwnerConfirm}")
+                                ACLog.i(accountContext, TAG, "checkJoinGroupNeedConfirm return local flag ${groupInfo.needOwnerConfirm}")
                                 result(false, groupInfo.needOwnerConfirm == 1)
                             } else {
                                 result(false, false)
@@ -1912,7 +1912,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         }
                     }
                     .subscribe {
-                        ALog.i(TAG, "checkJoinGroupNeedConfirm succeed $it")
+                        ACLog.i(accountContext, TAG, "checkJoinGroupNeedConfirm succeed $it")
                         AmeDispatcher.mainThread.dispatch {
                             result(true, it)
                         }
@@ -1957,7 +1957,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     }
                     .observeOn(AmeDispatcher.mainScheduler)
                     .doOnError {
-                        ALog.e(TAG, "joinGroupByShareCode failed", it)
+                        ACLog.e(accountContext, TAG, "joinGroupByShareCode failed", it)
                         when (ServerCodeUtil.getNetStatusCode(it)) {
                             ServerCodeUtil.CODE_LOW_VERSION -> {
                                 result(false, it.message
@@ -1973,7 +1973,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
                     }
                     .subscribe ({
-                        ALog.i(TAG, "joinGroupByShareCode succeed")
+                        ACLog.i(accountContext, TAG, "joinGroupByShareCode succeed")
                         result(true, "")
                     }, {})
         }
@@ -2029,7 +2029,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
                             }, {
 
-                                ALog.e(TAG, "updateNeedConfirm", it)
+                                ACLog.e(accountContext, TAG, "updateNeedConfirm", it)
                                 result(false, AppUtil.getString(R.string.common_error_failed))
                             })
                 } else {
@@ -2048,7 +2048,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                 val message = AmeGroupMessage.GroupShareSettingRefreshContent(groupInfo.shareCode,
                         groupInfo.shareCodeSetting, groupInfo.shareCodeSettingSign, groupInfo.shareSettingAndConfirmSign, groupInfo.needOwnerConfirm)
                 GroupMessageLogic.get(accountContext).messageSender.sendMessage(gid, AmeGroupMessage(AmeGroupMessage.GROUP_SHARE_SETTING_REFRESH, message), false) {
-                    ALog.i(TAG, "broadcastShareSettingRefresh succeed: $it")
+                    ACLog.i(accountContext, TAG, "broadcastShareSettingRefresh succeed: $it")
                     if (it) {
                         AmeDispatcher.io.dispatch {
                             groupCache.setBroadcastSharingData(gid, false)
@@ -2112,7 +2112,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             .subscribe({
                                 result(true, shareCode, "")
                             }, {
-                                ALog.e(TAG, "updateShareSetting", it)
+                                ACLog.e(accountContext, TAG, "updateShareSetting", it)
                                 result(false, "", AppUtil.getString(R.string.common_error_failed))
                             })
                 } else {
@@ -2205,7 +2205,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
         private fun saveGroupKey(groupInfo: GroupInfo, keyContent: GroupKeysContent.GroupKeyContent) {
             val gid = keyContent.gid
             if (keyContent.keyEncryptedVersion != GroupKeysContent.KEY_ENCRYPTED_VERSION) {
-                ALog.e(TAG, "unknown key encrypt version $gid")
+                ACLog.e(accountContext, TAG, "unknown key encrypt version $gid")
                 return
             }
 
@@ -2228,16 +2228,16 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             groupInfo.currentKeyVersion = keyContent.version
                             groupInfo.currentKey = g.currentKey
                         }
-                        ALog.i(TAG, "saveGroupKey strong key mode")
+                        ACLog.i(accountContext, TAG, "saveGroupKey strong key mode")
                     } else {
-                        ALog.e(TAG, "saveGroupKey strong key decode failed ${groupInfo.gid} new:${groupInfo.isNewGroup}")
+                        ACLog.e(accountContext, TAG, "saveGroupKey strong key decode failed ${groupInfo.gid} new:${groupInfo.isNewGroup}")
                     }
                 }
                 GroupKeyMode.NORMAL_MODE -> {
                     val contentKey = keyContent.normalModeKey
                             ?: throw Exception("normal key is null")
 
-                    val key = NormalKeyExchangeParam.normalKeyContentToGroupKey(contentKey, groupInfo.infoSecret.base64Decode(), groupInfo.groupPublicKey)
+                    val key = NormalKeyExchangeParam.normalKeyContentToGroupKey(accountContext, contentKey, groupInfo.infoSecret.base64Decode(), groupInfo.groupPublicKey)
                     if (null != key) {
                         GroupInfoDataManager.saveGroupKeyParam(accountContext, gid, keyContent.version, key.base64Encode().format())
 
@@ -2252,13 +2252,13 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
                             groupCache.updateKey(g.gid, keyContent.version, g.currentKey)
                         }
-                        ALog.i(TAG, "saveGroupKey normal key mode")
+                        ACLog.i(accountContext, TAG, "saveGroupKey normal key mode")
                     } else {
-                        ALog.e(TAG, "saveGroupKey normal key decode failed")
+                        ACLog.e(accountContext, TAG, "saveGroupKey normal key decode failed")
                     }
                 }
                 else -> {
-                    ALog.i(TAG, "saveGroupKey unknown key mode")
+                    ACLog.i(accountContext, TAG, "saveGroupKey unknown key mode")
                 }
             }
         }
@@ -2269,7 +2269,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
         @SuppressLint("CheckResult")
         fun uploadGroupKeys(gid: Long, mid: Long, mode: Int) {
-            ALog.i(TAG, "prepareUploadGroupKeys request start $gid")
+            ACLog.i(accountContext, TAG, "prepareUploadGroupKeys request start $gid")
             val newGroupKey = BCMEncryptUtils.generate64BitKey()
             GroupManagerCore.prepareUploadGroupKeys(accountContext, gid, mid, mode)
                     .subscribeOn(AmeDispatcher.ioScheduler)
@@ -2287,7 +2287,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         }
                     }
                     .flatMap {
-                        ALog.i(TAG, "uploadGroupKeys request start $gid")
+                        ACLog.i(accountContext, TAG, "uploadGroupKeys request start $gid")
 
                         val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
                                 ?: throw java.lang.Exception("group info not found")
@@ -2301,7 +2301,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                                 Observable.just(StrongKeyExchangeParam.getStrongKeysContent(accountContext, it, newGroupKey, groupInfo.groupPrivateKey))
                             }
                             GroupKeyMode.NORMAL_MODE -> {
-                                NormalKeyExchangeParam.getNormalKeysContent(newGroupKey, mid, groupInfo.infoSecret.base64Decode(), groupInfo.groupPrivateKey)
+                                NormalKeyExchangeParam.getNormalKeysContent(accountContext, newGroupKey, groupInfo.infoSecret.base64Decode(), groupInfo.groupPrivateKey)
                             }
                             else -> {
                                 throw java.lang.Exception("unknown key mode")
@@ -2315,13 +2315,13 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                                 .subscribeOn(AmeDispatcher.ioScheduler)
                     }.observeOn(AmeDispatcher.ioScheduler)
                     .flatMap {
-                        ALog.i(TAG, "uploadGroupKeys complete $gid")
+                        ACLog.i(accountContext, TAG, "uploadGroupKeys complete $gid")
                         syncGroupKeyList(gid, listOf(mid))
                     }
                     .subscribe({
-                        ALog.i(TAG, "uploadGroupKeys complete and sync succeed $gid")
+                        ACLog.i(accountContext, TAG, "uploadGroupKeys complete and sync succeed $gid")
                     }, {
-                        ALog.e(TAG, "uploadGroupKeys", it)
+                        ACLog.e(accountContext, TAG, "uploadGroupKeys", it)
                         if (ServerCodeUtil.getNetStatusCode(it) == 409) {
                             syncGroupKeyList(gid, listOf(mid))
                         }
@@ -2331,7 +2331,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
         @SuppressLint("CheckResult")
         fun checkLastGroupKeyValid(gid: Long) {
-            ALog.i(TAG, "checkLastGroupKeyValid refresh start $gid")
+            ACLog.i(accountContext, TAG, "checkLastGroupKeyValid refresh start $gid")
 
             Observable.create<GroupInfo> {
                 val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
@@ -2354,29 +2354,29 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             try {
                                 saveGroupKey(groupInfo, key)
                             } catch (e: Exception) {
-                                ALog.e(TAG, "checkLastGroupKeyValid.saveGroupKey", e)
+                                ACLog.e(accountContext, TAG, "checkLastGroupKeyValid.saveGroupKey", e)
                             }
 
-                            ALog.i(TAG, "checkLastGroupKeyValid ${groupInfo.gid} ${key.version} ${groupInfo.currentKeyVersion}")
+                            ACLog.i(accountContext, TAG, "checkLastGroupKeyValid ${groupInfo.gid} ${key.version} ${groupInfo.currentKeyVersion}")
 
                             if (TextUtils.isEmpty(groupInfo.currentKey) || key.version != groupInfo.currentKeyVersion) {
                                 refreshGroupKey(listOf(gid))
                             }
                         }
 
-                        ALog.i(TAG, "checkLastGroupKeyValid finished")
+                        ACLog.i(accountContext, TAG, "checkLastGroupKeyValid finished")
                     }, {
                         if (it is GroupException) {
-                            ALog.e(TAG, "checkLastGroupKeyValid ${it.err}")
+                            ACLog.e(accountContext, TAG, "checkLastGroupKeyValid ${it.err}")
                         } else {
-                            ALog.e(TAG, "checkLastGroupKeyValid", it)
+                            ACLog.e(accountContext, TAG, "checkLastGroupKeyValid", it)
                         }
                     })
         }
 
         @SuppressLint("CheckResult")
         fun checkGroupKeyValidState(list: List<Long>) {
-            ALog.i(TAG, "checkGroupKeyValidState refresh start ${list.size}")
+            ACLog.i(accountContext, TAG, "checkGroupKeyValidState refresh start ${list.size}")
 
             Observable.just(list)
                     .subscribeOn(AmeDispatcher.ioScheduler)
@@ -2407,7 +2407,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                                             try {
                                                 saveGroupKey(groupInfo, i)
                                             } catch (e: Exception) {
-                                                ALog.e(TAG, "checkGroupKeyValidState.saveGroupKey", e)
+                                                ACLog.e(accountContext, TAG, "checkGroupKeyValidState.saveGroupKey", e)
                                             }
                                         }
                                         true
@@ -2428,12 +2428,12 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             refreshGroupKey(keyLostList)
                         }
 
-                        ALog.i(TAG, "checkGroupKeyValidState finished ${list.size}")
+                        ACLog.i(accountContext, TAG, "checkGroupKeyValidState finished ${list.size}")
                     }, {
                         if (it is GroupException) {
-                            ALog.i(TAG, "checkGroupKeyValidState ${it.err}")
+                            ACLog.i(accountContext, TAG, "checkGroupKeyValidState ${it.err}")
                         } else {
-                            ALog.e(TAG, "checkGroupKeyValidState", it)
+                            ACLog.e(accountContext, TAG, "checkGroupKeyValidState", it)
                         }
                     })
         }
@@ -2500,7 +2500,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                                 .subscribeOn(AmeDispatcher.ioScheduler)
                     }.observeOn(AmeDispatcher.ioScheduler)
                     .subscribe({
-                        ALog.i(TAG, "uploadEncryptedNameAndNotice succeed")
+                        ACLog.i(accountContext, TAG, "uploadEncryptedNameAndNotice succeed")
                         result(true)
                     }, {
                         result(false)
@@ -2549,7 +2549,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     .subscribe({
                         result(true, "")
                     }, {
-                        ALog.e(TAG, "updateGroupAvatar error", it)
+                        ACLog.e(accountContext, TAG, "updateGroupAvatar error", it)
                         result(false, GroupException.error(it, AppUtil.getString(R.string.common_error_failed)))
                     })
         }

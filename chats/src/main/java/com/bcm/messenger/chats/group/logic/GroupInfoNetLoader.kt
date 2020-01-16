@@ -6,6 +6,7 @@ import com.bcm.messenger.chats.group.core.GroupManagerCore
 import com.bcm.messenger.chats.group.core.group.GroupInfoEntity
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.ServerResult
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -65,7 +66,7 @@ class GroupInfoNetLoader(private val accountContext: AccountContext) {
         val requestState = loadMap[key]
         loadMap.remove(key)
         if (requestState == null || requestState.subscriberList.isEmpty()) {
-            ALog.w("GroupMemberInfoNetLoader", "error loader state")
+            ACLog.w(accountContext, "GroupMemberInfoNetLoader", "error loader state")
             return
         }
 

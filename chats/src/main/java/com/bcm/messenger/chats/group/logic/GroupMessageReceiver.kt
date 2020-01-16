@@ -21,6 +21,7 @@ import com.bcm.messenger.common.ui.grouprepository.events.GroupKeyRefreshComplet
 import com.bcm.messenger.common.ui.grouprepository.events.GroupKeyRefreshStartEvent
 import com.bcm.messenger.common.utils.AmePushProcess
 import com.bcm.messenger.common.utils.base64Decode
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AmeURLUtil
 import com.bcm.messenger.utility.EncryptUtils
@@ -57,7 +58,7 @@ class GroupMessageReceiver(private val accountContext: AccountContext) : IServer
                     if (null != fromUid) {
                         handleGroupChatMessage(accountContext, groupChatMessage, fromUid)
                     } else {
-                        ALog.e(TAG, "who are u?")
+                        ACLog.e(accountContext,  TAG, "who are u?")
                     }
                 }
                 GroupMessageProtos.GroupMsg.Type.TYPE_INFO_UPDATE -> {
@@ -74,7 +75,7 @@ class GroupMessageReceiver(private val accountContext: AccountContext) : IServer
                     if (null != fromUid) {
                         handleGroupRecallMessage(accountContext, groupRecallMessage, fromUid)
                     } else {
-                        ALog.e(TAG, "who are u?")
+                        ACLog.e(accountContext,  TAG, "who are u?")
                     }
                 }
                 GroupMessageProtos.GroupMsg.Type.TYPE_KEY_REFRESH -> {
@@ -97,10 +98,10 @@ class GroupMessageReceiver(private val accountContext: AccountContext) : IServer
                     EventBus.getDefault().post(GroupKeyRefreshStartEvent(accountContext, updateKeyRequest.gid,
                             updateKeyRequest.mid, updateKeyRequest.fromUid, updateKeyRequest.keysMode))
                 }
-                else -> ALog.w(TAG, "unsupport group message type: ${proto.type}")
+                else -> ACLog.w(accountContext,  TAG, "unsupport group message type: ${proto.type}")
             }
         } catch (e: Throwable) {
-            ALog.e(TAG, "onReceiveData", e)
+            ACLog.e(accountContext,  TAG, "onReceiveData", e)
         }
 
         return true
@@ -120,7 +121,7 @@ class GroupMessageReceiver(private val accountContext: AccountContext) : IServer
             if (result == null) {
                 GroupMessageLogic.get(accountContext).syncOfflineMessage(serverMessage.gid, serverMessage.mid, Math.max(serverMessage.mid-1, 0))
                 //Received a message that could not be decrypted and lost it directly, and subsequently pulled it down through the offline channel
-                ALog.i(TAG, "decrypt group message failed ${serverMessage.mid}")
+                ACLog.i(accountContext,  TAG, "decrypt group message failed ${serverMessage.mid}")
             }
             result
         }
@@ -215,7 +216,7 @@ class GroupMessageReceiver(private val accountContext: AccountContext) : IServer
 
     private fun handleGroupMemberUpdate(accountContext: AccountContext, message: GroupMessageProtos.GroupMemberUpdate) {
         if (isMyQuitGroupEvent(accountContext, message)) {
-            ALog.i(TAG, "leave group" + message.gid)
+            ACLog.i(accountContext,  TAG, "leave group" + message.gid)
 
             val db = Repository.getThreadRepo(accountContext)?:return
             val groupRecipient = Recipient.recipientFromNewGroupId(accountContext, message.gid)
@@ -247,7 +248,7 @@ class GroupMessageReceiver(private val accountContext: AccountContext) : IServer
         val bcmData = AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, 0,null, AmePushProcess.GroupNotifyData(message.mid, message.gid, false), null, null, null))
         AmePushProcess.processPush(accountContext, bcmData)
 
-        Logger.i("GroupMemberChangedNotify ${memberChangedMessage.groupId} event:${memberChangedMessage.action} count:${memberChangedMessage.memberList.size}")
+        ACLog.i(accountContext, TAG, "${memberChangedMessage.groupId} event:${memberChangedMessage.action} count:${memberChangedMessage.memberList.size}")
         val detail = memberChangedMessage.toDetail()
         if (null != detail.message) {
             EventBus.getDefault().post(GroupMessageEvent(accountContext, detail))
@@ -304,7 +305,7 @@ class GroupMessageReceiver(private val accountContext: AccountContext) : IServer
                     EncryptUtils.computeSHA256(ecdh), EncryptUtils.MODE_AES, iv.base64Decode()), StandardCharsets.UTF_8)
 
         } catch (ex: Exception) {
-            ALog.e(TAG, "$gid getFinalSource error", ex)
+            ACLog.e(accountContext,  TAG, "$gid getFinalSource error", ex)
         }
         return null
     }

@@ -6,6 +6,7 @@ import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.server.ConnectState
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.foreground.AppForeground
 import com.bcm.messenger.utility.logger.ALog
 import java.io.*
@@ -268,13 +269,13 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
             objStream = ObjectOutputStream(output)
             objStream.writeObject(messageSyncTaskList)
         } catch (e: Exception) {
-            ALog.e(TAG, "saveTasks 1", e)
+            ACLog.e(accountContext,  TAG, "saveTasks 1", e)
         } finally {
             try {
                 output?.close()
                 objStream?.close()
             } catch (e: Exception) {
-                ALog.e(TAG, "saveTasks 2", e)
+                ACLog.e(accountContext,  TAG, "saveTasks 2", e)
             }
         }
     }
@@ -296,13 +297,13 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
                 })
             }
         } catch (e: Exception) {
-            ALog.e(TAG, "loadTasks 1", e)
+            ACLog.e(accountContext,  TAG, "loadTasks 1", e)
         } finally {
             try {
                 input?.close()
                 objStream?.close()
             } catch (e: Exception) {
-                ALog.e(TAG, "loadTasks 2", e)
+                ACLog.e(accountContext,  TAG, "loadTasks 2", e)
             }
         }
     }
@@ -310,7 +311,7 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
 
     fun syncJoinReq(gidList: List<Long>) {
         taskExecutor.execute {
-            ALog.w(TAG, "syncJoinReq begin sync ${gidList.size}")
+            ACLog.w(accountContext,  TAG, "syncJoinReq begin sync ${gidList.size}")
 
             if (joinReqOwnerTaskList.isEmpty() || joinReqMemberTaskList.isEmpty()) {
                 val ownerListEmpty = joinReqOwnerTaskList.isEmpty()
@@ -329,7 +330,7 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
                     }
                 }
             } else {
-                ALog.w(TAG, "syncJoinReq repeat request")
+                ACLog.w(accountContext,  TAG, "syncJoinReq repeat request")
             }
 
             //I am the owner and I have opened the sync chain of the audit switch
@@ -348,14 +349,14 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
 
     fun syncJoinReq(gid: Long) {
         taskExecutor.execute {
-            ALog.w(TAG, "syncJoinReq begin sync $gid")
+            ACLog.w(accountContext,  TAG, "syncJoinReq begin sync $gid")
 
             val groupInfo = GroupInfoDataManager.getGroupInfo(accountContext, gid) ?: return@execute
             if (!groupInfo.newGroup || groupInfo.owner == accountContext.uid) {
                 val needConfirm = groupInfo.role == AmeGroupMemberInfo.OWNER && groupInfo.needConfirm == true
                 if (needConfirm) {
                     GroupOfflineJoinReqMessageSyncTask(gid, 300, needConfirm).execute(accountContext) {
-                        ALog.i(TAG, "syncJoinReq  owner $gid finished")
+                        ACLog.i(accountContext,  TAG, "syncJoinReq  owner $gid finished")
 
                         if (it) {
                             syncCallback.onJoinRequestMessageSyncFinished(gid)
@@ -363,7 +364,7 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
                     }
                 } else {
                     GroupOfflineJoinReqMessageSyncTask(gid, 3000, needConfirm).execute(accountContext) {
-                        ALog.i(TAG, "syncJoinReq member $gid finished")
+                        ACLog.i(accountContext,  TAG, "syncJoinReq member $gid finished")
 
                         if (it) {
                             syncCallback.onJoinRequestMessageSyncFinished(gid)
@@ -385,10 +386,10 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
             if (joinReqOwnerTaskList.remove(task)) {
                 if (joinReqOwnerTaskList.isNotEmpty() && canSync()) {
                     syncOwnerJoinReqTask(joinReqOwnerTaskList.first())
-                    ALog.i(TAG, "syncOwnerJoinReqTaskFinish left ${joinReqOwnerTaskList.size}")
+                    ACLog.i(accountContext,  TAG, "syncOwnerJoinReqTaskFinish left ${joinReqOwnerTaskList.size}")
                 } else {
                     joinReqOwnerSyncRunning = false
-                    ALog.i(TAG, "syncOwnerJoinReqTaskFinish all finished")
+                    ACLog.i(accountContext,  TAG, "syncOwnerJoinReqTaskFinish all finished")
                 }
 
                 syncCallback.onJoinRequestMessageSyncFinished(task.gid)
@@ -407,10 +408,10 @@ class GroupOfflineSyncManager(private val accountContext: AccountContext, privat
             if (joinReqMemberTaskList.remove(task)) {
                 if (joinReqMemberTaskList.isNotEmpty() && canSync()) {
                     syncMemberJoinReqTask(joinReqMemberTaskList.first())
-                    ALog.i(TAG, "syncMemberJoinReqTaskFinish left ${joinReqMemberTaskList.size}")
+                    ACLog.i(accountContext,  TAG, "syncMemberJoinReqTaskFinish left ${joinReqMemberTaskList.size}")
                 } else {
                     joinReqMemberSyncRunning = false
-                    ALog.i(TAG, "syncMemberJoinReqTaskFinish all finished")
+                    ACLog.i(accountContext,  TAG, "syncMemberJoinReqTaskFinish all finished")
                 }
             }
 

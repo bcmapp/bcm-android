@@ -29,14 +29,14 @@ import javax.crypto.spec.SecretKeySpec;
 /**
  * When a user first initializes TextSecure, a few secrets
  * are generated.  These are:
- *
+ * <p>
  * 1) A 128bit symmetric encryption key.
  * 2) A 160bit symmetric MAC key.
  * 3) An ECC keypair.
- *
+ * <p>
  * The first two, along with the ECC keypair's private key, are
  * then encrypted on disk using PBE.
- *
+ * <p>
  * This class represents 1 and 2.
  *
  * @author Moxie Marlinspike
@@ -65,7 +65,7 @@ public class MasterSecret implements Parcelable, NotGuard {
         this.accountContext = accountContext;
         this.encryptionKey = encryptionKey;
         this.macKey = macKey;
-        this.tag = Integer.toString(accountContext.hashCode());
+        this.tag = "|" + (accountContext.getUid().hashCode() & 0x7FFFFFFF) + "|";
     }
 
     private MasterSecret(Parcel in) {
@@ -80,7 +80,7 @@ public class MasterSecret implements Parcelable, NotGuard {
         this.macKey = new SecretKeySpec(macKeyBytes, "HmacSHA1");
         if (null != accountContext) {
             this.tag = Integer.toString(accountContext.hashCode());
-        } else  {
+        } else {
             this.tag = "unknown";
         }
 

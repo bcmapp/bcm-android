@@ -18,6 +18,7 @@ import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
 import com.bcm.messenger.common.utils.CombineBitmapUtil
 import com.bcm.messenger.common.utils.getString
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.InputLengthFilter
@@ -59,21 +60,21 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                         val dbTop4List = GroupMemberManager.queryTopNGroupMember(accountContext, gid, 4).filter { m -> !existList.contains(m.uid) }
                         mList.addAll(dbTop4List.subList(0, min(dbTop4List.size, 4 - mList.size)))
                         if (mList.isEmpty()) {
-                            ALog.i(TAG, "$gid member list is empty")
+                            ACLog.i(accountContext, TAG, "$gid member list is empty")
                             return@create
                         }
                     }
 
                     if (!isHashChanged(accountContext, mList, params)) {
-                        ALog.i(TAG, "$gid hash state matched 2")
+                        ACLog.i(accountContext, TAG, "$gid hash state matched 2")
                         if (isAvatarAndNameReady(gInfo)) {
                             return@create
                         }
-                        ALog.i(TAG, "$gid hash state matched but info not ready")
+                        ACLog.i(accountContext, TAG, "$gid hash state matched but info not ready")
                     }
                     mList.map { m -> m.uid }.toMutableList()
                 } else {
-                    ALog.i(TAG, "$gid params is null")
+                    ACLog.i(accountContext, TAG, "$gid params is null")
                     mutableListOf<String>()
                 }
 
@@ -82,7 +83,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                 }
                 generatingSet.add(gid)
 
-                ALog.i(TAG, "refreshing group avatar and name $gid")
+                ACLog.i(accountContext, TAG, "refreshing group avatar and name $gid")
                 var combineName = ""
                 var chnCombineName = ""
                 var newParams: GroupAvatarParams? = null
@@ -99,7 +100,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                             combineName = combineGroupName(list, 0)
                             chnCombineName = combineGroupName(list, 1)
 
-                            ALog.i(TAG, "name:$combineName cnName:$chnCombineName")
+                            ACLog.i(accountContext, TAG, "name:$combineName cnName:$chnCombineName")
                             newParams = memberList2Params(accountContext, gid, list)
                             if (gInfo.iconUrl.isEmpty()) {
                                 list.map { m ->
@@ -132,7 +133,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                             path ?: throw Exception("bitmap save failed")
                         }.observeOn(AmeDispatcher.singleScheduler)
                         .doOnError {
-                            ALog.e(TAG, "autoGenAvatarOrName", it)
+                            ACLog.e(accountContext, TAG, "autoGenAvatarOrName", it)
 
                             generatingSet.remove(gid)
 
@@ -152,7 +153,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                             }
 
                             AmeDispatcher.mainThread.dispatch {
-                                ALog.i(TAG, "post name:${groupName(newInfo)} ")
+                                ACLog.i(accountContext, TAG, "post name:${groupName(newInfo)} ")
                                 EventBus.getDefault().post(GroupNameOrAvatarChanged(gid, groupName(newInfo), groupAvatar(newInfo)))
                             }
                         }.subscribe {
@@ -161,7 +162,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                             }
                             generatingSet.remove(gid)
                             AmeDispatcher.mainThread.dispatch {
-                                ALog.i(TAG, "post name:${groupName(gInfo)} ")
+                                ACLog.i(accountContext, TAG, "post name:${groupName(gInfo)} ")
                                 EventBus.getDefault().post(GroupNameOrAvatarChanged(gid, groupName(gInfo), groupAvatar(gInfo)))
                             }
                         }
@@ -268,7 +269,7 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
 
     // language: 0-ENG, 1-CHN
     private fun combineGroupName(memberList: List<AmeGroupMemberInfo>, language: Int): String {
-        ALog.i(TAG, "List count = ${memberList.size}")
+        ACLog.i(accountContext, TAG, "List count = ${memberList.size}")
         var spliceName = ""
         var index = 0
         for (member in memberList) {

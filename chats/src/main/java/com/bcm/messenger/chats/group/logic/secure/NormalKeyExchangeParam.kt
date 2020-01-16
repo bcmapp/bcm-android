@@ -1,10 +1,12 @@
 package com.bcm.messenger.chats.group.logic.secure
 
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.base64Decode
 import com.bcm.messenger.common.utils.base64Encode
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.utils.format
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.ByteString
@@ -13,8 +15,7 @@ import org.whispersystems.libsignal.InvalidKeyException
 import org.whispersystems.libsignal.ecc.Curve
 
 object NormalKeyExchangeParam {
-    fun getNormalKeysContent(groupKey: ByteArray,
-                             version: Long,
+    fun getNormalKeysContent(accountContext: AccountContext, groupKey: ByteArray,
                              groupInfoSecret: ByteArray,
                              groupInfoSecretPrivateKey: ByteArray
     ): Observable<GroupKeysContent> {
@@ -26,7 +27,7 @@ object NormalKeyExchangeParam {
                 val sign = Curve.calculateSignature(privateKey, groupKey)
                 builder.signature = ByteString.copyFrom(sign)
             } catch (e: InvalidKeyException) {
-                ALog.e("NormalKeyExchangeParam", "aliceBuild param failed", e)
+                ACLog.e(accountContext,  "NormalKeyExchangeParam", "aliceBuild param failed", e)
                 throw e
             }
 
@@ -37,7 +38,7 @@ object NormalKeyExchangeParam {
         }
     }
 
-    fun normalKeyContentToGroupKey(content: GroupKeysContent.NormalKeyContent,
+    fun normalKeyContentToGroupKey(accountContext:AccountContext, content: GroupKeysContent.NormalKeyContent,
                                   groupInfoSecret: ByteArray,
                                   groupInfoSecretPublicKey: ByteArray): ByteArray? {
         val params = GroupKeyExchange.NormalKeyParams.parseFrom(content.key.toByteArray().base64Decode())
@@ -47,7 +48,7 @@ object NormalKeyExchangeParam {
             if (BCMEncryptUtils.verifySignature(infoSecretPublicKey, groupKey, params.signature.toByteArray())) {
                 return groupKey
             } else {
-                ALog.e("NormalKeyExchangeParam", "normalKeyParamsToGroupKey failed, signature verify failed")
+                ACLog.e(accountContext,  "NormalKeyExchangeParam", "normalKeyParamsToGroupKey failed, signature verify failed")
             }
         }
         return null

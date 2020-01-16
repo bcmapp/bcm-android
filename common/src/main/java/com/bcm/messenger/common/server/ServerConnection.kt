@@ -3,6 +3,7 @@ package com.bcm.messenger.common.server
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.bcmhttp.WebSocketHttp
 import com.bcm.messenger.common.core.BcmHttpApiHelper
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.InvalidProtocolBufferException
@@ -65,7 +66,7 @@ class ServerConnection(private val accountContext: AccountContext, private val s
     }
 
     fun connect(token: Int = 0): Boolean {
-        Logger.i("$TAG WSC connect()...")
+        ACLog.i(accountContext, TAG,"WSC connect()...")
         retryDisposable?.dispose()
 
         return connectImpl(false, token)
@@ -79,7 +80,7 @@ class ServerConnection(private val accountContext: AccountContext, private val s
             updateConnectState(ConnectState.CONNECTING)
 
             val url = String.format(wsUri, accountContext.uid, accountContext.password)
-            Logger.d("WebSocketConnection filledUri: $url")
+            ACLog.d(accountContext, TAG, "WebSocketConnection filledUri: $url")
 
             connectingTime = System.currentTimeMillis()
             websocketEvent.destroyed = true
@@ -90,7 +91,7 @@ class ServerConnection(private val accountContext: AccountContext, private val s
     }
 
     fun disconnect() {
-        Logger.i("$TAG WSC disconnect()...")
+        ACLog.i(accountContext, TAG, "WSC disconnect()...")
 
         clearConnection(1000, "OK")
         updateConnectState(connectState)
@@ -146,7 +147,7 @@ class ServerConnection(private val accountContext: AccountContext, private val s
 
     fun sendKeepAlive(): Boolean {
         val client = this.client
-        Logger.i("$TAG, sending keep alive")
+        ACLog.i(accountContext, TAG, "sending keep alive")
         if (client != null && isConnected()) {
             val message = WebSocketProtos.WebSocketMessage.newBuilder()
                     .setType(WebSocketProtos.WebSocketMessage.Type.REQUEST)
@@ -158,7 +159,7 @@ class ServerConnection(private val accountContext: AccountContext, private val s
                     .toByteArray()
 
             if (client.send(ByteString.of(*message))) {
-                Logger.i("$TAG, keep alive succeed")
+                ACLog.i(accountContext, TAG, "keep alive succeed")
                 return true
             }
         }
@@ -182,7 +183,7 @@ class ServerConnection(private val accountContext: AccountContext, private val s
                 client?.close(1000, "OK")
 
             } catch (e: Throwable) {
-                ALog.e(TAG, "disconnect", e)
+                ACLog.e(accountContext, TAG, "disconnect", e)
             }
         }
 
@@ -195,11 +196,11 @@ class ServerConnection(private val accountContext: AccountContext, private val s
         private var connected = false
         override fun onOpen(webSocket: WebSocket?, response: Response?) {
             if (destroyed) {
-                ALog.i(TAG, "ignore onOpen")
+                ACLog.i(accountContext, TAG, "ignore onOpen")
                 return
             }
 
-            ALog.i(TAG, "onConnected()")
+            ACLog.i(accountContext, TAG, "onConnected()")
             connectingTime = 0
 
             updateConnectState(ConnectState.CONNECTED)
@@ -210,15 +211,15 @@ class ServerConnection(private val accountContext: AccountContext, private val s
 
         override fun onMessage(webSocket: WebSocket?, payload: ByteString?) {
             if (destroyed) {
-                ALog.i(TAG, "ignore onMessage")
+                ACLog.i(accountContext, TAG, "ignore onMessage")
                 return
             }
 
-            ALog.i(TAG, "WSC onMessage()")
+            ACLog.i(accountContext, TAG, "WSC onMessage()")
             try {
                 val message = WebSocketProtos.WebSocketMessage.parseFrom(payload!!.toByteArray())
 
-                ALog.i(TAG, " Message Type: " + message.getType().getNumber())
+                ACLog.i(accountContext, TAG, " Message Type: " + message.getType().getNumber())
 
                 if (message.type.number == WebSocketProtos.WebSocketMessage.Type.REQUEST_VALUE) {
                     protoDataEvent?.onMessageArrive(accountContext, message.request)
@@ -228,31 +229,31 @@ class ServerConnection(private val accountContext: AccountContext, private val s
                             String(message.response.body.toByteArray())))
                 }
             } catch (e: InvalidProtocolBufferException) {
-                ALog.e(TAG, "onMessage", e)
+                ACLog.e(accountContext, TAG, "onMessage", e)
             }
         }
 
         override fun onClosed(webSocket: WebSocket?, code: Int, reason: String?) {
             if (destroyed) {
-                ALog.i(TAG, "ignore onClosed")
+                ACLog.i(accountContext, TAG, "ignore onClosed")
                 return
             }
 
-            ALog.i(TAG, "onClose()...")
+            ACLog.i(accountContext, TAG, "onClose()...")
             clearConnection(code, reason)
         }
 
         override fun onFailure(webSocket: WebSocket?, t: Throwable?, response: Response?) {
             if (destroyed) {
-                ALog.i(TAG, "ignore onFailure")
+                ACLog.i(accountContext, TAG, "ignore onFailure")
                 return
             }
-            ALog.e(TAG, "onFailure()", t)
+            ACLog.e(accountContext, TAG, "onFailure()", t)
 
             val connected = this.connected
             if (response != null) {
                 val code = response.code()
-                ALog.w(TAG, "onFailure() code: $code")
+                ACLog.e(accountContext, TAG, "onFailure() code: $code")
 
                 if (code == RESPONSE_REFUSE) {
                     val info = response.header("X-Online-Device")
@@ -282,18 +283,18 @@ class ServerConnection(private val accountContext: AccountContext, private val s
 
         override fun onMessage(webSocket: WebSocket?, text: String?) {
             if (destroyed) {
-                ALog.i(TAG, "ignore onMessage")
+                ACLog.i(accountContext, TAG, "ignore onMessage")
                 return
             }
-            ALog.i(TAG, "onMessage(text)! $text")
+            ACLog.i(accountContext, TAG, "onMessage(text)! $text")
         }
 
         override fun onClosing(webSocket: WebSocket?, code: Int, reason: String?) {
             if (destroyed) {
-                ALog.i(TAG, "ignore onClosing")
+                ACLog.i(accountContext, TAG, "ignore onClosing")
                 return
             }
-            ALog.i(TAG, "onClosing()!...")
+            ACLog.i(accountContext, TAG, "onClosing()!...")
             if (!isDisconnect()) {
                 webSocket?.close(1000, "OK")
             }

@@ -4,6 +4,7 @@ import com.bcm.messenger.chats.group.core.GroupMemberCore
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMember
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -20,7 +21,7 @@ class GroupMemberSyncManager(private val accountContext: AccountContext) {
 
     fun syncGroupMember(gid: Long, fromUid: String, fromTime: Long, roles: List<Long>, finished: (firstPage: Boolean, finish: Boolean, memberList: List<GroupMember>) -> Unit) {
         if (syncTaskList.contains(gid)) {
-            ALog.i("GroupMemberSyncManager", "syncGroupMember $gid exist")
+            ACLog.i(accountContext,  "GroupMemberSyncManager", "syncGroupMember $gid exist")
             return
         }
 
@@ -35,12 +36,12 @@ class GroupMemberSyncManager(private val accountContext: AccountContext) {
     }
 
     private fun syncGroupMemberImpl(gid: Long, roles: List<Long>, fromUid: String, createTime: Long, finished: (firstPage: Boolean, finish: Boolean, memberList: List<GroupMember>) -> Unit) {
-        ALog.i("GroupMemberSyncManager", "syncGroupMemberImpl $gid from: $fromUid createTime: $createTime")
+        ACLog.i(accountContext,  "GroupMemberSyncManager", "syncGroupMemberImpl $gid from: $fromUid createTime: $createTime")
         GroupMemberCore.getGroupMemberByPage(accountContext, gid, roles, fromUid, createTime, PAGE_SIZE)
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .subscribe({
-                    ALog.i("GroupMemberSyncManager", "syncGroupMember result $gid ${it.isSuccess} ${it.msg}")
+                    ACLog.i(accountContext,  "GroupMemberSyncManager", "syncGroupMember result $gid ${it.isSuccess} ${it.msg}")
                     if (it.isSuccess) {
                         val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)?:throw Exception("")
                         val channelKey = groupInfo.channel_key
@@ -63,7 +64,7 @@ class GroupMemberSyncManager(private val accountContext: AccountContext) {
 
                     }
                 }, {
-                    ALog.e("GroupMemberSyncManager", "syncGroupMember $gid", it)
+                    ACLog.e(accountContext,  "GroupMemberSyncManager", "syncGroupMember $gid", it)
                     throw it
                 })
     }

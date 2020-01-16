@@ -15,6 +15,7 @@ import com.bcm.messenger.common.grouprepository.manager.GroupInfoDataManager
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.orhanobut.logger.Logger
@@ -44,7 +45,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
         }
 
         modelCache = GroupModelCache(accountContext, info) {
-            ALog.i(TAG, "init $groupId")
+            ACLog.i(accountContext,  TAG, "init $groupId")
             post(GroupInfoChangedEvent(groupId))
             checkSync()
 
@@ -85,7 +86,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
     }
 
     fun checkSync() {
-        ALog.i(TAG, "checkSync $groupId")
+        ACLog.i(accountContext,  TAG, "checkSync $groupId")
 
         if (!modelCache.isCacheReady) {
             return
@@ -101,7 +102,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
     }
 
     private fun checkAndSyncGroupMemberList() {
-        ALog.i(TAG, "checkAndSyncGroupMemberList with role ${modelCache.myRole}")
+        ACLog.i(accountContext,  TAG, "checkAndSyncGroupMemberList with role ${modelCache.myRole}")
 
         if (modelCache.myRole == AmeGroupMemberInfo.VISITOR) {
             return
@@ -206,7 +207,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
                         }
 
                         if (newName == null && newKeyConfig == null) {
-                            ALog.i(TAG, "syncMyMemberInfo no changed")
+                            ACLog.i(accountContext,  TAG, "syncMyMemberInfo no changed")
                             return@getGroupMemberInfo
                         }
 
@@ -220,7 +221,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
                         }
                     }
                 } catch (e: Exception) {
-                    ALog.e(TAG, "syncMyMemberInfo", e)
+                    ACLog.e(accountContext,  TAG, "syncMyMemberInfo", e)
                 }
             }
 
@@ -445,7 +446,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
                 .subscribe({
                     callback(it)
                 }, {
-                    ALog.e(TAG, "save draft fail", it)
+                    ACLog.e(accountContext,  TAG, "save draft fail", it)
                     callback(false)
                 })
     }
@@ -469,7 +470,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
                 .subscribe({
                     callback.invoke(it)
                 }, {
-                    ALog.e(TAG, "fetchMessage error", it)
+                    ACLog.e(accountContext,  TAG, "fetchMessage error", it)
                     callback.invoke(listOf())
                 })
     }
@@ -491,7 +492,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
                 .subscribe({
                     callback.invoke(it.first, it.second)
                 }, {
-                    ALog.e(TAG, "fetchMessage error", it)
+                    ACLog.e(accountContext,  TAG, "fetchMessage error", it)
                     callback.invoke(listOf(), 0L)
                 })
     }
@@ -513,7 +514,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
                 .subscribe({
                     callback.invoke(it)
                 }, {
-                    ALog.e(TAG, "fetchMessageBefore error", it)
+                    ACLog.e(accountContext,  TAG, "fetchMessageBefore error", it)
                     callback.invoke(null)
                 })
     }
@@ -578,7 +579,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
                 .subscribe({ shareContent ->
                     callback(shareContent)
                 }, {
-                    ALog.e(TAG, "getGroupShareShortQR error", it)
+                    ACLog.e(accountContext,  TAG, "getGroupShareShortQR error", it)
                     callback.invoke(null)
                 })
     }

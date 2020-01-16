@@ -14,6 +14,7 @@ import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.server.IServerDataListener
 import com.bcm.messenger.common.utils.format
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.EncryptUtils
@@ -90,7 +91,7 @@ class ChatMessageReceiver(private val accountContext: AccountContext) : IServerD
 
         val local = AmeTimeUtil.serverTimeMillis()
         if (envelope.timestamp > local) {
-            ALog.e(TAG, "handleEnvelope remote:${envelope.timestamp} local:$local")
+            ACLog.e(accountContext,  TAG, "handleEnvelope remote:${envelope.timestamp} local:$local")
         }
 
         val context = AppContextHolder.APP_CONTEXT
@@ -99,7 +100,7 @@ class ChatMessageReceiver(private val accountContext: AccountContext) : IServerD
 
         when (envelope.type) {
             SignalServiceProtos.Envelope.Type.RECEIPT -> {
-                ALog.i(TAG, "recv recipient:" + System.currentTimeMillis())
+                ACLog.i(accountContext,  TAG, "recv recipient:" + System.currentTimeMillis())
 
                 val messageId = MessagingDatabase.SyncMessageId(source, envelope.timestamp)
 
@@ -110,17 +111,17 @@ class ChatMessageReceiver(private val accountContext: AccountContext) : IServerD
                 chatRepo?.incrementDeliveryReceiptCount(messageId.address.serialize(), messageId.timetamp)
             }
             SignalServiceProtos.Envelope.Type.CIPHERTEXT, SignalServiceProtos.Envelope.Type.PREKEY_BUNDLE -> {
-                ALog.i(TAG, "recv message:" + System.currentTimeMillis())
+                ACLog.i(accountContext,  TAG, "recv message:" + System.currentTimeMillis())
                 if (!recipient.isBlocked) {
                     val messageId = Repository.getPushRepo(accountContext)?.insert(envelope) ?: -1L
                     val jobManager = AmeModuleCenter.accountJobMgr(accountContext)
                     jobManager?.add(PushDecryptJob(context, accountContext, messageId))
                 } else {
-                    ALog.w(TAG, "*** Received blocked push message, ignoring...")
+                    ACLog.w(accountContext,  TAG, "*** Received blocked push message, ignoring...")
                 }
             }
             else -> {
-                ALog.w(TAG, "Received envelope of unknown type:${envelope.type}")
+                ACLog.w(accountContext,  TAG, "Received envelope of unknown type:${envelope.type}")
             }
         }
 
@@ -168,14 +169,14 @@ class ChatMessageReceiver(private val accountContext: AccountContext) : IServerD
                     try {
                         val identityKeyString = String(EncryptUtils.base64Encode(preKey.identityKey.serialize()))
                         if (!AddressUtil.isValid(device.number, identityKeyString)) {
-                            ALog.e(TAG, "getPreKeys error identity key got")
+                            ACLog.e(accountContext,  TAG, "getPreKeys error identity key got")
                             continue
                         }
 
                         val sessionBuilder = SessionBuilder(store, SignalProtocolAddress(device.number, SignalServiceAddress.DEFAULT_DEVICE_ID))
                         sessionBuilder.process(preKey)
                     } catch (e: Exception) {
-                        ALog.w(TAG, "Untrusted identity key from handleMismatchedDevices")
+                        ACLog.w(accountContext,  TAG, "Untrusted identity key from handleMismatchedDevices")
                     }
                 }
             }

@@ -8,6 +8,7 @@ import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.base64Decode
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.common.utils.privateKey
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.EncryptUtils
@@ -161,12 +162,12 @@ object StrongKeyExchangeParam {
             if (preKeyBundle.signedPreKey != null && !Curve.verifySignature(preKeyBundle.identityKey.publicKey,
                             preKeyBundle.signedPreKey.serialize(),
                             preKeyBundle.signedPreKeySignature)) {
-                ALog.e(TAG, "Invalid signature on device key!")
+                ACLog.e(accountContext,  TAG, "Invalid signature on device key!")
                 return null
             }
 
             if (preKeyBundle.signedPreKey == null) {
-                ALog.e(TAG, "No signed prekey!")
+                ACLog.e(accountContext,  TAG, "No signed prekey!")
                 return null
             }
 
@@ -205,7 +206,7 @@ object StrongKeyExchangeParam {
                 val sign = Curve.calculateSignature(groupInfoSecretPrivateKey.privateKey(), groupKey)
                 builder.signature = ByteString.copyFrom(sign)
             } catch (e: InvalidKeyException) {
-                ALog.e(TAG, "aliceBuild param failed", e)
+                ACLog.e(accountContext,  TAG, "aliceBuild param failed", e)
                 return null
             }
             return builder.build()
@@ -247,7 +248,7 @@ object StrongKeyExchangeParam {
                 val prekey = if (params.prekeyId > 0) {
                     val k = keyStore.loadPreKey(params.prekeyId)
                     if (k == null) {
-                        ALog.e(TAG, "bobParse failed, preKey not found")
+                        ACLog.e(accountContext,  TAG, "bobParse failed, preKey not found")
                         return null
                     }
                     k
@@ -257,7 +258,7 @@ object StrongKeyExchangeParam {
 
                 val signedPreKey = keyStore.loadSignedPreKey(params.signedPrekeyId)
                 if (null == signedPreKey) {
-                    ALog.e(TAG, "bobParse failed, signedPreKey not found")
+                    ACLog.e(accountContext,  TAG, "bobParse failed, signedPreKey not found")
                     return null
                 }
                 val secrets = ByteArrayOutputStream()
@@ -290,13 +291,13 @@ object StrongKeyExchangeParam {
                     if (BCMEncryptUtils.verifySignature(infoSecretPublicKey, result, params.signature.toByteArray())) {
                         return result
                     } else {
-                        ALog.e(TAG, "bobParse failed, signature verify failed")
+                        ACLog.e(accountContext,  TAG, "bobParse failed, signature verify failed")
                     }
                 } else {
-                    ALog.e(TAG, "bobParse failed, decrypted failed")
+                    ACLog.e(accountContext,  TAG, "bobParse failed, decrypted failed")
                 }
             } catch (e: Throwable) {
-                ALog.e(TAG, "Parse group key failed", e)
+                ACLog.e(accountContext,  TAG, "Parse group key failed", e)
                 return null
             }
 

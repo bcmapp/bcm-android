@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.LongSparseArray
 import com.bcm.messenger.chats.group.core.GroupMessageCore
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.schedulers.Schedulers
@@ -55,9 +56,9 @@ class GroupAckReporter(private val accountContext: AccountContext) {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe({
-                    ALog.i(TAG, "send ack success gid = $gid mid = $ack")
+                    ACLog.i(accountContext, TAG, "send ack success gid = $gid mid = $ack")
                 }, {
-                    ALog.i(TAG, "send ack error gid = $gid mid = $ack")
+                    ACLog.e(accountContext, TAG, "send ack error gid = $gid mid = $ack", it)
                 })
     }
 }
