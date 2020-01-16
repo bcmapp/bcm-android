@@ -148,7 +148,7 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
             }
         }
 
-        if (mGroupModel.getGroupInfo().shareLink.isEmpty()
+        if (mGroupModel.getGroupInfo().shareLink?.isNotEmpty() != true
                 && mGroupModel.myRole() != AmeGroupMemberInfo.OWNER) {
             share_group_item.visibility = View.GONE
         }
