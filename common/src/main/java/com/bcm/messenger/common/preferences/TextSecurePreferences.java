@@ -49,7 +49,6 @@ public class TextSecurePreferences {
 
     public static final String SYSTEM_EMOJI_PREF = "pref_system_emoji";
     private static final String MULTI_DEVICE_PROVISIONED_PREF = "pref_multi_device";
-    private static final String ALWAYS_RELAY_CALLS_PREF = "pref_turn_only";
     private static final String PROFILE_KEY_PREF = "pref_profile_key";
     public static final String READ_RECEIPTS_PREF = "pref_read_receipts";
 
@@ -93,14 +92,6 @@ public class TextSecurePreferences {
 
     public static void setProfileKey(AccountContext accountContext, String key) {
         setStringPreference(accountContext, PROFILE_KEY_PREF, key);
-    }
-
-    public static boolean isTurnOnly(AccountContext accountContext) {
-        return getBooleanPreference(accountContext, ALWAYS_RELAY_CALLS_PREF, false);
-    }
-
-    public static void setTurnOnly(AccountContext accountContext, Boolean turnOnly) {
-        setBooleanPreference(accountContext, ALWAYS_RELAY_CALLS_PREF, turnOnly);
     }
 
     public static boolean isGcmDisabled(AccountContext accountContext) {

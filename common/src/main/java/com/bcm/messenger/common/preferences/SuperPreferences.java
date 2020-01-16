@@ -35,6 +35,7 @@ public class SuperPreferences {
     private static final String VIBRATE_PREF = "pref_key_vibrate";
     private static final String NOTIFICATION_PREF = "pref_key_enable_notifications";
     public static final String SCREEN_SECURITY_PREF = "pref_screen_security";
+    private static final String ALWAYS_RELAY_CALLS_PREF = "pref_turn_only";
 
 
     public static final String METRICS = "metrics";
@@ -217,5 +218,13 @@ public class SuperPreferences {
 
     public static void setNotificationVibrateEnabled(Context context, boolean value) {
         context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putBoolean(VIBRATE_PREF, value).apply();
+    }
+
+    public static boolean isTurnOnly(Context context) {
+        return context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).getBoolean(ALWAYS_RELAY_CALLS_PREF, false);
+    }
+
+    public static void setTurnOnly(Context context, Boolean turnOnly) {
+        context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putBoolean(ALWAYS_RELAY_CALLS_PREF, turnOnly).apply();
     }
 }

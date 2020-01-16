@@ -495,6 +495,11 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
     private fun handleAudioMessage(messageRecord: MessageRecord) {
+        val audioAttachment = messageRecord.getAudioAttachment()
+        if (audioAttachment?.isPendingDownload() == true) {
+            AmeModuleCenter.accountJobMgr(getAccountContext())?.add(AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, getAccountContext(), messageRecord.id,
+                    audioAttachment.id, audioAttachment.uniqueId, false))
+        }
 
         audioViewStub.get().visibility = View.VISIBLE
         audioViewStub.get().setAudio(masterSecret, messageRecord)
@@ -515,22 +520,31 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                     context.getColorCompat(R.color.common_color_black))
         }
 
-        updateAlpha(messageRecord, audioViewStub.get(), messageRecord.getAudioAttachment())
+        updateAlpha(messageRecord, audioViewStub.get(), audioAttachment)
     }
 
     private fun handleDocumentMessage(messageRecord: MessageRecord) {
+        val docAttachment = messageRecord.getDocumentAttachment()
+        if (docAttachment?.isPendingDownload() == true) {
+            AmeModuleCenter.accountJobMgr(getAccountContext())?.add(AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, getAccountContext(), messageRecord.id,
+                    docAttachment.id, docAttachment.uniqueId, false))
+        }
+
         documentViewStub.get().visibility = View.VISIBLE
         documentViewStub.get().setDocument(messageRecord)
         documentViewStub.get().setDownloadClickListener(downloadClickListener)
         documentViewStub.get().setDocumentClickListener(previewClickListener)
         documentViewStub.get().setOnLongClickListener(this)
 
-        updateAlpha(messageRecord, documentViewStub.get(), messageRecord.getDocumentAttachment())
+        updateAlpha(messageRecord, documentViewStub.get(), docAttachment)
     }
 
     private fun handleThumbnailMessage(messageRecord: MessageRecord) {
-        val slide = messageRecord.getImageAttachment() ?: messageRecord.getVideoAttachment()
-        ?: return
+        val slide = messageRecord.getImageAttachment() ?: messageRecord.getVideoAttachment() ?: return
+        if (slide.isPendingDownload()) {
+            AmeModuleCenter.accountJobMgr(getAccountContext())?.add(AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, getAccountContext(), messageRecord.id,
+                    slide.id, slide.uniqueId, false))
+        }
 
         mediaThumbnailStub.get().visibility = View.VISIBLE
         val radius = resources.getDimensionPixelSize(R.dimen.chats_conversation_item_radius)

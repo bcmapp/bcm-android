@@ -193,7 +193,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
         background = null
 
         member_single_avatar.setPhoto(groupRecipient)
-        member_single_avatar.radius = width / 4f
+        member_single_avatar.radius = layoutParams.width / 4f
     }
 
     private fun createBackground(cornerRadius: Float): Drawable {

@@ -35,7 +35,7 @@ import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.event.MessageReceiveNotifyEvent;
 import com.bcm.messenger.common.metrics.MetricsConstKt;
-import com.bcm.messenger.common.preferences.TextSecurePreferences;
+import com.bcm.messenger.common.preferences.SuperPreferences;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.provider.accountmodule.IChatModule;
 import com.bcm.messenger.common.provider.accountmodule.IMetricsModule;
@@ -503,7 +503,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                     }
                     currentMetric = MetricsConstKt.COUNTER_CALLEE_SEND_ANSWER;
 
-                    boolean isAlwaysTurn = TextSecurePreferences.isTurnOnly(WebRtcCallService.this.accountContext);
+                    boolean isAlwaysTurn = SuperPreferences.isTurnOnly(WebRtcCallService.this);
 
                     WebRtcCallService.this.peerConnection = new PeerConnectionWrapper(WebRtcCallService.this, peerConnectionFactory,
                             WebRtcCallService.this, localRenderer, result, WebRtcCallService.this, eglBase, isAlwaysTurn);
@@ -616,7 +616,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                     }
                     currentMetric = MetricsConstKt.COUNTER_CALLER_SEND_OFFER;
 
-                    boolean isAlwaysTurn = TextSecurePreferences.isTurnOnly(WebRtcCallService.this.accountContext);
+                    boolean isAlwaysTurn = SuperPreferences.isTurnOnly(WebRtcCallService.this);
 
                     WebRtcCallService.this.peerConnection = new PeerConnectionWrapper(WebRtcCallService.this, peerConnectionFactory,
                             WebRtcCallService.this, localRenderer, result, WebRtcCallService.this, eglBase, isAlwaysTurn);

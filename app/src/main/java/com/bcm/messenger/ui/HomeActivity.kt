@@ -170,6 +170,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
         super.onDestroy()
         RxBus.unSubscribe(TAG)
         ClipboardUtil.unInitClipboardUtil()
+        unreadObserver.unInit()
         titleView.unInit()
     }
 

@@ -303,10 +303,6 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
         return viewPagerAdapter.getCurrentView(home_profile_view_pager.currentItem)?.isLogin ?: false
     }
 
-    fun resortAccountList() {
-        viewPagerAdapter.resortAccounts()
-    }
-
     fun reloadAccountList() {
         viewPagerAdapter.loadAccounts()
     }

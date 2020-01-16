@@ -201,6 +201,16 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
             }
         }
 
+        setting_rtc_p2p.setSwitchEnable(false)
+        setting_rtc_p2p.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            val turnOnly = !SuperPreferences.isTurnOnly(this)
+            SuperPreferences.setTurnOnly(this, turnOnly)
+            setting_rtc_p2p.setSwitchStatus(turnOnly)
+        }
+
         setting_feedback.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
@@ -256,6 +266,8 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
 
         privacy_pin_lock.setTip(if (AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip),
                 contentColor = getColorCompat(R.color.common_content_second_color))
+
+        setting_rtc_p2p.setSwitchStatus(SuperPreferences.isTurnOnly(this))
     }
 
     private fun initHeadView() {

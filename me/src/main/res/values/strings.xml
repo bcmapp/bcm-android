@@ -337,7 +337,7 @@
     <string name="me_notification_vibrate_title">Vibrate</string>
 
     <!--privacy settings-->
-    <string name="me_privacy_settings_title">Privacy and Security</string>
+    <string name="me_privacy_settings_title">Privacy</string>
 
     <!--Pin Lock -->
     <string name="me_pin_size_4">Use 4-digit PIN</string>

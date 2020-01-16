@@ -37,16 +37,6 @@
                 app:setting_item_right="none"
                 app:setting_item_switch="off" />
 
-            <com.bcm.messenger.common.ui.CommonSettingItem
-                android:id="@+id/privacy_rtc_p2p"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:setting_item_line="false"
-                app:setting_item_name="@string/me_setting_rtc_p2p_title"
-                app:setting_item_right="none"
-                app:setting_item_sub_name="@string/me_setting_rtc_p2p_sub_title"
-                app:setting_item_switch="off" />
-
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

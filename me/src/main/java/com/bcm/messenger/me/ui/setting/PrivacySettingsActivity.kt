@@ -3,19 +3,13 @@ package com.bcm.messenger.me.ui.setting
 import android.content.Intent
 import android.os.Bundle
 import com.bcm.messenger.common.AccountSwipeBaseActivity
-import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeLoadingPopup
-import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.common.utils.startBcmActivity
-import com.bcm.messenger.common.utils.startBcmActivityForResult
 import com.bcm.messenger.me.R
-import com.bcm.messenger.me.logic.AmePinLogic
 import com.bcm.messenger.me.ui.block.BlockUsersActivity
-import com.bcm.messenger.me.ui.pinlock.PinLockInitActivity
-import com.bcm.messenger.me.ui.pinlock.PinLockSettingActivity
 import com.bcm.messenger.utility.QuickOpCheck
 import kotlinx.android.synthetic.main.me_activity_privacy_settings.*
 
@@ -69,22 +63,10 @@ class PrivacySettingsActivity : AccountSwipeBaseActivity() {
                 }
             }
         }
-
-        privacy_rtc_p2p.setSwitchEnable(false)
-        privacy_rtc_p2p.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-            val turnOnly = !TextSecurePreferences.isTurnOnly(accountContext)
-            TextSecurePreferences.setTurnOnly(accountContext, turnOnly)
-            privacy_rtc_p2p.setSwitchStatus(turnOnly)
-        }
     }
 
     private fun initData() {
         updateStrangerState()
-
-        privacy_rtc_p2p.setSwitchStatus(TextSecurePreferences.isTurnOnly(accountContext))
     }
 
     private fun updateStrangerState() {

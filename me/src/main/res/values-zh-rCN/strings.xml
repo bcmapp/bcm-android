@@ -344,7 +344,7 @@
     <string name="me_notification_vibrate_title">震动</string>
 
     <!--privacy settings-->
-    <string name="me_privacy_settings_title">隐私和安全</string>
+    <string name="me_privacy_settings_title">隐私</string>
 
     <string name="me_pin_size_4">切换成4位数PIN码</string>
     <string name="me_pin_size_6">切换成6位数PIN码</string>
