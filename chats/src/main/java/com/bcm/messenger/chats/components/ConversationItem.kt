@@ -757,7 +757,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         when {
             messageRecord.isFailed() -> setFailedStatusIcons()
             messageRecord.isMediaFailed() -> setFailedStatusIcons()
-            messageRecord.isPendingInsecureFallback()-> setFailedStatusIcons()
+            messageRecord.isPendingInsecureFallback() -> setFailedStatusIcons()
             else -> alertView?.setNone()
         }
     }

@@ -41,11 +41,9 @@ import java.io.OutputStream
  * Created by wjh on 2018/11/20
  */
 open class ChatPreviewClickListener(private val accountContext: AccountContext) : ChatComponentListener {
-
     private val TAG = "ChatPreviewClickListener"
 
     private fun doForOtherFile(context: Context, uri: Uri, contentType: String?, name: String?) {
-
         fun handleWithPath(uri: Uri, path: String?) {
             AmeAppLifecycle.hideLoading()
             ALog.d(TAG, "doForOtherFile path: $path, uri: $uri, contentType: $contentType")
@@ -256,6 +254,4 @@ open class ChatPreviewClickListener(private val accountContext: AccountContext) 
             ALog.e(TAG, "onClick error", ex)
         }
     }
-
-
 }

@@ -354,7 +354,7 @@ class PrivateChatRepo(
 
     fun updateDateSentForResending(messageId: Long, dateSent: Long) {
         chatDao.updateDataSent(messageId, dateSent)
-        updateStatus(messageId, TOTAL_MASK, BASE_SENDING_TYPE)
+        updateStatus(messageId, BASE_TYPE_MASK, BASE_SENDING_TYPE)
     }
 
     fun updateBundleMessage(messageId: Long): Long {
