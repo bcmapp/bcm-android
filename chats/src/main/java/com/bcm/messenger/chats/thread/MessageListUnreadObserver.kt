@@ -91,6 +91,7 @@ class MessageListUnreadObserver {
                 observers[it] = Pair(liveData, observer)
             }
         }
+        checkUnhandledRequest()
     }
 
     private fun observeOthers() {

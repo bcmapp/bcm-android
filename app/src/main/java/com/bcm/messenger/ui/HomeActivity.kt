@@ -677,11 +677,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
                 }
                 entity.chatUnread = unreadCount
 
-                val showUnread = when {
-                    entity.chatUnread > 0 -> entity.chatUnread
-                    entity.friendUnhandle > 0 -> entity.friendUnhandle
-                    else -> 0
-                }
+                val showUnread = entity.chatUnread + entity.friendUnhandle
                 home_profile_layout.setUnreadCount(accountContext, showUnread)
 
                 updateHomeBadge()
@@ -696,11 +692,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
                 entity1.friendUnread = unreadCount
                 entity1.friendUnhandle = unhandledCount
 
-                val showUnread = when {
-                    entity1.chatUnread > 0 -> entity1.chatUnread
-                    entity1.friendUnhandle > 0 -> entity1.friendUnhandle
-                    else -> 0
-                }
+                val showUnread = entity1.chatUnread + entity1.friendUnhandle
                 home_profile_layout.setUnreadCount(accountContext, showUnread)
                 if (accountContext == this@HomeActivity.accountContext) {
                     messageListFragment?.updateFriendRequest(entity1.friendUnhandle, entity1.friendUnread)
@@ -730,7 +722,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
                 val backgroundUnreadList = mutableListOf<AccountContext>()
                 unreadMap.forEach {
                     unread += it.value.chatUnread
-                    unread += it.value.friendUnread
+                    unread += it.value.friendUnhandle
                     unread += it.value.adHocUnread
 
                     if (it.key != AMELogin.majorContext) {
