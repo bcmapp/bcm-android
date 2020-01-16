@@ -9,6 +9,7 @@ import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
@@ -31,13 +32,15 @@ class AccountSwitcherActivity : AppCompatActivity() {
         setContentView(R.layout.activity_account_switcher)
         initView()
 
-        val uid = intent.getStringExtra(ARouterConstants.PARAM.PARAM_UID)?:""
+        val uid = intent.getStringExtra(ARouterConstants.PARAM.PARAM_UID) ?: ""
         if (uid.isNotEmpty()) {
             val intent = Intent(this, VerifyKeyActivity::class.java).apply {
                 putExtra(RegistrationActivity.RE_LOGIN_ID, uid)
             }
             startBcmActivity(AmeLoginLogic.getAccountContext(uid), intent)
         }
+
+        window.setStatusBarLightMode()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -70,7 +73,7 @@ class AccountSwitcherActivity : AppCompatActivity() {
             }
         })
 
-        if(!AppUtil.isReleaseBuild()) {
+        if (!AppUtil.isReleaseBuild()) {
             switcher_env_setting.visibility = View.VISIBLE
         }
 

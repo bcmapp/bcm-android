@@ -109,6 +109,7 @@
         <activity android:name=".ui.TablessIntroActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.AccountSwitcherActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
         <service android:name="com.bcm.messenger.google.FcmMessagingService">

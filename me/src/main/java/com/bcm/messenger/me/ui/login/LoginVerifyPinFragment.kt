@@ -276,8 +276,10 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
     }
 
     private fun stopAnim() {
-        ViewUtils.fadeOut(verify_pin_loading, 250)
-        ViewUtils.fadeIn(verify_pin_input_go, 250)
-        verify_pin_loading.stopAnim()
+        if (activity?.isFinishing != true || activity?.isDestroyed != true) {
+            ViewUtils.fadeOut(verify_pin_loading, 250)
+            ViewUtils.fadeIn(verify_pin_input_go, 250)
+            verify_pin_loading?.stopAnim()
+        }
     }
 }

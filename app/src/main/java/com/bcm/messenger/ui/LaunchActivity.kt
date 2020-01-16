@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.deprecated.DatabaseFactory
@@ -19,7 +18,6 @@ import com.bcm.messenger.logic.SchemeLaunchHelper
 import com.bcm.messenger.me.ui.login.RegistrationActivity
 import com.bcm.messenger.me.utils.BcmUpdateUtil
 import com.bcm.messenger.utility.QuickOpCheck
-import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.permission.PermissionUtil
 import com.bcm.route.annotation.Route

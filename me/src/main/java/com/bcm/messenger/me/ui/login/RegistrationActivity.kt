@@ -58,7 +58,7 @@ class RegistrationActivity : AppCompatActivity() {
 
             val scanResult = data?.getStringExtra(ARouterConstants.PARAM.SCAN.SCAN_RESULT) ?: return
             AmeLoginLogic.saveBackupFromExportModelWithWarning(scanResult, true) { uid ->
-                action(uid?:"")
+                action(uid ?: "")
             }
         }
     }

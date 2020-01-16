@@ -33,7 +33,7 @@ class SetPasswordFragment : AbsRegistrationFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         set_password_back.setOnClickListener {
-            activity?.apply { supportFragmentManager.popBackStack() }
+            activity?.onBackPressed()
         }
         set_new_password_done_button.setOnClickListener {
             if (!checkInputLegitimate()){
