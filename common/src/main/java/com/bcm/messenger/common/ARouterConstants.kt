@@ -41,10 +41,6 @@ object ARouterConstants {
         const val OTHER = "/other"
     }
 
-    object Account {
-        const val ACCOUNT_CONTEXT = PREFIX.APP + "/account_context"
-    }
-
     /**
      * activity path
      */

@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.bcm.messenger.utility.logger.ALog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.orhanobut.logger.Logger;
@@ -27,11 +28,11 @@ public class PlayServicesUtil {
         try {
             gcmStatus = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
         } catch (Throwable t) {
-            Log.w(TAG, t);
+            ALog.e(TAG, "getPlayServicesStatus", t);
             return PlayServicesStatus.MISSING;
         }
 
-        Logger.w(TAG, "Play Services: " + gcmStatus);
+        ALog.i(TAG, "Play Services: " + gcmStatus);
 
         switch (gcmStatus) {
             case ConnectionResult.SUCCESS:

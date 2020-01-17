@@ -1181,10 +1181,22 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             return Repository.getThreadRepo(accountContext)
         }
 
+        private var delayRefreshGroupInfo:Disposable? = null
         @Subscribe
         fun onEvent(e: GroupInfoUpdateNotify) {
-            listenerRef.get()?.onGroupInfoChanged(e.groupInfo)
-            getShareLink(e.groupInfo.gid){_,_->}
+            delayRefreshGroupInfo?.dispose()
+
+            delayRefreshGroupInfo = queryGroupInfo(e.groupInfo.gid)
+                    .delaySubscription(5, TimeUnit.SECONDS)
+                    .subscribeOn(AmeDispatcher.ioScheduler)
+                    .observeOn(AmeDispatcher.mainScheduler)
+                    .subscribe({
+                        delayRefreshGroupInfo = null
+                        listenerRef.get()?.onGroupInfoChanged(GroupInfoTransform.transformToModel(it))
+                        getShareLink(e.groupInfo.gid){_,_->}
+                    }, {
+                        delayRefreshGroupInfo = null
+                    })
         }
 
         @Subscribe

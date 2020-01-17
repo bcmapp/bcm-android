@@ -481,7 +481,7 @@ public class PushDecryptJob extends ContextJob {
         for (ReadMessage readMessage : readMessages) {
             List<kotlin.Pair<Long, Long>> expiring = repository.getChatRepo().setTimestampRead(readMessage.getSender(), readMessage.getTimestamp(), envelopeTimestamp);
 
-            IExpiringScheduler manager = ExpirationManager.INSTANCE.scheduler(accountContext);
+            IExpiringScheduler manager = ExpirationManager.INSTANCE.get(accountContext);
             for (Pair<Long, Long> expiringMessage : expiring) {
                 manager.scheduleDeletion(expiringMessage.getFirst(), false, envelopeTimestamp, expiringMessage.getSecond());
             }
@@ -595,7 +595,7 @@ public class PushDecryptJob extends ContextJob {
         if (message.getMessage().getExpiresInSeconds() > 0) {
             chatRepo.setMessageExpiresStart(messageId);
 
-            IExpiringScheduler manager = ExpirationManager.INSTANCE.scheduler(accountContext);
+            IExpiringScheduler manager = ExpirationManager.INSTANCE.get(accountContext);
             manager.scheduleDeletion(messageId, true,
                     message.getExpirationStartTimestamp(),
                     message.getMessage().getExpiresInSeconds() * 1000);
@@ -803,7 +803,7 @@ public class PushDecryptJob extends ContextJob {
             chatRepo.setMessageExpiresStart(messageId);
             chatRepo.setMessageExpiresStart(messageId);
 
-            IExpiringScheduler manager = ExpirationManager.INSTANCE.scheduler(accountContext);
+            IExpiringScheduler manager = ExpirationManager.INSTANCE.get(accountContext);
             manager.scheduleDeletion(messageId, false, message.getExpirationStartTimestamp(), expiresInMillis);
         }
 

@@ -20,7 +20,7 @@ public class ExpirationListener extends BroadcastReceiver {
             if (intent.hasExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT)) {
                 Serializable obj = intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT);
                 if (obj instanceof AccountContext) {
-                    ExpirationManager.INSTANCE.scheduler((AccountContext) obj).checkSchedule();
+                    ExpirationManager.INSTANCE.get((AccountContext)obj).checkSchedule();
                 }
             }
         } catch (Throwable e) {

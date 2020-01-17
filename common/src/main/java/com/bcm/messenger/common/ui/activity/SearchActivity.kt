@@ -47,7 +47,6 @@ class SearchActivity : AccountSwipeBaseActivity(), ISearchCallback {
             intent.putExtra(ARouterConstants.PARAM.PARAM_EXIT_ANIM, R.anim.common_popup_alpha_out)
             intent.putExtra(ARouterConstants.PARAM.PARAM_PREVIOUS_EXIT_ANIM, R.anim.common_popup_alpha_out)
             intent.putExtra(ARouterConstants.PARAM.PARAM_PREVIOUS_ENTER_ANIM, R.anim.common_popup_alpha_in)
-            intent.putExtra(ARouterConstants.Account.ACCOUNT_CONTEXT, accountContext)
 
             if (context is Activity) {
                 if (requestCode != 0) {

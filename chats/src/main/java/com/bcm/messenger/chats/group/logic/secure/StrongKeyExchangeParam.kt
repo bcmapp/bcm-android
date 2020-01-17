@@ -199,6 +199,10 @@ object StrongKeyExchangeParam {
             builder.aliceUid = accountContext.uid
             builder.signedPrekeyId = preKeyBundle.signedPreKeyId
 
+            if (uid == "15BWLjTebico2i3WnrZRXNQFGCE8CBgtMv") {
+                ACLog.i(accountContext, "GroupLogic", "strong key build ${builder.prekeyId}, ${builder.signedPrekeyId}")
+            }
+
             val encryptedKey = EncryptUtils.aes256Encrypt(groupKey, key)
             builder.encyptedGroupKey = ByteString.copyFrom(encryptedKey)
 

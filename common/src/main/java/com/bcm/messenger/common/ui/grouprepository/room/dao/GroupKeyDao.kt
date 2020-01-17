@@ -16,7 +16,7 @@ interface GroupKeyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveKeys(listKeys:List<GroupKey>)
 
-    @Query("SELECT * FROM ${GroupKey.TABLE_NAME} WHERE gid = :gid  ORDER BY version DESC  LIMIT 0 ,1 ")
+    @Query("SELECT * FROM ${GroupKey.TABLE_NAME} WHERE gid = :gid AND `key` != \"\"  ORDER BY version DESC  LIMIT 0 ,1 ")
     fun queryLastVersionKey(gid:Long): GroupKey?
 
     @Query("SELECT * FROM ${GroupKey.TABLE_NAME}")

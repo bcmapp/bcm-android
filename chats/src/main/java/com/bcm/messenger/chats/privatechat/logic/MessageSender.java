@@ -272,7 +272,7 @@ public class MessageSender {
         chatRepo.setMessageSendSuccess(messageId);
 
         if (expiresIn > 0) {
-            IExpiringScheduler expiringScheduler = ExpirationManager.INSTANCE.scheduler(accountContext);
+            IExpiringScheduler expiringScheduler = ExpirationManager.INSTANCE.get(accountContext);
 
             chatRepo.setMessageExpiresStart(messageId);
             expiringScheduler.scheduleDeletion(messageId, false, expiresIn);
@@ -298,7 +298,7 @@ public class MessageSender {
         }
 
         if (expiresIn > 0) {
-            IExpiringScheduler expiringScheduler = ExpirationManager.INSTANCE.scheduler(accountContext);
+            IExpiringScheduler expiringScheduler = ExpirationManager.INSTANCE.get(accountContext);
 
             chatRepo.setMessageExpiresStart(messageId);
             expiringScheduler.scheduleDeletion(messageId, true, expiresIn);

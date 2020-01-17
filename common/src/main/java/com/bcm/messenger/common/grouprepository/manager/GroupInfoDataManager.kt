@@ -47,7 +47,6 @@ object GroupInfoDataManager {
         val groupKey = Repository.getGroupKeyRepo(accountContext)?.queryKeys(gid, listOf(version))
         return if (groupKey?.isNotEmpty() == true) {
             GroupKeyParam(groupKey.first().key.base64Decode(), groupKey.first().version)
-
         } else {
             val groupInfo = queryOneGroupInfo(accountContext, gid) ?: return null
             if (!groupInfo.isNewGroup && !TextUtils.isEmpty(groupInfo.currentKey)) {
@@ -71,7 +70,7 @@ object GroupInfoDataManager {
     }
 
     fun queryLastGroupKeyVersion(accountContext: AccountContext, gid: Long): GroupKey? {
-        return Repository.getGroupKeyRepo(accountContext)?.queryLastVersionKey(gid)
+        return Repository.getGroupKeyRepo(accountContext)?.queryLastVersionKey(gid).takeIf { it?.key?.isNotEmpty() == true }
     }
 
     fun updateGroupNotificationEnable(accountContext: AccountContext, gid: Long, enable: Boolean) {

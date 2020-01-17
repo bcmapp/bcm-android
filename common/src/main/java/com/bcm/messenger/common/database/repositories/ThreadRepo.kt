@@ -17,6 +17,7 @@ import com.bcm.messenger.common.grouprepository.room.entity.GroupLiveInfo
 import com.bcm.messenger.common.mms.PartAuthority
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.ClassHelper
 import com.bcm.messenger.utility.logger.ALog
 
 /**
@@ -208,6 +209,7 @@ class ThreadRepo(
     }
 
     fun updateThread(threadId: Long, record: MessageRecord?, time: Long? = null) {
+        ALog.i("updateThread", ClassHelper.getCallStack())
         repository.runInTransaction {
             val threadModel = threadDao.queryThread(threadId)
             if (threadModel != null) {
@@ -253,6 +255,8 @@ class ThreadRepo(
     }
 
     fun updateByNewGroup(gid: Long, time: Long? = null) {
+        ALog.i("updateThread", ClassHelper.getCallStack())
+        
         val message = GroupMessageTransform.transformToModel(MessageDataManager.fetchLastMessage(accountContext, gid))
         var threadId = getThreadIdIfExist(Recipient.recipientFromNewGroupId(accountContext, gid))
         if (threadId <= 0L && (null == message || null == message.message)) {

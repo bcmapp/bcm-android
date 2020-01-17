@@ -22,10 +22,7 @@ import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.push.AmeNotificationService
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.utility.AmeTimeUtil
-import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.utility.GsonUtils
-import com.bcm.messenger.utility.RomUtil
+import com.bcm.messenger.utility.*
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.foreground.AppForeground
 import com.bcm.messenger.utility.logger.ALog
@@ -294,6 +291,7 @@ object AmePushProcess {
                     ALog.w(TAG, "processPush fail, find accountContext null")
                     return
                 }
+                ALog.d(TAG, "notify to account ${accountContext.uid}")
                 notify.bcmdata.contactChat?.uid?.let {
                     try {
                         notify.bcmdata.contactChat.uid = BCMEncryptUtils.decryptSource(accountContext, it.toByteArray())

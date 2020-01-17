@@ -40,9 +40,7 @@ class DatabaseMigrateActivity : AppCompatActivity() {
         setContentView(R.layout.activity_database_migrate)
 
         isLoginProgress = intent.getBooleanExtra(IS_LOGIN_PROGRESS, false)
-
-        //todo wangshuhe
-        accountContext = intent.getSerializableExtra(ARouterConstants.Account.ACCOUNT_CONTEXT) as AccountContext
+        accountContext = intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as AccountContext
 
         startMigrate(accountContext)
     }

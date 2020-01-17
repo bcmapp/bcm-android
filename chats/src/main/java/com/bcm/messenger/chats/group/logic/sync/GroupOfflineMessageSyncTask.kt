@@ -123,13 +123,15 @@ class GroupOfflineMessageSyncTask(val gid: Long, val fromMid: Long, val toMid: L
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .flatMap {
-                    val newVersionList = GroupInfoDataManager.queryGroupKeyList(accountContext, gid, keyVersions.toList()).map { it.version }
-                    keyVersions.removeAll(newVersionList)
+                    val localKeyVersions = GroupInfoDataManager.queryGroupKeyList(accountContext, gid, keyVersions.toList()).map { it.version }
+                    keyVersions.removeAll(localKeyVersions)
                     if (keyVersions.isNotEmpty()) {
                         //
                         //The encrypted version of the message is larger than the password version I can get, which means I can't solve it with the password.
-                        if (newVersionList.isNotEmpty() && Collections.max(keyVersions) > Collections.max(newVersionList)
-                                || newVersionList.isEmpty()) {
+                        if ((localKeyVersions.isNotEmpty() && Collections.max(keyVersions) > Collections.max(localKeyVersions))
+                                || localKeyVersions.isEmpty()) {
+                            GroupInfoDataManager.saveGroupKeyParam(accountContext, gid, Collections.max(keyVersions), "")
+
                             return@flatMap GroupLogic.get(accountContext).getKeyRotate().rotateGroup(gid)
                                     .observeOn(AmeDispatcher.ioScheduler)
                                     .map { refreshResult ->

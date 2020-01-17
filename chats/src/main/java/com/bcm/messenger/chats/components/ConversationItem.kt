@@ -838,7 +838,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                 Observable.create<Boolean> {
                     val id = messageRecord.id
                     Repository.getChatRepo(getAccountContext())?.setMessageExpiresStart(messageRecord.id)
-                    ExpirationManager.scheduler(getAccountContext()).scheduleDeletion(id, messageRecord.isMediaMessage(), messageRecord.expiresTime)
+                    ExpirationManager.get(getAccountContext()).scheduleDeletion(id, messageRecord.isMediaMessage(), messageRecord.expiresTime)
                     it.onNext(true)
                     it.onComplete()
 

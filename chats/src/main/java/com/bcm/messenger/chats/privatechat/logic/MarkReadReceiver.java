@@ -91,7 +91,7 @@ public class MarkReadReceiver extends MasterSecretBroadcastReceiver {
 
     private static void scheduleDeletion(AccountContext accountContext, ExpirationInfo expirationInfo) {
         if (expirationInfo.getExpiresIn() > 0 && expirationInfo.getExpireStarted() <= 0) {
-            IExpiringScheduler expirationManager = ExpirationManager.INSTANCE.scheduler(accountContext);
+            IExpiringScheduler expirationManager = ExpirationManager.INSTANCE.get(accountContext);
 
             PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
             if (chatRepo == null) {

@@ -32,9 +32,11 @@ class UmengModuleImp : IUmengModule {
         if (AppUtil.isMainProcess()) {
             MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO)
             if (RomUtil.isEmui()) {
+                ALog.i(TAG, "Emui Registar")
                 HuaWeiRegister.register(context)
             }
             else if (MiPushRegistar.checkDevice(context)) {
+                ALog.i(TAG, "MiPushRegistar")
                 MiPushRegistar.register(context, UMengHelper.XIAOMI_ID, UMengHelper.XIAOMI_KEY)
             }
         }
@@ -56,6 +58,7 @@ class UmengModuleImp : IUmengModule {
     }
 
     override fun getPushToken(context: Context): String? {
+        ALog.i(TAG, "umeng token ${PushAgent.getInstance(context).registrationId}")
         return PushAgent.getInstance(context).registrationId
     }
 

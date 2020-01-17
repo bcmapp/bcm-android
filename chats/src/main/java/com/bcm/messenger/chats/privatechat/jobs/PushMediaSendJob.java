@@ -76,7 +76,7 @@ public class PushMediaSendJob extends PushSendJob {
             if (record.getExpiresTime() > 0 && !record.isExpirationTimerUpdate()) {
                 chatRepo.setMessageExpiresStart(messageId);
 
-                ExpirationManager.INSTANCE.scheduler(accountContext).scheduleDeletion(messageId, true, record.getExpiresTime());
+                ExpirationManager.INSTANCE.get(accountContext).scheduleDeletion(messageId, true, record.getExpiresTime());
             }
 
             ALog.i(TAG, "send complete:" + messageId);

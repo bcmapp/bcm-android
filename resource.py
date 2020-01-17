@@ -2,8 +2,8 @@ import os
 #import shutil
 import zipfile
 
-valid_module_list = ['adhoc-client','common','ame', 'me','chats','wallet','framework','contacts','app']
-valid_dir_list = ['src','main','res','values-zh-rCN','values','strings.xml']
+valid_module_list = ['adhoc-client','common','login','me','chats','wallet','framework','contacts','app']
+valid_dir_list = ['src','main','res','values','strings.xml']
 
 def zip_file_in_dir(filename,fromDir,toDir, zipf):
     

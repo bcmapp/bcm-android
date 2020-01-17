@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
@@ -96,7 +97,7 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
                             val accountContext = AmeModuleCenter.login().getAccountContext(reLoginUid)
                             val context = AppContextHolder.APP_CONTEXT
                             if (DatabaseFactory.isDatabaseExist(accountContext, context) && !TextSecurePreferences.isDatabaseMigrated(accountContext)) {
-                                startActivity(Intent(this, DatabaseMigrateActivity::class.java).apply {
+                                startBcmActivity(accountContext, Intent(this, DatabaseMigrateActivity::class.java).apply {
                                     putExtra(DatabaseMigrateActivity.IS_LOGIN_PROGRESS, true)
                                 })
                             } else {

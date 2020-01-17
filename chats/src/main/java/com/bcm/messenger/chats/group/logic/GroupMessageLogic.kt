@@ -123,7 +123,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
             }
             val isAtMe = e.message.extContent?.isAtAll == true || e.message.extContent?.atList?.contains(e.accountContext.uid) == true
             if (e.message.type.toLong() != AmeGroupMessage.DECRYPT_FAIL) {
-                val bcmData = AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, 0,null, AmePushProcess.GroupNotifyData(e.message.serverIndex, e.message.gid, isAtMe), null, null))
+                val bcmData = AmePushProcess.BcmData(AmePushProcess.BcmNotify(AmePushProcess.GROUP_NOTIFY, 0, null, AmePushProcess.GroupNotifyData(e.message.serverIndex, e.message.gid, isAtMe), null, null))
                 AmePushProcess.processPush(e.accountContext, bcmData)
             } else {
                 ACLog.e(accountContext, TAG, "receive group message and DECRYPT_FAIL---gid " + e.message.gid)
@@ -305,7 +305,8 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
         private fun handleReceiveGroupMessage(message: AmeGroupMessageDetail) {
             val groupMessage = GroupMessageTransform.transformToEntity(message)
             doControlMessage(message.gid, message.message.content)
-            val result: MessageDataManager.InsertMessageResult = MessageDataManager.insertReceiveMessage(accountContext, groupMessage)?:return
+            val result: MessageDataManager.InsertMessageResult = MessageDataManager.insertReceiveMessage(accountContext, groupMessage)
+                    ?: return
             when (result.resultCode) {
                 MessageDataManager.InsertMessageResult.REPLAY_MESSAGE -> {
                     ACLog.e(accountContext, TAG, "message replay " + message.serverIndex)
@@ -339,7 +340,8 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
         }
 
         private fun handleOnFetchMessage(messages: List<GroupMessageEntity>, gid: Long): List<GroupMessage>? {
-            val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid) ?: return null
+            val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
+                    ?: return null
             val fetchList = mutableListOf<GroupMessage>()
             var memberListChanged = false
 
@@ -375,7 +377,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                         for (member in memberChangeMessage.members!!) {
                             if (member.uid != null && member.role != null) {
                                 val info = AmeGroupMemberInfo()
-                                info.uid = member.uid?:continue
+                                info.uid = member.uid ?: continue
                                 info.role = member.role
                                 info.gid = gid
                                 if (changed.action == AmeGroupMemberChanged.LEAVE) {
@@ -422,15 +424,15 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                     groupMessage
                 }
 
-                if (null != fetchGroupMessage) {
-                    MessageDataManager.insertFetchedMessages(accountContext, fetchGroupMessage)
-                    if (fetchGroupMessage.content_type == AmeGroupMessage.DECRYPT_FAIL.toInt()) {
-                        ++decryptFailCount
-                        decryptFailLastMid = msg.mid
-                        decryptFailLastTime = msg.createTime
-                    }
-                    fetchList.add(fetchGroupMessage)
+                MessageDataManager.insertFetchedMessages(accountContext, fetchGroupMessage)
+                if (fetchGroupMessage.content_type == AmeGroupMessage.DECRYPT_FAIL.toInt()
+                        && fetchGroupMessage.send_or_receive == GroupMessage.RECEIVE) {
+                    ++decryptFailCount
+                    decryptFailLastMid = msg.mid
+                    decryptFailLastTime = msg.createTime
                 }
+
+                fetchList.add(fetchGroupMessage)
             }
 
             if (decryptFailCount > 0) {
@@ -468,13 +470,16 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
             return groupMessage
         }
 
-        private fun handleChatMessage(msg: GroupMessageEntity, groupInfo: GroupInfo): GroupMessage? {
+        private fun handleChatMessage(msg: GroupMessageEntity, groupInfo: GroupInfo): GroupMessage {
             val gid = groupInfo.gid
 
             val detail = AmeGroupMessageDetail()
             detail.senderId = msg.getFinalSource(groupInfo)
             if (detail.senderId == accountContext.uid) {
-                return null
+                val exist = MessageDataManager.queryOneMessage(accountContext, gid, msg.mid, true)
+                if (exist != null) {
+                    return exist
+                }
             }
 
             val decryptBean = GroupMessageEncryptUtils.decapsulateMessage(msg.text)
@@ -566,26 +571,27 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
 
             ACLog.i(accountContext, TAG, "syncOfflineMessage start $gid last:$lastMid  ack:$lastAck, localmax:$localMax")
 
-        // If the last ack is smaller than the id of the local record, it means that some records are not read
-        if (from < localMax) {
-            val list = MessageDataManager.getExistMessageByMids(accountContext, gid, from, localMax).sorted()
+            // If the last ack is smaller than the id of the local record, it means that some records are not read
+            if (from < localMax) {
+                val list = MessageDataManager.getExistMessageByMids(accountContext, gid, from, localMax).sorted()
 
-            if (list.isNotEmpty() && list.first() == from) {
-                //found next discontinuous mid
-                var pre = from - 1
-                for (i in list) {
-                    if (i - pre != 1L) {
-                        pre += 1
-                        ACLog.i(accountContext, TAG, "adjust gid:$gid $pre")
-                        break
+                if (list.isNotEmpty() && list.first() == from) {
+                    //found next discontinuous mid
+                    var pre = from - 1
+                    for (i in list) {
+                        if (i - pre != 1L) {
+                            pre += 1
+                            ACLog.i(accountContext, TAG, "adjust gid:$gid $pre")
+                            break
+                        }
+                        pre = i
                     }
-                    pre = i
+                    from = pre
                 }
-                from = pre
             }
-        }
 
             if (from <= lastMid && lastMid > lastMidCache[gid] ?: 0) {
+                ACLog.i(accountContext, TAG, "updateFailCounthaha start $gid last:$lastMid  ack:$lastAck, from:$from")
                 failCounter.updateFailCount(gid, 0, 0, 0)
                 lastMidCache[gid] = lastMid
                 MessageDataManager.insertFetchingMessages(accountContext, gid, from, lastMid)

@@ -39,7 +39,7 @@ import com.bcm.netswitchy.proxy.ProxyManager
 import com.bcm.route.api.BcmRouter
 
 
-class MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxyStateChanged, RecipientModifiedListener, IServerConnectStateListener {
+class  MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxyStateChanged, RecipientModifiedListener, IServerConnectStateListener {
 
     private val INIT = 0
     private val OFFLINE = 1
