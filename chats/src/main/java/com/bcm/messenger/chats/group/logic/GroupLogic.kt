@@ -702,24 +702,26 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
         }
 
         private fun checkGroupShareLink(groupId: Long, role: Long) {
-            getShareLink(groupId) {
-                succeed, link ->
-                if (succeed) {
-                    if (role == AmeGroupMemberInfo.OWNER) {
-                        if (link.isEmpty() || link != getGroupInfo(groupId)?.shareLink) {
-                            ACLog.i(accountContext, TAG, "checkGroupShareLink regen link")
-                            genShareLink(groupId)
-                                    .subscribeOn(AmeDispatcher.ioScheduler)
-                                    .observeOn(AmeDispatcher.ioScheduler)
-                                    .subscribe({},{})
-                        }
-                    } else {
-                        AmeDispatcher.io.dispatch {
-                            groupCache.updateShareLink(groupId, link)
+            AmeDispatcher.io.dispatch({
+                getShareLink(groupId) {
+                    succeed, link ->
+                    if (succeed) {
+                        if (role == AmeGroupMemberInfo.OWNER) {
+                            if (link.isEmpty() || link != getGroupInfo(groupId)?.shareLink) {
+                                ACLog.i(accountContext, TAG, "checkGroupShareLink regen link")
+                                genShareLink(groupId)
+                                        .subscribeOn(AmeDispatcher.ioScheduler)
+                                        .observeOn(AmeDispatcher.ioScheduler)
+                                        .subscribe({},{})
+                            }
+                        } else {
+                            AmeDispatcher.io.dispatch {
+                                groupCache.updateShareLink(groupId, link)
+                            }
                         }
                     }
                 }
-            }
+            }, 2000)
         }
 
 

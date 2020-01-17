@@ -34,7 +34,6 @@ class ChatGroupMemberSelectionActivity : AccountSwipeBaseActivity(), AmeRecycleV
         setContentView(R.layout.chats_group_member_list)
         val groupId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)
 
-        EventBus.getDefault().register(this)
         val groupModel = GroupLogic.get(accountContext).getModel(groupId)
         if (null == groupModel) {
             finish()
@@ -46,7 +45,6 @@ class ChatGroupMemberSelectionActivity : AccountSwipeBaseActivity(), AmeRecycleV
 
     override fun onDestroy() {
         super.onDestroy()
-        EventBus.getDefault().unregister(this)
         EventBus.getDefault().removeStickyEvent(ChatGroupChangeOwnerPopWindow.PleaseReturnTheOwnerEvent::class.java)
     }
 
