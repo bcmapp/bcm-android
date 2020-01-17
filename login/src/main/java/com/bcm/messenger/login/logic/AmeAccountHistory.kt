@@ -170,6 +170,10 @@ class AmeAccountHistory {
             return
         }
 
+        if (majorAccountUid == uid) {
+            return
+        }
+
         minorAccountUids.add(uid)
         storage.set(AME_MINOR_LOGIN_ACCOUNT, GsonUtils.toJson(minorAccountUids))
 
@@ -193,9 +197,13 @@ class AmeAccountHistory {
         //set current major account to minor account
         if (lastMajorUid.isNotEmpty()) {
             minorAccountUids.add(lastMajorUid)
-            minorAccountUids.remove(uid)
-            storage.set(AME_MINOR_LOGIN_ACCOUNT, GsonUtils.toJson(minorAccountUids))
         }
+
+        if (minorAccountUids.contains(uid)) {
+            minorAccountUids.remove(uid)
+        }
+
+        storage.set(AME_MINOR_LOGIN_ACCOUNT, GsonUtils.toJson(minorAccountUids))
 
         majorAccountUid = uid
         storage.set(AME_MAJOR_LOGIN_ACCOUNT, uid)
@@ -413,7 +421,7 @@ class AmeAccountHistory {
             loginContextList.add(majorContext)
         }
 
-        val minorList = minorAccountUids
+        val minorList = minorAccountUids.filter { it != majorAccountUid }
         for (i in minorList) {
             loginContextList.add(getAccountContext(i) ?: continue)
         }
