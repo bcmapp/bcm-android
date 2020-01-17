@@ -1,6 +1,7 @@
 package com.bcm.messenger.ui
 
 import android.animation.*
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
@@ -32,6 +33,7 @@ import com.bcm.messenger.common.utils.pixel.PixelManager
 import com.bcm.messenger.logic.SchemeLaunchHelper
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.ui.pinlock.PinLockInitActivity
+import com.bcm.messenger.me.ui.pinlock.PinLockSettingActivity
 import com.bcm.messenger.me.ui.scan.NewScanActivity
 import com.bcm.messenger.me.utils.BcmUpdateUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -643,14 +645,17 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
         var content = ""
         var okTitle = ""
+        var act: Class<out Activity>? = null
         if (user.majorHasPin()) {
             content = getString(R.string.account_pin_clear_tip_major_content)
             okTitle = getString(R.string.account_pin_clear_tip_major_ok)
+            act = PinLockSettingActivity::class.java
 
             user.clearAccountPin()
         } else if (user.anyAccountHasPin()) {
             content = getString(R.string.account_pin_clear_tip_content)
             okTitle = getString(R.string.account_pin_clear_tip_ok)
+            act = PinLockInitActivity::class.java
 
             user.clearAccountPin()
         }
@@ -662,7 +667,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
                     .withContent(content)
                     .withOkTitle(okTitle)
                     .withOkListener {
-                        startBcmActivity(Intent(this, PinLockInitActivity::class.java))
+                        startBcmActivity(Intent(this, act))
                     }
                     .withCancelTitle(getString(R.string.common_understood))
                     .show(this)
