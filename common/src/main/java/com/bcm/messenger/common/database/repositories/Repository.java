@@ -257,14 +257,16 @@ public class Repository {
         }
     }
 
+    /**
+     * WARNING!!
+     *
+     * @param accountContext Account context to delete database.
+     */
     public static void clearDatabase(AccountContext accountContext) {
-        Repository repo = repositoryHashMap.get(accountContext);
-        if (repo != null) {
-            try {
-                UserDatabase.deleteDatabase(accountContext);
-            } catch (Throwable tr) {
-                ALog.e(TAG, "Delete database failed!", tr);
-            }
+        try {
+            UserDatabase.deleteDatabase(accountContext);
+        } catch (Throwable tr) {
+            ALog.e(TAG, "Delete database failed!", tr);
         }
     }
 
