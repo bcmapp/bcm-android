@@ -155,6 +155,7 @@ class  MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySt
     }
 
     private fun updateStatusLines() {
+        isEnabled = (state == OFFLINE || state == PROXY_TRY)
         if (isEnabled && guideEnable) {
             getChildAt(0).isEnabled = true
             getChildAt(1).isEnabled = true

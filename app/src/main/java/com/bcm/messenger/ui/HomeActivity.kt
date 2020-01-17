@@ -31,8 +31,8 @@ import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.common.utils.pixel.PixelManager
 import com.bcm.messenger.logic.SchemeLaunchHelper
 import com.bcm.messenger.login.logic.AmeLoginLogic
+import com.bcm.messenger.me.ui.pinlock.PinLockInitActivity
 import com.bcm.messenger.me.ui.scan.NewScanActivity
-import com.bcm.messenger.me.ui.setting.PrivacySettingsActivity
 import com.bcm.messenger.me.utils.BcmUpdateUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.MultiClickObserver
@@ -622,6 +622,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
         titleView.updateContext(newAccountContext)
         home_toolbar_avatar.showRecipientAvatar(accountRecipient)
         messageListFragment?.updateAccountContext(newAccountContext)
+        checkBackupNotice()
 
         val unreadStatus = unreadMap[newAccountContext] ?: return
         if (accountContext == this@HomeActivity.accountContext) {
@@ -661,7 +662,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
                     .withContent(content)
                     .withOkTitle(okTitle)
                     .withOkListener {
-                        startBcmActivity(Intent(this, PrivacySettingsActivity::class.java))
+                        startBcmActivity(Intent(this, PinLockInitActivity::class.java))
                     }
                     .withCancelTitle(getString(R.string.common_understood))
                     .show(this)

@@ -8,7 +8,11 @@ import com.bcm.messenger.R
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.preferences.SuperPreferences
+import com.bcm.messenger.common.preferences.TextSecurePreferences
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.setTranslucentStatus
+import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import kotlinx.android.synthetic.main.activity_tabless_intro.*
 
 /**
@@ -33,6 +37,19 @@ class TablessIntroActivity : AppCompatActivity() {
         tabless_confirm.setOnClickListener {
             SuperPreferences.setTablessIntroductionFlag(this@TablessIntroActivity)
             finish()
+        }
+        
+        migrateSettings()
+    }
+    
+    private fun migrateSettings() {
+        AmeDispatcher.io.dispatch { 
+            val majorContext = AMELogin.majorContext
+            SuperPreferences.setNotificationsEnabled(AppContextHolder.APP_CONTEXT, TextSecurePreferences.isNotificationsEnabled(majorContext))
+            SuperPreferences.setNotificationRingtone(AppContextHolder.APP_CONTEXT, TextSecurePreferences.getNotificationRingtone(majorContext))
+            SuperPreferences.setNotificationVibrateEnabled(AppContextHolder.APP_CONTEXT, TextSecurePreferences.isNotificationVibrateEnabled(majorContext))
+            SuperPreferences.setTurnOnly(AppContextHolder.APP_CONTEXT, TextSecurePreferences.isTurnOnly(majorContext))
+            SuperPreferences.setScreenSecurityEnabled(AppContextHolder.APP_CONTEXT, TextSecurePreferences.isScreenSecurityEnabled(majorContext))
         }
     }
 

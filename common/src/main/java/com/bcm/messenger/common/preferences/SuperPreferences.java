@@ -28,7 +28,6 @@ public class SuperPreferences {
     private static final String FLOATING_WINDOW_MUTE = "floating_window_mute";
     private static final String HEIGHT_KEYBOARD_PORTRAIT = "height_keyboard_portrait";
     private static final String HEIGHT_KEYBOARD_LANDSCAPE = "height_keyboard_landscape";
-    private static final String TABLESS_INTRODUCTION_FLAG = "tabless_introduction_flag";
     private static final String TABLESS_ACCOUNT_SWITCH_FLAG = "tabless_account_switch_flag";
 
     public static final String RINGTONE_PREF = "pref_key_ringtone";
@@ -37,9 +36,7 @@ public class SuperPreferences {
     public static final String SCREEN_SECURITY_PREF = "pref_screen_security";
     private static final String ALWAYS_RELAY_CALLS_PREF = "pref_turn_only";
 
-
     public static final String METRICS = "metrics";
-
     
     private static final String ACCOUNT_BACKUP_PREF = "pref_account_backup";
 

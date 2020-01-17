@@ -2,6 +2,7 @@ package com.bcm.messenger.common.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.provider.Settings;
 
 import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
@@ -24,6 +25,12 @@ public class TextSecurePreferences {
     private static final String TAG = TextSecurePreferences.class.getSimpleName();
 
     public static final String THREAD_TRIM_LENGTH = "pref_trim_length";
+
+    public static final String RINGTONE_PREF = "pref_key_ringtone";
+    private static final String VIBRATE_PREF = "pref_key_vibrate";
+    private static final String NOTIFICATION_PREF = "pref_key_enable_notifications";
+    public static final String SCREEN_SECURITY_PREF = "pref_screen_security";
+    private static final String ALWAYS_RELAY_CALLS_PREF = "pref_turn_only";
 
     private static final String THREAD_TRIM_ENABLED = "pref_trim_threads";
 
@@ -200,12 +207,31 @@ public class TextSecurePreferences {
         return getIntegerPreference(accountContext, MIGRATE_FAILED_COUNT, 0);
     }
 
+    public static boolean isScreenSecurityEnabled(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, SCREEN_SECURITY_PREF, false);
+    }
+
+    public static boolean isNotificationsEnabled(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, NOTIFICATION_PREF, true);
+    }
+
+    public static String getNotificationRingtone(AccountContext accountContext) {
+        return getStringPreference(accountContext, RINGTONE_PREF, Settings.System.DEFAULT_NOTIFICATION_URI.toString());
+    }
+
+    public static boolean isNotificationVibrateEnabled(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, VIBRATE_PREF, true);
+    }
+
+    public static boolean isTurnOnly(AccountContext accountContext) {
+        return getBooleanPreference(accountContext, ALWAYS_RELAY_CALLS_PREF, false);
+    }
+
     public static void setBooleanPreference(AccountContext accountContext, String key, boolean value) {
         SharedPreferences pref = getCurrentSharedPreferences(accountContext);
         if (null != pref){
             pref.edit().putBoolean(key, value).apply();
         }
-
     }
 
     public static boolean getBooleanPreference(AccountContext accountContext, String key, boolean defaultValue) {

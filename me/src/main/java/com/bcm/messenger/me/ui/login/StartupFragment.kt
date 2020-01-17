@@ -45,9 +45,8 @@ class StartupFragment : AbsRegistrationFragment() {
             createAccount()
         } else {
             showLogoAnimation()
+            SuperPreferences.setTablessIntroductionFlag(AppContextHolder.APP_CONTEXT)
         }
-
-        SuperPreferences.setTablessIntroductionFlag(AppContextHolder.APP_CONTEXT)
     }
 
     private fun initView() {
