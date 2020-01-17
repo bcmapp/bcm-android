@@ -151,8 +151,8 @@
         <item quantity="other">%d 个其他人</item>
     </plurals>
 
-    <string name="common_notification_message_contents_format">你有%d个会话收到新消息。</string>
-    <string name="common_notification_message_content_format">你有1个会话收到新消息。</string>
+    <string name="common_notification_message_contents_format">你收到%d条新消息。</string>
+    <string name="common_notification_message_content_format">你收到1条新消息。</string>
     <string name="common_chats_group_kick_me">你被%s移出群聊</string>
     <string name="common_group_invite_stranger_notice">邀请%s进群失败，请先加为好友</string>
     <string name="common_group_name_update_format">群名更改为%s</string>

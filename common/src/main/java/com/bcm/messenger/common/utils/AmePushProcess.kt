@@ -55,7 +55,8 @@ object AmePushProcess {
     private const val downloadNotificationId = 3
 
     private var pushInitTime = 0L
-    private var mUnreadCountMap = mutableMapOf<AccountContext, MutableSet<String>>()
+//    private var mUnreadCountMap = mutableMapOf<AccountContext, MutableSet<String>>()
+    private var mUnreadCountMap = mutableMapOf<AccountContext, Int>()
     private var mAdHocUnreadCountMap = mutableMapOf<AccountContext, MutableSet<String>>()
     private var mFriendReqUnreadCountMap = mutableMapOf<AccountContext, Int>()
 
@@ -75,7 +76,7 @@ object AmePushProcess {
             const val TYPE_ALERT_TEXT = "textalert"
 
             @JvmField
-            val CREATOR : Parcelable.Creator<SystemNotifyData> = object : Parcelable.Creator<SystemNotifyData> {
+            val CREATOR: Parcelable.Creator<SystemNotifyData> = object : Parcelable.Creator<SystemNotifyData> {
                 override fun createFromParcel(parcel: Parcel): SystemNotifyData {
                     return SystemNotifyData(parcel)
                 }
@@ -236,7 +237,7 @@ object AmePushProcess {
                     @SerializedName("adhocchat") val adhocChat: AdHocNotifyData? = null,
                     @SerializedName("systemmsg") val systemChat: SystemNotifyData? = null) : NotGuard
 
-    class BcmData(val bcmdata: BcmNotify?): NotGuard
+    class BcmData(val bcmdata: BcmNotify?) : NotGuard
 
     @SuppressLint("CheckResult")
     fun processPush(accountContext: AccountContext, notify: BcmData?) {
@@ -264,7 +265,7 @@ object AmePushProcess {
                         }.subscribe {
 
                         }
-            }else {
+            } else {
                 ALog.w(TAG, "receive push data, -- no notification enable")
             }
 
@@ -338,31 +339,22 @@ object AmePushProcess {
             val adhocChat = data.bcmdata?.adhocChat
 
             if (privateChat != null || groupChat != null || friendRequest != null) {
-
-                var unreadSet = mUnreadCountMap[accountContext]
-                if (unreadSet == null) {
-                    unreadSet = mutableSetOf()
-                    mUnreadCountMap[accountContext] = unreadSet
-                }
-                unreadSet.clear()
-                unreadSet.addAll(Repository.getThreadRepo(accountContext)?.getAllThreadsWithRecipientReady()?.mapNotNull {
-                    val r = it.getRecipient(accountContext)
-                    if (r.isMuted || it.unreadCount <= 0) {
-                        null
-                    }else {
-                        if (r.isGroupRecipient) {
-                            GroupUtil.gidFromUid(it.uid).toString()
-                        } else {
-                            it.uid
+                AmeModuleCenter.login().getLoginAccountContextList().forEach {
+                    var unreadCount = 0
+                    Repository.getThreadRepo(it)?.getAllThreadsWithRecipientReady()?.forEach { record ->
+                        val r = record.getRecipient(accountContext)
+                        if (!r.isMuted && record.unreadCount >= 0) {
+                            unreadCount += record.unreadCount
                         }
                     }
-                } ?: setOf())
+                    mUnreadCountMap[it] = unreadCount
+                }
 
                 val groupId = groupChat?.gid
                 if (groupId != null) {
                     val mute = GroupInfoDataManager.queryOneAmeGroupInfo(accountContext, groupId)?.mute ?: true
                     if (!mute) {
-                        unreadSet.add(groupId.toString())
+                        mUnreadCountMap[accountContext] = mUnreadCountMap[accountContext]?.inc() ?: 1
                     }
                 }
 
@@ -370,17 +362,15 @@ object AmePushProcess {
                 if (privateUid != null) {
                     val recipient = Recipient.from(accountContext, privateUid, false)
                     if (!recipient.isMuted) {
-                        unreadSet.add(privateUid)
+                        mUnreadCountMap[accountContext] = mUnreadCountMap[accountContext]?.inc() ?: 1
                     }
                 }
 
-                var friendReqCount = mFriendReqUnreadCountMap[accountContext] ?: 0
-                friendReqCount = Repository.getFriendRequestRepo(accountContext)?.queryUnreadCount() ?: 0
+                val friendReqCount = Repository.getFriendRequestRepo(accountContext)?.queryUnreadCount() ?: 0
                 mFriendReqUnreadCountMap[accountContext] = friendReqCount
             }
 
             if (adhocChat != null) {
-
                 val dao = Repository.getAdHocSessionRepo(accountContext)
                 var unreadSet = mAdHocUnreadCountMap[accountContext]
                 if (unreadSet == null) {
@@ -394,9 +384,7 @@ object AmePushProcess {
                 if (dao?.querySession(data.bcmdata.adhocChat.session)?.mute != true) {
                     unreadSet.add(data.bcmdata.adhocChat.session)
                 }
-
             }
-
         }
     }
 
@@ -405,7 +393,7 @@ object AmePushProcess {
     }
 
     private fun handleNotify(accountContext: AccountContext, notifyData: SystemNotifyData?) {
-        if(notifyData == null) {
+        if (notifyData == null) {
             return
         }
 
@@ -421,7 +409,7 @@ object AmePushProcess {
         try {
             ALog.i(TAG, "handleNotify type: ${notifyData.type}, content: ${notifyData.content}")
             val current = AmeTimeUtil.serverTimeMillis() / 1000
-            when(notifyData.type) {
+            when (notifyData.type) {
                 SystemNotifyData.TYPE_ALERT_WEB -> {
                     val data = GsonUtils.fromJson(notifyData.content, SystemNotifyData.WebAlertData::class.java)
                     if (canNotifySystemMsg(current, data.start, data.end)) {
@@ -454,10 +442,9 @@ object AmePushProcess {
                     }, {
                         ALog.e(TAG, it.localizedMessage)
                     })
-
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "handleNotify for system chat fail", ex)
-        }finally {
+        } finally {
             TextSecurePreferences.setStringPreference(accountContext, TextSecurePreferences.SYS_PUSH_MESSAGE + "_" + accountContext.uid + "_" + notifyData.type, GsonUtils.toJson(notifyData))
         }
     }
@@ -483,7 +470,7 @@ object AmePushProcess {
     private fun handleNotify(accountContext: AccountContext, notifyData: ChatNotifyData?) {
         if (null != notifyData) {
             ALog.i(TAG, "receive push group data -- background!!!")
-            notifyData.uid?.let {uid ->
+            notifyData.uid?.let { uid ->
                 val builder = AmeNotification.getDefaultNotificationBuilder(AppContextHolder.APP_CONTEXT)
                 val recipient = Recipient.from(accountContext, uid, false)
 
@@ -492,7 +479,8 @@ object AmePushProcess {
                 }
 
                 if (SuperPreferences.isNotificationsEnabled(AppContextHolder.APP_CONTEXT)) {
-                    setAlarm(accountContext, builder, recipient.ringtone, recipient.vibrate ?: RecipientDatabase.VibrateState.DEFAULT)
+                    setAlarm(accountContext, builder, recipient.ringtone, recipient.vibrate
+                            ?: RecipientDatabase.VibrateState.DEFAULT)
                 }
 
                 notifyBar(accountContext, builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
@@ -508,8 +496,7 @@ object AmePushProcess {
         if (null != notifyData && notifyData.gid ?: 0 > 0) {
             val builder = AmeNotification.getDefaultNotificationBuilder(AppContextHolder.APP_CONTEXT)
 
-            var mute = false
-            mute = GroupInfoDataManager.queryOneAmeGroupInfo(accountContext,notifyData.gid
+            val mute = GroupInfoDataManager.queryOneAmeGroupInfo(accountContext, notifyData.gid
                     ?: throw Exception("group message id is null"))?.mute
                     ?: true
 
@@ -544,7 +531,7 @@ object AmePushProcess {
         }
         builder.setAutoCancel(true)
         val notificationId = System.currentTimeMillis().toInt()
-        builder.setContentIntent(AmeNotificationService.getIntent(accountContext,null, AmeNotificationService.ACTION_FRIEND_REQ, notificationId))
+        builder.setContentIntent(AmeNotificationService.getIntent(accountContext, null, AmeNotificationService.ACTION_FRIEND_REQ, notificationId))
         val notification = builder.build()
 
         AmeDispatcher.mainThread.dispatch({
@@ -553,8 +540,7 @@ object AmePushProcess {
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
             notificationManager?.notify(friendNotificationId, notification)
             ALog.i(TAG, "notify bar start end $notificationId")
-
-        },500)
+        }, 500)
     }
 
     /**
@@ -568,7 +554,7 @@ object AmePushProcess {
                 setAlarm(accountContext, builder, null, RecipientDatabase.VibrateState.ENABLED)
                 notifyBar(accountContext, builder, notifyData, AppContextHolder.APP_CONTEXT, System.currentTimeMillis().toInt(),
                         AmeNotificationService.ACTION_ADHOC)
-            }else {
+            } else {
                 ALog.w(TAG, "handleAdHocNotify isAt: ${notifyData.isAt}, enable: $enable")
             }
         }
@@ -587,7 +573,7 @@ object AmePushProcess {
                 var friendReqCount = 0
                 if (msg is AdHocNotifyData) {
                     chatCount = getAdHocUnreadCount()
-                }else if (msg is GroupNotifyData || msg is ChatNotifyData) {
+                } else if (msg is GroupNotifyData || msg is ChatNotifyData) {
                     chatCount = getChatUnreadCount()
                     friendReqCount = getFriendRequestUnreadCount()
                 }
@@ -595,7 +581,7 @@ object AmePushProcess {
                 if (chatCount <= 0) {
                     ALog.i(TAG, "notify bar start $notificationId $chatCount but empty message thread list")
                     return
-                }else {
+                } else {
                     ALog.i(TAG, "notify bar start $notificationId")
                 }
 
@@ -611,7 +597,7 @@ object AmePushProcess {
                         .setAutoCancel(true)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder.setSmallIcon(R.drawable.icon_notification_alpha).setColor(AppUtil.getColor(context.resources, R.color.common_color_black))
+                    builder.setSmallIcon(R.drawable.icon_notification_alpha).setColor(getColor(R.color.common_color_black))
                 }
 
                 val notification = builder.build()
@@ -621,9 +607,7 @@ object AmePushProcess {
                     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                     notificationManager?.notify(chatNotificationId, notification)
                     ALog.i(TAG, "notify bar start end $notificationId")
-
-                },500)
-
+                }, 500)
             } else {
                 ALog.i(TAG, "notify bar end context is null $notificationId")
             }
@@ -647,7 +631,7 @@ object AmePushProcess {
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setAutoCancel(true)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder.setSmallIcon(R.drawable.icon_notification_alpha).color = AppUtil.getColor(context.resources, R.color.common_color_black)
+                    builder.setSmallIcon(R.drawable.icon_notification_alpha).color = getColor(R.color.common_color_black)
                 }
                 val notification = builder.build()
 
@@ -741,7 +725,8 @@ object AmePushProcess {
             ALog.i(TAG, "updateAppBadge with totalCount: $count")
             if (RomUtil.isMiui()) {
                 ALog.i(TAG, "xiaomi updateAppBadge count: $count")
-                ShortcutBadger.applyNotification(context, mChatNotification ?: mFriendReqNotification, count)
+                ShortcutBadger.applyNotification(context, mChatNotification
+                        ?: mFriendReqNotification, count)
             } else {
                 if (count <= 0) {
                     ShortcutBadger.removeCount(context)
@@ -749,7 +734,6 @@ object AmePushProcess {
                     ShortcutBadger.applyCount(context, count)
                 }
             }
-
         } catch (t: Throwable) {
             // NOTE :: I don't totally trust this thing, so I'm catching
             // everything.
@@ -762,19 +746,17 @@ object AmePushProcess {
      */
     private fun updateAppBadge(context: Context, chatCount: Int, friendReqCount: Int) {
         try {
-
             if (RomUtil.isMiui()) {
                 ALog.i(TAG, "xiaomi updateAppBadge chatCount: $chatCount, chatNotification: ${mChatNotification != null}, " +
                         "friendReqCount: $friendReqCount, friendNotification: ${mFriendReqNotification != null}")
                 if (mChatNotification == null && mFriendReqNotification != null) {
                     ShortcutBadger.applyNotification(context, mFriendReqNotification, chatCount + friendReqCount)
-                }else if (mChatNotification != null && mFriendReqNotification == null) {
+                } else if (mChatNotification != null && mFriendReqNotification == null) {
                     ShortcutBadger.applyNotification(context, mChatNotification, chatCount + friendReqCount)
-                }else {
+                } else {
                     ShortcutBadger.applyNotification(context, mChatNotification, chatCount)
                     ShortcutBadger.applyNotification(context, mFriendReqNotification, friendReqCount)
                 }
-
             } else {
                 val count = chatCount + friendReqCount
                 ALog.i(TAG, "updateAppBadge with chatCount: $chatCount, friendReqCount: $friendReqCount")
@@ -784,7 +766,6 @@ object AmePushProcess {
                     ShortcutBadger.applyCount(context, count)
                 }
             }
-
         } catch (t: Throwable) {
             // NOTE :: I don't totally trust this thing, so I'm catching
             // everything.
@@ -803,8 +784,7 @@ object AmePushProcess {
                     return ac
                 }
             }
-
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "findAccountContext error", ex)
         }
         return null
@@ -812,8 +792,8 @@ object AmePushProcess {
 
     private fun getChatUnreadCount(): Int {
         var unreadCount = 0
-        for ((ac, set) in mUnreadCountMap) {
-            unreadCount += set.size
+        mUnreadCountMap.values.forEach {
+            unreadCount += it
         }
         return unreadCount
     }

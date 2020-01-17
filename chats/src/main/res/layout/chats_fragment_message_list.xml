@@ -8,12 +8,11 @@
     <com.bcm.messenger.common.ui.BcmRecyclerView
         android:id="@+id/chats_list"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chats_system_message_layout"
-        app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/chats_list_item_view" />
 
     <com.bcm.messenger.common.ui.ContentShadeView

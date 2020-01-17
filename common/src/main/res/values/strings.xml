@@ -173,8 +173,8 @@
         <item quantity="other">%d others</item>
     </plurals>
 
-    <string name="common_notification_message_content_format">You have new message(s) from 1 conversation.</string>
-    <string name="common_notification_message_contents_format">You have new messages from %d conversations.</string>
+    <string name="common_notification_message_content_format">You have 1 new message</string>
+    <string name="common_notification_message_contents_format">You have %d new messages</string>
     <string name="common_chats_group_kick_me">You were removed from the group chat by %s</string>
     <string name="common_group_invite_stranger_notice">Failed to add %s into the group, please add as friend(s) first</string>
     <string name="common_group_name_update_format">Group name changed to %s</string>
