@@ -736,7 +736,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
             if (dbGroupInfo.role == AmeGroupMemberInfo.OWNER) {
                 if ((oldSecretKey != dbGroupInfo.infoSecret || TextUtils.isEmpty(dbGroupInfo.shareCodeSetting))) {
-                    updateShareSetting(dbGroupInfo.gid, false) { succeed, shareCode, error ->
+                    updateShareSetting(dbGroupInfo.gid, true) { succeed, shareCode, error ->
                         ACLog.i(accountContext, TAG, "parseGroupInfo adjust group info succeed:$succeed $error")
                     }
                 } else if (groupCache.isBroadcastSharingData(info.gid)) {
@@ -1204,42 +1204,22 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
         @Subscribe
         fun onEvent(e: GroupMemberChangedNotify) {
             val change = e.changed
-            when {
-                change.isMyJoin() -> {
-                    ACLog.i(accountContext, TAG, "join group")
-                    queryGroupInfo(change.groupId) { ameGroup, ackState, error ->
-                        AmeDispatcher.io.dispatch {
-                            if (null != ameGroup && null != ackState) {
-                                getModel(change.groupId)?.checkSync()
-                                GroupMessageLogic.get(accountContext).syncOfflineMessage(ameGroup.gid, ackState.lastMid, ackState.lastAckMid)
-                                getThreadDB()?.getThreadIdFor(Recipient.recipientFromNewGroup(accountContext, ameGroup))
-                            } else {
-                                ALog.e(TAG, "join new group, query group info failed $error")
-                            }
-                        }
-                    }
-                }
-                change.isMyLeave() -> {
-                    Observable.just(change.groupId)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(Schedulers.io())
-                            .map {
-                                groupCache.updateRole(it, AmeGroupMemberInfo.VISITOR)
-                                updateNoticeShowState(it, true)
-                            }.observeOn(AmeDispatcher.mainScheduler)
-                            .subscribe({
-                                if (e.changed.fromUid != accountContext.uid) {
-                                    listenerRef.get()?.onMemberLeave(change.groupId, change.memberList)
-                                }
-                            }, {
-                                ALog.e(TAG, it)
-                            })
-                }
-            }
-
             AmeDispatcher.io.dispatch {
                 when (change.action) {
                     AmeGroupMemberChanged.JOIN -> {
+                        ACLog.i(accountContext, TAG, "join group")
+                        queryGroupInfo(change.groupId) { ameGroup, ackState, error ->
+                            AmeDispatcher.io.dispatch {
+                                if (null != ameGroup && null != ackState) {
+                                    getModel(change.groupId)?.checkSync()
+                                    GroupMessageLogic.get(accountContext).syncOfflineMessage(ameGroup.gid, ackState.lastMid, ackState.lastAckMid)
+                                    getThreadDB()?.getThreadIdFor(Recipient.recipientFromNewGroup(accountContext, ameGroup))
+                                } else {
+                                    ALog.e(TAG, "join new group, query group info failed $error")
+                                }
+                            }
+                        }
+
                         getGroupMemberInfos(change.groupId, change.memberList.map {
                             it.uid
                         }).delaySubscription(1, TimeUnit.SECONDS)
@@ -1254,15 +1234,25 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                                     listenerRef.get()?.onMemberUpdate(change.groupId, it)
                                 }, {})
                         GroupMemberManager.insertGroupMembers(accountContext, change.memberList)
-                        GroupInfoDataManager.increaseMemberCount(accountContext, change.groupId, 1L)
+                        GroupInfoDataManager.increaseMemberCount(accountContext, change.groupId, 1L*e.changed.memberList.size)
                         groupCache.setGroupMemberState(change.groupId, GroupMemberSyncState.DIRTY)
                     }
                     AmeGroupMemberChanged.UPDATE -> {
-                        queryGroupInfo(change.groupId, null)
                         GroupMemberManager.updateGroupMembers(accountContext, change.memberList)
+                        val ownerUid = change.ownerUid()
+                        if (ownerUid?.isNotEmpty() == true) {
+                            groupCache.updateOwner(change.groupId, ownerUid)
+                            if (ownerUid == accountContext.uid) {
+                                groupCache.updateRole(change.groupId, AmeGroupMemberInfo.OWNER)
+                            }
+                        }
                     }
                     AmeGroupMemberChanged.LEAVE -> {
-                        GroupInfoDataManager.increaseMemberCount(accountContext, change.groupId, -1L)
+                        if (change.contains(accountContext.uid)) {
+                            groupCache.updateRole(change.groupId, AmeGroupMemberInfo.VISITOR)
+                            updateNoticeShowState(change.groupId, true)
+                        }
+                        GroupInfoDataManager.increaseMemberCount(accountContext, change.groupId, -1L*e.changed.memberList.size)
                         GroupMemberManager.deleteMember(accountContext, change.memberList)
                         groupCache.setGroupMemberState(change.groupId, GroupMemberSyncState.DIRTY)
                     }

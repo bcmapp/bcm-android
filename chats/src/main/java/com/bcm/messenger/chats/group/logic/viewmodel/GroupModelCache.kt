@@ -112,6 +112,10 @@ class GroupModelCache(private val accountContext: AccountContext, group: AmeGrou
         return array
     }
 
+    fun getMemberSize(): Int {
+        return memberList?.size?:0
+    }
+
     private fun sortMemberList(list: List<AmeGroupMemberInfo>): List<AmeGroupMemberInfo> {
         return list.sortedWith(Comparator { o1, o2 ->
             if (o1.role == AmeGroupMemberInfo.OWNER && o2.role != AmeGroupMemberInfo.OWNER) {
@@ -150,21 +154,12 @@ class GroupModelCache(private val accountContext: AccountContext, group: AmeGrou
 
     fun removeMember(list:List<String>?){
         if (list != null){
-            val removedList = ArrayList<AmeGroupMemberInfo>()
             for (u in list){
-                val remove = memberList?.remove(u)
-                if (null != remove){
-                    removedList.add(remove)
-                }
+                memberList?.remove(u)
+            }
 
-                if (null != remove){
-                    if (remove.uid == accountContext.uid){
-                        info.role = AmeGroupMemberInfo.VISITOR
-                        AmeDispatcher.io.dispatch{
-                            GroupInfoDataManager.updateGroupRole(accountContext, info.gid, AmeGroupMemberInfo.VISITOR)
-                        }
-                    }
-                }
+            if (list.contains(accountContext.uid)){
+                info.role = AmeGroupMemberInfo.VISITOR
             }
         }
     }
@@ -177,9 +172,6 @@ class GroupModelCache(private val accountContext: AccountContext, group: AmeGrou
 
                 if (u.uid == accountContext.uid){
                     info.role = u.role
-                    AmeDispatcher.io.dispatch {
-                        GroupInfoDataManager.updateGroupRole(accountContext, info.gid, u.role)
-                    }
                 }
 
                 if (u.role == AmeGroupMemberInfo.OWNER){

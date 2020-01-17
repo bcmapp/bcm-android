@@ -10,7 +10,7 @@ import com.bcm.messenger.utility.proguard.NotGuard
 /**
  * bcm.social.01 2018/6/7.
  */
-data class AmeGroupMemberChanged(val accountContext: AccountContext, val groupId:Long, val messageId:Long) {
+data class AmeGroupMemberChanged(val accountContext: AccountContext, val groupId: Long, val messageId: Long) {
     companion object {
         val JOIN = 1L
         val LEAVE = 3L
@@ -22,34 +22,17 @@ data class AmeGroupMemberChanged(val accountContext: AccountContext, val groupId
     var createTime: Long? = 0
     lateinit var memberList: ArrayList<AmeGroupMemberInfo>
 
-    /**
-     * true join 
-     */
-    fun isMyJoin(): Boolean {
-        if (action == JOIN){
-            for (i in memberList){
-                if (i.uid == accountContext.uid){
-                    return true
-                }
-            }
-        }
-        return false
+    fun contains(uid: String): Boolean {
+        return null != memberList.filter { it.uid == uid }
+                .takeIf { it.isNotEmpty() }
+                ?.first()
     }
 
-    /**
-     * true leave 
-     */
-    fun isMyLeave(): Boolean {
-        if (action == LEAVE){
-            for (i in memberList){
-                if (i.uid == accountContext.uid){
-                    return true
-                }
-            }
-        }
-        return false
+    fun ownerUid(): String? {
+        return memberList.filter { it.role == AmeGroupMemberInfo.OWNER }
+                .takeIf { it.isNotEmpty() }
+                ?.first()?.uid
     }
-
 
     fun toDetail(): AmeGroupMessageDetail {
         val detail = AmeGroupMessageDetail()

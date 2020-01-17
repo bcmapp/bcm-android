@@ -93,4 +93,7 @@ public interface GroupInfoDao {
 
     @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET member_count = :count WHERE gid = :gid ")
     void updateMemberCount(long gid, long count);
+
+    @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET owner = :ownerUid WHERE gid = :gid ")
+    void updateOwner(long gid, @NotNull String ownerUid);
 }

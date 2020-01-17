@@ -332,4 +332,11 @@ class GroupCache(private val accountContext: AccountContext, val cacheReady: () 
 
         GroupInfoDataManager.updateGroupShareShortLink(accountContext, gid, link)
     }
+
+    fun updateOwner(gid: Long, ownerUid: String) {
+        val groupInfo = getGroupInfo(gid)?:return
+        groupInfo.owner = ownerUid
+
+        GroupInfoDataManager.updateOwner(accountContext, gid, ownerUid)
+    }
 }

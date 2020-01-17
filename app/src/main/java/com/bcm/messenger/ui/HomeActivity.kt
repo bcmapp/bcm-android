@@ -179,6 +179,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
     override fun onResume() {
         super.onResume()
         home_profile_layout.onResume()
+        titleView.update()
 
         checkPinUpgrade()
 

@@ -397,7 +397,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
 
                     if (changed.action == AmeGroupMemberChanged.LEAVE || changed.action == AmeGroupMemberChanged.JOIN) {
                         if (changed.action == AmeGroupMemberChanged.LEAVE) {
-                            if (accountContext.uid != groupInfo.owner && !changed.isMyLeave()) {
+                            if (accountContext.uid != groupInfo.owner && !changed.contains(accountContext.uid)) {
                                 groupMessage.is_confirm = GroupMessage.CONFIRM_BUT_NOT_SHOW
                             }
                         }

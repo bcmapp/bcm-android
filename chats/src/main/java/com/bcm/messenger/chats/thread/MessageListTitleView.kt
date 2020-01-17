@@ -171,7 +171,7 @@ class  MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySt
         }
     }
 
-    private fun update() {
+    fun update() {
         val state = getState()
         if (state == this.state) {
             return

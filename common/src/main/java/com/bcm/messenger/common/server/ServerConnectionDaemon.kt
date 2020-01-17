@@ -336,7 +336,9 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
     }
 
     override fun onDaemonTick() {
-        daemonRun()
+        if (accountContext.isLogin) {
+            daemonRun()
+        }
     }
 
     private fun tickTime(): Long {

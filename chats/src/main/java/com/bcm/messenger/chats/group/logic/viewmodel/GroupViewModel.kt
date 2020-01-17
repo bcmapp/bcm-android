@@ -730,7 +730,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
     override fun onMemberLeave(gid: Long, memberList: List<AmeGroupMemberInfo>) {
         if (gid == groupId && memberList.isNotEmpty()) {
             modelCache.removeMember(memberList.map { it.uid })
-            modelCache.info.memberCount = max(1, modelCache.info.memberCount + memberList.count())
+            modelCache.info.memberCount = max(modelCache.getMemberSize(), modelCache.info.memberCount - memberList.count())
 
             post(MemberListChangedEvent())
 

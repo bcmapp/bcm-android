@@ -161,6 +161,7 @@ class GroupMessageReceiver(private val accountContext: AccountContext) : IServer
     }
 
     private fun handleGroupInfoUpdateMessage(accountContext: AccountContext, message: GroupMessageProtos.GroupInfoUpdate) {
+        ACLog.i(accountContext,  TAG, "handleGroupInfoUpdateMessage")
         val gInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, message.gid) ?: return
 
         var newName:String? = null
@@ -215,9 +216,8 @@ class GroupMessageReceiver(private val accountContext: AccountContext) : IServer
     }
 
     private fun handleGroupMemberUpdate(accountContext: AccountContext, message: GroupMessageProtos.GroupMemberUpdate) {
+        ACLog.i(accountContext,  TAG, "handleGroupMemberUpdate ${message.action}")
         if (isMyQuitGroupEvent(accountContext, message)) {
-            ACLog.i(accountContext,  TAG, "leave group" + message.gid)
-
             val db = Repository.getThreadRepo(accountContext)?:return
             val groupRecipient = Recipient.recipientFromNewGroupId(accountContext, message.gid)
             val threadId = db.getThreadIdIfExist(groupRecipient)

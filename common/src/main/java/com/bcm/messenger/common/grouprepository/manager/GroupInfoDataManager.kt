@@ -219,4 +219,8 @@ object GroupInfoDataManager {
             getDao(accountContext)?.updateMemberCount(gid, count)
         }
     }
+
+    fun updateOwner(accountContext: AccountContext, gid: Long, ownerUid: String) {
+        getDao(accountContext)?.updateOwner(gid, ownerUid)
+    }
 }
