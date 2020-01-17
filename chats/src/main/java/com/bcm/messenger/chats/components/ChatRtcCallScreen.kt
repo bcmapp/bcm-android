@@ -92,6 +92,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
     constructor(context: Context, accountContext: AccountContext) : super(context, null, 0) {
         this.accountContext = accountContext
+        initialize()
     }
 
     constructor(context: Context) : this(context, null)
@@ -684,7 +685,6 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                 postDelayed({
                     mListener?.onEnd(mRecipient)
                 }, WebRtcCallService.FINISH_DELAY)
-
             } else {
                 val intent = Intent(context, WebRtcCallService::class.java)
                 intent.action = WebRtcCallService.ACTION_LOCAL_HANGUP
