@@ -93,6 +93,7 @@ class ServerConnection(private val accountContext: AccountContext, private val s
     fun disconnect() {
         ACLog.i(accountContext, TAG, "WSC disconnect()...")
 
+        websocketEvent.destroyed = true
         clearConnection(1000, "OK")
         updateConnectState(connectState)
     }
