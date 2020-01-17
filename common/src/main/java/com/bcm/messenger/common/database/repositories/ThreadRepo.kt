@@ -4,11 +4,11 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
-import com.bcm.messenger.common.deprecated.MessagingDatabase
 import com.bcm.messenger.common.database.model.ThreadDbModel
 import com.bcm.messenger.common.database.records.AttachmentRecord
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.database.records.ThreadRecord
+import com.bcm.messenger.common.deprecated.MessagingDatabase
 import com.bcm.messenger.common.grouprepository.manager.GroupLiveInfoManager
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
@@ -17,7 +17,6 @@ import com.bcm.messenger.common.grouprepository.room.entity.GroupLiveInfo
 import com.bcm.messenger.common.mms.PartAuthority
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.AppContextHolder
-import com.bcm.messenger.utility.ClassHelper
 import com.bcm.messenger.utility.logger.ALog
 
 /**
@@ -209,7 +208,6 @@ class ThreadRepo(
     }
 
     fun updateThread(threadId: Long, record: MessageRecord?, time: Long? = null) {
-        ALog.i("updateThread", ClassHelper.getCallStack())
         repository.runInTransaction {
             val threadModel = threadDao.queryThread(threadId)
             if (threadModel != null) {
@@ -255,7 +253,6 @@ class ThreadRepo(
     }
 
     fun updateByNewGroup(gid: Long, time: Long? = null) {
-        ALog.i("updateThread", ClassHelper.getCallStack())
         
         val message = GroupMessageTransform.transformToModel(MessageDataManager.fetchLastMessage(accountContext, gid))
         var threadId = getThreadIdIfExist(Recipient.recipientFromNewGroupId(accountContext, gid))
