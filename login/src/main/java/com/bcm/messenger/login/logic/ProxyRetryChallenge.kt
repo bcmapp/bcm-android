@@ -10,6 +10,7 @@ import com.bcm.messenger.login.R
 import com.bcm.messenger.login.bean.ChallengeResult
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.common.bcmhttp.RxIMHttp
+import com.bcm.messenger.utility.bcmhttp.exception.ConnectionException
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.netswitchy.proxy.IProxyStateChanged
@@ -20,9 +21,9 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.util.*
 
-object ProxyRetryChallenge: IProxyStateChanged {
+object ProxyRetryChallenge : IProxyStateChanged {
     private const val ACCOUNT_CHALLENGE = "/v1/accounts/challenge/%s"
-    private var observableEmitter    = EmitterProxy(null)
+    private var observableEmitter = EmitterProxy(null)
     private var stashUid = ""
 
     fun request(uid: String): Observable<ChallengeResult> {
@@ -36,16 +37,20 @@ object ProxyRetryChallenge: IProxyStateChanged {
                     null, object : TypeToken<ChallengeResult>() {}.type)
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe ({ challenge ->
+                    .subscribe({ challenge ->
                         RxIMHttp.remove(accountContext)
                         IMHttp.remove(accountContext)
                         observableEmitter.onComplete(challenge)
                     }, { e ->
-                        RxIMHttp.remove(accountContext)
-                        IMHttp.remove(accountContext)
-                        AmePopup.tipLoading.updateTip(AppUtil.getString(R.string.login_loading_connecting_server))
-                        tryProxy(e)}
-                    )
+                        if (e is ConnectionException) {
+                            RxIMHttp.remove(accountContext)
+                            IMHttp.remove(accountContext)
+                            AmePopup.tipLoading.updateTip(AppUtil.getString(R.string.login_loading_connecting_server))
+                            tryProxy(e)
+                        } else {
+                            observableEmitter.onError(e)
+                        }
+                    })
         }
     }
 
@@ -92,11 +97,11 @@ object ProxyRetryChallenge: IProxyStateChanged {
                     null, object : TypeToken<ChallengeResult>() {}.type)
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe ({ challenge ->
+                    .subscribe({ challenge ->
                         RxIMHttp.remove(accountContext)
                         IMHttp.remove(accountContext)
                         observableEmitter.onComplete(challenge)
-                    },{
+                    }, {
                         RxIMHttp.remove(accountContext)
                         IMHttp.remove(accountContext)
                         observableEmitter.onError(it)
@@ -106,8 +111,8 @@ object ProxyRetryChallenge: IProxyStateChanged {
         }
     }
 
-    private class EmitterProxy(var emiter:ObservableEmitter<ChallengeResult>?) {
-        fun onError(e:Throwable) {
+    private class EmitterProxy(var emiter: ObservableEmitter<ChallengeResult>?) {
+        fun onError(e: Throwable) {
             emiter?.onError(e)
             emiter = null
         }
