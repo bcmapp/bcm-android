@@ -268,8 +268,8 @@ class LoginModuleImpl : ILoginModule
     }
 
     private fun tryRunProxy() {
-        val provider = AmeModuleCenter.adhoc(AMELogin.majorContext)
-        if (NetworkUtil.isConnected() && provider?.isAdHocMode() != true) {
+        val provider = AmeModuleCenter.adhoc()
+        if (NetworkUtil.isConnected() && !provider.isAdHocMode()) {
             if (AppForeground.foreground()) {
                 if (lastTryProxyTime > 0) {
                     return
@@ -295,8 +295,8 @@ class LoginModuleImpl : ILoginModule
     }
 
     override fun onProxyConnectFinished() {
-        val provider = AmeModuleCenter.adhoc(AMELogin.majorContext)
-        if (provider?.isAdHocMode() != true) {
+        val provider = AmeModuleCenter.adhoc()
+        if (!provider.isAdHocMode()) {
             if (!ProxyManager.isProxyRunning()) {
                 if (!AMELogin.isLogin) {
                     if (AppForeground.foreground() && !ProxyManager.isTesting()) {

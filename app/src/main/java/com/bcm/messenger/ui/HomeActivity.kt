@@ -124,11 +124,14 @@ class HomeActivity : AccountSwipeBaseActivity() {
         val adHocMainTag = "adhoc_main"
         val adHocMainFragment = supportFragmentManager.findFragmentByTag(adHocMainTag)
 
-        val adhocMode = AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true
+
+        val adhocMode = AmeModuleCenter.adhoc().isAdHocMode()
         if (adhocMode) {
             if (null != adHocMainFragment) {
                 return true
             }
+
+            AmeModuleCenter.adhoc().initModule()
             val addFragment = supportFragmentManager.beginTransaction()
 
             val adhocUid = AmeModuleCenter.login().getAdHocUid()
@@ -153,6 +156,8 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
             return true
         } else {
+            AmeModuleCenter.adhoc().uninitModule()
+
             if (null != adHocMainFragment) {
                 val removeFragment = supportFragmentManager.beginTransaction()
                 removeFragment.remove(adHocMainFragment).commitNow()
@@ -280,7 +285,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            val adhocMode = AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true
+            val adhocMode = AmeModuleCenter.adhoc().isAdHocMode()
             if (home_pull_down_layout.isTopViewExpanded() && !adhocMode) {
                 home_pull_down_layout.closeTopViewAndCallback()
                 return true

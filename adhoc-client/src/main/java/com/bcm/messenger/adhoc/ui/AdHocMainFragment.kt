@@ -178,6 +178,8 @@ class AdHocMainFragment: BaseFragment(),
             wSelf.get()?.updateAdHocState()
         }
         titleSwitcher?.setText(adHocStep.getStepDescribe())
+
+        onScanStateChanged(AdHocChannelLogic.get(accountContext).getConnState())
     }
 
     private fun updateAdHocState() {

@@ -1,13 +1,14 @@
 package com.bcm.messenger.common.provider.accountmodule
 
 import android.content.Context
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.IAmeModule
 
 
-interface IAdHocModule: IAmeAccountModule {
+interface IAdHocModule: IAmeModule {
 
     fun isAdHocMode(): Boolean
-    fun configHocMode()
+    fun configHocMode(accountContext: AccountContext)
     fun repairAdHocServer()
     fun repairAdHocScanner()
 

@@ -29,7 +29,10 @@ class AdHocSessionLogic(private val accountContext: AccountContext) : AdHocSDK.I
             }
         }
 
-        fun remove() {
+        fun remove(accountContext: AccountContext) {
+            if (accountContext != this.logic?.accountContext) {
+                return
+            }
             logic = null
         }
     }

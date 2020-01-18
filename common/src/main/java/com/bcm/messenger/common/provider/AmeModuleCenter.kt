@@ -35,7 +35,7 @@ object AmeModuleCenter {
         user(accountContext)?.initModule()
         metric(accountContext)?.initModule()
         wallet(accountContext)?.initModule()
-        adhoc(accountContext)?.initModule()
+
     }
 
     fun unInit(accountContext: AccountContext) {
@@ -45,7 +45,6 @@ object AmeModuleCenter {
         user(accountContext)?.uninitModule()
         metric(accountContext)?.uninitModule()
         wallet(accountContext)?.uninitModule()
-        adhoc(accountContext)?.initModule()
         AmeProvider.removeModule(accountContext)
     }
 
@@ -81,8 +80,8 @@ object AmeModuleCenter {
         return AmeProvider.getAccountModule(ARouterConstants.Provider.REPORT_BASE, accountContext)
     }
 
-    fun adhoc(accountContext: AccountContext): IAdHocModule? {
-        return AmeProvider.getAccountModule(ARouterConstants.Provider.PROVIDER_AD_HOC, accountContext)
+    fun adhoc(): IAdHocModule {
+        return AmeProvider.get(ARouterConstants.Provider.PROVIDER_AD_HOC)!!
     }
 
     fun app(): IAmeAppModule {
@@ -119,7 +118,7 @@ object AmeModuleCenter {
 
         contact(accountContext)?.doForLogin()
 
-        if (adhoc(accountContext)?.isAdHocMode() != true) {
+        if (!adhoc().isAdHocMode()) {
             serverDaemon(accountContext).startDaemon()
             serverDaemon(accountContext).startConnection()
         }

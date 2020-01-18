@@ -191,8 +191,8 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
             if (!isActive) {
                 return@setOnClickListener
             }
-            val adhocModule = AmeModuleCenter.adhoc(accountItem.accountContext)
-            adhocModule?.configHocMode()
+            val adhocModule = AmeModuleCenter.adhoc()
+            adhocModule.configHocMode(accountItem.accountContext)
         }
 
         showAllViews()

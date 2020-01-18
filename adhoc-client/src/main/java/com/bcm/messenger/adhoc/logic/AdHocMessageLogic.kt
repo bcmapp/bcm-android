@@ -47,7 +47,10 @@ class AdHocMessageLogic(private val accountContext: AccountContext) : AdHocSessi
             }
         }
 
-        fun remove() {
+        fun remove(accountContext: AccountContext) {
+            if (accountContext != this.logic?.accountContext) {
+                return
+            }
             logic = null
         }
     }
@@ -73,6 +76,8 @@ class AdHocMessageLogic(private val accountContext: AccountContext) : AdHocSessi
     init {
         AdHocChannelLogic.get(accountContext).addListener(this)
         messengerSdk.addEventListener(this)
+
+        onScanStateChanged(AdHocChannelLogic.get(accountContext).getConnState())
     }
 
     override fun onRecycle() {

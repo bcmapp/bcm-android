@@ -118,8 +118,7 @@ class  MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySt
         } else if (OFFLINE == state) {
             val a = this.accountContext
             if (a != null) {
-                val adhocProvider = AmeModuleCenter.adhoc(a)
-                adhocProvider?.configHocMode()
+                AmeModuleCenter.adhoc().configHocMode(a)
             }
         }
     }

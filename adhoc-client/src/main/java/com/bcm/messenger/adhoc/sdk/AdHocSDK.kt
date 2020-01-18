@@ -219,7 +219,7 @@ object AdHocSDK {
 
     private val adHocListener = object : IAdHocListener.Stub() {
         override fun onServerStateChanged(serverSSID: String, serverIp: String, myIp: String, status: Int, errorCode: Int) {
-            ALog.i(TAG, "onServerStateChanged status:$status error:$errorCode")
+            ALog.i(TAG, "onServerStateChanged status:$status error:$errorCode $serverIp $myIp")
             AmeDispatcher.singleScheduler.scheduleDirect {
                 netSnapshot.serverName = deviceNameFromSSID(serverSSID)
                 netSnapshot.serverIp = serverIp
@@ -260,7 +260,7 @@ object AdHocSDK {
         }
 
         override fun onClientStateChanged(clientIp: String, connected: Boolean) {
-            ALog.i(TAG, "onClientStateChanged $connected")
+            ALog.i(TAG, "onClientStateChanged $connected $clientIp")
             AmeDispatcher.singleScheduler.scheduleDirect {
                 if (connected) {
                     netSnapshot.clientSet.add(clientIp)

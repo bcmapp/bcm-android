@@ -28,7 +28,10 @@ class AdHocChannelLogic(private val accountContext: AccountContext): AdHocSDK.IA
             }
         }
 
-        fun remove() {
+        fun remove(accountContext: AccountContext) {
+            if (accountContext != this.logic?.accountContext) {
+                return
+            }
             logic = null
         }
     }
@@ -49,6 +52,10 @@ class AdHocChannelLogic(private val accountContext: AccountContext): AdHocSDK.IA
 
     fun instance(): AdHocChannelLogic {
         return this
+    }
+
+    fun getConnState():IAdHocChannelListener.CONNECT_STATE {
+        return mLastState?:IAdHocChannelListener.CONNECT_STATE.SCANNING
     }
 
     /**

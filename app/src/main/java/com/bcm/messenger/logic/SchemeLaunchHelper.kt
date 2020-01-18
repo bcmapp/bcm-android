@@ -373,8 +373,8 @@ class SchemeLaunchHelper(val context: Context) {
     private fun toAdHoc(accountContext: AccountContext, data: AmePushProcess.AdHocNotifyData?) {
         val current = AmeAppLifecycle.current() ?: return
         if (!data?.session.isNullOrEmpty()) {
-            val adHocProvider = AmeModuleCenter.adhoc(accountContext)
-            if (adHocProvider?.isAdHocMode() == true) {
+            val adHocProvider = AmeModuleCenter.adhoc()
+            if (adHocProvider.isAdHocMode()) {
                 BcmRouter.getInstance()
                         .get(ARouterConstants.Activity.ADHOC_CONVERSATION)
                         .putString(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, data?.session)

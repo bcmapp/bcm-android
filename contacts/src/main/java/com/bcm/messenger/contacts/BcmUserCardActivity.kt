@@ -67,7 +67,7 @@ class BcmUserCardActivity: AccountSwipeBaseActivity(), RecipientModifiedListener
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            if (isProfileUpdated || AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true) {
+            if (isProfileUpdated || AmeModuleCenter.adhoc().isAdHocMode()) {
                 goChat()
             } else {
                 AmePopup.loading.show(this)
@@ -88,7 +88,7 @@ class BcmUserCardActivity: AccountSwipeBaseActivity(), RecipientModifiedListener
             }
 
             override fun onClickRight() {
-                if (AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true) {
+                if (AmeModuleCenter.adhoc().isAdHocMode()) {
                     return
                 }
                 val builder = AmePopup.bottom.newBuilder()
@@ -125,7 +125,7 @@ class BcmUserCardActivity: AccountSwipeBaseActivity(), RecipientModifiedListener
             }
         })
 
-        if (AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true) {
+        if (AmeModuleCenter.adhoc().isAdHocMode()) {
             title_bar.hideRightViews()
         }
 
@@ -138,7 +138,7 @@ class BcmUserCardActivity: AccountSwipeBaseActivity(), RecipientModifiedListener
 
         }
 
-        if (AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() != true) {
+        if (!AmeModuleCenter.adhoc().isAdHocMode()) {
             mProfileDispose = AmeModuleCenter.contact(accountContext)?.fetchProfile(recipient) {
                 isProfileUpdated = true
                 if (isWaitToChat) {
@@ -171,8 +171,8 @@ class BcmUserCardActivity: AccountSwipeBaseActivity(), RecipientModifiedListener
     }
 
     private fun updateActionState(recipient: Recipient) {
-        val allowChat = AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true || recipient.isFriend || recipient.isAllowStranger
-        val allowAdd = AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() != true && !recipient.isFriend
+        val allowChat = AmeModuleCenter.adhoc().isAdHocMode() || recipient.isFriend || recipient.isAllowStranger
+        val allowAdd = !AmeModuleCenter.adhoc().isAdHocMode() && !recipient.isFriend
 
         if (allowChat) {
             friend_chat.isEnabled = true
@@ -203,8 +203,8 @@ class BcmUserCardActivity: AccountSwipeBaseActivity(), RecipientModifiedListener
 
     private fun goChat() {
         val recipient = mRecipient ?: return
-        if (AmeModuleCenter.adhoc(accountContext)?.isAdHocMode() == true) {
-            AmeModuleCenter.adhoc(accountContext)?.gotoPrivateChat(this, recipient.address.serialize())
+        if (AmeModuleCenter.adhoc().isAdHocMode()) {
+            AmeModuleCenter.adhoc().gotoPrivateChat(this, recipient.address.serialize())
         }else {
             AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
                     HomeTopEvent.ConversationEvent.fromPrivateConversation(recipient.address.serialize(), false)))

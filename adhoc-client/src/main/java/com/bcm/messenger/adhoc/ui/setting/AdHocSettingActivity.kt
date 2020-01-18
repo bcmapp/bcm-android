@@ -59,13 +59,11 @@ class AdHocSettingActivity : AccountSwipeBaseActivity() {
     private fun updateState() {
         if (AdHocSetting.isEnable()) {
             AmeModuleCenter.login().setAdHocUid(accountContext.uid)
-            AmeModuleCenter.adhoc(accountContext)
             adhoc_setting_mode_enable.setBackgroundResource(R.drawable.common_red_tint_bg)
             adhoc_setting_mode_enable.text = getString(R.string.adhoc_setting_disable_airchat)
             adhoc_setting_mode_enable.setTextColor(AppUtil.getColor(resources, R.color.common_color_ff3737))
         } else {
             AmeModuleCenter.login().setAdHocUid("")
-            AmeModuleCenter.removeModule(accountContext, ARouterConstants.Provider.PROVIDER_AD_HOC)
             adhoc_setting_mode_enable.setBackgroundResource(R.drawable.common_blue_bg)
             adhoc_setting_mode_enable.text = getString(R.string.adhoc_setting_enable_airchat)
             adhoc_setting_mode_enable.setTextColor(AppUtil.getColor(resources, R.color.common_color_white))

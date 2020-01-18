@@ -22,7 +22,7 @@ class AdHocDeviceRequire(accountContext: AccountContext, private val activity: A
     private var checking: Boolean = false
     private var needRequire: Boolean = false
     private var screenOn: Boolean = true
-    private val provider = AmeModuleCenter.adhoc(accountContext)
+    private val provider = AmeModuleCenter.adhoc()
 
     fun require() {
         needRequire = true
@@ -91,20 +91,20 @@ class AdHocDeviceRequire(accountContext: AccountContext, private val activity: A
                 ALog.i(TAG, "checkRequirement WiFi enable $it")
 
                 if (it) {
-                    provider?.repairAdHocServer()
+                    provider.repairAdHocServer()
                 }
 
                 checking = false
                 if (!cancel) {
                     checkWiFi()
                 } else {
-                    provider?.startAdHocServer(false)
+                    provider.startAdHocServer(false)
                     checkBLE()
                 }
             }
             return
         } else {
-            provider?.startAdHocServer(true)
+            provider.startAdHocServer(true)
         }
 
         checkBLE()
@@ -118,25 +118,25 @@ class AdHocDeviceRequire(accountContext: AccountContext, private val activity: A
                 BleUtil.enableBLE(activity, AppUtil.getString(R.string.common_ble_go_setting)) { it, cancel ->
                     ALog.i(TAG, "checkRequirement BLE enable $it")
                     if (it) {
-                        provider?.repairAdHocScanner()
+                        this.provider.repairAdHocScanner()
                     }
 
                     AmeDispatcher.mainThread.dispatch({
                         if (BleUtil.isEnable() && !it) {
-                            provider?.repairAdHocScanner()
+                            this.provider?.repairAdHocScanner()
                         }
                         checking = false
                         if (!cancel) {
                             checkBLE()
                         } else {
-                            provider?.startBroadcast(false)
+                            this.provider.startBroadcast(false)
                             checkGPS()
                         }
                     }, 500)
                 }
                 return
             } else {
-                provider?.startBroadcast(true)
+                provider.startBroadcast(true)
             }
         }
         checkGPS()

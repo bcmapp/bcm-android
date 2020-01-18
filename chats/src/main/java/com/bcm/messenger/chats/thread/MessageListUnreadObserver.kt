@@ -97,7 +97,7 @@ class MessageListUnreadObserver {
     private fun observeOthers() {
         RxBus.subscribe<HomeTabEvent>(TAG) {
             ALog.i(TAG, "receive HomeTabEvent position: ${it.position}, figure: ${it.showFigure}")
-            val adhocMode = AmeModuleCenter.adhoc(AMELogin.majorContext)?.isAdHocMode() == true
+            val adhocMode = AmeModuleCenter.adhoc().isAdHocMode()
             when (it.position) {
                 TAB_ADHOC -> {
                     if ((it.showFigure != null || it.showDot != null) && adhocMode) {
