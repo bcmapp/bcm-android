@@ -203,6 +203,10 @@ class HomeActivity : AccountSwipeBaseActivity() {
                 checkSchemeLaunch()
             }
             checkBackupNotice()
+
+            if (accountContext.isLogin) {
+                AmeModuleCenter.serverDaemon(accountContext).checkConnection(false)
+            }
         }
 
         // check need fetch profile or avatar
@@ -642,9 +646,11 @@ class HomeActivity : AccountSwipeBaseActivity() {
         checkBackupNotice()
 
         val unreadStatus = unreadMap[newAccountContext] ?: return
-        if (accountContext == this@HomeActivity.accountContext) {
+        if (newAccountContext == this@HomeActivity.accountContext) {
             messageListFragment?.updateFriendRequest(unreadStatus.friendUnhandle, unreadStatus.friendUnread)
         }
+
+        AmeModuleCenter.serverDaemon(newAccountContext).checkConnection(false)
     }
 
     override fun onLoginStateChanged() {
