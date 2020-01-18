@@ -54,6 +54,7 @@ class AdHocModuleImpl : IAdHocModule {
 
     override fun startScan(start: Boolean) {
         if (start) {
+            this.accountContext?:return
             AdHocSDK.startScan()
         } else {
             AdHocSDK.stopScan()
