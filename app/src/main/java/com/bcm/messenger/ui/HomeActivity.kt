@@ -23,6 +23,7 @@ import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.server.ConnectState
 import com.bcm.messenger.common.ui.BcmRecyclerView
 import com.bcm.messenger.common.ui.CommonShareView
 import com.bcm.messenger.common.ui.ConstraintPullDownLayout
@@ -148,8 +149,11 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
             home_adhoc_main.visibility = View.VISIBLE
 
-            AmeModuleCenter.serverDaemon(accountContext).stopDaemon()
-            AmeModuleCenter.serverDaemon(accountContext).stopConnection()
+            val loginList = AmeLoginLogic.accountHistory.getAllLoginContext()
+            for (accountContext in loginList) {
+                AmeModuleCenter.serverDaemon(accountContext).stopDaemon()
+                AmeModuleCenter.serverDaemon(accountContext).stopConnection()
+            }
 
             mPixelManager = PixelManager.Builder().target(PixelActivity::class.java).build()
             mPixelManager?.start(AppContextHolder.APP_CONTEXT)
@@ -165,8 +169,13 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
             home_adhoc_main.visibility = View.GONE
 
-            AmeModuleCenter.serverDaemon(accountContext).startDaemon()
-            AmeModuleCenter.serverDaemon(accountContext).checkConnection(true)
+            val loginList = AmeLoginLogic.accountHistory.getAllLoginContext()
+            for (accountContext in loginList) {
+                if (AmeModuleCenter.serverDaemon(accountContext).state() != ConnectState.CONNECTED) {
+                    AmeModuleCenter.serverDaemon(accountContext).startDaemon()
+                    AmeModuleCenter.serverDaemon(accountContext).checkConnection(true)
+                }
+            }
 
             mPixelManager?.quit(AppContextHolder.APP_CONTEXT)
         }

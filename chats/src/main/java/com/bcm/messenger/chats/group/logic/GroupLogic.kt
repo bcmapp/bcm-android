@@ -736,9 +736,13 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
             if (dbGroupInfo.role == AmeGroupMemberInfo.OWNER) {
                 if ((oldSecretKey != dbGroupInfo.infoSecret || TextUtils.isEmpty(dbGroupInfo.shareCodeSetting))) {
-                    updateShareSetting(dbGroupInfo.gid, true) { succeed, shareCode, error ->
-                        ACLog.i(accountContext, TAG, "parseGroupInfo adjust group info succeed:$succeed $error")
-                    }
+                    AmeDispatcher.io.dispatch({
+                        updateShareSetting(dbGroupInfo.gid, true) { succeed, shareCode, error ->
+                            ACLog.i(accountContext, TAG, "parseGroupInfo adjust group info succeed:$succeed $error")
+                        }
+
+                        updateNeedConfirm(dbGroupInfo.gid, true){_,_ -> }
+                    }, 500)
                 } else if (groupCache.isBroadcastSharingData(info.gid)) {
                     broadcastShareSettingRefresh(info.gid)
                 }
