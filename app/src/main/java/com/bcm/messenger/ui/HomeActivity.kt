@@ -643,6 +643,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
         titleView.updateContext(newAccountContext)
         home_toolbar_avatar.showRecipientAvatar(accountRecipient)
         messageListFragment?.updateAccountContext(newAccountContext)
+        home_pull_down_layout.resetReachTop()
         checkBackupNotice()
 
         val unreadStatus = unreadMap[newAccountContext] ?: return

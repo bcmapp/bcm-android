@@ -313,6 +313,10 @@ class ConstraintPullDownLayout @JvmOverloads constructor(context: Context, attrs
         })
     }
 
+    fun resetReachTop() {
+        isScrollViewReachTop = true
+    }
+
     /**
      * 设置需要下拉显示的顶部View
      *
