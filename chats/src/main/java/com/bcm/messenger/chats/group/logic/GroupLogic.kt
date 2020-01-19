@@ -1313,7 +1313,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
         @Subscribe
         fun onEvent(event: GroupShareSettingRefreshEvent) {
             val owner = GroupInfoDataManager.queryOneGroupInfo(accountContext, event.gid)?.owner
-            if (owner == null || owner.isEmpty()) {
+            if (owner == null || owner.isEmpty() || owner == accountContext.uid) {
                 ACLog.w(accountContext, TAG, "GroupShareSettingRefreshEvent ${event.gid}  group info is null")
                 return
             }
@@ -1341,7 +1341,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                                         groupInfo.shareCodeSetting,
                                         groupInfo.shareCodeSettingSign,
                                         groupInfo.shareSettingAndConfirmSign,
-                                        groupInfo.ephemeralKey?:"")
+                                        event.eKey?:"")
 
                                 groupCache.updateNeedConfirm(groupInfo.gid,
                                         groupInfo.needOwnerConfirm,
@@ -2058,7 +2058,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             if (groupInfo?.role == AmeGroupMemberInfo.OWNER) {
                 groupCache.setBroadcastSharingData(gid, true)
                 val message = AmeGroupMessage.GroupShareSettingRefreshContent(groupInfo.shareCode,
-                        groupInfo.shareCodeSetting, groupInfo.shareCodeSettingSign, groupInfo.shareSettingAndConfirmSign, groupInfo.needOwnerConfirm)
+                        groupInfo.shareCodeSetting, groupInfo.shareCodeSettingSign, groupInfo.shareSettingAndConfirmSign, groupInfo.needOwnerConfirm, groupInfo.ephemeralKey)
                 GroupMessageLogic.get(accountContext).messageSender.sendMessage(gid, AmeGroupMessage(AmeGroupMessage.GROUP_SHARE_SETTING_REFRESH, message), false) {
                     ACLog.i(accountContext, TAG, "broadcastShareSettingRefresh succeed: $it")
                     if (it) {

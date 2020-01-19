@@ -1258,7 +1258,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
     class SecureContent() : Content()
 
-    class GroupShareSettingRefreshContent(val shareCode:String, val shareSetting: String, val shareSettingSign:String, val shareAndOwnerConfirmSign:String, val needConfirm:Int ):Content() {
+    class GroupShareSettingRefreshContent(val shareCode:String, val shareSetting: String, val shareSettingSign:String, val shareAndOwnerConfirmSign:String, val needConfirm:Int, val ekey: String? ):Content() {
 
     }
 

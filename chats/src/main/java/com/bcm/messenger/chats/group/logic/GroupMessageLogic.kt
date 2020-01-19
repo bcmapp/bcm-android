@@ -334,7 +334,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                     GroupLogic.get(accountContext).updateGroupInfoPinMid(gid, message.mid)
                 }
                 is AmeGroupMessage.GroupShareSettingRefreshContent -> {
-                    EventBus.getDefault().post(GroupShareSettingRefreshEvent(gid, message.shareCode, message.shareSetting, message.shareSettingSign, message.shareAndOwnerConfirmSign, message.needConfirm))
+                    EventBus.getDefault().post(GroupShareSettingRefreshEvent(gid, message.shareCode, message.shareSetting, message.shareSettingSign, message.shareAndOwnerConfirmSign, message.needConfirm, message.ekey))
                 }
             }
         }
