@@ -1,7 +1,6 @@
 package com.bcm.messenger.me.provider
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -14,13 +13,11 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.repositories.Repository
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.server.IServerConnectForceLogoutListener
 import com.bcm.messenger.common.server.KickEvent
-import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
@@ -33,7 +30,6 @@ import com.bcm.messenger.me.logic.AmeNoteLogic
 import com.bcm.messenger.me.logic.AmePinLogic
 import com.bcm.messenger.me.logic.FeedbackReport
 import com.bcm.messenger.me.ui.keybox.SwitchAccount
-import com.bcm.messenger.me.ui.login.RegistrationActivity
 import com.bcm.messenger.me.ui.note.AmeNoteActivity
 import com.bcm.messenger.me.ui.note.AmeNoteUnlockActivity
 import com.bcm.messenger.me.utils.MeConfirmDialog
@@ -50,13 +46,11 @@ import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.whispersystems.curve25519.Curve25519
 import org.whispersystems.libsignal.ecc.DjbECPublicKey
 import java.io.File
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 /**
  * Created by wjh on 2018/7/3
@@ -263,7 +257,7 @@ class UserModuleImp : IUserModule
         val privateKeyArray = checkOldPasswordRight(oldPassword)
         val newPrivateKey = BCMPrivateKeyUtils.encryptPrivateKey(privateKeyArray, newPassword.toByteArray())
 
-        val account = AmeLoginLogic.getMajorAccount()
+        val account = AmeLoginLogic.getAccount(accountContext.uid)
         if (account == null) {
             ALog.e(TAG, "change pin without login")
             return false
@@ -313,7 +307,7 @@ class UserModuleImp : IUserModule
     }
 
     override fun getDefaultPinPassword(): String? {
-        var phone = AmeLoginLogic.getMajorAccount()?.phone ?: return null
+        var phone = AmeLoginLogic.getAccount(accountContext.uid)?.phone ?: return null
         try {
             if (isPhoneEncrypted(phone)) {
                 phone = decryptPhone(phone)
@@ -349,7 +343,7 @@ class UserModuleImp : IUserModule
 
     @Throws(Exception::class)
     private fun checkOldPasswordRight(oldPassword: String): ByteArray {
-        val account = AmeLoginLogic.getMajorAccount()
+        val account = AmeLoginLogic.getAccount(accountContext.uid)
         if (null != account) {
             val result = AmeLoginLogic.accountHistory.getPrivateKeyWithPassword(account, oldPassword)
             if (null != result) {
@@ -390,7 +384,7 @@ class UserModuleImp : IUserModule
 
     override fun getUserPrivateKey(password: String): ByteArray? {
         try {
-            val account = AmeLoginLogic.getMajorAccount() ?: return null
+            val account = AmeLoginLogic.getAccount(accountContext.uid) ?: return null
             return AmeLoginLogic.accountHistory.getPrivateKeyWithPassword(account, password)
         } catch (ex: Exception) {
             return null

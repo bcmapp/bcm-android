@@ -14,14 +14,12 @@ import com.bcm.messenger.common.crypto.AccountMasterSecret
 import com.bcm.messenger.common.crypto.IdentityKeyUtil
 import com.bcm.messenger.common.crypto.MasterSecretUtil
 import com.bcm.messenger.common.crypto.PreKeyUtil
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.database.repositories.IdentityRepo
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.event.NewAccountAddedEvent
 import com.bcm.messenger.common.gcm.FcmUtil
 import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IUmengModule
@@ -58,7 +56,6 @@ import java.io.File
 import java.net.URLEncoder
 import java.nio.ByteBuffer
 import java.util.*
-import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -161,8 +158,8 @@ object AmeLoginLogic {
     /**
      * save backup time
      */
-    fun saveCurrentBackup(time: Long) {
-        val account = accountHistory.majorAccountData()
+    fun saveCurrentBackup(accountContext: AccountContext, time: Long) {
+        val account = getAccount(accountContext.uid)
         if (account != null) {
             var newTime = min(time, AmeTimeUtil.localTimeSecond())
             if (newTime <= 0) {

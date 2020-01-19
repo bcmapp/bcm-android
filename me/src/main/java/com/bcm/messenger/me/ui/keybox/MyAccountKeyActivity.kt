@@ -278,7 +278,7 @@ class MyAccountKeyActivity : AccountSwipeBaseActivity() {
 
     private fun handleBackupKey() {
         MeConfirmDialog.showBackupComplete(this, {}, {
-            AmeLoginLogic.saveCurrentBackup(AmeTimeUtil.localTimeSecond())
+            AmeLoginLogic.saveCurrentBackup(accountContext, AmeTimeUtil.localTimeSecond())
             initData()
         })
     }

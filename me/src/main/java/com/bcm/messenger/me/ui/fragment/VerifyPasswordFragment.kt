@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -74,7 +72,7 @@ class VerifyPasswordFragment : BaseFragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        fetchProfile(arguments?.getSerializable(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as? AccountContext)
+        fetchProfile()
 
         updateVerifyInput(verify_pin_input_text.text.isNotEmpty())
 
@@ -123,37 +121,33 @@ class VerifyPasswordFragment : BaseFragment() {
         }
     }
 
-    private fun fetchProfile(accountContext: AccountContext?) {
-        if (accountContext != null) {
-            val account = AmeLoginLogic.accountHistory.getAccount(accountContext.uid)
-            val realUid: String? = account?.uid
-            val name: String? = account?.name
-            val avatar: String? = account?.avatar
+    private fun fetchProfile() {
+        val account = AmeLoginLogic.accountHistory.getAccount(accountContext.uid)
+        val realUid: String? = account?.uid
+        val name: String? = account?.name
+        val avatar: String? = account?.avatar
 
-            if (!realUid.isNullOrEmpty()) {
-                val weakThis = WeakReference(this)
-                Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
-                    try {
-                        val recipient = Recipient.from(this.accountContext, realUid, false)
-                        val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
-                            avatar
-                        } else {
-                            null
-                        }
-                        recipient.setProfile(recipient.profileKey, name, finalAvatar)
-                        emitter.onNext(recipient)
-                    } finally {
-                        emitter.onComplete()
+        if (!realUid.isNullOrEmpty()) {
+            val weakThis = WeakReference(this)
+            Observable.create(ObservableOnSubscribe<Recipient> { emitter ->
+                try {
+                    val recipient = Recipient.from(this.accountContext, realUid, false)
+                    val finalAvatar = if (BcmFileUtils.isExist(avatar)) {
+                        avatar
+                    } else {
+                        null
                     }
-                }).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ recipient ->
-                            weakThis.get()?.verify_pin_name?.text = recipient.name
-                            weakThis.get()?.verify_pin_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
-                        }, {})
-            }
-        } else {
-            activity?.finish()
+                    recipient.setProfile(recipient.profileKey, name, finalAvatar)
+                    emitter.onNext(recipient)
+                } finally {
+                    emitter.onComplete()
+                }
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ recipient ->
+                        weakThis.get()?.verify_pin_name?.text = recipient.name
+                        weakThis.get()?.verify_pin_avatar?.setPhoto(recipient, IndividualAvatarView.KEYBOX_PHOTO_TYPE)
+                    }, {})
         }
     }
 
@@ -169,7 +163,7 @@ class VerifyPasswordFragment : BaseFragment() {
         verify_pin_loading.startAnim()
 
         Observable.create<Boolean> {
-            val accountData = AmeLoginLogic.getMajorAccount()
+            val accountData = AmeLoginLogic.getAccount(accountContext.uid)
             if (accountData != null) {
                 it.onNext(AmeLoginLogic.accountHistory.getPrivateKeyWithPassword(accountData, inputPassword) != null)
             } else {
