@@ -98,9 +98,9 @@ class LaunchActivity : AppCompatActivity() {
 
     private fun routeToHome() {
         ALog.i(TAG, "routeToHome")
-        SchemeLaunchHelper.storeSchemeIntent(null)
-        intent.component = ComponentName(this, HomeActivity::class.java)
-        startBcmActivity(AMELogin.majorContext, intent.apply {
+        SchemeLaunchHelper.storeSchemeIntent(intent)
+
+        startBcmActivity(AMELogin.majorContext, Intent(this, HomeActivity::class.java).apply {
             if (isTaskRoot) {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
             }

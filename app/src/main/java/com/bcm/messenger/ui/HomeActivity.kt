@@ -79,6 +79,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
         if (accountContext != AMELogin.majorContext) {
             setAccountContext(AMELogin.majorContext)
         }
+        Intent.FLAG_ACTIVITY_NEW_TASK
 
         setSwipeBackEnable(false)
 
@@ -237,7 +238,6 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
         if (AmeModuleCenter.user(accountContext)?.isPinLocked() == true) {
             AmeModuleCenter.user(accountContext)?.showPinLock()
-            SchemeLaunchHelper.storeSchemeIntent(newIntent)
         } else {
             //查看系统banner消息是否存在
             AmePushProcess.checkSystemBannerNotice()

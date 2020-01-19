@@ -101,7 +101,6 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             this.listenerRef = WeakReference(listener ?: noneListener)
         }
 
-
         internal fun updateGroupFinderSource() {
             mGroupFinderDispose?.dispose()
             mGroupFinderDispose = Observable.create<Boolean> {

@@ -284,11 +284,11 @@ class SchemeLaunchHelper(val context: Context) {
         try {
             ALog.i(TAG, "routeToChat by message")
 
-            val notify = Gson().fromJson(message, AmePushProcess.BcmNotify::class.java)
+            val notify = GsonUtils.fromJson(message, AmePushProcess.BcmNotify::class.java)
             val accountContext = checkTargetHashRight(notify.targetHash) ?: return
             notify.contactChat?.uid?.let {
                 try {
-                    val decryptSource = BCMEncryptUtils.decryptSource(accountContext, it.toByteArray())
+                    val decryptSource = it
                     notify.contactChat?.uid = decryptSource
                 } catch (e: Exception) {
                     ALog.e(TAG, "Uid decrypted failed!")

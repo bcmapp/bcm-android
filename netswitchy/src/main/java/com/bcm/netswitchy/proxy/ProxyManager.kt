@@ -437,7 +437,7 @@ object ProxyManager : INetworkConnectionListener, ProxyRunner.IProxyRunResult, P
 
     private fun saveCustomProxy() {
         if (customList.isNotEmpty()) {
-            proxyEditor.set(PROXY_CUSTOM, customList.map { "${it.value.params.name}\r${it.value.content}" }.toMutableSet())
+            proxyEditor.set(PROXY_CUSTOM, customList.map { "${it.value.params.name}\t${it.value.content}" }.toMutableSet())
         } else {
             proxyEditor.remove(PROXY_CUSTOM)
         }
@@ -459,8 +459,17 @@ object ProxyManager : INetworkConnectionListener, ProxyRunner.IProxyRunResult, P
         }
 
         val customStringList = proxyEditor.get(PROXY_CUSTOM, mutableSetOf())
-        customStringList.forEach {
-            val split = it.split('\r')
+        customStringList.forEach {p ->
+            val it = p.trim('\n', '\r')
+            var split = it.split('\t')
+            if (split.size == 1) {
+                split = it.split('\r')
+                if (split.size == 1) {
+                    split = it.split('\n')
+                }
+            }
+
+
             if (split.size == 2) {
                 val param = ProxyParamsParser.parse(split[1])
                 param?.name = split[0]

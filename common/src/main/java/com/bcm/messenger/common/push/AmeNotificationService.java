@@ -29,6 +29,7 @@ import com.bcm.route.api.BcmRouter;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.Serializable;
 
 /**
  * Created by bcm.social.01 on 2018/6/28.
@@ -73,7 +74,7 @@ public class AmeNotificationService extends Service {
                             toGroup(intent);
                             break;
                         case ACTION_HOME:
-                            toHome(intent);
+                            toHome();
                             break;
                         case ACTION_INSTALL:
                             toInstall(intent);
@@ -101,7 +102,7 @@ public class AmeNotificationService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void toHome(Intent intent) {
+    private void toHome() {
         BcmRouter.getInstance()
                 .get(ARouterConstants.Activity.APP_LAUNCH_PATH)
                 .navigation();
@@ -109,7 +110,7 @@ public class AmeNotificationService extends Service {
 
     private void toChat(Intent intent) {
         AmePushProcess.ChatNotifyData data = intent.getParcelableExtra(ACTION_DATA);
-        AccountContext accountContext = intent.getParcelableExtra(ACTION_CONTEXT);
+        AccountContext accountContext = getAccountContext(intent);
         if (data != null && data.getUid() != null) {
             long targetHash = 0L;
             if (accountContext != null) {
@@ -128,7 +129,7 @@ public class AmeNotificationService extends Service {
 
     private void toGroup(Intent intent){
         AmePushProcess.GroupNotifyData data = intent.getParcelableExtra(ACTION_DATA);
-        AccountContext accountContext = intent.getParcelableExtra(ACTION_CONTEXT);
+        AccountContext accountContext = getAccountContext(intent);
         if (data != null && data.getGid() != null && data.getMid() != null) {
             long targetHash = 0L;
             if (accountContext != null) {
@@ -141,6 +142,14 @@ public class AmeNotificationService extends Service {
         } else {
             ALog.e(TAG, "group - unknown push data");
         }
+    }
+
+    private AccountContext getAccountContext(Intent intent) {
+        Serializable context = intent.getSerializableExtra(ACTION_CONTEXT);
+        if (context instanceof AccountContext) {
+            return (AccountContext) context;
+        }
+        return null;
     }
 
     private void toInstall(Intent intent) {
@@ -184,7 +193,7 @@ public class AmeNotificationService extends Service {
         if (data == null) {
             data = new AmePushProcess.FriendNotifyData("", 1, "");
         }
-        AccountContext accountContext = intent.getParcelableExtra(ACTION_CONTEXT);
+        AccountContext accountContext = getAccountContext(intent);
         long targetHash = 0L;
         if (accountContext != null) {
             targetHash = BcmHash.hash(accountContext.getUid().getBytes());
@@ -197,7 +206,7 @@ public class AmeNotificationService extends Service {
 
     private void toAdHoc(Intent intent) {
         AmePushProcess.AdHocNotifyData data = intent.getParcelableExtra(ACTION_DATA);
-        AccountContext accountContext = intent.getParcelableExtra(ACTION_CONTEXT);
+        AccountContext accountContext = getAccountContext(intent);
         if (data != null && !TextUtils.isEmpty(data.getSession())) {
             long targetHash = 0L;
             if (accountContext != null) {
