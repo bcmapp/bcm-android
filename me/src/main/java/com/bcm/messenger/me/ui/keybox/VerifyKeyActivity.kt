@@ -1,18 +1,15 @@
 package com.bcm.messenger.me.ui.keybox
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.AccountSwipeBaseActivity
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.login.LoginVerifyPinFragment
 import com.bcm.messenger.me.ui.login.RegistrationActivity
 import com.bcm.route.annotation.Route
-import com.bcm.route.api.BcmRouter
 
 @Route(routePath = ARouterConstants.Activity.VERIFY_PASSWORD)
 class VerifyKeyActivity : AccountSwipeBaseActivity() {
@@ -34,7 +31,7 @@ class VerifyKeyActivity : AccountSwipeBaseActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish()
+            finishAfterTransition()
             return true
         }
         return super.onKeyDown(keyCode, event)

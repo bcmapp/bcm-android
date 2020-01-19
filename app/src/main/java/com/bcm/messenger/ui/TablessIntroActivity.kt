@@ -38,12 +38,12 @@ class TablessIntroActivity : AppCompatActivity() {
             SuperPreferences.setTablessIntroductionFlag(this@TablessIntroActivity)
             finish()
         }
-        
+
         migrateSettings()
     }
-    
+
     private fun migrateSettings() {
-        AmeDispatcher.io.dispatch { 
+        AmeDispatcher.io.dispatch {
             val majorContext = AMELogin.majorContext
             SuperPreferences.setNotificationsEnabled(AppContextHolder.APP_CONTEXT, TextSecurePreferences.isNotificationsEnabled(majorContext))
             SuperPreferences.setNotificationRingtone(AppContextHolder.APP_CONTEXT, TextSecurePreferences.getNotificationRingtone(majorContext))

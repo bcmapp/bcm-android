@@ -1328,7 +1328,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         ALog.d(TAG, "setCallInProgressNotification current: " + mCurrentNotificationType + ", new: " + type);
         mCurrentNotificationType = type;
         if (recipient != null) {
-            startForeground(CallNotificationBuilder.WEBRTC_NOTIFICATION, CallNotificationBuilder.getCallInProgressNotification(this, type, recipient));
+            startForeground(CallNotificationBuilder.WEBRTC_NOTIFICATION, CallNotificationBuilder.getCallInProgressNotification(this, this.accountContext, type, recipient));
         }
     }
 
