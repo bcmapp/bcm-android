@@ -58,14 +58,14 @@ class AmeAccountHistory {
         try {
             val minorUidListString = storage.get(AME_MINOR_LOGIN_ACCOUNT, "")
             if (minorUidListString.isNotEmpty()) {
-                minorAccountUids.addAll(Gson().fromJson(minorUidListString, object : TypeToken<List<String>>() {}.type))
+                minorAccountUids.addAll(GsonUtils.fromJson(minorUidListString, object : TypeToken<List<String>>() {}.type))
             }
 
             majorAccountUid = storage.get(AME_MAJOR_LOGIN_ACCOUNT, "")
 
             val accountListString = storage.get(AME_ACCOUNT_LIST, "")
             if (accountListString.isNotEmpty()) {
-                accountMap.putAll(Gson().fromJson(accountListString, object : TypeToken<HashMap<String, AmeAccountData>>() {}.type))
+                accountMap.putAll(GsonUtils.fromJson(accountListString, object : TypeToken<HashMap<String, AmeAccountData>>() {}.type))
             }
 
             var changed = 0
@@ -95,7 +95,11 @@ class AmeAccountHistory {
 
     private fun fixLoginState(account: AmeAccountData): Int {
         val accountContext = AccountContext(account.uid, "", "")
-        if (account.uid == majorAccountUid() && account.signalPassword.isEmpty()) {
+        if (majorAccountUid.isEmpty() && account.curLogin && account.signalPassword.isNotEmpty()) {
+            majorAccountUid = account.uid
+            account.curLogin = false
+            return 1
+        } else if (account.uid == majorAccountUid && account.signalPassword.isEmpty()) {
             ALog.i(TAG, "fix login state")
             account.registrationId = TextSecurePreferences.getLocalRegistrationId(accountContext)
             account.gcmDisabled = TextSecurePreferences.isGcmDisabled(accountContext)
