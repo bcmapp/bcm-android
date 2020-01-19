@@ -101,8 +101,14 @@ class LaunchActivity : AppCompatActivity() {
         SchemeLaunchHelper.storeSchemeIntent(null)
         intent.component = ComponentName(this, HomeActivity::class.java)
         startBcmActivity(AMELogin.majorContext, intent.apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+            if (isTaskRoot) {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
         })
+
+        if (!isTaskRoot) {
+            finish()
+        }
     }
 
     private fun routeToRegister() {

@@ -15,30 +15,6 @@ import com.google.gson.JsonSyntaxException
  * Created by bcm.social.01 on 2018/9/20.
  */
 object QRExport {
-    class ExportModel(val private: String?, val phone: String?, version: Int, val openID: String?, val keyGenTime: Long, val nickName: String?, val public: String?) : ExportModelBase(version) {
-
-        fun toAccountData(): AmeAccountData {
-            val accountData = AmeAccountData()
-            accountData.version = AmeAccountData.V2
-            accountData.mode = AmeAccountData.ACCOUNT_MODE_BACKUP
-            accountData.priKey = private ?: ""
-            accountData.pubKey = public ?: ""
-            if (accountData.pubKey.isNotEmpty()) {
-                try {
-                    accountData.uid = BCMPrivateKeyUtils.provideUid(Base64.decode(accountData.pubKey))
-                }catch (ex: Exception) {
-                    ALog.e("QRExport", ex)
-                    accountData.uid = ""
-                }
-            }
-            accountData.phone = phone ?: ""
-            accountData.name = nickName ?: ""
-            accountData.genKeyTime = keyGenTime
-            accountData.backupTime = AmeTimeUtil.localTimeSecond()
-            return accountData
-        }
-    }
-
     //V4 version account qr data
     //private key
     class ExportModelV4(version: Int, val public: String, val private: String, val keyGenTime: Long, val nickName: String) : ExportModelBase(version) {
