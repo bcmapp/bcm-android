@@ -60,7 +60,7 @@ class HomeProfileView @JvmOverloads constructor(context: Context,
     private val dp60 = 60.dp2Px()
     private val avatarMargin = (AppContextHolder.APP_CONTEXT.getScreenWidth() - 100.dp2Px()) / 2
     private val badgeMarginEnd = (160.dp2Px() * 0.3f / 2).toInt() - dp10
-    private val badgeMarginStart = 150.dp2Px() - badgeMarginEnd - 37.dp2Px()
+    private val badgeMarginStart = 150.dp2Px() - badgeMarginEnd - 47.dp2Px()
 
     private lateinit var recipient: Recipient
     private lateinit var accountItem: HomeAccountItem

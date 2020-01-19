@@ -47,7 +47,11 @@ class HomeAvatarBadgeView @JvmOverloads constructor(context: Context, attrs: Att
             unreadCount > 0 -> {
                 badge_warning.visibility = View.GONE
                 badge_count.visibility = View.VISIBLE
-                badge_count.text = unreadCount.toString()
+                badge_count.text = if (unreadCount > 99) {
+                    "99+"
+                } else {
+                    unreadCount.toString()
+                }
             }
             !isAccountBackup -> {
                 badge_warning.visibility = View.VISIBLE
