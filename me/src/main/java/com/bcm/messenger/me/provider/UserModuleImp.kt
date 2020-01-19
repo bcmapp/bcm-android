@@ -82,6 +82,8 @@ class UserModuleImp : IUserModule
         AppForeground.listener.addListener(this)
 
         noteLogic.refreshCurrentUser()
+
+        AmePinLogic.hasPin()
     }
 
     override fun uninitModule() {

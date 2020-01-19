@@ -48,6 +48,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
                 pinData.pinLockTime = oldPinData.pinLockTime
             }
         }
+        onForegroundChanged(AppForeground.foreground())
     }
 
     fun isLocked(): Boolean {

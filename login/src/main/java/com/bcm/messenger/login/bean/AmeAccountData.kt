@@ -32,7 +32,7 @@ class AmeAccountData : NotGuard {
     var signedPreKeyRegistered: Boolean = false
     var signedPreKeyFailureCount: Int = 0
     var signedPreKeyRotationTime: Long = 0
-    @Deprecated("")
+    @Deprecated("only use for compatible old login state")
     var curLogin = false
 
     override fun equals(other: Any?): Boolean {
