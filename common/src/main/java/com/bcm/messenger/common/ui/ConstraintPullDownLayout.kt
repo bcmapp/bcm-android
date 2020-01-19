@@ -14,8 +14,6 @@ import android.view.ViewConfiguration
 import android.view.animation.DecelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.NestedScrollView
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import kotlin.math.abs
@@ -309,16 +307,7 @@ class ConstraintPullDownLayout @JvmOverloads constructor(context: Context, attrs
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    when (val layoutManager = recyclerView.layoutManager) {
-                        is LinearLayoutManager -> {
-                            val firstPos = layoutManager.findFirstCompletelyVisibleItemPosition()
-                            isScrollViewReachTop = firstPos == 0
-                        }
-                        is GridLayoutManager -> {
-                            val firstPos = layoutManager.findFirstCompletelyVisibleItemPosition()
-                            isScrollViewReachTop = firstPos == 0
-                        }
-                    }
+                    isScrollViewReachTop = !recyclerView.canScrollVertically(-1)
                 }
             }
         })
