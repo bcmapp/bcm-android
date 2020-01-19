@@ -35,8 +35,9 @@ class ClickSpanTouchHandler() : View.OnTouchListener {
     private var mLongClickCallback: LongClickCallback? = null
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        ALog.i(TAG, "onTouch ${event?.action}")
         if (v is TextView) {
-            v.movementMethod = null
+            //v.movementMethod = null
             val text = v.text
             val spannable = Spannable.Factory.getInstance().newSpannable(text)
             val action = event?.action

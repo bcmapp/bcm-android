@@ -219,6 +219,9 @@ class ConversationItemPopWindow private constructor(context: Context, anchorView
                 else -> contentView.setBackgroundResource(R.drawable.chats_conversation_pop_down_bg)
             }
         }
+        popupWindow.setOnDismissListener {
+            popWindowClickListener?.onDismiss()
+        }
         popupWindow.showAtLocation(anchorView, gravity, tx, ty)
     }
 
@@ -412,5 +415,6 @@ class ConversationItemPopWindow private constructor(context: Context, anchorView
         fun onSelect()
         fun onPin()
         fun onReply()
+        fun onDismiss(){}
     }
 }

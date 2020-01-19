@@ -11,9 +11,13 @@ import com.bcm.messenger.utility.AppContextHolder
  *
  * Created by Kin on 2018/8/28
  */
-class TelUrlSpan(private val uri: Uri) : ClickableSpan() {
+class TelUrlSpan(private val longClickCheck: LongClickCheck, private val uri: Uri) : ClickableSpan() {
 
     override fun onClick(widget: View?) {
+        if (longClickCheck.isLongClick) {
+            return
+        }
+        
         try {
             val intent = Intent(Intent.ACTION_DIAL, uri)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

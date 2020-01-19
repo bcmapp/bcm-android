@@ -27,6 +27,7 @@ import com.bcm.messenger.chats.group.logic.MessageSender
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.chats.util.ClickSpanTouchHandler
 import com.bcm.messenger.chats.util.LinkUrlSpan
+import com.bcm.messenger.chats.util.LongClickCheck
 import com.bcm.messenger.chats.util.TelUrlSpan
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.api.IConversationContentAction
@@ -69,6 +70,8 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
         const val TAG = "ChatViewHolder"
         const val TYPE_AT = 1
 
+        private val longClickCheck = LongClickCheck()
+
         fun interceptMessageText(bodyView: TextView, messageRecord: AmeGroupMessageDetail, bodyText: CharSequence): CharSequence {
             bodyView.text = bodyText
             var resultText = interceptTextLink(bodyView, messageRecord.isSendByMe, bodyView.text)
@@ -98,12 +101,12 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
                     val url = uri.url
                     when {
                         url.indexOf("http://") == 0 || url.indexOf("https://") == 0 -> {
-                            val linkSpan = LinkUrlSpan(bodyView.context, url, isOutgoing)
+                            val linkSpan = LinkUrlSpan(longClickCheck, bodyView.context, url, isOutgoing)
                             spannableStringBuilder.setSpan(linkSpan, bodyText.getSpanStart(uri), bodyText.getSpanEnd(uri), Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
                             spannableStringBuilder.removeSpan(uri)
                         }
                         url.startsWith("tel:") -> {
-                            val telUrlSpan = TelUrlSpan(Uri.parse(url))
+                            val telUrlSpan = TelUrlSpan(longClickCheck, Uri.parse(url))
                             spannableStringBuilder.setSpan(telUrlSpan, bodyText.getSpanStart(uri), bodyText.getSpanEnd(uri), Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
                         }
                     }
@@ -127,6 +130,8 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
     protected var mNameView: TextView? = null
     protected var mBodyContainer: ViewGroup? = null
     protected lateinit var recipient: Recipient
+
+
 
     private val mBreatheAnim: Animation = AlphaAnimation(0.5f, 0.3f)
 
@@ -364,9 +369,7 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
         }
         mActionArray.put(type, action)
         v?.setOnLongClickListener(this)
-        if (v is EmojiTextView) {
-            v.setOnTouchListener(ClickSpanTouchHandler.getInstance(v.context))
-        }
+
         if (v != null) {
             action?.bind(messageRecord, v, glideRequests, batchSelected)
         }
@@ -456,6 +459,8 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
         val pinVisible = (messageRecord.isSendSuccess || !messageRecord.isSendByMe) && null != groupModel && groupModel.myRole() == AmeGroupMemberInfo.OWNER
         val isHistory = messageRecord is AmeHistoryMessageDetail
         val hasPin = pinVisible && (null != groupModel && groupModel.getGroupInfo().pinMid == messageRecord.serverIndex)
+
+        longClickCheck.isLongClick = true
         ConversationItemPopWindow.ItemPopWindowBuilder(context)
                 .withAnchorView(anchorView)
                 .withForwardable(messageRecord.isForwardable && !isHistory)
@@ -525,6 +530,10 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
 
                     override fun onReply() {
                         EventBus.getDefault().post(ReplyMessageEvent(messageRecord, ReplyMessageEvent.ACTION_REPLY))
+                    }
+
+                    override fun onDismiss() {
+                        longClickCheck.isLongClick = false
                     }
                 }).build()
     }

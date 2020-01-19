@@ -12,9 +12,12 @@ import com.bcm.messenger.common.utils.AppUtil
 /**
  * Created by zjl on 2018/7/2.
  */
-class LinkUrlSpan(val context: Context, val url: String, val isOutgoing: Boolean) : ClickableSpan() {
+class LinkUrlSpan(private val longClickCheck: LongClickCheck, val context: Context, val url: String, val isOutgoing: Boolean) : ClickableSpan() {
 
     override fun onClick(widget: View?) {
+        if (longClickCheck.isLongClick) {
+            return
+        }
         AmeModuleCenter.contact(AMELogin.majorContext)?.discernLink(context, url)
     }
 

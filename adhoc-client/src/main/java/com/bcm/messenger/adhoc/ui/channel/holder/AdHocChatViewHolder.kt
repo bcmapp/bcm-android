@@ -20,6 +20,7 @@ import com.bcm.messenger.adhoc.logic.AdHocSessionLogic
 import com.bcm.messenger.chats.components.AlertView
 import com.bcm.messenger.chats.components.ConversationItemPopWindow
 import com.bcm.messenger.chats.util.LinkUrlSpan
+import com.bcm.messenger.chats.util.LongClickCheck
 import com.bcm.messenger.chats.util.TelUrlSpan
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.api.IConversationContentAction
@@ -66,12 +67,12 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
                     val url = uri.url
                     when {
                         url.indexOf("http://") == 0 || url.indexOf("https://") == 0 -> {
-                            val linkSpan = LinkUrlSpan(bodyView.context, url, isOutgoing)
+                            val linkSpan = LinkUrlSpan(LongClickCheck(), bodyView.context, url, isOutgoing)
                             spannableStringBuilder.setSpan(linkSpan, bodyText.getSpanStart(uri), bodyText.getSpanEnd(uri), Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
                             spannableStringBuilder.removeSpan(uri)
                         }
                         url.startsWith("tel:") -> {
-                            val telUrlSpan = TelUrlSpan(Uri.parse(url))
+                            val telUrlSpan = TelUrlSpan(LongClickCheck(), Uri.parse(url))
                             spannableStringBuilder.setSpan(telUrlSpan, bodyText.getSpanStart(uri), bodyText.getSpanEnd(uri), Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
                         }
                     }
@@ -313,6 +314,7 @@ class AdHocChatViewHolder(accountContext: AccountContext, layout: View) : Conver
 
     override fun onLongClick(v: View): Boolean {
         mAction?.let {
+
             onLongClickAction(v, it)
         }
         return true

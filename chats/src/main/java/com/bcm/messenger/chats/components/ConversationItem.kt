@@ -107,6 +107,8 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
 
     private var mBreatheAnim = AlphaAnimation(0.5f, 0.3f)
 
+    private val longClickCheck = LongClickCheck()
+
     private val downloadClickListener = object : ChatComponentListener {
         override fun onClick(v: View, data: Any) {
             if (data is MessageRecord) {
@@ -392,7 +394,6 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
 
                 bodyTextView?.setOnClickListener(multiClickListener)
                 bodyTextView?.setOnLongClickListener(this)
-                bodyTextView?.setOnTouchListener(ClickSpanTouchHandler.getInstance(context))
 
             } else {
                 bodyTextView?.visibility = View.GONE
@@ -873,11 +874,11 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
             for (uri in urlSpans) {
                 val url = uri.url
                 if (url.indexOf("http://") == 0 || url.indexOf("https://") == 0) {
-                    val linkSpan = LinkUrlSpan(context, url, isOutgoing)
+                    val linkSpan = LinkUrlSpan(longClickCheck, context, url, isOutgoing)
                     builder.setSpan(linkSpan, (tv.text as Spannable).getSpanStart(uri), (tv.text as Spannable).getSpanEnd(uri), Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
                     builder.removeSpan(uri)
                 } else if (url.startsWith("tel:")) {
-                    val telUrlSpan = TelUrlSpan(Uri.parse(url))
+                    val telUrlSpan = TelUrlSpan(longClickCheck, Uri.parse(url))
                     builder.setSpan(telUrlSpan, (tv.text as Spannable).getSpanStart(uri), (tv.text as Spannable).getSpanEnd(uri), Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
                 }
             }
@@ -894,6 +895,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
             else -> null
         }
 
+        longClickCheck.isLongClick = true
         ConversationItemPopWindow.ItemPopWindowBuilder(context)
                 .withAnchorView(anchorView)
                 .withRecallVisible(!messageRecord.isFailed() && !messageRecord.isPending() && messageRecord.isOutgoing() && conversationRecipient.address.toString() != getAccountContext().uid)
@@ -931,11 +933,15 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                     override fun onPin() {}
 
                     override fun onReply() {}
+                    override fun onDismiss() {
+                        longClickCheck.isLongClick = false
+                    }
                 }).build()
     }
 
     private fun showPopWindowForTextItem(messageRecord: MessageRecord, anchorView: View, text: String = "", copyVisible: Boolean = false, forwardable: Boolean = true) {
 
+        longClickCheck.isLongClick = true
         ConversationItemPopWindow.ItemPopWindowBuilder(context)
                 .withAnchorView(anchorView)
                 .withForwardable(forwardable)
@@ -978,6 +984,10 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                     override fun onPin() {}
 
                     override fun onReply() {}
+
+                    override fun onDismiss() {
+                        longClickCheck.isLongClick = false
+                    }
                 }).build()
     }
 

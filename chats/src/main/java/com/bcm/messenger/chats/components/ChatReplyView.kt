@@ -13,6 +13,7 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.group.viewholder.ChatViewHolder
 import com.bcm.messenger.chats.util.ChatComponentListener
+import com.bcm.messenger.chats.util.LongClickCheck
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
