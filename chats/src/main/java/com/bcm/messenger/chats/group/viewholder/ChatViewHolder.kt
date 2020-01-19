@@ -14,6 +14,7 @@ import android.view.ViewStub
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.CheckBox
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.chats.R
@@ -115,23 +116,6 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
             }
 
             return bodyText
-        }
-
-        fun requestFitWidth(layout: StaticLayout): Int {
-            val line = layout.lineCount
-            ALog.i(TAG, "lineCount is: $line")
-            var max = 0.0f
-            if (line > 0) {
-
-                var w = 0.0f
-                for (i in 0 until line) {
-                    w = layout.getLineMax(i)
-                    if (w > max) {
-                        max = w
-                    }
-                }
-            }
-            return max.toInt()
         }
     }
 
@@ -279,6 +263,11 @@ open class ChatViewHolder(accountContext: AccountContext, containerView: View) :
         val v = when (type) {
             AmeGroupMessage.TEXT -> {
                 val v = getInflateView<EmojiTextView>(R.id.conversation_message)
+                if (messageRecord.isSendByMe) {
+                    val params = v.layoutParams as LinearLayout.LayoutParams
+                    params.setMargins(48.dp2Px(), 0, 0, 0)
+                }
+
                 if (action == null) {
                     action = ChatMessageHolderAction(accountContext)
                 }

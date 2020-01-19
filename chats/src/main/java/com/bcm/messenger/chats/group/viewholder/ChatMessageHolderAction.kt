@@ -26,20 +26,6 @@ import com.bcm.messenger.utility.MultiClickObserver
  * Created by wjh on 2018/10/23
  */
 open class ChatMessageHolderAction(accountContext: AccountContext) : BaseChatHolderAction<EmojiTextView>(accountContext) {
-
-    companion object {
-
-        @Volatile
-        private var BODY_MAX_WIDTH = 0
-
-        fun getBodyMaxWidth(): Int {
-            if (BODY_MAX_WIDTH == 0) {
-                BODY_MAX_WIDTH = AppContextHolder.APP_CONTEXT.getScreenWidth() - 130.dp2Px()
-            }
-            return BODY_MAX_WIDTH
-        }
-    }
-
     private var mMultiClickObserver = MultiClickObserver(2, object : MultiClickObserver.MultiClickListener {
         override fun onMultiClick(view: View?, count: Int) {
             val detail = mMessageDetail
@@ -66,26 +52,11 @@ open class ChatMessageHolderAction(accountContext: AccountContext) : BaseChatHol
         ChatViewHolder.interceptMessageText(body, message, text)
 
         body.setOnClickListener(mMultiClickObserver)
-
-        val staticLayout = StaticLayout(text, 0, text.length, body.paint, getBodyMaxWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false,
-                TextUtils.TruncateAt.END, getBodyMaxWidth())
-        val w = ChatViewHolder.requestFitWidth(staticLayout)
-        if (w > 0) {
-            val lp = body.layoutParams
-            if (lp != null) {
-                lp.width = w + body.paddingStart + body.paddingEnd
-                body.layoutParams = lp
-            }
-        }
     }
 
     private fun textFromMessage(record:AmeGroupMessageDetail): String{
         val data = record.message?.content as? AmeGroupMessage.TextContent
-        return if (null != data) {
-            data.text
-        } else {
-            (record.message?.content as? AmeGroupMessage.LinkContent)?.url?:""
-        }
+        return data?.text ?: ((record.message?.content as? AmeGroupMessage.LinkContent)?.url?:"")
     }
 
     override fun unBind() {

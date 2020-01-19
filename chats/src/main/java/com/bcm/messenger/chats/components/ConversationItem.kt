@@ -67,18 +67,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         LinearLayout(context, attrs), RecipientModifiedListener, BindableConversationItem, View.OnLongClickListener {
 
     companion object {
-
         private const val TAG = "ConversationItem"
-
-        @Volatile
-        private var BODY_MAX_WIDTH = 0
-
-        fun getBodyMaxWidth(): Int {
-            if (BODY_MAX_WIDTH == 0) {
-                BODY_MAX_WIDTH = AppContextHolder.APP_CONTEXT.getScreenWidth() - 130.dp2Px()
-            }
-            return BODY_MAX_WIDTH
-        }
     }
 
     private lateinit var messageRecord: MessageRecord
@@ -414,19 +403,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
 
         bodyTextView?.let {
             interceptLink(it, messageRecord.isOutgoing())
-            val text = it.text ?: ""
-            val staticLayout = StaticLayout(text, 0, text.length, it.paint, getBodyMaxWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false,
-                    TextUtils.TruncateAt.END, getBodyMaxWidth())
-            val w = requestFitWidth(staticLayout)
-            if (w > 0) {
-                val lp = it.layoutParams
-                if (lp != null) {
-                    lp.width = w + it.paddingStart + it.paddingEnd
-                    it.layoutParams = lp
-                }
-            }
         }
-
     }
 
     private fun updateMessageContent(messageRecord: MessageRecord) {
@@ -1025,23 +1002,6 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                 }
             }
         }
-    }
-
-    private fun requestFitWidth(layout: StaticLayout): Int {
-        val line = layout.lineCount
-        ALog.i(TAG, "lineCount is: $line")
-        var max = 0.0f
-        if (line > 0) {
-
-            var w = 0.0f
-            for (i in 0 until line) {
-                w = layout.getLineMax(i)
-                if (w > max) {
-                    max = w
-                }
-            }
-        }
-        return max.toInt()
     }
 
     private inner class ClickListener(private val parent: OnClickListener?) : OnClickListener {
