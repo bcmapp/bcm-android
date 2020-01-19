@@ -96,4 +96,7 @@ public interface GroupInfoDao {
 
     @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET owner = :ownerUid WHERE gid = :gid ")
     void updateOwner(long gid, @NotNull String ownerUid);
+
+    @Query("UPDATE " + GroupInfo.TABLE_NAME + " SET owner_confirm = :needConfirm, share_and_owner_confirm_sig = :confirmSign WHERE gid = :gid ")
+    void updateNeedConfirm(long gid, int needConfirm, @NotNull String confirmSign);
 }

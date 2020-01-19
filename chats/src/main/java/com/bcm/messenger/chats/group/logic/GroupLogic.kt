@@ -732,17 +732,12 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     ?: GroupInfo()
 
             val oldSecretKey = dbGroupInfo.infoSecret
+            val oldRole = dbGroupInfo.role
             info.toDbGroup(accountContext, dbGroupInfo, ownerIdentityKey, parseCount)
 
             if (dbGroupInfo.role == AmeGroupMemberInfo.OWNER) {
-                if ((oldSecretKey != dbGroupInfo.infoSecret || TextUtils.isEmpty(dbGroupInfo.shareCodeSetting))) {
-                    AmeDispatcher.io.dispatch({
-                        updateShareSetting(dbGroupInfo.gid, true) { succeed, shareCode, error ->
-                            ACLog.i(accountContext, TAG, "parseGroupInfo adjust group info succeed:$succeed $error")
-                        }
-
-                        updateNeedConfirm(dbGroupInfo.gid, true){_,_ -> }
-                    }, 500)
+                if (oldSecretKey != dbGroupInfo.infoSecret || oldRole != dbGroupInfo.role) {
+                    newOwnerAssignToMe(dbGroupInfo.gid)
                 } else if (groupCache.isBroadcastSharingData(info.gid)) {
                     broadcastShareSettingRefresh(info.gid)
                 }
@@ -1071,7 +1066,6 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
 
         @SuppressLint("CheckResult")
         fun muteGroup(groupId: Long, mute: Boolean, callback: (success: Boolean, msg: String?) -> Unit) {
-
             GroupManagerCore.updateMyNameAndMuteSetting(accountContext, groupId, mute, null, null, null)
                     .subscribeOn(AmeDispatcher.ioScheduler)
                     .observeOn(AmeDispatcher.ioScheduler)
@@ -1131,16 +1125,6 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         ALog.logForSecret(TAG, "updateMyMemberInfo failed", it)
                         result(false, GroupException.error(it, AppUtil.getString(R.string.common_error_failed)))
                     })
-        }
-
-        fun getUserRole(groupId: Long, uid: String, result: (role: Long) -> Unit) {
-            getGroupMemberInfo(groupId, uid) { member, error ->
-                if (member != null) {
-                    result(member.role)
-                } else {
-                    result(AmeGroupMemberInfo.VISITOR)
-                }
-            }
         }
 
         @SuppressLint("CheckResult")
@@ -1248,6 +1232,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             groupCache.updateOwner(change.groupId, ownerUid)
                             if (ownerUid == accountContext.uid) {
                                 groupCache.updateRole(change.groupId, AmeGroupMemberInfo.OWNER)
+                                newOwnerAssignToMe(change.groupId)
                             }
                         }
                     }
@@ -1280,6 +1265,19 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     }
                 }
             }
+        }
+
+        private fun newOwnerAssignToMe(groupId: Long) {
+            AmeDispatcher.io.dispatch({
+                ACLog.i(accountContext, TAG, "newOwnerAssignToMe")
+                if (getGroupInfo(groupId)?.needConfirm != true) {
+                    groupCache.updateNeedConfirm(groupId, 1, "")
+                }
+
+                updateShareSetting(groupId, true) { succeed, shareCode, error ->
+                    ACLog.i(accountContext, TAG, "parseGroupInfo adjust group info succeed:$succeed $error")
+                }
+            }, 500)
         }
 
         @Subscribe
@@ -2103,8 +2101,8 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                     val shareConfirmSign = String(EncryptUtils.base64Encode(shareConfirmSignByteArray))
 
                     val ek = BCMEncryptUtils.generate64BitKey()
-                    val encInfoSecret = groupInfo.infoSecret.toByteArray().base64Decode().aesEncode(ek)!!.base64Encode().format()
-                    val encEphemeralKey = ek.aesEncode(groupInfo.infoSecret.toByteArray().base64Decode())!!.base64Encode().format()
+                    val encInfoSecret = groupInfo.infoSecret.base64Decode().aesEncode(ek)!!.base64Encode().format()
+                    val encEphemeralKey = ek.aesEncode(groupInfo.infoSecret.base64Decode())!!.base64Encode().format()
 
 
                     GroupManagerCore.updateShareCodeSetting(accountContext, gid,

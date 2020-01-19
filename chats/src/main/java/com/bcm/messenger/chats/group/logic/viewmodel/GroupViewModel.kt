@@ -156,8 +156,8 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
         if (modelCache.info.shareEnable == true && myRole() == AmeGroupMemberInfo.OWNER) {
             disableShareGroup { succeed, error ->
                 if (succeed) {
-                    GroupLogic.get(accountContext).leaveGroup(groupId, newOwner) { succeed, error ->
-                        callback(succeed, error)
+                    GroupLogic.get(accountContext).leaveGroup(groupId, newOwner) { s, e ->
+                        callback(s, e)
                     }
                 } else {
                     callback(succeed, error ?: "Error")
@@ -553,7 +553,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
     }
 
     fun isShareGroupEnable(): Boolean {
-        return modelCache.info?.shareEnable ?: false
+        return modelCache.info.shareEnable ?: false
     }
 
     @SuppressLint("CheckResult")

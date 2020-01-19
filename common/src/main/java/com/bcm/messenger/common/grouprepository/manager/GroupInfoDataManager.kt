@@ -223,4 +223,8 @@ object GroupInfoDataManager {
     fun updateOwner(accountContext: AccountContext, gid: Long, ownerUid: String) {
         getDao(accountContext)?.updateOwner(gid, ownerUid)
     }
+
+    fun updateNeedConfirm(accountContext: AccountContext, gid: Long, needConfirm:Int, confirmSign:String) {
+        getDao(accountContext)?.updateNeedConfirm(gid, needConfirm, confirmSign)
+    }
 }

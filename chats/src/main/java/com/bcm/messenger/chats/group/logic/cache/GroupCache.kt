@@ -222,13 +222,9 @@ class GroupCache(private val accountContext: AccountContext, val cacheReady: () 
     }
 
     fun updateNeedConfirm(gid: Long, confirm: Int, shareConfirmSign: String) {
-        val groupInfo = GroupInfoDataManager.queryOneGroupInfo(accountContext, gid)
-        if (null != groupInfo) {
-            getGroupInfo(gid)?.needConfirm = confirm == 1
-            groupInfo.needOwnerConfirm = confirm
-            groupInfo.shareSettingAndConfirmSign = shareConfirmSign
-            GroupInfoDataManager.insertGroupInfo(accountContext, groupInfo)
-        }
+        val group = getGroupInfo(gid)?:return
+        group.needConfirm = confirm == 1
+        GroupInfoDataManager.updateNeedConfirm(accountContext, gid, confirm, shareConfirmSign)
     }
 
     fun updateShareSetting(gid: Long,
