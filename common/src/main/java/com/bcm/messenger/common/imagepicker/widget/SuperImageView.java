@@ -18,7 +18,6 @@
 
 package com.bcm.messenger.common.imagepicker.widget;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -263,12 +262,12 @@ public class SuperImageView extends AppCompatImageView {
                                 lastClickPos.y) < 50 */) {
                             doubleClick(pA.x, pA.y);
                             now = 0;
-                        } else {
-                            Context context = getContext();
-                            if (context instanceof Activity) {
-                                ((Activity) context).finishAfterTransition();
-                            }
-                        }
+                        } /*else {*/
+//                            Context context = getContext();
+//                            if (context instanceof Activity) {
+//                                ((Activity) context).finishAfterTransition();
+//                            }
+//                        }
                         lastClickPos.set(pA);
                         lastClickTime = now;
                     }
@@ -404,8 +403,5 @@ public class SuperImageView extends AppCompatImageView {
         matrix.mapRect(rectF);
 
         return rectF;
-
     }
-
-
 }

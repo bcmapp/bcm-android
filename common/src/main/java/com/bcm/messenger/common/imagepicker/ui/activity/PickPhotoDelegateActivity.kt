@@ -38,7 +38,6 @@ class PickPhotoDelegateActivity : AppCompatActivity(), BcmPickPhotoCropHelper.On
                     }
                 }
             } else {
-                // 
                 ALog.i(TAG, "Start pick photo")
                 PermissionUtil.checkStorage(this) { res ->
                     if (res) {
@@ -64,7 +63,6 @@ class PickPhotoDelegateActivity : AppCompatActivity(), BcmPickPhotoCropHelper.On
             REQ_INNER_PICK -> {
                 if (resultCode == Activity.RESULT_OK) {
                     ALog.i(TAG, "Pick photo return OK")
-                    // 
                     if (config.cropPhoto) {
                         ALog.i(TAG, "Pick photo OK, start crop photo")
                         // 
@@ -76,7 +74,6 @@ class PickPhotoDelegateActivity : AppCompatActivity(), BcmPickPhotoCropHelper.On
                             startActivityForResult(intent, REQ_INNER_CROP)
                         }
                     } else {
-                        // 
                         ALog.i(TAG, "Pick photo OK, return selected list")
                         val intent = Intent(data)
                         setResult(Activity.RESULT_OK, intent)
@@ -93,9 +90,7 @@ class PickPhotoDelegateActivity : AppCompatActivity(), BcmPickPhotoCropHelper.On
             REQ_INNER_CAPTURE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     ALog.i(TAG, "Capture photo return OK")
-                    // 
                     if (config.cropPhoto) {
-                        // 
                         ALog.i(TAG, "Capture photo OK, start crop photo")
                         val intent = Intent()
                         intent.setClass(this, ImageCropActivity::class.java)
@@ -103,7 +98,6 @@ class PickPhotoDelegateActivity : AppCompatActivity(), BcmPickPhotoCropHelper.On
                         startActivityForResult(intent, REQ_INNER_CROP)
                     } else {
                         ALog.i(TAG, "Capture photo OK, return photo path")
-                        // 
                         val intent = Intent()
                         intent.putExtra(BcmPickPhotoConstants.EXTRA_CAPTURE_PATH, BcmTakePhotoHelper.currentPhotoPath)
                         setResult(Activity.RESULT_OK, intent)
@@ -126,7 +120,6 @@ class PickPhotoDelegateActivity : AppCompatActivity(), BcmPickPhotoCropHelper.On
     }
 
     override fun onImageCropComplete(bmp: Bitmap?, ratio: Float) {
-        // 
         ALog.i(TAG, "Crop photo complete, return result")
         if (bmp != null) {
             config.callbacks.forEach {

@@ -27,8 +27,10 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -37,13 +39,16 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoCropHelper;
 import com.bcm.messenger.common.imagepicker.widget.AvatarRectView;
 import com.bcm.messenger.common.imagepicker.widget.SuperImageView;
 import com.bcm.messenger.common.utils.AppUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+
 import java.io.File;
+
 import com.bcm.messenger.utility.logger.ALog;
 import com.bumptech.glide.request.target.Target;
 
@@ -114,7 +119,6 @@ public class AvatarCropFragment extends Fragment {
         //rlLayoutParams.addRule(RelativeLayout.ABOVE, R.id.photo_preview_dock);
         mRectView = new AvatarRectView(mContext, screenWidth - margin * 2);
         rootView.addView(mRectView, 1, rlLayoutParams);
-
     }
 
 

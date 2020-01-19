@@ -36,7 +36,7 @@ import com.bcm.messenger.common.utils.AppUtilKotlinKt;
 
 
 /**
- * 
+ * Created by Kin
  */
 public class ImageCropActivity extends FragmentActivity implements View.OnClickListener {
 
@@ -82,7 +82,6 @@ public class ImageCropActivity extends FragmentActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-
         if (v.getId() == R.id.btn_pic_ok) {
             Bitmap bmp = mFragment.getCropBitmap(BcmPickPhotoCropHelper.INSTANCE.getCropSize());
             BcmPickPhotoCropHelper.INSTANCE.notifyImageCropComplete(bmp, 0);
@@ -90,30 +89,28 @@ public class ImageCropActivity extends FragmentActivity implements View.OnClickL
         } else if (v.getId() == R.id.btn_pic_rechoose) {
             finish();
         }
-
     }
 
     private float lastX = 0f;
     private float lastY = 0f;
     private long lastTime = 0;
 
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
             lastX = event.getX();
             lastY = event.getY();
             lastTime = System.currentTimeMillis();
-        }else if(event.getAction() == MotionEvent.ACTION_UP) {
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
             try {
                 long now = System.currentTimeMillis();
                 int exceptY = 0;
                 int[] l = new int[2];
                 View v = mFragment.getView();
-                if(v != null) {
+                if (v != null) {
                     v.getLocationOnScreen(l);
                     exceptY = l[1];
-                }else {
+                } else {
                     btnOk.getLocationOnScreen(l);
                     exceptY = l[1] + btnOk.getHeight() + 30;
                 }
@@ -122,11 +119,10 @@ public class ImageCropActivity extends FragmentActivity implements View.OnClickL
                     return true;
                 }
 
-            }catch (Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
         return super.dispatchTouchEvent(event);
     }
-
 }
