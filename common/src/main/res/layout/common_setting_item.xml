@@ -95,14 +95,17 @@
 
             <com.bcm.messenger.common.ui.emoji.EmojiTextView
                 android:id="@+id/item_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:textColor="@color/common_color_black"
                 android:textSize="17sp"
                 android:lineSpacingExtra="3dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/item_center_right"
                 tools:text="About"/>
 
             <com.bcm.messenger.common.ui.emoji.EmojiTextView
@@ -121,7 +124,7 @@
 
             <FrameLayout
                 android:id="@+id/item_center_right"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 app:layout_constraintTop_toTopOf="@id/item_name"

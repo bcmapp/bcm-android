@@ -141,12 +141,12 @@
 
         <TextView
             android:id="@+id/home_profile_wallet_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ellipsize="end"
             android:gravity="center"
-            android:maxLines="1"
+            android:maxLines="2"
             android:text="@string/chats_more_wallet_title"
             android:textColor="@color/common_60_transparent"
             android:textSize="13sp"
@@ -169,12 +169,12 @@
 
         <TextView
             android:id="@+id/home_profile_data_vault_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ellipsize="end"
             android:gravity="center"
-            android:maxLines="1"
+            android:maxLines="2"
             android:text="@string/chats_more_data_vault_title"
             android:textColor="@color/common_60_transparent"
             android:textSize="13sp"
@@ -196,12 +196,12 @@
 
         <TextView
             android:id="@+id/home_profile_air_chat_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ellipsize="end"
             android:gravity="center"
-            android:maxLines="1"
+            android:maxLines="2"
             android:text="@string/chats_more_airchat_title"
             android:textColor="@color/common_60_transparent"
             android:textSize="13sp"
