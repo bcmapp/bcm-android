@@ -98,6 +98,8 @@ class AmeAccountHistory {
         if (majorAccountUid.isEmpty() && account.curLogin && account.signalPassword.isNotEmpty()) {
             majorAccountUid = account.uid
             account.curLogin = false
+
+            storage.set(AME_MAJOR_LOGIN_ACCOUNT, majorAccountUid)
             return 1
         } else if (account.uid == majorAccountUid && account.signalPassword.isEmpty()) {
             ALog.i(TAG, "fix login state")
@@ -349,7 +351,6 @@ class AmeAccountHistory {
             saveAccount(accountData)
             return priKeyArray
         } else {
-
             return BCMPrivateKeyUtils.decryptPrivateKey(accountData.priKey, password.toByteArray()).second
         }
     }
