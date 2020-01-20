@@ -352,7 +352,7 @@ object AmeFileUploader : AccountContextMap<AmeFileUploader.AmeFileUploaderImpl>(
                             callback.onUploadFailed(file.absolutePath, e.message ?: "")
                         }
 
-                        override fun onResponse(uploadResponse: Void, id: Long) {
+                        override fun onResponse(uploadResponse: Void?, id: Long) {
                             callback.onUploadSuccess(response.downloadUrl, id.toString())
                         }
 
@@ -381,11 +381,11 @@ object AmeFileUploader : AccountContextMap<AmeFileUploader.AmeFileUploaderImpl>(
                             return threadMode
                         }
 
-                        override fun onError(call: Call, e: Exception, id: Long) {
-                            callback.onUploadFailed(data, e.message ?: "")
+                        override fun onError(call: Call, e: Exception?, id: Long) {
+                            callback.onUploadFailed(data, e?.message ?: "")
                         }
 
-                        override fun onResponse(uploadResponse: Void, id: Long) {
+                        override fun onResponse(uploadResponse: Void?, id: Long) {
                             callback.onUploadSuccess(response.downloadUrl, id.toString())
                         }
 
