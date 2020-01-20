@@ -330,7 +330,6 @@ class ChatModuleImp : IChatModule {
                             }
                             activity.startBcmActivity(accountContext, intent)
                             callback?.invoke(emptySet())
-
                         }.show(activity)
             } else {
                 val intent = Intent(context, ForwardActivity::class.java).apply {

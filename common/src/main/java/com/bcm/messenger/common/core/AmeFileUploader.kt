@@ -338,6 +338,7 @@ object AmeFileUploader : AccountContextMap<AmeFileUploader.AmeFileUploaderImpl>(
 
             getAwsUploadInfo(accountContext, type, object : JsonDeserializeCallback<AwsUploadResEntity>() {
                 override fun onError(call: Call, e: Exception, id: Long) {
+                    ALog.w(TAG, "Upload failed ${e.message}")
                     callback.onUploadFailed(file.absolutePath, e.message ?: "")
                 }
 
@@ -348,6 +349,7 @@ object AmeFileUploader : AccountContextMap<AmeFileUploader.AmeFileUploaderImpl>(
                         }
 
                         override fun onError(call: Call, e: Exception, id: Long) {
+                            ALog.w(TAG, "Upload failed ${e.message}")
                             callback.onUploadFailed(file.absolutePath, e.message ?: "")
                         }
 
@@ -371,6 +373,7 @@ object AmeFileUploader : AccountContextMap<AmeFileUploader.AmeFileUploaderImpl>(
 
             getAwsUploadInfo(accountContext, type, object : JsonDeserializeCallback<AwsUploadResEntity>() {
                 override fun onError(call: Call, e: Exception, id: Long) {
+                    ALog.w(TAG, "Upload failed ${e.message}")
                     callback.onUploadFailed(data, e.message ?: "")
                 }
 
@@ -381,6 +384,7 @@ object AmeFileUploader : AccountContextMap<AmeFileUploader.AmeFileUploaderImpl>(
                         }
 
                         override fun onError(call: Call, e: Exception?, id: Long) {
+                            ALog.w(TAG, "Upload failed ${e?.message}")
                             callback.onUploadFailed(data, e?.message ?: "")
                         }
 

@@ -181,13 +181,12 @@ object MessageFileHandler {
                                     if (!useThumbnail) {
                                         if (messageDetail !is AmeHistoryMessageDetail) {
                                             MessageDataManager.updateMessageAttachmentUri(accountContext, messageDetail.gid, messageDetail.indexId, fileInfo)
+                                            MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId,
+                                                    if (messageDetail.isSendByMe) GroupMessage.SEND_SUCCESS else GroupMessage.RECEIVE_SUCCESS)
                                             localResponse(true, PartAuthority.getGroupAttachmentUri(messageDetail.gid, messageDetail.indexId))
                                         } else {
                                             localResponse(true, Uri.fromFile(fileInfo.file))
                                         }
-
-                                        MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId,
-                                                if (messageDetail.isSendByMe) GroupMessage.SEND_SUCCESS else GroupMessage.RECEIVE_SUCCESS)
                                     } else {
                                         if (messageDetail !is AmeHistoryMessageDetail) {
                                             MessageDataManager.updateMessageThumbnailUri(accountContext, messageDetail.gid, messageDetail.indexId, fileInfo)
