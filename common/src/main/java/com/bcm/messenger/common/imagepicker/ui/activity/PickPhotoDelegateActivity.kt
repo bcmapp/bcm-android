@@ -31,7 +31,7 @@ class PickPhotoDelegateActivity : AppCompatActivity(), BcmPickPhotoCropHelper.On
             config.isPicking = true
             if (config.capturePhoto) {
                 ALog.i(TAG, "Start capture photo")
-                PermissionUtil.checkCamera(this) { res ->
+                PermissionUtil.checkCameraAndStorage(this) { res ->
                     if (res) {
                         BcmTakePhotoHelper.takePicture(AMELogin.majorContext,this)
                     } else {

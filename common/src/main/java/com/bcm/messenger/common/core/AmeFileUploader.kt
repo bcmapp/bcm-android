@@ -40,9 +40,13 @@ object AmeFileUploader : AccountContextMap<AmeFileUploader.AmeFileUploaderImpl>(
     val DCIM_DIRECTORY = Environment.getExternalStorageDirectory().absolutePath + "/DCIM/bcm/"
 
     init {
-        val file = File(DCIM_DIRECTORY)
-        if (!file.exists()) {
-            file.mkdirs()
+        try {
+            val file = File(DCIM_DIRECTORY)
+            if (!file.exists()) {
+                file.mkdirs()
+            }
+        } catch (tr: Throwable) {
+            ALog.e("AmeFileUploader", "Create DCIM error")
         }
     }
 

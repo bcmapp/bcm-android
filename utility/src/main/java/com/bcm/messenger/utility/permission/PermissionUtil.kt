@@ -27,6 +27,18 @@ object PermissionUtil {
 
     var languageSetting: ILanguageSetting? = null
 
+    fun checkCameraAndStorage(context: Context, result: (ok: Boolean) -> Unit) {
+        PermissionBuilder(context)
+                .permission(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                .onGranted {
+                    result(true)
+                }
+                .onDenied {
+                    result(false)
+                }
+                .request()
+    }
+
     fun checkCamera(context: Context, result: (ok: Boolean) -> Unit) {
 
         PermissionBuilder(context)

@@ -22,6 +22,7 @@ import com.bcm.messenger.common.utils.createScreenShot
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.utility.permission.PermissionUtil
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -271,24 +272,28 @@ class ChatGroupAvatarActivity : AccountSwipeBaseActivity() {
     }
 
     private fun saveAvatarToLocal() {
-        val bitmap = group_avatar.createScreenShot()
-        Observable.create<String> {
-            val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM-GROUP-${groupModel.groupId()}.jpg", AmeFileUploader.get(accountContext).DCIM_DIRECTORY)
-            if (path == null) {
-                it.onError(Exception("Save QR code error"))
-                return@create
+        PermissionUtil.checkStorage(this) {
+            if (it) {
+                val bitmap = group_avatar.createScreenShot()
+                Observable.create<String> {
+                    val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM-GROUP-${groupModel.groupId()}.jpg", AmeFileUploader.get(accountContext).DCIM_DIRECTORY)
+                    if (path == null) {
+                        it.onError(Exception("Save QR code error"))
+                        return@create
+                    }
+                    it.onNext(path)
+                    it.onComplete()
+                }.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnError {
+                            AmePopup.result.failure(this, getString(R.string.chats_group_info_edit_save_failed), true)
+                        }
+                        .subscribe {
+                            MediaScannerConnection.scanFile(this, arrayOf(it), arrayOf(BcmFileUtils.IMAGE_PNG), null)
+                            AmePopup.result.succeed(this, getString(R.string.chats_group_info_edit_save_success), true)
+                        }
             }
-            it.onNext(path)
-            it.onComplete()
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError {
-                    AmePopup.result.failure(this, getString(R.string.chats_group_info_edit_save_failed), true)
-                }
-                .subscribe {
-                    MediaScannerConnection.scanFile(this, arrayOf(it), arrayOf(BcmFileUtils.IMAGE_PNG), null)
-                    AmePopup.result.succeed(this, getString(R.string.chats_group_info_edit_save_success), true)
-                }
+        }
     }
 
 }

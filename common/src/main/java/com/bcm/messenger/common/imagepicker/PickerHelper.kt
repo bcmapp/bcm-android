@@ -19,6 +19,7 @@ import com.bcm.messenger.common.utils.getScreenWidth
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.utility.permission.PermissionUtil
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions

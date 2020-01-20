@@ -122,6 +122,8 @@ open class KeyboardAwareLinearLayout @JvmOverloads constructor(context: Context,
         minCustomKeyboardTopMarginLandscape = 170.dp2Px()
         statusBarHeight = context.getStatusBarHeight()
         viewInset = getViewInset()
+
+        ALog.i(TAG, "\nScreenHeight = ${context.getScreenHeight()}\nScreenRealHeight = ${getRealScreenHeight()}\nStatusBarHeight = $statusBarHeight\nInset = $viewInset")
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -148,6 +150,7 @@ open class KeyboardAwareLinearLayout @JvmOverloads constructor(context: Context,
 
         val availableHeight = availableHeight
         val keyboardHeight = availableHeight - (rect.bottom - rect.top)
+        ALog.i(TAG, "\nKeyboard height = $keyboardHeight\nInset = $viewInset\nRect = $rect")
 
         if (keyboardHeight > minKeyboardSize) {
             if (this.keyboardHeight != keyboardHeight) {

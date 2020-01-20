@@ -27,6 +27,7 @@ import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.utility.permission.PermissionUtil
 import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -257,23 +258,27 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
     }
 
     private fun doForSaveShareUrl() {
-        val bitmap = group_share_qr_layout.createScreenShot()
-        Observable.create<String> {
-            val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM_GROUP_SHARE_CARD_${mGroupModel.groupId()}.jpg", AmeFileUploader.get(accountContext).DCIM_DIRECTORY)
-            if (path == null) {
-                it.onError(Exception("Save QR code error"))
-                return@create
+        PermissionUtil.checkStorage(this) {
+            if (it) {
+                val bitmap = group_share_qr_layout.createScreenShot()
+                Observable.create<String> {
+                    val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM_GROUP_SHARE_CARD_${mGroupModel.groupId()}.jpg", AmeFileUploader.get(accountContext).DCIM_DIRECTORY)
+                    if (path == null) {
+                        it.onError(Exception("Save QR code error"))
+                        return@create
+                    }
+                    it.onNext(path)
+                    it.onComplete()
+                }.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            MediaScannerConnection.scanFile(this, arrayOf(it), arrayOf(BcmFileUtils.IMAGE_PNG), null)
+                            AmeAppLifecycle.succeed(getString(R.string.chats_group_share_save_success), true)
+                        }, {
+                            AmeAppLifecycle.failure(getString(R.string.chats_group_share_save_fail), true)
+                        })
             }
-            it.onNext(path)
-            it.onComplete()
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    MediaScannerConnection.scanFile(this, arrayOf(it), arrayOf(BcmFileUtils.IMAGE_PNG), null)
-                    AmeAppLifecycle.succeed(getString(R.string.chats_group_share_save_success), true)
-                }, {
-                    AmeAppLifecycle.failure(getString(R.string.chats_group_share_save_fail), true)
-                })
+        }
     }
 
     private fun doForRevoke() {
