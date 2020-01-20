@@ -9,7 +9,6 @@ import com.bcm.messenger.common.bcmhttp.FileHttp
 import com.bcm.messenger.common.bcmhttp.IMHttp
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptorHelper
 import com.bcm.messenger.common.utils.AccountContextMap
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.bcmhttp.callback.Callback
 import com.bcm.messenger.utility.bcmhttp.callback.FileDownCallback
