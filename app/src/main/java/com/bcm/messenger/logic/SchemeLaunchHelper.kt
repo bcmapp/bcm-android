@@ -288,7 +288,11 @@ class SchemeLaunchHelper(val context: Context) {
             val accountContext = checkTargetHashRight(notify.targetHash) ?: return
             notify.contactChat?.uid?.let {
                 try {
-                    val decryptSource = it
+                    val decryptSource = if(Address.isUid(it)){
+                        it
+                    } else {
+                        BCMEncryptUtils.decryptSource(accountContext, it.toByteArray())
+                    }
                     notify.contactChat?.uid = decryptSource
                 } catch (e: Exception) {
                     ALog.e(TAG, "Uid decrypted failed!")
