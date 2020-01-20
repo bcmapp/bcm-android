@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.AmeFileUploader
@@ -139,10 +140,10 @@ class BcmPickPhotoView private constructor(private val builder: Builder) {
 object BcmTakePhotoHelper {
     var currentPhotoPath = ""
 
-    fun takePicture(act: Activity) {
+    fun takePicture(accountContext: AccountContext, act: Activity) {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(act.packageManager) != null) {
-            val photoFile = createImageSaveFile()
+            val photoFile = createImageSaveFile(accountContext)
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile))
             } else {
@@ -154,9 +155,9 @@ object BcmTakePhotoHelper {
         act.startActivityForResult(takePictureIntent, REQ_INNER_CAPTURE)
     }
 
-    private fun createImageSaveFile(): File {
+    private fun createImageSaveFile(accountContext: AccountContext): File {
         // 6.0，DCIM/bcm，6.0
-        val pic = File(if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) AmeFileUploader.DCIM_DIRECTORY else AmeFileUploader.DECRYPT_DIRECTORY)
+        val pic = File(if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) AmeFileUploader.get(accountContext).DCIM_DIRECTORY else AmeFileUploader.get(accountContext).DECRYPT_DIRECTORY)
         if (!pic.exists()) {
             pic.mkdirs()
         }

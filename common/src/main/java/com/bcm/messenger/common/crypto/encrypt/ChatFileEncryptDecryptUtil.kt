@@ -87,7 +87,7 @@ object ChatFileEncryptDecryptUtil {
     @Throws(AssertionError::class, RuntimeException::class)
     @WorkerThread
     @JvmStatic
-    fun encryptGroupFile(path: String, keyParam: GroupKeyParam?): GroupFileInfo {
+    fun encryptGroupFile(accountContext: AccountContext, path: String, keyParam: GroupKeyParam?): GroupFileInfo {
         keyParam ?: throw AssertionError("Key param is null")
         try {
             val originFile = File(path)
@@ -95,7 +95,7 @@ object ChatFileEncryptDecryptUtil {
 
             val oneTimePsw = EncryptUtils.encryptSHA512(GroupMessageEncryptUtils.byteMerger(keyParam.key, digest))
 
-            val uri = BcmFileUtils.createFile(AmeFileUploader.ENCRYPT_DIRECTORY, "${AmeFileUploader.ENCRYPT_DIRECTORY}/${originFile.name}")
+            val uri = BcmFileUtils.createFile(AmeFileUploader.get(accountContext).ENCRYPT_DIRECTORY, "${AmeFileUploader.get(accountContext).ENCRYPT_DIRECTORY}/${originFile.name}")
             val destFile = File(uri.path)
             realEncryptGroupFile(originFile, destFile, oneTimePsw)
             return GroupFileInfo(destFile, destFile.length(), originFile.name,
@@ -185,13 +185,13 @@ object ChatFileEncryptDecryptUtil {
                     psw = detail.attachmentPsw?.psw ?: ""
                     sign = content.sign
                     size = content.size
-                    destPath = "${content.getPath().second}${File.separator}${content.getExtension()}"
+                    destPath = "${content.getPath(masterSecret.accountContext).second}${File.separator}${content.getExtension()}"
                 } else {
                     pswType = detail.thumbPsw?.type ?: -1
                     psw = detail.thumbPsw?.psw ?: ""
                     sign = content.sign_thumbnail
                     size = content.size
-                    destPath = "${content.getThumbnailPath().second}${File.separator}${content.getThumbnailExtension()}"
+                    destPath = "${content.getThumbnailPath(masterSecret.accountContext).second}${File.separator}${content.getThumbnailExtension()}"
                 }
             }
             detail.message.isAudio() -> {
@@ -200,7 +200,7 @@ object ChatFileEncryptDecryptUtil {
                 psw = detail.attachmentPsw?.psw ?: ""
                 sign = (detail.message.content as AmeGroupMessage.AudioContent).sign
                 size = (detail.message.content as AmeGroupMessage.AudioContent).size
-                destPath = "${content.getPath().second}${File.separator}${content.getExtension()}"
+                destPath = "${content.getPath(masterSecret.accountContext).second}${File.separator}${content.getExtension()}"
             }
             detail.message.isFile() -> {
                 val content = detail.message.content as AmeGroupMessage.FileContent
@@ -208,7 +208,7 @@ object ChatFileEncryptDecryptUtil {
                 psw = detail.attachmentPsw?.psw ?: ""
                 sign = (detail.message.content as AmeGroupMessage.FileContent).sign
                 size = (detail.message.content as AmeGroupMessage.FileContent).size
-                destPath = "${content.getPath().second}${File.separator}${content.getExtension()}"
+                destPath = "${content.getPath(masterSecret.accountContext).second}${File.separator}${content.getExtension()}"
             }
             else -> throw RuntimeException("MessageDetail is not a media message.")
         }
@@ -240,7 +240,7 @@ object ChatFileEncryptDecryptUtil {
     @Throws(IOException::class)
     fun encryptLocalFile(masterSecret: MasterSecret, toEncryptFileStream: InputStream): FileInfo {
         val time = System.currentTimeMillis()
-        val partDirectory = File(AmeFileUploader.CHAT_FILE_DIRECTORY)
+        val partDirectory = File(AmeFileUploader.get(masterSecret.accountContext).CHAT_FILE_DIRECTORY)
         val messageDigest = MessageDigest.getInstance("SHA-256")
         val digestInputStream = DigestInputStream(toEncryptFileStream, messageDigest)
 

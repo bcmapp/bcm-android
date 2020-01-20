@@ -37,16 +37,18 @@ class AmeHistoryMessageDetail : AmeGroupMessageDetail() {
         return result
     }
 
-    override fun getFilePartUri(): Uri? {
+    override fun getFilePartUri(accountContext: AccountContext?): Uri? {
         val resultUri = toAttachmentUri()
         if (resultUri != null) {
             return resultUri
         }
         val content = message.content as AmeGroupMessage.AttachmentContent
-        val pathPair = content.getPath()
+        accountContext?:return null
+
+        val pathPair = content.getPath(accountContext)
 
         val destPath = pathPair.second + File.separator + content.getExtension()
-        if (content.isExist()) {
+        if (content.isExist(accountContext)) {
             return BcmFileUtils.getFileUri(destPath)
         }
 
@@ -57,15 +59,15 @@ class AmeHistoryMessageDetail : AmeGroupMessageDetail() {
         if (message.isWithThumbnail()) {
             val content = message.content as AmeGroupMessage.ThumbnailContent
 
-            val pathPair = content.getPath()
-            val thumbnailPathPair = content.getThumbnailPath()
+            val pathPair = content.getPath(accoutContext?:return null)
+            val thumbnailPathPair = content.getThumbnailPath(accoutContext)
             var useThumbnail = true
             //gif，，，
             val isExist = if (content.thumbnail_url.isNullOrEmpty() || MediaUtil.isGif(content.mimeType)) {
                 useThumbnail = false
-                content.isExist()
+                content.isExist(accoutContext)
             } else {
-                content.isThumbnailExist()
+                content.isThumbnailExist(accoutContext)
             }
             val destPath = if (useThumbnail) {
                 thumbnailPathPair.second + File.separator + content.getThumbnailExtension()

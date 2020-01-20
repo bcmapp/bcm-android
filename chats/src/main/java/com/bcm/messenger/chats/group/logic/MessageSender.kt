@@ -20,6 +20,7 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTransform
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.preferences.TextSecurePreferences
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.base64Decode
@@ -312,7 +313,7 @@ class MessageSender(private val mAccountContext: AccountContext) {
 
         Observable.create(ObservableOnSubscribe<String> {
 
-            val path = BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, Uri.parse(messageDetail.attachmentUri))
+            val path = BcmFileUtils.getFileAbsolutePath(mAccountContext, AppContextHolder.APP_CONTEXT, Uri.parse(messageDetail.attachmentUri))
             if (path == null || path.isEmpty()) {
                 it.onError(Exception("media path is null"))
             } else {

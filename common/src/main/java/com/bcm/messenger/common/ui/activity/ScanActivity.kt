@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.AccountSwipeBaseActivity
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -208,7 +209,7 @@ class ScanActivity : AccountSwipeBaseActivity(), TextureView.SurfaceTextureListe
             Observable.create(ObservableOnSubscribe<Result> {
 
                 try {
-                    val result = decodeScanImage(BcmFileUtils.getFileAbsolutePath(this, data?.data))
+                    val result = decodeScanImage(BcmFileUtils.getFileAbsolutePath(accountContext, this, data?.data))
                     if (result == null) {
                         throw Exception("decodeScanImage result is null")
                     } else {

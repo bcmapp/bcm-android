@@ -100,11 +100,11 @@ class PrivacyProfileUpgrader(val logic: BcmProfileLogic) {
      */
     private fun downloadAvatarOld(context: Context, url: String, path: String, callback: (result: Bitmap?) -> Unit) {
 
-        AmeFileUploader.downloadFile(context, url, object : FileDownCallback(AmeFileUploader.TEMP_DIRECTORY, path) {
+        AmeFileUploader.get(logic.mAccountContext).downloadFile(context, url, object : FileDownCallback(AmeFileUploader.get(logic.mAccountContext).TEMP_DIRECTORY, path) {
 
             override fun onError(call: Call?, e: Exception?, id: Long) {
                 callback(null)
-                File(AmeFileUploader.TEMP_DIRECTORY, path).delete()
+                File(AmeFileUploader.get(logic.mAccountContext).TEMP_DIRECTORY, path).delete()
             }
 
             override fun onResponse(response: File?, id: Long) {
@@ -114,7 +114,7 @@ class PrivacyProfileUpgrader(val logic: BcmProfileLogic) {
                     val result = BitmapFactory.decodeFile(response.absolutePath)
                     callback(result)
                 }
-                File(AmeFileUploader.TEMP_DIRECTORY, path).delete()
+                File(AmeFileUploader.get(logic.mAccountContext).TEMP_DIRECTORY, path).delete()
             }
 
         })

@@ -273,7 +273,7 @@ public class AmeGroupMessageDetail {
         this.thumbnailUri = thumbnailUri;
     }
 
-    public @Nullable Uri getFilePartUri() {
+    public @Nullable Uri getFilePartUri(@Nullable AccountContext accountContext) {
         if (attachmentUri == null) {
             return null;
         } else if (!isFileEncrypted) {
@@ -285,12 +285,16 @@ public class AmeGroupMessageDetail {
 
     public @Nullable Uri getThumbnailPartUri(@Nullable AccountContext accountContext) {
         if (message.getContent() instanceof AmeGroupMessage.ThumbnailContent && MediaUtil.isGif(((AmeGroupMessage.ThumbnailContent) message.getContent()).getMimeType())) {
-            return getFilePartUri();
+            return getFilePartUri(accountContext);
         } else if (thumbnailUri == null) {
             // Check thumbnail file and save uri to database. Thumbnail had not saved to DB in previous versions.
             // Since 2.4.0
-            if (message.getContent() instanceof AmeGroupMessage.ThumbnailContent && ((AmeGroupMessage.ThumbnailContent) message.getContent()).isThumbnailExist()) {
-                File file = new File(((AmeGroupMessage.ThumbnailContent) message.getContent()).getThumbnailPath().getSecond() + File.separator + ((AmeGroupMessage.ThumbnailContent) message.getContent()).getThumbnailExtension());
+            if (null == accountContext) {
+                return null;
+            }
+
+            if (message.getContent() instanceof AmeGroupMessage.ThumbnailContent && ((AmeGroupMessage.ThumbnailContent) message.getContent()).isThumbnailExist(accountContext)) {
+                File file = new File(((AmeGroupMessage.ThumbnailContent) message.getContent()).getThumbnailPath(accountContext).getSecond() + File.separator + ((AmeGroupMessage.ThumbnailContent) message.getContent()).getThumbnailExtension());
 
                 AmeDispatcher.INSTANCE.getIo().dispatch(() -> {
                     if (accountContext != null) {

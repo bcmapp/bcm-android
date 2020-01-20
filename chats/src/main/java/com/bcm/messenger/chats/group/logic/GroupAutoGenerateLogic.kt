@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.text.TextUtils
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.database.repositories.Repository
@@ -121,14 +122,14 @@ class GroupAutoGenerateLogic(private val accountContext: AccountContext) {
                         }.observeOn(AmeDispatcher.ioScheduler)
                         .map {
                             val oldPath = gInfo.spliceAvatar
-                            val path = BcmFileUtils.saveBitmap2File(it, "group_avatar_${gid}_${System.currentTimeMillis()}.jpg")
+                            val path = BcmFileUtils.saveBitmap2File(it, "group_avatar_${gid}_${System.currentTimeMillis()}.jpg", AmeFileUploader.get(accountContext).TEMP_DIRECTORY)
                             gInfo.spliceName = combineName
                             gInfo.chnSpliceName = chnCombineName
                             gInfo.spliceAvatar = path
                             GroupLogic.get(accountContext).updateAutoGenGroupNameAndAvatar(gid, combineName, chnCombineName, path)
 
                             if (TextUtils.isEmpty(oldPath)) {
-                                BcmFileUtils.delete(oldPath)
+                                BcmFileUtils.delete(accountContext, oldPath)
                             }
                             path ?: throw Exception("bitmap save failed")
                         }.observeOn(AmeDispatcher.singleScheduler)

@@ -64,7 +64,7 @@ class AdHocMessageCache(private val accountContext: AccountContext) {
                 if (detail.attachmentState) {
                     detail.attachmentUri = result.toString()
                     if (detail.getMessageBody()?.isVideo() == true) { //video need first frame
-                        detail.thumbnailUri = Uri.fromFile(File(BcmFileUtils.getVideoFramePath(AppContextHolder.APP_CONTEXT, result))).toString()
+                        detail.thumbnailUri = Uri.fromFile(File(BcmFileUtils.getVideoFramePath(accountContext, AppContextHolder.APP_CONTEXT, result))).toString()
                     } else {
                         detail.thumbnailUri = detail.attachmentUri
                     }
@@ -123,7 +123,7 @@ class AdHocMessageCache(private val accountContext: AccountContext) {
                     }
                     m.attachmentUri = localUri
                     if (m.getMessageBody()?.isVideo() == true) { //for video, need first frame
-                        m.thumbnailUri = Uri.fromFile(File(BcmFileUtils.getVideoFramePath(AppContextHolder.APP_CONTEXT, Uri.parse(localUri)))).toString()
+                        m.thumbnailUri = Uri.fromFile(File(BcmFileUtils.getVideoFramePath(accountContext, AppContextHolder.APP_CONTEXT, Uri.parse(localUri)))).toString()
                     } else {
                         m.thumbnailUri = m.attachmentUri
                     }
@@ -148,7 +148,7 @@ class AdHocMessageCache(private val accountContext: AccountContext) {
             return true
         }
         return try {
-            val file = File(BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, uri)
+            val file = File(BcmFileUtils.getFileAbsolutePath(accountContext, AppContextHolder.APP_CONTEXT, uri)
                     ?: throw Exception("getAttachmentFilePath fail"))
             val result = AdHocUtil.digest(file)
             ALog.i(TAG, "checkAttachmentLegal result: $result, remote: $digest")

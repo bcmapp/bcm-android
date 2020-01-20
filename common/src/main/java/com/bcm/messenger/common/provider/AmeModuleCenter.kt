@@ -105,7 +105,7 @@ object AmeModuleCenter {
 
         accountJobMgr(accountContext)
         ALog.logForSecret("AmeModuleCenter", "updateAccount ${accountContext.tag} ${accountContext.uid}")
-        AmeFileUploader.initDownloadPath(AppContextHolder.APP_CONTEXT)
+        AmeFileUploader.get(accountContext)
         ReportUtils.setGUid(accountContext.uid)
 
         if (DatabaseFactory.isDatabaseExist(accountContext, AppContextHolder.APP_CONTEXT) && !TextSecurePreferences.isDatabaseMigrated(accountContext)) {
@@ -140,8 +140,7 @@ object AmeModuleCenter {
         Repository.accountLogOut(accountContext)
         serverConnDaemons.remove(accountContext)
         AccountJobManager.remove(accountContext)
-
-
+        AmeFileUploader.remove(accountContext)
     }
 
 }

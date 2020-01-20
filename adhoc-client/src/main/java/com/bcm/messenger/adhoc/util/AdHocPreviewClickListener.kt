@@ -78,7 +78,7 @@ open class AdHocPreviewClickListener(private val accountContext: AccountContext)
 
         AmeAppLifecycle.showLoading()
         Observable.create<Pair<Uri, String?>> {
-            val filePath = BcmFileUtils.getFileAbsolutePath(context, uri)
+            val filePath = BcmFileUtils.getFileAbsolutePath(accountContext, context, uri)
                     ?: throw Exception("get file path fail")
             val targetUri = FileProvider.getUriForFile(context, BuildConfig.BCM_APPLICATION_ID + ".fileprovider", File(filePath))
             it.onNext(Pair(targetUri, filePath))

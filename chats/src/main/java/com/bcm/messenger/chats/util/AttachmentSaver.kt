@@ -6,6 +6,7 @@ import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.mms.GlideApp
@@ -34,13 +35,13 @@ import java.util.*
  * Created by wjh on 2018/6/14
  */
 object AttachmentSaver {
-    fun saveAttachmentOnAsync(activity: AppCompatActivity, mediaUrl: String?, mediaType: String?, name: String?) {
+    fun saveAttachmentOnAsync(accountContext: AccountContext, activity: AppCompatActivity, mediaUrl: String?, mediaType: String?, name: String?) {
         AmePopup.loading.show(activity)
         Observable.create(ObservableOnSubscribe<Pair<Boolean, File?>> {
             try {
                 val url = mediaUrl ?: throw Exception("media url is null")
                 val type = mediaType ?: throw Exception("media type is null")
-                val resultFile = saveAttachment(AppContextHolder.APP_CONTEXT, url, type, name)
+                val resultFile = saveAttachment(accountContext, AppContextHolder.APP_CONTEXT, url, type, name)
                         ?: throw Exception("save file is null")
                 val result = Pair(true, resultFile)
                 it.onNext(result)
@@ -100,13 +101,13 @@ object AttachmentSaver {
                 })
     }
 
-    fun saveAttachment(context: Context, url: String, contentType: String?, name: String?): File? {
+    fun saveAttachment(accountContext: AccountContext, context: Context, url: String, contentType: String?, name: String?): File? {
         if (!StorageUtil.canWriteInExternalStorageDir()) {
             return null
         }
         try {
             val targetFile = GlideApp.with(context).load(url).downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get()
-            return saveAttachment(context, targetFile, contentType, name)
+            return saveAttachment(accountContext, context, targetFile, contentType, name)
 
         } catch (ex: Exception) {
             ALog.e("AttachmentSaver", "saveAttachment fail", ex)
@@ -155,7 +156,7 @@ object AttachmentSaver {
 
 
     @Throws(Exception::class)
-    private fun saveAttachment(context: Context, attachment: File, sourceType: String?, name: String?): File? {
+    private fun saveAttachment(accountContext: AccountContext, context: Context, attachment: File, sourceType: String?, name: String?): File? {
         var outputStream: FileOutputStream? = null
         try {
             val contentType = if (sourceType.isNullOrEmpty()) {
@@ -170,7 +171,7 @@ object AttachmentSaver {
             }
             fileName = File(fileName).name
 
-            val outputDirectory = createOutputDirectoryFromContentType(contentType)
+            val outputDirectory = createOutputDirectoryFromContentType(accountContext, contentType)
             val attachmentFile = createOutputFile(outputDirectory, fileName)
             if (attachmentFile.exists() && attachmentFile.length() > 0) {
                 return attachmentFile
@@ -206,7 +207,7 @@ object AttachmentSaver {
             }
             fileName = File(fileName).name
 
-            val outputDirectory = createOutputDirectoryFromContentType(contentType, saveAsTemp)
+            val outputDirectory = createOutputDirectoryFromContentType(masterSecret.accountContext, contentType, saveAsTemp)
             val attachmentFile = createOutputFile(outputDirectory, fileName, saveAsTemp)
             if (attachmentFile.exists() && attachmentFile.length() > 0) {
                 return attachmentFile
@@ -231,9 +232,9 @@ object AttachmentSaver {
         }
     }
 
-    private fun createOutputDirectoryFromContentType(contentType: String?, saveAsTemp: Boolean = false): File {
+    private fun createOutputDirectoryFromContentType(accountContext: AccountContext, contentType: String?, saveAsTemp: Boolean = false): File {
         if (saveAsTemp) {
-            val path = File(AmeFileUploader.TEMP_DIRECTORY)
+            val path = File(AmeFileUploader.get(accountContext).TEMP_DIRECTORY)
             if (!path.exists()) {
                 path.mkdir()
             }

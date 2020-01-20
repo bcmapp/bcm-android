@@ -33,25 +33,25 @@ object EncryptMediaUtils {
     }
 
     fun encryptVideo(masterSecret: MasterSecret, gid: Long, videoPath: String): Pair<EncryptResult?, EncryptResult?> {
-        val triple = BcmFileUtils.getVideoFrameInfo(videoPath)
+        val triple = BcmFileUtils.getVideoFrameInfo(masterSecret.accountContext, videoPath)
         val groupInfo = GroupInfoDataManager.queryOneGroupInfo(masterSecret.accountContext, gid) ?: return Pair(null, null)
         val keyParam = GroupKeyParam(groupInfo.currentKey.base64Decode(), groupInfo.currentKeyVersion)
         try {
             if (triple.first != null) {
-                val compressedData = compressBitmap(triple.first!!, triple.second, triple.third, true)
+                val compressedData = compressBitmap(masterSecret.accountContext, triple.first!!, triple.second, triple.third, true)
 
-                val thumbnailFile = ChatFileEncryptDecryptUtil.encryptGroupFile(compressedData.first, keyParam)
+                val thumbnailFile = ChatFileEncryptDecryptUtil.encryptGroupFile(masterSecret.accountContext, compressedData.first, keyParam)
                 val thumbnailLocal = ChatFileEncryptDecryptUtil.encryptLocalFile(masterSecret, FileInputStream(compressedData.first))
                 File(triple.first).delete()
                 File(compressedData.first).delete()
 
-                val videoFile = ChatFileEncryptDecryptUtil.encryptGroupFile(videoPath, keyParam)
+                val videoFile = ChatFileEncryptDecryptUtil.encryptGroupFile(masterSecret.accountContext, videoPath, keyParam)
                 val videoLocal = ChatFileEncryptDecryptUtil.encryptLocalFile(masterSecret, FileInputStream(videoPath))
 
                 return Pair(EncryptResult(videoLocal, videoFile, triple.second, triple.third),
                         EncryptResult(thumbnailLocal, thumbnailFile, compressedData.second, compressedData.third))
             } else {
-                val videoFile = ChatFileEncryptDecryptUtil.encryptGroupFile(videoPath, keyParam)
+                val videoFile = ChatFileEncryptDecryptUtil.encryptGroupFile(masterSecret.accountContext, videoPath, keyParam)
                 val videoLocal = ChatFileEncryptDecryptUtil.encryptLocalFile(masterSecret, FileInputStream(videoPath))
                 return Pair(EncryptResult(videoLocal, videoFile, triple.second, triple.third),
                         EncryptResult(null, null, 0, 0))
@@ -105,13 +105,13 @@ object EncryptMediaUtils {
         val width = options.outWidth
         val height = options.outHeight
 
-        val compressedData = compressBitmap(path, width, height, false)
+        val compressedData = compressBitmap(masterSecret.accountContext, path, width, height, false)
 
         try {
-            val imageFile = ChatFileEncryptDecryptUtil.encryptGroupFile(path, keyParam)
+            val imageFile = ChatFileEncryptDecryptUtil.encryptGroupFile(masterSecret.accountContext, path, keyParam)
             val imageLocal = ChatFileEncryptDecryptUtil.encryptLocalFile(masterSecret, FileInputStream(path))
 
-            val thumbnailFile = ChatFileEncryptDecryptUtil.encryptGroupFile(compressedData.first, keyParam)
+            val thumbnailFile = ChatFileEncryptDecryptUtil.encryptGroupFile(masterSecret.accountContext, compressedData.first, keyParam)
             val thumbnailLocal = ChatFileEncryptDecryptUtil.encryptLocalFile(masterSecret, FileInputStream(compressedData.first))
             File(compressedData.first).delete()
 
@@ -159,7 +159,7 @@ object EncryptMediaUtils {
         val keyParam = GroupKeyParam(groupInfo.currentKey.base64Decode(), groupInfo.currentKeyVersion)
 
         try {
-            val remoteFile = ChatFileEncryptDecryptUtil.encryptGroupFile(filePath, keyParam)
+            val remoteFile = ChatFileEncryptDecryptUtil.encryptGroupFile(masterSecret.accountContext, filePath, keyParam)
             val localFile = ChatFileEncryptDecryptUtil.encryptLocalFile(masterSecret, FileInputStream(filePath))
 
             return EncryptResult(localFile, remoteFile, 0, 0)
@@ -187,7 +187,7 @@ object EncryptMediaUtils {
 //        return null
 //    }
 
-    private fun compressBitmap(path: String, currentWidth: Int, currentHeight: Int, isVideo: Boolean): Triple<String, Int, Int> {
+    private fun compressBitmap(accountContext: AccountContext, path: String, currentWidth: Int, currentHeight: Int, isVideo: Boolean): Triple<String, Int, Int> {
         val destWidth: Int
         val destHeight: Int
 
@@ -209,7 +209,7 @@ object EncryptMediaUtils {
             var outputStream: OutputStream? = null
 
             try {
-                val localPath = "${AmeFileUploader.THUMBNAIL_DIRECTORY}${File.separatorChar}${System.currentTimeMillis()}.thumb"
+                val localPath = "${AmeFileUploader.get(accountContext).THUMBNAIL_DIRECTORY}${File.separatorChar}${System.currentTimeMillis()}.thumb"
                 val file = if (isVideo) File(path).apply { delete() } else File(localPath).apply { createNewFile() }
                 outputStream = FileOutputStream(file)
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)

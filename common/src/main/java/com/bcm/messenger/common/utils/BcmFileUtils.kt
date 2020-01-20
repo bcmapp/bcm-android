@@ -19,6 +19,7 @@ import android.text.TextUtils
 import android.text.format.Formatter
 import android.util.ArrayMap
 import androidx.core.content.FileProvider
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.utility.AppContextHolder
@@ -195,12 +196,12 @@ object BcmFileUtils {
      * @return
      */
     @SuppressLint("CheckResult")
-    fun getRemoteVideoFrameInfo(uri: String?, result: (url: String?, previewPath: String?) -> Unit) {
+    fun getRemoteVideoFrameInfo(accountContext: AccountContext, uri: String?, result: (url: String?, previewPath: String?) -> Unit) {
         if (uri == null) {
             return result(null, null)
         }
         val name = EncryptUtils.encryptMD5ToString(uri)
-        var tmpPath = File(AmeFileUploader.TEMP_DIRECTORY, name).absolutePath
+        var tmpPath = File(AmeFileUploader.get(accountContext).TEMP_DIRECTORY, name).absolutePath
         if (isExist(tmpPath)) {
             return result(uri, tmpPath)
         }
@@ -224,7 +225,7 @@ object BcmFileUtils {
             }
 
             if (null != previewBmp) {//，
-                tmpPath = saveBitmap2File(previewBmp, name)
+                tmpPath = saveBitmap2File(previewBmp, name, AmeFileUploader.get(accountContext).TEMP_DIRECTORY)
             }
 
             if (null != tmpPath) {
@@ -249,16 +250,16 @@ object BcmFileUtils {
     /**
      * （）
      */
-    fun getVideoFrameBitmap(context: Context, uri: Uri?): Bitmap? {
+    fun getVideoFrameBitmap(accountContext: AccountContext, context: Context, uri: Uri?): Bitmap? {
 
         if (uri == null) {
             return null
         }
-        val videoPath = getFileAbsolutePath(context, uri)
+        val videoPath = getFileAbsolutePath(accountContext, context, uri)
                 ?: return null
         var previewPath: String? = null
         val name = EncryptUtils.encryptMD5ToString(videoPath)
-        previewPath = File(AmeFileUploader.TEMP_DIRECTORY, name).absolutePath
+        previewPath = File(AmeFileUploader.get(accountContext).TEMP_DIRECTORY, name).absolutePath
         if (previewPath != null && isExist(previewPath)) {
             return BitmapFactory.decodeFile(previewPath)
 
@@ -277,7 +278,7 @@ object BcmFileUtils {
             }
 
             if (null != previewBmp) {//，
-                saveBitmap2File(previewBmp, name)
+                saveBitmap2File(previewBmp, name, AmeFileUploader.get(accountContext).TEMP_DIRECTORY)
             }
             return previewBmp
         }
@@ -286,9 +287,9 @@ object BcmFileUtils {
     /**
      * 
      */
-    fun getVideoFramePath(context: Context, uri: Uri): String? {
+    fun getVideoFramePath(accountContext: AccountContext, context: Context, uri: Uri): String? {
         var path: String? = null
-        getVideoFrameInfo(context, uri) { previewPath, _, _ ->
+        getVideoFrameInfo(accountContext, context, uri) { previewPath, _, _ ->
             path = previewPath
         }
         return path
@@ -297,7 +298,7 @@ object BcmFileUtils {
     /**
      * 
      */
-    fun getVideoFrameInfo(context: Context, path: String?, result: (previewPath: String?, width: Int, height: Int) -> Unit) {
+    fun getVideoFrameInfo(accountContext: AccountContext, context: Context, path: String?, result: (previewPath: String?, width: Int, height: Int) -> Unit) {
         if (path == null) {
             return result(null, 0, 0)
         }
@@ -305,7 +306,7 @@ object BcmFileUtils {
         var previewW: Int = 0
         var previewH: Int = 0
         val name = EncryptUtils.encryptMD5ToString(path)
-        previewPath = File(AmeFileUploader.TEMP_DIRECTORY, name).absolutePath
+        previewPath = File(AmeFileUploader.get(accountContext).TEMP_DIRECTORY, name).absolutePath
         if (previewPath != null && isExist(previewPath)) {
             val size = BitmapUtils.getImageSize(previewPath)
             previewW = size.width
@@ -326,13 +327,13 @@ object BcmFileUtils {
             }
 
             if (null != previewBmp) {//，
-                previewPath = saveBitmap2File(previewBmp, name)
+                previewPath = saveBitmap2File(previewBmp, name, AmeFileUploader.get(accountContext).TEMP_DIRECTORY)
             }
         }
         return result(previewPath, previewW, previewH)
     }
 
-    fun getVideoFrameInfo(path: String?): Triple<String?, Int, Int> {
+    fun getVideoFrameInfo(accountContext: AccountContext, path: String?): Triple<String?, Int, Int> {
         if (path == null) return Triple(null, 0, 0)
 
         val name = EncryptUtils.encryptMD5ToString(path)
@@ -340,7 +341,7 @@ object BcmFileUtils {
         try {
             retriever.setDataSource(path)
             val bitmap = retriever.frameAtTime
-            return Triple(saveBitmap2File(bitmap, name), bitmap.width, bitmap.height)
+            return Triple(saveBitmap2File(bitmap, name, AmeFileUploader.get(accountContext).TEMP_DIRECTORY), bitmap.width, bitmap.height)
         } catch (tr: Throwable) {
             ALog.w(TAG, "Get video frame error. ${tr.message}")
         } finally {
@@ -353,8 +354,8 @@ object BcmFileUtils {
     /**
      * ()
      */
-    fun getVideoFrameInfo(context: Context, uri: Uri?, result: (previewPath: String?, width: Int, height: Int) -> Unit) {
-        getVideoFrameInfo(context, getFileAbsolutePath(context, uri), result)
+    fun getVideoFrameInfo(accountContext: AccountContext, context: Context, uri: Uri?, result: (previewPath: String?, width: Int, height: Int) -> Unit) {
+        getVideoFrameInfo(accountContext, context, getFileAbsolutePath(accountContext, context, uri), result)
     }
 
     @Throws(Exception::class)
@@ -375,7 +376,7 @@ object BcmFileUtils {
      * @param fileUri
      */
     @TargetApi(19)
-    fun getFileAbsolutePath(context: Context?, fileUri: Uri?): String? {
+    fun getFileAbsolutePath(accountContext: AccountContext, context: Context?, fileUri: Uri?): String? {
         if (context == null || fileUri == null)
             return null
         if (ContentResolver.SCHEME_FILE == fileUri.scheme) {
@@ -396,7 +397,7 @@ object BcmFileUtils {
                     } else if (isDownloadsDocument(fileUri)) {
                         val id = DocumentsContract.getDocumentId(fileUri)
                         val contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), id.toLong())
-                        getContentDataPath(context, contentUri, null, null)
+                        getContentDataPath(accountContext, context, contentUri, null, null)
 
                     } else if (isMediaDocument(fileUri)) {
                         val docId = DocumentsContract.getDocumentId(fileUri)
@@ -410,12 +411,12 @@ object BcmFileUtils {
                         }
                         val selection = MediaStore.Images.Media._ID + "=?"
                         val selectionArgs = arrayOf(split[1])
-                        getContentDataPath(context, contentUri, selection, selectionArgs)
+                        getContentDataPath(accountContext, context, contentUri, selection, selectionArgs)
                     } else {
                         null
                     }
                 } else if ("content".equals(fileUri.scheme, ignoreCase = true)) {
-                    if (isGooglePhotosUri(fileUri)) fileUri.lastPathSegment else getContentDataPath(context, fileUri, null, null)
+                    if (isGooglePhotosUri(fileUri)) fileUri.lastPathSegment else getContentDataPath(accountContext, context, fileUri, null, null)
                 } else if ("file".equals(fileUri.scheme, ignoreCase = true)) {
                     fileUri.path
                 } else {
@@ -428,7 +429,7 @@ object BcmFileUtils {
 
             }catch (ex: Exception) {
                 ALog.e("BcmFileUtils", "getFileAbsolutePath fail", ex)
-                return getContentDataPath(context, fileUri, null, null)
+                return getContentDataPath(accountContext, context, fileUri, null, null)
             }
         }
         return null
@@ -437,7 +438,7 @@ object BcmFileUtils {
     /**
      * content uri，
      */
-    private fun getContentDataPath(context: Context, uri: Uri?, selection: String?, selectionArgs: Array<String>?): String? {
+    private fun getContentDataPath(accountContext: AccountContext, context: Context, uri: Uri?, selection: String?, selectionArgs: Array<String>?): String? {
         uri ?: return null
         var cursor: Cursor? = null
         try {
@@ -458,7 +459,7 @@ object BcmFileUtils {
                     fileName
                 }
                 //bcm
-                val destPath = AmeFileUploader.DECRYPT_DIRECTORY ?: AmeFileUploader.DEFAULT_PATH
+                val destPath = AmeFileUploader.get(accountContext).DECRYPT_DIRECTORY
                 val resultPath = destPath + File.separator + destName
                 createFile(destPath, resultPath)
                 //
@@ -507,7 +508,7 @@ object BcmFileUtils {
     /**
      * 
      */
-    fun saveBitmap2File(bitmap: Bitmap, imgName: String? = null, directory: String = AmeFileUploader.TEMP_DIRECTORY): String? {
+    fun saveBitmap2File(bitmap: Bitmap, imgName: String? = null, directory: String): String? {
 
         val bmpName = if (imgName.isNullOrEmpty()) {
             EncryptUtils.getSecretHex(5) + "_temp_bmp.jpg"
@@ -580,7 +581,7 @@ object BcmFileUtils {
     /**
      * 
      */
-    fun delete(path: String?): Boolean {
+    fun delete(accountContext: AccountContext, path: String?): Boolean {
         if (TextUtils.isEmpty(path)){
             return false
         }
@@ -589,7 +590,7 @@ object BcmFileUtils {
             var file = File(path)
             if (!file.exists()) {
                 val uri = Uri.parse(path)
-                val absolutePath = getFileAbsolutePath(AppContextHolder.APP_CONTEXT, uri)
+                val absolutePath = getFileAbsolutePath(accountContext, AppContextHolder.APP_CONTEXT, uri)
                 file = File(absolutePath)
             }
 

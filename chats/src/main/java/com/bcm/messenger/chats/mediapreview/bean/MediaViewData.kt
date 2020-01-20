@@ -275,7 +275,7 @@ data class MediaViewData(val indexId: Long,
                     val file = if (masterSecret != null) {
                         AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, masterSecret, finalUri, content.mimeType, name)
                     } else {
-                        AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, finalUri.toString(), content.mimeType, name)
+                        AttachmentSaver.saveAttachment(accountContext, AppContextHolder.APP_CONTEXT, finalUri.toString(), content.mimeType, name)
                     }
                     if (file != null) {
                         it.onNext(file)

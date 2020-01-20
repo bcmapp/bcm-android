@@ -113,7 +113,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         val slide = if (messageRecord.attachmentUri.isNullOrEmpty()) {
             AudioSlide(context, null, content.size, content.duration, false)
         } else {
-            AudioSlide(context, messageRecord.filePartUri, content.size, content.duration, false, true)
+            AudioSlide(context, messageRecord.getFilePartUri(accountContext), content.size, content.duration, false, true)
         }
 
         displayControl(audio_play)

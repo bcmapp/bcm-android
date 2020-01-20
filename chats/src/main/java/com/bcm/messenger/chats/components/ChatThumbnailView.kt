@@ -295,7 +295,7 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
                 val resultUri = if (messageDetailRecord.message.isVideo()) {
                     messageDetailRecord.getThumbnailPartUri(masterSecret.accountContext)
                 } else {
-                    messageDetailRecord.getThumbnailPartUri(masterSecret.accountContext) ?: messageDetailRecord.filePartUri
+                    messageDetailRecord.getThumbnailPartUri(masterSecret.accountContext) ?: messageDetailRecord.getFilePartUri(masterSecret.accountContext)
                 }
 
                 buildNotFoundHolderThumbnail(false)

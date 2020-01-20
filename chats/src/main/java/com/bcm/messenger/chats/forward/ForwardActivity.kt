@@ -360,7 +360,7 @@ class ForwardActivity : AccountSwipeBaseActivity() {
         if (recipient.isGroupRecipient) {
             Observable.create<Unit> {
                 val uri = Uri.fromFile(File(path))
-                val imageContent = AttachmentUtils.getAttachmentContent(this, uri, path) as? AmeGroupMessage.ImageContent
+                val imageContent = AttachmentUtils.getAttachmentContent(accountContext, this, uri, path) as? AmeGroupMessage.ImageContent
                         ?: throw Exception("ImageContent is null")
                 GroupMessageLogic.get(accountContext).messageSender.sendImageMessage(getMasterSecret(), GroupUtil.gidFromAddress(recipient.address), imageContent, uri, path, null)
                 it.onComplete()

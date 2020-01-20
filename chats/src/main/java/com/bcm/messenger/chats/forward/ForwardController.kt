@@ -254,7 +254,7 @@ object ForwardController {
                                     val smallBitmap = BitmapUtils.compressImageForThumbnail(it)
                                     smallBitmap?.let { bitmap ->
                                         val content = AmeGroupMessage.ImageContent("", bitmap.width, bitmap.height, slide.contentType,
-                                                "", BcmFileUtils.saveBitmap2File(bitmap)
+                                                "", BcmFileUtils.saveBitmap2File(bitmap, null, AmeFileUploader.get(masterSecret.accountContext).TEMP_DIRECTORY)
                                                 ?: "", "", it.length())
                                         GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendImageMessage(masterSecret, groupId, content, Uri.fromFile(it), it.path, privateToGroupCallback)
                                     }
@@ -277,7 +277,7 @@ object ForwardController {
                             Observable.create<Unit> {
                                 val file = AttachmentSaver.saveTempAttachment(AppContextHolder.APP_CONTEXT, masterSecret, slideUri, slide.contentType, slide.fileNameString)
                                 file?.let { f ->
-                                    BcmFileUtils.getVideoFrameInfo(AppContextHolder.APP_CONTEXT, f.absolutePath) { _, width, height ->
+                                    BcmFileUtils.getVideoFrameInfo(masterSecret.accountContext, AppContextHolder.APP_CONTEXT, f.absolutePath) { _, width, height ->
                                         val content = AmeGroupMessage.VideoContent("", slide.contentType, f.length(), slide.asAttachment().duration,
                                                 "", Uri.fromFile(f).toString(), width, height, "")
                                         GroupMessageLogic.get(AMELogin.majorContext).messageSender.sendVideoMessage(masterSecret, groupId, Uri.fromFile(f), content, f.path, privateToGroupCallback)
@@ -720,11 +720,11 @@ object ForwardController {
     private fun getGroupFilePath(masterSecret: MasterSecret, message: AmeGroupMessageDetail, uri: Uri): String? {
         return if (message.isFileEncrypted) {
             val inputStream = CtrStreamUtil.createForDecryptingInputStream(masterSecret, message.dataRandom, File(uri.path), 0)
-            val tempFile = File(AmeFileUploader.DECRYPT_DIRECTORY, "${System.currentTimeMillis()}.temp")
+            val tempFile = File(AmeFileUploader.get(masterSecret.accountContext).DECRYPT_DIRECTORY, "${System.currentTimeMillis()}.temp")
             BcmFileUtils.copy(inputStream, FileOutputStream(tempFile))
             tempFile.path
         } else {
-            BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, uri)
+            BcmFileUtils.getFileAbsolutePath(masterSecret.accountContext, AppContextHolder.APP_CONTEXT, uri)
         }
     }
 

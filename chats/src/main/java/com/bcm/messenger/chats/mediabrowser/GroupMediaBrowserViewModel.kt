@@ -146,7 +146,7 @@ class GroupMediaBrowserViewModel(accountContext: AccountContext) : BaseMediaBrow
                         override fun onResult(success: Boolean, uri: Uri?) {
                             if (success) {
                                 ALog.d(TAG, "download file, uri is $uri")
-                                val file = AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, uri?.toString()
+                                val file = AttachmentSaver.saveAttachment(accountContext, AppContextHolder.APP_CONTEXT, uri?.toString()
                                         ?: "", mimeType, name)
                                 if (file == null) {
                                     ALog.d(TAG, "download file failed, uri is $uri")
@@ -158,7 +158,7 @@ class GroupMediaBrowserViewModel(accountContext: AccountContext) : BaseMediaBrow
 
                 } else {
                     ALog.d(TAG, "download file, uri is ${msg.attachmentUri}")
-                    val file = AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, msg.attachmentUri, mimeType, name)
+                    val file = AttachmentSaver.saveAttachment(accountContext, AppContextHolder.APP_CONTEXT, msg.attachmentUri, mimeType, name)
                     if (file == null) {
                         ALog.d(TAG, "download file failed, uri is ${msg.attachmentUri}")
                         failList.add(data)

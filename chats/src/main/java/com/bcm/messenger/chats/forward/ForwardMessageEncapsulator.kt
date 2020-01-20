@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Size
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.GroupKeyParam
@@ -107,7 +108,7 @@ object ForwardMessageEncapsulator {
                 val path = if (!message.isAttachmentComplete) {
                     ""
                 } else {
-                    BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, message.toAttachmentUri())
+                    BcmFileUtils.getFileAbsolutePath(masterSecret.accountContext, AppContextHolder.APP_CONTEXT, message.toAttachmentUri())
                 }
                 if (path?.isNotEmpty() == true) {
                     try {
@@ -206,7 +207,7 @@ object ForwardMessageEncapsulator {
      * Upload the files not uploaded in the private chat message to the server
      */
     @SuppressLint("CheckResult")
-    private fun uploadPrivateHistoryFiles(prepareList: List<PrepareMessage>, result: (succeed: Boolean, historyList: List<HistoryMessageDetail>) -> Unit) {
+    private fun uploadPrivateHistoryFiles(accountContext: AccountContext, prepareList: List<PrepareMessage>, result: (succeed: Boolean, historyList: List<HistoryMessageDetail>) -> Unit) {
         val historyList = ArrayList<HistoryMessageDetail>(prepareList.count())
         val uploadList = ArrayList<Observable<String>>()
         for (prepare in prepareList) {
@@ -218,7 +219,7 @@ object ForwardMessageEncapsulator {
                         val c = prepare.ameMessage!!.content as AmeGroupMessage.VideoContent
                         var psw = prepare.historyMessage.thumbPsw?.psw
                         if (!c.thumbnail_url.startsWith("http")) {
-                            val observable = uploadProxyObserver(c.thumbnail_url, psw) {
+                            val observable = uploadProxyObserver(accountContext, c.thumbnail_url, psw) {
                                 c.thumbnail_url = it
                             }
                             uploadList.add(observable)
@@ -227,7 +228,7 @@ object ForwardMessageEncapsulator {
 
                         psw = prepare.historyMessage.attachmentPsw?.psw
                         if (!c.url.startsWith("http")) {
-                            val observable = uploadProxyObserver(c.url, psw) {
+                            val observable = uploadProxyObserver(accountContext, c.url, psw) {
                                 c.url = it
                             }
                             uploadList.add(observable)
@@ -243,7 +244,7 @@ object ForwardMessageEncapsulator {
                         val c = prepare.ameMessage!!.content as AmeGroupMessage.ImageContent
                         var psw = prepare.historyMessage.thumbPsw?.psw
                         if (!c.thumbnail_url.startsWith("http")) {
-                            val observable = uploadProxyObserver(c.thumbnail_url, psw) {
+                            val observable = uploadProxyObserver(accountContext, c.thumbnail_url, psw) {
                                 c.thumbnail_url = it
                             }
                             uploadList.add(observable)
@@ -252,7 +253,7 @@ object ForwardMessageEncapsulator {
 
                         psw = prepare.historyMessage.attachmentPsw?.psw
                         if (!c.url.startsWith("http")) {
-                            val observable = uploadProxyObserver(c.url, psw) {
+                            val observable = uploadProxyObserver(accountContext, c.url, psw) {
                                 c.url = it
                             }
                             uploadList.add(observable)
@@ -268,7 +269,7 @@ object ForwardMessageEncapsulator {
                         val psw = prepare.historyMessage.attachmentPsw?.psw
 
                         if (!c.url.startsWith("http")) {
-                            val observable = uploadProxyObserver(c.url, psw) {
+                            val observable = uploadProxyObserver(accountContext, c.url, psw) {
                                 c.url = it
                             }
                             uploadList.add(observable)
@@ -305,14 +306,14 @@ object ForwardMessageEncapsulator {
 
     }
 
-    private fun uploadProxyObserver(localPath: String, psw: String?, result: (url: String) -> Unit): Observable<String> {
+    private fun uploadProxyObserver(accountContext: AccountContext, localPath: String, psw: String?, result: (url: String) -> Unit): Observable<String> {
         return Observable.create(ObservableOnSubscribe<String> {
             if (psw?.isNotEmpty() == true) {
                 val destFile = createTempFile(AppContextHolder.APP_CONTEXT)
 
                 BCMEncryptUtils.encryptFile(File(localPath), Base64.decode(psw), destFile)
 
-                AmeFileUploader.uploadAttachmentToAws(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, AmeFileUploader.AttachmentType.GROUP_MESSAGE, destFile, object : AmeFileUploader.FileUploadCallback() {
+                AmeFileUploader.get(accountContext).uploadAttachmentToAws(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, AmeFileUploader.AttachmentType.GROUP_MESSAGE, destFile, object : AmeFileUploader.FileUploadCallback {
                     override fun onUploadSuccess(url: String?, id: String?) {
                         result(url ?: "")
                         it.onNext(url ?: "")
@@ -347,7 +348,7 @@ object ForwardMessageEncapsulator {
             }
         }
         val afterPrepareMessages: List<PrepareMessage> = prepareDetailMessages(masterSecret, prepareMessageList)
-        uploadPrivateHistoryFiles(afterPrepareMessages) { succeed, historyList ->
+        uploadPrivateHistoryFiles(masterSecret.accountContext, afterPrepareMessages) { succeed, historyList ->
             result(succeed, historyList)
         }
     }
@@ -395,6 +396,7 @@ object ForwardMessageEncapsulator {
         val inputStream = attachmentRepo.getAttachmentStream(masterSecret, attachment.id, attachment.uniqueId) ?: return
         val originPlainFile = createTempFile(AppContextHolder.APP_CONTEXT)
 
+        val tmpDir = AmeFileUploader.get(masterSecret.accountContext).TEMP_DIRECTORY
         outputDataToFile(inputStream, originPlainFile)
         val fileSign = Base64.encodeBytes(EncryptUtils.encryptSHA512(FileInputStream(originPlainFile)))
         when {
@@ -402,24 +404,24 @@ object ForwardMessageEncapsulator {
                 when {
                     !attachment.url.isNullOrEmpty() -> {
                         val attachmentUrl = attachment.url!!
-                        val frameFilePath = BcmFileUtils.getVideoFramePath(AppContextHolder.APP_CONTEXT, BcmFileUtils.getFileUri(originPlainFile.absolutePath!!))
-                        val thumbFilePath = BcmFileUtils.saveBitmap2File(BitmapUtils.compressImageForThumbnail(frameFilePath!!)!!)
+                        val frameFilePath = BcmFileUtils.getVideoFramePath(masterSecret.accountContext, AppContextHolder.APP_CONTEXT, BcmFileUtils.getFileUri(originPlainFile.absolutePath!!))
+                        val thumbFilePath = BcmFileUtils.saveBitmap2File(BitmapUtils.compressImageForThumbnail(frameFilePath!!)!!,null, tmpDir)
                         val thumbSize: Size = getThumbSizeForImage(attachment, thumbFilePath!!)
                         val thumbnailSign = Base64.encodeBytes(EncryptUtils.encryptSHA512(FileInputStream(File(thumbFilePath))))
                         prepareMessage.ameMessage = AmeGroupMessage(AmeGroupMessage.VIDEO, AmeGroupMessage.VideoContent(attachmentUrl, attachment.contentType, attachment.dataSize, attachment.duration, Base64.encodeBytes(attachment.digest), thumbFilePath, thumbSize.width, thumbSize.height, thumbnailSign))
                     }
                     attachment.contentLocation.isNotEmpty() -> {
                         val attachmentUrl = "https://ameim.bs2dl.yy.com/attachments/${attachment.contentLocation}"
-                        val frameFilePath = BcmFileUtils.getVideoFramePath(AppContextHolder.APP_CONTEXT, BcmFileUtils.getFileUri(originPlainFile.absolutePath!!))
-                        val thumbFilePath = BcmFileUtils.saveBitmap2File(BitmapUtils.compressImageForThumbnail(frameFilePath!!)!!)
+                        val frameFilePath = BcmFileUtils.getVideoFramePath(masterSecret.accountContext, AppContextHolder.APP_CONTEXT, BcmFileUtils.getFileUri(originPlainFile.absolutePath!!))
+                        val thumbFilePath = BcmFileUtils.saveBitmap2File(BitmapUtils.compressImageForThumbnail(frameFilePath!!)!!, null, tmpDir)
                         val thumbSize: Size = getThumbSizeForImage(attachment, thumbFilePath!!)
                         val thumbnailSign = Base64.encodeBytes(EncryptUtils.encryptSHA512(FileInputStream(File(thumbFilePath))))
                         prepareMessage.ameMessage = AmeGroupMessage(AmeGroupMessage.VIDEO, AmeGroupMessage.VideoContent(attachmentUrl, attachment.contentType, attachment.dataSize, attachment.duration, Base64.encodeBytes(attachment.digest), thumbFilePath, thumbSize.width, thumbSize.height, thumbnailSign))
                     }
                     else -> {
                         val attachmentUrl = originPlainFile.absolutePath
-                        val frameFilePath = BcmFileUtils.getVideoFramePath(AppContextHolder.APP_CONTEXT, BcmFileUtils.getFileUri(originPlainFile.absolutePath!!))
-                        val thumbFilePath = BcmFileUtils.saveBitmap2File(BitmapUtils.compressImageForThumbnail(frameFilePath!!)!!)
+                        val frameFilePath = BcmFileUtils.getVideoFramePath(masterSecret.accountContext, AppContextHolder.APP_CONTEXT, BcmFileUtils.getFileUri(originPlainFile.absolutePath!!))
+                        val thumbFilePath = BcmFileUtils.saveBitmap2File(BitmapUtils.compressImageForThumbnail(frameFilePath!!)!!, null, tmpDir)
                         val thumbSize: Size = getThumbSizeForImage(attachment, thumbFilePath!!)
                         val thumbnailSign = Base64.encodeBytes(EncryptUtils.encryptSHA512(FileInputStream(File(thumbFilePath))))
                         prepareMessage.ameMessage = AmeGroupMessage(AmeGroupMessage.VIDEO, AmeGroupMessage.VideoContent(attachmentUrl, attachment.contentType, attachment.dataSize, attachment.duration, fileSign, thumbFilePath, thumbSize.width, thumbSize.height, thumbnailSign))
@@ -449,21 +451,21 @@ object ForwardMessageEncapsulator {
                 when {
                     !attachment.url.isNullOrEmpty() -> {
                         val attachmentUrl = attachment.url!!
-                        val thumbFilePath = BcmFileUtils.saveBitmap2File(BitmapUtils.compressImageForThumbnail(originPlainFile.absoluteFile)!!)
+                        val thumbFilePath = BcmFileUtils.saveBitmap2File(BitmapUtils.compressImageForThumbnail(originPlainFile.absoluteFile)!!, null, tmpDir)
                         val thumbSize: Size = getThumbSizeForImage(attachment, thumbFilePath!!)
                         val thumbnailSign = Base64.encodeBytes(EncryptUtils.encryptSHA512(FileInputStream(File(thumbFilePath))))
                         prepareMessage.ameMessage = AmeGroupMessage(AmeGroupMessage.IMAGE, AmeGroupMessage.ImageContent(attachmentUrl, thumbSize.width, thumbSize.height, attachment.contentType, Base64.encodeBytes(attachment.digest), thumbFilePath, thumbnailSign, attachment.dataSize))
                     }
                     attachment.contentLocation.isNotEmpty() -> {
                         val attachmentUrl = "https://ameim.bs2dl.yy.com/attachments/${attachment.contentLocation}"
-                        val thumbFilePath = BcmFileUtils.saveBitmap2File(BitmapUtils.compressImageForThumbnail(originPlainFile.absoluteFile)!!)
+                        val thumbFilePath = BcmFileUtils.saveBitmap2File(BitmapUtils.compressImageForThumbnail(originPlainFile.absoluteFile)!!, null, tmpDir)
                         val thumbSize: Size = getThumbSizeForImage(attachment, thumbFilePath!!)
                         val thumbnailSign = Base64.encodeBytes(EncryptUtils.encryptSHA512(FileInputStream(File(thumbFilePath))))
                         prepareMessage.ameMessage = AmeGroupMessage(AmeGroupMessage.IMAGE, AmeGroupMessage.ImageContent(attachmentUrl, thumbSize.width, thumbSize.height, attachment.contentType, Base64.encodeBytes(attachment.digest), thumbFilePath, thumbnailSign, attachment.dataSize))
                     }
                     else -> {
                         val attachmentUrl = originPlainFile.absolutePath
-                        val thumbFilePath = BcmFileUtils.saveBitmap2File(BitmapUtils.compressImageForThumbnail(originPlainFile.absoluteFile)!!)
+                        val thumbFilePath = BcmFileUtils.saveBitmap2File(BitmapUtils.compressImageForThumbnail(originPlainFile.absoluteFile)!!, null, tmpDir)
                         val thumbSize: Size = getThumbSizeForImage(attachment, thumbFilePath!!)
                         val thumbnailSign = Base64.encodeBytes(EncryptUtils.encryptSHA512(FileInputStream(File(thumbFilePath))))
                         prepareMessage.ameMessage = AmeGroupMessage(AmeGroupMessage.IMAGE, AmeGroupMessage.ImageContent(attachmentUrl, thumbSize.width, thumbSize.height, attachment.contentType, fileSign, thumbFilePath, thumbnailSign, attachment.dataSize))

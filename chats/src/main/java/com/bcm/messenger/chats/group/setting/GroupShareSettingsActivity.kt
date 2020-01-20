@@ -259,7 +259,7 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
     private fun doForSaveShareUrl() {
         val bitmap = group_share_qr_layout.createScreenShot()
         Observable.create<String> {
-            val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM_GROUP_SHARE_CARD_${mGroupModel.groupId()}.jpg", AmeFileUploader.DCIM_DIRECTORY)
+            val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM_GROUP_SHARE_CARD_${mGroupModel.groupId()}.jpg", AmeFileUploader.get(accountContext).DCIM_DIRECTORY)
             if (path == null) {
                 it.onError(Exception("Save QR code error"))
                 return@create

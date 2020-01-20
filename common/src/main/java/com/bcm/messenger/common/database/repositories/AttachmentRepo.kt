@@ -286,7 +286,7 @@ class AttachmentRepo(
                 if (attachmentModel.isVideo()) {
                     var bitmap = MediaUtil.getVideoThumbnail(AppContextHolder.APP_CONTEXT, it.dataUri)
                     if (bitmap == null) {
-                        bitmap = BcmFileUtils.getVideoFrameBitmap(AppContextHolder.APP_CONTEXT, it.dataUri)
+                        bitmap = BcmFileUtils.getVideoFrameBitmap(masterSecret.accountContext, AppContextHolder.APP_CONTEXT, it.dataUri)
                     }
                     if (bitmap != null) {
                         updateAttachmentThumbnail(masterSecret, attachmentModel.id, attachmentModel.uniqueId, ByteArrayInputStream(BitmapUtils.toByteArray(bitmap)), bitmap.width.toFloat() / bitmap.height.toFloat())

@@ -85,7 +85,7 @@ object MessageDataManager {
         message.text = ""
 
         if (!TextUtils.isEmpty(message.attachment_uri)) {
-            BcmFileUtils.delete(message.attachment_uri)
+            BcmFileUtils.delete(accountContext, message.attachment_uri)
         }
 
         getDao(accountContext)?.updateMessage(message)
@@ -103,7 +103,7 @@ object MessageDataManager {
             for (m in list) {
                 m.is_confirm = GroupMessage.DELETED_MESSAGE
                 if (!TextUtils.isEmpty(m.attachment_uri)) {
-                    BcmFileUtils.delete(m.attachment_uri)
+                    BcmFileUtils.delete(accountContext, m.attachment_uri)
                 }
             }
             getDao(accountContext)?.updateMessages(list)
@@ -123,7 +123,7 @@ object MessageDataManager {
         for (msg in messageList) {
             msg.is_confirm = GroupMessage.DELETED_MESSAGE
             if (!TextUtils.isEmpty(msg.attachment_uri)) {
-                BcmFileUtils.delete(msg.attachment_uri)
+                BcmFileUtils.delete(accountContext, msg.attachment_uri)
             }
         }
         getDao(accountContext)?.updateMessages(messageList)
@@ -305,7 +305,7 @@ object MessageDataManager {
                         || (m.content_type.toLong() == AmeGroupMessage.VIDEO && ConversationStorage.testFlag(type, ConversationStorage.TYPE_VIDEO))) {
                     m.is_confirm = GroupMessage.DELETED_MESSAGE
                     if (!TextUtils.isEmpty(m.attachment_uri)) {
-                        BcmFileUtils.delete(m.attachment_uri)
+                        BcmFileUtils.delete(accountContext, m.attachment_uri)
                     }
                     deleted.add(m)
                 }

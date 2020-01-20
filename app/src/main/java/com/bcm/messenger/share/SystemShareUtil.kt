@@ -339,19 +339,19 @@ object SystemShareUtil {
                         Triple(uri, uri.path, AmeGroupMessage.ImageContent("", opts.outWidth, opts.outHeight, AttachmentUtils.getMimeType(file.name),
                                 "", uri.path ?: "", "", file.length()))
                     } else {
-                        val path = BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, uri)
+                        val path = BcmFileUtils.getFileAbsolutePath(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, uri)
                                 ?: ""
-                        val content = AttachmentUtils.getAttachmentContent(AppContextHolder.APP_CONTEXT, uri, path)
+                        val content = AttachmentUtils.getAttachmentContent(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, uri, path)
                         Triple(uri, path, content)
                     }
                 }
                 type.startsWith("video/") -> {
                     if (uri.scheme == "file") {
-                        Triple(uri, uri.path, AttachmentUtils.getAttachmentContent(AppContextHolder.APP_CONTEXT, uri, uri.path))
+                        Triple(uri, uri.path, AttachmentUtils.getAttachmentContent(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, uri, uri.path))
                     } else {
-                        val path = BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, uri)
+                        val path = BcmFileUtils.getFileAbsolutePath(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, uri)
                                 ?: ""
-                        val content = AttachmentUtils.getAttachmentContent(AppContextHolder.APP_CONTEXT, uri, path)
+                        val content = AttachmentUtils.getAttachmentContent(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, uri, path)
                         Triple(uri, path, content)
                     }
                 }
@@ -360,9 +360,9 @@ object SystemShareUtil {
                         val file = File(uri.path)
                         Triple(uri, uri.path, AmeGroupMessage.FileContent("", file.name, file.length(), AttachmentUtils.getMimeType(file.name)))
                     } else {
-                        val path = BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, uri)
+                        val path = BcmFileUtils.getFileAbsolutePath(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, uri)
                                 ?: ""
-                        val content = AttachmentUtils.getAttachmentContent(AppContextHolder.APP_CONTEXT, uri, path)
+                        val content = AttachmentUtils.getAttachmentContent(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, uri, path)
                         Triple(uri, path, content)
                     }
                 }
@@ -391,7 +391,7 @@ object SystemShareUtil {
                 }
                 type.startsWith("video/*") -> {
                     val fileUri = Uri.fromFile(file)
-                    Triple(fileUri, file.absolutePath, AttachmentUtils.getAttachmentContent(AppContextHolder.APP_CONTEXT, fileUri, file.absolutePath))
+                    Triple(fileUri, file.absolutePath, AttachmentUtils.getAttachmentContent(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, fileUri, file.absolutePath))
                 }
                 else -> {
                     Triple(Uri.fromFile(file), file.path, AmeGroupMessage.FileContent("", file.name, file.length(), AttachmentUtils.getMimeType(file.name)))

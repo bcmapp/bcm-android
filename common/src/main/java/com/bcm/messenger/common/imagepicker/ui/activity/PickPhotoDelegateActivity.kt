@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.imagepicker.*
 import com.bcm.messenger.common.imagepicker.bean.SelectedModel
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.permission.PermissionUtil
@@ -32,7 +33,7 @@ class PickPhotoDelegateActivity : AppCompatActivity(), BcmPickPhotoCropHelper.On
                 ALog.i(TAG, "Start capture photo")
                 PermissionUtil.checkCamera(this) { res ->
                     if (res) {
-                        BcmTakePhotoHelper.takePicture(this)
+                        BcmTakePhotoHelper.takePicture(AMELogin.majorContext,this)
                     } else {
                         finish()
                     }

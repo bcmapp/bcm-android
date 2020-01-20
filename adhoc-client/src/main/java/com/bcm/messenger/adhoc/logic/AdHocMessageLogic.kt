@@ -200,7 +200,7 @@ class AdHocMessageLogic(private val accountContext: AccountContext) : AdHocSessi
                         callback?.invoke(null)
                         return@addStoreForOutgoing
                     }
-                    val file = File(BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, Uri.parse(content.url)))
+                    val file = File(BcmFileUtils.getFileAbsolutePath(accountContext, AppContextHolder.APP_CONTEXT, Uri.parse(content.url)))
                     ALog.i(TAG, "actual send attachment file: ${file.absolutePath}")
                     if (adHocSession.isChannel()) {
                         messengerSdk.sendChannelFileMessage(sessionId, myNick, file, finalMessage.getMessageBodyJson()) { mid, succeed ->

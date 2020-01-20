@@ -647,7 +647,7 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
                     throw Exception("select image is not exist")
                 }
                 val uri = if (takenPhoto) Uri.fromFile(File(selectPath)) else AppUtil.getImageContentUri(this@ChatGroupConversationActivity, selectPath)
-                val imageContent = AttachmentUtils.getAttachmentContent(this@ChatGroupConversationActivity, uri, selectPath)
+                val imageContent = AttachmentUtils.getAttachmentContent(accountContext, this@ChatGroupConversationActivity, uri, selectPath)
                         as? AmeGroupMessage.ImageContent ?: throw Exception("ImageContent is null")
                 val size = BitmapUtils.getActualImageSize(selectPath)
                 imageContent.width = size.width
@@ -674,10 +674,10 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
 
         Observable.create(ObservableOnSubscribe<Boolean> {
 
-            val filePath = BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, data)
+            val filePath = BcmFileUtils.getFileAbsolutePath(accountContext, AppContextHolder.APP_CONTEXT, data)
                     ?: throw Exception("file path is null")
 
-            val attachmentContent = AttachmentUtils.getAttachmentContent(AppContextHolder.APP_CONTEXT, data, filePath)
+            val attachmentContent = AttachmentUtils.getAttachmentContent(accountContext, AppContextHolder.APP_CONTEXT, data, filePath)
 
             when (attachmentContent) {
                 is AmeGroupMessage.ImageContent -> {
@@ -715,7 +715,7 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
                 }
                 val file = File(selectPath)
                 val fileUri = Uri.fromFile(file)
-                val content = AttachmentUtils.getAttachmentContent(AppContextHolder.APP_CONTEXT, fileUri, selectPath)
+                val content = AttachmentUtils.getAttachmentContent(accountContext, AppContextHolder.APP_CONTEXT, fileUri, selectPath)
                         as? AmeGroupMessage.VideoContent ?: throw Exception("videoContent is null")
                 GroupMessageLogic.get(accountContext).messageSender.sendVideoMessage(getMasterSecret(), groupId, fileUri, content, selectPath, messageCallback)
 

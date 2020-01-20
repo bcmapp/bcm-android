@@ -212,7 +212,7 @@ class AdHocPreviewFragment : BaseFragment(), MediaMoreView.MoreViewActionListene
                 }
                 val activity = activity as? AppCompatActivity
                 if (activity != null) {
-                    AttachmentSaver.saveAttachmentOnAsync(activity, it.attachmentUri, content?.mimeType, name)
+                    AttachmentSaver.saveAttachmentOnAsync(accountContext, activity, it.attachmentUri, content?.mimeType, name)
                 }
             }
         }

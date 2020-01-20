@@ -9,6 +9,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.mms.DocumentSlide
 import com.bcm.messenger.common.mms.ImageSlide
@@ -94,7 +95,7 @@ object AttachmentUtils {
     }
 
 
-    fun getAttachmentContent(context: Context, contentUri: Uri, path: String?): AmeGroupMessage.AttachmentContent? {
+    fun getAttachmentContent(accountContext: AccountContext, context: Context, contentUri: Uri, path: String?): AmeGroupMessage.AttachmentContent? {
 
         fun getAttachmentName(path: String): String {
             try {
@@ -123,7 +124,7 @@ object AttachmentUtils {
                     attachmentSize = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE))
                 }
                 if (attachmentPath == null) {
-                    attachmentPath = BcmFileUtils.getFileAbsolutePath(context, contentUri)
+                    attachmentPath = BcmFileUtils.getFileAbsolutePath(accountContext, context, contentUri)
                 }
             }
 
@@ -154,7 +155,7 @@ object AttachmentUtils {
                     val duration = getPlayTime(context, contentUri)
                     var previewWidth = 0
                     var previewHeight = 0
-                    BcmFileUtils.getVideoFrameInfo(context, attachmentPath) { _, width, height ->
+                    BcmFileUtils.getVideoFrameInfo(accountContext, context, attachmentPath) { _, width, height ->
                         previewWidth = width
                         previewHeight = height
                     }

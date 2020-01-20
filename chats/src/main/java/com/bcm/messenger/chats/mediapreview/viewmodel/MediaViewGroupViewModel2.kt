@@ -85,7 +85,7 @@ class MediaViewGroupViewModel2(accountContext: AccountContext) : BaseMediaViewMo
 
     private fun generateGroupPreviewData(message: AmeGroupMessageDetail): MediaViewData {
         var mediaType: Int = MEDIA_TYPE_IMAGE
-        val mediaUri = message.filePartUri
+        val mediaUri = message.getFilePartUri(accountContext)
         var mimeType = ""
         when (message.message.type) {
              AmeGroupMessage.IMAGE -> {

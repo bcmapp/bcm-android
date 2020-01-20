@@ -111,17 +111,17 @@ object MessageFileHandler {
             return localResponse(true, resultUri)
         }
         val content = messageDetail.message.content as AmeGroupMessage.ThumbnailContent
-        val pathPair = content.getPath()
-        val thumbnailPathPair = content.getThumbnailPath()
+        val pathPair = content.getPath(accountContext)
+        val thumbnailPathPair = content.getThumbnailPath(accountContext)
 
         var isExist = false
         val thumb = if (content.thumbnail_url.isNullOrEmpty() || MediaUtil.isGif(content.mimeType)) {
             ALog.w(TAG, "downloadThumbnail use content url")
             useThumbnail = false
-            isExist = content.isExist()
+            isExist = content.isExist(accountContext)
             content.url
         } else {
-            isExist = content.isThumbnailExist()
+            isExist = content.isThumbnailExist(accountContext)
             content.thumbnail_url
         }
         val destPath = if (useThumbnail) {
@@ -142,7 +142,7 @@ object MessageFileHandler {
 
         messageDetail.isThumbnailDownloading = true
         try {
-            AmeFileUploader.downloadFile(AppContextHolder.APP_CONTEXT, thumb,
+            AmeFileUploader.get(accountContext).downloadFile(AppContextHolder.APP_CONTEXT, thumb,
                     object : FileDownCallback(if (useThumbnail) thumbnailPathPair.first else pathPair.first, if (useThumbnail) content.getThumbnailExtension() else content.getExtension()) {
                         override fun inProgress(progress: Int, total: Long, id: Long) {
                             messageDetail.isThumbnailDownloading = progress != 100
@@ -198,7 +198,7 @@ object MessageFileHandler {
                                     }
                                 } catch (ex: Exception) {
                                     ALog.e(TAG, "downloadThumbnail error", ex)
-                                    BcmFileUtils.delete(destPath)
+                                    BcmFileUtils.delete(accountContext, destPath)
                                     localResponse(false, null)
                                 }
                             }
@@ -223,16 +223,16 @@ object MessageFileHandler {
             }
         }
 
-        val pathPair = content.getPath()
-        val thumbnailPathPair = content.getThumbnailPath()
+        val pathPair = content.getPath(accountContext)
+        val thumbnailPathPair = content.getThumbnailPath(accountContext)
         var useThumbnail = true
         var isExist = false
         val thumb = if (content.thumbnail_url.isNullOrEmpty() || MediaUtil.isGif(content.mimeType)) {
             useThumbnail = false
-            isExist = content.isExist()
+            isExist = content.isExist(accountContext)
             content.url
         } else {
-            isExist = content.isThumbnailExist()
+            isExist = content.isThumbnailExist(accountContext)
             content.thumbnail_url
         }
         val destPath = if (useThumbnail) {
@@ -252,7 +252,7 @@ object MessageFileHandler {
         }
 
         try {
-            AmeFileUploader.downloadFile(AppContextHolder.APP_CONTEXT, thumb,
+            AmeFileUploader.get(accountContext).downloadFile(AppContextHolder.APP_CONTEXT, thumb,
                     object : FileDownCallback(if (useThumbnail) thumbnailPathPair.first else pathPair.first, if (useThumbnail) content.getThumbnailExtension() else content.getExtension()) {
 
                         override fun inProgress(progress: Int, total: Long, id: Long) {
@@ -298,7 +298,7 @@ object MessageFileHandler {
 
                                 } catch (ex: Exception) {
                                     ALog.e(TAG, "downloadThumbnail error", ex)
-                                    BcmFileUtils.delete(destPath)
+                                    BcmFileUtils.delete(accountContext, destPath)
                                     localResponse(false, null)
                                 }
                             }
@@ -355,10 +355,10 @@ object MessageFileHandler {
             return localResponse(true, resultUri)
         }
         val content = messageDetail.message.content as AmeGroupMessage.AttachmentContent
-        val pathPair = content.getPath()
+        val pathPair = content.getPath(accountContext)
 
         val destPath = pathPair.second + File.separator + content.getExtension()
-        if (content.isExist()) {
+        if (content.isExist(accountContext)) {
             ALog.w(TAG, "downloadAttachment attachment exist, indexId: ${messageDetail.indexId}, gid: ${messageDetail.gid}")
             return localResponse(true, BcmFileUtils.getFileUri(destPath))
         }
@@ -370,7 +370,7 @@ object MessageFileHandler {
 
         try {
             messageDetail.isAttachmentDownloading = true
-            AmeFileUploader.downloadFile(AppContextHolder.APP_CONTEXT, content.url, object : FileDownCallback(pathPair.first, content.getExtension()) {
+            AmeFileUploader.get(accountContext).downloadFile(AppContextHolder.APP_CONTEXT, content.url, object : FileDownCallback(pathPair.first, content.getExtension()) {
                 override fun inProgress(progress: Int, total: Long, id: Long) {
                     messageDetail.isAttachmentDownloading = progress != 100
                     if (messageDetail is AmeHistoryMessageDetail) {
@@ -416,7 +416,7 @@ object MessageFileHandler {
                         }
                     } catch (ex: Exception) {
                         ALog.e(TAG, "downloadAttachment error", ex)
-                        BcmFileUtils.delete(destPath)
+                        BcmFileUtils.delete(accountContext, destPath)
                         localResponse(false, null)
                     }
                 }
@@ -447,8 +447,8 @@ object MessageFileHandler {
 //            val videoUploadResult = UploadResult("", videoResult.localFileInfo!!, videoResult.groupStreamInfo!!.sign, videoResult.width, videoResult.height)
 //            val thumbUploadResult = UploadResult("", thumbResult.localFileInfo!!, thumbResult.groupStreamInfo!!.sign, thumbResult.width, thumbResult.height)
 
-            AmeFileUploader.uploadMultiStreamToAws(masterSecret.accountContext, AmeFileUploader.AttachmentType.GROUP_MESSAGE, filePaths, object : AmeFileUploader.MultiStreamUploadCallback {
-                override fun onFailed(resultMap: MutableMap<StreamUploadData, AmeFileUploader.FileUploadResult>?) {
+            AmeFileUploader.get(masterSecret.accountContext).uploadMultiStreamToAws(masterSecret.accountContext, AmeFileUploader.AttachmentType.GROUP_MESSAGE, filePaths, object : AmeFileUploader.MultiStreamUploadCallback {
+                override fun onFailed(resultMap: Map<StreamUploadData, AmeFileUploader.FileUploadResult>?) {
                     videoResult.localFileInfo?.file?.delete()
                     thumbResult.localFileInfo?.file?.delete()
 
@@ -458,7 +458,7 @@ object MessageFileHandler {
                     result(null, null)
                 }
 
-                override fun onSuccess(resultMap: MutableMap<StreamUploadData, AmeFileUploader.FileUploadResult>?) {
+                override fun onSuccess(resultMap: Map<StreamUploadData, AmeFileUploader.FileUploadResult>?) {
                     videoResult.groupFileInfo?.file?.delete()
                     thumbResult.groupFileInfo?.file?.delete()
 
@@ -497,8 +497,8 @@ object MessageFileHandler {
                 val imageUploadResult = UploadResult("", imageResult.localFileInfo!!, groupFileInfo.sign, imageResult.width, imageResult.height)
                 val thumbUploadResult = UploadResult("", thumbResult.localFileInfo!!, thumbGroupFileInfo.sign, thumbResult.width, thumbResult.height)
 
-                AmeFileUploader.uploadMultiStreamToAws(masterSecret.accountContext, AmeFileUploader.AttachmentType.GROUP_MESSAGE, filePaths, object : AmeFileUploader.MultiStreamUploadCallback {
-                    override fun onFailed(resultMap: MutableMap<StreamUploadData, AmeFileUploader.FileUploadResult>?) {
+                AmeFileUploader.get(masterSecret.accountContext).uploadMultiStreamToAws(masterSecret.accountContext, AmeFileUploader.AttachmentType.GROUP_MESSAGE, filePaths, object : AmeFileUploader.MultiStreamUploadCallback {
+                    override fun onFailed(resultMap: Map<StreamUploadData, AmeFileUploader.FileUploadResult>?) {
                         imageResult.localFileInfo?.file?.delete()
                         thumbResult.localFileInfo?.file?.delete()
 
@@ -508,7 +508,7 @@ object MessageFileHandler {
                         result(null, null)
                     }
 
-                    override fun onSuccess(resultMap: MutableMap<StreamUploadData, AmeFileUploader.FileUploadResult>?) {
+                    override fun onSuccess(resultMap: Map<StreamUploadData, AmeFileUploader.FileUploadResult>?) {
                         imageResult.groupFileInfo?.file?.delete()
                         thumbResult.groupFileInfo?.file?.delete()
 
@@ -541,7 +541,7 @@ object MessageFileHandler {
 //            val uploadData = StreamUploadData(groupFileInfo.inputStream, groupFileInfo.name, groupFileInfo.mimeType, groupFileInfo.size)
             val uploadData = StreamUploadData(FileInputStream(groupFileInfo.file), groupFileInfo.name, groupFileInfo.mimeType, groupFileInfo.size)
 
-            AmeFileUploader.uploadStreamToAws(masterSecret.accountContext, AmeFileUploader.AttachmentType.GROUP_MESSAGE, uploadData, object : AmeFileUploader.StreamUploadCallback() {
+            AmeFileUploader.get(masterSecret.accountContext).uploadStreamToAws(masterSecret.accountContext, AmeFileUploader.AttachmentType.GROUP_MESSAGE, uploadData, object : AmeFileUploader.StreamUploadCallback {
                 override fun onUploadSuccess(url: String?, id: String?) {
                     fileResult.groupFileInfo?.file?.delete()
 

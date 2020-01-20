@@ -16,6 +16,7 @@ import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.scan.CameraManager
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AppUtil
@@ -187,7 +188,7 @@ class ScanFragment : Fragment(), TextureView.SurfaceTextureListener {
             Observable.create(ObservableOnSubscribe<Result> {
 
                 try {
-                    val result = decodeScanImage(BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, data?.data))
+                    val result = decodeScanImage(BcmFileUtils.getFileAbsolutePath(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, data?.data))
                     if (result == null) {
                         throw Exception("decodeScanImage result is null")
                     } else {

@@ -15,6 +15,7 @@ import com.amap.api.maps2d.model.*
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.AmeFileUploader
 import com.bcm.messenger.common.core.getSelectedLocale
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.example.amap.R
 import java.io.*
@@ -109,7 +110,7 @@ class GDPreviewFragment : Fragment() {
                         val mFileName: String
                         mFileDirName = String.format(Locale.US, "L%02d/", zoom + 1)
                         mFileName = String.format(Locale.US, "%s", TileXYToQuadKey(x, y, zoom))//remvoe .jpg
-                        val LJ = AmeFileUploader.MAP_DIRECTORY + mFileDirName + mFileName
+                        val LJ = AmeFileUploader.get(AMELogin.majorContext).MAP_DIRECTORY + mFileDirName + mFileName
                         if (BcmFileUtils.isExist(mFileDirName + mFileName)) {
                             return URL("file://" + LJ)
                         } else {
@@ -135,7 +136,7 @@ class GDPreviewFragment : Fragment() {
                 }
             })
             tileOverlayOptions?.diskCacheEnabled(false)
-                    ?.diskCacheDir(AmeFileUploader.MAP_DIRECTORY)
+                    ?.diskCacheDir(AmeFileUploader.get(AMELogin.majorContext).MAP_DIRECTORY)
                     ?.diskCacheSize(1024000)
                     ?.memoryCacheEnabled(true)
                     ?.memCacheSize(102400)
@@ -213,11 +214,11 @@ class GDPreviewFragment : Fragment() {
         Thread(Runnable {
             try {
                 if (bm != null) {
-                    val dirFile = File(AmeFileUploader.MAP_DIRECTORY + fileDirName)
+                    val dirFile = File(AmeFileUploader.get(AMELogin.majorContext).MAP_DIRECTORY + fileDirName)
                     if (!dirFile.exists()) {
                         dirFile.mkdir()
                     }
-                    val myCaptureFile = File(AmeFileUploader.MAP_DIRECTORY + fileDirName + fileName)
+                    val myCaptureFile = File(AmeFileUploader.get(AMELogin.majorContext).MAP_DIRECTORY + fileDirName + fileName)
                     val bos = BufferedOutputStream(FileOutputStream(myCaptureFile))
                     bm.compress(Bitmap.CompressFormat.JPEG, 80, bos)
                     bos.flush()

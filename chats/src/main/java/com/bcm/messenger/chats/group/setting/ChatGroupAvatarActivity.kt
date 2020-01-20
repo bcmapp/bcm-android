@@ -148,7 +148,7 @@ class ChatGroupAvatarActivity : AccountSwipeBaseActivity() {
             }
             mHandling = true
             Observable.create<Pair<String, String>> {
-                val avatarPath = BcmFileUtils.saveBitmap2File(updateBitmap)
+                val avatarPath = BcmFileUtils.saveBitmap2File(updateBitmap, null, AmeFileUploader.get(accountContext).TEMP_DIRECTORY)
                 if (!avatarPath.isNullOrBlank()) {
                     // TODO: Encrypt group avatar
 //                    val groupInfo = groupModel.getGroupInfo()
@@ -189,7 +189,7 @@ class ChatGroupAvatarActivity : AccountSwipeBaseActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         ALog.d(TAG, "begin uploadGroupAvatar")
-                        AmeFileUploader.uploadGroupAvatar(accountContext, AppContextHolder.APP_CONTEXT, File(it.first), object : AmeFileUploader.FileUploadCallback() {
+                        AmeFileUploader.get(accountContext).uploadGroupAvatar(accountContext, AppContextHolder.APP_CONTEXT, File(it.first), object : AmeFileUploader.FileUploadCallback {
                             override fun onUploadFailed(filePath: String, msg: String?) {
                                 failed(msg)
                             }
@@ -273,7 +273,7 @@ class ChatGroupAvatarActivity : AccountSwipeBaseActivity() {
     private fun saveAvatarToLocal() {
         val bitmap = group_avatar.createScreenShot()
         Observable.create<String> {
-            val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM-GROUP-${groupModel.groupId()}.jpg", AmeFileUploader.DCIM_DIRECTORY)
+            val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM-GROUP-${groupModel.groupId()}.jpg", AmeFileUploader.get(accountContext).DCIM_DIRECTORY)
             if (path == null) {
                 it.onError(Exception("Save QR code error"))
                 return@create

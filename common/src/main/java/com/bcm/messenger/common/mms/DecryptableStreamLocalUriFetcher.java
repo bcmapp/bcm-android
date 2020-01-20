@@ -36,7 +36,7 @@ class DecryptableStreamLocalUriFetcher extends StreamLocalUriFetcher {
             Bitmap thumbnail = MediaUtil.getVideoThumbnail(context, uri);
 
             if (thumbnail == null) {
-                thumbnail = BcmFileUtils.INSTANCE.getVideoFrameBitmap(context, uri);
+                thumbnail = BcmFileUtils.INSTANCE.getVideoFrameBitmap(masterSecret.getAccountContext(), context, uri);
             }
             if (thumbnail != null) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();

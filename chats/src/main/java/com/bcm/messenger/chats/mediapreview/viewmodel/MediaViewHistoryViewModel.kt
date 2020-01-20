@@ -118,7 +118,7 @@ class MediaViewHistoryViewModel(accountContext: AccountContext) : BaseMediaViewM
             }
         }
         if (isMediaType) {
-            return MediaViewData(indexId, history.filePartUri, mimeType, mediaType, history, MSG_TYPE_HISTORY)
+            return MediaViewData(indexId, history.getFilePartUri(accountContext), mimeType, mediaType, history, MSG_TYPE_HISTORY)
         }
         return null
     }

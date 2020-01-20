@@ -8,6 +8,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.util.ChatComponentListener
 import com.bcm.messenger.chats.util.GroupAttachmentProgressEvent
 import com.bcm.messenger.chats.util.HistoryGroupAttachmentProgressEvent
+import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.database.model.AttachmentDbModel
 import com.bcm.messenger.common.database.records.AttachmentRecord
@@ -113,7 +114,7 @@ class ChatDocumentView @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
 
-    fun setDocument(messageRecord: AmeGroupMessageDetail) {
+    fun setDocument(accountContext: AccountContext, messageRecord: AmeGroupMessageDetail) {
         mGroupMessage = messageRecord
         mPrivateMessage = null
         documentSlide = null
@@ -127,7 +128,7 @@ class ChatDocumentView @JvmOverloads constructor(context: Context, attrs: Attrib
             var isComplete = messageRecord.isAttachmentComplete
             if (!isComplete && messageRecord is AmeHistoryMessageDetail) {
                 val content = messageRecord.message.content
-                if (content is AmeGroupMessage.AttachmentContent && content.isExist()) {
+                if (content is AmeGroupMessage.AttachmentContent && content.isExist(accountContext)) {
                     isComplete = true
                 }
             }

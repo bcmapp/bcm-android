@@ -79,7 +79,7 @@ open class ChatPreviewClickListener(private val accountContext: AccountContext) 
         Observable.create<Pair<Uri, String>> {
             if (contentType == null || !contentType.startsWith("text/")) {
                 val masterSecret = AMELogin.majorContext.masterSecret
-                val outFile = File(AmeFileUploader.DOCUMENT_DIRECTORY, name
+                val outFile = File(AmeFileUploader.get(accountContext).DOCUMENT_DIRECTORY, name
                         ?: System.currentTimeMillis().toString())
                 if (!BcmFileUtils.isExist(outFile.absolutePath)) {
                     ALog.d(TAG, "doForOtherFile uri: $uri, outFile: $outFile is not exist, create")
@@ -182,7 +182,7 @@ open class ChatPreviewClickListener(private val accountContext: AccountContext) 
         var isComplete = messageRecord.isAttachmentComplete
         if (!isComplete && messageRecord is AmeHistoryMessageDetail) {
             val content = messageRecord.message.content
-            if (content is AmeGroupMessage.AttachmentContent && content.isExist()) {
+            if (content is AmeGroupMessage.AttachmentContent && content.isExist(accountContext)) {
                 isComplete = true
             }
         }
@@ -203,7 +203,7 @@ open class ChatPreviewClickListener(private val accountContext: AccountContext) 
             val publicUri = if (messageRecord.isFileEncrypted) {
                 PartAuthority.getGroupPublicUri(PartAuthority.getGroupAttachmentUri(messageRecord.gid, messageRecord.indexId))
             } else {
-                val uri = messageRecord.filePartUri
+                val uri = messageRecord.getFilePartUri(accountContext)
                 if (uri != null && uri.path != null) {
                     PartProvider.getUnencryptedUri(uri.path)
                 } else {

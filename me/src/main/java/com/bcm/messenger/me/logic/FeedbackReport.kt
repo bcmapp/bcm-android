@@ -67,13 +67,13 @@ object FeedbackReport {
 
 
     private fun postFile(url: String, nyy: NYy, fileName: String, callback: (succeed: Boolean) -> Unit): Boolean {
-        AmeFileUploader.uploadAttachmentToAws(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, AmeFileUploader.AttachmentType.GROUP_MESSAGE, File(fileName), object : AmeFileUploader.FileUploadCallback() {
+        AmeFileUploader.get(AMELogin.majorContext).uploadAttachmentToAws(AMELogin.majorContext, AppContextHolder.APP_CONTEXT, AmeFileUploader.AttachmentType.GROUP_MESSAGE, File(fileName), object : AmeFileUploader.FileUploadCallback {
             override fun onUploadSuccess(fileUrl: String?, id: String?) {
                 post(url, nyy, fileUrl ?: "", callback)
                 File(fileName).delete()
             }
 
-            override fun onUploadFailed(filepath: String?, msg: String?) {
+            override fun onUploadFailed(filepath: String, msg: String?) {
                 callback(false)
                 File(fileName).delete()
             }

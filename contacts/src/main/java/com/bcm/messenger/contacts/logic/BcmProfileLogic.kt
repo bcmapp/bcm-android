@@ -314,10 +314,10 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
         fun doPrepare(context: Context, recipient: Recipient, avatarBitmap: Bitmap): PrepareData? {
 
             val prepareData = PrepareData(recipient.privacyProfile,
-                    File(AmeFileUploader.DECRYPT_DIRECTORY, getAvatarFileName(recipient, true, true)),
-                    File(AmeFileUploader.ENCRYPT_DIRECTORY, getAvatarFileName(recipient, true, true)),
-                    File(AmeFileUploader.DECRYPT_DIRECTORY, getAvatarFileName(recipient, false, true)),
-                    File(AmeFileUploader.ENCRYPT_DIRECTORY, getAvatarFileName(recipient, false, true)),
+                    File(AmeFileUploader.get(mAccountContext).DECRYPT_DIRECTORY, getAvatarFileName(recipient, true, true)),
+                    File(AmeFileUploader.get(mAccountContext).ENCRYPT_DIRECTORY, getAvatarFileName(recipient, true, true)),
+                    File(AmeFileUploader.get(mAccountContext).DECRYPT_DIRECTORY, getAvatarFileName(recipient, false, true)),
+                    File(AmeFileUploader.get(mAccountContext).ENCRYPT_DIRECTORY, getAvatarFileName(recipient, false, true)),
                     true, avatarBitmap, null)
 
             try {
@@ -408,13 +408,13 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                             .observeOn(AmeDispatcher.ioScheduler)
                             .map {
                                 if (it) {
-                                    val finalHdPath = File(AmeFileUploader.DECRYPT_DIRECTORY, getAvatarFileName(recipient, true, false))
+                                    val finalHdPath = File(AmeFileUploader.get(mAccountContext).DECRYPT_DIRECTORY, getAvatarFileName(recipient, true, false))
                                     prepareData.hdPath.renameTo(finalHdPath)
                                     clearAvatarResource(prepareData.privacyProfile.avatarHDUri)
                                     clearAvatarResource(prepareData.privacyProfile.avatarLDUri)
                                     prepareData.privacyProfile.avatarHDUri = BcmFileUtils.getFileUri(finalHdPath.absolutePath).toString()
                                     prepareData.privacyProfile.avatarLDUri = if (prepareData.useSame) prepareData.privacyProfile.avatarHDUri else {
-                                        val finalLdPath = File(AmeFileUploader.DECRYPT_DIRECTORY, getAvatarFileName(recipient, false, false))
+                                        val finalLdPath = File(AmeFileUploader.get(mAccountContext).DECRYPT_DIRECTORY, getAvatarFileName(recipient, false, false))
                                         prepareData.ldPath.renameTo(finalLdPath)
                                         BcmFileUtils.getFileUri(finalLdPath.absolutePath).toString()
                                     }
@@ -450,9 +450,9 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                         uploadFileList.add(prepareData.ldEncryptPath.absolutePath)
                     }
 
-                    AmeFileUploader.uploadMultiFileToAws(mAccountContext, context, AmeFileUploader.AttachmentType.PROFILE, uploadFileList, object : AmeFileUploader.MultiFileUploadCallback {
+                    AmeFileUploader.get(mAccountContext).uploadMultiFileToAws(mAccountContext, context, AmeFileUploader.AttachmentType.PROFILE, uploadFileList, object : AmeFileUploader.MultiFileUploadCallback {
 
-                        override fun onFailed(resultMap: MutableMap<String, AmeFileUploader.FileUploadResult>?) {
+                        override fun onFailed(resultMap: Map<String, AmeFileUploader.FileUploadResult>?) {
                             doAfterUploadAvatarBitmap(recipient, prepareData, null, null)
                                     .subscribeOn(AmeDispatcher.ioScheduler)
                                     .observeOn(AmeDispatcher.mainScheduler)
@@ -465,7 +465,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                                     })
                         }
 
-                        override fun onSuccess(resultMap: MutableMap<String, AmeFileUploader.FileUploadResult>?) {
+                        override fun onSuccess(resultMap: Map<String, AmeFileUploader.FileUploadResult>?) {
                             val avatarHd = resultMap?.get(prepareData.hdEncryptPath.absolutePath)?.location
                             val avatarLd = if (prepareData.useSame) {
                                 avatarHd

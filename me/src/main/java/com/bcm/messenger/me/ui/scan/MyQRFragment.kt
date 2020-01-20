@@ -113,7 +113,7 @@ class MyQRFragment : BaseFragment() {
         Observable.create<String> {
             val path = BcmFileUtils.saveBitmap2File(bitmap,
                     "BCM-QR-Code-${DateUtils.formatDefaultTime(System.currentTimeMillis())}.jpg",
-                    AmeFileUploader.DCIM_DIRECTORY)
+                    AmeFileUploader.get(accountContext).DCIM_DIRECTORY)
             if (path == null) {
                 it.onError(Exception("Save QR code error"))
                 return@create
@@ -133,7 +133,7 @@ class MyQRFragment : BaseFragment() {
     private fun forwardToChats() {
         val bitmap = qr_code_layout.createScreenShot()
         Observable.create<String> {
-            val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM-QR-Code.jpg")
+            val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM-QR-Code.jpg",AmeFileUploader.get(accountContext).TEMP_DIRECTORY)
             if (path == null) {
                 it.onError(RuntimeException("Save QR code error"))
                 return@create
@@ -151,7 +151,7 @@ class MyQRFragment : BaseFragment() {
     private fun shareToOtherApp() {
         val bitmap = qr_code_layout.createScreenShot()
         Observable.create<Uri> {
-            val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM-QR-Code.jpg")
+            val path = BcmFileUtils.saveBitmap2File(bitmap, "BCM-QR-Code.jpg", AmeFileUploader.get(accountContext).TEMP_DIRECTORY)
             if (path == null) {
                 it.onError(RuntimeException("Save QR code error"))
                 return@create

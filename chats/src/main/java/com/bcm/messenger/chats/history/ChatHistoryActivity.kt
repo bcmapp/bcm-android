@@ -180,8 +180,8 @@ class ChatHistoryActivity : AccountSwipeBaseActivity() {
                         val content = this.message.content
                         when (content) {
                             is AmeGroupMessage.FileContent -> {
-                                if (content.isExist()) {
-                                    attachmentUri = Uri.fromFile(File(content.getPath().second + File.separator + content.getExtension())).toString()
+                                if (content.isExist(accountContext)) {
+                                    attachmentUri = Uri.fromFile(File(content.getPath(accountContext).second + File.separator + content.getExtension())).toString()
                                 }
                             }
                             is AmeGroupMessage.ImageContent, is AmeGroupMessage.VideoContent -> {
@@ -228,8 +228,8 @@ class ChatHistoryActivity : AccountSwipeBaseActivity() {
 
                         when (val content = this.message.content) {
                             is AmeGroupMessage.FileContent -> {
-                                if (content.isExist()) {
-                                    attachmentUri = Uri.fromFile(File(content.getPath().second + File.separator + content.getExtension())).toString()
+                                if (content.isExist(accountContext)) {
+                                    attachmentUri = Uri.fromFile(File(content.getPath(accountContext).second + File.separator + content.getExtension())).toString()
                                 }
                             }
                             is AmeGroupMessage.ImageContent, is AmeGroupMessage.VideoContent -> {

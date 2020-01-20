@@ -118,7 +118,7 @@ class ChatForwardDialog(private val accountContext: AccountContext) : DialogFrag
                 if (isShare) {
                     if (uri != null) {
                         if (uri.scheme == "http" || uri.scheme == Uri.EMPTY.scheme) {
-                            BcmFileUtils.getRemoteVideoFrameInfo(uri.toString()) { _, previewPath ->
+                            BcmFileUtils.getRemoteVideoFrameInfo(accountContext, uri.toString()) { _, previewPath ->
                                 glideRequests?.asBitmap()
                                         ?.load(previewPath)
                                         ?.error(R.drawable.common_video_place_square_img)

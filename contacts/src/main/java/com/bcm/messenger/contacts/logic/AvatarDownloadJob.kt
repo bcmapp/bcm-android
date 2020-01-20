@@ -134,12 +134,12 @@ class AvatarDownloadJob(private val context: Context, private val accountContext
             val avatarUrl = if (avatarId.startsWith("http", true)) {
                 avatarId
             } else {
-                AmeFileUploader.ATTACHMENT_URL + avatarId
+                AmeFileUploader.get(accountContext).ATTACHMENT_URL + avatarId
             }
             ALog.d(TAG, "begin download avatar uid: ${recipient.address}, isHd: $isHd, url: $avatarUrl")
 
             val encryptFileName = BcmProfileLogic.getAvatarFileName(recipient, isHd, false)
-            AmeFileUploader.downloadFile(context, avatarUrl, object : FileDownCallback(AmeFileUploader.ENCRYPT_DIRECTORY, encryptFileName) {
+            AmeFileUploader.get(accountContext).downloadFile(context, avatarUrl, object : FileDownCallback(AmeFileUploader.get(accountContext).ENCRYPT_DIRECTORY, encryptFileName) {
 
                 override fun onError(call: Call?, e: java.lang.Exception?, id: Long) {
                     callback(false)
@@ -149,10 +149,10 @@ class AvatarDownloadJob(private val context: Context, private val accountContext
                     if (response == null) {
                         callback(false)
                     } else {
-                        val targetFullFile = File(AmeFileUploader.DECRYPT_DIRECTORY, BcmProfileLogic.getAvatarFileName(recipient, isHd, true))
+                        val targetFullFile = File(AmeFileUploader.get(accountContext).DECRYPT_DIRECTORY, BcmProfileLogic.getAvatarFileName(recipient, isHd, true))
                         try {
                             BCMEncryptUtils.decryptFileByAES256(response.absolutePath, targetFullFile.absolutePath, Base64.decode(privacyProfile.avatarKey))
-                            val finalAvatarPath = File(AmeFileUploader.DECRYPT_DIRECTORY, BcmProfileLogic.getAvatarFileName(recipient, isHd, false))
+                            val finalAvatarPath = File(AmeFileUploader.get(accountContext).DECRYPT_DIRECTORY, BcmProfileLogic.getAvatarFileName(recipient, isHd, false))
                             targetFullFile.renameTo(finalAvatarPath)
                             val finalUri = BcmFileUtils.getFileUri(finalAvatarPath.absolutePath)
                             if (isHd) {

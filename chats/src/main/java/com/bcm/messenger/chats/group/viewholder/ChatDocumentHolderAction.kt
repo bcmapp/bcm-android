@@ -25,7 +25,7 @@ class ChatDocumentHolderAction(accountContext: AccountContext) : BaseChatHolderA
     override fun bindData(message: AmeGroupMessageDetail, body: ChatDocumentView, glideRequests: GlideRequests, batchSelected: Set<AmeGroupMessageDetail>?) {
         body.setDocumentClickListener(mPreviewClickListener)
         body.setDownloadClickListener(mDownloadClickListener)
-        body.setDocument(message)
+        body.setDocument(accountContext, message)
     }
 
     override fun resend(messageRecord: AmeGroupMessageDetail) {
@@ -39,7 +39,7 @@ class ChatDocumentHolderAction(accountContext: AccountContext) : BaseChatHolderA
         override fun onClick(v: View, data: Any) {
             if (data is AmeGroupMessageDetail) {
                 val content = data.message.content as AmeGroupMessage.AttachmentContent
-                if (content.isExist()) {
+                if (content.isExist(accountContext)) {
                     updateDocumentShow(v, data)
                 } else {
                     MessageFileHandler.downloadAttachment(accountContext, data, object : MessageFileHandler.MessageFileCallback {
@@ -55,7 +55,7 @@ class ChatDocumentHolderAction(accountContext: AccountContext) : BaseChatHolderA
 
         private fun updateDocumentShow(view: View, messageRecord: AmeGroupMessageDetail) {
             if (mBaseView == view) {
-                mBaseView?.setDocument(messageRecord)
+                mBaseView?.setDocument(accountContext, messageRecord)
             }
         }
     }

@@ -41,7 +41,7 @@ class ChatAudioHolderAction(accountContext: AccountContext) : BaseChatHolderActi
                     AppUtil.getColor(bodyView.resources, R.color.common_color_black))
         }
 
-        if(messageRecord.attachmentUri.isNullOrEmpty() || !content.isExist()) {
+        if(messageRecord.attachmentUri.isNullOrEmpty() || !content.isExist(accountContext)) {
             bodyView.doDownloadAction()
         }
 
@@ -63,7 +63,7 @@ class ChatAudioHolderAction(accountContext: AccountContext) : BaseChatHolderActi
 
             if(data is AmeGroupMessageDetail) {
                 val content = data.message.content as AmeGroupMessage.AudioContent
-                if(content.isExist()) {
+                if(content.isExist(accountContext)) {
                     updateAudioMessage(v, data)
                 }else {
 

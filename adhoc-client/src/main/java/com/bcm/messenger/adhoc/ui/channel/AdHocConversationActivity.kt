@@ -376,7 +376,7 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
                 throw Exception("select image is not exist")
             }
             val uri = if (takenPhoto) Uri.fromFile(File(selectPath)) else AppUtil.getImageContentUri(this@AdHocConversationActivity, selectPath)
-            val imageContent = AttachmentUtils.getAttachmentContent(this@AdHocConversationActivity, uri, selectPath)
+            val imageContent = AttachmentUtils.getAttachmentContent(accountContext, this@AdHocConversationActivity, uri, selectPath)
                     as? AmeGroupMessage.ImageContent ?: throw Exception("ImageContent is null")
             if (imageContent.size > AmeGroupMessage.AttachmentContent.SIZE_MAX) {
                 overSizeList.add(selectPath)
@@ -414,9 +414,9 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
         var hasNoticeTooLarge = false
         Observable.create(ObservableOnSubscribe<AmeGroupMessage.AttachmentContent> {
 
-            val filePath = BcmFileUtils.getFileAbsolutePath(AppContextHolder.APP_CONTEXT, data)
+            val filePath = BcmFileUtils.getFileAbsolutePath(accountContext, AppContextHolder.APP_CONTEXT, data)
                     ?: throw Exception("file path is null")
-            val attachmentContent = AttachmentUtils.getAttachmentContent(AppContextHolder.APP_CONTEXT, data, filePath)
+            val attachmentContent = AttachmentUtils.getAttachmentContent(accountContext, AppContextHolder.APP_CONTEXT, data, filePath)
                     ?: throw Exception("attachmentContent is null")
 
             if (attachmentContent.size > AmeGroupMessage.AttachmentContent.SIZE_MAX) {
@@ -462,7 +462,7 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
             }
             val file = File(selectPath)
             val fileUri = Uri.fromFile(file)
-            val content = AttachmentUtils.getAttachmentContent(AppContextHolder.APP_CONTEXT, fileUri, selectPath)
+            val content = AttachmentUtils.getAttachmentContent(accountContext, AppContextHolder.APP_CONTEXT, fileUri, selectPath)
                     as? AmeGroupMessage.VideoContent ?: throw Exception("videoContent is null")
             if (content.size > AmeGroupMessage.AttachmentContent.SIZE_MAX) {
                 overSizeList.add(selectPath)

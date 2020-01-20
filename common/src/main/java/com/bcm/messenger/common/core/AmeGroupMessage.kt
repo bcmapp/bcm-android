@@ -246,12 +246,12 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             }
         }
 
-        open fun getThumbnailPath(): Pair<String, String> {
-            return Pair(AmeFileUploader.ENCRYPT_DIRECTORY, AmeFileUploader.DECRYPT_DIRECTORY)
+        open fun getThumbnailPath(accountContext: AccountContext): Pair<String, String> {
+            return Pair(AmeFileUploader.get(accountContext).ENCRYPT_DIRECTORY, AmeFileUploader.get(accountContext).DECRYPT_DIRECTORY)
         }
 
-        open fun isThumbnailExist(): Boolean {
-            val path = getThumbnailPath()
+        open fun isThumbnailExist(accountContext: AccountContext): Boolean {
+            val path = getThumbnailPath(accountContext)
             return BcmFileUtils.isExist(path.second + File.separator + getThumbnailExtension())
         }
 
@@ -297,12 +297,12 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         /**
          * 
          */
-        open fun getPath(): Pair<String, String> {
-            return Pair(AmeFileUploader.ENCRYPT_DIRECTORY, AmeFileUploader.DECRYPT_DIRECTORY)
+        open fun getPath(accountContext: AccountContext): Pair<String, String> {
+            return Pair(AmeFileUploader.get(accountContext).ENCRYPT_DIRECTORY, AmeFileUploader.get(accountContext).DECRYPT_DIRECTORY)
         }
 
-        open fun isExist(): Boolean {
-            val path = getPath()
+        open fun isExist(accountContext: AccountContext): Boolean {
+            val path = getPath(accountContext)
             return BcmFileUtils.isExist(path.second + File.separator + getExtension())
         }
 
@@ -376,8 +376,8 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_video_message_description)
         }
 
-        override fun getThumbnailPath(): Pair<String, String> {
-            return Pair(AmeFileUploader.VIDEO_DIRECTORY, AmeFileUploader.DECRYPT_DIRECTORY)
+        override fun getThumbnailPath(accountContext: AccountContext): Pair<String, String> {
+            return Pair(AmeFileUploader.get(accountContext).VIDEO_DIRECTORY, AmeFileUploader.get(accountContext).DECRYPT_DIRECTORY)
         }
 
     }
@@ -388,8 +388,8 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_audio_message_description)
         }
 
-        override fun getPath(): Pair<String, String> {
-            return Pair(AmeFileUploader.AUDIO_DIRECTORY, AmeFileUploader.DECRYPT_DIRECTORY)
+        override fun getPath(accountContext: AccountContext): Pair<String, String> {
+            return Pair(AmeFileUploader.get(accountContext).AUDIO_DIRECTORY, AmeFileUploader.get(accountContext).DECRYPT_DIRECTORY)
         }
 
     }
@@ -400,8 +400,8 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             return AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.common_file_message_description)
         }
 
-        override fun getPath(): Pair<String, String> {
-            return Pair(AmeFileUploader.DOCUMENT_DIRECTORY, AmeFileUploader.DECRYPT_DIRECTORY)
+        override fun getPath(accountContext: AccountContext): Pair<String, String> {
+            return Pair(AmeFileUploader.get(accountContext).DOCUMENT_DIRECTORY, AmeFileUploader.get(accountContext).DECRYPT_DIRECTORY)
         }
 
         companion object {
