@@ -16,7 +16,6 @@ import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.mms.PartAuthority
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.MediaUtil
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.crypto.encrypt.ChatFileEncryptDecryptUtil
 import com.bcm.messenger.common.crypto.encrypt.EncryptMediaUtils
 import com.bcm.messenger.common.crypto.encrypt.FileInfo
@@ -156,6 +155,9 @@ object MessageFileHandler {
                         override fun onError(call: Call?, e: Exception?, id: Long) {
                             ALog.e(TAG, "downloadThumbnail error", e)
                             localResponse(false, null)
+                            if (messageDetail is AmeHistoryMessageDetail) {
+                                return
+                            }
                             if (e is BaseHttp.HttpErrorException && (e.code == 403 || e.code == 404)) {
                                 MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_NOT_FOUND)
                             } else {
@@ -168,7 +170,6 @@ object MessageFileHandler {
                                 MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_DOWNLOAD_FAIL)
                                 localResponse(false, null)
                             } else {
-
                                 try {
                                     val fileInfo = ChatFileEncryptDecryptUtil.decryptAndSaveFile(accountContext,
                                             accountContext.masterSecret,
@@ -382,6 +383,9 @@ object MessageFileHandler {
                 override fun onError(call: Call?, e: Exception?, id: Long) {
                     ALog.e(TAG, "downloadAttachment error", e)
                     localResponse(false, null)
+                    if (messageDetail is AmeHistoryMessageDetail) {
+                        return
+                    }
                     if (e is BaseHttp.HttpErrorException && (e.code == 403 || e.code == 404)) {
                         MessageDataManager.updateMessageSendStateByIndex(accountContext, messageDetail.gid, messageDetail.indexId, GroupMessage.FILE_NOT_FOUND)
                     } else {
