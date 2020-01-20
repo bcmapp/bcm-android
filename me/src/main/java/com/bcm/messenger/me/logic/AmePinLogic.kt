@@ -28,7 +28,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
     private val storage = SPEditor("pin_storage")
 
     private var pinData = PinData()
-    private var oldPin:PinData? = null
+    private var oldPin: PinData? = null
 
     init {
         AppForeground.listener.addListener(this)
@@ -73,7 +73,9 @@ object AmePinLogic : AppForeground.IForegroundEvent {
     }
 
     fun clearAccountPin() {
-        AmeLoginLogic.accountHistory.clearPin()
+        if (pinData.pin.isNotEmpty()) {
+            AmeLoginLogic.accountHistory.clearPin()
+        }
     }
 
     fun majorHasPin(): Boolean {
@@ -116,7 +118,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
             return pinData.pin == getProPin(pin)
         }
 
-        val oldPinData = oldPin?:return false
+        val oldPinData = oldPin ?: return false
         if (oldPinData.pin.isNotEmpty() && pin.isNotEmpty()) {
             val check = oldPinData.pin == getOldProPin(AmeLoginLogic.accountHistory.majorAccountUid(), pin)
             if (check) {
