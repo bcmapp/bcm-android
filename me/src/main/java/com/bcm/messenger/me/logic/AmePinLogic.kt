@@ -73,7 +73,7 @@ object AmePinLogic : AppForeground.IForegroundEvent {
     }
 
     fun clearAccountPin() {
-        if (pinData.pin.isNotEmpty()) {
+        if (pinData.pin.isNotEmpty() || oldPin?.pin?.isNotEmpty() != true ) {
             AmeLoginLogic.accountHistory.clearPin()
         }
     }
