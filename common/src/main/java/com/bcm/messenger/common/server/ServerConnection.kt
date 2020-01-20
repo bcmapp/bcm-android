@@ -43,7 +43,7 @@ class ServerConnection(private val accountContext: AccountContext, private val s
 
     private var connectingTime = 0L
 
-    private var retryDisposable:Disposable? = null
+
 
     fun setConnectionListener(listener: IServerProtoDataEvent?) {
         protoDataEvent = listener
@@ -67,7 +67,6 @@ class ServerConnection(private val accountContext: AccountContext, private val s
 
     fun connect(token: Int = 0): Boolean {
         ACLog.i(accountContext, TAG,"WSC connect()...")
-        retryDisposable?.dispose()
 
         return connectImpl(false, token)
     }
@@ -81,6 +80,7 @@ class ServerConnection(private val accountContext: AccountContext, private val s
 
             val url = String.format(wsUri, accountContext.uid, accountContext.password)
             ACLog.d(accountContext, TAG, "WebSocketConnection filledUri: $url")
+            ACLog.i(accountContext, TAG, "WSC connecting...")
 
             connectingTime = System.currentTimeMillis()
             websocketEvent.destroyed = true
@@ -193,8 +193,22 @@ class ServerConnection(private val accountContext: AccountContext, private val s
         connectState = ConnectState.DISCONNECTED
     }
 
-    inner class WebsocketConnectionListener(private val forRetry: Boolean, var destroyed: Boolean = false, private val scheduler: Scheduler) : WebSocketListener() {
+    inner class WebsocketConnectionListener(private val forRetry: Boolean, destroy: Boolean = false, private val scheduler: Scheduler) : WebSocketListener() {
         private var connected = false
+        private var retryDisposable:Disposable? = null
+        var destroyed = false
+            set(value) {
+                field = value
+                if (destroyed) {
+                    retryDisposable?.dispose()
+                    retryDisposable = null
+                }
+            }
+
+        init {
+            this.destroyed = destroy
+        }
+
         override fun onOpen(webSocket: WebSocket?, response: Response?) {
             if (destroyed) {
                 ACLog.i(accountContext, TAG, "ignore onOpen")
@@ -272,7 +286,7 @@ class ServerConnection(private val accountContext: AccountContext, private val s
 
             if (connected || !forRetry ) {
                 retryDisposable = Observable.create<Boolean> {
-                    if (accountContext.isLogin && !destroyed) {
+                    if (accountContext.isLogin && !destroyed && !forRetry) {
                         connectImpl(true, connectToken)
                     }
                 }.delaySubscription(1000, TimeUnit.MILLISECONDS)

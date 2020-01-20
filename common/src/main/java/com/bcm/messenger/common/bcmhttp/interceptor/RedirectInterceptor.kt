@@ -93,7 +93,7 @@ class RedirectInterceptor(private val lbsType: String, private val defaultServer
         }
 
         if (null != exception) {
-            ALog.e("RedirectInterceptor", redirectUrl, exception)
+            ALog.logForSecret("RedirectInterceptor", redirectUrl, exception)
             throw exception
         }
 

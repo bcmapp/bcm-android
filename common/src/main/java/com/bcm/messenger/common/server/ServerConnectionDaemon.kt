@@ -161,7 +161,7 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
             }
 
             var retryCalled = false
-            retryTimer = Observable.timer(600, TimeUnit.MILLISECONDS)
+            retryTimer = Observable.timer(600, TimeUnit.MILLISECONDS, singleScheduler)
                     .repeat(4)
                     .subscribeOn(singleScheduler)
                     .observeOn(singleScheduler)
@@ -200,18 +200,18 @@ class ServerConnectionDaemon(private val accountContext: AccountContext
     }
 
     private fun doConnection(connectToken: Int): Boolean {
-        synchronized(this) {
-            val conn = serverConn
-            if (conn != null && !conn.isDisconnect() && !conn.isTimeout()) {
-                return true
-            }
-
-            val serverConn = ServerConnection(accountContext, daemonScheduler.scheduler, BuildConfig.USER_AGENT)
-            serverConn.setConnectionListener(this)
-            this.serverConn = serverConn
-
-            return serverConn.connect(connectToken)
+        val conn = serverConn
+        if (conn != null && !conn.isDisconnect() && !conn.isTimeout()) {
+            return true
         }
+
+        conn?.disconnect()
+
+        val serverConn = ServerConnection(accountContext, daemonScheduler.scheduler, BuildConfig.USER_AGENT)
+        serverConn.setConnectionListener(this)
+        this.serverConn = serverConn
+
+        return serverConn.connect(connectToken)
     }
 
     private fun sendRequest(request: WebSocketProtos.WebSocketRequestMessage): Future<Pair<Int, String>> {

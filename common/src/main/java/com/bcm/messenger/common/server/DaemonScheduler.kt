@@ -17,7 +17,7 @@ class DaemonScheduler {
 
     fun startTicker() {
         if (daemonTimer?.isDisposed != false) {
-            daemonTimer = Observable.timer(DAEMON_TIMER_MILLI, TimeUnit.MILLISECONDS)
+            daemonTimer = Observable.timer(DAEMON_TIMER_MILLI, TimeUnit.MILLISECONDS, singleScheduler)
                     .repeat()
                     .subscribeOn(singleScheduler)
                     .observeOn(singleScheduler)

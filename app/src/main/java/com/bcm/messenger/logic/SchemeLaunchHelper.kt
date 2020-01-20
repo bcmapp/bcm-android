@@ -101,7 +101,7 @@ class SchemeLaunchHelper(val context: Context) {
                 when (conversation) {
                     ARouterConstants.Activity.CHAT_CONVERSATION_PATH -> {
                         ALog.i(TAG, "route path im: $conversation")
-                        routeToChat(accountContext, intent)
+                        //routeToChat(accountContext, intent)
                         return
                     }
                 }
@@ -110,7 +110,7 @@ class SchemeLaunchHelper(val context: Context) {
             val offlineMessage = intent.extras?.get("bcmdata") as? String
             if (offlineMessage?.isNotEmpty() == true) {
                 ALog.i(TAG, "route offline message")
-                routeToChat(offlineMessage)
+                //routeToChat(offlineMessage)
                 return
             }
 
@@ -299,14 +299,14 @@ class SchemeLaunchHelper(val context: Context) {
                     return
                 }
             }
-            if (null != notify) {
+
                 when {
                     notify.contactChat != null -> toChat(accountContext, notify.contactChat)
                     notify.groupChat != null -> toGroup(accountContext, notify.groupChat)
                     notify.friendMsg != null -> toFriendReq(accountContext, notify.contactChat)
                     notify.adhocChat != null -> toAdHoc(accountContext, notify.adhocChat)
                 }
-            }
+
         } catch (e: JsonSyntaxException) {
             ALog.e(TAG, e)
         }

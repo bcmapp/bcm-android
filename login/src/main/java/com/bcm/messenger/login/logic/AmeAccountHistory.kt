@@ -245,6 +245,14 @@ class AmeAccountHistory {
         accountContextMap[uid] = AccountContext(uid, "", "")
 
         saveLastLoginUid(majorAccountUid)
+
+        val accountData = accountMap[uid]
+        if (null != accountData) {
+            accountData.signalPassword = ""
+            accountData.signalingKey = ""
+            saveAccountHistory()
+        }
+
         EventBus.getDefault().post(AccountLoginStateChangedEvent())
     }
 
