@@ -153,6 +153,10 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
             share_group_item.visibility = View.GONE
         }
 
+        if (mGroupModel.myRole() != AmeGroupMemberInfo.OWNER) {
+            share_group_item.hideHead()
+        }
+
         share_group_item.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
