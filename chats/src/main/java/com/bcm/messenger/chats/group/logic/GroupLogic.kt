@@ -211,6 +211,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                                   var shareSetting: String = "",
                                   var shareSettingSign: String = "",
                                   var shareConfirmSign: String = "",
+                                  var shareCode: String = "",
                                   val groupInfo: GroupInfo = GroupInfo()
             ) {
                 var groupKeyPlainBytes: ByteArray = BCMEncryptUtils.generate64BitKey()
@@ -275,6 +276,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         val profileKeys = EncryptUtils.aes256EncryptAndBase64(keyConfig.toString(), channelKey.toByteArray())
 
                         val shareCode= EncryptUtils.base64Encode(EncryptUtils.getSecretBytes(16)).format()
+                        stash.shareCode = shareCode
                         val shareSettingJson = GsonUtils.toJson(GroupShareSettingEntity(1, shareCode, 1))
                         stash.shareSetting = EncryptUtils.aes256EncryptAndBase64(shareSettingJson, stash.groupInfoSecretPlainBytes)
 
@@ -346,6 +348,10 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         dbGroupInfo.shareEnabled = 1
                         dbGroupInfo.shareCode = ""
                         dbGroupInfo.version = 3
+                        dbGroupInfo.shareCode = stash.shareCode
+                        dbGroupInfo.shareCodeSetting = stash.shareSetting
+                        dbGroupInfo.shareCodeSettingSign = stash.shareSettingSign
+                        dbGroupInfo.shareSettingAndConfirmSign = stash.shareConfirmSign
 
                         groupCache.saveGroupInfo(dbGroupInfo)
                         GroupInfoDataManager.saveGroupKeyParam(accountContext, dbGroupInfo.gid, dbGroupInfo.currentKeyVersion, dbGroupInfo.currentKey)
@@ -408,6 +414,8 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             var shareSetting = ""
             var shareSettingSign = ""
             var shareConfirmSign = ""
+            var shareCode = ""
+
             GroupManagerCore.queryRecipientsInfo(accountContext, inviteList)
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
@@ -449,7 +457,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                         keyConfig.version = self.privacyProfile.version
                         val profileKeys = EncryptUtils.aes256EncryptAndBase64(keyConfig.toString(), channel_key.toByteArray())
 
-                        val shareCode= EncryptUtils.base64Encode(EncryptUtils.getSecretBytes(16)).format()
+                        shareCode= EncryptUtils.base64Encode(EncryptUtils.getSecretBytes(16)).format()
                         val shareSettingJson = GsonUtils.toJson(GroupShareSettingEntity(1, shareCode, 1))
                         shareSetting = EncryptUtils.aes256EncryptAndBase64(shareSettingJson, groupSecret)
 
@@ -498,7 +506,7 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
                             dbGroupInfo.needOwnerConfirm = 1
                             dbGroupInfo.shareEpoch = 1
                             dbGroupInfo.shareEnabled = 1
-                            dbGroupInfo.shareCode = ""
+                            dbGroupInfo.shareCode = shareCode
                             dbGroupInfo.shareCodeSetting = shareSetting
                             dbGroupInfo.shareCodeSettingSign = shareSettingSign
                             dbGroupInfo.shareSettingAndConfirmSign = shareConfirmSign
