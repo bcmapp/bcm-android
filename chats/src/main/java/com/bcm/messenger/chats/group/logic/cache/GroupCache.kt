@@ -19,6 +19,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 /**
@@ -28,8 +29,8 @@ class GroupCache(private val accountContext: AccountContext, val cacheReady: () 
 
     private val TAG = "GroupCache"
 
-    private val otherGroupList: HashMap<Long, AmeGroupInfo> = HashMap()
-    private val myGroupList: HashMap<Long, AmeGroupInfo> = HashMap()
+    private val otherGroupList: ConcurrentHashMap<Long, AmeGroupInfo> = ConcurrentHashMap()
+    private val myGroupList: ConcurrentHashMap<Long, AmeGroupInfo> = ConcurrentHashMap()
     private var isCachedReady: Boolean = false
 
     @SuppressLint("CheckResult")
@@ -135,9 +136,13 @@ class GroupCache(private val accountContext: AccountContext, val cacheReady: () 
         if (group.role != role) {
             group.role = role
             if (role == AmeGroupMemberInfo.VISITOR) {
-            
                 GroupLiveInfoManager.get(accountContext).deleteLiveInfoWhenLeaveGroup(gid)
                 GroupInfoDataManager.clearShareSetting(accountContext, group.gid)
+                myGroupList.remove(gid)
+                otherGroupList[gid] = group
+            } else {
+                myGroupList[gid] = group
+                otherGroupList.remove(gid)
             }
             GroupInfoDataManager.updateGroupRole(accountContext, gid, role)
         }

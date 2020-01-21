@@ -1,7 +1,6 @@
 package com.bcm.messenger.chats.group.logic
 
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.crypto.GroupProfileDecryption
@@ -27,7 +26,6 @@ import com.bcm.messenger.utility.AmeURLUtil
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.logger.ALog
 import com.google.protobuf.AbstractMessage
-import com.orhanobut.logger.Logger
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
 import org.spongycastle.pqc.math.linearalgebra.ByteUtils

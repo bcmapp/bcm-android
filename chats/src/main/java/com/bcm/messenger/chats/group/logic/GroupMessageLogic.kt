@@ -8,7 +8,6 @@ import com.bcm.messenger.chats.group.logic.sync.GroupOfflineDecryptFailCounter
 import com.bcm.messenger.chats.group.logic.sync.GroupOfflineSyncManager
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.crypto.encrypt.GroupMessageEncryptUtils

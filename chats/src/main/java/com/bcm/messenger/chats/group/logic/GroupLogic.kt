@@ -1885,6 +1885,9 @@ object GroupLogic : AccountContextMap<GroupLogic.GroupLogicImpl>({
             diffList.removeAll(serverList)
             if (diffList.isNotEmpty()) {
                 for (kicked in diffList) {
+                    if (groupCache.getGroupInfo(kicked)?.role == AmeGroupMemberInfo.VISITOR) {
+                        continue
+                    }
                     groupCache.updateRole(kicked, AmeGroupMemberInfo.VISITOR)
                     if (isCurrentModel(kicked)) {
                         getModel(kicked)?.checkSync()

@@ -11,7 +11,6 @@ import com.bcm.messenger.common.core.ServerResult
 import com.bcm.messenger.common.core.corebean.GroupKeyMode
 import com.bcm.messenger.common.core.corebean.IdentityKeyInfo
 import com.bcm.messenger.common.core.corebean.ProfilesResult
-import com.bcm.messenger.common.crypto.ECCipherProto
 import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.grouprepository.room.entity.JoinGroupReqComment
 import com.bcm.messenger.common.recipients.Recipient
