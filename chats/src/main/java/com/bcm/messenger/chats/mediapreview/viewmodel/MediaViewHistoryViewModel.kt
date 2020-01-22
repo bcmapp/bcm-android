@@ -52,9 +52,9 @@ class MediaViewHistoryViewModel(accountContext: AccountContext) : BaseMediaViewM
 
     override fun deleteData(data: MediaViewData?, result: ((success: Boolean) -> Unit)?) {}
 
-    override fun saveData(data: MediaViewData?, result: ((success: Boolean) -> Unit)?) {
-        data?.saveAttachment(accountContext, null) { success, _ ->
-            result?.invoke(success)
+    override fun saveData(data: MediaViewData?, result: ((success: Boolean, path: String) -> Unit)?) {
+        data?.saveAttachment(accountContext, null) { success, path ->
+            result?.invoke(success, path)
         }
     }
 

@@ -19,5 +19,5 @@ abstract class BaseMediaViewModel(protected val accountContext: AccountContext) 
 
     abstract fun deleteData(data: MediaViewData?, result: ((success: Boolean) -> Unit)?)
 
-    abstract fun saveData(data: MediaViewData?, result: ((success: Boolean) -> Unit)?)
+    abstract fun saveData(data: MediaViewData?, result: ((success: Boolean, path: String) -> Unit)?)
 }

@@ -2,9 +2,11 @@ package com.bcm.messenger.chats.mediabrowser.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -61,9 +63,10 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        activity?.let {act ->
+        activity?.let { act ->
             initView(act)
-            browserType = arguments?.getInt(ARouterConstants.PARAM.PARAM_BROWSER_TYPE, BaseMediaBrowserViewModel.TYPE_FILE) ?: BaseMediaBrowserViewModel.TYPE_FILE
+            browserType = arguments?.getInt(ARouterConstants.PARAM.PARAM_BROWSER_TYPE, BaseMediaBrowserViewModel.TYPE_FILE)
+                    ?: BaseMediaBrowserViewModel.TYPE_FILE
             mAddress = arguments?.getParcelable(ARouterConstants.PARAM.PARAM_ADDRESS)
 
             if (mAddress == null) {
@@ -71,7 +74,7 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
                 return
             }
 
-            mAddress?.let {address ->
+            mAddress?.let { address ->
                 recipient = Recipient.from(accountContext, address.serialize(), true)
                 recipient.addListener(this)
                 initResource(act)
@@ -234,7 +237,7 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
     override fun save() {
         mediaHandleViewModel?.selection?.value?.let {
             AmePopup.loading.show(activity, false)
-            commonViewModel?.download(it.selectionList.toList()) { fail ->
+            commonViewModel?.download(it.selectionList.toList()) { success, fail ->
                 AmePopup.loading.dismiss()
                 if (fail.isNotEmpty()) {
                     val content = StringBuilder()
@@ -246,9 +249,14 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
                         }
                     }
                     content.append(getString(R.string.chats_save_fail))
-                    AmeAppLifecycle.failure(getString(R.string.chats_save_fail), true)
+                    ToastUtil.show(activity ?: return@download, getString(R.string.chats_save_fail))
                 } else {
-                    AmeAppLifecycle.succeed(getString(R.string.chats_save_success), true)
+                    val successString = SpannableStringBuilder(getString(R.string.chats_save_success))
+                    success.forEach { path ->
+                        successString.append("\n$path")
+                    }
+                    ToastUtil.show(activity
+                            ?: return@download, successString.toString(), Toast.LENGTH_LONG)
                 }
                 adapter?.notifyDataSetChanged()
                 mediaHandleViewModel?.clearSelectionList()

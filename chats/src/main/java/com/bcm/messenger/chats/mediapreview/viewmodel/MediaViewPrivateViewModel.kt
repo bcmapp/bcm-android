@@ -123,9 +123,9 @@ class MediaViewPrivateViewModel(accountContext: AccountContext) : BaseMediaViewM
                 }
     }
 
-    override fun saveData(data: MediaViewData?, result: ((success: Boolean) -> Unit)?) {
+    override fun saveData(data: MediaViewData?, result: ((success: Boolean, path: String) -> Unit)?) {
         if (data == null) {
-            result?.invoke(false)
+            result?.invoke(false, "")
             return
         }
 
@@ -137,23 +137,22 @@ class MediaViewPrivateViewModel(accountContext: AccountContext) : BaseMediaViewM
                 downloadVideo(data.mediaUri, messageRecord, result)
             }
         } else {
-            result?.invoke(false)
+            result?.invoke(false, "")
         }
     }
 
-    private fun downloadImage(mediaUri: Uri?, messageRecord: MessageRecord, result: ((success: Boolean) -> Unit)?) {
+    private fun downloadImage(mediaUri: Uri?, messageRecord: MessageRecord, result: ((success: Boolean, path: String) -> Unit)?) {
         val slide = messageRecord.getImageAttachment()
         if (slide?.dataUri == null) {
-            result?.invoke(false)
+            result?.invoke(false, "")
             return
         }
 
         if (mediaUri != null && masterSecret != null) {
-            Observable.create(ObservableOnSubscribe<Boolean> {
+            Observable.create(ObservableOnSubscribe<String> {
                 try {
-                    AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, masterSecret, mediaUri, slide.contentType, slide.fileName) ?: throw Exception("saveAttachment fail")
-                    it.onNext(true)
-
+                    val file = AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, masterSecret, mediaUri, slide.contentType, slide.fileName) ?: throw Exception("saveAttachment fail")
+                    it.onNext(file.path)
                 }
                 catch (ex: Exception) {
                     it.onError(ex)
@@ -164,29 +163,29 @@ class MediaViewPrivateViewModel(accountContext: AccountContext) : BaseMediaViewM
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        result?.invoke(it)
+                        result?.invoke(true, it)
                     }, {
                         ALog.e(TAG, "downloadImage fail", it)
-                        result?.invoke(false)
+                        result?.invoke(false, "")
                     })
         } else {
             ALog.e(TAG, "mediaUri is null ,mediaUrl is null")
-            result?.invoke(false)
+            result?.invoke(false, "")
         }
     }
 
-    private fun downloadVideo(mediaUri: Uri?, messageRecord: MessageRecord, result: ((success: Boolean) -> Unit)?) {
+    private fun downloadVideo(mediaUri: Uri?, messageRecord: MessageRecord, result: ((success: Boolean, path: String) -> Unit)?) {
         val slide = messageRecord.getVideoAttachment()
         if (slide?.dataUri == null) {
-            result?.invoke(false)
+            result?.invoke(false, "")
             return
         }
 
         if (mediaUri != null && masterSecret != null) {
-            Observable.create(ObservableOnSubscribe<Boolean> {
+            Observable.create(ObservableOnSubscribe<String> {
                 try {
-                    AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, masterSecret, mediaUri, slide.contentType, slide.fileName) ?: throw Exception("saveAttachment fail")
-                    it.onNext(true)
+                    val file = AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, masterSecret, mediaUri, slide.contentType, slide.fileName) ?: throw Exception("saveAttachment fail")
+                    it.onNext(file.path)
                 }
                 catch (ex: Exception) {
                     it.onError(ex)
@@ -197,10 +196,10 @@ class MediaViewPrivateViewModel(accountContext: AccountContext) : BaseMediaViewM
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe( {
-                        result?.invoke(it)
+                        result?.invoke(true, it)
                     }, {
                         ALog.e(TAG, "downloadVideo fail", it)
-                        result?.invoke(false)
+                        result?.invoke(false, "")
                     })
             return
         }
@@ -212,8 +211,7 @@ class MediaViewPrivateViewModel(accountContext: AccountContext) : BaseMediaViewM
                 AmeModuleCenter.accountJobMgr(accountContext)?.add(AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, accountContext,
                         messageRecord.id, slide.id, slide.uniqueId, true))
 
-                it.onNext(true)
-
+                it.onNext(false)
             } catch (ex: Exception) {
                 ALog.e(TAG, "downloadVideo error", ex)
                 it.onNext(false)
@@ -223,7 +221,7 @@ class MediaViewPrivateViewModel(accountContext: AccountContext) : BaseMediaViewM
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    result?.invoke(it)
+                    result?.invoke(it, "")
                 }
     }
 

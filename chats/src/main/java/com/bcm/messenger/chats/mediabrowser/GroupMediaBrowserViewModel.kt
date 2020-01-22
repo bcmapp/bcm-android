@@ -15,7 +15,6 @@ import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTrans
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.common.utils.MediaUtil
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -97,17 +96,18 @@ class GroupMediaBrowserViewModel(accountContext: AccountContext) : BaseMediaBrow
     }
 
     @SuppressLint("CheckResult")
-    override fun download(mediaDataList: List<MediaBrowseData>, callback: (fail: List<MediaBrowseData>) -> Unit) {
+    override fun download(mediaDataList: List<MediaBrowseData>, callback: (success: List<String>, fail: List<MediaBrowseData>) -> Unit) {
         if (masterSecret == null || gid == -1L) {
-            callback(mediaDataList)
+            callback(emptyList(), mediaDataList)
             ALog.e(TAG, "MasterSecret is null or gid has not set!")
             return
         }
-        Observable.create<List<MediaBrowseData>> {
+        Observable.create<Pair<List<String>, List<MediaBrowseData>>> {
             val failList = mutableListOf<MediaBrowseData>()
+            val successSet = mutableSetOf<String>()
             mediaDataList.forEach { data ->
                 if (destroyed) {
-                    it.onNext(failList)
+                    it.onNext(Pair(emptyList(), failList))
                     it.onComplete()
                     return@forEach
                 }
@@ -151,6 +151,8 @@ class GroupMediaBrowserViewModel(accountContext: AccountContext) : BaseMediaBrow
                                 if (file == null) {
                                     ALog.d(TAG, "download file failed, uri is $uri")
                                     failList.add(data)
+                                } else {
+                                    successSet.add(file.parent)
                                 }
                             }
                         }
@@ -162,20 +164,21 @@ class GroupMediaBrowserViewModel(accountContext: AccountContext) : BaseMediaBrow
                     if (file == null) {
                         ALog.d(TAG, "download file failed, uri is ${msg.attachmentUri}")
                         failList.add(data)
+                    } else {
+                        successSet.add(file.parent)
                     }
                 }
             }
-            it.onNext(failList)
+            it.onNext(Pair(successSet.toList(), failList))
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError {
+                .subscribe({
+                    callback(it.first, it.second)
+                }, {
                     it.printStackTrace()
-                    callback(mediaDataList)
-                }
-                .subscribe {
-                    callback(it)
-                }
+                    callback(emptyList(), mediaDataList)
+                })
     }
 
     @SuppressLint("CheckResult")

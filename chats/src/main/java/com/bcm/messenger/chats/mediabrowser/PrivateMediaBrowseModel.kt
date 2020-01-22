@@ -125,11 +125,12 @@ class PrivateMediaBrowseModel(accountContext: AccountContext) : BaseMediaBrowser
     }
 
     @SuppressLint("CheckResult")
-    override fun download(mediaDataList: List<MediaBrowseData>, callback: (fail: List<MediaBrowseData>) -> Unit) {
+    override fun download(mediaDataList: List<MediaBrowseData>, callback: (success: List<String>, fail: List<MediaBrowseData>) -> Unit) {
         checkValid()
-        Observable.create(ObservableOnSubscribe<List<MediaBrowseData>> {
+        Observable.create(ObservableOnSubscribe<Pair<List<String>, List<MediaBrowseData>>> {
 
             val fail = mutableListOf<MediaBrowseData>()
+            val successSet = mutableSetOf<String>()
             fail.addAll(mediaDataList)
             try {
 
@@ -138,17 +139,19 @@ class PrivateMediaBrowseModel(accountContext: AccountContext) : BaseMediaBrowser
                         break
                     }
                     val record = data.msgSource as? MessageRecord ?: continue
-                    val attachmentSlide = record.getImageAttachment()
-                            ?: record.getDocumentAttachment()
+                    val attachmentSlide = record.getImageAttachment() ?: record.getVideoAttachment()
+                    ?: record.getDocumentAttachment()
                     if (attachmentSlide != null) {
                         try {
                             if (attachmentSlide.transferState != AttachmentDbModel.TransferState.STARTED.state) {
                                 AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, accountContext, record.id,
                                         attachmentSlide.id, attachmentSlide.uniqueId, true).onRun(mMasterSecret)
                             }
-                            if (AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, mMasterSecret, attachmentSlide.dataUri
-                                            ?: continue, attachmentSlide.contentType, attachmentSlide.fileName) != null) {
+                            val file = AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, mMasterSecret, attachmentSlide.dataUri
+                                    ?: continue, attachmentSlide.contentType, attachmentSlide.fileName)
+                            if (file != null) {
                                 fail.remove(data)
+                                successSet.add(file.parent)
                             }
                         } catch (ex: Exception) {
                             ALog.e(TAG, "record ${data.name} download attachment error")
@@ -158,15 +161,17 @@ class PrivateMediaBrowseModel(accountContext: AccountContext) : BaseMediaBrowser
             } catch (ex: Exception) {
                 ALog.e(TAG, "download error", ex)
             } finally {
-                it.onNext(fail)
+                it.onNext(Pair(successSet.toList(), fail))
                 it.onComplete()
             }
-
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { fail ->
-                    callback.invoke(fail)
-                }
+                .subscribe({
+                    callback.invoke(it.first, it.second)
+                }, {
+                    it.printStackTrace()
+                    callback(emptyList(), mediaDataList)
+                })
     }
 
     @SuppressLint("CheckResult")

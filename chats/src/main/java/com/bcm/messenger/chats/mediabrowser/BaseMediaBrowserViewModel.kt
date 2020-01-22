@@ -23,9 +23,7 @@ abstract class BaseMediaBrowserViewModel(protected val accountContext: AccountCo
 
     abstract fun loadMedia(browseType: Int, callback: (result: Map<String, MutableList<MediaBrowseData>>) -> Unit)
 
-    abstract fun download(mediaDataList: List<MediaBrowseData>, callback: (fail: List<MediaBrowseData>) -> Unit)
+    abstract fun download(mediaDataList: List<MediaBrowseData>, callback: (success: List<String>, fail: List<MediaBrowseData>) -> Unit)
 
     abstract fun delete(mediaDataList: List<MediaBrowseData>, callback: (fail: List<MediaBrowseData>) -> Unit)
-
-
 }

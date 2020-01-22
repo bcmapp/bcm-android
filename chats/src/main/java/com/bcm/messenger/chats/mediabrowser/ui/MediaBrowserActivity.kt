@@ -94,7 +94,6 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
             browser_share_img.visibility = View.GONE
             browser_save_img.visibility = View.GONE
             selection_size_view.visibility = View.VISIBLE
-
         }
 
         chats_media_browser_title.setListener(object : CommonTitleBar2.TitleBarClickListener() {
@@ -201,7 +200,6 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
                     }
                 }
             }
-
         })
 
         browser_share_img.setOnClickListener {

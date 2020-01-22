@@ -261,7 +261,7 @@ data class MediaViewData(val indexId: Long,
     }
 
 
-    fun saveAttachment(accountContext: AccountContext, masterSecret: MasterSecret?, callback: (success: Boolean, uri: String) -> Unit) {
+    fun saveAttachment(accountContext: AccountContext, masterSecret: MasterSecret?, callback: (success: Boolean, path: String) -> Unit) {
         if (sourceMsg is AmeGroupMessageDetail) {
 
             fun doSaveAction(finalUri: Uri) {
@@ -287,7 +287,7 @@ data class MediaViewData(val indexId: Long,
                 }).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
-                            callback.invoke(true, Uri.fromFile(it).toString())
+                            callback.invoke(true, it.path)
                         }, {
                             callback.invoke(false, "")
                         })

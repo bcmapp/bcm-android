@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.SharedElementCallback
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
@@ -21,6 +22,7 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.GroupUtil
@@ -215,12 +217,12 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
         val f = (adapter.getCurrentFragment() as? MediaViewFragment) ?: return
         val data = f.getData()
         chats_media_more_view.displaySpinning()
-        viewModel.saveData(data) { success ->
+        viewModel.saveData(data) { success, path ->
             chats_media_more_view.displayDefault()
             if (success) {
-                AmeAppLifecycle.succeed(getString(R.string.chats_save_success), true)
+                ToastUtil.show(this, getString(R.string.chats_save_success) + " $path", Toast.LENGTH_LONG)
             } else {
-                AmeAppLifecycle.failure(getString(R.string.chats_save_fail), true)
+                ToastUtil.show(this, getString(R.string.chats_save_fail), Toast.LENGTH_LONG)
             }
         }
     }

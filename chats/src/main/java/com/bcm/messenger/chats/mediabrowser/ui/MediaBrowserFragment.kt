@@ -3,9 +3,11 @@ package com.bcm.messenger.chats.mediabrowser.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -24,9 +26,9 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.utility.AppContextHolder
 import kotlinx.android.synthetic.main.chats_media_image_browser.*
 import java.lang.ref.WeakReference
 
@@ -188,13 +190,17 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
         AmeAppLifecycle.showLoading()
         val weakThis = WeakReference(this)
         mHandleViewModel?.selection?.value?.let {
-            viewModel?.download(it.selectionList.toList()) { fail ->
+            viewModel?.download(it.selectionList.toList()) { success, fail ->
                 AmeAppLifecycle.hideLoading()
                 if (fail.isNotEmpty()) {
-                    AmeAppLifecycle.failure(AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_save_fail), true)
+                    ToastUtil.show(activity ?: return@download, getString(R.string.chats_save_fail))
                 } else {
+                    val successString = SpannableStringBuilder(getString(R.string.chats_save_success))
+                    success.forEach { path ->
+                        successString.append("\n$path")
+                    }
                     weakThis.get()?.mHandleViewModel?.setSelecting(false)
-                    AmeAppLifecycle.succeed(AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_save_success), true)
+                    ToastUtil.show(activity ?: return@download, successString.toString(), Toast.LENGTH_LONG)
                 }
             }
         }
@@ -212,14 +218,14 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
                         viewModel?.delete(list) { fail ->
                             AmeAppLifecycle.hideLoading()
                             if (fail.isNotEmpty()) {
-                                AmeAppLifecycle.failure(AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_delete_fail), true)
+                                AmeAppLifecycle.failure(getString(R.string.chats_delete_fail), true)
                             } else {
                                 val safeThis = weakThis.get()
                                 if (null != safeThis && !safeThis.isDetached) {
                                     weakThis.get()?.browserAdapter?.delete(list)
                                     weakThis.get()?.mHandleViewModel?.setSelecting(false)
                                 }
-                                AmeAppLifecycle.succeed(AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_delete_success), true)
+                                AmeAppLifecycle.succeed(getString(R.string.chats_delete_success), true)
                             }
                         }
                     }

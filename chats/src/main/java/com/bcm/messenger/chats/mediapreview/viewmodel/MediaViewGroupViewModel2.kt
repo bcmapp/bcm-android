@@ -76,10 +76,9 @@ class MediaViewGroupViewModel2(accountContext: AccountContext) : BaseMediaViewMo
                     }
     }
 
-    override fun saveData(data: MediaViewData?, result: ((success: Boolean) -> Unit)?) {
-
-        data?.saveAttachment(accountContext, masterSecret) { success, _ ->
-            result?.invoke(success)
+    override fun saveData(data: MediaViewData?, result: ((success: Boolean, path: String) -> Unit)?) {
+        data?.saveAttachment(accountContext, masterSecret) { success, path ->
+            result?.invoke(success, path)
         }
     }
 
