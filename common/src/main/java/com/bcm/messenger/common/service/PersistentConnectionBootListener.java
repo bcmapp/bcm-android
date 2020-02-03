@@ -12,8 +12,6 @@ import com.bcm.messenger.common.provider.AMELogin;
 import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.utility.logger.ALog;
 
-import java.util.function.Consumer;
-
 
 public class PersistentConnectionBootListener extends BroadcastReceiver {
   @RequiresApi(api = Build.VERSION_CODES.N)
@@ -22,9 +20,9 @@ public class PersistentConnectionBootListener extends BroadcastReceiver {
       try {
           ALog.i("BootListener", "MessageRetrievalService");
           if (AMELogin.INSTANCE.isLogin()) {
-              AmeModuleCenter.INSTANCE.login().getLoginAccountContextList().forEach(accountContext -> {
+              for (AccountContext accountContext : AmeModuleCenter.INSTANCE.login().getLoginAccountContextList()) {
                   AmeModuleCenter.INSTANCE.serverDaemon(accountContext).checkConnection(false);
-              });
+              }
           }
       } catch (Exception e) {
           e.printStackTrace();
