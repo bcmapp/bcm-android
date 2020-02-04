@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Basic colour-->
+    <color name="common_color_transparent">#00000000</color>
+    <color name="common_color_white">#ffffff</color>
+    <color name="common_color_white_10">#1Affffff</color>
+    <color name="common_color_white_50">#80ffffff</color>
+    <color name="common_color_white_70">#B3ffffff</color>
+    <color name="common_color_white_30">#4dffffff</color>
+    <color name="common_color_black">#000000</color>
+    <color name="common_color_black_15">#19000000</color>
+    <color name="common_color_black_30">#38000000</color>
+    <color name="common_color_black_50">#80000000</color>
+    <color name="common_color_black_60">#99000000</color>
+    <color name="common_color_black_70">#B2000000</color>
+    <color name="common_color_666666">#666666</color>
+    <color name="common_color_999999">#999999</color>
+    <color name="common_color_eeeeee">#eeeeee</color>
+    <color name="common_color_e8e8e8">#e8e8e8</color>
+    <color name="common_color_cccccc">#cccccc</color>
+    <color name="common_color_c2c2c2">#c2c2c2</color>
+    <color name="common_color_131313">#131313</color>
+    <color name="common_color_f34a62">#f34a62</color>
+    <color name="common_color_ff3737">#ff3737</color>
+    <color name="common_color_4763fe">#4763fe</color>
+    <color name="common_color_379BFF">#379BFF</color>
+    <color name="common_color_CC0019">#CC0019</color>
+    <color name="common_color_FFBB00">#FFBB00</color>
+    <color name="common_color_F1F2F3">#F1F2F3</color>
+    <color name="common_color_white_80">#4cFFFFFF</color>
+    <color name="common_color_A6B3Bf">#A6B3BF</color>
+    <color name="common_color_616161">#616161</color>
+    <color name="common_color_606060">#606060</color>
+    <color name="common_color_A6B3BF">#A6B3BF</color>
+    <color name="common_color_half_tran">#88000000</color>
+    <color name="common_color_half_tran_white">#80FFFFFF</color>
+    <color name="common_color_dark_background">#182331</color>
+    <color name="common_color_9BCDFF">#9BCDFF</color>
+    <color name="common_color_EBF5FF">#EBF5FF</color>
+    <color name="common_color_C3E1FF">#C3E1FF</color>
+    <color name="common_color_919191">#919191</color>
+    <color name="common_color_909090">#909090</color>
+    <color name="common_color_c0c0c0">#c0c0c0</color>
+    <color name="common_color_88c0c0c0">#88c0c0c0</color>
+    <color name="common_color_black_transparent_10">#1A000000</color>
+    <color name="common_color_white_transparent_10">#1AFFFFFF</color>
+    <color name="common_color_white_transparent_30">#4dffffff</color>
+    <color name="common_color_A8A8A8">#A8A8A8</color>
+    <color name="common_color_A8A8A8_transparent_30">#4DA8A8A8</color>
+    <color name="common_color_ff3737_transparent_10">#19ff3737</color>
+    <color name="common_color_379BFF_transparent_10">#19379BFF</color>
+    <color name="common_red">#FF0000</color>
+    <color name="common_3ED645">#3ED645</color>
+
+    <!--Common colour-->
+    <color name="common_colorPrimaryDark">#303F9F</color>
+    <color name="common_colorAccent">#FF4081</color>
+    <color name="common_app_primary_color">@color/common_color_379BFF</color>
+    <color name="common_primary_dark_color">#1c7ac5</color>
+    <color name="common_app_second_color">@color/common_color_379BFF</color>
+    <color name="common_unread_indicator">#bbbbbb</color>
+    <color name="common_division_color">#e8e8e8</color>
+    <color name="common_status_bar_color">#66000000</color>
+    <color name="common_line_color">#e8e8e8</color>
+    <color name="common_title_bar_text_color">@color/common_color_131313</color>
+    <color name="common_title_bar_right_text_color">@color/common_app_primary_color</color>
+    <color name="common_app_green_color">#3ED645</color>
+    <color name="common_app_gray_color">#808080</color>
+
+    <!-- Main colour -->
+    <color name="common_content_primary_color">#131313</color>
+    <!-- Secondary colour -->
+    <color name="common_content_second_color">#A8A8A8</color>
+
+    <color name="common_content_warning_color">#FF3737</color>
+
+    <color name="common_title_color">#303030</color>
+
+    <color name="common_disable_color">#C2C2C2</color>
+    <color name="common_background_filter">#4C000000</color>
+
+    <color name="common_background_color">#F2F3F4</color><!--#F2F3F5-->
+    <color name="common_background_F2F3F4">#F2F3F4</color>
+
+    <color name="common_background_filter_7A">#7A000000</color>
+    <color name="common_color_C2C2C2">#C2C2C2</color>
+    <color name="common_10_transparent">#1A000000</color>
+    <color name="common_20_transparent">#33000000</color>
+    <color name="common_30_transparent">#4D000000</color>
+    <color name="common_60_transparent">#9A000000</color>
+    <color name="common_70_transparent">#B3000000</color>
+    <color name="common_color_F6F7F9">#F6F7F9</color>
+
+    <color name="common_white_50_transparent">#80FFFFFF</color>
+
+    <!-- scanner -->
+    <color name="common_scan_mask">#60000000</color>
+    <color name="common_scan_laser">#c099cc00</color>
+    <color name="common_scan_corner">@color/common_color_white</color>
+    <color name="common_scan_dot">@color/common_app_primary_color</color>
+    <color name="common_scan_result_view">#b0000000</color>
+    <color name="common_scan_result_dots">#c099cc00</color>
+
+    <color name="common_pink_5">#e91e63</color>
+    <color name="common_light_green_2">#c8e6c9</color>
+    <color name="common_blue_3">#64B5F6</color>
+
+
+    <!--image picker-->
+    <color name="common_theme_body">#cc22292c</color>
+    <color name="common_theme_body_dark">#cc20272a</color>
+
+    <!-- Touch colour -->
+    <color name="common_touch_highlight">#400099cc</color>
+
+    <color name="common_dark_gray">#111111</color>
+
+    <!--Dark theme colours-->
+    <color name="common_text_main_color">#FFFFFF</color>
+    <color name="common_text_secondary_color">#BFFFFFFF</color>
+    <color name="common_text_third_color">#80FFFFFF</color>
+    <color name="common_text_warning_color">#FF3737</color>
+    <color name="common_underline_color">#26B3B3B3</color>
+    <color name="common_default_icon_color">#FFFFFF</color>
+    <color name="common_default_background_color">#000000</color>
+    <color name="common_default_background_gery_color">#202122</color>
+    <color name="common_default_switcher_color">#202122</color>
+    <color name="common_default_ripple_color">#303030</color>
+</resources>

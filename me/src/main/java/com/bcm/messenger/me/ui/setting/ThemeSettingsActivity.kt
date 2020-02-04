@@ -87,8 +87,10 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
             itemView.language_select_item.setName(data)
             itemView.language_select_item.setOnClickListener {
                 itemView.language_select_item.showRightStatus(CommonSettingItem.RIGHT_YES)
-                (theme_list.layoutManager as LinearLayoutManager).findViewByPosition(currentTheme)?.language_select_item?.showRightStatus(CommonSettingItem.RIGHT_NONE)
-                currentTheme = position
+                if (position != currentTheme) {
+                    (theme_list.layoutManager as LinearLayoutManager).findViewByPosition(currentTheme)?.language_select_item?.showRightStatus(CommonSettingItem.RIGHT_NONE)
+                    currentTheme = position
+                }
             }
 
             if (position == currentTheme) {
