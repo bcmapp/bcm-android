@@ -263,4 +263,30 @@
         <attr name="auto_start" format="boolean" />
     </declare-styleable>
 
+
+    <attr name="common_title_bar_left_icon_color" format="color" />
+    <attr name="common_title_bar_left_text_color" format="color" />
+    <attr name="common_title_bar_right_icon_color" format="color" />
+    <attr name="common_title_bar_right_text_color" format="color" />
+    <attr name="common_title_bar_center_text_color" format="color" />
+    <attr name="common_title_bar_background" format="color|reference" />
+
+    <attr name="common_activity_background" format="color|reference" />
+    <attr name="common_view_background" format="color|reference" />
+
+    <attr name="common_setting_item_background" format="color|reference" />
+    <attr name="common_setting_item_main_text_color" format="color" />
+    <attr name="common_setting_item_detail_text_color" format="color" />
+    <attr name="common_setting_item_tip_text_color" format="color" />
+    <attr name="common_setting_item_warn_color" format="color" />
+    <attr name="common_setting_item_switcher_color" format="color" />
+    <attr name="common_setting_item_right_icon_color" format="color" />
+    <attr name="common_setting_item_icon_color" format="color" />
+
+    <attr name="common_item_line_color" format="color" />
+    <attr name="common_text_main_color" format="color" />
+    <attr name="common_text_secondary_color" format="color" />
+    <attr name="common_text_third_color" format="color" />
+
+    <attr name="common_ripple_color" format="color" />
 </resources>

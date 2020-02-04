@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/theme_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:center_text="@string/me_theme_settings_title"
+        app:right_type="text"
+        app:right_text="@string/common_string_save"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/theme_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

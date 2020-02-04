@@ -84,6 +84,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
         //check before send text or audio，true: pass，false: cancel
         fun onBeforeTextOrAudioHandle(): Boolean
+
         fun onMessageSend(message: CharSequence, replyContent: AmeGroupMessage.ReplyContent? = null, extContent: AmeGroupMessageDetail.ExtensionContent? = null)
         fun onEmojiPanelShow(show: Boolean)
         fun onMoreOptionsPanelShow(show: Boolean)
@@ -350,7 +351,8 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                 val text = s.toString().trim()
                 updateToggleButtonState(text.isNotEmpty())
                 if (text.length > INPUT_NUM_MAX) {
-                    panel_compose_text.setText(panel_compose_text.text?.subSequence(0, INPUT_NUM_MAX) ?: "")
+                    panel_compose_text.setText(panel_compose_text.text?.subSequence(0, INPUT_NUM_MAX)
+                            ?: "")
                     panel_compose_text.setSelection(INPUT_NUM_MAX)
                 }
             }
@@ -724,8 +726,8 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
     }
 
     fun showMultiSelectMode(show: Boolean, batchSelected: Set<Any>?) {
-        if(show) {
-            if(panel_other_action_layout.visibility != View.VISIBLE) {
+        if (show) {
+            if (panel_other_action_layout.visibility != View.VISIBLE) {
                 mBatchSelected = batchSelected
                 mInputAwareLayout?.hideCurrentInput(panel_compose_text)
                 panel_other_action_layout.clearAnimation()
@@ -733,12 +735,12 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                 panel_other_action_layout.startAnimation(AnimationUtils.loadAnimation(context, R.anim.common_slide_from_bottom_fast))
                 panel_main_ban.visibility = View.GONE
             }
-        }else {
-            if(panel_other_action_layout.visibility == View.VISIBLE) {
+        } else {
+            if (panel_other_action_layout.visibility == View.VISIBLE) {
                 mBatchSelected = batchSelected
                 panel_other_action_layout.clearAnimation()
                 panel_other_action_layout.startAnimation(AnimationUtils.loadAnimation(context, R.anim.common_slide_to_bottom_fast).apply {
-                    setAnimationListener(object : Animation.AnimationListener{
+                    setAnimationListener(object : Animation.AnimationListener {
                         override fun onAnimationRepeat(animation: Animation?) {
                         }
 
@@ -777,7 +779,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
     fun setReply(accountContext: AccountContext?, messageDetail: AmeGroupMessageDetail?, locateCallback: ((v: View) -> Unit)?) {
 
-        if(messageDetail != null && accountContext != null) {
+        if (messageDetail != null && accountContext != null) {
 
             postDelayed({
                 panel_compose_text.requestFocus()
@@ -788,15 +790,14 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                 val groupModel = GroupLogic.get(accountContext).getModel(messageDetail.gid)
                 panel_reply_to_tv.text = if (recipient == null) {
                     null
-                }else {
+                } else {
                     BcmGroupNameUtil.getGroupMemberName(recipient, groupModel?.getGroupMember(recipient.address.serialize()))
                 }
 
                 val replyContent = if (messageDetail.message.type == AmeGroupMessage.CHAT_REPLY) {//If the reply message type is also reply, it is treated as a normal text message, and only the text is returned
                     val rc = messageDetail.message.content as AmeGroupMessage.ReplyContent
                     AmeGroupMessage.ReplyContent(messageDetail.serverIndex, messageDetail.senderId, AmeGroupMessage<AmeGroupMessage.TextContent>(AmeGroupMessage.TEXT, AmeGroupMessage.TextContent(rc.text)).toString(), "")
-                }
-                else {
+                } else {
                     AmeGroupMessage.ReplyContent(messageDetail.serverIndex, messageDetail.senderId, messageDetail.message.toString(), "")
                 }
 
@@ -814,7 +815,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
             }, 150)
 
-        }else {
+        } else {
 
             panel_reply_layout.visibility = View.GONE
             panel_reply_content_tv.tag = null
@@ -852,27 +853,29 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
         panel_forward_btn.setOnClickListener {
 
             val weakThis = WeakReference(this)
-            AmeModuleCenter.chat(AMELogin.majorContext)?.forwardMessage(context, isGroup, mCurrentConversationId, mBatchSelected ?: return@setOnClickListener) {
-                if (it.isEmpty()){
+            AmeModuleCenter.chat(AMELogin.majorContext)?.forwardMessage(context, isGroup, mCurrentConversationId, mBatchSelected
+                    ?: return@setOnClickListener) {
+                if (it.isEmpty()) {
                     weakThis.get()?.postDelayed({
                         EventBus.getDefault().post(MultiSelectEvent(isGroup, null))
-                    },500)
+                    }, 500)
 
                 }
             }
         }
         panel_delete_btn.setOnClickListener {
-            if(mCurrentConversationId == 0L) {
+            if (mCurrentConversationId == 0L) {
                 ALog.i(TAG, "message delete fail, conversationId is 0")
                 return@setOnClickListener
             }
-            if(mBatchSelected?.isNotEmpty() == true) {
-                AmeModuleCenter.chat(AMELogin.majorContext)?.deleteMessage(context, isGroup, mCurrentConversationId, mBatchSelected ?: return@setOnClickListener) {
-                    if(it.isEmpty()) {
+            if (mBatchSelected?.isNotEmpty() == true) {
+                AmeModuleCenter.chat(AMELogin.majorContext)?.deleteMessage(context, isGroup, mCurrentConversationId, mBatchSelected
+                        ?: return@setOnClickListener) {
+                    if (it.isEmpty()) {
                         EventBus.getDefault().post(MultiSelectEvent(isGroup, null))
                     }
                 }
-            }else {
+            } else {
                 ToastUtil.show(context, context.getString(R.string.chats_select_mode_delete_empty))
             }
         }

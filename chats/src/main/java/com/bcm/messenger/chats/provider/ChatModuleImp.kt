@@ -324,11 +324,13 @@ class ChatModuleImp : IChatModule {
                         .withOkTitle(context.getString(R.string.common_popup_ok))
                         .withCancelTitle(context.getString(R.string.common_cancel))
                         .withOkListener {
-                            val intent = Intent(context, ForwardActivity::class.java).apply {
-                                putExtra(ForwardActivity.MULTI_INDEX_ID, msgIdList.toLongArray())
-                                putExtra(ForwardActivity.GID, if (isGroup) conversationId else ARouterConstants.PRIVATE_MEDIA_CHAT)
+                            if (msgIdList.isNotEmpty()) {
+                                val intent = Intent(context, ForwardActivity::class.java).apply {
+                                    putExtra(ForwardActivity.MULTI_INDEX_ID, msgIdList.toLongArray())
+                                    putExtra(ForwardActivity.GID, if (isGroup) conversationId else ARouterConstants.PRIVATE_MEDIA_CHAT)
+                                }
+                                activity.startBcmActivity(accountContext, intent)
                             }
-                            activity.startBcmActivity(accountContext, intent)
                             callback?.invoke(emptySet())
                         }.show(activity)
             } else {

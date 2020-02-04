@@ -18,6 +18,11 @@
     <string name="chats_item_confirm_delete">Confirm</string>
     <string name="chats_item_confirm_delete_title">Delete Confirm</string>
     <string name="chats_item_confirm_delete_message">Are you sure to delete this conversation?</string>
+    <string name="chats_item_set_read">Set Read</string>
+    <string name="chats_item_set_unread">Set Unread</string>
+    <string name="chats_item_set_mute">Set mute</string>
+    <string name="chats_item_set_not_mute">Set not mute</string>
+
     <string name="chats_title">Chats</string>
     <string name="chats_no_conversation_main">No Chats</string>
     <string name="chats_no_conversation_sub">strike up a chat and it will show up here</string>

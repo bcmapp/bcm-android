@@ -12,7 +12,6 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.bean.MessageListItem
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.mms.GlideRequests
@@ -221,6 +220,8 @@ class MessageListAdapter(context: Context,
 
             chatItem.setOnLongClickListener {
                 val menuItems = listOf(
+                        BcmPopupMenu.MenuItem(if (chatItem.unreadCount == 0) getString(R.string.chats_item_set_unread) else getString(R.string.chats_item_set_read)),
+                        BcmPopupMenu.MenuItem(if (chatItem.recipient?.isMuted == true) getString(R.string.chats_item_set_not_mute) else getString(R.string.chats_item_set_mute)),
                         BcmPopupMenu.MenuItem(if (isPinned) getString(R.string.chats_item_cancel_pin) else getString(R.string.chats_item_pin)),
                         BcmPopupMenu.MenuItem(getString(R.string.chats_item_delete))
                 )
@@ -229,8 +230,10 @@ class MessageListAdapter(context: Context,
                         .setAnchorView(it)
                         .setSelectedCallback { index ->
                             when (index) {
-                                0 -> switchPin()
-                                1 -> confirmDelete()
+                                0 -> {/*TODO: Set unread*/}
+                                1 -> {/*TODO: Set mute*/}
+                                2 -> switchPin()
+                                3 -> confirmDelete()
                             }
                         }
                         .show(x, y)

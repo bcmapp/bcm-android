@@ -335,7 +335,6 @@
     <string name="me_setting_about_title">关于</string>
     <string name="me_setting_help_title">常见问题</string>
 
-
     <!--Notification Setting-->
     <string name="me_notification_setting_title">通知</string>
     <string name="me_notification_push_title">推送通知</string>
@@ -345,6 +344,12 @@
 
     <!--privacy settings-->
     <string name="me_privacy_settings_title">隐私</string>
+
+    <!--theme settings-->
+    <string name="me_theme_settings_title">主题颜色</string>
+    <string name="me_theme_settings_system_default">系统默认设置</string>
+    <string name="me_theme_settings_light">浅色调</string>
+    <string name="me_theme_settings_dark">深色调</string>
 
     <string name="me_pin_size_4">切换成4位数PIN码</string>
     <string name="me_pin_size_6">切换成6位数PIN码</string>

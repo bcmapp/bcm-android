@@ -130,6 +130,13 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
             startBcmActivityForResult(Intent(this, LanguageSelectActivity::class.java), REQUEST_SETTING)
         }
 
+        setting_theme.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            startActivity(Intent(this, ThemeSettingsActivity::class.java))
+        }
+
         setting_tts.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener

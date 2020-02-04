@@ -35,7 +35,7 @@ class PickPhotoDelegateActivity : AppCompatActivity(), BcmPickPhotoCropHelper.On
                     if (res) {
                         BcmTakePhotoHelper.takePicture(AMELogin.majorContext,this)
                     } else {
-                        finish()
+                        clearAndFinish()
                     }
                 }
             } else {
@@ -44,7 +44,7 @@ class PickPhotoDelegateActivity : AppCompatActivity(), BcmPickPhotoCropHelper.On
                     if (res) {
                         startActivityForResult(Intent(this, PickPhotoActivity::class.java), REQ_INNER_PICK)
                     } else {
-                        finish()
+                        clearAndFinish()
                     }
                 }
             }

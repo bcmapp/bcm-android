@@ -339,6 +339,12 @@
     <!--privacy settings-->
     <string name="me_privacy_settings_title">Privacy</string>
 
+    <!--theme settings-->
+    <string name="me_theme_settings_title">Themes</string>
+    <string name="me_theme_settings_system_default">System Default</string>
+    <string name="me_theme_settings_light">Light</string>
+    <string name="me_theme_settings_dark">Dark</string>
+
     <!--Pin Lock -->
     <string name="me_pin_size_4">Use 4-digit PIN</string>
     <string name="me_pin_size_6">Use 6-digit PIN</string>

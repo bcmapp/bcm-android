@@ -204,7 +204,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
             builder.append(StringAppearanceUtil.addImage("  ", drawable, 0))
         } else if (record.isFailed() || record.isPendingInsecureFallback()) {
             builder = SpannableStringBuilder()
-            builder.append(StringAppearanceUtil.addImage(context, "  ", R.drawable.common_content_warning_icon, AppUtil.dp2Px(resources, 12), 0))
+            builder.append(StringAppearanceUtil.addImage(context, "  ", R.drawable.common_content_warning_icon, 12.dp2Px(), 0))
         }
 
         val text: CharSequence = try {
@@ -212,7 +212,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                 if (record.snippetContent.isEmpty()) {
                     ""
                 } else {
-                    builder = SpannableStringBuilder(StringAppearanceUtil.applyAppearance(context.getString(R.string.common_thread_draft), color = AppUtil.getColor(resources, R.color.common_color_ff3737)))
+                    builder = SpannableStringBuilder(StringAppearanceUtil.applyAppearance(context.getString(R.string.common_thread_draft), color = getColor(R.color.common_color_ff3737)))
                     builder.append(" ")
                     record.snippetContent
                 }

@@ -97,10 +97,10 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
         val array = context.obtainStyledAttributes(attrs, R.styleable.CommonTitleBar2)
 
         isFillStatusBar = array.getBoolean(R.styleable.CommonTitleBar2_fill_status_bar, true)
-        titleBarBackground = array.getResourceId(R.styleable.CommonTitleBar2_title_bar_background, R.color.common_color_white)
+        titleBarBackground = array.getResourceId(R.styleable.CommonTitleBar2_title_bar_background, context.getAttribute(R.attr.common_title_bar_background))
         titleBarHeight = array.getDimension(R.styleable.CommonTitleBar2_title_bar_height, 44f.dp2Px()).toInt()
         isShowBottomLine = array.getBoolean(R.styleable.CommonTitleBar2_show_bottom_line, false)
-        bottomLineColor = array.getColor(R.styleable.CommonTitleBar2_bottom_line_color, getColor(R.color.common_line_color))
+        bottomLineColor = array.getColor(R.styleable.CommonTitleBar2_bottom_line_color, context.getAttrColor(R.attr.common_item_line_color))
         bottomLineHeight = array.getDimension(R.styleable.CommonTitleBar2_bottom_line_height, 0f).toInt()
         elevationSize = array.getDimension(R.styleable.CommonTitleBar2_title_bar_elevation, 0f)
 
@@ -108,7 +108,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
         when (leftType) {
             TYPE_TEXT -> {
                 leftText = array.getString(R.styleable.CommonTitleBar2_left_text) ?: ""
-                leftTextColor = array.getColor(R.styleable.CommonTitleBar2_left_text_color, getColor(R.color.common_color_black))
+                leftTextColor = array.getColor(R.styleable.CommonTitleBar2_left_text_color, context.getAttrColor(R.attr.common_title_bar_left_text_color))
                 leftTextSize = array.getDimension(R.styleable.CommonTitleBar2_left_text_size, 17f.sp2Px())
                 leftTextImage = array.getResourceId(R.styleable.CommonTitleBar2_left_text_image, 0)
             }
@@ -120,7 +120,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
         when (rightType) {
             TYPE_TEXT -> {
                 rightText = array.getString(R.styleable.CommonTitleBar2_right_text) ?: ""
-                rightTextColor = array.getColor(R.styleable.CommonTitleBar2_right_text_color, getColor(R.color.common_color_black))
+                rightTextColor = array.getColor(R.styleable.CommonTitleBar2_right_text_color, context.getAttrColor(R.attr.common_title_bar_right_text_color))
                 rightTextSize = array.getDimension(R.styleable.CommonTitleBar2_right_text_size, 17f.sp2Px())
                 rightTextImage = array.getResourceId(R.styleable.CommonTitleBar2_right_text_image, 0)
             }
@@ -132,7 +132,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
         when (centerType) {
             TYPE_TEXT -> {
                 centerText = array.getString(R.styleable.CommonTitleBar2_center_text) ?: ""
-                centerTextColor = array.getColor(R.styleable.CommonTitleBar2_center_text_color, getColor(R.color.common_color_black))
+                centerTextColor = array.getColor(R.styleable.CommonTitleBar2_center_text_color, context.getAttrColor(R.attr.common_title_bar_center_text_color))
                 centerTextSize = array.getDimension(R.styleable.CommonTitleBar2_center_text_size, 17f.sp2Px())
                 centerTextAlign = array.getInt(R.styleable.CommonTitleBar2_center_text_align, 0)
                 centerTextStyle = array.getInt(R.styleable.CommonTitleBar2_center_text_style, 0)
@@ -154,7 +154,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
         }
 
         if (titleBarBackground != 0) {
-            title_bar_background.background = getDrawable(titleBarBackground)
+            title_bar_background.setBackgroundResource(titleBarBackground)
         }
 
         if (isShowBottomLine) {

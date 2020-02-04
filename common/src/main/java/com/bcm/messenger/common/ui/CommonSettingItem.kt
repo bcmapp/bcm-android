@@ -10,10 +10,11 @@ import android.view.animation.LinearInterpolator
 import android.widget.CompoundButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.utility.setDrawableLeft
 import kotlinx.android.synthetic.main.common_setting_item.view.*
 import com.bcm.messenger.common.R
+import com.bcm.messenger.common.utils.getAttrColor
+import com.bcm.messenger.common.utils.getAttribute
 
 /**
  * Created by wjh on 2018/6/6
@@ -49,20 +50,20 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         val logoRes = typeArray.getResourceId(R.styleable.CommonSettingItemStyle_setting_item_logo, 0)
         val logoSize = typeArray.getDimensionPixelSize(R.styleable.CommonSettingItemStyle_setting_item_logo_size, 0)
         val head = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_head) ?: ""
-        mHeadColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_head_color, getColor(R.color.common_content_second_color))
+        mHeadColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_head_color, context.getAttrColor(R.attr.common_setting_item_background))
         val name = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_name) ?: ""
         val subName = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_sub_name) ?: ""
-        mNameColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_name_color, getColor(R.color.common_content_primary_color))
-        mSubNameColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_sub_name_color, getColor(R.color.common_content_second_color))
+        mNameColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_name_color, context.getAttrColor(R.attr.common_setting_item_main_text_color))
+        mSubNameColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_sub_name_color, context.getAttrColor(R.attr.common_setting_item_detail_text_color))
         val showLine = typeArray.getBoolean(R.styleable.CommonSettingItemStyle_setting_item_line, true)
         val tipText = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_tip_text) ?: ""
-        mTipColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_tip_color, getColor(R.color.common_content_warning_color))
+        mTipColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_tip_color, context.getAttrColor(R.attr.common_setting_item_warn_color))
         mTipIcon = typeArray.getResourceId(R.styleable.CommonSettingItemStyle_setting_item_tip_icon, 0)
         val switchStatus = typeArray.getInt(R.styleable.CommonSettingItemStyle_setting_item_switch, 0)
         val rightStatus = typeArray.getInt(R.styleable.CommonSettingItemStyle_setting_item_right, RIGHT_ARROW)
         val customRightDrawable = typeArray.getResourceId(R.styleable.CommonSettingItemStyle_setting_item_right_custom, 0)
 
-        val headBackground = typeArray.getResourceId(R.styleable.CommonSettingItemStyle_setting_item_head_background, R.color.common_color_white)
+        val headBackground = typeArray.getResourceId(R.styleable.CommonSettingItemStyle_setting_item_head_background, context.getAttribute(R.attr.common_setting_item_background))
         val bodyBackground = typeArray.getResourceId(R.styleable.CommonSettingItemStyle_setting_item_body_background, R.drawable.common_item_ripple_bg)
 
         val headPaddingTop = typeArray.getDimensionPixelSize(R.styleable.CommonSettingItemStyle_setting_item_head_padding_top, 26.dp2Px())

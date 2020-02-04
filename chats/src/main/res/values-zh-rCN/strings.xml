@@ -16,6 +16,11 @@
     <string name="chats_item_confirm_delete">确认删除</string>
     <string name="chats_item_confirm_delete_title">确认删除</string>
     <string name="chats_item_confirm_delete_message">你确认要删除此会话吗？</string>
+    <string name="chats_item_set_read">标为已读</string>
+    <string name="chats_item_set_unread">标为未读</string>
+    <string name="chats_item_set_mute">标记免打扰</string>
+    <string name="chats_item_set_not_mute">取消免打扰</string>
+
     <string name="chats_title">聊天</string>
     <string name="chats_no_conversation_main">无聊天记录</string>
     <string name="chats_no_conversation_sub">聊天会在这里显示</string>

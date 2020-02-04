@@ -115,4 +115,17 @@
     <color name="common_touch_highlight">#400099cc</color>
 
     <color name="common_dark_gray">#111111</color>
+
+
+    <!--Light theme colours-->
+    <color name="common_text_main_color">#000000</color>
+    <color name="common_text_secondary_color">#99000000</color>
+    <color name="common_text_third_color">#4C000000</color>
+    <color name="common_text_warning_color">#FF3737</color>
+    <color name="common_underline_color">#26B3B3B3</color>
+    <color name="common_default_icon_color">#000000</color>
+    <color name="common_default_background_color">#FFFFFF</color>
+    <color name="common_default_background_gery_color">#F2F3F4</color>
+    <color name="common_default_switcher_color">#000000</color>
+    <color name="common_default_ripple_color">#A8A8A8</color>
 </resources>

@@ -33,6 +33,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import androidx.annotation.AttrRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -505,6 +506,20 @@ fun getColor(resId: Int): Int {
     } else {
         AppContextHolder.APP_CONTEXT.resources.getColor(resId)
     }
+}
+
+fun Context.getAttrColor(@AttrRes attr: Int): Int {
+    val styledAttributes = this.obtainStyledAttributes(intArrayOf(attr))
+    val result = styledAttributes.getColor(0, -1)
+    styledAttributes.recycle()
+    return result
+}
+
+fun Context.getAttribute(@AttrRes attr: Int): Int {
+    val styledAttributes = this.obtainStyledAttributes(intArrayOf(attr))
+    val result = styledAttributes.getResourceId(0, -1)
+    styledAttributes.recycle()
+    return result
 }
 
 /**

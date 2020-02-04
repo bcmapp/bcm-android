@@ -37,9 +37,8 @@ public class SuperPreferences {
     private static final String ALWAYS_RELAY_CALLS_PREF = "pref_turn_only";
 
     public static final String METRICS = "metrics";
-    
     private static final String ACCOUNT_BACKUP_PREF = "pref_account_backup";
-
+    private static final String THEME_PREF = "pref_theme";
 
     public static SharedPreferences getSuperPreferences(Context context, String table) {
         return context.getSharedPreferences(table, Context.MODE_PRIVATE);
@@ -223,5 +222,13 @@ public class SuperPreferences {
 
     public static void setTurnOnly(Context context, Boolean turnOnly) {
         context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putBoolean(ALWAYS_RELAY_CALLS_PREF, turnOnly).apply();
+    }
+
+    public static int getCurrentThemeSetting(Context context, int defaultTheme) {
+        return context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).getInt(THEME_PREF, defaultTheme);
+    }
+
+    public static void setCurrentThemeSetting(Context context, int currentTheme) {
+        context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putInt(THEME_PREF, currentTheme).apply();
     }
 }
