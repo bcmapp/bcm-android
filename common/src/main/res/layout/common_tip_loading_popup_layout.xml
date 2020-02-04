@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_color_black"
+    android:background="@color/common_background_color"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
@@ -30,7 +30,7 @@
                 android:paddingEnd="10dp"
                 android:paddingBottom="15dp"
                 android:textSize="20sp"
-                android:textColor="@color/common_color_white"
+                android:textColor="@color/common_color_black"
                 android:visibility="gone"
                 />
 
@@ -44,7 +44,7 @@
                 android:paddingEnd="10dp"
                 android:textSize="13sp"
                 android:layout_centerHorizontal="true"
-                android:textColor="@color/common_white_50_transparent"
+                android:textColor="@color/common_color_black_50"
                 android:visibility="gone"
                 />
         </RelativeLayout>
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:circle_size="large"
-            app:circle_color="white"
+            app:circle_color="black"
             android:layout_gravity="center"/>
     </LinearLayout>
 

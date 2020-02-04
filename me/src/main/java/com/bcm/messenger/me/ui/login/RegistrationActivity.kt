@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.route.annotation.Route
@@ -66,6 +68,8 @@ class RegistrationActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_registration)
+
+        window.setStatusBarLightMode()
 
         val f = StartupFragment()
         val arg = Bundle()
