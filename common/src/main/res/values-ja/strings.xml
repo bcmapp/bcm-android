@@ -462,5 +462,7 @@
 
     <string name="common_save_success">保存成功</string>
     <string name="common_save_fail">保存失敗</string>
+    <string name="common_next">Next</string>
+    <string name="common_set">Set</string>
 
 </resources>

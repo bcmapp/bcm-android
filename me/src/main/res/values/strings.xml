@@ -162,7 +162,7 @@
 
     <!-- account_key -->
     <string name="me_str_scan_account_key">Scan Account Key</string>
-    <string name="me_str_scan_to_login">Scan to Log In</string>
+    <string name="me_str_scan_to_login">Scan to Login</string>
     <string name="me_str_scan_account_key_content">Scan the QR Code of your Account Key to backup</string>
     <string name="me_str_scan_to_login_content">Scan the QR Code of your Account Key to login</string>
     <string name="me_str_delete_account_key">Delete Account Key</string>

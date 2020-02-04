@@ -2,6 +2,8 @@ package com.bcm.messenger.me.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -97,6 +99,18 @@ class PickNicknameFragment : AbsRegistrationFragment() {
                 }
             }
         }
+
+        new_nickname.addTextChangedListener(object :TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                nick_done_button.isEnabled  = s?.isNotEmpty() == true
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
     }
 
 }

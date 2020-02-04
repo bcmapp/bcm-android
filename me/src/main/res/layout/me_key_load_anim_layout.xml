@@ -10,44 +10,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="30dp"
         android:layout_marginRight="20dp"
-        android:background="@drawable/me_generate_account_key_result_bg_9"
+        android:background="@drawable/me_b6ff_80ff_gradient_background"
         android:padding="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/account_key_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:text="@string/me_account_key"
-            android:textColor="@color/common_color_white"
-            android:textSize="18sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toBottomOf="@+id/account_key_title">
 
         <TextView
             android:id="@+id/public_key_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:text="@string/me_public_key"
             android:textColor="@color/common_color_white"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/account_key_tv" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <FrameLayout
             android:id="@+id/anim_text_layout_one"
             android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_marginTop="5dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="3dp"
             android:background="@drawable/me_bg_color_genkey_radius_4dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -61,6 +47,7 @@
                 android:background="@null"
                 android:cursorVisible="false"
                 android:focusable="false"
+                android:letterSpacing="0.2"
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:padding="5dp"
@@ -78,7 +65,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/me_private_key"
             android:textColor="@color/common_color_white"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/anim_text_layout_one" />
 
@@ -103,6 +90,7 @@
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:padding="5dp"
+                android:letterSpacing="0.2"
                 android:text=""
                 android:scrollbars="horizontal"
                 android:singleLine="true"
@@ -116,7 +104,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:maxLines="1"
-            android:textColor="@color/common_color_white"
+            android:textColor="@color/common_color_white_50"
             android:textSize="11sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -133,20 +121,21 @@
         android:alpha="0"
         android:gravity="center"
         android:text="@string/me_account_key_anim_tips"
-        android:textColor="@color/common_color_white"
+        android:textColor="@color/common_color_black"
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/key_layout" />
 
-    <ImageView
+    <Button
         android:id="@+id/key_link_next"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        style="@style/CommonBlueButton"
         android:layout_marginTop="150dp"
         android:scaleX="0"
         android:scaleY="0"
-        android:src="@drawable/me_next_black_icon"
+        android:text="@string/common_next"
+        android:textColor="@color/common_color_white"
+        android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/account_key_anim_tips" />
@@ -156,8 +145,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:padding="12dp"
-        android:src="@drawable/common_back_arrow_white_icon"
-        android:visibility="gone"
+        android:src="@drawable/common_back_arrow_black_icon"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -166,10 +154,23 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:padding="12dp"
-        android:src="@drawable/common_info_icon"
-        android:visibility="gone"
+        android:src="@drawable/common_info_black_icon"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/account_key_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="30dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/common_color_black"
+        android:text="@string/me_generated_key"
+        app:layout_constraintTop_toBottomOf="@id/account_info_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

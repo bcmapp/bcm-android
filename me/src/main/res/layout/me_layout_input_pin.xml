@@ -7,7 +7,7 @@
                                              android:layout_height="match_parent"
                                              android:background="@color/common_color_transparent"
                                              android:visibility="visible"
-                                             tools:background="@drawable/me_login_bg">
+                                             tools:background="@color/common_background_color">
 
     <ImageView
         android:id="@+id/input_pin_back"

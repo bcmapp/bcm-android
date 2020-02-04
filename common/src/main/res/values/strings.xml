@@ -438,5 +438,7 @@
 
     <string name="common_save_success">Saved</string>
     <string name="common_save_fail">Save Fail</string>
+    <string name="common_next">Next</string>
+    <string name="common_set">Set</string>
 
 </resources>

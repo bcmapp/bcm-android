@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <style name="CommonWindowStyle" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
@@ -242,4 +242,43 @@
         <item name="center_text_size">17sp</item>
     </style>
 
+    <style name="CommonBlueButton" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:layout_marginStart">45dp</item>
+        <item name="android:layout_marginEnd">45dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/common_blue_bg</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CommonLightBlueButton" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:layout_marginStart">45dp</item>
+        <item name="android:layout_marginEnd">45dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/common_blue_light_bg</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="CommonEditTextView" parent="Widget.AppCompat.EditText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_marginStart">45dp</item>
+        <item name="android:layout_marginEnd">45dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/common_color_black</item>
+        <item name="android:textColorHint">@color/common_color_A8A8A8</item>
+        <item name="android:textCursorDrawable">@drawable/common_blue_color_cursor</item>
+        <item name="android:background">@drawable/common_edit_border_normal</item>
+    </style>
 </resources>

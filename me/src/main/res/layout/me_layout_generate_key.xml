@@ -9,7 +9,7 @@
                                              android:paddingLeft="15dp"
                                              android:paddingRight="15dp"
                                              android:visibility="visible"
-                                             tools:background="@drawable/me_login_bg">
+                                             tools:background="@color/common_background_color">
 
     <TextView
         android:id="@+id/generate_key_header"

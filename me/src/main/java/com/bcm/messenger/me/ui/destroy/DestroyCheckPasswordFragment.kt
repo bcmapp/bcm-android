@@ -48,9 +48,9 @@ class DestroyCheckPasswordFragment : BaseFragment() {
         destroy_password_input.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 destroy_password_input.background = if (s != null && s.isNotEmpty()) {
-                    context?.getDrawable(R.drawable.me_register_input_bg)
+                    context?.getDrawable(R.drawable.common_edit_border_normal)
                 } else {
-                    context?.getDrawable(R.drawable.me_register_input_error_bg)
+                    context?.getDrawable(R.drawable.common_edit_border_error)
                 }
             }
 

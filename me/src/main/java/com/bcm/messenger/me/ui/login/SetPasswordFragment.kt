@@ -7,11 +7,13 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.NestedScrollView
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
 import kotlinx.android.synthetic.main.me_fragment_set_password.*
+import kotlinx.android.synthetic.main.me_note_unlock_activity.*
 import org.whispersystems.libsignal.ecc.ECKeyPair
 import java.util.regex.Pattern
 
@@ -58,20 +60,20 @@ class SetPasswordFragment : AbsRegistrationFragment() {
 
         new_password_edit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                new_password_edit.background = context?.getDrawable(R.drawable.me_register_input_bg)
+                new_password_edit.background = context?.getDrawable(R.drawable.common_edit_border_normal)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
         new_password_edit.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus && new_password_edit.length() < ARouterConstants.PASSWORD_LEN_MIN) {
-                new_password_edit.background = context?.getDrawable(R.drawable.me_register_input_error_bg)
+                new_password_edit.background = context?.getDrawable(R.drawable.common_edit_border_error)
             }
         }
 
         confirm_pwd_edit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                confirm_pwd_edit.background = context?.getDrawable(R.drawable.me_register_input_bg)
+                confirm_pwd_edit.background = context?.getDrawable(R.drawable.common_edit_border_normal)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -81,12 +83,12 @@ class SetPasswordFragment : AbsRegistrationFragment() {
     private fun checkInputLegitimate(): Boolean {
         if (new_password_edit.length() < ARouterConstants.PASSWORD_LEN_MIN) {
             AmePopup.result.failure(activity, getString(R.string.common_password_too_short_warning), true)
-            new_password_edit.background = context?.getDrawable(R.drawable.me_register_input_error_bg)
+            new_password_edit.background = context?.getDrawable(R.drawable.common_edit_border_error)
             return false
         } else if (!TextUtils.equals(new_password_edit.text, confirm_pwd_edit.text)) {
 
             AmePopup.result.failure(activity, resources.getString(R.string.me_psw_not_equals_confirm_psw), true)
-            confirm_pwd_edit.background = context?.getDrawable(R.drawable.me_register_input_error_bg)
+            confirm_pwd_edit.background = context?.getDrawable(R.drawable.common_edit_border_error)
             return false
 
         } else if (!Pattern.matches(ARouterConstants.PASSWORD_REGEX, new_password_edit.text)) {

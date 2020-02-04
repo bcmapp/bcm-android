@@ -404,5 +404,7 @@
 
     <string name="common_save_success">Сохранил</string>
     <string name="common_save_fail">Не сохр.</string>
+    <string name="common_next">Next</string>
+    <string name="common_set">Set</string>
 
 </resources>

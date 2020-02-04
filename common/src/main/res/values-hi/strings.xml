@@ -391,5 +391,7 @@
 
     <string name="common_save_success">सफलतापूर्वक सहेजा गया</string>
     <string name="common_save_fail">सहेजना विफल</string>
+    <string name="common_next">Next</string>
+    <string name="common_set">Set</string>
 
 </resources>

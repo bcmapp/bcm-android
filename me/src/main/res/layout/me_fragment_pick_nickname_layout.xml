@@ -7,42 +7,35 @@
     android:layout_height="match_parent"
     android:background="@color/common_color_transparent"
     android:visibility="visible"
-    tools:background="@drawable/me_login_bg">
+    tools:background="@color/common_background_color">
 
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/nickname_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/nickname_header"
         android:layout_width="wrap_content"
         android:layout_height="26dp"
-        android:layout_marginTop="110dp"
+        android:layout_marginTop="30dp"
         android:text="@string/me_nick_name_set_title"
-        android:textColor="@color/common_color_white"
+        android:textColor="@color/common_color_black"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/nickname_title_bar" />
 
     <com.bcm.messenger.common.ui.ClearButtonEditText
         android:id="@+id/new_nickname"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="60dp"
-        android:background="@drawable/me_register_input_bg"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:gravity="left|center_vertical"
+        android:layout_marginTop="30dp"
+        style="@style/CommonEditTextView"
         android:hint="@string/me_nickname_placeholder"
         android:maxLength="30"
         android:imeOptions="actionDone"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:singleLine="true"
-        android:textColor="@color/common_color_white"
-        android:textColorHint="#7fffffff"
-        android:textCursorDrawable="@drawable/common_white_color_cursor"
-        android:textSize="14sp"
         app:clearButtonHeight="12dp"
         app:clearButtonPadding="10dp"
         app:clearButtonResource="@drawable/common_input_clear_icon"
@@ -53,14 +46,14 @@
         app:paddingEnd="15dp"
         app:showClearButton="true" />
 
-    <ImageView
+    <Button
         android:id="@+id/nick_done_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:src="@drawable/me_next_black_icon"
+        style="@style/CommonBlueButton"
+        android:enabled="false"
+        android:layout_marginBottom="30dp"
+        android:text="@string/common_string_save"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_nickname" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

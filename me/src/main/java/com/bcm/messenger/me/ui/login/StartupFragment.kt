@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.os.Handler
@@ -65,11 +66,12 @@ class StartupFragment : AbsRegistrationFragment() {
                     .navigation(activity, RegistrationActivity.REQUEST_CODE_SCAN_QR_IMPORT)
         }
 
-        startup_keybox.setOnClickListener {
+        startup_dev.setOnClickListener {
             BcmRouter.getInstance().get(ARouterConstants.Activity.APP_DEV_SETTING).navigation(context)
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun createAccount() {
         AmePopup.tipLoading.show(this.activity)
         Observable.create(ObservableOnSubscribe<ECKeyPair> {
@@ -138,7 +140,7 @@ class StartupFragment : AbsRegistrationFragment() {
         startup_scan?.visibility = View.VISIBLE
 
         if (!AppUtil.isReleaseBuild()) {
-            startup_keybox?.visibility = View.VISIBLE
+            startup_dev?.visibility = View.VISIBLE
         }
 
         AnimatorSet().apply {

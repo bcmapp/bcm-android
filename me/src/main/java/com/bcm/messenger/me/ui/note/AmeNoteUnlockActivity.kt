@@ -131,7 +131,7 @@ class AmeNoteUnlockActivity : AccountSwipeBaseActivity() {
 
         unlockAnim.pause()
         globalRinger.start(R.raw.note_unlock_done)
-        me_note_lock_background.setBackgroundResource(R.drawable.me_note_unlock_pwd_background)
+        me_note_lock_background.setBackgroundResource(R.drawable.me_b6ff_80ff_gradient_background)
 
 
         AmeDispatcher.mainThread.dispatch({

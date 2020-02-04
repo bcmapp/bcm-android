@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/me_login_bg">
+    android:background="@color/common_background_color">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/keybox_control_title"

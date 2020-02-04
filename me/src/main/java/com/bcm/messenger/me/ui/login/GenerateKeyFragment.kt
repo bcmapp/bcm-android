@@ -237,7 +237,7 @@ class GenerateKeyFragment : AbsRegistrationFragment() {
             return
         }
         if (context != null)
-            hash_generated_running_text.setTextColor(getColorCompat(R.color.common_color_white))
+            hash_generated_running_text.setTextColor(getColorCompat(R.color.common_color_black_30))
         AnimatorSet().apply {
             duration = 200
             play(ObjectAnimator.ofFloat(hash_generated_running_text, "alpha", 0f, 1f))
@@ -386,7 +386,7 @@ class GenerateKeyFragment : AbsRegistrationFragment() {
                 duration = 400
             }).before(AnimatorSet().apply {
                 play(ObjectAnimator.ofFloat(startup_key, "translationY", -500f, 0f - startup_key.bottom))
-                        .with(ObjectAnimator.ofFloat(key_load_anim_layout, "translationY", -1000f, 0f - height))
+                        .with(ObjectAnimator.ofFloat(key_load_anim_layout, "translationY", -1000f, 0f-AppContextHolder.APP_CONTEXT.getScreenHeight()))
                 duration = 1500
                 addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationStart(animation: Animator?) {

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/common_color_transparent"
     android:visibility="visible"
-    tools:background="@drawable/me_login_bg">
+    tools:background="@color/common_background_color">
 
     <ImageView
         android:id="@+id/relogin_input_pin_back"
@@ -87,7 +87,7 @@
             android:id="@+id/relogin_input_pin_editText"
             android:layout_width="225dp"
             android:layout_height="50dp"
-            android:background="@drawable/me_register_input_bg"
+            android:background="@drawable/common_edit_border_normal"
             android:layout_marginTop="20dp"
             android:focusable="true"
             android:focusableInTouchMode="true"
