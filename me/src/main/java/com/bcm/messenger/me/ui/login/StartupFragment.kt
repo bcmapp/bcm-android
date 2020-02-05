@@ -103,6 +103,12 @@ class StartupFragment : AbsRegistrationFragment() {
                                     transaction.commitAllowingStateLoss()
                                     f.setKeyPair(it)
                                 }
+                            } else {
+                                activity?.apply {
+                                    if (arguments?.getBoolean(RegistrationActivity.CREATE_ACCOUNT_ID, false) == true) {
+                                        this.finish()
+                                    }
+                                }
                             }
                         }
                     } else {
