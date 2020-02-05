@@ -5,7 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.deprecated.DatabaseFactory
@@ -13,6 +17,7 @@ import com.bcm.messenger.common.preferences.TextSecurePreferences
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.activity.DatabaseMigrateActivity
+import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.logic.SchemeLaunchHelper
 import com.bcm.messenger.me.ui.login.RegistrationActivity
@@ -52,6 +57,9 @@ class LaunchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
         if (quickOp.isQuick || savedInstanceState != null) {
             finish()
@@ -67,7 +75,7 @@ class LaunchActivity : AppCompatActivity() {
             }
         }
 
-        checkLaunch()
+        //checkLaunch()
     }
 
     private fun checkLaunch() {

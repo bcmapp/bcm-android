@@ -3,13 +3,18 @@
 
     <style name="AppTheme.Launch" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowBackground">@drawable/me_startup_icon</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
         <item name="android:windowAnimationStyle">@style/notAnimation</item>
         <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <style name="AppTheme.Launch.black" parent="AppTheme.Launch">
+        <item name="android:windowBackground">@drawable/launch_background_black</item>
+    </style>
+
+    <style name="AppTheme.Launch.white" parent="AppTheme.Launch">
+        <item name="android:windowBackground">@drawable/launch_background_white</item>
     </style>
 
     <style name="notAnimation">
