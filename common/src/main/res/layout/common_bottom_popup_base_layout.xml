@@ -23,14 +23,14 @@
         android:paddingBottom="@dimen/common_vertical_gap"
         android:paddingEnd="@dimen/common_horizontal_gap"
         android:textSize="14sp"
-        android:textColor="@color/common_color_606060"
+        android:textColor="?attr/common_text_secondary_color"
         android:gravity="center" />
     <View
         android:id="@+id/popup_title_line"
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_line_height"
         android:layout_below="@id/popup_title"
-        android:background="@color/common_line_color"/>
+        android:background="?attr/common_item_line_color"/>
     <LinearLayout
         android:id="@+id/popup_items_layout"
         android:layout_below="@id/popup_title_line"
@@ -44,7 +44,7 @@
         android:layout_below="@+id/popup_items_layout"
         android:gravity="center"
         android:text="@string/common_cancel"
-        android:textColor="#000000"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="17sp"
         android:background="@drawable/common_item_ripple_bg"/>
 

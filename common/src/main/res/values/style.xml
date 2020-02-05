@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <style name="CommonWindowStyle" parent="@android:style/Theme.Dialog">
+    <style name="CommonWindowStyle" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowIsTranslucent">false</item>
@@ -16,7 +16,7 @@
         <item name="android:windowExitAnimation">@anim/common_popup_drop_out</item>
     </style>
 
-    <style name="CommonLoadingStyle" parent="@android:style/Theme.Dialog">
+    <style name="CommonLoadingStyle" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
@@ -27,7 +27,7 @@
     </style>
 
 
-    <style name="CommonTipStyle" parent="@android:style/Theme.Dialog">
+    <style name="CommonTipStyle" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
@@ -48,7 +48,7 @@
         <item name="android:windowFullscreen">false</item>
     </style>
 
-    <style name="CommonPickerPopupWindow" parent="Base.Theme.AppCompat.Dialog">
+    <style name="CommonPickerPopupWindow" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowEnterAnimation">@anim/common_slide_from_bottom_fast</item>
         <item name="android:windowExitAnimation">@anim/common_slide_to_bottom_fast</item>
         <item name="android:windowFullscreen">true</item>
@@ -190,27 +190,7 @@
         <item name="android:background">@drawable/common_password_bg</item>
     </style>
 
-    <style name="WebTitle" parent="@android:style/TextAppearance">
-        <item name="android:textSize">18sp</item>
-        <item name="android:ellipsize">marquee</item>
-        <item name="android:marqueeRepeatLimit">marquee_forever</item>
-        <item name="android:scrollHorizontally">true</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-
-    <style name="AnchorDialogStyle" parent="@android:style/Theme.Dialog">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@color/common_color_transparent</item>
-        <item name="android:backgroundDimEnabled">true</item>
-    </style>
-
-    <style name="ForwardDialogStyle" parent="@android:style/Theme.Dialog">
+    <style name="ForwardDialogStyle" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowSoftInputMode">adjustPan</item>

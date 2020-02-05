@@ -1,6 +1,5 @@
 package com.bcm.messenger.me.ui.setting
 
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -22,26 +21,14 @@ import kotlinx.android.synthetic.main.me_item_language_select.view.*
  */
 class ThemeSettingsActivity : SwipeBaseActivity() {
     private val themeList = mutableListOf<String>()
-    private val themeManager = ThemeManager()
 
     private var currentTheme = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        themeManager.onCreate(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_theme_settings)
 
         initView()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        themeManager.onResume(this)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        themeManager.onConfigurationChanged(this, newConfig)
     }
 
     private fun initView() {

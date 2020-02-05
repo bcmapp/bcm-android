@@ -29,29 +29,30 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:orientation="vertical"
                 android:layout_marginStart="65dp"
                 android:layout_marginEnd="10dp"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/home_toolbar_chat"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
+
                 <include
                     android:id="@+id/home_toolbar_name"
                     layout="@layout/chats_list_center_title_view"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
-                    />
+                    android:layout_weight="1" />
 
                 <com.bcm.messenger.chats.thread.MessageListUnreadView
                     android:id="@+id/home_toolbar_unread_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="10dp"/>
+                    android:paddingBottom="10dp" />
             </LinearLayout>
 
 
@@ -92,7 +93,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/home_toolbar"/>
+            app:layout_constraintTop_toBottomOf="@id/home_toolbar" />
 
     </com.bcm.messenger.common.ui.ConstraintPullDownLayout>
 
@@ -112,14 +113,14 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="6dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/home_status_fill"/>
+        app:layout_constraintTop_toBottomOf="@id/home_status_fill" />
 
     <View
         android:id="@+id/home_profile_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/common_color_white"
         android:alpha="0"
+        android:background="?attr/common_activity_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -139,6 +140,6 @@
         android:id="@+id/home_adhoc_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

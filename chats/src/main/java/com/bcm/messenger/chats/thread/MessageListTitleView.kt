@@ -15,7 +15,6 @@ import android.view.animation.AnimationUtils
 import android.widget.TextSwitcher
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getColor
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
@@ -186,14 +185,14 @@ class  MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySt
                 val offlineString = SpannableString(getString(R.string.chats_network_disconnected))
                 offlineString.setSpan(StyleSpan(Typeface.BOLD), 0, offlineString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 offlineString.setSpan(AbsoluteSizeSpan(20, true), 0, offlineString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                offlineString.setSpan(ForegroundColorSpan(getColor(context, R.color.common_color_black)), 0, offlineString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                offlineString.setSpan(ForegroundColorSpan(context.getColorCompat(R.color.common_text_main_color)), 0, offlineString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
                 builder.append(offlineString)
 
                 val spanString = SpannableString(getString(R.string.chats_try_airchat))
                 spanString.setSpan(StyleSpan(Typeface.BOLD), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spanString.setSpan(AbsoluteSizeSpan(12, true), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spanString.setSpan(ForegroundColorSpan(getColor(context, R.color.common_color_379BFF)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spanString.setSpan(ForegroundColorSpan(context.getColorCompat(R.color.common_text_blue_color)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 builder.append(spanString)
                 builder.append(StringAppearanceUtil.addImage(context, " ", R.drawable.chats_main_status_right_icon, 12.dp2Px(), 0))
 
@@ -204,14 +203,14 @@ class  MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySt
                 val offlineString = SpannableString(getString(R.string.chats_server_can_not_reach))
                 offlineString.setSpan(StyleSpan(Typeface.BOLD), 0, offlineString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 offlineString.setSpan(AbsoluteSizeSpan(20, true), 0, offlineString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                offlineString.setSpan(ForegroundColorSpan(getColor(context, R.color.common_color_black)), 0, offlineString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                offlineString.setSpan(ForegroundColorSpan(context.getColorCompat(R.color.common_text_main_color)), 0, offlineString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
                 builder.append(offlineString)
 
                 val spanString = SpannableString(getString(R.string.chats_network_try_proxy))
                 spanString.setSpan(StyleSpan(Typeface.BOLD), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spanString.setSpan(AbsoluteSizeSpan(12, true), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spanString.setSpan(ForegroundColorSpan(getColor(context, R.color.common_color_379BFF)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spanString.setSpan(ForegroundColorSpan(context.getColorCompat(R.color.common_text_blue_color)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 builder.append(spanString)
                 builder.append(StringAppearanceUtil.addImage(context, " ", R.drawable.chats_main_status_right_icon, 12.dp2Px(), 0))
 
@@ -234,7 +233,7 @@ class  MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySt
                 val spanString = SpannableString(t)
                 spanString.setSpan(StyleSpan(Typeface.BOLD), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spanString.setSpan(AbsoluteSizeSpan(30, true), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spanString.setSpan(ForegroundColorSpan(getColor(context, R.color.common_color_black)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spanString.setSpan(ForegroundColorSpan(context.getColorCompat(R.color.common_text_main_color)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
                 spanString
 
@@ -243,7 +242,7 @@ class  MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySt
                 val spanString = SpannableString(currentName)
                 spanString.setSpan(StyleSpan(Typeface.BOLD), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spanString.setSpan(AbsoluteSizeSpan(22.sp2Px()), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spanString.setSpan(ForegroundColorSpan(getColor(context, R.color.common_color_black)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spanString.setSpan(ForegroundColorSpan(context.getColorCompat(R.color.common_text_main_color)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
                 spanString
             }
@@ -293,7 +292,7 @@ class  MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySt
             val spanString = SpannableString(currentName)
             spanString.setSpan(StyleSpan(Typeface.BOLD), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             spanString.setSpan(AbsoluteSizeSpan(22.sp2Px()), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spanString.setSpan(ForegroundColorSpan(getColor(context, R.color.common_color_black)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spanString.setSpan(ForegroundColorSpan(context.getColorCompat(R.color.common_text_main_color)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
             setText(spanString)
         }

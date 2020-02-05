@@ -154,12 +154,12 @@ class MessageListFragment : BaseFragment() {
             if (mAdapter?.getTrueDataList().isNullOrEmpty()) {
                 val context = activity ?: return
                 var title: CharSequence = context.getString(R.string.chats_no_conversation_main)
-                title = StringAppearanceUtil.applyAppearance(title, 20.dp2Px(), context.getColorCompat(R.color.common_color_black))
+                title = StringAppearanceUtil.applyAppearance(title, 20.dp2Px(), context.getColorCompat(R.color.common_text_main_color))
                 val contentBuilder = SpannableStringBuilder(StringAppearanceUtil.applyBold(title))
                 contentBuilder.append("\n\n")
                 val key = context.getString(R.string.chats_no_conversation_invite)
                 val source = context.getString(R.string.chats_no_conversation_description, key)
-                contentBuilder.append(StringAppearanceUtil.applyFilterAppearance(source, key, color = context.getColorCompat(R.color.common_app_primary_color)))
+                contentBuilder.append(StringAppearanceUtil.applyFilterAppearance(source, key, color = context.getColorCompat(R.color.common_text_blue_color)))
                 chats_shade?.showContent(contentBuilder)
             } else {
                 chats_shade?.hide()

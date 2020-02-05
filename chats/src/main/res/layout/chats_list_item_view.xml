@@ -23,7 +23,7 @@
         android:layout_height="@dimen/common_line_height"
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@id/contact_photo_image"
-        android:background="@color/common_division_color"/>
+        android:background="?attr/common_item_line_color"/>
 
     <ImageView
         android:id="@+id/chats_pin"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="17sp"
             android:drawablePadding="5dp"
             tools:text="big juju" />
@@ -73,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        android:textColor="@color/common_content_second_color"
+        android:textColor="?attr/common_text_secondary_color"
         android:textSize="12sp"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="@dimen/common_horizontal_gap"
@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="@color/common_content_second_color"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="15sp"
             android:lineSpacingExtra="0dp"
             android:layout_marginEnd="@dimen/common_horizontal_gap"

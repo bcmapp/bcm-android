@@ -11,28 +11,13 @@ import com.bcm.messenger.utility.AppContextHolder
  */
 open class ThemeManager {
     private var currentTheme = THEME_SYSTEM
-    private var systemUiMode = THEME_LIGHT
 
     fun onCreate(activity: Activity) {
-        val uiMode = activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         currentTheme = getCurrentTheme(activity)
-        systemUiMode = if (uiMode == Configuration.UI_MODE_NIGHT_YES) THEME_DARK else THEME_LIGHT
     }
 
     fun onResume(activity: Activity) {
-        if (currentTheme != getCurrentTheme(activity)) {
-            activity.recreate()
-        }
-    }
-
-    fun onConfigurationChanged(activity: Activity, newConfig: Configuration) {
-        if (currentTheme == THEME_SYSTEM) {
-            val uiMode = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
-            if ((uiMode == Configuration.UI_MODE_NIGHT_YES && systemUiMode == THEME_LIGHT) ||
-                    (uiMode != Configuration.UI_MODE_NIGHT_YES && systemUiMode == THEME_DARK)) {
-//                activity.recreate()
-            }
-        }
+        // DO noting.
     }
 
     protected fun getCurrentTheme(activity: Activity): Int {

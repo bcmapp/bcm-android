@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/common_color_A8A8A8">
+    android:color="?attr/common_ripple_color">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/common_color_F1F2F3" />
+            <solid android:color="?attr/common_view_background_grey" />
             <corners android:radius="8dp" />
         </shape>
     </item>

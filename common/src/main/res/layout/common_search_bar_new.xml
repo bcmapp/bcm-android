@@ -32,7 +32,7 @@
             android:focusableInTouchMode="false"
             android:singleLine="true"
             android:text="@string/common_search_display_title"
-            android:textColor="@color/common_content_second_color"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="15sp"
             android:gravity="left|center_vertical"
             app:layout_constraintBottom_toBottomOf="parent"

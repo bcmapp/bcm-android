@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="CommonBaseTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="CommonBcmTheme.Basic" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
@@ -20,7 +20,9 @@
         <item name="common_title_bar_background">@color/common_default_background_color</item>
 
         <item name="common_activity_background">@color/common_default_background_color</item>
+        <item name="common_activity_background_grey">@color/common_default_background_grey_color</item>
         <item name="common_view_background">@color/common_default_background_color</item>
+        <item name="common_view_background_grey">@color/common_default_background_grey_color</item>
 
         <item name="common_setting_item_background">@color/common_default_background_color</item>
         <item name="common_setting_item_main_text_color">@color/common_text_main_color</item>
@@ -30,10 +32,13 @@
         <item name="common_setting_item_switcher_color">@color/common_default_switcher_color</item>
         <item name="common_setting_item_right_icon_color">@color/common_default_icon_color</item>
         <item name="common_setting_item_icon_color">@color/common_default_icon_color</item>
+
         <item name="common_item_line_color">@color/common_underline_color</item>
         <item name="common_text_main_color">@color/common_text_main_color</item>
         <item name="common_text_secondary_color">@color/common_text_secondary_color</item>
         <item name="common_text_third_color">@color/common_text_third_color</item>
+        <item name="common_text_warn_color">@color/common_text_warning_color</item>
+        <item name="common_text_blue_color">@color/common_text_blue_color</item>
 
         <item name="common_ripple_color">@color/common_default_ripple_color</item>
 
@@ -56,7 +61,7 @@
         <item name="center_text_size">17sp</item>
     </style>
 
-    <style name="BcmActivityTheme.Transparent" parent="BcmActivityTheme.Basic">
+    <style name="CommonBcmTheme.Transparent" parent="CommonBcmTheme.Basic">
         <item name="android:windowBackground">@color/common_70_transparent</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>

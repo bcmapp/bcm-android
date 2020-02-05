@@ -3,7 +3,6 @@ package com.bcm.messenger.common.ui.popup.centerpopup
 import android.app.Activity
 import android.app.Application
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
@@ -124,7 +123,7 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
             val popup = if (config.viewCreator != null
                     || config.contentAlignment != View.TEXT_ALIGNMENT_CENTER
                     || config.topMost) {
-                PopupWindow() as ICenterPop
+                PopupWindow()
             } else {
                 AlertWindow(config)
             }
@@ -178,7 +177,7 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
 
 
     interface ICenterPop {
-        var config: AmeCenterPopup.PopConfig
+        var config: PopConfig
         fun show(fragmentActivity: FragmentActivity, tag: String)
         fun destroy()
         val showing: Boolean
@@ -289,8 +288,8 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
                     window.decorView.setPadding(0, 0, 0, 0)
                 }
 
-                dialog.setCancelable(config?.cancelable ?: true)
-                dialog.setCanceledOnTouchOutside(config?.cancelable ?: true)
+                dialog.setCancelable(config.cancelable)
+                dialog.setCanceledOnTouchOutside(config.cancelable)
                 return dialog
             }
 
@@ -298,8 +297,8 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
         }
 
         private fun updateUI() {
-            isCancelable = config?.cancelable ?: true
-            val config = this.config ?: return
+            isCancelable = config.cancelable
+            val config = this.config
             if (config.title?.length ?: 0 > 0) {
                 common_popup_title.visibility = View.VISIBLE
                 common_popup_title.text = config.title

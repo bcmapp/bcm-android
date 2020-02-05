@@ -1,24 +1,17 @@
 package com.bcm.messenger.common
 
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Looper
 import android.os.MessageQueue
-import android.view.WindowManager
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.core.setLocale
-import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.common.preferences.TextSecurePreferences
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IUmengModule
-import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.recipients.RecipientModifiedListener
+import com.bcm.messenger.common.theme.ThemeManager
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -44,6 +37,8 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
     private var checkDisposable: Disposable? = null
     private var checkStartTime = System.currentTimeMillis()
 
+    private val themeManager = ThemeManager()
+
     private val idleHandler = MessageQueue.IdleHandler {
         if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
             disabledLightStatusBar = true
@@ -68,6 +63,8 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
         }
         super.onCreate(savedInstanceState)
         ALog.d(TAG, "onCreate: $localClassName")
+
+        themeManager.onCreate(this)
         window.setTranslucentStatus()
 
         mHelper = SwipeBackActivityHelper(this)
@@ -97,6 +94,7 @@ open class SwipeBaseActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     override fun onResume() {
         super.onResume()
+        themeManager.onResume(this)
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onActivityResume(this)
         if (!disabledClipboardCheck && ClipboardUtil.clipboardChanged) {
             checkClipboardDelay()

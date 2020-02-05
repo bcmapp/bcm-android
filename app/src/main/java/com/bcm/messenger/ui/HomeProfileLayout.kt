@@ -124,7 +124,7 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private fun initView() {
-        setBackgroundColor(getColor(R.color.common_color_white))
+        setBackgroundColor(getColor(R.color.common_default_background_color))
 
         hideAllViews()
 
