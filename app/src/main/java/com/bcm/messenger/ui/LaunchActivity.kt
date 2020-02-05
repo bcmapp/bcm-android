@@ -75,7 +75,7 @@ class LaunchActivity : AppCompatActivity() {
             }
         }
 
-        //checkLaunch()
+        checkLaunch()
     }
 
     private fun checkLaunch() {
