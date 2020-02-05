@@ -24,6 +24,7 @@ import com.bcm.messenger.common.crypto.PRNGFixes
 import com.bcm.messenger.common.jobs.GcmRefresh
 import com.bcm.messenger.common.metrics.ReportConfigure
 import com.bcm.messenger.common.provider.*
+import com.bcm.messenger.common.theme.ThemeManager
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.crash.initCrash
 import com.bcm.messenger.crash.setCrashReportLogs
@@ -81,6 +82,7 @@ class AmeApplication : MultiDexApplication() {
         initBcmRouter()
         AmeConfigure.init(!isReleaseBuild)
 
+        ThemeManager.initTheme()
         initCrash()
         initLog()
         initLanguage()
@@ -227,7 +229,7 @@ class AmeApplication : MultiDexApplication() {
     }
 
     private fun initLanguage() {
-        setApplicationLanguage(this)
+        setApplicationLanguage(this, null)
         PermissionUtil.languageSetting = object : PermissionUtil.ILanguageSetting {
             override fun permissionTitle(): String {
                 return getString(R.string.common_permission_rationale_notice)
@@ -250,7 +252,7 @@ class AmeApplication : MultiDexApplication() {
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
-        onConfigurationChanged(this)
+        onConfigurationChanged(this, newConfig)
     }
 
     private fun bindService() {

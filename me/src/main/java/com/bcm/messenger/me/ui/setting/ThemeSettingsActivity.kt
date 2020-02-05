@@ -1,5 +1,6 @@
 package com.bcm.messenger.me.ui.setting
 
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -38,16 +39,21 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
         themeManager.onResume(this)
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        themeManager.onConfigurationChanged(this, newConfig)
+    }
+
     private fun initView() {
         if (Build.VERSION.SDK_INT >= 29) {
-            currentTheme = SuperPreferences.getCurrentThemeSetting(this, themeManager.THEME_SYSTEM)
+            currentTheme = SuperPreferences.getCurrentThemeSetting(this, ThemeManager.THEME_SYSTEM)
             themeList.addAll(listOf(
                     getString(R.string.me_theme_settings_system_default),
                     getString(R.string.me_theme_settings_light),
                     getString(R.string.me_theme_settings_dark)
             ))
         } else {
-            currentTheme = SuperPreferences.getCurrentThemeSetting(this, themeManager.THEME_LIGHT)
+            currentTheme = SuperPreferences.getCurrentThemeSetting(this, ThemeManager.THEME_LIGHT) - 1
             themeList.addAll(listOf(
                     getString(R.string.me_theme_settings_light),
                     getString(R.string.me_theme_settings_dark)
@@ -107,9 +113,9 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
         }
 
         when (currentTheme) {
-            themeManager.THEME_SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            themeManager.THEME_LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            themeManager.THEME_DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            ThemeManager.THEME_SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            ThemeManager.THEME_LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            ThemeManager.THEME_DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
         SuperPreferences.setCurrentThemeSetting(this, currentTheme)
 

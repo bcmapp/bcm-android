@@ -237,7 +237,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
      */
     private fun changeSwitch(isOn: Boolean) {
         if (isOn) {
-            item_switch.trackTintList = resources.getColorStateList(R.color.common_color_black)
+            item_switch.trackTintList = resources.getColorStateList(R.color.common_default_switcher_color)
         } else {
             item_switch.trackTintList = resources.getColorStateList(R.color.common_color_F1F2F3)
         }
