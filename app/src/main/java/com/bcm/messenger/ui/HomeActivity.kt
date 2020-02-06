@@ -562,8 +562,8 @@ class HomeActivity : AccountSwipeBaseActivity() {
         showAnim(home_toolbar_more)
         BcmPopupMenu.Builder(this)
                 .setMenuItem(listOf(
-                        BcmPopupMenu.MenuItem(getString(com.bcm.messenger.chats.R.string.chats_main_scan_and_add), com.bcm.messenger.chats.R.drawable.chats_menu_scan_icon),
-                        BcmPopupMenu.MenuItem(getString(com.bcm.messenger.chats.R.string.chats_main_invite_friend), com.bcm.messenger.chats.R.drawable.chats_menu_invite_icon)
+                        BcmPopupMenu.MenuItem(getString(com.bcm.messenger.chats.R.string.chats_main_scan_and_add), R.drawable.home_menu_scan_icon),
+                        BcmPopupMenu.MenuItem(getString(com.bcm.messenger.chats.R.string.chats_main_invite_friend), R.drawable.home_menu_invite_icon)
                 ))
                 .setAnchorView(home_toolbar_more)
                 .setSelectedCallback { index ->

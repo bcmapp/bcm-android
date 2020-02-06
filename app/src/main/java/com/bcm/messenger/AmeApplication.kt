@@ -229,7 +229,7 @@ class AmeApplication : MultiDexApplication() {
     }
 
     private fun initLanguage() {
-        setApplicationLanguage(this, null)
+        setApplicationLanguage(this)
         PermissionUtil.languageSetting = object : PermissionUtil.ILanguageSetting {
             override fun permissionTitle(): String {
                 return getString(R.string.common_permission_rationale_notice)
@@ -242,7 +242,6 @@ class AmeApplication : MultiDexApplication() {
             override fun permissionCancel(): String {
                 return getString(R.string.common_cancel)
             }
-
         }
     }
 
@@ -252,7 +251,8 @@ class AmeApplication : MultiDexApplication() {
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
-        onConfigurationChanged(this, newConfig)
+        ThemeManager.onConfigurationChanged(this, newConfig)
+        onConfigurationChanged(this)
     }
 
     private fun bindService() {

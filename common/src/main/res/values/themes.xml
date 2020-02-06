@@ -9,6 +9,7 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:statusBarColor">@color/common_color_transparent</item>
+        <item name="android:navigationBarColor">@color/common_default_background_color</item>
 
         <item name="android:windowBackground">@color/common_default_background_color</item>
 
@@ -24,7 +25,7 @@
         <item name="common_view_background">@color/common_default_background_color</item>
         <item name="common_view_background_grey">@color/common_default_background_grey_color</item>
         <item name="common_ripple_background">@color/common_default_ripple_background_color</item>
-        <item name="common_background_dark_grey">@color/common_default_dark_grey_background_color</item>
+        <item name="common_view_background_dark_grey">@color/common_default_dark_grey_background_color</item>
 
         <item name="common_setting_item_background">@color/common_default_background_color</item>
         <item name="common_setting_item_main_text_color">@color/common_text_main_color</item>
@@ -53,7 +54,7 @@
         <item name="title_bar_height">52dp</item>
 
         <item name="left_type">image</item>
-        <item name="left_image">@drawable/common_back_arrow_black_icon</item>
+        <item name="left_image">@drawable/common_arrow_back_icon</item>
         <item name="left_text_size">17sp</item>
         <item name="left_text_color">@color/common_text_main_color</item>
 

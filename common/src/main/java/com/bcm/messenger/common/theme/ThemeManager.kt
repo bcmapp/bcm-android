@@ -1,7 +1,9 @@
 package com.bcm.messenger.common.theme
 
 import android.app.Activity
+import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.utility.AppContextHolder
@@ -61,6 +63,17 @@ open class ThemeManager {
         @JvmStatic
         fun themeTimeChanged() {
             timerManager?.onTimeChanged()
+        }
+
+        @JvmStatic
+        fun onConfigurationChanged(context: Context, newConfig: Configuration?) {
+            if (Build.VERSION.SDK_INT >= 29
+                    && SuperPreferences.getCurrentThemeSetting(AppContextHolder.APP_CONTEXT, THEME_SYSTEM) == THEME_SYSTEM
+                    && newConfig != null) {
+                val config = context.resources.configuration
+                config.uiMode = newConfig.uiMode
+                context.createConfigurationContext(config)
+            }
         }
     }
 }

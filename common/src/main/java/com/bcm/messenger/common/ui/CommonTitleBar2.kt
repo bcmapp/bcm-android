@@ -57,6 +57,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
     private var leftTextSize = 0f
     private var leftTextImage = 0
     private var leftImage = 0
+    private var leftImageColor = 0
     private var leftCustomViewRes = 0
     private var leftCustomViewId = 0
     private var leftCustomView: View? = null
@@ -67,6 +68,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
     private var rightTextSize = 0f
     private var rightTextImage = 0
     private var rightImage = 0
+    private var rightImageColor = 0
     private var rightCustomViewRes = 0
     private var rightCustomViewId = 0
     private var rightCustomView: View? = null
@@ -112,7 +114,10 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
                 leftTextSize = array.getDimension(R.styleable.CommonTitleBar2_left_text_size, 17f.sp2Px())
                 leftTextImage = array.getResourceId(R.styleable.CommonTitleBar2_left_text_image, 0)
             }
-            TYPE_IMAGE -> leftImage = array.getResourceId(R.styleable.CommonTitleBar2_left_image, R.drawable.common_back_arrow_black_icon)
+            TYPE_IMAGE -> {
+                leftImage = array.getResourceId(R.styleable.CommonTitleBar2_left_image, R.drawable.common_arrow_back_icon)
+                leftImageColor = array.getColor(R.styleable.CommonTitleBar2_left_image_color, context.getAttrColor(R.attr.common_title_bar_left_icon_color))
+            }
             TYPE_CUSTOM -> leftCustomViewRes = array.getResourceId(R.styleable.CommonTitleBar2_left_custom_view, 0)
         }
 
@@ -124,7 +129,10 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
                 rightTextSize = array.getDimension(R.styleable.CommonTitleBar2_right_text_size, 17f.sp2Px())
                 rightTextImage = array.getResourceId(R.styleable.CommonTitleBar2_right_text_image, 0)
             }
-            TYPE_IMAGE -> rightImage = array.getResourceId(R.styleable.CommonTitleBar2_right_image, R.drawable.common_back_arrow_black_icon)
+            TYPE_IMAGE -> {
+                rightImage = array.getResourceId(R.styleable.CommonTitleBar2_right_image, 0)
+                rightImageColor = array.getColor(R.styleable.CommonTitleBar2_right_image_color, context.getAttrColor(R.attr.common_title_bar_right_icon_color))
+            }
             TYPE_CUSTOM -> rightCustomViewRes = array.getResourceId(R.styleable.CommonTitleBar2_right_custom_view, 0)
         }
 
@@ -208,6 +216,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
             TYPE_IMAGE -> {
                 title_bar_left_text.visibility = View.GONE
                 title_bar_left_img.setImageResource(leftImage)
+                title_bar_left_img.drawable.setTint(leftImageColor)
             }
             TYPE_CUSTOM -> {
                 val view = LayoutInflater.from(context).inflate(leftCustomViewRes, this, false)
@@ -240,6 +249,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
             TYPE_IMAGE -> {
                 title_bar_right_text.visibility = View.GONE
                 title_bar_right_img.setImageResource(rightImage)
+                title_bar_right_img.drawable.setTint(rightImageColor)
             }
             TYPE_CUSTOM -> {
                 val view = LayoutInflater.from(context).inflate(rightCustomViewRes, this, false)

@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.common_setting_item.view.*
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getAttribute
+import com.bcm.messenger.common.utils.getColorCompat
 
 /**
  * Created by wjh on 2018/6/6
@@ -27,7 +28,8 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         const val RIGHT_ARROW = 2
         const val RIGHT_YES = 3
         const val RIGHT_ARROW_WHITE = 4
-        const val RIGHT_CUSTOM = 5
+        const val RIGHT_ARROW_BLACK = 5
+        const val RIGHT_CUSTOM = 6
     }
 
     private var switchListener: CompoundButton.OnCheckedChangeListener? = null
@@ -231,10 +233,6 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    fun getTip(): CharSequence {
-        return item_tip.text
-    }
-
 
     /**
      *
@@ -295,12 +293,14 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
             RIGHT_ARROW -> {
                 item_right.visibility = View.VISIBLE
                 item_right_body.clearAnimation()
-                item_right_body.setImageResource(R.drawable.common_right_arrow_icon)
+                item_right_body.setImageResource(R.drawable.common_arrow_right_icon)
+                item_right_body.drawable.setTint(context.getAttrColor(R.attr.common_icon_color_grey))
             }
             RIGHT_ARROW_WHITE -> {
                 item_right.visibility = View.VISIBLE
                 item_right_body.clearAnimation()
-                item_right_body.setImageResource(R.drawable.common_right_arrow_white_icon)
+                item_right_body.setImageResource(R.drawable.common_arrow_right_icon)
+                item_right_body.drawable.setTint(context.getColorCompat(R.color.common_color_white))
             }
             RIGHT_YES -> {
                 item_right.visibility = View.VISIBLE
@@ -321,14 +321,14 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     /**
      *
      */
-    fun setItemBodyPadding(paddingTop: Int, paddingBottom: Int) {
+    private fun setItemBodyPadding(paddingTop: Int, paddingBottom: Int) {
 
-        var lp = item_left.layoutParams as ConstraintLayout.LayoutParams
+        var lp = item_left.layoutParams as LayoutParams
         lp.topMargin = paddingTop
         lp.bottomMargin = paddingBottom
         item_left.layoutParams = lp
 
-        lp = item_center.layoutParams as ConstraintLayout.LayoutParams
+        lp = item_center.layoutParams as LayoutParams
         lp.topMargin = paddingTop
         lp.bottomMargin = paddingBottom
         item_center.layoutParams = lp
@@ -337,7 +337,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     /**
      *
      */
-    fun setItemHeadPadding(paddingTop: Int, paddingBottom: Int) {
+    private fun setItemHeadPadding(paddingTop: Int, paddingBottom: Int) {
 //        val lp = item_head.layoutParams as ConstraintLayout.LayoutParams
 //        lp.topMargin = paddingTop
 //        lp.bottomMargin = paddingBottom
@@ -348,7 +348,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     /**
      *
      */
-    fun setLogoMargin(margin: Int) {
+    private fun setLogoMargin(margin: Int) {
         item_left.setPadding(item_left.paddingStart, item_left.paddingTop, margin, item_left.paddingBottom)
     }
 

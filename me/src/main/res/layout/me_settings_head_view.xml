@@ -79,7 +79,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
-            android:src="@drawable/me_qr_icon_grey"
+            android:src="@drawable/me_setting_profile_qr_code_icon"
+            android:tint="?attr/common_icon_color_grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/head_view_arrow"
             app:layout_constraintTop_toTopOf="parent" />
@@ -89,7 +90,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
-            android:src="@drawable/common_right_arrow_icon"
+            android:src="@drawable/common_arrow_right_icon"
+            android:tint="?attr/common_icon_color_grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

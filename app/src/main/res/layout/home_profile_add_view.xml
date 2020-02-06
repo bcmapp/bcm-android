@@ -21,7 +21,8 @@
             android:layout_width="160dp"
             android:layout_height="160dp"
             android:background="@drawable/common_item_ripple_oval_transparent_bg"
-            android:src="@drawable/home_icon_profile_add_account"
+            android:src="@drawable/home_profile_add_icon"
+            android:tint="?attr/common_icon_color_grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

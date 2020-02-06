@@ -1,7 +1,6 @@
 package com.bcm.messenger.common.core
 
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Build
 import android.os.LocaleList
 import com.bcm.messenger.common.preferences.SuperPreferences
@@ -41,7 +40,7 @@ fun setLocale(context: Context?): Context? {
     return context
 }
 
-fun setApplicationLanguage(context: Context?, newConfig: Configuration?) {
+fun setApplicationLanguage(context: Context?) {
     context ?: return
     val dm = context.applicationContext.resources.displayMetrics
     val config = context.applicationContext.resources.configuration
@@ -51,9 +50,6 @@ fun setApplicationLanguage(context: Context?, newConfig: Configuration?) {
         LocaleList.setDefault(localeList)
         config.locales = localeList
         config.setLocale(locale)
-        if (newConfig != null) {
-            config.uiMode = newConfig.uiMode
-        }
         context.applicationContext.createConfigurationContext(config)
         Locale.setDefault(locale)
     } else {
@@ -65,10 +61,10 @@ fun setApplicationLanguage(context: Context?, newConfig: Configuration?) {
     SystemUtils.setUseLanguage(locale.language ?: language)
 }
 
-fun onConfigurationChanged(context: Context?, newConfig: Configuration?) {
+fun onConfigurationChanged(context: Context?) {
     context ?: return
     setLocale(context)
-    setApplicationLanguage(context, newConfig)
+    setApplicationLanguage(context)
 }
 
 fun updateLanguage(context: Context?, newCountry: String?, newLanguage: String?) {
@@ -77,7 +73,7 @@ fun updateLanguage(context: Context?, newCountry: String?, newLanguage: String?)
     SuperPreferences.setCountryString(context, newCountry ?: country)
     country = newCountry ?: country
     language = newLanguage ?: language
-    setApplicationLanguage(AppContextHolder.APP_CONTEXT, null)
+    setApplicationLanguage(AppContextHolder.APP_CONTEXT)
     
     SystemUtils.setUseLanguage(newLanguage ?: language)
 }

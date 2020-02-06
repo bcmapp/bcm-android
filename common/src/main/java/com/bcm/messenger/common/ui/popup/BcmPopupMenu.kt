@@ -5,10 +5,16 @@ import android.content.Context
 import android.view.Gravity
 import android.view.Menu
 import android.view.View
+import androidx.annotation.AttrRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
+import com.bcm.messenger.common.R
+import com.bcm.messenger.common.utils.getAttrColor
+import com.bcm.messenger.common.utils.getAttribute
+import com.bcm.messenger.common.utils.getDrawable
+import com.bcm.messenger.utility.AppContextHolder
 import java.lang.ref.WeakReference
 
 /**
@@ -31,8 +37,12 @@ class BcmPopupMenu {
         val menu = popupMenu.menu
         config.menuItem.forEachIndexed { index, menuText ->
             menu.add(Menu.NONE, index, index, menuText.title)
-            menu.getItem(index).setIcon(menuText.iconRes)
-            (menu as? MenuBuilder)?.setOptionalIconsVisible(true)
+            if (menuText.iconRes != 0) {
+                val drawable = getDrawable(menuText.iconRes)
+                drawable.setTint(context.getAttrColor(menuText.iconColor))
+                menu.getItem(index).icon = drawable
+                (menu as? MenuBuilder)?.setOptionalIconsVisible(true)
+            }
         }
 
         popupMenu.setOnMenuItemClickListener { menuItem ->
@@ -119,5 +129,5 @@ class BcmPopupMenu {
         var y = -1
     }
 
-    class MenuItem(val title: String, @DrawableRes val iconRes: Int = 0)
+    class MenuItem(val title: String, @DrawableRes val iconRes: Int = 0, @AttrRes val iconColor: Int = R.attr.common_icon_color)
 }

@@ -126,6 +126,7 @@
         <attr name="left_text_size" format="reference|dimension" />
         <attr name="left_text_image" format="reference" />
         <attr name="left_image" format="reference" />
+        <attr name="left_image_color" format="color|reference" />
         <attr name="left_custom_view" format="reference" />
 
         <attr name="right_type" format="reference|enum">
@@ -139,6 +140,7 @@
         <attr name="right_text_size" format="reference|dimension" />
         <attr name="right_text_image" format="reference" />
         <attr name="right_image" format="reference" />
+        <attr name="right_image_color" format="reference|color" />
         <attr name="right_custom_view" format="reference" />
 
         <attr name="center_type" format="reference|enum">
@@ -282,7 +284,7 @@
     <!-- light: white, dark: black-->
     <attr name="common_ripple_background" format="color" />
     <!-- light: white, dark: grey-->
-    <attr name="common_background_dark_grey" format="color" />
+    <attr name="common_view_background_dark_grey" format="color" />
 
     <attr name="common_setting_item_background" format="color|reference" />
     <attr name="common_setting_item_main_text_color" format="color" />

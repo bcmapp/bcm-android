@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription=""
                 android:scaleType="fitCenter"
-                tools:src="@drawable/common_right_arrow_icon"/>
+                tools:src="@drawable/common_arrow_right_icon"/>
 
         </FrameLayout>
 

@@ -22,7 +22,7 @@
         android:id="@+id/share_app_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/common_view_background_grey"
+        android:background="?attr/common_view_background_dark_grey"
         android:paddingStart="20dp"
         android:paddingTop="5dp"
         android:paddingEnd="20dp" />
@@ -31,7 +31,7 @@
         android:id="@+id/share_indicator"
         android:layout_width="match_parent"
         android:layout_height="37dp"
-        android:background="?attr/common_view_background_grey"
+        android:background="?attr/common_view_background_dark_grey"
         android:gravity="center"
         android:orientation="horizontal" />
 
