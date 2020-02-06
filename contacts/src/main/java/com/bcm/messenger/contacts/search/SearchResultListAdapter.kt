@@ -14,7 +14,7 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.RecipientAvatarView
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
-import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.contacts.R
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
@@ -33,10 +33,6 @@ class SearchResultListAdapter(context: Context, val mListener: SearchActionListe
     private val mInflater = LayoutInflater.from(context)
 
     private var mSearchKey: String = ""
-
-    init {
-
-    }
 
     fun setSearchResult(resultList: List<SearchItemData>, searchKey: String) {
         mSearchKey = searchKey
@@ -91,26 +87,26 @@ class SearchResultListAdapter(context: Context, val mListener: SearchActionListe
             if (sd.isTop) {
                 titleView.visibility = View.VISIBLE
                 titleView.text = sd.title
-            }else {
+            } else {
                 titleView.visibility = View.GONE
             }
             if (sd.hasMore != true) {
                 moreLayout.visibility = View.GONE
                 contentLine.visibility = View.VISIBLE
-            }else {
+            } else {
                 moreLayout.visibility = View.VISIBLE
                 contentLine.visibility = View.GONE
                 moreFlag.setImageResource(R.drawable.common_right_arrow_icon)
                 moreDescription.text = sd.moreDescription
             }
 
-            when(sd.type) {
+            when (sd.type) {
                 BcmFinderType.ADDRESS_BOOK, BcmFinderType.USER_ID -> {
                     val r = sd.tag as Recipient
                     r.addListener(this)
                     if (r.isFriend) {
                         actionView.visibility = View.GONE
-                    }else {
+                    } else {
                         actionView.visibility = View.VISIBLE
                     }
                     contentLogo.showPrivateAvatar(r)
@@ -140,7 +136,7 @@ class SearchResultListAdapter(context: Context, val mListener: SearchActionListe
         }
 
         private fun applyContentName(name: CharSequence): CharSequence {
-            return StringAppearanceUtil.applyFilterAppearanceIgnoreCase(name, mSearchKey, null, AppUtil.getColor(itemView.resources, R.color.common_app_primary_color))
+            return StringAppearanceUtil.applyFilterAppearanceIgnoreCase(name, mSearchKey, null, itemView.context.getColorCompat(R.color.common_text_blue_color))
         }
     }
 }

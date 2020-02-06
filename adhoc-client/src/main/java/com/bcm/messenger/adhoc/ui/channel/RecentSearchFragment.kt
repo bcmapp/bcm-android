@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.adhoc_fragment_recent_search.*
 /**
  * Created by wjh on 2019/4/3
  */
-class RecentSearchFragment() : BaseFragment(), AdHocChannelLogic.IAdHocChannelListener {
+class RecentSearchFragment : BaseFragment(), AdHocChannelLogic.IAdHocChannelListener {
 
     private var mChecker = object : BcmFinderManager.SearchRecordChecker {
         override fun isValid(record: SearchRecordDetail): Boolean {
@@ -38,8 +38,7 @@ class RecentSearchFragment() : BaseFragment(), AdHocChannelLogic.IAdHocChannelLi
             return if (record.type == BcmFinderType.AIR_CHAT) {
                 val session = AdHocSessionLogic.get(accountContext).getSession(record.tag as String)
                 session != null
-            }
-            else {
+            } else {
                 true
             }
         }
@@ -78,7 +77,7 @@ class RecentSearchFragment() : BaseFragment(), AdHocChannelLogic.IAdHocChannelLi
 
     private fun handleSelect(type: BcmFinderType, data: Any?) {
         val a = activity
-        when(type) {
+        when (type) {
             BcmFinderType.AIR_CHAT -> {
                 val s = data as AdHocSession
                 if (a is ISearchCallback) {
@@ -89,7 +88,8 @@ class RecentSearchFragment() : BaseFragment(), AdHocChannelLogic.IAdHocChannelLi
                     putExtra(ARouterConstants.PARAM.PARAM_ADHOC_SESSION, s.sessionId)
                 })
             }
-            else -> {}
+            else -> {
+            }
         }
     }
 
@@ -131,9 +131,10 @@ class RecentSearchFragment() : BaseFragment(), AdHocChannelLogic.IAdHocChannelLi
 
         fun bind() {
             val d = this.data ?: return
-            when(d.type) {
+            when (d.type) {
                 BcmFinderType.AIR_CHAT -> {
-                    val s = AdHocSessionLogic.get(accountContext).getSession(d.tag as String) ?: return
+                    val s = AdHocSessionLogic.get(accountContext).getSession(d.tag as String)
+                            ?: return
                     photoView.setSession(accountContext, s)
                     nameView.text = s.displayName(accountContext)
                     mActualData = s

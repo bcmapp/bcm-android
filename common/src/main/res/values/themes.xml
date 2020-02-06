@@ -44,6 +44,9 @@
 
         <item name="common_ripple_color">@color/common_default_ripple_color</item>
 
+        <item name="common_icon_color">@color/common_default_icon_color</item>
+        <item name="common_icon_color_grey">@color/common_default_icon_grey_color</item>
+
         <item name="fill_status_bar">true</item>
         <item name="show_bottom_line">false</item>
         <item name="title_bar_background">@color/common_default_background_color</item>

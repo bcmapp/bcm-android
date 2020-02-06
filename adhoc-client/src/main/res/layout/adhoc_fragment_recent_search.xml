@@ -8,7 +8,7 @@
         android:id="@+id/recent_title_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="@color/common_content_second_color"
+        android:textColor="?attr/common_text_third_color"
         android:textSize="14sp"
         android:text="@string/common_recent_search_title"
         android:paddingTop="@dimen/common_horizontal_gap"

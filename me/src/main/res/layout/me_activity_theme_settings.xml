@@ -17,9 +17,7 @@
                 android:id="@+id/theme_title_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:center_text="@string/me_theme_settings_title"
-                app:right_text="@string/common_string_save"
-                app:right_type="text" />
+                app:center_text="@string/me_theme_settings_title" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

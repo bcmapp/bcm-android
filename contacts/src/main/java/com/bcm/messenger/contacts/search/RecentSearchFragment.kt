@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.api.ISearchCallback
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
@@ -18,8 +17,6 @@ import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.finder.BcmFinderType
 import com.bcm.messenger.common.finder.SearchRecordDetail
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.RecipientAvatarView
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
@@ -30,7 +27,7 @@ import kotlinx.android.synthetic.main.contacts_fragment_recent_search.*
  * Created by wjh on 2019/4/3
  */
 @SuppressLint("ValidFragment")
-class RecentSearchFragment() : BaseFragment() {
+class RecentSearchFragment : BaseFragment() {
 
     private var mChecker = object : BcmFinderManager.SearchRecordChecker {
         override fun isValid(record: SearchRecordDetail): Boolean {
@@ -40,8 +37,7 @@ class RecentSearchFragment() : BaseFragment() {
             return if (record.type == BcmFinderType.GROUP) {
                 val groupInfo = AmeModuleCenter.group(accountContext)?.getGroupInfo((record.tag as String).toLong())
                 groupInfo != null
-            }
-            else {
+            } else {
                 true
             }
         }
@@ -66,7 +62,7 @@ class RecentSearchFragment() : BaseFragment() {
 
     private fun handleSelect(type: BcmFinderType, data: Any?) {
         val a = activity
-        when(type) {
+        when (type) {
             BcmFinderType.ADDRESS_BOOK -> {
                 val r = data as Recipient
                 if (a is ISearchCallback) {
@@ -84,7 +80,8 @@ class RecentSearchFragment() : BaseFragment() {
                 AmeModuleCenter.app().gotoHome(accountContext, HomeTopEvent(true,
                         HomeTopEvent.ConversationEvent.fromGroupConversation(g.gid)))
             }
-            else -> {}
+            else -> {
+            }
         }
     }
 
@@ -126,7 +123,7 @@ class RecentSearchFragment() : BaseFragment() {
 
         fun bind() {
             val d = this.data ?: return
-            when(d.type) {
+            when (d.type) {
                 BcmFinderType.ADDRESS_BOOK -> {
                     val r = Recipient.from(accountContext, d.tag as String, true)
                     photoView.showPrivateAvatar(r)

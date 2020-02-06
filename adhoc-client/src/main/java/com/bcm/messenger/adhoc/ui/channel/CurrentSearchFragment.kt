@@ -31,7 +31,7 @@ import kotlinx.android.synthetic.main.adhoc_fragment_current_search.*
 /**
  * Created by wjh on 2019/4/3
  */
-class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic.IAdHocChannelListener {
+class CurrentSearchFragment : BaseFragment(), ISearchAction, AdHocChannelLogic.IAdHocChannelListener {
 
     private val TAG = "CurrentSearchFragment"
 
@@ -93,7 +93,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic
         mSearchLimit = searchLimit
         if (isAdded) {
             doSearchAction(mKeyword, mSearchLimit, mTypes)
-        }else {
+        } else {
             ALog.d(TAG, "setCurrentKeyword fail, is not added")
         }
     }
@@ -103,7 +103,6 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic
             mAdapter?.notifyMainChanged()
         }
     }
-
 
     private fun doSearchAction(keyword: String, searchLimit: Boolean, types: Array<BcmFinderType>) {
         ALog.d(TAG, "doSearchAction keyword: $keyword")
@@ -119,7 +118,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic
         showLoading()
         if (searchLimit) {
             BcmFinderManager.get(accountContext).querySearchResultLimit(keyword, types, callback)
-        }else {
+        } else {
             BcmFinderManager.get(accountContext).querySearchResult(keyword, types, callback)
         }
     }
@@ -128,7 +127,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic
         ALog.d(TAG, "showLoading")
         try {
             search_shade?.showLoading()
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "showLoading error", ex)
         }
     }
@@ -137,7 +136,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic
         ALog.d(TAG, "hideLoading")
         try {
             search_shade?.hide()
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "hideLoading ex", ex)
         }
     }
@@ -154,7 +153,6 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic
         private val moreFlag = itemView.findViewById<ImageView>(R.id.search_more_flag)
 
         init {
-
             contentLayout.setOnClickListener {
                 val session = this.data?.tag as? AdHocSession ?: return@setOnClickListener
                 val a = activity
@@ -173,7 +171,6 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic
                     a.onMore(data?.type ?: return@setOnClickListener, mKeyword)
                 }
             }
-
         }
 
         fun bind() {
@@ -181,20 +178,20 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction, AdHocChannelLogic
             if (sd.isTop) {
                 titleView.visibility = View.VISIBLE
                 titleView.text = sd.title
-            }else {
+            } else {
                 titleView.visibility = View.GONE
             }
             if (sd.hasMore != true) {
                 moreLayout.visibility = View.GONE
                 contentLine.visibility = View.VISIBLE
-            }else {
+            } else {
                 moreLayout.visibility = View.VISIBLE
                 contentLine.visibility = View.GONE
                 moreFlag.setImageResource(R.drawable.common_right_arrow_icon)
                 moreDescription.text = sd.moreDescription
             }
 
-            when(sd.type) {
+            when (sd.type) {
                 BcmFinderType.AIR_CHAT -> {
                     val session = sd.tag as AdHocSession
                     contentLogo.setSession(accountContext, session)

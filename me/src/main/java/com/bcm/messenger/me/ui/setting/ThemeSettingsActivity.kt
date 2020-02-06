@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.theme.ThemeManager
@@ -17,7 +16,6 @@ import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.ViewUtils
 import kotlinx.android.synthetic.main.me_activity_theme_settings.*
 import java.lang.ref.WeakReference
-import java.util.*
 
 /**
  * Created by Kin on 2020/2/4
@@ -53,6 +51,7 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
 
             SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_LIGHT)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            ThemeManager.stopTimer()
         }
         theme_dark.setOnClickListener {
             theme_select_light.background = null
@@ -66,6 +65,7 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
 
             SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_DARK)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            ThemeManager.stopTimer()
         }
 
         theme_follow_system.setOnClickListener {
@@ -80,6 +80,7 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
 
             SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_SYSTEM)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            ThemeManager.stopTimer()
         }
         theme_schedule.setOnClickListener {
             theme_select_light.background = null
@@ -92,7 +93,7 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
             ViewUtils.fadeIn(theme_schedule_layout, 250)
 
             SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_CUSTOM)
-            updateThemeByTime()
+            ThemeManager.startTimer()
         }
         theme_disabled.setOnClickListener {
             theme_select_light.background = null
@@ -112,6 +113,7 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
             }
 
             ViewUtils.fadeOut(theme_schedule_layout, 250)
+            ThemeManager.stopTimer()
         }
 
         theme_schedule_light.setOnClickListener {
@@ -166,48 +168,7 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
                 weakThis.get()?.theme_schedule_dark?.setTip(newTime, contentColor = getColorCompat(R.color.common_text_third_color))
                 SuperPreferences.setDarkStartTime(this, newTime)
             }
-            weakThis.get()?.updateThemeByTime()
+            ThemeManager.themeTimeChanged()
         }, 0, 0, true).show()
-    }
-
-    private fun updateThemeByTime() {
-        val lightTime = theme_schedule_light.getTip().split(":")
-        val darkTime = theme_schedule_dark.getTip().split(":")
-
-        val calendar = Calendar.getInstance()
-        val lightCalendar = Calendar.getInstance()
-        val darkCalendar = Calendar.getInstance()
-
-        lightCalendar.clear()
-        lightCalendar.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DATE], lightTime[0].toInt(), lightTime[1].toInt())
-
-        darkCalendar.clear()
-        darkCalendar.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DATE], darkTime[0].toInt(), darkTime[1].toInt())
-
-        val currentTime = calendar.time.time
-        val lightLongTime = lightCalendar.time.time
-        val darkLongTime = darkCalendar.time.time
-
-        if (lightLongTime > darkLongTime) {
-            if (currentTime in darkLongTime..lightLongTime) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        } else {
-            if (currentTime in lightLongTime..darkLongTime) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }
-        }
-    }
-
-    override fun recreate() {
-        super.finish()
-        overridePendingTransition(0, R.anim.common_popup_alpha_out)
-        startActivity(intent.apply {
-            putExtra(ARouterConstants.PARAM.PARAM_ENTER_ANIM, R.anim.common_popup_alpha_in)
-        })
     }
 }

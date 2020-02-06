@@ -65,7 +65,8 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/common_item_ripple_oval_transparent_bg"
                 android:scaleType="centerInside"
-                android:src="@drawable/home_icon_new_chat"
+                android:src="@drawable/home_new_chat_icon"
+                android:tint="?attr/common_icon_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/home_toolbar_more"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -77,9 +78,10 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="15dp"
                 android:layout_marginBottom="10dp"
-                android:background="@drawable/common_item_ripple_oval_dark_grey_bg"
+                android:background="@drawable/common_item_ripple_oval_transparent_bg"
                 android:scaleType="centerInside"
-                android:src="@drawable/chats_icon_home_menu"
+                android:src="@drawable/home_more_icon"
+                android:tint="?attr/common_icon_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

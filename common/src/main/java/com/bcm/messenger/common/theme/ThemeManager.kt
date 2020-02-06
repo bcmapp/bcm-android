@@ -31,15 +31,36 @@ open class ThemeManager {
         const val THEME_CUSTOM = 3
 
         @JvmStatic
+        private var timerManager: ThemeTimerManager? = null
+
+        @JvmStatic
         fun initTheme() {
             when (SuperPreferences.getCurrentThemeSetting(AppContextHolder.APP_CONTEXT, THEME_SYSTEM)) {
                 THEME_SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                 THEME_LIGHT-> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 THEME_DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 THEME_CUSTOM -> {
-                    // TODO: check current time and set mode
+                    startTimer()
                 }
             }
+        }
+
+        @JvmStatic
+        fun startTimer() {
+            timerManager = ThemeTimerManager().apply {
+                registerTimeReceiver()
+            }
+        }
+
+        @JvmStatic
+        fun stopTimer() {
+            timerManager?.unregisterTimeReceiver()
+            timerManager = null
+        }
+
+        @JvmStatic
+        fun themeTimeChanged() {
+            timerManager?.onTimeChanged()
         }
     }
 }

@@ -124,6 +124,7 @@
     <color name="common_text_blue_color">#379BFF</color>
     <color name="common_underline_color">#26B3B3B3</color>
     <color name="common_default_icon_color">#FFFFFF</color>
+    <color name="common_default_icon_grey_color">#99000000</color>
     <color name="common_default_background_color">#000000</color>
     <color name="common_default_background_grey_color">#202122</color>
     <color name="common_default_switcher_color">#379BFF</color>

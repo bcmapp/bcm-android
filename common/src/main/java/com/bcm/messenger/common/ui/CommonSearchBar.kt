@@ -31,9 +31,9 @@ class CommonSearchBar : ConstraintLayout {
     private var mListener: OnSearchActionListener? = null
     private var mTextWatcher: TextWatcher? = null
 
-    constructor(context: Context) : this(context, null) {}
+    constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0) {}
+    constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
 
     constructor(context: Context, attributeSet: AttributeSet?, defStyleAttr: Int) : super(context, attributeSet, defStyleAttr) {
 
@@ -72,7 +72,7 @@ class CommonSearchBar : ConstraintLayout {
     }
 
     fun setMode(mode: Int) {
-        when(mode) {
+        when (mode) {
             MODE_DISPLAY -> {
                 common_search_display_layout.visibility = View.VISIBLE
                 common_search_edit_layout.visibility = View.GONE
@@ -138,14 +138,13 @@ class CommonSearchBar : ConstraintLayout {
                                 if (searchText == getSearchText()) {
                                     if (searchText.isEmpty()) {
                                         mListener?.onClear()
-                                    }else {
+                                    } else {
                                         mListener?.onSearch(searchText)
                                     }
-                                }else {
+                                } else {
                                     ALog.i(TAG, "receive searchTextChangedObservable: $searchText not same to current")
                                 }
                             }, {
-
                             })
                 }
 
@@ -175,5 +174,4 @@ class CommonSearchBar : ConstraintLayout {
         fun onSearch(keyword: String)
         fun onClear()
     }
-
 }

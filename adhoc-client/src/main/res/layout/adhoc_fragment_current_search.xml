@@ -16,7 +16,7 @@
         android:id="@+id/search_shade"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/common_color_white"
+        android:background="?attr/common_view_background"
         android:gravity="top|center_horizontal"
         android:paddingTop="80dp"
         android:visibility="gone"

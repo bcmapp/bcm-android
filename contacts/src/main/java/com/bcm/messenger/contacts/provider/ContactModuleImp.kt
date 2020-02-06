@@ -122,9 +122,10 @@ class ContactModuleImp : IContactModule {
             val userProvider = AmeModuleCenter.user(accountContext)
             Observable.create<Pair<String?, String?>> {
                 try {
-                    val accountDiscernPair = userProvider?.checkBackupAccountValid(qrCode) ?: throw Exception("userModule is null")
+                    val accountDiscernPair = userProvider?.checkBackupAccountValid(qrCode)
+                            ?: throw Exception("userModule is null")
                     it.onNext(accountDiscernPair)
-                }catch (ex: Exception) {
+                } catch (ex: Exception) {
                     it.onNext(Pair(null, ex.message))
                 }
                 it.onComplete()
@@ -135,7 +136,7 @@ class ContactModuleImp : IContactModule {
                             userProvider?.showImportAccountWarning(context) {
                                 callback?.invoke(false)
                             }
-                        }else {
+                        } else {
                             val recipientSetting = Recipient.fromJson(qrCode)
                             if (recipientSetting == null || recipientSetting.uid.isNullOrEmpty()) {
                                 BcmRouter.getInstance().get(ARouterConstants.Activity.QR_DISPLAY).putString(ARouterConstants.PARAM.PARAM_QR_CODE, qrCode).startBcmActivity(accountContext, context)
@@ -145,7 +146,6 @@ class ContactModuleImp : IContactModule {
                             }
                         }
                     }
-
 
 
         }
@@ -159,33 +159,31 @@ class ContactModuleImp : IContactModule {
                 callback?.invoke(false)
                 return
             }
-            groupProvider.queryGroupInfo(shareContent.groupId) {groupInfo ->
+            groupProvider.queryGroupInfo(shareContent.groupId) { groupInfo ->
                 if (groupInfo == null || groupInfo.role == AmeGroupMemberInfo.VISITOR) {
                     BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_SHARE_DESCRIPTION).putString(ARouterConstants.PARAM.GROUP_SHARE.GROUP_SHARE_CONTENT, shareContent.toString())
                             .startBcmActivity(accountContext, context)
                     callback?.invoke(true)
-                }else {
+                } else {
                     AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
                             HomeTopEvent.ConversationEvent.fromGroupConversation(shareContent.groupId)))
                     callback?.invoke(true)
                 }
             }
 
-        }
-        else if (PrivacyProfile.isShortLink(link)) {
+        } else if (PrivacyProfile.isShortLink(link)) {
             AmeAppLifecycle.showLoading()
             mProfileLogic.checkShareLink(context, link) { result ->
                 AmeAppLifecycle.hideLoading()
                 if (result == null) {
                     BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, link).navigation(context)
                     callback?.invoke(true)
-                }else {
+                } else {
                     openContactDataActivity(context, Address.from(accountContext, result.uid), result.name)
                     callback?.invoke(true)
                 }
             }
-        }
-        else {
+        } else {
             BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, link).navigation(context)
             callback?.invoke(true)
         }

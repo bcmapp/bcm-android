@@ -24,7 +24,7 @@ import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.common_activity_search.*
 
 /**
- * 
+ *
  * @created by wjh 2019-04-04
  */
 class SearchActivity : AccountSwipeBaseActivity(), ISearchCallback {
@@ -34,7 +34,7 @@ class SearchActivity : AccountSwipeBaseActivity(), ISearchCallback {
         const val REQUEST_SEARCH_MORE = 1
 
         /**
-         * 
+         *
          */
         fun callSearchActivity(context: Context, accountContext: AccountContext, keyword: String, displayAll: Boolean, hasPrevious: Boolean, searchClass: String, recentClass: String?, requestCode: Int) {
             val intent = Intent(context, SearchActivity::class.java)
@@ -51,14 +51,13 @@ class SearchActivity : AccountSwipeBaseActivity(), ISearchCallback {
             if (context is Activity) {
                 if (requestCode != 0) {
                     context.startBcmActivityForResult(accountContext, intent, requestCode)
-                }else {
+                } else {
                     context.startBcmActivity(accountContext, intent)
                 }
-            }else {
+            } else {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startBcmActivity(accountContext, intent)
             }
-
         }
     }
 
@@ -151,14 +150,15 @@ class SearchActivity : AccountSwipeBaseActivity(), ISearchCallback {
                 ALog.d(TAG, "onClear")
                 if (!mRecentFragmentClazz.isNullOrEmpty()) {
                     displayRecent()
-                }else {
+                } else {
                     displaySearch("")
                 }
             }
 
         })
 
-        search_main_sb.setSearchText(intent.getStringExtra(ARouterConstants.PARAM.SEARCH.CURRENT_KEYWORD) ?: "")
+        search_main_sb.setSearchText(intent.getStringExtra(ARouterConstants.PARAM.SEARCH.CURRENT_KEYWORD)
+                ?: "")
 
         search_main_sb.post {
             search_main_sb.requestSearchFocus()
@@ -166,7 +166,7 @@ class SearchActivity : AccountSwipeBaseActivity(), ISearchCallback {
     }
 
     /**
-     * 
+     *
      */
     private fun displayRecent() {
         if (mDisplayFragment == mRecentSearchFragment && mDisplayFragment != null) {
@@ -186,7 +186,7 @@ class SearchActivity : AccountSwipeBaseActivity(), ISearchCallback {
             }
             mRecentSearchFragment = f
             tran.add(R.id.search_main_layout, f)
-        }else {
+        } else {
             tran.show(f)
         }
         mDisplayFragment = mRecentSearchFragment
@@ -195,7 +195,7 @@ class SearchActivity : AccountSwipeBaseActivity(), ISearchCallback {
     }
 
     /**
-     * 
+     *
      */
     private fun displaySearch(keyword: String) {
         if (mDisplayFragment == mCurrentSearchFragment && mDisplayFragment != null) {

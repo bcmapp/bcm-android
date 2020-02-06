@@ -17,8 +17,6 @@ import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.finder.BcmFinderType
 import com.bcm.messenger.common.finder.SearchItemData
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.activity.SearchActivity
 import com.bcm.messenger.common.utils.startBcmActivity
@@ -31,7 +29,7 @@ import kotlinx.android.synthetic.main.contacts_fragment_current_search.*
  * Created by wjh on 2019/4/3
  */
 @SuppressLint("ValidFragment")
-class CurrentSearchFragment() : BaseFragment(), ISearchAction {
+class CurrentSearchFragment : BaseFragment(), ISearchAction {
 
     private val TAG = "CurrentSearchFragment"
 
@@ -57,11 +55,12 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
         search_shade.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
         search_list.layoutManager = LinearLayoutManager(context)
 
-        mAdapter = SearchResultListAdapter(context ?: return, object : SearchResultListAdapter.SearchActionListener {
+        mAdapter = SearchResultListAdapter(context
+                ?: return, object : SearchResultListAdapter.SearchActionListener {
 
             override fun onSelect(data: SearchItemData) {
                 val a = activity
-                when(data.type) {
+                when (data.type) {
                     BcmFinderType.ADDRESS_BOOK, BcmFinderType.USER_ID -> {
                         val r = data.tag as Recipient
                         if (a is ISearchCallback) {
@@ -69,7 +68,6 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
                         }
                         AmeModuleCenter.app().gotoHome(accountContext, HomeTopEvent(true,
                                 HomeTopEvent.ConversationEvent.fromPrivateConversation(r.address.serialize(), true)))
-
                     }
                     BcmFinderType.GROUP -> {
                         val g = data.tag as AmeGroupInfo
@@ -79,7 +77,8 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
                         AmeModuleCenter.app().gotoHome(accountContext, HomeTopEvent(true,
                                 HomeTopEvent.ConversationEvent.fromGroupConversation(g.gid)))
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             }
 
@@ -88,7 +87,8 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
                 if (a is ISearchCallback) {
                     a.onMore(data.type, mKeyword)
                 }
-                SearchActivity.callSearchActivity(a ?: return, accountContext, mKeyword, true, true, CurrentSearchFragment::class.java.name, null, SearchActivity.REQUEST_SEARCH_MORE)
+                SearchActivity.callSearchActivity(a
+                        ?: return, accountContext, mKeyword, true, true, CurrentSearchFragment::class.java.name, null, SearchActivity.REQUEST_SEARCH_MORE)
             }
 
             override fun onAction(data: SearchItemData) {
@@ -113,7 +113,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
         mSearchLimit = searchLimit
         if (isAdded) {
             doSearchAction(mKeyword, mSearchLimit, mTypes)
-        }else {
+        } else {
             ALog.d(TAG, "setCurrentKeyword fail, is not added")
         }
     }
@@ -136,7 +136,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
         showLoading()
         if (searchLimit) {
             BcmFinderManager.get(accountContext).querySearchResultLimit(keyword, types, callback)
-        }else {
+        } else {
             BcmFinderManager.get(accountContext).querySearchResult(keyword, types, callback)
         }
     }
@@ -145,7 +145,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
         ALog.d(TAG, "showLoading")
         try {
             search_shade?.showLoading()
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "showLoading error", ex)
         }
     }
@@ -154,7 +154,7 @@ class CurrentSearchFragment() : BaseFragment(), ISearchAction {
         ALog.d(TAG, "hideLoading")
         try {
             search_shade?.hide()
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "hideLoading ex", ex)
         }
     }
