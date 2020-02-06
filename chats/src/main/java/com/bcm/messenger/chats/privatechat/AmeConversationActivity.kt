@@ -11,13 +11,19 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.SharedElementCallback
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.bean.BottomPanelClickListener
 import com.bcm.messenger.chats.bean.BottomPanelItem
 import com.bcm.messenger.chats.bean.SendContactEvent
+import com.bcm.messenger.chats.components.ChatsBurnSetting
 import com.bcm.messenger.chats.components.ConversationInputPanel
 import com.bcm.messenger.chats.components.titlebar.ChatTitleBar
+import com.bcm.messenger.chats.components.titlebar.ChatTitleDropBar
+import com.bcm.messenger.chats.components.titlebar.ChatTitleDropItem
+import com.bcm.messenger.chats.components.titlebar.ChatTitleDropMenu
+import com.bcm.messenger.chats.mediabrowser.ui.MediaBrowserActivity
 import com.bcm.messenger.chats.privatechat.webrtc.CameraState
 import com.bcm.messenger.chats.user.SendContactActivity
 import com.bcm.messenger.chats.util.AttachmentUtils
@@ -31,6 +37,7 @@ import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.database.repositories.DraftRepo
+import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.database.repositories.ThreadRepo
 import com.bcm.messenger.common.event.*
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
@@ -48,6 +55,7 @@ import com.bcm.messenger.common.sms.OutgoingTextMessage
 import com.bcm.messenger.common.ui.KeyboardAwareLinearLayout
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
+import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.AmeTimeUtil
@@ -64,6 +72,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.chats_bottom_pannel_item.*
 import kotlinx.android.synthetic.main.chats_conversation_activity.*
 import kotlinx.android.synthetic.main.chats_conversation_input_panel.view.*
 import me.imid.swipebacklayout.lib.SwipeBackLayout
@@ -324,7 +333,6 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
 
         mScreenshotManager?.removeScreenshotListener()
         mScreenshotManager = null
-
     }
 
     override fun onResume() {
@@ -396,10 +404,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
             }
 
             override fun onTitle(multiSelect: Boolean) {
-                if (!mRecipient.isFriend) {
-                    hideInput()
-                    BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND).putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address).startBcmActivity(accountContext, this@AmeConversationActivity)
-                }
+                showDropMenu()
             }
 
             override fun onLeft(multiSelect: Boolean) {
@@ -620,6 +625,43 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
 
         })
 
+    }
+
+    private fun showDropMenu() {
+        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, R.color.common_text_main_color, getString(R.string.chats_media_and_files)) {
+            MediaBrowserActivity.router(accountContext, mRecipient.address)
+        }
+
+        var icon = R.drawable.chats_message_burn_icon
+        val tickTalkTitle = if (mRecipient.expireMessages > 0) {
+            icon = R.drawable.chats_message_burn_enable_icon
+            "Tiktalk・${ChatsBurnSetting.typeToString(ChatsBurnSetting.expireToType(mRecipient.expireMessages))}"
+        } else {
+            "Tiktalk"
+        }
+
+        val chatBurn  = ChatTitleDropItem(icon, R.color.common_text_main_color, tickTalkTitle) {
+            ChatsBurnSetting.configBurnSetting(this, mRecipient, accountContext.masterSecret?:return@ChatTitleDropItem) {
+                bottom_panel.setBurnExpireAfterRead(mRecipient.expireMessages)
+            }
+        }
+
+        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, R.color.common_text_main_color, getString(R.string.chats_message_clear_history)) {
+            AmePopup.bottom.newBuilder()
+                    .withTitle(getString(R.string.chats_user_clear_history_title, mRecipient.name))
+                    .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clear), getColorCompat(R.color.common_color_ff3737)) {
+                        val threadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, 0L)
+                        Repository.getChatRepo(accountContext)?.cleanChatMessages(threadId)
+                    })
+                    .withDoneTitle(getString(R.string.common_cancel))
+                    .show(this)
+        }
+
+        val actionList = listOf(chatFile, chatBurn, chatClear)
+
+        val dropMenu = ChatTitleDropMenu()
+        dropMenu.updateMenu(actionList)
+        dropMenu.show(chat_title_bar)
     }
 
     private fun initData() {

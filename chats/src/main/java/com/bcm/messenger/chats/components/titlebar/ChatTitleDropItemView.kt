@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.common.utils.getColor
 import kotlinx.android.synthetic.main.chats_title_bar_drop_item_view.view.*
 
 /**
@@ -23,21 +24,18 @@ class ChatTitleDropItemView:FrameLayout {
         drop_title.text = item.title
         if (item.icon != 0){
             val drawable= resources.getDrawable(item.icon, null)
+            drawable.setTint(resources.getColor(item.tint))
             drawable.setBounds(0, 0, drawable.minimumWidth, drawable.minimumHeight)
-            drop_title.setCompoundDrawables(drawable, null, null,null)
+            drop_title.setCompoundDrawables(null, drawable, null,null)
         } else {
             drop_title.setCompoundDrawables(null, null, null,null)
         }
 
-        if (item.action != null && item.actionTitle != null){
-            drop_action.text = item.actionTitle
-            drop_action.visibility = View.VISIBLE
-            drop_action.setOnClickListener {
+        if (item.action != null){
+            drop_title.setOnClickListener {
                 action(it)
                 item.action.invoke(it)
             }
-        } else {
-            drop_action.visibility = View.GONE
         }
     }
 }

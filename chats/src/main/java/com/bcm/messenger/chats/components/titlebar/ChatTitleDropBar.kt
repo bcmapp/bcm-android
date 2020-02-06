@@ -112,7 +112,8 @@ class ChatTitleDropBar:LinearLayout {
                 dropMenu.setOnDismissListener {
                     replaceItem(DropItem_Drop, R.drawable.chats_8_down)
                 }
-                dropMenu.showAsDropDown(this, actionList)
+                dropMenu.updateMenu(actionList)
+                dropMenu.showAsDropDown(this)
             }
 
             replaceItem(DropItem_Drop, R.drawable.chats_8_up)

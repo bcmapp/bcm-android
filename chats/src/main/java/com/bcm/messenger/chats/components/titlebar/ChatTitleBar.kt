@@ -6,12 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.core.Address
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.getStatusBarHeight
 import com.bcm.messenger.utility.setDrawableLeft
 import com.bcm.messenger.utility.setDrawableRight
 import kotlinx.android.synthetic.main.chats_titlebar_layout.view.*
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.utils.GroupUtil
+import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.route.api.BcmRouter
 
 /**
  * Created by bcm.social.01 on 2019/1/27.
@@ -28,6 +34,7 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
     private var mMultiSelect: Boolean = false
     private var mInPrivateChat: Boolean = false
     private var mCallback: OnChatTitleCallback? = null
+    private var address:Address? = null
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -54,6 +61,11 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
             mCallback?.onTitle(mMultiSelect)
         }
 
+        bar_add_friend.setOnClickListener {
+            BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND).putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS,
+                    address?:return@setOnClickListener).startBcmActivity(AMELogin.majorContext, context)
+        }
+
         setBackgroundResource(R.color.common_color_white)
     }
 
@@ -68,15 +80,17 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
             bar_title_whole.visibility = View.GONE
             return
         } else {
+            address = recipient.address
             if (recipient.isFriend) {
                 bar_title_layout.visibility = View.GONE
                 bar_title_whole.visibility = View.VISIBLE
                 bar_title_whole.text = recipient.name
+                bar_add_friend.visibility = View.GONE
             } else {
                 bar_title_layout.visibility = View.VISIBLE
                 bar_title_whole.visibility = View.GONE
                 bar_title_main.text = recipient.name
-                bar_title_main.setDrawableRight(R.drawable.chats_add_friend_icon)
+                bar_add_friend.visibility = View.VISIBLE
                 bar_title_sub.text = context.getString(R.string.chats_recipient_stranger_role)
             }
             bar_recipient_photo.showPrivateAvatar(recipient)
@@ -86,6 +100,9 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
 
     fun setGroupChat(accountContext: AccountContext, gid: Long, name: String, memberCount: Int) {
         mInPrivateChat = false
+
+        address = GroupUtil.addressFromGid(accountContext, gid)
+
         bar_title_layout.visibility = View.GONE
         bar_title_whole.visibility = View.VISIBLE
         bar_title_whole.text = "$name($memberCount)"

@@ -16,8 +16,14 @@ import com.bcm.messenger.common.utils.AppUtil
  */
 class ChatTitleDropMenu: PopupWindow(){
     private val TAG = "PopupWindow"
+    private var itemList = mutableListOf<ChatTitleDropItem>()
 
-    fun showAsDropDown(anchor: View, itemList:List<ChatTitleDropItem>) {
+    fun updateMenu(itemList: List<ChatTitleDropItem>) {
+        this.itemList.clear()
+        this.itemList.addAll(itemList)
+    }
+
+    fun show(anchor: View) {
         setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         isTouchable = true
         isFocusable = true
@@ -25,15 +31,13 @@ class ChatTitleDropMenu: PopupWindow(){
         animationStyle = 0
 
         val contentView = LayoutInflater.from(anchor.context).inflate(R.layout.chats_title_bar_menu_layout, null) as LinearLayout
+        contentView.setBackgroundResource(R.color.common_default_background_color)
         contentView.setOnClickListener{
             dismiss()
         }
 
         for (i in itemList){
             val v = ChatTitleDropItemView(anchor.context)
-            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-            params.setMargins(2, 0, 2, 0)
-            v.layoutParams = params
             contentView.addView(v)
             v.setViewItem(i){
                 dismiss()

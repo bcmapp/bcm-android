@@ -3,13 +3,16 @@ import os
 import zipfile
 
 valid_module_list = ['adhoc-client','common','login','me','chats','wallet','framework','contacts','app']
-valid_dir_list = ['src','main','res','values','strings.xml']
+#valid_dir_list = ['src','main','res','values','strings.xml']
+valid_dir_list = ['src','main','res','drawable-xhdpi']
 
 def zip_file_in_dir(filename,fromDir,toDir, zipf):
     
-    for i in [d for d in os.listdir(fromDir) if d in valid_dir_list or d in valid_module_list]:
+    for i in [d for d in os.listdir(fromDir) if d in valid_dir_list or d in valid_module_list or d.endswith(".png")]:
         t=os.path.join(fromDir,i)
-        if os.path.isfile(t) and filename in os.path.split(t)[1]:
+        #if os.path.isfile(t) and filename in os.path.split(t)[1]:
+        if os.path.isfile(t):
+            print t
             #ori = os.path.split(os.path.relpath(x))
             #dest = os.path.join(toDir, ori[0])
             #if not os.path.isdir(dest):

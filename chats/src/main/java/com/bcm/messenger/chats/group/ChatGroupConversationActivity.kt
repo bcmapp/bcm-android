@@ -19,13 +19,17 @@ import com.bcm.messenger.chats.bean.BottomPanelItem
 import com.bcm.messenger.chats.bean.SendContactEvent
 import com.bcm.messenger.chats.components.ConversationInputPanel
 import com.bcm.messenger.chats.components.titlebar.ChatTitleBar
+import com.bcm.messenger.chats.components.titlebar.ChatTitleDropItem
+import com.bcm.messenger.chats.components.titlebar.ChatTitleDropMenu
 import com.bcm.messenger.chats.group.live.ChatLiveSettingActivity
 import com.bcm.messenger.chats.group.live.LiveFlowController
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.group.logic.MessageSender
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
+import com.bcm.messenger.chats.group.setting.ChatGroupContentClear
 import com.bcm.messenger.chats.group.setting.ChatGroupSettingActivity
+import com.bcm.messenger.chats.mediabrowser.ui.MediaBrowserActivity
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.chats.user.SendContactActivity
 import com.bcm.messenger.chats.util.AttachmentUtils
@@ -53,6 +57,8 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.KeyboardAwareLinearLayout
 import com.bcm.messenger.common.ui.popup.AmePopup
+import com.bcm.messenger.common.ui.popup.ToastUtil
+import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.BitmapUtils
@@ -155,6 +161,7 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
             }
 
             override fun onTitle(multiSelect: Boolean) {
+                showDropMenu()
             }
         })
 
@@ -358,6 +365,36 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
 
             }
         })
+    }
+
+    private fun showDropMenu() {
+        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, R.color.common_text_main_color, getString(R.string.chats_media_and_files)) {
+            val groupModel = this.groupModel?:return@ChatTitleDropItem
+            MediaBrowserActivity.router(accountContext, GroupUtil.addressFromGid(accountContext, groupModel.groupId()))
+        }
+
+        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, R.color.common_text_main_color, getString(R.string.chats_message_clear_history)) {
+            val groupModel = this.groupModel?:return@ChatTitleDropItem
+            AmePopup.bottom.newBuilder()
+                    .withTitle(getString(R.string.chats_user_clear_history_title, groupModel.groupName()))
+                    .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clear), AmeBottomPopup.PopupItem.CLR_RED) {
+
+                        ThreadListViewModel.getCurrentThreadModel()?.deleteGroupConversation(groupModel.groupId(), groupModel.threadId()) {
+                            if (it) {
+                                RxBus.post(ChatGroupContentClear(groupModel.groupId()))
+                                ToastUtil.show(this, getString(R.string.chats_clean_succeed))
+                            }
+                        }
+                    })
+                    .withDoneTitle(getString(R.string.chats_cancel))
+                    .show(this)
+        }
+
+        val actionList = listOf(chatFile, chatClear)
+
+        val dropMenu = ChatTitleDropMenu()
+        dropMenu.updateMenu(actionList)
+        dropMenu.show(chat_title_bar)
     }
 
     private fun initData() {

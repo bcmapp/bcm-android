@@ -220,7 +220,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
     private var mInputAwareLayout: InputAwareLayout? = null
 
-    private var pickView: DataPickerPopupWindow? = null
     private var expireValue = 1
 
     private var mEmojiContainer: ExtraContainer? = null
@@ -464,133 +463,19 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
     }
 
     fun callBurnAfterRead(recipient: Recipient, masterSecret: MasterSecret) {
-        fun getBurnExpireFromIndex(index: Int): Int {
-            return when (index) {
-                0 -> 0
-                1 -> 30
-                2 -> 120
-                3 -> 300
-                4 -> 3600
-                5 -> 86400
-                6 -> 604800
-                7 -> 1209600
-                else -> 0
-            }
+        ChatsBurnSetting.configBurnSetting(context as FragmentActivity, recipient, masterSecret) {
+            setBurnExpireAfterRead(recipient.expireMessages)
         }
-
-        val c = context
-        if (c is FragmentActivity) {
-            pickView = DataPickerPopupWindow(c)
-                    .setTitle(c.getString(R.string.chats_destroy_message_popup_title))
-                    .setDataList(listOf(
-                            c.getString(R.string.chats_auto_clear_off),
-                            c.getString(R.string.chats_destroy_message_30_sec),
-                            c.getString(R.string.chats_destroy_message_2_min),
-                            c.getString(R.string.chats_destroy_message_5_min),
-                            c.getString(R.string.chats_destroy_message_1_hour),
-                            c.getString(R.string.chats_destroy_message_1_day),
-                            c.getString(R.string.chats_destroy_message_1_week),
-                            c.getString(R.string.chats_destroy_message_2_weeks)
-                    ))
-                    .setCurrentIndex(expireValue)
-                    .setCallback { index ->
-                        val expire = getBurnExpireFromIndex(index)
-                        if (recipient.expireMessages == expire) {
-                            post {
-                                ToastUtil.show(context, resources.getString(R.string.chats_read_burn_choose_same))
-                            }
-                            return@setCallback
-                        }
-
-                        Observable.create(ObservableOnSubscribe<Boolean> {
-                            val goon = if (recipient.expireMessages != expire) {
-
-                                Repository.getRecipientRepo(recipient.address.context())?.setExpireTime(recipient, expire.toLong())
-
-                                true
-
-                            } else {
-                                false
-                            }
-                            it.onNext(goon)
-                            it.onComplete()
-                        }).subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({ result ->
-                                    if (result) {
-
-                                        ViewModelProviders.of(c).get(AmeConversationViewModel::class.java).sendMediaMessage(c,
-                                                masterSecret,
-                                                OutgoingExpirationUpdateMessage(recipient, AmeTimeUtil.getMessageSendTime(), expire * 1000L)) { success ->
-
-                                            if (success) {
-                                                setBurnExpireAfterRead(expire)
-
-                                            }
-                                        }
-
-                                    }
-                                }, {
-                                    ALog.e(TAG, "callBurnAfterRead error", it)
-                                })
-
-                    }
-
-            pickView?.show()
-        }
-
     }
 
     fun setBurnExpireAfterRead(expire: Int) {
+        expireValue = ChatsBurnSetting.expireToType(expire)
+        panel_burn_delay_tv.text = ChatsBurnSetting.typeToString(expireValue)
 
-        fun getIndexFromBurnExpire(expire: Int): Int {
-            return when (expire) {
-                0 -> 0
-                30 -> 1
-                120 -> 2
-                300 -> 3
-                3600 -> 4
-                86400 -> 5
-                604800 -> 6
-                1209600 -> 7
-                else -> 0
-            }
-        }
-
-        expireValue = getIndexFromBurnExpire(expire)
-        when (expireValue) {
-            1 -> {
-                panel_burn_delay_tv.text = "30s"
-                panel_burn_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_destroy_msg_enabled_icon))
-            }
-            2 -> {
-                panel_burn_delay_tv.text = "2m"
-                panel_burn_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_destroy_msg_enabled_icon))
-            }
-            3 -> {
-                panel_burn_delay_tv.text = "5m"
-                panel_burn_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_destroy_msg_enabled_icon))
-            }
-            4 -> {
-                panel_burn_delay_tv.text = "1h"
-                panel_burn_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_destroy_msg_enabled_icon))
-            }
-            5 -> {
-                panel_burn_delay_tv.text = "1d"
-                panel_burn_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_destroy_msg_enabled_icon))
-            }
-            6 -> {
-                panel_burn_delay_tv.text = "1w"
-                panel_burn_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_destroy_msg_enabled_icon))
-            }
-            7 -> {
-                panel_burn_delay_tv.text = "2w"
-                panel_burn_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_destroy_msg_enabled_icon))
-            }
-            else -> {
-                panel_burn_delay_tv.text = ""
-                panel_burn_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_destroy_msg_icon))
-            }
+        if (expireValue > 0) {
+            panel_burn_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_destroy_msg_enabled_icon))
+        } else {
+            panel_burn_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_destroy_msg_icon))
         }
     }
 
