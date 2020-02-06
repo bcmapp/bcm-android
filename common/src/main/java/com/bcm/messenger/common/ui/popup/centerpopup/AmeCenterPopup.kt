@@ -204,15 +204,15 @@ class AmeCenterPopup : Application.ActivityLifecycleCallbacks {
             }
 
             if (!config.cancelTitle.isNullOrEmpty()) {
-                builder.setNegativeButton(config.cancelTitle) { dialog, which -> config.cancel.invoke() }
+                builder.setNegativeButton(config.cancelTitle) { _, _ -> config.cancel.invoke() }
             }
 
             if (!config.okTitle.isNullOrEmpty()) {
-                builder.setPositiveButton(config.okTitle) { dialog, which -> config.ok.invoke() }
+                builder.setPositiveButton(config.okTitle) { _, _ -> config.ok.invoke() }
             }
 
             if (!config.warningTitle.isNullOrEmpty()) {
-                builder.setNeutralButton(config.warningTitle) { dialog, which -> config.warning.invoke() }
+                builder.setNeutralButton(config.warningTitle) { _, _ -> config.warning.invoke() }
             }
 
             builder.setOnDismissListener {

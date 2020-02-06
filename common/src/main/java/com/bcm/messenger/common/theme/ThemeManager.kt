@@ -28,6 +28,7 @@ open class ThemeManager {
         const val THEME_SYSTEM = 0
         const val THEME_LIGHT = 1
         const val THEME_DARK = 2
+        const val THEME_CUSTOM = 3
 
         @JvmStatic
         fun initTheme() {
@@ -35,6 +36,9 @@ open class ThemeManager {
                 THEME_SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                 THEME_LIGHT-> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 THEME_DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                THEME_CUSTOM -> {
+                    // TODO: check current time and set mode
+                }
             }
         }
     }

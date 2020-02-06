@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 
 public class SuperPreferences {
@@ -38,7 +39,10 @@ public class SuperPreferences {
 
     public static final String METRICS = "metrics";
     private static final String ACCOUNT_BACKUP_PREF = "pref_account_backup";
+
     private static final String THEME_PREF = "pref_theme";
+    private static final String THEME_LIGHT_START = "pref_light_start";
+    private static final String THEME_DARK_START = "pref_dark_start";
 
     public static SharedPreferences getSuperPreferences(Context context, String table) {
         return context.getSharedPreferences(table, Context.MODE_PRIVATE);
@@ -230,5 +234,21 @@ public class SuperPreferences {
 
     public static void setCurrentThemeSetting(Context context, int currentTheme) {
         context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putInt(THEME_PREF, currentTheme).apply();
+    }
+
+    public static String getLightStartTime(Context context, String defaultTime) {
+        return context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).getString(THEME_LIGHT_START, defaultTime);
+    }
+
+    public static void setLightStartTime(Context context, String startTime) {
+        context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putString(THEME_LIGHT_START, startTime).apply();
+    }
+
+    public static String getDarkStartTime(Context context, String defaultTime) {
+        return context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).getString(THEME_DARK_START, defaultTime);
+    }
+
+    public static void setDarkStartTime(Context context, String startTime) {
+        context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putString(THEME_DARK_START, startTime).apply();
     }
 }

@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -282,6 +283,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
                 sepView.layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         5.dp2Px())
+                sepView.setBackgroundColor(getColor(R.color.common_underline_color))
                 parent.addView(sepView)
                 return sepView
             }

@@ -1,21 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.bcm.messenger.common.ui.CommonTitleBar2
-        android:id="@+id/theme_title_bar"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:center_text="@string/me_theme_settings_title"
-        app:right_type="text"
-        app:right_text="@string/common_string_save"/>
+        android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/theme_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-</LinearLayout>
+            <com.bcm.messenger.common.ui.CommonTitleBar2
+                android:id="@+id/theme_title_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:center_text="@string/me_theme_settings_title"
+                app:right_text="@string/common_string_save"
+                app:right_type="text" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="150dp">
+
+                <ImageView
+                    android:id="@+id/theme_light"
+                    android:layout_width="165dp"
+                    android:layout_height="95dp"
+                    android:src="@drawable/me_theme_settings_light_theme"
+                    app:layout_constraintBottom_toBottomOf="@id/theme_select_light"
+                    app:layout_constraintEnd_toEndOf="@id/theme_select_light"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="@id/theme_select_light"
+                    app:layout_constraintTop_toTopOf="@id/theme_select_light" />
+
+                <View
+                    android:id="@+id/theme_select_light"
+                    android:layout_width="175dp"
+                    android:layout_height="105dp"
+                    android:layout_marginTop="15dp"
+                    app:layout_constraintEnd_toStartOf="@id/theme_select_dark"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/theme_light_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/me_theme_settings_light"
+                    android:textColor="?attr/common_text_secondary_color"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="@id/theme_select_light"
+                    app:layout_constraintStart_toStartOf="@id/theme_select_light"
+                    app:layout_constraintTop_toBottomOf="@id/theme_select_light" />
+
+                <ImageView
+                    android:id="@+id/theme_dark"
+                    android:layout_width="165dp"
+                    android:layout_height="95dp"
+                    android:src="@drawable/me_theme_settings_dark_theme"
+                    app:layout_constraintBottom_toBottomOf="@id/theme_select_dark"
+                    app:layout_constraintEnd_toEndOf="@id/theme_select_dark"
+                    app:layout_constraintStart_toStartOf="@id/theme_select_dark"
+                    app:layout_constraintTop_toTopOf="@id/theme_select_dark" />
+
+                <View
+                    android:id="@+id/theme_select_dark"
+                    android:layout_width="175dp"
+                    android:layout_height="105dp"
+                    android:layout_marginTop="15dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toEndOf="@id/theme_select_light"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/theme_dark_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/me_theme_settings_dark"
+                    android:textColor="?attr/common_text_secondary_color"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="@id/theme_select_dark"
+                    app:layout_constraintStart_toStartOf="@id/theme_select_dark"
+                    app:layout_constraintTop_toBottomOf="@id/theme_select_dark" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.bcm.messenger.common.ui.CommonSettingItem
+                    android:id="@+id/theme_follow_system"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:setting_item_head="@string/me_theme_settings_auto_title"
+                    app:setting_item_line="true"
+                    app:setting_item_name="@string/me_theme_settings_system_default"
+                    app:setting_item_right="none"
+                    app:setting_item_switch="none" />
+
+                <com.bcm.messenger.common.ui.CommonSettingItem
+                    android:id="@+id/theme_schedule"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:setting_item_line="true"
+                    app:setting_item_name="@string/me_theme_settings_schedule"
+                    app:setting_item_right="none"
+                    app:setting_item_switch="none" />
+
+                <com.bcm.messenger.common.ui.CommonSettingItem
+                    android:id="@+id/theme_disabled"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:setting_item_line="true"
+                    app:setting_item_name="@string/me_theme_settings_disabled"
+                    app:setting_item_right="none"
+                    app:setting_item_switch="none" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/theme_schedule_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.bcm.messenger.common.ui.CommonSettingItem
+                    android:id="@+id/theme_schedule_light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:setting_item_head="@string/me_theme_settings_schedule_title"
+                    app:setting_item_line="true"
+                    app:setting_item_name="@string/me_theme_settings_schedule_light_theme"
+                    app:setting_item_right="none"
+                    app:setting_item_switch="none" />
+
+                <com.bcm.messenger.common.ui.CommonSettingItem
+                    android:id="@+id/theme_schedule_dark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:setting_item_line="false"
+                    app:setting_item_name="@string/me_theme_settings_schedule_dark_theme"
+                    app:setting_item_right="none"
+                    app:setting_item_switch="none" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

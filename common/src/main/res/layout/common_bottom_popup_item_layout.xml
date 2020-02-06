@@ -11,13 +11,13 @@
         android:layout_height="54dp"
         android:layout_alignParentStart="true"
         android:gravity="center"
-        android:textColor="#000000"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="17sp" />
     <View
         android:id="@+id/sub_choice_line"
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_line_height"
         android:layout_below="@+id/item_text"
-        android:background="@color/common_color_e8e8e8"/>
+        android:background="?attr/common_item_line_color"/>
 
 </com.bcm.messenger.common.ui.popup.bottompopup.BottomPopupCellView>

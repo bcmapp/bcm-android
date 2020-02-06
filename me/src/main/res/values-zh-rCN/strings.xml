@@ -350,6 +350,12 @@
     <string name="me_theme_settings_system_default">系统默认设置</string>
     <string name="me_theme_settings_light">浅色调</string>
     <string name="me_theme_settings_dark">深色调</string>
+    <string name="me_theme_settings_auto_title">自动黑夜主题</string>
+    <string name="me_theme_settings_schedule">自定义</string>
+    <string name="me_theme_settings_disabled">关闭</string>
+    <string name="me_theme_settings_schedule_title">设置自定义</string>
+    <string name="me_theme_settings_schedule_light_theme">浅色调主题</string>
+    <string name="me_theme_settings_schedule_dark_theme">深色调主题</string>
 
     <string name="me_pin_size_4">切换成4位数PIN码</string>
     <string name="me_pin_size_6">切换成6位数PIN码</string>

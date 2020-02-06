@@ -127,5 +127,7 @@
     <color name="common_default_background_color">#000000</color>
     <color name="common_default_background_grey_color">#202122</color>
     <color name="common_default_switcher_color">#379BFF</color>
-    <color name="common_default_ripple_color">#303030</color>
+    <color name="common_default_ripple_color">#505050</color>
+    <color name="common_default_ripple_background_color">#000000</color>
+    <color name="common_default_dark_grey_background_color">#202122</color>
 </resources>

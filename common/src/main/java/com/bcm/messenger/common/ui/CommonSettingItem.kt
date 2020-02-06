@@ -231,6 +231,10 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
+    fun getTip(): CharSequence {
+        return item_tip.text
+    }
+
 
     /**
      *

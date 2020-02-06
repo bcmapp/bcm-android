@@ -46,6 +46,6 @@
         android:text="@string/common_cancel"
         android:textColor="?attr/common_text_main_color"
         android:textSize="17sp"
-        android:background="@drawable/common_item_ripple_bg"/>
+        android:background="@drawable/common_item_ripple_dark_grey_bg"/>
 
 </RelativeLayout>

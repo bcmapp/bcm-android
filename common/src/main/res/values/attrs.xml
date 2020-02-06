@@ -271,10 +271,18 @@
     <attr name="common_title_bar_center_text_color" format="color" />
     <attr name="common_title_bar_background" format="color|reference" />
 
+    <!-- light: white, dark: black-->
     <attr name="common_activity_background" format="color|reference" />
+    <!-- light: grey, dark: grey-->
     <attr name="common_activity_background_grey" format="color|reference" />
+    <!-- light: white, dark: black-->
     <attr name="common_view_background" format="color|reference" />
+    <!-- light: grey, dark: grey-->
     <attr name="common_view_background_grey" format="color|reference" />
+    <!-- light: white, dark: black-->
+    <attr name="common_ripple_background" format="color" />
+    <!-- light: white, dark: grey-->
+    <attr name="common_background_dark_grey" format="color" />
 
     <attr name="common_setting_item_background" format="color|reference" />
     <attr name="common_setting_item_main_text_color" format="color" />

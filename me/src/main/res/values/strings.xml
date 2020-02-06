@@ -344,6 +344,12 @@
     <string name="me_theme_settings_system_default">System Default</string>
     <string name="me_theme_settings_light">Light</string>
     <string name="me_theme_settings_dark">Dark</string>
+    <string name="me_theme_settings_auto_title">AUTO DARK THEME</string>
+    <string name="me_theme_settings_schedule">Schedule</string>
+    <string name="me_theme_settings_disabled">Disabled</string>
+    <string name="me_theme_settings_schedule_title">SET UP SCHEDULE</string>
+    <string name="me_theme_settings_schedule_light_theme">Light Theme</string>
+    <string name="me_theme_settings_schedule_dark_theme">Dark Theme</string>
 
     <!--Pin Lock -->
     <string name="me_pin_size_4">Use 4-digit PIN</string>
