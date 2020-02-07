@@ -62,7 +62,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="@string/common_done"
-            android:textColor="@color/common_color_white"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="17sp"
             tools:text="Test"/>
 

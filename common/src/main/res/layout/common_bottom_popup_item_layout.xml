@@ -17,7 +17,7 @@
         android:id="@+id/sub_choice_line"
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_line_height"
-        android:layout_below="@+id/item_text"
+        android:layout_below="@id/item_text"
         android:background="?attr/common_item_line_color"/>
 
 </com.bcm.messenger.common.ui.popup.bottompopup.BottomPopupCellView>

@@ -10,6 +10,8 @@ import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.common.R
+import com.bcm.messenger.common.utils.getAttrColor
+import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.common_loading_view.view.*
 
@@ -41,31 +43,26 @@ class CommonLoadingView @JvmOverloads constructor(context: Context, attrs: Attri
 
         when (size) {
             SIZE_SMALL -> {
-                loading_inner.setImageResource(R.drawable.common_loading_inner_black_small)
-                loading_outer.setImageResource(R.drawable.common_loading_outer_black_small)
+                loading_inner.setImageResource(R.drawable.common_loading_inner_small_icon)
+                loading_outer.setImageResource(R.drawable.common_loading_outer_small_icon)
             }
             SIZE_MIDDLE -> {
-                if (color == COLOR_BLACK) {
-                    loading_inner.setImageResource(R.drawable.common_loading_inner_black_middle)
-                    loading_outer.setImageResource(R.drawable.common_loading_outer_black_middle)
-                } else {
-                    loading_inner.setImageResource(R.drawable.common_loading_inner_white_middle)
-                    loading_outer.setImageResource(R.drawable.common_loading_outer_white_middle)
-                }
+                loading_inner.setImageResource(R.drawable.common_loading_inner_middle_icon)
+                loading_outer.setImageResource(R.drawable.common_loading_outer_middle_icon)
             }
             SIZE_LARGE -> {
-                if (color == COLOR_BLACK) {
-                    loading_inner.setImageResource(R.drawable.common_loading_inner_black_large)
-                    loading_outer.setImageResource(R.drawable.common_loading_outer_black_large)
-                } else {
-                    loading_inner.setImageResource(R.drawable.common_loading_inner_white_large)
-                    loading_outer.setImageResource(R.drawable.common_loading_outer_white_large)
-                }
+                loading_inner.setImageResource(R.drawable.common_loading_inner_large_icon)
+                loading_outer.setImageResource(R.drawable.common_loading_outer_large_icon)
             }
         }
 
+        if (color != COLOR_BLACK) {
+            loading_inner.setColorFilter(context.getAttrColor(R.attr.common_background_color))
+            loading_outer.setColorFilter(context.getAttrColor(R.attr.common_background_color))
+        }
+
         anim = AnimatorSet().apply {
-           
+
             playTogether(ObjectAnimator.ofFloat(loading_inner, "rotation", 360f, 0f).apply {
                 duration = 3000
                 repeatCount = Animation.INFINITE

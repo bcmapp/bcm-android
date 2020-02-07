@@ -115,10 +115,6 @@ object SwitchAccount {
 
         var option = activity.getString(R.string.me_logout_tip_out)
         var color = AmeBottomPopup.PopupItem.CLR_RED
-        if (!switchForLogOut) {
-            option = context.getString(R.string.me_switch_action_text)
-            color = AmeBottomPopup.PopupItem.CLR_BLACK
-        }
 
         AmePopup.bottom.newBuilder()
                 .withCustomView(viewCreator)

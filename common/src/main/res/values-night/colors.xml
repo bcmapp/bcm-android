@@ -126,6 +126,7 @@
     <color name="common_default_icon_color">#FFFFFF</color>
     <color name="common_default_icon_grey_color">#80FFFFFF</color>
     <color name="common_default_background_color">#000000</color>
+    <color name="common_progress_tint_color">#80000000</color>
     <color name="common_default_background_grey_color">#202122</color>
     <color name="common_default_switcher_color">#379BFF</color>
     <color name="common_default_ripple_color">#505050</color>

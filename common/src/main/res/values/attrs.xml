@@ -281,6 +281,7 @@
     <attr name="common_view_background" format="color|reference" />
     <!-- light: grey, dark: grey-->
     <attr name="common_view_background_grey" format="color|reference" />
+
     <!-- light: white, dark: black-->
     <attr name="common_ripple_background" format="color" />
     <!-- light: white, dark: grey-->
@@ -301,6 +302,8 @@
     <attr name="common_text_third_color" format="color" />
     <attr name="common_text_warn_color" format="color" />
     <attr name="common_text_blue_color" format="color" />
+    <attr name="common_background_color" format="color" />
+    <attr name="common_progress_tint_color" format="color"/>
 
     <attr name="common_ripple_color" format="color" />
 

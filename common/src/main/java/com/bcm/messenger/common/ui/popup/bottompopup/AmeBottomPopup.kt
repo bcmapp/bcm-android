@@ -11,9 +11,11 @@ import androidx.annotation.ColorInt
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.R
+import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.hideKeyboard
+import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.common_bottom_popup_base_layout.*
@@ -36,8 +38,8 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
             val SEP = PopupItem("", 0) {}
             val CLR_BLUE = Color.parseColor("#379BFF")
             val CLR_RED = Color.parseColor("#FF3737")
-            val CLR_BLACK = Color.parseColor("#000000")
-            val CLR_GRAY = Color.parseColor("#E8E8E8")
+            val CLR_BLACK get() = AppUtil.getColor(AppContextHolder.APP_CONTEXT, R.attr.common_text_main_color)
+            val CLR_GRAY get() = AppUtil.getColor(AppContextHolder.APP_CONTEXT, R.attr.common_view_background_grey)
         }
 
         val text: String

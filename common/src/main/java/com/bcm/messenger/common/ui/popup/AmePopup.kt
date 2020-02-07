@@ -18,9 +18,5 @@ object AmePopup {
     //
     val result: AmeResultPopup = AmeResultPopup()
     //
-    val download: AmeDownloadPopup = AmeDownloadPopup()
-    //
     val progress: AmeProgressPopup = AmeProgressPopup()
-    //
-    val anim: AmeAnimPopup = AmeAnimPopup.instance()
 }
