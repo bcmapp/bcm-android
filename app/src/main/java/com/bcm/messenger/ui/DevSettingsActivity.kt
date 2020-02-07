@@ -7,10 +7,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.CompoundButton
-import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ARouterConstants.Activity.APP_DEV_SETTING
+import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.bcmhttp.conncheck.IMServerConnectionChecker
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -42,7 +42,7 @@ import java.util.regex.Pattern
 
 
 @Route(routePath = APP_DEV_SETTING)
-class DevSettingsActivity : AppCompatActivity() {
+class DevSettingsActivity : ThemeBaseActivity() {
     private val TAG = "DevSettingsActivity"
 
     private val curEnv = EnvSettingLogic.getEnvSetting().copy()

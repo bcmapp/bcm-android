@@ -6,8 +6,8 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.deprecated.DatabaseFactory
 import com.bcm.messenger.common.preferences.TextSecurePreferences
@@ -30,7 +30,7 @@ import com.bcm.route.api.BcmRouter
  */
 
 @Route(routePath = ARouterConstants.Activity.APP_LAUNCH_PATH)
-class LaunchActivity : AppCompatActivity() {
+class LaunchActivity : ThemeBaseActivity() {
     private val TAG = "LaunchActivity"
 
     companion object {

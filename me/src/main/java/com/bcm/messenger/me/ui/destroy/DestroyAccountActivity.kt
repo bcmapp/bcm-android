@@ -3,8 +3,8 @@ package com.bcm.messenger.me.ui.destroy
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.me.R
 import com.bcm.route.annotation.Route
@@ -13,7 +13,7 @@ import com.bcm.route.annotation.Route
  * Created by Kin on 2018/9/19
  */
 @Route(routePath = ARouterConstants.Activity.ACCOUNT_DESTROY)
-class DestroyAccountActivity : AppCompatActivity() {
+class DestroyAccountActivity : ThemeBaseActivity() {
     private val TAG = "DestroyAccountActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {

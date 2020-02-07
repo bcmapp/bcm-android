@@ -6,8 +6,8 @@ import android.os.Build
 import android.os.Bundle
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
+import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.utility.foreground.AppForeground
 import java.lang.ref.WeakReference
 import java.security.KeyStore
@@ -22,7 +22,7 @@ import javax.crypto.KeyGenerator
  *
  * Created by Kin on 2019/8/1
  */
-class BiometricVerifyActivity : AppCompatActivity(), AppForeground.IForegroundEvent {
+class BiometricVerifyActivity : ThemeBaseActivity(), AppForeground.IForegroundEvent {
     private val KEY_STORE_PROVIDER = "AndroidKeyStore"
     private val KEY_STORE_ALIAS = "com.bcm.messenger.fingerprint"
 

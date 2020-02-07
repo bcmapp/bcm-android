@@ -4,9 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.R
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.setStatusBarLightMode
@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.activity_account_switcher.*
  * Created by Kin on 2020/1/9
  */
 @Route(routePath = ARouterConstants.Activity.ACCOUNT_SWITCHER)
-class AccountSwitcherActivity : AppCompatActivity() {
+class AccountSwitcherActivity : ThemeBaseActivity() {
     private val REQ_SCAN_ACCOUNT = 1001
     private val REQ_SCAN_LOGIN = 1002
 

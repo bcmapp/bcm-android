@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.R
+import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.imagepicker.*
 import com.bcm.messenger.common.imagepicker.bean.SelectedModel
 import com.bcm.messenger.common.provider.AMELogin
@@ -16,7 +16,7 @@ import com.bcm.messenger.utility.permission.PermissionUtil
 /**
  * Created by Kin on 2019/4/18
  */
-class PickPhotoDelegateActivity : AppCompatActivity(), BcmPickPhotoCropHelper.OnImageCropCompleteListener {
+class PickPhotoDelegateActivity : ThemeBaseActivity(), BcmPickPhotoCropHelper.OnImageCropCompleteListener {
     private val TAG = "PickPhotoDelegateActivity"
 
     private val config = BcmPickHelper.currentPickConfig

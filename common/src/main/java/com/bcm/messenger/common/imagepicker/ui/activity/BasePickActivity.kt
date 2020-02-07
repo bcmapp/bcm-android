@@ -5,7 +5,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Looper
 import android.os.MessageQueue
-import androidx.appcompat.app.AppCompatActivity
+import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bumptech.glide.Glide
@@ -15,7 +15,7 @@ import com.bumptech.glide.util.Util
  * Created by Kin on 2019/4/17
  */
 
-open class BasePickActivity : AppCompatActivity() {
+open class BasePickActivity : ThemeBaseActivity() {
     private val idleHandler = MessageQueue.IdleHandler {
         window?.setStatusBarLightMode()
         return@IdleHandler false

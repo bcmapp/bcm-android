@@ -3,8 +3,8 @@ package com.bcm.messenger.ui
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.R
+import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.preferences.SuperPreferences
@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_tabless_intro.*
 /**
  * Created by Kin on 2019/12/12
  */
-class TablessIntroActivity : AppCompatActivity() {
+class TablessIntroActivity : ThemeBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

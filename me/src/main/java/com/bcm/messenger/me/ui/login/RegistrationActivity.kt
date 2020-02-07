@@ -4,11 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
-import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
-import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
@@ -19,7 +18,7 @@ import com.bcm.route.api.BcmRouter
  * Created by ling
  */
 @Route(routePath = ARouterConstants.Activity.USER_REGISTER_PATH)
-class RegistrationActivity : AppCompatActivity() {
+class RegistrationActivity : ThemeBaseActivity() {
     companion object {
         private const val TAG = "RegistrationActivity"
         const val RE_LOGIN_ID = "RE_LOGIN_ID"

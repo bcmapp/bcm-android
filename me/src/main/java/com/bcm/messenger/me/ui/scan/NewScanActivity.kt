@@ -6,8 +6,8 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.KeyEvent
-import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -22,7 +22,7 @@ import com.google.zxing.Result
  * Created by wjh on 2019/7/2
  */
 @Route(routePath = ARouterConstants.Activity.SCAN_NEW)
-class NewScanActivity : AppCompatActivity() {
+class NewScanActivity : ThemeBaseActivity() {
 
     class ScanResultEvent(val result: Result)
     class ScanResumeEvent
