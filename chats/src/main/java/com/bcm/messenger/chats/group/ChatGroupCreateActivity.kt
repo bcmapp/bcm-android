@@ -21,8 +21,7 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.getColorCompat
-import com.bcm.messenger.common.utils.setStatusBarLightMode
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.netswitchy.configure.AmeConfigure
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
@@ -58,7 +57,6 @@ class ChatGroupCreateActivity : AccountSwipeBaseActivity(), IContactsCallback {
         initializeResources()
 
         setSwipeBackEnable(false)
-        window?.setStatusBarLightMode()
     }
 
     override fun onSelect(recipient: Recipient) {
@@ -66,11 +64,11 @@ class ChatGroupCreateActivity : AccountSwipeBaseActivity(), IContactsCallback {
 
         if (selectRecipients.isNotEmpty()) {
             title_bar?.setRightText(getString(R.string.chats_select_contact_done) + "(" + selectRecipients.size + ")")
-            title_bar?.setRightTextColor(getColorCompat(R.color.common_app_primary_color))
+            title_bar?.setRightTextColor(getAttrColor(R.attr.common_text_blue_color))
             title_bar?.setRightClickable(true)
         } else {
             title_bar?.setRightText(getString(R.string.chats_select_contact_done))
-            title_bar?.setRightTextColor(getColorCompat(R.color.common_content_second_color))
+            title_bar?.setRightTextColor(getAttrColor(R.attr.common_text_secondary_color))
             title_bar?.setRightClickable(false)
         }
     }
@@ -79,12 +77,12 @@ class ChatGroupCreateActivity : AccountSwipeBaseActivity(), IContactsCallback {
         selectRecipients.remove(recipient)
         if (selectRecipients.isEmpty()) {
             title_bar?.setRightText(getString(R.string.chats_select_contact_done))
-            title_bar?.setRightTextColor(getColorCompat(R.color.common_content_second_color))
+            title_bar?.setRightTextColor(getAttrColor(R.attr.common_text_secondary_color))
             title_bar?.setRightClickable(false)
 
         } else {
             title_bar?.setRightText(getString(R.string.chats_select_contact_done) + "(" + selectRecipients.size + ")")
-            title_bar?.setRightTextColor(getColorCompat(R.color.common_app_primary_color))
+            title_bar?.setRightTextColor(getAttrColor(R.attr.common_text_blue_color))
             title_bar?.setRightClickable(true)
         }
     }

@@ -39,6 +39,8 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     private var mSubNameColor: Int = 0
     private var mTipColor: Int = 0
     private var mTipIcon: Int = 0
+    private var mIconColor = 0
+    private var mTipIconColor = 0
 
     init {
         LayoutInflater.from(context).inflate(R.layout.common_setting_item, this)
@@ -51,6 +53,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
     private fun initView(typeArray: TypedArray) {
         val logoRes = typeArray.getResourceId(R.styleable.CommonSettingItemStyle_setting_item_logo, 0)
         val logoSize = typeArray.getDimensionPixelSize(R.styleable.CommonSettingItemStyle_setting_item_logo_size, 0)
+        mIconColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_logo_color, context.getAttrColor(R.attr.common_icon_color))
         val head = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_head) ?: ""
         mHeadColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_head_color, context.getAttrColor(R.attr.common_setting_item_background))
         val name = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_name) ?: ""
@@ -61,6 +64,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         val tipText = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_tip_text) ?: ""
         mTipColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_tip_color, context.getAttrColor(R.attr.common_setting_item_warn_color))
         mTipIcon = typeArray.getResourceId(R.styleable.CommonSettingItemStyle_setting_item_tip_icon, 0)
+        mTipIconColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_tip_icon_color, context.getAttrColor(R.attr.common_icon_color))
         val switchStatus = typeArray.getInt(R.styleable.CommonSettingItemStyle_setting_item_switch, 0)
         val rightStatus = typeArray.getInt(R.styleable.CommonSettingItemStyle_setting_item_right, RIGHT_ARROW)
         val customRightDrawable = typeArray.getResourceId(R.styleable.CommonSettingItemStyle_setting_item_right_custom, 0)
@@ -153,6 +157,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         } else {
             item_left.visibility = View.VISIBLE
             item_left_body.setImageResource(logoRes)
+            item_left_body.drawable.setTint(mIconColor)
             if (size != null && size > 0) {
                 item_left_body.layoutParams = item_left_body.layoutParams.apply {
                     height = size
@@ -224,7 +229,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
      */
     fun setTip(content: CharSequence, iconRes: Int = mTipIcon, contentColor: Int? = null) {
         item_tip.visibility = View.VISIBLE
-        item_tip.setDrawableLeft(iconRes, 10.dp2Px())
+        item_tip.setDrawableLeft(iconRes, 10.dp2Px(), mTipIconColor)
         item_tip.text = content
         if (contentColor == null) {
             item_tip.setTextColor(mTipColor)

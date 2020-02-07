@@ -9,14 +9,13 @@ import com.bcm.messenger.utility.logger.ALog
 
 
 /**
- * 
+ *
  * Created by wjh on 2019/7/4
  */
-class StickyLinearDecoration(val mCallback: StickyHeaderCallback) : RecyclerView.ItemDecoration() {
+class StickyLinearDecoration(private val mCallback: StickyHeaderCallback) : RecyclerView.ItemDecoration() {
 
     class StickyHeaderData(val isFirstView: Boolean, val isLastView: Boolean,
-                           val header: View, val height: Int, val dividerHeight: Int) {
-    }
+                           val header: View, val height: Int, val dividerHeight: Int)
 
     interface StickyHeaderCallback {
         fun getHeaderData(pos: Int): StickyHeaderData?
@@ -27,7 +26,7 @@ class StickyLinearDecoration(val mCallback: StickyHeaderCallback) : RecyclerView
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
-        val childCount = parent.childCount ?: 0
+        val childCount = parent.childCount
         //ALog.d(TAG, "childCount: $childCount")
         for (i in 0 until childCount) {
             val itemView = parent.getChildAt(i)
@@ -66,9 +65,7 @@ class StickyLinearDecoration(val mCallback: StickyHeaderCallback) : RecyclerView
                 }
                 val bottom = top + headerData.height
                 drawHeader(c, headerData, left, top, right, bottom)
-
             } else {
-
                 //ItemView
                 if (headerData.isFirstView) {
                     val top = itemView.top - headerData.height
@@ -91,7 +88,7 @@ class StickyLinearDecoration(val mCallback: StickyHeaderCallback) : RecyclerView
             } else {
                 outRect.top = headerData.dividerHeight
             }
-        }else {
+        } else {
             outRect.top = 0
         }
     }
@@ -113,6 +110,4 @@ class StickyLinearDecoration(val mCallback: StickyHeaderCallback) : RecyclerView
             drawBitmap(bitmap, left.toFloat(), top.toFloat(), mPaint)
         }
     }
-
-
 }

@@ -8,10 +8,12 @@
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/proxy_title_bar"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:center_text="@string/me_setting_proxy_title"
         app:right_type="image"
-        app:right_image="@drawable/common_titlebar_plus_icon"/>
+        app:right_image="@drawable/common_add_icon"
+        app:right_image_color="?attr/common_icon_color"/>
 
     <TextView
         android:id="@+id/proxy_running_state"
@@ -25,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="44dp"
         app:setting_item_name="run proxy"
-        app:setting_item_name_color="#379BFF"
+        app:setting_item_name_color="?attr/common_text_blue_color"
         app:setting_item_right="none"
         app:setting_item_switch="off"
         app:setting_item_line="false"
@@ -38,7 +40,7 @@
         android:layout_height="wrap_content"
         app:setting_item_line="false"
         app:setting_item_name="@string/me_test_proxy_usability"
-        app:setting_item_name_color="@color/common_color_379BFF"
+        app:setting_item_name_color="?attr/common_text_blue_color"
         app:setting_item_sub_name="@string/me_test_proxy_usability_describe"
         app:setting_item_right="none"
         app:setting_item_switch="none" />

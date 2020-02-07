@@ -26,6 +26,7 @@
         <item name="common_view_background_grey">@color/common_default_background_grey_color</item>
         <item name="common_ripple_background">@color/common_default_ripple_background_color</item>
         <item name="common_view_background_dark_grey">@color/common_default_dark_grey_background_color</item>
+        <item name="common_30_transparent">@color/common_default_30_transparent</item>
 
         <item name="common_setting_item_background">@color/common_default_background_color</item>
         <item name="common_setting_item_main_text_color">@color/common_text_main_color</item>
@@ -42,6 +43,9 @@
         <item name="common_text_third_color">@color/common_text_third_color</item>
         <item name="common_text_warn_color">@color/common_text_warning_color</item>
         <item name="common_text_blue_color">@color/common_text_blue_color</item>
+        <item name="common_text_green_color">@color/common_text_green_color</item>
+        <item name="common_text_white_color">@color/common_color_white</item>
+        <item name="common_text_black_color">@color/common_color_black</item>
         <item name="common_background_color">@color/common_background_color</item>
         <item name="common_progress_tint_color">@color/common_progress_tint_color</item>
 
@@ -49,6 +53,13 @@
 
         <item name="common_icon_color">@color/common_default_icon_color</item>
         <item name="common_icon_color_grey">@color/common_default_icon_grey_color</item>
+        <item name="common_selected_color">@color/common_default_selected_color</item>
+
+        <item name="common_button_blue_color">@color/common_blue_button_color</item>
+        <item name="common_button_blue_sub_color">@color/common_blue_sub_button_color</item>
+        <item name="common_button_red_color">@color/common_red_button_color</item>
+        <item name="common_button_red_sub_color">@color/common_red_sub_button_color</item>
+        <item name="common_button_disabled_color">@color/common_disabled_button_color</item>
 
         <item name="fill_status_bar">true</item>
         <item name="show_bottom_line">false</item>

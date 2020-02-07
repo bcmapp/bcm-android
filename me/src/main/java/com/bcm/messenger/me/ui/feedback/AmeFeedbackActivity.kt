@@ -14,7 +14,7 @@ import com.bcm.messenger.common.imagepicker.bean.SelectedModel
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.permission.PermissionUtil
@@ -48,10 +48,10 @@ class AmeFeedbackActivity : AccountSwipeBaseActivity() {
         feedback_description.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s?.isNotBlank() == true) {
-                    help_title_bar.setRightTextColor(getColorCompat(R.color.common_color_379BFF))
+                    help_title_bar.setRightTextColor(getAttrColor(R.attr.common_text_blue_color))
                     help_title_bar.setRightClickable(true)
                 } else {
-                    help_title_bar.setRightTextColor(getColorCompat(R.color.common_color_c0c0c0))
+                    help_title_bar.setRightTextColor(getAttrColor(R.attr.common_text_third_color))
                     help_title_bar.setRightClickable(false)
                 }
             }

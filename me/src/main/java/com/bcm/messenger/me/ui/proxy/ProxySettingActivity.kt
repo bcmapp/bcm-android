@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
@@ -19,7 +18,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.BcmPopupMenu
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.getColor
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.QuickOpCheck
@@ -192,7 +191,7 @@ class ProxySettingActivity : SwipeBaseActivity()
         return true
     }
 
-    private class ViewHolder(view: View) : AmeRecycleViewAdapter.ViewHolder<ProxyItem>(view) {
+    private inner class ViewHolder(view: View) : AmeRecycleViewAdapter.ViewHolder<ProxyItem>(view) {
         private val name = view.findViewById<TextView>(R.id.proxy_name)
         private val status = view.findViewById<TextView>(R.id.proxy_status)
         private val content = view.findViewById<TextView>(R.id.proxy_content)
@@ -220,17 +219,17 @@ class ProxySettingActivity : SwipeBaseActivity()
             when (data.status) {
                 ProxyItem.Status.USABLE -> {
                     status.text = name.context.getString(R.string.me_setting_proxy_item_usable)
-                    status.setTextColor(getColor(R.color.common_3ED645))
+                    status.setTextColor(this@ProxySettingActivity.getAttrColor(R.attr.common_text_green_color))
                     status.visibility = View.VISIBLE
                 }
                 ProxyItem.Status.UNUSABLE -> {
                     status.text = name.context.getString(R.string.me_setting_proxy_item_unusable)
-                    status.setTextColor(getColor(R.color.common_red))
+                    status.setTextColor(this@ProxySettingActivity.getAttrColor(R.attr.common_text_warn_color))
                     status.visibility = View.VISIBLE
                 }
                 ProxyItem.Status.TESTING -> {
                     status.text = name.context.getString(R.string.me_setting_proxy_item_testing)
-                    status.setTextColor(getColor(R.color.common_red))
+                    status.setTextColor(this@ProxySettingActivity.getAttrColor(R.attr.common_text_warn_color))
                     status.visibility = View.VISIBLE
                 }
                 else -> {

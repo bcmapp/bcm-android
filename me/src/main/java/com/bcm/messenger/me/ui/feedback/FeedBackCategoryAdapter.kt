@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.me.R
 
@@ -45,11 +46,11 @@ class FeedBackCategoryAdapter(activity: AppCompatActivity, list: MutableList<Str
         fun bindData(text: String, selectItem: String?) {
             item.text = text
             if (selectItem != null && text == selectItem) {
-                item.setBackgroundResource(R.drawable.common_blue_bg)
+                item.setBackgroundResource(R.drawable.common_rectangle_8_selected_bg)
                 item.setTextColor(getColor(R.color.common_color_white))
             } else {
-                item.setBackgroundResource(R.drawable.common_grey_bg)
-                item.setTextColor(getColor(R.color.common_color_black))
+                item.setBackgroundResource(R.drawable.common_rectangle_8_grey_bg)
+                item.setTextColor(itemView.context.getAttrColor(R.attr.common_text_main_color))
             }
         }
     }

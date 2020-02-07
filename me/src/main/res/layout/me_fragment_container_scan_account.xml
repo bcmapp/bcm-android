@@ -13,7 +13,7 @@
         app:center_text_size="17sp"
         app:center_text="@string/me_str_scan_account_key"
         app:left_type="image"
-        app:left_image="@drawable/common_close_black_m_icon"
+        app:left_image="@drawable/common_close_icon"
         app:right_type="image"
         app:right_image="@drawable/common_info_black_icon"
         app:layout_constraintTop_toTopOf="parent"

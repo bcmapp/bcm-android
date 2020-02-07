@@ -160,7 +160,7 @@
         <View
             android:id="@+id/item_line"
             android:layout_width="0dp"
-            android:layout_height="1dp"
+            android:layout_height="0.5dp"
             android:background="?attr/common_item_line_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/item_center"

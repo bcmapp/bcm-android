@@ -199,6 +199,7 @@
     <declare-styleable name="CommonSettingItemStyle">
         <attr name="setting_item_logo" format="reference"/>
         <attr name="setting_item_logo_size" format="dimension"/>
+        <attr name="setting_item_logo_color" format="color" />
         <attr name="setting_item_logo_margin" format="dimension"/>
         <attr name="setting_item_head_background" format="reference|color"/>
         <attr name="setting_item_head_padding_top" format="dimension"/>
@@ -213,6 +214,7 @@
         <attr name="setting_item_tip_text" format="string"/>
         <attr name="setting_item_tip_color" format="color"/>
         <attr name="setting_item_tip_icon" format="reference"/>
+        <attr name="setting_item_tip_icon_color" format="color" />
         <attr name="setting_item_line" format="boolean"/>
         <attr name="setting_item_padding_top" format="dimension"/>
         <attr name="setting_item_padding_bottom" format="dimension"/>
@@ -286,6 +288,7 @@
     <attr name="common_ripple_background" format="color" />
     <!-- light: white, dark: grey-->
     <attr name="common_view_background_dark_grey" format="color" />
+    <attr name="common_30_transparent" format="color" />
 
     <attr name="common_setting_item_background" format="color|reference" />
     <attr name="common_setting_item_main_text_color" format="color" />
@@ -302,6 +305,9 @@
     <attr name="common_text_third_color" format="color" />
     <attr name="common_text_warn_color" format="color" />
     <attr name="common_text_blue_color" format="color" />
+    <attr name="common_text_green_color" format="color" />
+    <attr name="common_text_white_color" format="color" />
+    <attr name="common_text_black_color" format="color" />
     <attr name="common_background_color" format="color" />
     <attr name="common_progress_tint_color" format="color"/>
 
@@ -309,4 +315,11 @@
 
     <attr name="common_icon_color" format="color" />
     <attr name="common_icon_color_grey" format="color" />
+    <attr name="common_selected_color" format="color" />
+
+    <attr name="common_button_blue_color" format="color" />
+    <attr name="common_button_blue_sub_color" format="color" />
+    <attr name="common_button_red_color" format="color" />
+    <attr name="common_button_red_sub_color" format="color" />
+    <attr name="common_button_disabled_color" format="color" />
 </resources>

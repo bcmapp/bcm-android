@@ -26,7 +26,7 @@
         android:layout_marginStart="@dimen/contacts_item_horizontal_gap"
         android:layout_toEndOf="@+id/group_logo_iv"
         android:ellipsize="end"
-        android:textColor="@color/common_color_black"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="17sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

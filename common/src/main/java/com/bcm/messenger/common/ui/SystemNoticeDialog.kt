@@ -26,7 +26,6 @@ object SystemNoticeDialog {
 
     private val TAG = SystemNoticeDialog::class.java.simpleName
 
-    //dialog，，，，
     private var sLastDialogRef: WeakReference<Dialog>? = null
 
     internal class SystemNoticeDialog(context: Context, theme: Int = R.style.CommonLoadingStyle) : Dialog(context, theme) {
@@ -45,14 +44,14 @@ object SystemNoticeDialog {
 
             webView = findViewById(R.id.dialog_content_wv)
             webView.addJavascriptInterface(BcmJSInterface().apply {
-                setListener(object : BcmJSInterface.JSActionListener{
+                setListener(object : BcmJSInterface.JSActionListener {
                     override fun onRoute(api: String, json: String): Boolean {
-                        when(api) {
+                        when (api) {
                             "browse" -> {
                                 val p = BcmRouter.getInstance().get(ARouterConstants.Activity.WEB).putString(ARouterConstants.PARAM.WEB_URL, json)
-                                if(context is Activity) {
+                                if (context is Activity) {
                                     p.navigation(context)
-                                }else {
+                                } else {
                                     p.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                     p.navigation(context)
                                 }
@@ -63,22 +62,16 @@ object SystemNoticeDialog {
                         }
                         return true
                     }
-
                 })
             }, "bcm")
-
         }
 
         fun show(url: String) {
             this.webView.loadUrl(url)
             show()
         }
-
     }
 
-    /**
-     * 
-     */
     fun show(context: Context, alert: AmePushProcess.SystemNotifyData.WebAlertData) {
 
         try {
@@ -93,12 +86,8 @@ object SystemNoticeDialog {
         } catch (ex: Exception) {
             ALog.e("SystemNoticeDialog", "show error", ex)
         }
-
     }
 
-    /**
-     * 
-     */
     fun show(context: Context, alert: AmePushProcess.SystemNotifyData.TextAlertData) {
         try {
             val config = AmeCenterPopup.PopConfig()
@@ -128,10 +117,8 @@ object SystemNoticeDialog {
             if (context is AppCompatActivity) {
                 AmePopup.center.show(context, config)
             }
-
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e("SystemNoticeDialog", "show error", ex)
         }
     }
-
 }

@@ -44,14 +44,12 @@ class NewChatActivity : AccountSwipeBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chats_activity_new_chat)
         initView()
-
-        window?.setStatusBarLightMode()
     }
 
     override fun onBackPressed() {
         if (mCreateGroupMode) {
             mContactSelection.setMultiMode(false)
-        }else {
+        } else {
             super.onBackPressed()
         }
     }
@@ -62,7 +60,7 @@ class NewChatActivity : AccountSwipeBaseActivity() {
             override fun onClickLeft() {
                 if (mCreateGroupMode) {
                     mContactSelection.setMultiMode(false)
-                }else {
+                } else {
                     finish()
                 }
             }
@@ -89,11 +87,11 @@ class NewChatActivity : AccountSwipeBaseActivity() {
                                         HomeTopEvent.ConversationEvent.fromGroupConversation(groupInfo.gid)))
                             }
                         } else {
-                            AmePopup.result.failure(this@NewChatActivity,error ?: resources.getString(R.string.chats_unknown), true)
+                            AmePopup.result.failure(this@NewChatActivity, error
+                                    ?: resources.getString(R.string.chats_unknown), true)
                         }
                     }
-
-                }else {
+                } else {
                     mContactSelection.setMultiMode(true)
                 }
             }
@@ -135,7 +133,6 @@ class NewChatActivity : AccountSwipeBaseActivity() {
                         weakSelf.get()?.initFragment(R.id.new_chat_container, f, args)
                     }
                 }
-
     }
 
     private val selectCallback = object : IContactsCallback {
@@ -144,8 +141,7 @@ class NewChatActivity : AccountSwipeBaseActivity() {
             if (mCreateGroupMode) {
                 mSelectSet.add(recipient)
                 new_chat_title_bar.setRightText(getString(R.string.chats_select_contact_done) + "(" + mSelectSet.size + ")")
-
-            }else {
+            } else {
                 AmePopup.loading.show(this@NewChatActivity)
                 ThreadListViewModel.getExistThreadId(accountContext, recipient) {
                     AmePopup.loading.dismiss()
@@ -156,7 +152,6 @@ class NewChatActivity : AccountSwipeBaseActivity() {
                             .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, recipient.address)
                             .putLong(ARouterConstants.PARAM.PARAM_THREAD, it)
                             .startBcmActivity(accountContext)
-
                 }
             }
         }
@@ -173,23 +168,21 @@ class NewChatActivity : AccountSwipeBaseActivity() {
             mSelectSet.clear()
             if (multiSelect) { //多选表示进入创建群模式
                 new_chat_title_bar.setRightText(getString(R.string.chats_select_contact_done) + "(" + mSelectSet.size + ")")
-                new_chat_title_bar.setRightTextColor(getColorCompat(R.color.common_app_primary_color))
+                new_chat_title_bar.setRightTextColor(getAttrColor(R.attr.common_text_blue_color))
                 new_chat_title_bar.setLeftText(getString(R.string.chats_cancel))
-                new_chat_title_bar.setLeftTextColor(getColorCompat(R.color.common_color_black))
+                new_chat_title_bar.setLeftTextColor(getAttrColor(R.attr.common_text_main_color))
                 new_chat_title_bar.setLeftTextSize(15.0f)
 
                 try {
                     //自己是不需要再选的
                     mContactSelection.setFixedSelected(listOf(Recipient.major()))
-                }catch (ex: Exception) {
+                } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
-
-            }else {
+            } else {
                 new_chat_title_bar.setRightText(getString(R.string.chats_new_group_chat))
-                new_chat_title_bar.setRightTextColor(getColorCompat(R.color.common_color_black))
-                new_chat_title_bar.setLeftIcon(R.drawable.common_close_black_m_icon)
-
+                new_chat_title_bar.setRightTextColor(getAttrColor(R.attr.common_text_main_color))
+                new_chat_title_bar.setLeftIcon(R.drawable.common_close_icon)
             }
 
             mGroupsView?.let {

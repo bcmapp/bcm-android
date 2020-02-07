@@ -3,34 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/common_color_white">
+    android:orientation="vertical">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/language_title"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:center_text="@string/me_setting_language_title"
-        app:left_type="text"
-        app:left_text="@string/common_cancel"
-        app:right_type="text"
-        app:right_text="@string/common_done"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:left_text="@string/common_cancel"
+        app:left_type="text"
+        app:right_text="@string/common_done"
+        app:right_type="text" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/language_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical" />
-
-    <!--<com.bcm.messenger.common.ui.LanguageSelectItem-->
-    <!--android:id="@+id/me_item_language_select"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="44dp"-->
-    <!--android:layout_marginTop="15dp"-->
-    <!--android:background="@color/common_color_white"-->
-    <!--app:common_item_name="Language"-->
-    <!--app:common_item_line="true"/>-->
 </LinearLayout>
 

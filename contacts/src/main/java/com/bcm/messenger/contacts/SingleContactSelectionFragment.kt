@@ -1,7 +1,6 @@
 package com.bcm.messenger.contacts
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +17,7 @@ import com.bcm.messenger.common.ui.ContentShadeView
 import com.bcm.messenger.common.ui.CustomDataSearcher
 import com.bcm.messenger.common.ui.Sidebar
 import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.contacts.adapter.ContactsListLoader
 import com.bcm.messenger.contacts.components.RecipientRecyclerView
 import com.bcm.messenger.contacts.components.RecipientSelectionView
@@ -38,7 +37,7 @@ import io.reactivex.schedulers.Schedulers
 class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
 
     companion object {
-        private val TAG = "SingleContactSelection"
+        private const val TAG = "SingleContactSelection"
         const val LOADER_CONTACTS = 1
     }
 
@@ -74,7 +73,7 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
 
         override fun onLoadFinished(loader: Loader<List<Recipient>>, data: List<Recipient>) {
             mCustomDataSearcher?.setSourceList(data)
-            updateContactsListView(data, "",  !data.isEmpty(), true)
+            updateContactsListView(data, "", data.isNotEmpty(), true)
         }
 
         override fun onLoaderReset(loader: Loader<List<Recipient>>) {
@@ -136,8 +135,7 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
 
         mRecyclerView = convertView.findViewById(R.id.contacts_select_list)
 
-        val checker = arguments?.getString(ARouterConstants.PARAM.CONTACTS_SELECT.PARAM_ENABLE_CHECKER)
-                ?:ARouterConstants.PARAM.CONTACTS_SELECT.ENABLE_CHECKER.CHECKER_DEFAULT
+        val checker = arguments?.getString(ARouterConstants.PARAM.CONTACTS_SELECT.PARAM_ENABLE_CHECKER) ?: ARouterConstants.PARAM.CONTACTS_SELECT.ENABLE_CHECKER.CHECKER_DEFAULT
 
         mRecyclerView?.setEnableChecker(SelectionEnableChecker.getChecker(checker))
         mRecyclerView?.setMultiSelect(arguments?.getBoolean(ARouterConstants.PARAM.CONTACTS_SELECT.PARAM_MULTI_SELECT, false) ?: false)
@@ -145,7 +143,6 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
         mShowDecoration = arguments?.getBoolean(ARouterConstants.PARAM.CONTACTS_SELECT.PARAM_SHOW_DECORATION, true) ?: true
 
         mRecyclerView?.setOnContactsActionListener(object : RecipientRecyclerView.OnContactsActionListener {
-
             override fun onDeselected(recipient: Recipient) {
                 mCallback?.onDeselect(recipient)
                 mSelectionView?.removeSelection(recipient)
@@ -224,27 +221,23 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
     private fun initSelectedContacts() {
         //判断是否已有选中的联系人
         mRecyclerView?.setSelectedRecipient(mFixedSelectedList)
-        val gid = arguments?.getLong(ARouterConstants.PARAM.PARAM_GROUP_ID, -1)?:return
+        val gid = arguments?.getLong(ARouterConstants.PARAM.PARAM_GROUP_ID, -1) ?: return
         if (gid <= 0) {
             return
         }
         val memberList = AmeModuleCenter.group(accountContext)?.getMembersFromCache(gid)
         if (!memberList.isNullOrEmpty()) {
-
             dispose = Observable.create(ObservableOnSubscribe<List<Recipient>> {
-
                 it.onNext(memberList.map { address ->
                     Recipient.from(accountContext, address, true)
                 })
                 it.onComplete()
-
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         mRecyclerView?.setSelectedRecipient(it)
                     }
         }
-
     }
 
     private fun initData() {
@@ -262,8 +255,8 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
 
     override fun addSearchBar(context: Context) {
         if (mCustomDataSearcher == null) {
-            val searchbar = CustomDataSearcher<Recipient>(context)
-            searchbar.setOnSearchActionListener(object : CustomDataSearcher.OnSearchActionListener<Recipient>() {
+            val searchBar = CustomDataSearcher<Recipient>(context)
+            searchBar.setOnSearchActionListener(object : CustomDataSearcher.OnSearchActionListener<Recipient>() {
                 override fun onSearchNull(results: List<Recipient>) {
                     updateContactsListView(results, "", results.isNotEmpty(), mShowDecoration)
                 }
@@ -278,16 +271,15 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
 
             })
 
-            mCustomDataSearcher = searchbar
+            mCustomDataSearcher = searchBar
         }
     }
 
     override fun addEmptyShade(context: Context) {
-
         if (mEmptyView == null) {
             val emptyView = ContentShadeView(context)
-            emptyView.setTitleAppearance(16.dp2Px(), context.getColorCompat(R.color.common_content_second_color))
-            emptyView.setSubTitleAppearance(12.dp2Px(), Color.parseColor("#C2C2C2"))
+            emptyView.setTitleAppearance(16.dp2Px(), context.getAttrColor(R.attr.common_text_secondary_color))
+            emptyView.setSubTitleAppearance(12.dp2Px(), context.getAttrColor(R.attr.common_text_third_color))
             emptyView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             emptyView.setPadding(0, 70.dp2Px(), 0, 50.dp2Px())
             mEmptyView = emptyView
@@ -319,7 +311,7 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
         val index = mRecyclerView?.addHeader(header, true)
         if (index != null) {
             mHeaderFooterMap[header] = index
-        }else {
+        } else {
             mHeaderList.add(header)
         }
     }
@@ -328,7 +320,7 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
         val index = mRecyclerView?.addFooter(footer, true)
         if (index != null) {
             mHeaderFooterMap[footer] = index
-        }else {
+        } else {
             mFooterList.add(footer)
         }
 
@@ -364,5 +356,4 @@ class SingleContactSelectionFragment : BaseFragment(), IContactsAction {
     override fun setContactSelectCallback(callback: IContactsCallback) {
         mCallback = callback
     }
-
 }

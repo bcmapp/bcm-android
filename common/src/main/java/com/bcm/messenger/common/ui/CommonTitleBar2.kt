@@ -333,6 +333,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
         leftType = TYPE_IMAGE
         title_bar_left_text.visibility = View.GONE
         title_bar_left_img.setImageResource(resId)
+        title_bar_left_img.drawable.setTint(leftImageColor)
         title_bar_left_img.visibility = View.VISIBLE
 
         title_bar_left_zone.isClickable = true
@@ -458,6 +459,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
         rightType = TYPE_IMAGE
         title_bar_right_text.visibility = View.GONE
         title_bar_right_img.setImageResource(resId)
+        title_bar_right_img.drawable.setTint(rightImageColor)
         title_bar_right_img.visibility = View.VISIBLE
 
         title_bar_right_zone.isClickable = true

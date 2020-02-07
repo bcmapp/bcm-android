@@ -9,13 +9,14 @@
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/title_bar"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:center_text="@string/chats_select_contact_title"
         app:left_type="text"
         app:left_text="@string/chats_cancel"
         app:right_type="text"
         app:right_text="@string/chats_select_contact_done"
-        app:right_text_color="@color/common_content_second_color"
+        app:right_text_color="?attr/common_text_secondary_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

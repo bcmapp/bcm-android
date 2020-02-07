@@ -3,7 +3,6 @@ package com.bcm.messenger.me.ui.profile
 import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.recipients.Recipient

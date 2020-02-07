@@ -4,7 +4,6 @@ import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
@@ -31,6 +30,5 @@ class GroupContactActivity : AccountSwipeBaseActivity() {
         })
 
         initFragment(R.id.group_contact_container, GroupContactFragment(), null)
-        window?.setStatusBarLightMode()
     }
 }

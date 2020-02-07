@@ -1,7 +1,6 @@
 package com.bcm.messenger.me.ui.proxy
 
 import android.os.Bundle
-import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.AmeAppLifecycle

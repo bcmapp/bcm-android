@@ -14,6 +14,7 @@ class QREncoder(val data: String, formatString: String? = null, private val dime
 
     private val WHITE = -0x1
     private val BLACK = -0x1000000
+    private val TRANSPARENT = -0x000000
 
     private val format: BarcodeFormat
 
@@ -34,7 +35,7 @@ class QREncoder(val data: String, formatString: String? = null, private val dime
     }
 
     @Throws(Exception::class)
-    fun encodeAsBitmap(): Bitmap {
+    fun encodeAsBitmap(whiteBackground: Boolean = true): Bitmap {
         val hints: MutableMap<EncodeHintType, Any> = Hashtable<EncodeHintType, Any>()
         hints[EncodeHintType.MARGIN] = 0
         hints[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.H
@@ -50,7 +51,11 @@ class QREncoder(val data: String, formatString: String? = null, private val dime
         for (y in 0 until height) {
             val offset = y * width
             for (x in 0 until width) {
-                pixels[offset + x] = if (result.get(x, y)) BLACK else WHITE
+                pixels[offset + x] = if (whiteBackground) {
+                    if (result.get(x, y)) BLACK else WHITE
+                } else {
+                    if (result.get(x, y)) WHITE else TRANSPARENT
+                }
             }
         }
 

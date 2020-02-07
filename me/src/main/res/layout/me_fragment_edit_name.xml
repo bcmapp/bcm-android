@@ -3,24 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_color_F6F7F9"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/edit_name_title_bar"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:center_text="@string/me_nickname_placeholder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:left_text="@string/common_cancel"
-        app:left_text_color="@color/common_color_black"
         app:left_type="text"
         app:right_text="@string/me_save"
-        app:right_text_color="@color/common_color_379BFF"
+        app:right_text_color="?attr/common_text_blue_color"
         app:right_type="text" />
 
     <com.bcm.messenger.common.ui.emoji.EmojiEditText
@@ -28,7 +27,7 @@
         android:layout_width="0dp"
         android:layout_height="44dp"
         android:layout_marginTop="30dp"
-        android:background="@color/common_color_white"
+        android:background="?attr/common_view_background_grey"
         android:ems="10"
         android:maxLength="30"
         android:hint="@string/me_nickname_placeholder"

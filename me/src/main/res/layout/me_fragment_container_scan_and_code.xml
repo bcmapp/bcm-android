@@ -12,7 +12,7 @@
         app:center_custom_view="@layout/me_layout_scan_with_code"
         app:show_bottom_line="false"
         app:left_type="image"
-        app:left_image="@drawable/common_close_black_m_icon"
+        app:left_image="@drawable/common_close_icon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

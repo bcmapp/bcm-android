@@ -6,10 +6,12 @@
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/title_bar"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:center_text="@string/contacts_fragment_group_title"
         app:right_type="image"
-        app:right_image="@drawable/common_titlebar_plus_icon"
+        app:right_image="@drawable/common_add_icon"
+        app:right_image_color="?attr/common_icon_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

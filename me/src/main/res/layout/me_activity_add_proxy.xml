@@ -8,18 +8,18 @@
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/add_proxy_title_bar"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:center_text="@string/me_add_proxy_title"
         app:right_type="text"
         app:right_text="@string/me_setting_proxy_action_add"/>
-
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginStart="15dp"
-        android:textColor="#A8A8A8"
+        android:textColor="?attr/common_text_third_color"
         android:textSize="13sp"
         android:text="@string/me_add_proxy_name"/>
 
@@ -30,7 +30,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        android:background="@drawable/common_grey_12_bg"
+        android:background="@drawable/common_rectangle_12_grey_bg"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:gravity="left|center_vertical"
@@ -38,8 +38,8 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:singleLine="true"
-        android:textColor="@color/common_color_black"
-        android:textColorHint="#7fffffff"
+        android:textColor="?attr/common_text_main_color"
+        android:textColorHint="?attr/common_text_third_color"
         android:textCursorDrawable="@drawable/common_edit_cursor_shape"
         android:textSize="14sp"
         app:clearButtonHeight="12dp"
@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginStart="15dp"
-        android:textColor="#A8A8A8"
+        android:textColor="?attr/common_text_third_color"
         android:textSize="13sp"
         android:text="@string/me_add_proxy_uri_scheme_url"/>
 
@@ -65,7 +65,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        android:background="@drawable/common_grey_12_bg"
+        android:background="@drawable/common_rectangle_12_grey_bg"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:gravity="left|center_vertical"
@@ -73,8 +73,8 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:singleLine="true"
-        android:textColor="@color/common_color_black"
-        android:textColorHint="#7fffffff"
+        android:textColor="?attr/common_text_main_color"
+        android:textColorHint="?attr/common_text_third_color"
         android:textCursorDrawable="@drawable/common_edit_cursor_shape"
         android:textSize="14sp"
         app:clearButtonHeight="12dp"
@@ -90,7 +90,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
         android:layout_marginStart="15dp"
-        android:textColor="#A8A8A8"
+        android:textColor="?attr/common_text_third_color"
         android:textSize="10sp"
         android:text="Shadowsocks (ss://…), ShadowsocksR (ssr://…) and OFBS4 (obfs4://…) URLs are supported."/>
 </LinearLayout>

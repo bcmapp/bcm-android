@@ -119,18 +119,31 @@
 
     <!--Light theme colours-->
     <color name="common_text_main_color">#000000</color>
-    <color name="common_text_secondary_color">#99000000</color>
-    <color name="common_text_third_color">#4C000000</color>
+    <color name="common_text_secondary_color">#606060</color>
+    <color name="common_text_third_color">#C0C0C0</color>
     <color name="common_text_warning_color">#FF3737</color>
     <color name="common_text_blue_color">#379BFF</color>
-    <color name="common_underline_color">#26B3B3B3</color>
+    <color name="common_text_green_color">#3ED645</color>
+
+    <color name="common_underline_color">#E0E0E0</color>
+
     <color name="common_default_icon_color">#000000</color>
-    <color name="common_default_icon_grey_color">#99000000</color>
+    <color name="common_default_icon_grey_color">#E0E0E0</color>
+
     <color name="common_default_background_color">#FFFFFF</color>
     <color name="common_progress_tint_color">#80FFFFFF</color>
     <color name="common_default_background_grey_color">#F2F3F4</color>
+    <color name="common_default_dark_grey_background_color">#FFFFFF</color>
+
     <color name="common_default_switcher_color">#000000</color>
     <color name="common_default_ripple_color">#A8A8A8</color>
     <color name="common_default_ripple_background_color">#FFFFFF</color>
-    <color name="common_default_dark_grey_background_color">#FFFFFF</color>
+    <color name="common_default_selected_color">#379BFF</color>
+    <color name="common_default_30_transparent">#4DFFFFFF</color>
+
+    <color name="common_blue_button_color">#379BFF</color>
+    <color name="common_blue_sub_button_color">#19379BFF</color>
+    <color name="common_red_button_color">#FF3737</color>
+    <color name="common_red_sub_button_color">#19FF3737</color>
+    <color name="common_disabled_button_color">#F2F3F4</color>
 </resources>

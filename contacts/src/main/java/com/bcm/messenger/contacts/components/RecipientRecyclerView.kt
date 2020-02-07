@@ -48,13 +48,12 @@ class RecipientRecyclerView @JvmOverloads constructor(
 
     private var mShowBar = false
 
-    private var enableChecker:SelectionEnableChecker.IChecker = SelectionEnableChecker.getChecker("")
+    private var enableChecker: SelectionEnableChecker.IChecker = SelectionEnableChecker.getChecker("")
 
     private var mCanChangeMode: Boolean = false
 
     init {
         addItemDecoration(StickyLinearDecoration(object : ContactsLinearDecorationCallback(context, mAdapter) {
-
             override fun getHeaderData(pos: Int): StickyLinearDecoration.StickyHeaderData? {
                 return if (mShowDecoration) {
                     super.getHeaderData(pos)
@@ -86,7 +85,7 @@ class RecipientRecyclerView @JvmOverloads constructor(
     }
 
     override fun onBindViewHolder(holder: LinearBaseAdapter.ViewHolder<Recipient>, trueData: Recipient?) {
-        if(holder is ContactsViewHolder) {
+        if (holder is ContactsViewHolder) {
             holder.bind()
         }
     }
@@ -96,7 +95,7 @@ class RecipientRecyclerView @JvmOverloads constructor(
     }
 
     override fun onViewRecycled(holder: LinearBaseAdapter.ViewHolder<Recipient>) {
-        if(holder is ContactsViewHolder) {
+        if (holder is ContactsViewHolder) {
             holder.unbind()
         }
     }
@@ -104,7 +103,7 @@ class RecipientRecyclerView @JvmOverloads constructor(
     override fun getItemId(allPosition: Int): Long {
 
         val type = getViewType(allPosition)
-        val idText = if(type == LinearBaseAdapter.ITEM_TYPE_DATA) {
+        val idText = if (type == LinearBaseAdapter.ITEM_TYPE_DATA) {
             mAdapter.getMainData(allPosition).data?.address?.serialize() ?: return 0
         } else {
             "id_individual_contact_extra_$type"
@@ -120,7 +119,6 @@ class RecipientRecyclerView @JvmOverloads constructor(
     }
 
     fun setSelected(recipient: Recipient, select: Boolean) {
-
         val notify = if (select) {
             mSelectList.add(recipient)
         } else {
@@ -134,7 +132,6 @@ class RecipientRecyclerView @JvmOverloads constructor(
                 mListener?.onDeselected(recipient)
             }
         }
-
     }
 
     fun setCanChangeMode(can: Boolean) {
@@ -155,7 +152,6 @@ class RecipientRecyclerView @JvmOverloads constructor(
                     mSelectList.add(it)
                 }
             }
-
         } else {
             recipients.forEach {
                 if (!mSelectList.contains(it)) {
@@ -195,7 +191,7 @@ class RecipientRecyclerView @JvmOverloads constructor(
         }
     }
 
-    fun setEnableChecker(enableChecker:SelectionEnableChecker.IChecker) {
+    fun setEnableChecker(enableChecker: SelectionEnableChecker.IChecker) {
         this.enableChecker = enableChecker
     }
 
@@ -289,14 +285,14 @@ class RecipientRecyclerView @JvmOverloads constructor(
             val weakRecyclerView = WeakReference(this@RecipientRecyclerView)
             enableChecker.canEnable(recipient.address, false)
                     .subscribe {
-                        val selectView = weakSelf.get()?.selectView?:return@subscribe
-                        val photoView = weakSelf.get()?.photoView?:return@subscribe
-                        val nameView = weakSelf.get()?.nameView?:return@subscribe
-                        val selectingView = weakSelf.get()?.selectingView?:return@subscribe
+                        val selectView = weakSelf.get()?.selectView ?: return@subscribe
+                        val photoView = weakSelf.get()?.photoView ?: return@subscribe
+                        val nameView = weakSelf.get()?.nameView ?: return@subscribe
+                        val selectingView = weakSelf.get()?.selectingView ?: return@subscribe
 
-                        val multiSelect = weakRecyclerView.get()?.mMultiSelect?:return@subscribe
-                        val fixedSelectList = weakRecyclerView.get()?.mFixedSelectList?:return@subscribe
-                        val selectList = weakRecyclerView.get()?.mSelectList?:return@subscribe
+                        val multiSelect = weakRecyclerView.get()?.mMultiSelect ?: return@subscribe
+                        val fixedSelectList = weakRecyclerView.get()?.mFixedSelectList ?: return@subscribe
+                        val selectList = weakRecyclerView.get()?.mSelectList ?: return@subscribe
                         val regex = weakRecyclerView.get()?.mRegex
 
                         selectView.visibility = if (multiSelect) {
@@ -304,7 +300,7 @@ class RecipientRecyclerView @JvmOverloads constructor(
                             val isChecked = selectList.contains(recipient)
                             weakRecyclerView.get()?.changeSelectView(selectView, isChecked)
 
-                            when(it) {
+                            when (it) {
                                 SelectionEnableChecker.STATE.CHECKING -> {
                                     weakSelf.get()?.showChecking()
                                 }
@@ -359,7 +355,7 @@ class RecipientRecyclerView @JvmOverloads constructor(
         }
 
         override fun onModified(recipient: Recipient) {
-            if(this.data == recipient) {
+            if (this.data == recipient) {
                 itemView.post {
                     bind()
                 }

@@ -7,9 +7,10 @@
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/new_chat_title_bar"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:left_type="image"
-        app:left_image="@drawable/common_close_black_m_icon"
+        app:left_image="@drawable/common_close_icon"
         app:right_type="text"
         app:right_text="@string/chats_new_group_chat"
         app:center_text="@string/chats_new_chat" />

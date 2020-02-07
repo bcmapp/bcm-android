@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/common_background_F2F3F4"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="?attr/common_activity_background_grey">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/help_title_bar"
-        style="@style/CommonTitleBarStyle"
-        app:right_type="text"
-        app:right_text="@string/me_submit"
-        app:right_text_color="@color/common_color_c0c0c0"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:center_text="@string/me_support_head"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:right_text="@string/me_submit"
+        app:right_text_color="?attr/common_text_third_color"
+        app:right_type="text" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -23,10 +24,10 @@
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
+        android:background="@drawable/common_rectangle_8_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/help_title_bar"
-        android:background="@drawable/common_white_bg">
+        app:layout_constraintTop_toBottomOf="@+id/help_title_bar">
 
         <TextView
             android:id="@+id/feedback_category_title"
@@ -35,7 +36,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="10dp"
             android:text="@string/me_feedback_category"
-            android:textColor="@color/common_color_606060"
+            android:textColor="?attr/common_text_secondary_color"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Category" />
@@ -44,9 +45,9 @@
             android:id="@+id/feedback_category_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="5dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
+            android:paddingTop="5dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feedback_category_title" />
 
@@ -57,7 +58,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="15dp"
             android:text="@string/me_feedback_screenshot"
-            android:textColor="@color/common_color_606060"
+            android:textColor="?attr/common_text_secondary_color"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feedback_category_list"
             tools:text="Screenshot" />
@@ -79,7 +80,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="15dp"
             android:text="@string/me_feedback_description"
-            android:textColor="@color/common_color_606060"
+            android:textColor="?attr/common_text_secondary_color"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feedback_srceenshot_list"
             tools:text="Description" />
@@ -91,16 +92,16 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="15dp"
-            android:gravity="top"
             android:background="@null"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="top"
             android:hint="@string/me_problem_describe"
             android:maxLength="200"
             android:padding="5dp"
             android:text=""
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:textColor="#131313"
-            android:textColorHint="#C2C2C2"
+            android:textColor="?attr/common_text_main_color"
+            android:textColorHint="?attr/common_text_third_color"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

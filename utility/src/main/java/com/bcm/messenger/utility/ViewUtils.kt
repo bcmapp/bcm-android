@@ -160,7 +160,7 @@ fun TextView.setDrawableRight(resId: Int, size: Int = 0) {
     }
 }
 
-fun TextView.setDrawableLeft(resId: Int, size: Int = 0) {
+fun TextView.setDrawableLeft(resId: Int, size: Int = 0, color: Int = 0) {
     if (resId == 0) {
         this.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
         return
@@ -168,6 +168,7 @@ fun TextView.setDrawableLeft(resId: Int, size: Int = 0) {
     val img = context.getDrawable(resId)
     if (size != 0) {
         img?.let {
+            it.setTint(color)
             it.setBounds(0, 0, size, size)
             this.setCompoundDrawables(img, null, null, null)
         }

@@ -22,7 +22,8 @@
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
         android:paddingStart="10dp"
-        android:src="@drawable/common_close_black_m_icon"
+        android:src="@drawable/common_close_icon"
+        android:tint="@color/common_default_icon_color"
         android:contentDescription=""
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

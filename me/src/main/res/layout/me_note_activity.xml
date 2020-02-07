@@ -11,7 +11,8 @@
         style="@style/CommonTitleBarStyle"
         android:id="@+id/note_title_bar"
         app:right_type="image"
-        app:right_image="@drawable/common_titlebar_plus_icon" />
+        app:right_image="@drawable/common_add_icon"
+        app:right_image_color="?attr/common_icon_color"/>
 
     <include layout="@layout/me_note_guild_view_layout"
         android:id="@+id/me_note_guild_view"

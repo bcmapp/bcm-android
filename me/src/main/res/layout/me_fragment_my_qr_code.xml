@@ -2,10 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_color_white">
+    android:background="?attr/common_view_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/qr_code_layout"
@@ -38,7 +37,7 @@
             android:layout_marginEnd="15dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/qr_code_avatar"
             app:layout_constraintEnd_toEndOf="parent"
@@ -52,7 +51,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="15dp"
-            android:background="@color/common_line_color"
+            android:background="?attr/common_item_line_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -79,67 +78,102 @@
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
             android:text="@string/me_scan_code_add_me"
-            android:textColor="@color/common_color_606060"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/qr_code_image" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
+    <LinearLayout
         android:id="@+id/qr_code_forward"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_marginTop="30dp"
-        android:background="@drawable/common_item_ripple_transparent_bg"
-        android:drawableTop="@drawable/me_qr_code_forward_icon"
-        android:drawablePadding="10dp"
-        android:gravity="center_horizontal"
-        android:text="@string/me_forward"
-        android:textColor="@color/common_color_black"
-        android:textSize="13sp"
         app:layout_constraintEnd_toStartOf="@+id/qr_code_share"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/qr_code_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/qr_code_layout">
 
-    <TextView
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/common_item_ripple_oval_grey_bg"
+            android:src="@drawable/me_qr_code_forward_icon"
+            android:tint="?attr/common_icon_color"/>
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/me_forward"
+            android:textColor="?attr/common_text_main_color"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/qr_code_share"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_marginStart="25dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="25dp"
-        android:background="@drawable/common_item_ripple_transparent_bg"
-        android:drawableTop="@drawable/me_qr_code_share_icon"
-        android:drawablePadding="10dp"
-        android:gravity="center_horizontal"
-        android:text="@string/me_share"
-        android:textColor="@color/common_color_black"
-        android:textSize="13sp"
         app:layout_constraintEnd_toStartOf="@+id/qr_code_save"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/qr_code_forward"
-        app:layout_constraintTop_toBottomOf="@+id/qr_code_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/qr_code_layout">
 
-    <TextView
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/common_item_ripple_oval_grey_bg"
+            android:src="@drawable/me_qr_code_copy_icon"
+            android:tint="?attr/common_icon_color"/>
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/me_share"
+            android:textColor="?attr/common_text_main_color"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/qr_code_save"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_marginTop="30dp"
-        android:background="@drawable/common_item_ripple_transparent_bg"
-        android:drawableTop="@drawable/me_qr_code_save_icon"
-        android:drawablePadding="10dp"
-        android:gravity="center_horizontal"
-        android:text="@string/me_my_qr_code_save"
-        android:textColor="@color/common_color_black"
-        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/qr_code_share"
         app:layout_constraintTop_toBottomOf="@+id/qr_code_layout"
-        app:layout_constraintHorizontal_chainStyle="packed"/>
+        app:layout_constraintHorizontal_chainStyle="packed">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/common_item_ripple_oval_grey_bg"
+            android:src="@drawable/me_qr_code_save_icon"
+            android:tint="?attr/common_icon_color"/>
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/me_my_qr_code_save"
+            android:textColor="?attr/common_text_main_color"
+            android:textSize="13sp" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,6 +12,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.bcm.messenger.common.imagepicker.widget.CropRoundCornerTransform
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.common.mms.GlideApp
+import com.bcm.messenger.common.utils.getAttrColor
+import com.bcm.messenger.common.utils.getDrawable
 
 class FeedBackScreenshotAdapter(activity: AppCompatActivity, selectImage: () -> Unit) : RecyclerView.Adapter<FeedBackScreenshotAdapter.ScreenshotViewHolder>() {
 
@@ -108,8 +110,10 @@ class FeedBackScreenshotAdapter(activity: AppCompatActivity, selectImage: () -> 
         }
 
         fun bindSelect() {
+            val drawable = getDrawable(R.drawable.me_feedback_add_image_icon)
+            drawable.setTint(itemView.context.getAttrColor(R.attr.common_icon_color))
             GlideApp.with(itemView.context)
-                    .load(R.drawable.me_add_image)
+                    .load(drawable)
                     .centerCrop()
                     .apply(RequestOptions.bitmapTransform(CropRoundCornerTransform(radius, 0, CropRoundCornerTransform.CornerType.ALL)))
                     .into(item)

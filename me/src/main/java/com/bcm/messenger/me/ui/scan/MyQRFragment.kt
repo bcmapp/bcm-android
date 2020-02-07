@@ -1,6 +1,7 @@
 package com.bcm.messenger.me.ui.scan
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -90,8 +91,9 @@ class MyQRFragment : BaseFragment() {
             if (!shortLink.isNullOrEmpty()) {
                 Observable.create<Bitmap> {
                     ALog.d(TAG, "initQrCode: $shortLink")
+                    val isDarkMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
                     val qrEncoder = QREncoder(shortLink, dimension = 250.dp2Px(), charset = "utf-8")
-                    val bitmap = qrEncoder.encodeAsBitmap()
+                    val bitmap = qrEncoder.encodeAsBitmap(!isDarkMode)
                     it.onNext(bitmap)
                     it.onComplete()
                 }.subscribeOn(Schedulers.io())

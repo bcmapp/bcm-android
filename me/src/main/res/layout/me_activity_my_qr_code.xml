@@ -4,12 +4,12 @@
     android:id="@+id/my_qr_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_background_color"
     android:orientation="vertical">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/my_qr_title_bar"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:center_text="@string/me_title_my_qr_code"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"

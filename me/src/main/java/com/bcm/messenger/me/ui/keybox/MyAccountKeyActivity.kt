@@ -81,8 +81,6 @@ class MyAccountKeyActivity : AccountSwipeBaseActivity() {
         }
 
         fetchProfile()
-
-        window?.setStatusBarLightMode()
     }
 
     override fun onResume() {
@@ -110,29 +108,28 @@ class MyAccountKeyActivity : AccountSwipeBaseActivity() {
 
         if (backupTime > 0) {
             account_backup_date?.text = getString(R.string.me_str_backup_export_date, DateUtils.formatDayTime(backupTime))
-            account_my_backup?.background = getDrawable(R.drawable.common_grey_bg)
-            account_my_backup?.text = AppUtil.getString(this, R.string.me_mark_as_backed_up)
-            account_my_backup?.setTextColor(getColorCompat(R.color.common_color_black_70))
+            account_my_backup?.background = getDrawable(R.drawable.common_rectangle_8_grey_bg)
+            account_my_backup?.text = getString(R.string.me_mark_as_backed_up)
+            account_my_backup?.setTextColor(getAttrColor(R.attr.common_text_white_color))
             account_my_backup?.isEnabled = false
             account_my_notice?.visibility = View.INVISIBLE
-
         } else {
             val backupBuilder = SpannableStringBuilder()
-            backupBuilder.append(AppUtil.getString(this, R.string.me_str_backup_date_export))
-            val notBackup = AppUtil.getString(this, R.string.me_not_backed_up)
+            backupBuilder.append(getString(R.string.me_str_backup_date_export))
+            val notBackup = getString(R.string.me_not_backed_up)
             backupBuilder.append(notBackup)
-            val foregroundColor = ForegroundColorSpan(getColorCompat(R.color.common_color_ff3737))
+            val foregroundColor = ForegroundColorSpan(getAttrColor(R.attr.common_text_warn_color))
             backupBuilder.setSpan(foregroundColor, backupBuilder.length - notBackup.length - 1, backupBuilder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             account_backup_date?.text = backupBuilder
-            account_my_backup?.background = getDrawable(R.drawable.common_blue_bg)
-            account_my_backup?.text = AppUtil.getString(this, R.string.me_finish_backup)
-            account_my_backup?.setTextColor(getColorCompat(R.color.common_color_white))
+            account_my_backup?.background = getDrawable(R.drawable.common_button_blue_bg)
+            account_my_backup?.text = getString(R.string.me_finish_backup)
+            account_my_backup?.setTextColor(getAttrColor(R.attr.common_text_white_color))
             account_my_backup?.isEnabled = true
             account_my_notice?.visibility = View.VISIBLE
 
             val noticeBuilder = SpannableStringBuilder()
             noticeBuilder.append(getString(R.string.me_account_not_backup_warning))
-            noticeBuilder.append(StringAppearanceUtil.applyAppearance(getString(R.string.me_account_backup_help_description), color = getColorCompat(R.color.common_app_primary_color)))
+            noticeBuilder.append(StringAppearanceUtil.applyAppearance(getString(R.string.me_account_backup_help_description), color = getAttrColor(R.attr.common_text_blue_color)))
             account_my_notice?.text = noticeBuilder
         }
     }

@@ -9,6 +9,7 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.StickyLinearDecoration
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.contacts.R
 import com.bcm.messenger.utility.AppContextHolder
@@ -34,7 +35,7 @@ open class ContactsLinearDecorationCallback(private val context: Context, privat
             if (cData.data == null) {
                 return null
             }
-            val pIndex = pos -1
+            val pIndex = pos - 1
             if (pIndex >= 0) {
                 pData = mAdapter.getMainData(pIndex)
             }
@@ -52,9 +53,9 @@ open class ContactsLinearDecorationCallback(private val context: Context, privat
                 header.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 header.text = cData.letter
                 header.gravity = Gravity.CENTER_VERTICAL
-                header.setTextColor(context.getColorCompat(R.color.common_content_second_color))
+                header.setTextColor(context.getAttrColor(R.attr.common_text_secondary_color))
                 header.textSize = 14.0f
-                header.setBackgroundColor(Color.parseColor("#E5FFFFFF"))
+                header.setBackgroundColor(context.getAttrColor(R.attr.common_view_background_grey))
                 val w = AppContextHolder.APP_CONTEXT.resources.getDimensionPixelSize(R.dimen.common_horizontal_gap)
                 val h = 8.dp2Px()
                 header.setPadding(w, h, w, h)
@@ -64,12 +65,9 @@ open class ContactsLinearDecorationCallback(private val context: Context, privat
             ALog.d(TAG, "getHeaderData cPos: $pos, pPos: $pIndex, nPos: $nIndex, isFirst: $isFirst, isLast: $isLast, header: ${header.text}")
 
             return StickyLinearDecoration.StickyHeaderData(isFirst, isLast, header, 36.dp2Px(), 1.dp2Px())
-
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ALog.e(TAG, "getHeaderData error", ex)
         }
         return null
     }
-
-
 }

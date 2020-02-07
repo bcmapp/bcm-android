@@ -1,7 +1,6 @@
 package com.bcm.messenger.contacts
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -26,7 +25,7 @@ import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
 import com.bcm.messenger.common.ui.adapter.IListDataSource
 import com.bcm.messenger.common.ui.adapter.ListDataSource
 import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.contacts.viewmodel.GroupContactViewModel
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
@@ -42,7 +41,6 @@ import org.greenrobot.eventbus.ThreadMode
  */
 @Route(routePath = ARouterConstants.Fragment.CONTACTS_GROUP)
 class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDelegate<GroupContactViewModel.GroupContactViewData> {
-
     companion object {
         private const val TAG = "GroupContactFragment"
         private const val SEARCH_BAR_VIEW_STYLE = 2
@@ -86,7 +84,6 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
         group_contact_list.adapter = adapter
         adapter.setViewHolderDelegate(this)
         group_contact_list.addItemDecoration(StickyLinearDecoration(object : StickyLinearDecoration.StickyHeaderCallback {
-
             private val mHeaderMap: MutableMap<String, TextView> = mutableMapOf()
 
             override fun getHeaderData(pos: Int): StickyLinearDecoration.StickyHeaderData? {
@@ -100,7 +97,7 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
                     if (!cData.isTrueData) {
                         return null
                     }
-                    val pIndex = pos -1
+                    val pIndex = pos - 1
                     if (pIndex >= 0) {
                         pData = groupContactViewModel?.getGroupList()?.get(pIndex)
                     }
@@ -116,9 +113,9 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
                         header.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                         header.text = cData.firstLetter.toString()
                         header.gravity = Gravity.CENTER_VERTICAL
-                        header.setTextColor(getColorCompat(R.color.common_color_909090))
+                        header.setTextColor(context?.getAttrColor(R.attr.common_text_secondary_color) ?: 0)
                         header.textSize = 15.0f
-                        header.setBackgroundColor(Color.parseColor("#E5FFFFFF"))
+                        header.setBackgroundColor(context?.getAttrColor(R.attr.common_view_background_grey) ?: 0)
                         val w = AppContextHolder.APP_CONTEXT.resources.getDimensionPixelSize(R.dimen.common_horizontal_gap)
                         val h = 8.dp2Px()
                         header.setPadding(w, h, w, h)
@@ -126,15 +123,14 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
                         mHeaderMap[cData.firstLetter.toString()] = header
                     }
                     return StickyLinearDecoration.StickyHeaderData(isFirst, isLast, header, 36.dp2Px(), 1.dp2Px())
-
-                }catch (ex: Exception) {
+                } catch (ex: Exception) {
                     ALog.e(TAG, "getHeaderData error", ex)
                 }
                 return null
             }
         }))
 
-        val viewModel = GroupContactViewModel(accountContext) {self, list ->
+        val viewModel = GroupContactViewModel(accountContext) { self, list ->
             ALog.d(TAG, "GroupContactViewModel update groupList: ${list.size}")
             if (self.getTrueDataSize() == 0) {
                 group_contact_sidebar?.hide()
@@ -163,8 +159,7 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
                     val pos = (recyclerView.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: 0
                     val letter = groupContactViewModel?.getGroupList()?.get(pos)?.firstLetter?.toString()
                     group_contact_sidebar?.selectLetter(letter)
-
-                }catch (ex: Exception) {
+                } catch (ex: Exception) {
                     ALog.e(TAG, "onScrolled error")
                 }
             }
@@ -190,7 +185,6 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
                     layoutManager.scrollToPositionWithOffset(position, 0)
                 }
             }
-
         })
     }
 
@@ -201,7 +195,7 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
     }
 
     override fun getViewHolderType(adapter: AmeRecycleViewAdapter<GroupContactViewModel.GroupContactViewData>, position: Int, data: GroupContactViewModel.GroupContactViewData): Int {
-        return when(data){
+        return when (data) {
             GroupContactViewModel.SEARCH_BAR -> SEARCH_BAR_VIEW_STYLE
             GroupContactViewModel.GROUP_EMPTY -> R.layout.contacts_layout_empty_group
             else -> R.layout.contacts_item_group
@@ -209,9 +203,9 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
     }
 
     override fun bindViewHolder(adapter: AmeRecycleViewAdapter<GroupContactViewModel.GroupContactViewData>, viewHolder: AmeRecycleViewAdapter.ViewHolder<GroupContactViewModel.GroupContactViewData>) {
-        if (viewHolder is GroupHolder){
+        if (viewHolder is GroupHolder) {
             val data = viewHolder.getData()
-            if (null != data){
+            if (null != data) {
                 viewHolder.bind(data)
             }
         }
@@ -224,7 +218,7 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
     }
 
     override fun createViewHolder(adapter: AmeRecycleViewAdapter<GroupContactViewModel.GroupContactViewData>, inflater: LayoutInflater, parent: ViewGroup, viewType: Int): AmeRecycleViewAdapter.ViewHolder<GroupContactViewModel.GroupContactViewData> {
-        return when(viewType){
+        return when (viewType) {
             SEARCH_BAR_VIEW_STYLE -> {
                 SearchBarHolder(CommonSearchBar(parent.context).apply {
                     layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -232,7 +226,7 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
                     val tb = resources.getDimensionPixelSize(R.dimen.common_vertical_gap)
                     setPadding(lr, tb, lr, tb)
                     setMode(CommonSearchBar.MODE_DISPLAY)
-                    setOnSearchActionListener(object : CommonSearchBar.OnSearchActionListener{
+                    setOnSearchActionListener(object : CommonSearchBar.OnSearchActionListener {
                         override fun onJump() {
                             AmeModuleCenter.contact(accountContext)?.openSearch(context)
                         }
@@ -254,20 +248,17 @@ class GroupContactFragment : BaseFragment(), AmeRecycleViewAdapter.IViewHolderDe
     override fun onViewClicked(adapter: AmeRecycleViewAdapter<GroupContactViewModel.GroupContactViewData>, viewHolder: AmeRecycleViewAdapter.ViewHolder<GroupContactViewModel.GroupContactViewData>) {
         val data = viewHolder.getData()
 
-        if (QuickOpCheck.getDefault().isQuick){
+        if (QuickOpCheck.getDefault().isQuick) {
             return
         }
 
         if (data != null) {
-
             AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
-                        HomeTopEvent.ConversationEvent.fromGroupConversation(data.groupInfo.gid)))
-
+                    HomeTopEvent.ConversationEvent.fromGroupConversation(data.groupInfo.gid)))
         }
-
     }
 
-    class SearchBarHolder(val searchBar: CommonSearchBar) : AmeRecycleViewAdapter.ViewHolder<GroupContactViewModel.GroupContactViewData>(searchBar)
+    class SearchBarHolder(searchBar: CommonSearchBar) : AmeRecycleViewAdapter.ViewHolder<GroupContactViewModel.GroupContactViewData>(searchBar)
     class GroupContactAdapter<T : Any>(context: Context, dataModel: IListDataSource<T>) : AmeRecycleViewAdapter<T>(context, dataModel) {}
     class EmptyHolder(view: View) : AmeRecycleViewAdapter.ViewHolder<GroupContactViewModel.GroupContactViewData>(view)
 

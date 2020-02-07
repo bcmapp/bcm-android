@@ -6,7 +6,8 @@
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/profile_title_bar"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:center_text="@string/me_profile_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/me_profile_picture"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="17sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +51,8 @@
             android:id="@+id/profile_icon_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/common_right_arrow_icon"
+            android:src="@drawable/common_arrow_right_icon"
+            android:tint="?attr/common_icon_color_grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -58,7 +60,7 @@
         <View
             android:layout_width="0dp"
             android:layout_height="@dimen/common_line_height"
-            android:background="@color/common_line_color"
+            android:background="?attr/common_item_line_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -73,8 +75,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profile_photo_item"
         app:setting_item_name="@string/me_profile_nickname"
-        app:setting_item_name_color="@color/common_color_black"
-        app:setting_item_tip_color="@color/common_content_second_color" />
+        app:setting_item_name_color="?attr/common_text_main_color"
+        app:setting_item_tip_color="?attr/common_text_secondary_color" />
 
     <LinearLayout
         android:id="@+id/profile_account_uid"
@@ -92,7 +94,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:text="ID"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="17sp" />
 
         <TextView
@@ -102,7 +104,7 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/common_color_black_30"
+            android:textColor="?attr/common_text_third_color"
             android:textSize="17sp" />
 
         <TextView
@@ -114,7 +116,7 @@
             android:paddingEnd="15dp"
             android:paddingBottom="10dp"
             android:text="@string/common_invite_share_copy"
-            android:textColor="@color/common_color_379BFF"
+            android:textColor="?attr/common_text_blue_color"
             android:textSize="17sp" />
 
     </LinearLayout>
@@ -125,7 +127,7 @@
         android:layout_height="@dimen/common_line_height"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        android:background="@color/common_line_color"
+        android:background="?attr/common_item_line_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profile_account_uid" />
@@ -138,10 +140,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profile_id_line"
         app:setting_item_name="@string/me_profile_add_me"
-        app:setting_item_name_color="@color/common_color_black"
+        app:setting_item_name_color="?attr/common_text_main_color"
         app:setting_item_right="none"
         app:setting_item_right_custom="@drawable/common_qr_code_black_icon"
-        app:setting_item_tip_color="@color/common_content_second_color" />
+        app:setting_item_tip_color="?attr/common_text_secondary_color" />
 
     <com.bcm.messenger.common.ui.CommonSettingItem
         android:id="@+id/profile_account_item"
@@ -151,9 +153,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profile_qr_item"
         app:setting_item_name="@string/me_profile_account_title"
-        app:setting_item_name_color="@color/common_color_black"
+        app:setting_item_name_color="?attr/common_text_main_color"
         app:setting_item_right="arrow"
-        app:setting_item_tip_color="@color/common_content_warning_color" />
+        app:setting_item_tip_color="?attr/common_text_warn_color" />
 
     <com.bcm.messenger.common.ui.CommonSettingItem
         android:id="@+id/profile_change_pwd_item"
@@ -163,7 +165,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profile_account_item"
         app:setting_item_name="@string/me_profile_change_pwd_title"
-        app:setting_item_name_color="@color/common_color_black"
+        app:setting_item_name_color="?attr/common_text_main_color"
         app:setting_item_right="arrow" />
 
     <TextView
@@ -175,7 +177,7 @@
         android:background="@drawable/common_red_bg"
         android:gravity="center"
         android:text="@string/me_log_out"
-        android:textColor="@color/common_color_white"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="17sp"
         app:layout_constraintBottom_toTopOf="@id/profile_destroy_btn"
         app:layout_constraintEnd_toEndOf="parent"
@@ -188,10 +190,10 @@
         android:layout_marginStart="45dp"
         android:layout_marginEnd="45dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/common_white_bg"
+        android:background="@drawable/common_rectangle_8_bg"
         android:gravity="center"
         android:text="@string/me_destroy_account_str"
-        android:textColor="@color/common_color_ff3737"
+        android:textColor="?attr/common_text_warn_color"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
