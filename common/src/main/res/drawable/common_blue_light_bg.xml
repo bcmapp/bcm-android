@@ -5,13 +5,13 @@
         <selector>
             <item android:state_enabled="true">
                 <shape>
-                    <solid android:color="@color/common_color_379BFF_transparent_10"/>
+                    <solid android:color="?attr/common_secondary_blue_color"/>
                     <corners android:radius="8dp"/>
                 </shape>
             </item>
             <item android:state_enabled="false">
                 <shape>
-                    <solid android:color="#0C000000"/>
+                    <solid android:color="?attr/common_view_background_grey"/>
                     <corners android:radius="8dp"/>
                 </shape>
             </item>

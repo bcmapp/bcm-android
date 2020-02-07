@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_color_white"
     android:fillViewport="true"
     android:fitsSystemWindows="true">
 
@@ -25,7 +24,7 @@
             android:layout_height="26dp"
             android:layout_marginTop="30dp"
             android:text="@string/me_nick_name_set_title"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"

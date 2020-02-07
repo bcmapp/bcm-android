@@ -48,6 +48,7 @@
         <item name="common_text_black_color">@color/common_color_black</item>
         <item name="common_background_color">@color/common_background_color</item>
         <item name="common_progress_tint_color">@color/common_progress_tint_color</item>
+        <item name="common_secondary_blue_color">@color/common_secondary_blue_color</item>
 
         <item name="common_ripple_color">@color/common_default_ripple_color</item>
 

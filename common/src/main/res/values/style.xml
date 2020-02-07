@@ -205,20 +205,21 @@
         <item name="android:layout_width">match_parent</item>
         <item name="fill_status_bar">true</item>
         <item name="show_bottom_line">false</item>
-        <item name="title_bar_background">@color/common_color_white</item>
+        <item name="title_bar_background">?attr/common_background_color</item>
         <item name="title_bar_height">52dp</item>
 
         <item name="left_type">image</item>
-        <item name="left_image">@drawable/common_back_arrow_black_icon</item>
+        <item name="left_image">@drawable/common_arrow_back_icon</item>
+        <item name="left_image_color">?attr/common_title_bar_left_icon_color</item>
         <item name="left_text_size">17sp</item>
-        <item name="left_text_color">@color/common_color_black</item>
+        <item name="left_text_color">?attr/common_text_main_color</item>
 
         <item name="right_type">none</item>
         <item name="right_text_size">17sp</item>
-        <item name="right_text_color">@color/common_color_black</item>
+        <item name="right_text_color">?attr/common_text_main_color</item>
 
         <item name="center_type">text</item>
-        <item name="center_text_color">@color/common_color_black</item>
+        <item name="center_text_color">?attr/common_text_main_color</item>
         <item name="center_text_size">17sp</item>
     </style>
 
@@ -257,7 +258,7 @@
         <item name="android:paddingEnd">20dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:textColor">?attr/common_text_main_color</item>
-        <item name="android:textColorHint">@color/common_color_A8A8A8</item>
+        <item name="android:textColorHint">?attr/common_text_third_color</item>
         <item name="android:textCursorDrawable">@drawable/common_blue_color_cursor</item>
         <item name="android:background">@drawable/common_edit_border_normal</item>
     </style>

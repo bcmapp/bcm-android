@@ -73,8 +73,7 @@ open class ThemeManager {
         }
 
         protected fun getCurrentTheme(context: Context): Int {
-            return THEME_DARK
-            //return SuperPreferences.getCurrentThemeSetting(context, THEME_SYSTEM)
+            return SuperPreferences.getCurrentThemeSetting(context, THEME_SYSTEM)
         }
     }
 }

@@ -5,9 +5,7 @@
     android:id="@+id/input_pin_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_color_transparent"
-    android:visibility="visible"
-    tools:background="@color/common_background_color">
+    android:visibility="visible">
 
 
     <TextView
@@ -16,7 +14,7 @@
         android:layout_height="26dp"
         android:layout_marginTop="110dp"
         android:text="@string/me_text_account_created"
-        android:textColor="@color/common_color_black"
+        android:textColor="@color/common_text_main_color"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"

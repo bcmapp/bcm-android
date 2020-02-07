@@ -6,6 +6,9 @@ import android.view.MotionEvent
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.ui.emoji.EmojiEditText
+import com.bcm.messenger.common.utils.getAttrColor
+import com.bcm.messenger.common.utils.getDrawable
+import com.bcm.messenger.utility.AppContextHolder
 
 /**
  * Created by Kin on 2018/12/13
@@ -30,7 +33,8 @@ class ClearButtonEditText @JvmOverloads constructor(context: Context, attrs: Att
     private fun loadAttrs(context: Context, attrs: AttributeSet) {
         val array = context.obtainStyledAttributes(attrs, R.styleable.ClearButtonEditText)
         val clearButtonShow = array.getBoolean(array.getIndex(R.styleable.ClearButtonEditText_showClearButton), false)
-        clearDrawable = array.getDrawable(R.styleable.ClearButtonEditText_clearButtonResource)
+        clearDrawable = array.getDrawable(R.styleable.ClearButtonEditText_clearButtonResource)?: getDrawable(R.drawable.common_input_clear_icon)
+        clearDrawable.setTint(AppContextHolder.APP_CONTEXT.getAttrColor(R.attr.common_text_third_color))
         drawableWidth = array.getDimension(R.styleable.ClearButtonEditText_clearButtonWidth, drawableWidth.toFloat()).toInt()
         drawableHeight = array.getDimension(R.styleable.ClearButtonEditText_clearButtonHeight, drawableHeight.toFloat()).toInt()
         drawablePadding = array.getDimension(R.styleable.ClearButtonEditText_clearButtonPadding, drawablePadding.toFloat()).toInt()

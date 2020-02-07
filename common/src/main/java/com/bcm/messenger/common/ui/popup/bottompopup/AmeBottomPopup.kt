@@ -11,10 +11,7 @@ import androidx.annotation.ColorInt
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.R
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getColor
-import com.bcm.messenger.common.utils.hideKeyboard
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -38,23 +35,22 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
             val SEP = PopupItem("", 0) {}
             val CLR_BLUE = Color.parseColor("#379BFF")
             val CLR_RED = Color.parseColor("#FF3737")
-            val CLR_BLACK get() = AppUtil.getColor(AppContextHolder.APP_CONTEXT, R.attr.common_text_main_color)
-            val CLR_GRAY get() = AppUtil.getColor(AppContextHolder.APP_CONTEXT, R.attr.common_view_background_grey)
         }
 
         val text: String
         val textColor: Int
         val action: (v: View) -> Unit
+        private val blackClr get() = getColor(R.color.common_text_main_color)
 
         constructor(text: String) {
-            this.textColor = CLR_BLACK
+            this.textColor = blackClr
             this.text = text
             this.action = {}
         }
 
 
         constructor(text: String, action: (v: View) -> Unit) {
-            this.textColor = CLR_BLACK
+            this.textColor = blackClr
             this.text = text
             this.action = action
         }
@@ -67,7 +63,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
     }
 
     class Builder {
-        private val config = PopConfig("", "", PopupItem.CLR_BLACK, {}, true, ArrayList(), {}, null)
+        private val config = PopConfig("", "", AppContextHolder.APP_CONTEXT.getAttrColor(R.attr.common_text_main_color), {}, true, ArrayList(), {}, null)
 
         fun withTitle(title: String): Builder {
             config.title = title
@@ -281,7 +277,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
                 return cellView
             } else {
                 val sepView = View(inflater.context)
-                sepView.setBackgroundColor(PopupItem.CLR_GRAY)
+                sepView.setBackgroundColor(AppContextHolder.APP_CONTEXT.getAttrColor(R.attr.common_text_secondary_color))
                 sepView.layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         5.dp2Px())

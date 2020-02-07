@@ -58,7 +58,6 @@
         <activity
             android:name="com.bcm.messenger.me.ui.keybox.VerifyKeyActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BcmActivityTheme.Basic"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.profile.ProfileActivity"
