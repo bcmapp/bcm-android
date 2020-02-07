@@ -8,9 +8,11 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
+import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 
@@ -69,6 +71,9 @@ class RegistrationActivity : ThemeBaseActivity() {
         setContentView(R.layout.me_activity_registration)
 
         window.setStatusBarLightMode()
+
+        ALog.i("REGCOLOR",  "${this.getAttrColor(R.attr.common_background_color)}")
+
 
         val f = StartupFragment()
         val arg = Bundle()

@@ -3,6 +3,6 @@
              android:id="@+id/register_container"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:background="@color/common_background_color">
+             android:background="?attr/common_background_color">
 
 </FrameLayout>

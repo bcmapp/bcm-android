@@ -12,6 +12,7 @@ import com.bcm.messenger.common.core.setLocale
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.RxBus
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -65,6 +66,9 @@ class NewScanActivity : ThemeBaseActivity() {
         RxBus.subscribe<ScanResultEvent>(TAG) { scanResult ->
             handleScanResult(scanResult.result)
         }
+
+        ALog.i("REGCOLOR",  "${this.getAttrColor(R.attr.common_background_color)}")
+
 
         initFragment()
     }

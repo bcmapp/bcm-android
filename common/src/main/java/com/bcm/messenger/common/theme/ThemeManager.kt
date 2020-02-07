@@ -22,10 +22,6 @@ open class ThemeManager {
         // DO noting.
     }
 
-    protected fun getCurrentTheme(activity: Activity): Int {
-        return SuperPreferences.getCurrentThemeSetting(activity, THEME_SYSTEM)
-    }
-
     companion object {
         const val THEME_SYSTEM = 0
         const val THEME_LIGHT = 1
@@ -37,7 +33,7 @@ open class ThemeManager {
 
         @JvmStatic
         fun initTheme() {
-            when (SuperPreferences.getCurrentThemeSetting(AppContextHolder.APP_CONTEXT, THEME_SYSTEM)) {
+            when (getCurrentTheme(AppContextHolder.APP_CONTEXT)) {
                 THEME_SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                 THEME_LIGHT-> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 THEME_DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -68,12 +64,17 @@ open class ThemeManager {
         @JvmStatic
         fun onConfigurationChanged(context: Context, newConfig: Configuration?) {
             if (Build.VERSION.SDK_INT >= 29
-                    && SuperPreferences.getCurrentThemeSetting(AppContextHolder.APP_CONTEXT, THEME_SYSTEM) == THEME_SYSTEM
+                    && getCurrentTheme(AppContextHolder.APP_CONTEXT) == THEME_SYSTEM
                     && newConfig != null) {
                 val config = context.resources.configuration
                 config.uiMode = newConfig.uiMode
                 context.createConfigurationContext(config)
             }
+        }
+
+        protected fun getCurrentTheme(context: Context): Int {
+            return THEME_DARK
+            //return SuperPreferences.getCurrentThemeSetting(context, THEME_SYSTEM)
         }
     }
 }

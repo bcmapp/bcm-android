@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_background_color">
+    android:background="?attr/common_background_color">
 
     <ImageView
         android:id="@+id/startup_icon"
@@ -13,6 +13,7 @@
         android:layout_height="100dp"
         android:layout_marginTop="100dp"
         android:src="@drawable/me_logo_animation_list"
+        android:tint="?attr/common_text_main_color"
         android:contentDescription="icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

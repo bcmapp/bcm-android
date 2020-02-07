@@ -2,18 +2,18 @@
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
                 android:oneshot="true">
     <item
-        android:drawable="@drawable/ic_launch_logo_black_0"
+        android:drawable="@drawable/ic_launch_logo_0"
         android:duration="50"/>
     <item
-        android:drawable="@drawable/ic_launch_logo_black_1"
+        android:drawable="@drawable/ic_launch_logo_1"
         android:duration="50"/>
     <item
-        android:drawable="@drawable/ic_launch_logo_black_0"
+        android:drawable="@drawable/ic_launch_logo_0"
         android:duration="300"/>
     <item
-        android:drawable="@drawable/ic_launch_logo_black_1"
+        android:drawable="@drawable/ic_launch_logo_1"
         android:duration="50"/>
     <item
-        android:drawable="@drawable/ic_launch_logo_black_0"
+        android:drawable="@drawable/ic_launch_logo_0"
         android:duration="50"/>
 </animation-list>

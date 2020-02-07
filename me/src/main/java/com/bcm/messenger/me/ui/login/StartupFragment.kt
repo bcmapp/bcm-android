@@ -16,6 +16,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
