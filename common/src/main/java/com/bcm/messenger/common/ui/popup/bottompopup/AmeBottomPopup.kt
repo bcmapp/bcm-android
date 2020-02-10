@@ -35,22 +35,22 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
             val SEP = PopupItem("", 0) {}
             val CLR_BLUE = Color.parseColor("#379BFF")
             val CLR_RED = Color.parseColor("#FF3737")
+            const val CLR_DEFAULT = 0
         }
 
         val text: String
-        val textColor: Int
+        @ColorInt val textColor: Int
         val action: (v: View) -> Unit
-        private val blackClr get() = getColor(R.color.common_text_main_color)
 
         constructor(text: String) {
-            this.textColor = blackClr
+            this.textColor = CLR_DEFAULT
             this.text = text
             this.action = {}
         }
 
 
         constructor(text: String, action: (v: View) -> Unit) {
-            this.textColor = blackClr
+            this.textColor = CLR_DEFAULT
             this.text = text
             this.action = action
         }
@@ -264,7 +264,12 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
             if (popupItem != PopupItem.SEP) {
                 val view = inflater.inflate(R.layout.common_bottom_popup_item_layout, parent, false)
                 val cellView = view as BottomPopupCellView
-                cellView.setText(popupItem.text, popupItem.textColor)
+                val color = if (popupItem.textColor != PopupItem.CLR_DEFAULT) {
+                    popupItem.textColor
+                } else {
+                    inflater.context.getAttrColor(R.attr.common_text_main_color)
+                }
+                cellView.setText(popupItem.text, color)
                 cellView.setOnClickListener {
                     dismiss()
                     popupItem.action(it)

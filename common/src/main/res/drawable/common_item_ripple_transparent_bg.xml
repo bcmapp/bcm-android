@@ -3,7 +3,7 @@
     android:color="?attr/common_ripple_color">
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
-            <solid android:color="?attr/common_view_background"/>
+            <solid android:color="?attr/common_view_background_dark_grey"/>
         </shape>
     </item>
 </ripple>

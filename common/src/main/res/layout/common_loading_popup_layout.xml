@@ -15,7 +15,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:circle_size="large"
-            app:circle_color="white"
             android:layout_gravity="center"/>
     </FrameLayout>
 

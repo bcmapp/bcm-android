@@ -5,6 +5,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
@@ -36,7 +37,7 @@ class CommonLoadingView @JvmOverloads constructor(context: Context, attrs: Attri
         val array = context.obtainStyledAttributes(attrs, R.styleable.CommonLoadingView)
 
         val size = array.getInt(R.styleable.CommonLoadingView_circle_size, SIZE_MIDDLE)
-        val color = array.getInt(R.styleable.CommonLoadingView_circle_color, COLOR_BLACK)
+        val color = array.getInt(R.styleable.CommonLoadingView_circle_color, 0)
         val isAutoStart = array.getBoolean(R.styleable.CommonLoadingView_auto_start, false)
 
         array.recycle()
@@ -56,10 +57,14 @@ class CommonLoadingView @JvmOverloads constructor(context: Context, attrs: Attri
             }
         }
 
-        if (color != COLOR_BLACK) {
-            loading_inner.setColorFilter(context.getAttrColor(R.attr.common_background_color))
-            loading_outer.setColorFilter(context.getAttrColor(R.attr.common_background_color))
+        val clr = when (color) {
+            COLOR_BLACK -> context.getAttrColor(R.attr.common_black)
+            COLOR_WHITE -> context.getAttrColor(R.attr.common_white)
+            else -> context.getAttrColor(R.attr.common_foreground_color)
         }
+
+        loading_inner.setColorFilter(clr)
+        loading_outer.setColorFilter(clr)
 
         anim = AnimatorSet().apply {
 
