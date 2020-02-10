@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="chats_title_color">#131313</color>
+    <color name="chats_conversation_item_received_color">#131313</color>
+    <color name="chats_sub_txt_color">#99999999</color>
+    <color name="chats_line">#e8e8e8</color>
+    <color name="chats_unread">#4562ff</color>
+    <color name="chats_user_delete">#f34a62</color>
+
+    <color name="chats_conversation_item_header_color">#bbbbbb</color>
+
+    <color name="chats_audio_send_decoration_color">#f0f0f0</color>
+    <color name="chats_audio_receive_decoration_color">#cccccc</color>
+    <color name="chats_conversation_send_bg_color">#379BFF</color>
+    <color name="chats_conversation_receive_bg_color">#F2F3F5</color>
+
+    <color name="chats_audio_sending_color">#9BCDFF</color>
+    <color name="chats_audio_send_color">#379BFF</color>
+    <color name="chats_audio_send_progress_color">#2C7CCC</color>
+
+    <color name="chats_audio_receive_color">#F2F3F5</color>
+    <color name="chats_audio_receive_progress_color">#D8E0EA</color>
+
+    <color name="chats_thumbnail_send_color">#f1f3f5</color>
+    <color name="chats_thumbnail_receive_color">#f1f3f5</color>
+
+    <color name="chats_contacts_select_done">#379BFF</color>
+
+    <color name="chats_rct_call_background_filter">#4C000000</color>
+    <color name="chats_group_name_edit">#F6F7F9</color>
+    <color name="chats_tips_background">#26000000</color>
+    <color name="chats_emoji_panel_background">#EDEFF2</color>
+    <color name="chats_indicator_unselected_color">#3D000000</color>
+
+    <color name="chats_mine_tips_text_color">#C3E1FF</color>
+    <color name="chats_mine_view_tips_countdown_color">#FF3737</color>
+    <color name="chats_black_opacity_70">#B3000000</color>
+
+    <color name="chats_text_interval">#E5FFFFFF</color>
+    
+    <color name="chats_audio_progress_outgo_color">#2C7CCC</color>
+    <color name="chats_audio_progress_income_color">#202122</color>
+    <color name="chats_media_progress_outgo_color">#202122</color>
+    <color name="chats_media_progress_income_color">#202122</color>
+    <color name="chats_message_outgo_background_color">#379BFF</color>
+    <color name="chats_message_income_background_color">#000000</color>
+</resources>

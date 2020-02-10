@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@color/common_content_second_color"
+                android:textColor="?attr/common_text_secondary_color"
                 android:textSize="12sp"
                 tools:text="+14152222222"
                 tools:visibility="visible" />
@@ -152,7 +152,7 @@
                     android:paddingStart="@dimen/chats_conversation_item_horizontal_gap"
                     android:paddingEnd="@dimen/chats_conversation_item_horizontal_gap"
                     android:paddingTop="@dimen/chats_conversation_item_vertical_gap"
-                    android:textColor="@color/common_color_A8A8A8"
+                    android:textColor="?attr/common_text_third_color"
                     android:textSize="@dimen/chats_conversation_item_body_text_size"
                     android:visibility="gone"
                     tools:text="boopsspgjejgespgjspj" />
@@ -167,8 +167,8 @@
                     android:paddingStart="@dimen/chats_conversation_item_horizontal_gap"
                     android:paddingEnd="@dimen/chats_conversation_item_horizontal_gap"
                     android:paddingTop="@dimen/chats_conversation_item_vertical_gap"
-                    android:textColor="@color/chats_conversation_item_received_color"
-                    android:textColorLink="@color/common_app_primary_color"
+                    android:textColor="?attr/common_text_main_color"
+                    android:textColorLink="?attr/common_text_blue_color"
                     android:textSize="@dimen/chats_conversation_item_body_text_size"
                     android:ellipsize="end"
                     tools:text="boopsspgjejgespgjspj" />
@@ -204,7 +204,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:singleLine="false"
-            android:textColor="@color/common_content_second_color"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

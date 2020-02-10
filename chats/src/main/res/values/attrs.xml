@@ -31,4 +31,13 @@
         </attr>
         <attr name="chats_textSize" format="dimension" />
     </declare-styleable>
+
+    <!-- Conversations -->
+    <attr name="chats_conversation_audio_progress_outgo_color" format="color" />
+    <attr name="chats_conversation_audio_progress_income_color" format="color" />
+    <attr name="chats_conversation_media_progress_outgo_color" format="color" />
+    <attr name="chats_conversation_media_progress_income_color" format="color" />
+    <attr name="chats_conversation_outgo_background_color" format="color" />
+    <attr name="chats_conversation_income_background_color" format="color" />
+
 </resources>

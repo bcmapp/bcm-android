@@ -3,19 +3,16 @@
     <item android:id="@android:id/background">
         <shape>
             <corners android:radius="@dimen/chats_conversation_item_radius"/>
-            <solid android:color="@color/common_color_white" />
+            <solid android:color="?attr/chats_conversation_income_background_color" />
         </shape>
     </item>
 
     <item android:id="@android:id/progress">
-
         <clip>
             <shape>
                 <corners android:radius="@dimen/chats_conversation_item_radius"/>
-                <solid android:color="@color/chats_audio_receive_progress_color"/>
+                <solid android:color="?attr/chats_conversation_audio_progress_income_color"/>
             </shape>
         </clip>
-
     </item>
-
 </layer-list>

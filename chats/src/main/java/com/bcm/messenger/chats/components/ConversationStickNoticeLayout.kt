@@ -8,7 +8,7 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.getColor
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.utility.StringAppearanceUtil
 import kotlinx.android.synthetic.main.chats_layout_stick_notice.view.*
 
@@ -52,7 +52,8 @@ class ConversationStickNoticeLayout : androidx.constraintlayout.widget.Constrain
     fun setGroupInfo(groupInfo: AmeGroupInfo) {
         stick_notify_text_one?.visibility = View.VISIBLE
         val text = "  " + context.getString(R.string.chats_stick_group_notify_secure_text)
-        val d = AppUtil.getDrawable(resources, R.drawable.chats_chat_secure_icon)
+        val d = AppUtil.getDrawable(resources, R.drawable.chats_conversation_secure_icon)
+        d.setTint(context.getAttrColor(R.attr.common_icon_color))
         d.setBounds(0, 0, d.intrinsicWidth, d.intrinsicHeight)
         stick_notify_text_one?.text = StringAppearanceUtil.addImage(text, d, 0)
     }
@@ -61,17 +62,18 @@ class ConversationStickNoticeLayout : androidx.constraintlayout.widget.Constrain
     fun setRecipient(recipient: Recipient) {
         stick_notify_text_one?.visibility = View.VISIBLE
         val text = "  " + context.getString(R.string.chats_stick_notify_secure_text)
-        val d = AppUtil.getDrawable(resources, R.drawable.chats_chat_secure_icon)
+        val d = AppUtil.getDrawable(resources, R.drawable.chats_conversation_secure_icon)
+        d.setTint(context.getAttrColor(R.attr.common_icon_color))
         d.setBounds(0, 0, d.intrinsicWidth, d.intrinsicHeight)
         stick_notify_text_one?.text = StringAppearanceUtil.addImage(text, d, 0)
 
         if (recipient.isFriend) {
             stick_notify_text_two?.visibility = View.GONE
-        }else {
+        } else {
             stick_notify_text_two?.visibility = View.VISIBLE
             val span = SpannableStringBuilder(context.getString(R.string.chats_stick_notify_relation_temp_text, recipient.name))
             span.append("\n\n")
-            span.append(StringAppearanceUtil.applyAppearance(context.getString(R.string.chats_relation_add_friend_action), color = getColor(R.color.common_app_primary_color)))
+            span.append(StringAppearanceUtil.applyAppearance(context.getString(R.string.chats_relation_add_friend_action), color = context.getAttrColor(R.attr.common_text_blue_color)))
             stick_notify_text_two?.text = span
         }
     }
@@ -86,7 +88,7 @@ class ConversationStickNoticeLayout : androidx.constraintlayout.widget.Constrain
         if (loading) {
             stick_notify_loading.visibility = View.VISIBLE
             stick_notify_loading.startAnim()
-        }else {
+        } else {
             stick_notify_loading.visibility = View.GONE
             stick_notify_loading.stopAnim()
         }

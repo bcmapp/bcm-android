@@ -76,11 +76,7 @@ class AmeConversationAdapter(val context: Context, val masterSecret: MasterSecre
     }
 
     open class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var textView: TextView
-
-        init {
-            textView = itemView.findViewById(R.id.text)
-        }
+        private var textView = itemView.findViewById<TextView>(R.id.text)
 
         fun setText(text: CharSequence) {
             textView.text = text

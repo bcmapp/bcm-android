@@ -21,7 +21,7 @@ import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -265,8 +265,8 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
                 private_conversation_root?.setBackgroundResource(R.drawable.chats_auto_delete_bg)
                 mStickNoticeLayout?.setBackgroundResource(R.drawable.chats_auto_delete_bg)
             } else {
-                private_conversation_root?.setBackgroundColor(getColorCompat(R.color.common_background_color))
-                mStickNoticeLayout?.setBackgroundColor(getColorCompat(R.color.common_background_color))
+                private_conversation_root?.setBackgroundColor(getAttrColor(R.attr.common_view_background_grey))
+                mStickNoticeLayout?.setBackgroundColor(getAttrColor(R.attr.common_view_background_grey))
             }
         }
     }
@@ -415,5 +415,4 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
         }
         return (mLayoutManager?.findFirstVisibleItemPosition() ?: 0) == 0
     }
-
 }

@@ -37,6 +37,11 @@
     <color name="chats_black_opacity_70">#B3000000</color>
 
     <color name="chats_text_interval">#E5FFFFFF</color>
-
-    <color name="chats_mine_award_text_color">#AC0015</color>
+    
+    <color name="chats_audio_progress_outgo_color">#2C7CCC</color>
+    <color name="chats_audio_progress_income_color">#F2F3F4</color>
+    <color name="chats_media_progress_outgo_color">#F2F3F4</color>
+    <color name="chats_media_progress_income_color">#F2F3F4</color>
+    <color name="chats_message_outgo_background_color">#379BFF</color>
+    <color name="chats_message_income_background_color">#FFFFFF</color>
 </resources>

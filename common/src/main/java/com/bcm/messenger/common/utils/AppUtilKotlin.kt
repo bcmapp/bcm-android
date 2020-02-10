@@ -508,6 +508,14 @@ fun getColor(resId: Int): Int {
     }
 }
 
+fun Fragment.getAttrColor(@AttrRes attr: Int): Int {
+    val act = activity ?: return 0
+    val styledAttributes = act.obtainStyledAttributes(intArrayOf(attr))
+    val result = styledAttributes.getColor(0, -1)
+    styledAttributes.recycle()
+    return result
+}
+
 fun Context.getAttrColor(@AttrRes attr: Int): Int {
     val styledAttributes = this.obtainStyledAttributes(intArrayOf(attr))
     val result = styledAttributes.getColor(0, -1)

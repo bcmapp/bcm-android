@@ -31,7 +31,8 @@
                 android:layout_height="15dp"
                 android:contentDescription="@string/common_audio_play_accessibility_description"
                 android:scaleType="centerInside"
-                android:src="@drawable/chats_audio_send_play_icon"
+                android:src="@drawable/chats_conversation_item_play_icon"
+                android:tint="?attr/common_white_color"
                 android:visibility="gone"
                 tools:visibility="gone"/>
 

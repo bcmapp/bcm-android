@@ -33,6 +33,8 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import com.bcm.messenger.common.mms.AudioSlide
+import kotlin.math.floor
+import kotlin.math.min
 
 /**
  */
@@ -69,8 +71,8 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
     init {
         View.inflate(context, R.layout.chats_audio_view_new, this)
 
-        audio_play.setOnClickListener { v -> doPlayAction(true) }
-        audio_pause.setOnClickListener { v -> doPlayAction(false) }
+        audio_play.setOnClickListener { doPlayAction(true) }
+        audio_pause.setOnClickListener { doPlayAction(false) }
 
         setOnClickListener { v ->
             if (mPrivateMessage?.isMediaDeleted() == true || mGroupMessage?.isFileDeleted == true) {
@@ -117,19 +119,17 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         }
 
         displayControl(audio_play)
-        if (messageRecord.isSending || messageRecord.isAttachmentDownloading) {
-            mShowPending = true
-        } else if (messageRecord.attachmentUri.isNullOrEmpty()) {
-            mShowPending = false
-        } else {
-            mShowPending = false
+        mShowPending = when {
+            messageRecord.isSending || messageRecord.isAttachmentDownloading -> true
+            messageRecord.attachmentUri.isNullOrEmpty() -> false
+            else -> false
         }
 
         AudioSlidePlayer.stopAll()
 
         this.audioSlidePlayer = AudioSlidePlayer.createFor(context, masterSecret, slide, this)
         audio_progress.progress = 0
-        updateMediaDuration(masterSecret.accountContext, audioSlidePlayer, slide.duration)
+        updateMediaDuration(audioSlidePlayer, slide.duration)
         if (slide.duration <= 0) {
             audioSlidePlayer?.prepareDuration()
         }
@@ -143,11 +143,9 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
             audio_timestamp.visibility = View.VISIBLE
             audio_decoration.visibility = View.VISIBLE
         }
-
     }
 
     fun setAudio(masterSecret: MasterSecret, messageRecord: MessageRecord) {
-
         accountContext = masterSecret.accountContext
         mPrivateMessage = messageRecord
         mGroupMessage = null
@@ -167,7 +165,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
 
         this.audioSlidePlayer = AudioSlidePlayer.createFor(context, masterSecret, slide, this)
         audio_progress.progress = 0
-        updateMediaDuration(masterSecret.accountContext, audioSlidePlayer, slide.duration)
+        updateMediaDuration(audioSlidePlayer, slide.duration)
         if (slide.duration <= 0) {
             audioSlidePlayer?.prepareDuration()
         }
@@ -181,7 +179,6 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
             audio_timestamp.visibility = View.VISIBLE
             audio_decoration.visibility = View.VISIBLE
         }
-
     }
 
 
@@ -213,14 +210,11 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
     }
 
     override fun onPrepare(player: AudioSlidePlayer?, totalMills: Long) {
-        val accountContext = this.accountContext?:return
-        updateMediaDuration(accountContext, player, totalMills)
+        updateMediaDuration(player, totalMills)
     }
 
     override fun onStart(player: AudioSlidePlayer?, totalMills: Long) {
-        val accountContext = this.accountContext?:return
-
-        updateMediaDuration(accountContext, player, totalMills)
+        updateMediaDuration(player, totalMills)
         if (this.audioSlidePlayer?.audioSlide == player?.audioSlide) {
             if (audio_pause.visibility != View.VISIBLE) {
                 togglePlayToPause()
@@ -251,7 +245,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
             audio_timestamp.text = DateUtils.convertMinuteAndSecond((player?.audioSlide?.duration
                     ?: 0) - millis)
         }
-        val newProgress = Math.floor(progress * audio_progress.max).toInt()
+        val newProgress = floor(progress * audio_progress.max).toInt()
         if (newProgress > audio_progress.progress || backwardsCounter >= AUDIO_BACKWARD) {
             backwardsCounter = 0
             audio_progress.progress = newProgress
@@ -269,8 +263,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         post { displayControl(audio_play) }
     }
 
-    private fun updateMediaDuration(accountContext: AccountContext, player: AudioSlidePlayer?, duration: Long) {
-
+    private fun updateMediaDuration(player: AudioSlidePlayer?, duration: Long) {
         ALog.d(TAG, "updateMediaDuration: $duration")
         val audioSlide = player?.audioSlide
         if (audioSlide?.duration != duration) {
@@ -305,7 +298,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
                 audio_timestamp.text = DateUtils.convertMinuteAndSecond(duration)
             }
             audio_decoration.layoutParams = audio_decoration.layoutParams.apply {
-                width = Math.min(3.dp2Px() * (duration / 1000).toInt(), 150.dp2Px())
+                width = min(3.dp2Px() * (duration / 1000).toInt(), 150.dp2Px())
                 if (width == 0) width = 5.dp2Px()
             }
         }
@@ -341,7 +334,6 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         } catch (ex: Exception) {
             Logger.e(ex, "audio play error", ex)
         }
-
     }
 
 
@@ -358,7 +350,6 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
 
 
     private fun displayControl(target: View?) {
-
         if (mCurrentControlView != null) {
             if (mCurrentControlView === target) {
                 return
@@ -371,7 +362,6 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
             target.visibility = View.VISIBLE
         }
         mCurrentControlView = target
-
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
@@ -381,5 +371,4 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
             mShowPending = event.progress < event.total
         }
     }
-
 }

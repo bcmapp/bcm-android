@@ -10,13 +10,9 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.common.utils.getStatusBarHeight
-import com.bcm.messenger.utility.setDrawableLeft
-import com.bcm.messenger.utility.setDrawableRight
 import kotlinx.android.synthetic.main.chats_titlebar_layout.view.*
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.utils.GroupUtil
-import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.*
 import com.bcm.route.api.BcmRouter
 
 /**
@@ -48,7 +44,10 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
 
         custom_view.setOnClickListener {}
 
-        bar_back.setOnClickListener {
+        bar_back_text.setOnClickListener {
+            mCallback?.onLeft(mMultiSelect)
+        }
+        bar_back_img.setOnClickListener {
             mCallback?.onLeft(mMultiSelect)
         }
         bar_recipient_photo.setOnClickListener {
@@ -65,8 +64,6 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
             BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND).putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS,
                     address?:return@setOnClickListener).startBcmActivity(AMELogin.majorContext, context)
         }
-
-        setBackgroundResource(R.color.common_color_white)
     }
 
     fun setOnChatTitleCallback(callback: OnChatTitleCallback?) {
@@ -122,11 +119,12 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
         mMultiSelect = multiSelect
         showRight(!multiSelect)
         if (multiSelect) {
-            bar_back.setDrawableLeft(0)
-            bar_back.text = context.getString(R.string.chats_select_mode_cancel_btn)
+            bar_back_text.text = context.getString(R.string.chats_select_mode_cancel_btn)
+            bar_back_text.visibility = View.VISIBLE
+            bar_back_img.visibility = View.GONE
         } else {
-            bar_back.text = ""
-            bar_back.setDrawableLeft(R.drawable.common_back_arrow_black_icon)
+            bar_back_text.visibility = View.INVISIBLE
+            bar_back_img.visibility = View.VISIBLE
         }
     }
 

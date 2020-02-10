@@ -6,5 +6,5 @@
         android:topRightRadius="10dp"
         android:bottomLeftRadius="0dp"
         android:bottomRightRadius="0dp"/>
-    <solid android:color="@color/common_color_white"/>
+    <solid android:color="?attr/common_view_background"/>
 </shape>

@@ -17,7 +17,7 @@ import com.bcm.messenger.common.event.PartProgressEvent
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
 import com.bcm.messenger.common.utils.BcmFileUtils
-import com.bcm.messenger.common.utils.getColor
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.utility.ViewUtils
 import kotlinx.android.synthetic.main.chats_document_view_new.view.*
 import org.greenrobot.eventbus.EventBus
@@ -158,12 +158,12 @@ class ChatDocumentView @JvmOverloads constructor(context: Context, attrs: Attrib
     private fun setDocumentAppearance(isOutGoing: Boolean) {
         if (isOutGoing) {
             document_icon.setBackgroundResource(R.drawable.chats_message_file_icon)
-            document_size.setTextColor(getColor(R.color.common_color_white))
-            document_name.setTextColor(getColor(R.color.common_color_white))
+            document_size.setTextColor(context.getAttrColor(R.attr.common_text_white_color))
+            document_name.setTextColor(context.getAttrColor(R.attr.common_text_white_color))
         } else {
             document_icon.setBackgroundResource(R.drawable.chats_message_file_icon_grey)
-            document_size.setTextColor(getColor(R.color.common_color_black))
-            document_name.setTextColor(getColor(R.color.common_color_black))
+            document_size.setTextColor(context.getAttrColor(R.attr.common_text_main_color))
+            document_name.setTextColor(context.getAttrColor(R.attr.common_text_main_color))
         }
     }
 

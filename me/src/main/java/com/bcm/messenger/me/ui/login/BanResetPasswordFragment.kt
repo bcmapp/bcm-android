@@ -28,10 +28,8 @@ class BanResetPasswordFragment : AbsRegistrationFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         ban_reset_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
-
             override fun onClickLeft() {
-                activity?.apply { supportFragmentManager.popBackStack() }
-
+                fragmentManager?.popBackStack()
             }
             override fun onClickRight() {
                 UserModuleImp().gotoBackupTutorial()
@@ -45,9 +43,5 @@ class BanResetPasswordFragment : AbsRegistrationFragment() {
             }
             activity?.apply { supportFragmentManager.popBackStack() }
         }
-
-        activity?.window?.setStatusBarLightMode()
     }
-
-
 }

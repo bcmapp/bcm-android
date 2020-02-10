@@ -19,8 +19,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.RotateAnimation
 import android.widget.EditText
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.chats.R
@@ -28,29 +26,22 @@ import com.bcm.messenger.chats.adapter.BottomPanelAdapter
 import com.bcm.messenger.chats.adapter.ChatAtListAdapter
 import com.bcm.messenger.chats.bean.BottomPanelItem
 import com.bcm.messenger.chats.group.logic.GroupLogic
-import com.bcm.messenger.chats.privatechat.AmeConversationViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.audio.AudioRecorder
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.event.MultiSelectEvent
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
-import com.bcm.messenger.common.mms.OutgoingExpirationUpdateMessage
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.InputAwareLayout
 import com.bcm.messenger.common.ui.KeyboardAwareLinearLayout
-import com.bcm.messenger.common.ui.popup.DataPickerPopupWindow
 import com.bcm.messenger.common.ui.popup.ToastUtil
-import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
 import com.bcm.messenger.common.utils.getColorCompat
-import com.bcm.messenger.utility.AmeTimeUtil
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.permission.PermissionUtil
@@ -92,9 +83,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
     }
 
     inner class ExtraContainer(val view: View, val isEmojiPanel: Boolean, override var isShowing: Boolean) : InputAwareLayout.InputView {
-
         private var optionOpenAnim = RotateAnimation(0f, 45f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
-
         private var optionCloseAnim = RotateAnimation(45f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
 
         override fun show(height: Int, immediate: Boolean) {
@@ -122,7 +111,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
         private fun showMoreOptionPanel(show: Boolean) {
             if (show) {
                 if ((!optionOpenAnim.hasStarted() || optionOpenAnim.hasEnded()) && panel_option_container.visibility != View.VISIBLE) {
-
                     panel_more_options_iv.clearAnimation()
                     optionOpenAnim.duration = 100
                     optionOpenAnim.fillAfter = true
@@ -131,20 +119,16 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                         }
 
                         override fun onAnimationEnd(animation: Animation?) {
-
                         }
 
                         override fun onAnimationStart(animation: Animation?) {
                             panel_option_container.visibility = View.VISIBLE
                             mListener?.onMoreOptionsPanelShow(show)
                         }
-
                     })
                     panel_more_options_iv.startAnimation(optionOpenAnim)
                 }
-
             } else {
-
                 if ((optionOpenAnim.hasStarted() && !optionOpenAnim.hasEnded()) || panel_option_container.visibility == View.VISIBLE) {
                     panel_more_options_iv.clearAnimation()
                     optionCloseAnim.duration = 100
@@ -163,13 +147,13 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
             if (show) {
                 if (panel_emoji_container.visibility != View.VISIBLE) {
                     panel_emoji_container.visibility = View.VISIBLE
-                    panel_emoji_toggle.setImageDrawable(AppUtil.getDrawable(resources, R.drawable.chats_keyboard))
+                    panel_emoji_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_conversation_keyboard_icon))
                     mListener?.onEmojiPanelShow(show)
                 }
             } else {
                 if (panel_emoji_container.visibility == View.VISIBLE) {
                     panel_emoji_container.visibility = View.GONE
-                    panel_emoji_toggle.setImageDrawable(AppUtil.getDrawable(resources, R.drawable.chats_emoji))
+                    panel_emoji_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_conversation_emoji_icon))
                     mListener?.onEmojiPanelShow(show)
                 }
             }
@@ -198,7 +182,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
     constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
 
     constructor(context: Context, attributeSet: AttributeSet?, defStyleAttr: Int) : super(context, attributeSet, defStyleAttr) {
-
         LayoutInflater.from(context).inflate(R.layout.chats_conversation_input_panel, this)
         initResources(attributeSet)
         init(context)
@@ -219,8 +202,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
     lateinit var voiceRecodingPanel: VoiceRecodingPanel
 
     private var mInputAwareLayout: InputAwareLayout? = null
-
-    private var expireValue = 1
 
     private var mEmojiContainer: ExtraContainer? = null
     private var mOptionContainer: ExtraContainer? = null
@@ -304,7 +285,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
             mListener?.onAudioStateChanged(OnConversationInputListener.AUDIO_COMPLETE, recordUri, byteSize, playTime)
         } else {
             if (playTime < 1000) {
-                ToastUtil.show(context, AppUtil.getString(AppContextHolder.APP_CONTEXT, R.string.chats_record_time_too_short))
+                ToastUtil.show(context, context.getString(R.string.chats_record_time_too_short))
             }
             mListener?.onAudioStateChanged(OnConversationInputListener.AUDIO_CANCEL, recordUri, byteSize, playTime)
         }
@@ -339,7 +320,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
         clipChildren = false
         clipToPadding = false
-
     }
 
     private fun init(context: Context) {
@@ -362,7 +342,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 onAtTextChanged(panel_compose_text, start, before, count)
             }
-
         })
         panel_compose_text.setOnClickListener {
             panel_compose_text.isFocusableInTouchMode = true
@@ -408,7 +387,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                     mInputAwareLayout?.showSoftkey(panel_compose_text)
                 }
             }
-
         }
         panel_emoji_container.setInputCallback { emoji ->
             val posStart = panel_compose_text.selectionStart
@@ -435,7 +413,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
         initAtList()
 
         initMultiSelectAction()
-
     }
 
     override fun clearFocus() {
@@ -445,38 +422,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
     fun hideInput() {
         mInputAwareLayout?.hideCurrentInput(panel_compose_text)
-    }
-
-    fun setBurnAfterReadVisible(recipient: Recipient, callback: ((v: View) -> Unit)?) {
-
-        panel_burn_toggle.visibility = if (!recipient.isLogin && callback != null) View.VISIBLE else View.GONE
-        panel_burn_delay_tv.visibility = panel_burn_toggle.visibility
-        if (callback != null) {
-            setBurnExpireAfterRead(recipient.expireMessages)
-            panel_burn_toggle.setOnClickListener {
-                mInputAwareLayout?.hideCurrentInput(panel_compose_text)
-                callback.invoke(it)
-            }
-        } else {
-            panel_burn_toggle.setOnClickListener(null)
-        }
-    }
-
-    fun callBurnAfterRead(recipient: Recipient, masterSecret: MasterSecret) {
-        ChatsBurnSetting.configBurnSetting(context as FragmentActivity, recipient, masterSecret) {
-            setBurnExpireAfterRead(recipient.expireMessages)
-        }
-    }
-
-    fun setBurnExpireAfterRead(expire: Int) {
-        expireValue = ChatsBurnSetting.expireToType(expire)
-        panel_burn_delay_tv.text = ChatsBurnSetting.typeToString(expireValue)
-
-        if (expireValue > 0) {
-            panel_burn_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_destroy_msg_enabled_icon))
-        } else {
-            panel_burn_toggle.setImageDrawable(context.getDrawable(R.drawable.chats_destroy_msg_icon))
-        }
     }
 
     fun setOnConversationInputListener(listener: OnConversationInputListener) {
@@ -529,7 +474,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
         panel_compose_text?.post {
             panel_compose_text?.setSelection(panel_compose_text.text?.length ?: 0)
         }
-
     }
 
     fun getComposeText(): CharSequence {
@@ -543,7 +487,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
             panel_compose_text?.requestFocus()
             mInputAwareLayout?.showSoftkey(panel_compose_text ?: return@postDelayed)
         }, 300)
-
     }
 
     fun setMasterSecret(masterSecret: MasterSecret?) {
@@ -562,7 +505,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
             panel_more_options_iv.isEnabled = false
             panel_emoji_toggle.isEnabled = false
             restriction_ban_txt.text = content
-
         } else {
             panel_restriction_ban.visibility = View.GONE
             panel_audio_toggle.isEnabled = true
@@ -635,7 +577,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
                         override fun onAnimationStart(animation: Animation?) {
                         }
-
                     })
                 })
                 panel_main_ban.visibility = View.VISIBLE
@@ -659,13 +600,10 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                 panel_at_list.startAnimation(animation)
             }
         }
-
     }
 
     fun setReply(accountContext: AccountContext?, messageDetail: AmeGroupMessageDetail?, locateCallback: ((v: View) -> Unit)?) {
-
         if (messageDetail != null && accountContext != null) {
-
             postDelayed({
                 panel_compose_text.requestFocus()
                 mInputAwareLayout?.showSoftkey(panel_compose_text)
@@ -697,15 +635,11 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                 panel_reply_layout.setOnClickListener {
                     locateCallback?.invoke(it)
                 }
-
             }, 150)
-
         } else {
-
             panel_reply_layout.visibility = View.GONE
             panel_reply_content_tv.tag = null
         }
-
     }
 
     private fun checkHasAudioPermission(): Boolean {
@@ -736,7 +670,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
     private fun initMultiSelectAction() {
         panel_forward_btn.setOnClickListener {
-
             val weakThis = WeakReference(this)
             AmeModuleCenter.chat(AMELogin.majorContext)?.forwardMessage(context, isGroup, mCurrentConversationId, mBatchSelected
                     ?: return@setOnClickListener) {
@@ -744,7 +677,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                     weakThis.get()?.postDelayed({
                         EventBus.getDefault().post(MultiSelectEvent(isGroup, null))
                     }, 500)
-
                 }
             }
         }
@@ -770,13 +702,10 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
         ALog.d(TAG, "initAtList")
         mChatAtAdapter = ChatAtListAdapter(AMELogin.majorContext, context, object : ChatAtListAdapter.AtActionListener {
             override fun onSelect(recipient: Recipient) {
-
                 val lastIndex = getAtingIndex()
                 remoteNearestAtData(panel_compose_text.text?.length ?: 0)
                 addAtData(TempAtData(recipient, lastIndex))
-
             }
-
         })
         panel_at_list.adapter = mChatAtAdapter
         panel_at_list.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -791,7 +720,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
         }
 
         try {
-
             ALog.d(TAG, "addAtData index: ${data.index}")
             val recipient = data.recipient
             if (recipient != null) {
@@ -813,10 +741,8 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                 }
             }
             mCurrentAtDataList.add(insertIndex, data)
-
         } catch (ex: Exception) {
             ALog.e(TAG, "addAtData error", ex)
-
         } finally {
             showAtList(getAtingIndex() >= 0)
         }
@@ -846,16 +772,13 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                         sourceText?.delete(removeIndex, fromIndex)
                     }
                 } else {
-
                     val replaceText = panel_compose_text.text?.subSequence(removeIndex, fromIndex)
                     val atPart = createAtPart(recipient, mCurrentConversationId)
                     if (replaceText?.endsWith(atPart) == true) {
                         panel_compose_text.text?.delete(removeIndex, fromIndex)
                     }
                 }
-
             }
-
         } catch (ex: Exception) {
             ALog.e(TAG, "remoteNearestAtData error", ex)
         } finally {
@@ -905,17 +828,13 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
         ALog.d(TAG, "onAtTextChanged sourceText: ${inputText.text}, mLastAtIndex: $atingIndex, start: $start, add: $add")
         if (atingIndex >= 0) {
-
             if (start <= atingIndex) {
                 if (add < 0) {
-
                     if (start + before > atingIndex) {
                         remoteNearestAtData(atingIndex)
                     }
                 }
-
             } else {
-
                 val search = inputText.text.substring(atingIndex + 1)
                 ALog.d(TAG, "onAtTextChanged search: $search")
 
@@ -941,13 +860,10 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
                         }, {
                             ALog.e(TAG, "onAtTextChanged error", it)
                         })
-
             }
 
             updateAtDataIndex(start, add)
-
         } else {
-
             updateAtDataIndex(start, add)
 
             val num = Math.abs(add)
@@ -955,12 +871,9 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
                 if (add > 0) {
                     if (inputText.text.endsWith(ARouterConstants.CHAT_AT_CHAR)) {
-
                         addAtData(TempAtData(null, start))
                     }
-
                 } else {
-
                     if (start < mLastInputText.length && start + 1 <= mLastInputText.length && mLastInputText.subSequence(start, start + 1) == " ") {
                         remoteNearestAtData(start)
                     }
@@ -970,7 +883,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
         mLastInputText = inputText.text.toString()
         ALog.d(TAG, "onAtTextChanged lastInputText: $mLastInputText")
-
     }
 
     private fun getTargetExtensionContent(): AmeGroupMessageDetail.ExtensionContent {
@@ -1007,7 +919,6 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
     }
 
     private class TempAtData(var recipient: Recipient?, var index: Int = -1) {
-
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
@@ -1026,6 +937,4 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
             return result
         }
     }
-
-
 }

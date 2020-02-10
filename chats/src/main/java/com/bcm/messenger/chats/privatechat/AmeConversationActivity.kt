@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.SharedElementCallback
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.bean.BottomPanelClickListener
@@ -20,7 +19,6 @@ import com.bcm.messenger.chats.bean.SendContactEvent
 import com.bcm.messenger.chats.components.ChatsBurnSetting
 import com.bcm.messenger.chats.components.ConversationInputPanel
 import com.bcm.messenger.chats.components.titlebar.ChatTitleBar
-import com.bcm.messenger.chats.components.titlebar.ChatTitleDropBar
 import com.bcm.messenger.chats.components.titlebar.ChatTitleDropItem
 import com.bcm.messenger.chats.components.titlebar.ChatTitleDropMenu
 import com.bcm.messenger.chats.mediabrowser.ui.MediaBrowserActivity
@@ -72,7 +70,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.chats_bottom_pannel_item.*
 import kotlinx.android.synthetic.main.chats_conversation_activity.*
 import kotlinx.android.synthetic.main.chats_conversation_input_panel.view.*
 import me.imid.swipebacklayout.lib.SwipeBackLayout
@@ -160,8 +157,6 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
         AmeConfigure.checkAutoDeleteEnable { enable ->
             ALog.i(TAG, "auto_delete_enable- $enable")
         }
-
-        window?.setStatusBarLightMode()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -371,7 +366,6 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
             return
         }
         if (recipient == mRecipient) {
-            bottom_panel?.setBurnExpireAfterRead(recipient.expireMessages)
             chat_title_bar?.setPrivateChat(mRecipient)
 
             mConversationModel?.checkProfileKeyUpdateToDate(this)
@@ -477,7 +471,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
             }
         })
 
-        bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_camera), R.drawable.chats_icon_camera, object : BottomPanelClickListener {
+        bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_camera), R.drawable.chats_conversation_panel_cam_icon, object : BottomPanelClickListener {
             override fun onClick(name: String, view: View) {
                 checkRecipientBlock {
                     if (it) {
@@ -497,7 +491,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                 }
             }
         }),
-                BottomPanelItem(getString(R.string.chats_more_option_album), R.drawable.chats_icon_picture, object : BottomPanelClickListener {
+                BottomPanelItem(getString(R.string.chats_more_option_album), R.drawable.chats_conversation_panel_pic_icon, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         checkRecipientBlock {
                             if (it) {
@@ -517,7 +511,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                         }
                     }
                 }),
-                BottomPanelItem(getString(R.string.chats_more_option_file), R.drawable.chats_icon_file, object : BottomPanelClickListener {
+                BottomPanelItem(getString(R.string.chats_more_option_file), R.drawable.chats_conversation_panel_file_icon, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         checkRecipientBlock {
                             if (it) {
@@ -546,7 +540,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
 
         if (!mRecipient.isGroupRecipient && !mRecipient.isLogin) {
             bottom_panel.addOptionItem(
-                    BottomPanelItem(getString(R.string.chats_more_option_call), R.drawable.chats_icon_call, object : BottomPanelClickListener {
+                    BottomPanelItem(getString(R.string.chats_more_option_call), R.drawable.chats_conversation_panel_voice_call_icon, object : BottomPanelClickListener {
                         override fun onClick(name: String, view: View) {
                             checkRecipientBlock {
                                 if (it) {
@@ -561,7 +555,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                     }))
         }
         bottom_panel.addOptionItem(
-                BottomPanelItem(getString(R.string.chats_more_option_location), R.drawable.chats_icon_location, object : BottomPanelClickListener {
+                BottomPanelItem(getString(R.string.chats_more_option_location), R.drawable.chats_conversation_panel_location_icon, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         checkRecipientBlock {
                             if (it) {
@@ -575,7 +569,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                         }
                     }
                 }),
-                BottomPanelItem(getString(R.string.chats_more_option_namecard), R.drawable.chats_icon_contact, object : BottomPanelClickListener {
+                BottomPanelItem(getString(R.string.chats_more_option_namecard), R.drawable.chats_conversation_panel_card_icon, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         checkRecipientBlock {
                             if (it) {
@@ -586,28 +580,6 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                         }
                     }
                 }))
-        if (!mRecipient.isLogin) {
-            bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_shredder), R.drawable.chats_72_recall, object : BottomPanelClickListener {
-                override fun onClick(name: String, view: View) {
-                    checkRecipientBlock {
-                        if (it) {
-                            AmeModuleCenter.user(accountContext)?.showClearHistoryConfirm(this@AmeConversationActivity, {
-                                mConversationModel?.clearConversationHistory(this@AmeConversationActivity)
-                            }, {
-                            })
-                        }
-                    }
-                }
-            }))
-        }
-
-        bottom_panel.setBurnAfterReadVisible(mRecipient) {
-            checkRecipientBlock {
-                if (it) {
-                    bottom_panel.callBurnAfterRead(mRecipient, getMasterSecret())
-                }
-            }
-        }
 
         swipeBackLayout.addSwipeListener(object : SwipeBackLayout.SwipeListener {
             override fun onScrollStateChange(state: Int, scrollPercent: Float) {
@@ -642,7 +614,6 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
 
         val chatBurn  = ChatTitleDropItem(icon, R.color.common_text_main_color, tickTalkTitle) {
             ChatsBurnSetting.configBurnSetting(this, mRecipient, accountContext.masterSecret?:return@ChatTitleDropItem) {
-                bottom_panel.setBurnExpireAfterRead(mRecipient.expireMessages)
             }
         }
 

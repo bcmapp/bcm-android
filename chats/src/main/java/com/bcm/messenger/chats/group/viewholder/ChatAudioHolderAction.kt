@@ -31,7 +31,7 @@ class ChatAudioHolderAction(accountContext: AccountContext) : BaseChatHolderActi
         if (messageRecord.isSendByMe) {
             bodyView.setProgressDrawableResource(R.drawable.chats_audio_send_top_progress_bg)
 
-            bodyView.setAudioAppearance(R.drawable.chats_audio_send_play_icon, R.drawable.chats_audio_send_pause_icon,
+            bodyView.setAudioAppearance(R.drawable.chats_conversation_item_play_icon, R.drawable.chats_audio_send_pause_icon,
                     AppUtil.getColor(bodyView.resources, R.color.chats_audio_send_decoration_color),
                     AppUtil.getColor(bodyView.resources, R.color.common_color_white))
         }else {

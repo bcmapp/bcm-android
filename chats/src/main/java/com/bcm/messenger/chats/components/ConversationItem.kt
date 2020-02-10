@@ -487,7 +487,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         if (messageRecord.isOutgoing()) {
             audioViewStub.get().setProgressDrawableResource(R.drawable.chats_audio_send_top_progress_bg)
 
-            audioViewStub.get().setAudioAppearance(R.drawable.chats_audio_send_play_icon, R.drawable.chats_audio_send_pause_icon,
+            audioViewStub.get().setAudioAppearance(R.drawable.chats_conversation_item_play_icon, R.drawable.chats_audio_send_pause_icon,
                     context.getColorCompat(R.color.chats_audio_send_decoration_color),
                     context.getColorCompat(R.color.common_color_white))
 

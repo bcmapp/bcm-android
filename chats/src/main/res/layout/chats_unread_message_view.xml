@@ -15,7 +15,7 @@
         android:layout_centerVertical="true"
         android:gravity="center"
         android:textSize="12sp"
-        android:textColor="@color/common_color_white"
+        android:textColor="?attr/common_text_main_color"
         tools:text="20 new messages"/>
 
 </com.bcm.messenger.chats.components.UnreadMessageBubbleView>

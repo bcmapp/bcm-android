@@ -14,7 +14,7 @@ import com.bcm.messenger.common.utils.AppUtil
 /**
  * bcm.social.01 2019/1/27.
  */
-class ChatTitleDropMenu: PopupWindow(){
+class ChatTitleDropMenu : PopupWindow() {
     private val TAG = "PopupWindow"
     private var itemList = mutableListOf<ChatTitleDropItem>()
 
@@ -32,17 +32,17 @@ class ChatTitleDropMenu: PopupWindow(){
 
         val contentView = LayoutInflater.from(anchor.context).inflate(R.layout.chats_title_bar_menu_layout, null) as LinearLayout
         contentView.setBackgroundResource(R.color.common_default_background_color)
-        contentView.setOnClickListener{
+        contentView.setOnClickListener {
             dismiss()
         }
 
-        for (i in itemList){
+        for (i in itemList) {
             val v = ChatTitleDropItemView(anchor.context)
             contentView.addView(v)
-            v.setViewItem(i){
+            v.setViewItem(i) {
                 dismiss()
             }
-            v.setOnClickListener{
+            v.setOnClickListener {
                 dismiss()
             }
         }

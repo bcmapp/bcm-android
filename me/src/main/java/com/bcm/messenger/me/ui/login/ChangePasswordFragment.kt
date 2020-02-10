@@ -14,7 +14,7 @@ import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
@@ -83,7 +83,7 @@ class ChangePasswordFragment : BaseFragment() {
         confirm_pwd_edit?.addTextChangedListener(watcher)
 
         val builder = SpannableStringBuilder(getString(R.string.me_change_password_notice_part))
-        builder.append(StringAppearanceUtil.applyAppearance(getString(R.string.me_change_password_notce_action), color = getColorCompat(R.color.common_app_primary_color)))
+        builder.append(StringAppearanceUtil.applyAppearance(getString(R.string.me_change_password_notce_action), color = getAttrColor(R.attr.common_text_blue_color)))
         change_password_notice?.text = builder
         change_password_notice?.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
@@ -107,25 +107,25 @@ class ChangePasswordFragment : BaseFragment() {
         val enable = if (!Pattern.matches(ARouterConstants.PASSWORD_REGEX, new_pwd_edit.text)) {
             confirm_pwd_notice.visibility = View.GONE
             new_pwd_notice.visibility = if (new_pwd_edit.text.isNullOrEmpty()) View.GONE else View.VISIBLE
-            new_pwd_notice.setTextColor(getColorCompat(R.color.common_content_warning_color))
+            new_pwd_notice.setTextColor(getAttrColor(R.attr.common_text_warn_color))
             new_pwd_notice.text = getString(R.string.me_change_password_weak_description)
             ALog.d(TAG, "new_pwd_edit is weak")
             false
         } else if (!checkLegitimateForNewPassword()) {
             new_pwd_notice.visibility = View.VISIBLE
             confirm_pwd_notice.visibility = if (confirm_pwd_edit.text.isNullOrEmpty()) View.GONE else View.VISIBLE
-            new_pwd_notice.setTextColor(getColorCompat(R.color.common_app_green_color))
+            new_pwd_notice.setTextColor(getAttrColor(R.attr.common_text_green_color))
             new_pwd_notice.text = getString(R.string.me_change_password_strong_description)
-            confirm_pwd_notice.setTextColor(getColorCompat(R.color.common_content_warning_color))
+            confirm_pwd_notice.setTextColor(getAttrColor(R.attr.common_text_warn_color))
             confirm_pwd_notice.text = getString(R.string.me_change_password_not_match_description)
             ALog.d(TAG, "new_pwd_edit not match confirm_pwd_edit")
             false
         } else {
             new_pwd_notice.visibility = View.VISIBLE
             confirm_pwd_notice.visibility = View.VISIBLE
-            new_pwd_notice.setTextColor(getColorCompat(R.color.common_app_green_color))
+            new_pwd_notice.setTextColor(getAttrColor(R.attr.common_text_green_color))
             new_pwd_notice.text = getString(R.string.me_change_password_strong_description)
-            confirm_pwd_notice.setTextColor(getColorCompat(R.color.common_app_green_color))
+            confirm_pwd_notice.setTextColor(getAttrColor(R.attr.common_text_green_color))
             confirm_pwd_notice.text = getString(R.string.me_change_password_match_description)
             !origin_pwd_edit.text.isNullOrEmpty()
         }

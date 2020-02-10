@@ -10,8 +10,6 @@
         android:id="@+id/chat_user_main_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/common_background_color"
-        android:overScrollMode="never"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -87,7 +85,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:setting_item_name="@string/chats_media_and_files"
-                app:setting_item_right="arrow"
+                app:setting_item_right="none"
+                app:setting_item_right_custom="@drawable/chats_conversation_detail_files_icon"
                 app:setting_item_head="@string/chats_user_setting_data_title"
                 app:setting_item_line="false"/>
 
@@ -97,7 +96,7 @@
                 android:layout_height="wrap_content"
                 app:setting_item_name="@string/chats_user_clear_history"
                 app:setting_item_right="none"
-                app:setting_item_right_custom="@drawable/chats_group_setting_clear_history_icon"
+                app:setting_item_right_custom="@drawable/chats_conversation_detail_clear_history_icon"
                 app:setting_item_head="@string/chats_user_setting_clear_history_title"
                 app:setting_item_line="false"/>
 
@@ -115,7 +114,7 @@
                 android:layout_height="@dimen/chats_setting_item_height"
                 android:visibility="gone"
                 app:setting_item_name="@string/chats_user_delete_text"
-                app:setting_item_name_color="@color/common_content_warning_color"
+                app:setting_item_name_color="?attr/common_setting_item_warn_color"
                 app:setting_item_right="none"
                 app:setting_item_line="false"/>
 
@@ -131,7 +130,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:right_type="text"
-        app:right_text_color="@color/common_color_black"
         app:right_text_size="17sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

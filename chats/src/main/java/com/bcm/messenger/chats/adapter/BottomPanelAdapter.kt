@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.bean.BottomPanelItem
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.utility.QuickOpCheck
 
 
@@ -74,6 +75,7 @@ class BottomPanelAdapter(private val context: Context) : RecyclerView.Adapter<Bo
     override fun onBindViewHolder(holder: BottomViewHolder, position: Int) {
         val item = list[position]
         holder.panelImg.setImageResource(item.imgId)
+        holder.panelImg.drawable.setTint(context.getAttrColor(R.attr.common_icon_color))
         holder.panelImg.setOnClickListener { v ->
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener

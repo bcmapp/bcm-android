@@ -3,7 +3,7 @@
     <item android:id="@android:id/background">
         <shape>
             <corners android:radius="@dimen/chats_conversation_item_radius"/>
-            <solid android:color="@color/chats_audio_send_color"/>
+            <solid android:color="?attr/chats_conversation_outgo_background_color"/>
         </shape>
     </item>
 
@@ -12,7 +12,7 @@
         <clip>
             <shape>
                 <corners android:radius="@dimen/chats_conversation_item_radius"/>
-                <solid android:color="@color/chats_audio_send_progress_color"/>
+                <solid android:color="?chats_conversation_audio_progress_outgo_color"/>
             </shape>
         </clip>
 

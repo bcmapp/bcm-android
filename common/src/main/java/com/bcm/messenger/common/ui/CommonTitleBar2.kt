@@ -339,6 +339,10 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
         title_bar_left_zone.isClickable = true
     }
 
+    fun setLeftIconColor(color: Int) {
+        title_bar_left_img.drawable.setTint(color)
+    }
+
     fun setLeftText(text: String) {
         leftType = TYPE_TEXT
         title_bar_left_text.text = text
@@ -463,6 +467,10 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
         title_bar_right_img.visibility = View.VISIBLE
 
         title_bar_right_zone.isClickable = true
+    }
+
+    fun setRightIconColor(color: Int) {
+        title_bar_right_img.drawable.setTint(color)
     }
 
     fun setRightText(text: String) {

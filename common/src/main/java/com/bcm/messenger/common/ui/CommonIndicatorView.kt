@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
 import com.bcm.messenger.common.R
-import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.dp2Px
 
 /**
  * Created by Kin on 2018/7/26
@@ -20,8 +20,8 @@ class CommonIndicatorView @JvmOverloads constructor(context: Context, attrs: Att
         }
         for (i in 0 until count) {
             val view = View(context)
-            view.layoutParams = LayoutParams(AppUtil.dp2Px(context.resources, 7), AppUtil.dp2Px(context.resources, 7)).apply {
-                setMargins(AppUtil.dp2Px(context.resources, 4), 0, AppUtil.dp2Px(context.resources, 4), 0)
+            view.layoutParams = LayoutParams(7.dp2Px(), 7.dp2Px()).apply {
+                setMargins(4.dp2Px(), 0, 4.dp2Px(), 0)
             }
             view.background = context.getDrawable(R.drawable.common_indicator_selector)
             view.isActivated = false

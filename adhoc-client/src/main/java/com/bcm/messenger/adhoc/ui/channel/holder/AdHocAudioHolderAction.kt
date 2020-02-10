@@ -19,7 +19,7 @@ class AdHocAudioHolderAction(private val accountContext: AccountContext) : BaseH
         if (message.sendByMe) {
             body.setProgressDrawableResource(R.drawable.chats_audio_send_top_progress_bg)
 
-            body.setAudioAppearance(R.drawable.chats_audio_send_play_icon, R.drawable.chats_audio_send_pause_icon,
+            body.setAudioAppearance(R.drawable.chats_conversation_item_play_icon, R.drawable.chats_audio_send_pause_icon,
                     AppUtil.getColor(body.resources, R.color.chats_audio_send_decoration_color),
                     AppUtil.getColor(body.resources, R.color.common_color_white))
         }else {

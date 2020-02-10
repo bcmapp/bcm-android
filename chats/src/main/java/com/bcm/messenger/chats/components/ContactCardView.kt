@@ -17,10 +17,7 @@ import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
-import com.bcm.messenger.common.utils.getColor
-import com.bcm.messenger.common.utils.getString
-import com.bcm.messenger.common.utils.sp2Px
-import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_contact_card_view.view.*
@@ -89,9 +86,9 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
         } else {
             setBackgroundResource(R.drawable.chats_share_card_incoming_bg)
             val spanBuilder = SpannableStringBuilder()
-            spanBuilder.append(StringAppearanceUtil.applyAppearance(getString(R.string.chats_contact_card_title), 11.sp2Px(), Color.parseColor("#4D000000")))
+            spanBuilder.append(StringAppearanceUtil.applyAppearance(getString(R.string.chats_contact_card_title), 11.sp2Px(), context.getAttrColor(R.attr.common_text_third_color)))
             spanBuilder.append("\n")
-            spanBuilder.append(StringAppearanceUtil.applyAppearance(name, 16.sp2Px(), getColor(R.color.common_color_black)))
+            spanBuilder.append(StringAppearanceUtil.applyAppearance(name, 16.sp2Px(), context.getAttrColor(R.attr.common_text_main_color)))
             contact_name.text = spanBuilder
 
             contact_action.setBackgroundResource(R.drawable.chats_contact_action_incoming_selector)

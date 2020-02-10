@@ -19,6 +19,7 @@ import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.provider.IAmeAppModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
+import com.bcm.messenger.common.theme.ThemeManager
 import com.bcm.messenger.common.ui.CommonSettingItem
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
@@ -100,14 +101,13 @@ class ChatUserPageActivity : AccountSwipeBaseActivity(), RecipientModifiedListen
                         isBgLight = it
                         if (it) {
                             window.setStatusBarLightMode()
-                            chat_user_name.setTextColor(getColorCompat(R.color.common_color_black))
+                            chat_user_name.setTextColor(getAttrColor(R.attr.common_black_color))
                             if (!mRecipient.isLogin) {
                                 chat_user_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
                             }
                         } else {
-                            chat_user_title_bar.setLeftIcon(R.drawable.common_back_arrow_white_icon)
-                            chat_user_title_bar.setRightTextColor(getColorCompat(R.color.common_color_white))
-                            chat_user_name.setTextColor(getColorCompat(R.color.common_color_white))
+                            chat_user_title_bar.setLeftIconColor(getAttrColor(R.attr.common_white_color))
+                            chat_user_name.setTextColor(getAttrColor(R.attr.common_white_color))
                             if (!mRecipient.isLogin) {
                                 chat_user_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
                             }
@@ -208,7 +208,7 @@ class ChatUserPageActivity : AccountSwipeBaseActivity(), RecipientModifiedListen
 
             AmePopup.bottom.newBuilder()
                     .withTitle(title)
-                    .withPopItem(AmeBottomPopup.PopupItem(item, getColorCompat(R.color.common_content_warning_color)) {
+                    .withPopItem(AmeBottomPopup.PopupItem(item, getAttrColor(R.attr.common_text_warn_color)) {
                         mGoingFinish = true
                         AmeModuleCenter.contact(accountContext)?.deleteFriend(mRecipient.address.serialize()) {
                             if (it) {
@@ -255,17 +255,18 @@ class ChatUserPageActivity : AccountSwipeBaseActivity(), RecipientModifiedListen
 
             if (alpha >= 0.5f && !lightMode) {
                 lightMode = true
-                window.setStatusBarLightMode()
-                chat_user_title_bar.setLeftIcon(R.drawable.common_back_arrow_black_icon)
-                chat_user_title_bar.setRightTextColor(getColorCompat(R.color.common_color_black))
+                if (!ThemeManager.isDarkTheme(this)) {
+                    window.setStatusBarLightMode()
+                }
+                chat_user_title_bar.setLeftIcon(R.drawable.common_arrow_back_icon)
             } else if (alpha < 0.5f && lightMode) {
                 lightMode = false
                 if (isBgLight) {
                     window.setStatusBarLightMode()
                 } else {
                     window.setStatusBarDarkMode()
-                    chat_user_title_bar.setLeftIcon(R.drawable.common_back_arrow_white_icon)
-                    chat_user_title_bar.setRightTextColor(getColorCompat(R.color.common_color_white))
+                    chat_user_title_bar.setLeftIconColor(getAttrColor(R.attr.common_white_color))
+                    chat_user_title_bar.setRightTextColor(getAttrColor(R.attr.common_white_color))
                 }
             }
         }

@@ -273,6 +273,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         if (iconRes != 0) {
             item_right.visibility = View.VISIBLE
             item_right_body.setImageResource(iconRes)
+            item_right_body.drawable.setTint(context.getAttrColor(R.attr.common_icon_color))
         } else {
             item_right.visibility = View.GONE
         }
@@ -305,7 +306,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
                 item_right.visibility = View.VISIBLE
                 item_right_body.clearAnimation()
                 item_right_body.setImageResource(R.drawable.common_arrow_right_icon)
-                item_right_body.drawable.setTint(context.getColorCompat(R.color.common_color_white))
+                item_right_body.drawable.setTint(context.getAttrColor(R.attr.common_white_color))
             }
             RIGHT_YES -> {
                 item_right.visibility = View.VISIBLE
