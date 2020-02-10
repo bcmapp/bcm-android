@@ -5,9 +5,7 @@
                                              android:id="@+id/input_pin_layout"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
-                                             android:background="@color/common_color_transparent"
-                                             android:visibility="visible"
-                                             tools:background="@color/common_background_color">
+                                             android:visibility="visible">
 
     <ImageView
         android:id="@+id/input_pin_back"
@@ -16,7 +14,8 @@
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
         android:padding="8dp"
-        android:src="@drawable/common_back_arrow_white_icon"
+        android:src="@drawable/common_arrow_back_icon"
+        android:tint="?attr/common_foreground_color"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

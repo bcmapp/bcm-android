@@ -10,7 +10,8 @@
         style="@style/CommonTitleBarStyle"
         app:center_text="@string/wallet_list_title"
         app:right_type="image"
-        app:right_image="@drawable/common_more_black_icon" />
+        app:right_image="@drawable/common_more_icon"
+        app:right_image_color="?attr/common_foreground_color" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/wallet_list"

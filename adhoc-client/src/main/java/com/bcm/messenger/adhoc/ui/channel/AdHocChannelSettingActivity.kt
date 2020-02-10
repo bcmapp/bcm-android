@@ -184,14 +184,14 @@ class AdHocChannelSettingActivity : AccountSwipeBaseActivity(),
             if (alpha >= 0.5f && !lightMode) {
                 lightMode = true
                 window.setStatusBarLightMode()
-                channel_setting_title.setLeftIcon(R.drawable.common_back_arrow_black_icon)
+                channel_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_foreground_color)
             } else if (alpha < 0.5f && lightMode) {
                 lightMode = false
                 if (isBgLight) {
                     window.setStatusBarLightMode()
                 } else {
                     window.setStatusBarDarkMode()
-                    channel_setting_title.setLeftIcon(R.drawable.common_back_arrow_white_icon)
+                    channel_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_text_white_color)
                 }
             }
         }
@@ -221,7 +221,7 @@ class AdHocChannelSettingActivity : AccountSwipeBaseActivity(),
                         window.setStatusBarLightMode()
                         channel_control_name.setTextColor(getColorCompat(R.color.common_color_black))
                     } else {
-                        channel_setting_title.setLeftIcon(R.drawable.common_back_arrow_white_icon)
+                        channel_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_white)
                         channel_control_name.setTextColor(getColorCompat(R.color.common_color_white))
                     }
                 }

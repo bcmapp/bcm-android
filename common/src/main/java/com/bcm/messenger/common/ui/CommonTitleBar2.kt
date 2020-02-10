@@ -9,6 +9,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import androidx.annotation.AttrRes
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -329,8 +330,12 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
         title_bar_left_zone.isClickable = false
     }
 
-    fun setLeftIcon(@DrawableRes resId: Int) {
+    fun setLeftIcon(@DrawableRes resId: Int, @AttrRes color: Int = 0) {
         leftType = TYPE_IMAGE
+        if (color == 0) {
+            leftImageColor = context.getAttrColor(color)
+        }
+
         title_bar_left_text.visibility = View.GONE
         title_bar_left_img.setImageResource(resId)
         title_bar_left_img.drawable.setTint(leftImageColor)
@@ -459,8 +464,12 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
         return title_bar_right_zone.isClickable
     }
 
-    fun setRightIcon(@DrawableRes resId: Int) {
+    fun setRightIcon(@DrawableRes resId: Int, @AttrRes color: Int = 0) {
         rightType = TYPE_IMAGE
+        if (color != 0) {
+            rightImageColor = context.getAttrColor(color)
+        }
+
         title_bar_right_text.visibility = View.GONE
         title_bar_right_img.setImageResource(resId)
         title_bar_right_img.drawable.setTint(rightImageColor)

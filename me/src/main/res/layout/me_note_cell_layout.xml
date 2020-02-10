@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:textSize="17sp"
-        android:textColor="@color/common_color_black"
+        android:textColor="?attr/common_text_main_color"
         android:lineSpacingExtra="1dp"
         android:text=""
         android:maxLines="2"/>
@@ -30,11 +30,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:drawableEnd="@drawable/me_note_item_16_pin_icon"
+        android:drawableEnd="@drawable/common_pin_icon"
         android:ellipsize="end"
         android:text=""
         android:textSize="13sp"
-        android:textColor="#A8A8A8"
+        android:textColor="?attr/common_text_third_color"
         android:maxLines="1"
         android:gravity="left"/>
 

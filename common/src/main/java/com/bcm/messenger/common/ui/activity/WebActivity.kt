@@ -10,6 +10,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.SwipeBaseActivity
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 

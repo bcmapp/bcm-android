@@ -5,7 +5,6 @@
     android:id="@+id/layout_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_color_white"
     android:fitsSystemWindows="true">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
@@ -14,7 +13,7 @@
         app:center_text="@string/me_note_unlock_enter_password"
         app:left_type="text"
         app:left_text="@string/common_cancel"
-        app:left_text_color="@color/common_color_black"
+        app:left_text_color="?attr/common_text_main_color"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

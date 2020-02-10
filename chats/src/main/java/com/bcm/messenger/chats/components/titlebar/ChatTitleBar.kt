@@ -42,8 +42,6 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
             height = context.getStatusBarHeight()
         }
 
-        custom_view.setOnClickListener {}
-
         bar_back_text.setOnClickListener {
             mCallback?.onLeft(mMultiSelect)
         }
@@ -143,25 +141,6 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
             bar_right_layout.showDot()
         } else {
             bar_right_layout.hideBadge()
-        }
-    }
-
-    fun addCustomView(view: View, marginLeft: Int = 0, marginTop: Int = 0, marginRight: Int = 0, marginBottom: Int = 0) {
-        if (view.parent != null) {
-            val p = view.parent as ViewGroup
-            p.removeView(view)
-        }
-
-        val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        params.setMargins(marginLeft, marginTop, marginRight, marginBottom)
-        view.layoutParams = params
-
-        custom_view.addView(view)
-    }
-
-    fun removeCustomView(view: View) {
-        if (view.parent == custom_view) {
-            custom_view.removeView(view)
         }
     }
 }

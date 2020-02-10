@@ -19,11 +19,11 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <ImageView
+        <View
             android:id="@+id/home_top_bg"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:background="@drawable/wallet_home_top_bg"
+            android:background="?attr/common_foreground_color"
             android:contentDescription=""
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -46,7 +46,8 @@
             android:paddingEnd="@dimen/common_horizontal_gap"
             android:paddingStart="0dp"
             android:scaleType="centerInside"
-            android:src="@drawable/wallet_home_popup_icon"
+            android:src="@drawable/common_add_icon"
+            android:tint="?attr/common_background_color"
             app:layout_constraintRight_toRightOf="@id/home_top_bg"
             app:layout_constraintTop_toBottomOf="@id/wallet_status_fill"/>
 
@@ -67,9 +68,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="52dp"
             android:drawablePadding="6dp"
-            android:drawableRight="@drawable/wallet_assets_open_icon"
+            android:drawableEnd="@drawable/wallet_assets_hide_icon"
             android:text="@string/wallet_home_total_title"
-            android:textColor="@color/common_color_white"
+            android:textColor="?attr/common_background_color"
             android:textSize="14sp"
             android:padding="6dp"
             app:layout_constraintLeft_toLeftOf="@id/home_top_bg"
@@ -80,7 +81,7 @@
             android:id="@+id/home_total_balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/common_color_white"
+            android:textColor="?attr/common_background_color"
             android:textSize="22sp"
             app:layout_constraintLeft_toLeftOf="@id/home_top_bg"
             app:layout_constraintRight_toRightOf="@id/home_top_bg"
@@ -101,7 +102,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="gone"
-            android:background="@color/common_color_white"
+            android:background="?attr/common_background_color"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/home_init_progress"
@@ -111,7 +112,7 @@
             android:id="@+id/pop_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#40000000"
+            android:background="?attr/common_view_background_grey"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:visibility="gone"/>
@@ -127,7 +128,7 @@
             android:layout_marginEnd="15dp"
             android:paddingTop="@dimen/common_horizontal_gap"
             android:text="@string/wallet_popup_setting_description"
-            android:textColor="@color/common_content_primary_color"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="14sp"
             android:drawableStart="@drawable/wallet_setting_icon"
             android:drawablePadding="8dp"

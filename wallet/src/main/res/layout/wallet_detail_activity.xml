@@ -10,7 +10,8 @@
         android:id="@+id/detail_title_bar"
         style="@style/CommonTitleBarStyle"
         app:right_type="image"
-        app:right_image="@drawable/common_more_black_icon"
+        app:right_image="@drawable/common_more_icon"
+        app:right_image_color="?attr/common_foreground_color"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>

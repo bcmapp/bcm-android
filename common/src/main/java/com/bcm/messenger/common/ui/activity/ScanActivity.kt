@@ -279,16 +279,7 @@ class ScanActivity : AccountSwipeBaseActivity(), TextureView.SurfaceTextureListe
             scan_title_bar.setCenterText(intent.getStringExtra(INTENT_EXTRA_TITLE))
         }
         if (intent.getBooleanExtra(INTENT_EXTRA_BACKUP, false)) {
-            val imageView = ImageView(this)
-            imageView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            imageView.scaleType = ImageView.ScaleType.CENTER
-            imageView.setImageResource(R.drawable.common_info_icon)
-            val padding = resources.getDimensionPixelSize(R.dimen.common_horizontal_gap)
-            imageView.setPadding(padding, 0, padding, 0)
             scan_title_bar.setRightIcon(R.drawable.common_info_icon)
-            imageView.setOnClickListener {
-                openBackupInfo()
-            }
         } else {
             val textView = TextView(this)
             textView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)

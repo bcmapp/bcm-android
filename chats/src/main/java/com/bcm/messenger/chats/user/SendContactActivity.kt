@@ -16,6 +16,7 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.utils.view.resetDrawable
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.setDrawableLeft
 import com.bcm.route.annotation.Route
@@ -117,11 +118,11 @@ class SendContactActivity : AccountSwipeBaseActivity(), IContactsCallback {
         selectSet.clear()
         if (!multiSelect) {
             left?.text = ""
-            left?.setDrawableLeft(R.drawable.common_back_arrow_black_icon)
+            left?.setDrawableLeft(R.drawable.common_arrow_back_icon, R.attr.common_foreground_color)
             right?.text = getString(R.string.common_multi_select)
         } else {
             left?.text = getString(R.string.chats_select_mode_cancel_btn)
-            left?.setDrawableLeft(0)
+            left?.resetDrawable()
             right?.text = "${getString(R.string.chats_done)}(${selectSet.size})"
         }
     }

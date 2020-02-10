@@ -37,7 +37,7 @@
             android:paddingBottom="2dp"
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
-            android:drawableStart="@drawable/common_back_arrow_black_icon"
+            android:drawableStart="@drawable/common_arrow_back_icon"
             android:background="@drawable/common_item_ripple_transparent_bg"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

@@ -24,7 +24,8 @@
                 android:layout_height="@dimen/common_bcm_app_title_bar_height"
                 android:layout_marginStart="14dp"
                 android:padding="5dp"
-                android:src="@drawable/common_back_arrow_black_icon"
+                android:src="@drawable/common_arrow_back_icon"
+                android:tint="?attr/common_foreground_color"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 

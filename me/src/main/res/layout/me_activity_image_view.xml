@@ -9,9 +9,11 @@
         android:id="@+id/photo_preview_dock"
         style="@style/CommonTitleBarStyle"
         app:title_bar_background="@color/common_color_transparent"
-        app:left_image="@drawable/common_back_arrow_white_icon"
+        app:left_image="@drawable/common_arrow_back_icon"
+        app:left_image_color="?attr/common_white"
         app:right_type="image"
-        app:right_image="@drawable/common_more_white_icon"
+        app:right_image="@drawable/common_more_icon"
+        app:right_image_color="?attr/common_white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

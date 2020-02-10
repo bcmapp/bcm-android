@@ -16,10 +16,7 @@ import com.bcm.messenger.common.api.ISearchCallback
 import com.bcm.messenger.common.finder.BcmFinderManager
 import com.bcm.messenger.common.finder.BcmFinderType
 import com.bcm.messenger.common.ui.CommonSearchBar
-import com.bcm.messenger.common.utils.getStatusBarHeight
-import com.bcm.messenger.common.utils.hideKeyboard
-import com.bcm.messenger.common.utils.startBcmActivity
-import com.bcm.messenger.common.utils.startBcmActivityForResult
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.common_activity_search.*
 
@@ -116,6 +113,7 @@ class SearchActivity : AccountSwipeBaseActivity(), ISearchCallback {
             return
         }
 
+        search_back_iv.setColorFilter(getAttrColor(R.attr.common_foreground_color))
         if (mHasPrevious) {
             search_back_iv.visibility = View.VISIBLE
         } else {

@@ -50,6 +50,7 @@ class AdHocChatTitleBar: androidx.constraintlayout.widget.ConstraintLayout, Reci
             }
             mCallback?.onLeft()
         }
+
         bar_right.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener

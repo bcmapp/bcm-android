@@ -19,7 +19,8 @@
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/scan_title_bar"
         style="@style/CommonTitleBarStyle"
-        app:left_image="@drawable/common_back_arrow_white_icon"
+        app:left_image="@drawable/common_arrow_back_icon"
+        app:left_image_color="?attr/common_foreground_color"
         app:center_text="@string/common_scan_title"
         app:center_text_color="@color/common_color_white"
         app:title_bar_background="@color/common_color_black" />

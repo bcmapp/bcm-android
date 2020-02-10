@@ -19,9 +19,9 @@ import com.bcm.messenger.common.ui.adapter.ListDataSource
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.BcmPopupMenu
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
-import com.bcm.messenger.common.utils.DateUtils
-import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.common.utils.view.resetDrawable
+import com.bcm.messenger.common.utils.view.setRightDrawable
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.bean.BcmNote
 import com.bcm.messenger.me.logic.AmeNoteLogic
@@ -31,7 +31,6 @@ import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
 import kotlinx.android.synthetic.main.me_note_activity.*
 import kotlinx.android.synthetic.main.me_note_guild_view_layout.*
-import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.lang.ref.WeakReference
 import java.util.*
@@ -211,10 +210,10 @@ class AmeNoteActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.IViewH
                 topic.text = data.topic
                 timestamp.text = formatTime()
 
-                if (data.pin) {
-                    timestamp.setDrawableRight(R.drawable.me_note_item_16_pin_icon, 16.dp2Px())
+                if (data.pin){
+                    timestamp.setRightDrawable(R.drawable.common_pin_icon, R.attr.common_foreground_color)
                 } else {
-                    timestamp.setDrawableRight(0)
+                    timestamp.resetDrawable()
                 }
             }
         }
