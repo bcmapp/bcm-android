@@ -2,13 +2,13 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="false">
         <shape android:shape="oval">
-            <stroke android:color="@color/common_color_black_30" android:width="0.5dp" />
+            <stroke android:color="?attr/common_text_secondary_color" android:width="0.5dp" />
         </shape>
     </item>
     <item android:state_pressed="true">
         <shape android:shape="oval">
-            <stroke android:color="@color/common_color_black_30" android:width="0.5dp" />
-            <solid android:color="@color/common_color_black_15" />
+            <stroke android:color="?attr/common_text_secondary_color" android:width="0.5dp" />
+            <solid android:color="?attr/common_view_background_grey" />
         </shape>
     </item>
 </selector>

@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_background_color"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -14,7 +13,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="100dp"
         android:text="Confirm PIN"
-        android:textColor="@color/common_color_black"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,7 +47,7 @@
         android:layout_marginEnd="12dp"
         android:layout_marginTop="60dp"
         android:src="@drawable/me_input_pin_white_bg"
-        app:layout_constraintEnd_toStartOf="@+id/pin_center"
+        app:layout_constraintEnd_toStartOf="@id/pin_center"
         app:layout_constraintTop_toBottomOf="@+id/pin_input_title" />
 
     <View
@@ -70,7 +69,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="60dp"
         android:src="@drawable/me_input_pin_white_bg"
-        app:layout_constraintStart_toEndOf="@+id/pin_center"
+        app:layout_constraintStart_toEndOf="@id/pin_center"
         app:layout_constraintTop_toBottomOf="@+id/pin_input_title" />
 
     <ImageView
@@ -103,104 +102,101 @@
         android:textColor="@color/common_color_379BFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pin_center"
+        app:layout_constraintTop_toBottomOf="@id/pin_center"
         tools:text="Use 6-digit PIN" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:id="@+id/input_keyboard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="79dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="70dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/pin_center"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:id="@+id/input_1"
             android:layout_marginEnd="35dp"
             android:text="1"
-            style="@style/PickLockInput"
-            app:layout_constraintEnd_toStartOf="@+id/input_2"
-            app:layout_constraintTop_toTopOf="parent" />
+            style="@style/PickLockInput"/>
 
         <TextView
             android:id="@+id/input_2"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/input_1"
+            android:layout_marginEnd="35dp"
             android:text="2"
             style="@style/PickLockInput"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            />
 
         <TextView
             android:id="@+id/input_3"
-            android:layout_marginStart="35dp"
+            android:layout_toEndOf="@id/input_2"
             android:text="3"
             style="@style/PickLockInput"
-            app:layout_constraintStart_toEndOf="@+id/input_2"
-            app:layout_constraintTop_toTopOf="parent" />
+            />
 
         <TextView
             android:id="@+id/input_4"
+            android:layout_below="@id/input_1"
             android:layout_marginEnd="35dp"
             android:layout_marginTop="25dp"
             android:text="4"
             style="@style/PickLockInput"
-            app:layout_constraintEnd_toStartOf="@+id/input_5"
-            app:layout_constraintTop_toBottomOf="@+id/input_2" />
+            />
 
         <TextView
             android:id="@+id/input_5"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_below="@id/input_1"
+            android:layout_toEndOf="@id/input_4"
+            android:layout_marginEnd="35dp"
             android:layout_marginTop="25dp"
             android:text="5"
             style="@style/PickLockInput"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/input_2" />
+            />
 
         <TextView
             android:id="@+id/input_6"
-            android:layout_marginStart="35dp"
+            android:layout_below="@id/input_1"
+            android:layout_toEndOf="@id/input_5"
             android:layout_marginTop="25dp"
             android:text="6"
             style="@style/PickLockInput"
-            app:layout_constraintStart_toEndOf="@+id/input_5"
-            app:layout_constraintTop_toBottomOf="@+id/input_2" />
+            />
 
         <TextView
             android:id="@+id/input_7"
+            android:layout_below="@id/input_4"
             android:layout_marginEnd="35dp"
             android:layout_marginTop="25dp"
             android:text="7"
             style="@style/PickLockInput"
-            app:layout_constraintEnd_toStartOf="@+id/input_8"
-            app:layout_constraintTop_toBottomOf="@+id/input_5" />
+            />
 
         <TextView
             android:id="@+id/input_8"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_below="@id/input_4"
+            android:layout_toEndOf="@id/input_7"
+            android:layout_marginEnd="35dp"
             android:layout_marginTop="25dp"
             android:text="8"
             style="@style/PickLockInput"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/input_5" />
+            />
 
         <TextView
             android:id="@+id/input_9"
-            android:layout_marginStart="35dp"
+            android:layout_below="@id/input_4"
+            android:layout_toEndOf="@id/input_8"
             android:layout_marginTop="25dp"
             android:text="9"
             style="@style/PickLockInput"
-            app:layout_constraintStart_toEndOf="@+id/input_8"
-            app:layout_constraintTop_toBottomOf="@+id/input_5" />
+            />
 
         <ImageView
             android:id="@+id/input_back"
+            android:layout_below="@id/input_7"
             android:layout_width="65dp"
             android:layout_height="65dp"
             android:layout_marginEnd="35dp"
@@ -208,11 +204,12 @@
             android:background="@drawable/me_input_gray_bg"
             android:scaleType="center"
             android:src="@drawable/me_pin_back"
-            app:layout_constraintEnd_toStartOf="@+id/input_0"
-            app:layout_constraintTop_toBottomOf="@+id/input_8" />
+            android:tint="?attr/common_text_secondary_color"
+            />
 
         <ImageView
             android:id="@+id/input_verify"
+            android:layout_below="@id/input_7"
             android:layout_width="65dp"
             android:layout_height="65dp"
             android:layout_marginEnd="35dp"
@@ -220,33 +217,29 @@
             android:background="@drawable/me_input_gray_bg"
             android:scaleType="center"
             android:src="@drawable/me_pin_fingerprint"
-            app:layout_constraintEnd_toStartOf="@+id/input_0"
-            app:layout_constraintTop_toBottomOf="@+id/input_8"
-            android:visibility="gone" />
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/input_0"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_below="@id/input_7"
+            android:layout_toEndOf="@id/input_verify"
+            android:layout_marginEnd="35dp"
             android:layout_marginTop="25dp"
             android:text="0"
             style="@style/PickLockInput"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/input_8" />
+            />
 
         <ImageView
             android:id="@+id/input_delete"
+            android:layout_below="@id/input_7"
+            android:layout_toEndOf="@id/input_0"
             android:layout_width="65dp"
             android:layout_height="65dp"
-            android:layout_marginStart="35dp"
             android:layout_marginTop="25dp"
             android:scaleType="center"
             android:src="@drawable/me_pin_delete"
+            android:tint="?attr/common_text_secondary_color"
             android:background="@drawable/me_input_gray_bg"
-            app:layout_constraintStart_toEndOf="@+id/input_0"
-            app:layout_constraintTop_toBottomOf="@+id/input_8" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+            />
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

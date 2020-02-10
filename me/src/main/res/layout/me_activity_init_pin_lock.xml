@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/common_background_color"
+        android:background="?attr/common_background_color"
         android:clipToPadding="true"
         android:fitsSystemWindows="false">
 
@@ -27,7 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:background="@color/common_color_white"
             android:orientation="vertical"
             android:layout_below="@id/title_bar_layout">
 
@@ -42,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:textColor="@color/common_color_606060"
+                android:textColor="?attr/common_text_secondary_color"
                 android:textSize="17sp"
                 android:text="@string/me_pin_lock_title"
                 android:layout_marginTop="50dp" />
@@ -51,7 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:textColor="@color/common_color_606060"
+                android:textColor="?attr/common_text_third_color"
                 android:textSize="15sp"
                 android:text="@string/me_request_pin_for_identity_verification"
                 android:paddingStart="30dp"
@@ -74,7 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:textColor="@color/common_color_606060"
+                android:textColor="?attr/common_text_third_color"
                 android:textSize="15sp"
                 android:text="@string/me_note_forget_the_pin"
                 android:paddingStart="30dp"

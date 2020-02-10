@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.common.ARouterConstants
@@ -85,7 +86,6 @@ class PinInputActivity : AccountSwipeBaseActivity() {
     private var inputSize = INPUT_SIZE_4
     private var inputStyle = INPUT_PIN
     private var pinList: MutableList<ImageView>? = null
-    private var inputList: MutableList<TextView>? = null
     private var setPin: String? = null
     private var inputFragment = Stack<Int>()
 
@@ -99,7 +99,7 @@ class PinInputActivity : AccountSwipeBaseActivity() {
 
         pin_input_title.visibility = View.VISIBLE
         input_back.visibility = View.VISIBLE
-        input_verify.visibility = View.GONE
+        input_verify.visibility = View.INVISIBLE
 
         if (intent != null) {
             pushFragment(inputStyle)
@@ -117,13 +117,11 @@ class PinInputActivity : AccountSwipeBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSwipeBackEnable(false)
+        setContentView(R.layout.me_activity_pin_lock)
+        layoutKeybord()
 
-        if (resources.displayMetrics.density >= 2f) {
-            setContentView(R.layout.me_activity_pin_lock)
-        } else {
-            setContentView(R.layout.me_activity_pin_lock_small)
-        }
         initParams(intent)
+
 
         pin_word_size.setOnClickListener {
             when {
@@ -134,9 +132,9 @@ class PinInputActivity : AccountSwipeBaseActivity() {
             }
         }
 
-        inputList = ArrayList(listOf(input_0, input_1, input_2, input_3, input_4, input_5, input_6, input_7, input_8, input_9))
+        val inputList = listOf(input_0, input_1, input_2, input_3, input_4, input_5, input_6, input_7, input_8, input_9)
 
-        for (input in inputList ?: listOf<TextView>()) {
+        for (input in inputList) {
             input.setOnClickListener {
                 if (!isFingerShow) {
                     addPin(input.text)
@@ -201,7 +199,7 @@ class PinInputActivity : AccountSwipeBaseActivity() {
                 pin_input_title.text = getString(R.string.me_new_pin)
             }
             VERIFY_UNLOCK -> {
-                input_back.visibility = View.GONE
+                input_back.visibility = View.INVISIBLE
                 input_verify.visibility = View.VISIBLE
                 pin_word_size.visibility = View.GONE
                 pin_word_size.text = getString(R.string.me_forget_pin)
@@ -419,8 +417,8 @@ class PinInputActivity : AccountSwipeBaseActivity() {
     private fun startAuthenticate() {
         if (!BiometricVerifyUtil.canUseBiometricFeature() || !AmePinLogic.isUnlockWithFingerprintEnable()) {
             pin_word_size.visibility = View.VISIBLE
-            input_back.visibility = View.GONE
-            input_verify.visibility = View.GONE
+            input_back.visibility = View.INVISIBLE
+            input_verify.visibility = View.INVISIBLE
             return
         }
 
@@ -442,12 +440,31 @@ class PinInputActivity : AccountSwipeBaseActivity() {
                         }, 300)
                     } else {
                         if (!hasHw || isLocked) {
-                            input_verify.visibility = View.GONE
+                            input_verify.visibility = View.INVISIBLE
                         }
                         pin_word_size.visibility = View.VISIBLE
                         isFingerShow = false
                     }
                 }
                 .build()
+    }
+
+    private fun layoutKeybord() {
+        val dm = resources.displayMetrics
+        val width = dm.widthPixels
+
+        var size = 65.dp2Px()
+        val sepH = 35.dp2Px()
+
+        if (size * 3 + sepH*5 > width) {
+            size = (width - sepH*5)/3
+            val inputList = listOf(input_0, input_1, input_2, input_3, input_4, input_5, input_6, input_7, input_8, input_9, input_back, input_verify, input_delete)
+            for (i in inputList) {
+                val layoutParams = i.layoutParams
+                layoutParams.width = size
+                layoutParams.height = size
+                i.layoutParams = layoutParams
+            }
+        }
     }
 }
