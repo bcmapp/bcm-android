@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_background_color">
+    android:background="@color/common_view_background">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chats_conversation_list"

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/common_colorPrimaryDark">
+    android:color="?attr/common_ripple_color">
     <item>
         <selector>
             <item android:state_enabled="true">
                 <shape>
-                    <solid android:color="@color/common_color_379BFF_transparent_10"/>
+                    <solid android:color="?attr/chats_conversation_income_button_background_color"/>
                     <corners android:radius="8dp"/>
                 </shape>
             </item>

@@ -24,7 +24,6 @@ import com.bcm.messenger.common.imagepicker.BcmPickPhotoConstants
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
 import com.bcm.messenger.common.imagepicker.bean.SelectedModel
 import com.bcm.messenger.common.providers.PersistentBlobProvider
-import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.KeyboardAwareLinearLayout
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.AppUtil
@@ -243,7 +242,7 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
         })
 
         bottom_panel.removeAllOptionItems()
-        bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_camera), R.drawable.chats_icon_camera, object : BottomPanelClickListener {
+        bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_camera), R.drawable.chats_conversation_panel_cam_icon, object : BottomPanelClickListener {
             override fun onClick(name: String, view: View) {
                 PermissionUtil.checkCamera(this@AdHocConversationActivity) {
                     if (it) {
@@ -258,7 +257,7 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
                 }
             }
         }),
-                BottomPanelItem(getString(R.string.chats_more_option_album), R.drawable.chats_icon_picture, object : BottomPanelClickListener {
+                BottomPanelItem(getString(R.string.chats_more_option_album), R.drawable.chats_conversation_panel_pic_icon, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         PermissionUtil.checkCamera(this@AdHocConversationActivity) {
                             if (it) {
@@ -273,7 +272,7 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
                         }
                     }
                 }),
-                BottomPanelItem(getString(R.string.chats_more_option_file), R.drawable.chats_icon_file, object : BottomPanelClickListener {
+                BottomPanelItem(getString(R.string.chats_more_option_file), R.drawable.chats_conversation_panel_file_icon, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         PermissionUtil.checkStorage(this@AdHocConversationActivity) {
                             if (it) {

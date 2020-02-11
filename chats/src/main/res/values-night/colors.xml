@@ -39,9 +39,12 @@
     <color name="chats_text_interval">#E5FFFFFF</color>
     
     <color name="chats_audio_progress_outgo_color">#2C7CCC</color>
-    <color name="chats_audio_progress_income_color">#202122</color>
-    <color name="chats_media_progress_outgo_color">#202122</color>
-    <color name="chats_media_progress_income_color">#202122</color>
+    <color name="chats_audio_progress_income_color">#303030</color>
+    <color name="chats_media_progress_outgo_color">#303030</color>
+    <color name="chats_media_progress_income_color">#303030</color>
     <color name="chats_message_outgo_background_color">#379BFF</color>
     <color name="chats_message_income_background_color">#000000</color>
+    <color name="chats_message_income_text_color">#FFFFFF</color>
+    <color name="chats_message_outgo_button_background_color">#19FFFFFF</color>
+    <color name="chats_message_income_button_background_color">#19379BFF</color>
 </resources>

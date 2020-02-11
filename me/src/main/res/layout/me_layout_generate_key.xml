@@ -9,7 +9,7 @@
                                              android:paddingLeft="15dp"
                                              android:paddingRight="15dp"
                                              android:visibility="visible"
-                                             tools:background="@color/common_background_color">
+                                             tools:background="@color/common_view_background">
 
     <TextView
         android:id="@+id/generate_key_header"

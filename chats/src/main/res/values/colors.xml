@@ -44,4 +44,7 @@
     <color name="chats_media_progress_income_color">#F2F3F4</color>
     <color name="chats_message_outgo_background_color">#379BFF</color>
     <color name="chats_message_income_background_color">#FFFFFF</color>
+    <color name="chats_message_income_text_color">#000000</color>
+    <color name="chats_message_outgo_button_background_color">#19FFFFFF</color>
+    <color name="chats_message_income_button_background_color">#19379BFF</color>
 </resources>

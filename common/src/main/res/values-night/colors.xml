@@ -80,8 +80,7 @@
     <color name="common_disable_color">#C2C2C2</color>
     <color name="common_background_filter">#4C000000</color>
 
-    <color name="common_background_color">#000000</color>
-    <color name="common_foreground_color">#FFFFFF</color>
+    <color name="common_view_background">#000000</color>
     <color name="common_background_F2F3F4">#F2F3F4</color>
 
     <color name="common_background_filter_7A">#7A000000</color>
@@ -133,6 +132,7 @@
     <color name="common_progress_tint_color">#80000000</color>
     <color name="common_default_background_grey_color">#202122</color>
     <color name="common_default_dark_grey_background_color">#202122</color>
+    <color name="common_default_foreground_color">#FFFFFF</color>
 
     <color name="common_default_switcher_color">#379BFF</color>
     <color name="common_default_ripple_color">#606060</color>

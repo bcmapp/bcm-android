@@ -67,7 +67,7 @@ class NewScanActivity : ThemeBaseActivity() {
             handleScanResult(scanResult.result)
         }
 
-        ALog.i("REGCOLOR",  "${this.getAttrColor(R.attr.common_background_color)}")
+        ALog.i("REGCOLOR",  "${this.getAttrColor(R.attr.common_view_background)}")
 
 
         initFragment()

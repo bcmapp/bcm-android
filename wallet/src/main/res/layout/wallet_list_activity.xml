@@ -17,7 +17,7 @@
         android:id="@+id/wallet_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/common_background_color"
+        android:background="@color/common_view_background"
         android:overScrollMode="never"
         android:paddingTop="5dp"
         android:paddingBottom="20dp" />

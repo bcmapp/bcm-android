@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/common_color_transparent"
     android:visibility="visible"
-    tools:background="@color/common_background_color">
+    tools:background="@color/common_view_background">
 
     <ImageView
         android:id="@+id/relogin_input_pin_back"

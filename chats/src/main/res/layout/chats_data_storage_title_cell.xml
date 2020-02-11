@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingTop="20dp"
-    android:background="@color/common_background_color">
+    android:background="@color/common_view_background">
 
     <TextView
         android:id="@+id/text_clear_all"

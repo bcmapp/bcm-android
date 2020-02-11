@@ -48,14 +48,14 @@ class GroupShareCardView @JvmOverloads constructor(context: Context, attrs: Attr
             val eKeyByteArray = if (!eKey.isNullOrEmpty()) {
                 try {
                     eKey.base64Decode()
-                } catch(e:Throwable) {
+                } catch (e: Throwable) {
                     null
                 }
             } else {
                 null
             }
             AmeModuleCenter.group(AMELogin.majorContext)?.doGroupJoin(context, shareContent.groupId, shareContent.groupName, shareContent.groupIcon,
-                    shareContent.shareCode, shareContent.shareSignature, shareContent.timestamp, eKeyByteArray) {success ->
+                    shareContent.shareCode, shareContent.shareSignature, shareContent.timestamp, eKeyByteArray) { success ->
                 ALog.d(TAG, "do join group success: $success")
             }
         }
@@ -70,41 +70,47 @@ class GroupShareCardView @JvmOverloads constructor(context: Context, attrs: Attr
 
         val name = if (shareContent.groupName.isNullOrEmpty()) {
             context.getString(R.string.common_chats_group_default_name)
-        }else {
+        } else {
             shareContent.groupName ?: ""
         }
 
+        val drawable = context.getDrawable(R.drawable.common_group_default_avatar_logo)
         val span = SpannableStringBuilder()
         if (!outgoing) {
             setBackgroundResource(R.drawable.chats_share_card_incoming_bg)
-            share_arrow_iv.setImageResource(R.drawable.common_right_arrow_icon)
-            span.append(StringAppearanceUtil.applyAppearance(name, color = getColor(R.color.common_color_black)))
+
+            span.append(StringAppearanceUtil.applyAppearance(name, color = context.getAttrColor(R.attr.common_text_third_color)))
             span.append("\n")
-            span.append(StringAppearanceUtil.applyAppearance(mUrl, color = getColor(R.color.common_content_second_color)))
-            share_action_tv.background = getDrawable(R.drawable.chats_group_share_card_incoming_button)
-            share_action_tv.setTextColor(getColor(R.color.common_app_primary_color))
+            span.append(StringAppearanceUtil.applyAppearance(mUrl, color = context.getAttrColor(R.attr.common_text_secondary_color)))
+            share_action_tv.setBackgroundResource(R.drawable.chats_group_share_card_incoming_button)
+            share_action_tv.setTextColor(context.getAttrColor(R.attr.common_text_blue_color))
 
-
-        }else {
+            share_arrow_iv.setImageResource(R.drawable.common_right_arrow_icon)
+            share_arrow_iv.drawable.setTint(context.getAttrColor(R.attr.common_icon_color_grey))
+            drawable?.setTint(context.getAttrColor(R.attr.common_icon_color))
+        } else {
             setBackgroundResource(R.drawable.chats_share_card_outgoing_bg)
-            share_arrow_iv.setImageResource(R.drawable.common_right_arrow_white_icon)
-            span.append(StringAppearanceUtil.applyAppearance(name, color = getColor(R.color.common_color_white)))
+
+            span.append(StringAppearanceUtil.applyAppearance(name, color = context.getAttrColor(R.attr.common_text_white_color)))
             span.append("\n")
             span.append(StringAppearanceUtil.applyAppearance(mUrl, color = Color.parseColor("#80FFFFFF")))
-            share_action_tv.background = getDrawable(R.drawable.chats_group_share_card_outgoing_button)
-            share_action_tv.setTextColor(getColor(R.color.common_color_white))
+            share_action_tv.setBackgroundResource(R.drawable.chats_group_share_card_outgoing_button)
+            share_action_tv.setTextColor(context.getAttrColor(R.attr.common_text_white_color))
+
+            share_arrow_iv.setImageResource(R.drawable.common_right_arrow_icon)
+            share_arrow_iv.drawable.setTint(context.getAttrColor(R.attr.common_white_color))
+            drawable?.setTint(context.getAttrColor(R.attr.common_white_color))
         }
 
         share_name_tv.text = span
         val c = context
-        if (c is Activity && c.isDestroyed) {
-        }else {
+        if ((context as? Activity)?.isDestroyed != true) {
             try {
                 GlideApp.with(c).load(shareContent.groupIcon)
-                        .placeholder(R.drawable.common_group_default_logo)
-                        .error(R.drawable.common_group_default_logo)
+                        .placeholder(drawable)
+                        .error(drawable)
                         .into(share_logo)
-            }catch (ex: Exception) {
+            } catch (ex: Exception) {
                 ALog.e(TAG, "bind error", ex)
             }
         }

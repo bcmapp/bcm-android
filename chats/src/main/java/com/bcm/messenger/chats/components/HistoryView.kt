@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.HistoryMessageDetail
-import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.getAttrColor
 import kotlinx.android.synthetic.main.chats_history_view.view.*
 
 /**
@@ -21,13 +21,13 @@ class HistoryView @JvmOverloads constructor(context: Context, attrs: AttributeSe
     fun setStyle(inView: Int) {
         this.inView = inView
         if (inView == 2) {
-            chats_history_title.setTextColor(AppUtil.getColor(resources, R.color.common_color_white))
-            chats_history_view_more.setTextColor(AppUtil.getColor(resources, R.color.chats_mine_tips_text_color))
-            chats_history_icon.setImageDrawable(AppUtil.getDrawable(resources, com.bcm.messenger.common.R.drawable.common_right_arrow_white_icon))
+            chats_history_title.setTextColor(context.getAttrColor(R.attr.common_text_white_color))
+            chats_history_view_more.setTextColor(context.getAttrColor(R.attr.common_text_third_color))
+            chats_history_icon.drawable.setTint(context.getAttrColor(R.attr.common_white_color))
         } else {
-            chats_history_title.setTextColor(AppUtil.getColor(resources, R.color.common_color_black))
-            chats_history_view_more.setTextColor(AppUtil.getColor(resources, R.color.common_content_second_color))
-            chats_history_icon.setImageDrawable(AppUtil.getDrawable(resources, com.bcm.messenger.common.R.drawable.common_right_arrow_icon))
+            chats_history_title.setTextColor(context.getAttrColor(R.attr.common_text_main_color))
+            chats_history_view_more.setTextColor(context.getAttrColor(R.attr.common_text_secondary_color))
+            chats_history_icon.drawable.setTint(context.getAttrColor(R.attr.common_icon_color_grey))
         }
     }
 

@@ -274,7 +274,7 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
                     window.setStatusBarLightMode()
                 } else {
                     window.setStatusBarDarkMode()
-                    chats_group_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_white)
+                    chats_group_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_white_color)
                 }
             }
         }
@@ -327,7 +327,7 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
                         group_control_name.setTextColor(getColorCompat(R.color.common_color_black))
                         group_control_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
                     } else if (!lightMode) {
-                        chats_group_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_white)
+                        chats_group_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_white_color)
                         group_control_name.setTextColor(getColorCompat(R.color.common_color_white))
                         group_control_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
                     }

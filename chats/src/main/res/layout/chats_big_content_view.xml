@@ -52,7 +52,7 @@
         android:id="@+id/chat_tts_notice_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/common_background_color"
+        android:background="@color/common_view_background"
         android:paddingStart="@dimen/common_horizontal_gap"
         android:paddingTop="10dp"
         android:paddingEnd="@dimen/common_horizontal_gap"

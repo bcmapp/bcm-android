@@ -48,12 +48,11 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
                             .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, it.address)
                             .putString(ARouterConstants.PARAM.PARAM_NICK, mContactContent?.nickName)
                             .startBcmActivity(it.address.context(), context)
-                }else {
+                } else {
                     AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(it.address.context(), HomeTopEvent(true,
-                            HomeTopEvent.ConversationEvent.fromPrivateConversation(it.address.serialize(),false)))
+                            HomeTopEvent.ConversationEvent.fromPrivateConversation(it.address.serialize(), false)))
                 }
             }
-
         }
     }
 
@@ -75,14 +74,17 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
         if (isOutgoing) {
             setBackgroundResource(R.drawable.chats_share_card_outgoing_bg)
             val spanBuilder = SpannableStringBuilder()
-            spanBuilder.append(StringAppearanceUtil.applyAppearance(getString(R.string.chats_contact_card_title), 11.sp2Px(), Color.parseColor("#80FFFFFF")))
+            spanBuilder.append(StringAppearanceUtil.applyAppearance(getString(R.string.chats_contact_card_title), 11.sp2Px(), context.getAttrColor(R.attr.common_text_third_color)))
             spanBuilder.append("\n")
-            spanBuilder.append(StringAppearanceUtil.applyAppearance(name, 16.sp2Px(), getColor(R.color.common_color_white)))
+            spanBuilder.append(StringAppearanceUtil.applyAppearance(name, 16.sp2Px(), context.getAttrColor(R.attr.common_text_white_color)))
             contact_name.text = spanBuilder
 
             contact_action.setBackgroundResource(R.drawable.chats_contact_action_outgoing_selector)
-            contact_action.setTextColor(getColor(R.color.common_color_white))
-            contact_more.setImageResource(R.drawable.common_right_arrow_white_icon)
+            contact_action.setTextColor(context.getAttrColor(R.attr.common_text_white_color))
+
+            val drawable = context.getDrawable(R.drawable.common_arrow_right_icon)
+            drawable?.setTint(context.getAttrColor(R.attr.common_white_color))
+            contact_more.setImageDrawable(drawable)
         } else {
             setBackgroundResource(R.drawable.chats_share_card_incoming_bg)
             val spanBuilder = SpannableStringBuilder()
@@ -92,14 +94,17 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
             contact_name.text = spanBuilder
 
             contact_action.setBackgroundResource(R.drawable.chats_contact_action_incoming_selector)
-            contact_action.setTextColor(getColor(R.color.common_app_primary_color))
-            contact_more.setImageResource(R.drawable.common_right_arrow_icon)
+            contact_action.setTextColor(context.getAttrColor(R.attr.common_text_blue_color))
+
+            val drawable = context.getDrawable(R.drawable.common_arrow_right_icon)
+            drawable?.setTint(context.getAttrColor(R.attr.common_icon_color_grey))
+            contact_more.setImageDrawable(drawable)
         }
         contact_portrait.setPhoto(recipient, name, IndividualAvatarView.NAME_CARD_TYPE)
 
         if (!recipient.isLogin && (recipient.relationship == RecipientRepo.Relationship.STRANGER || recipient.relationship == RecipientRepo.Relationship.REQUEST)) {
             contact_action.text = getString(R.string.chats_contact_card_add_action)
-        }else {
+        } else {
             contact_action.text = getString(R.string.chats_contact_card_chat_action)
         }
     }
@@ -116,6 +121,5 @@ class ContactCardView @JvmOverloads constructor(context: Context, attrs: Attribu
                 }
             }
         }
-
     }
 }

@@ -25,10 +25,11 @@
 
     <TextView
         android:id="@+id/slide_to_cancel"
-        android:layout_width="wrap_content"
+        android:layout_width="24dp"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:drawableStart="@drawable/chats_icon_slide_to_cancel"
+        android:drawableStart="@drawable/common_arrow_back_icon"
+        android:drawableTint="?attr/common_white_color"
         android:drawablePadding="5dp"
         android:gravity="center"
         android:paddingStart="4dp"

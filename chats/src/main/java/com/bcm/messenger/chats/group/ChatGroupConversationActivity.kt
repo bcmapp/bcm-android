@@ -127,9 +127,6 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
         setContentView(R.layout.chats_tt_conversation_activity)
         initView()
         initData()
-
-        window?.setStatusBarLightMode()
-
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -172,7 +169,7 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
         })
 
         bottom_panel.removeAllOptionItems()
-        bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_camera), R.drawable.chats_icon_camera, object : BottomPanelClickListener {
+        bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_camera), R.drawable.chats_conversation_panel_cam_icon, object : BottomPanelClickListener {
             override fun onClick(name: String, view: View) {
                 PermissionUtil.checkCamera(this@ChatGroupConversationActivity) {
                     if (it) {
@@ -187,7 +184,7 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
                 }
             }
         }),
-                BottomPanelItem(getString(R.string.chats_more_option_album), R.drawable.chats_icon_picture, object : BottomPanelClickListener {
+                BottomPanelItem(getString(R.string.chats_more_option_album), R.drawable.chats_conversation_panel_pic_icon, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         PermissionUtil.checkCamera(this@ChatGroupConversationActivity) {
                             if (it) {
@@ -202,7 +199,7 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
                         }
                     }
                 }),
-                BottomPanelItem(getString(R.string.chats_more_option_file), R.drawable.chats_icon_file, object : BottomPanelClickListener {
+                BottomPanelItem(getString(R.string.chats_more_option_file), R.drawable.chats_conversation_panel_file_icon, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         PermissionUtil.checkStorage(this@ChatGroupConversationActivity) {
                             if (it) {
@@ -226,7 +223,7 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
                         }
                     }
                 }),
-                BottomPanelItem(getString(R.string.chats_more_option_location), R.drawable.chats_icon_location, object : BottomPanelClickListener {
+                BottomPanelItem(getString(R.string.chats_more_option_location), R.drawable.chats_conversation_panel_location_icon, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         PermissionUtil.checkLocationPermission(this@ChatGroupConversationActivity) {
                             if (it) {
@@ -235,7 +232,7 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
                         }
                     }
                 }),
-                BottomPanelItem(getString(R.string.chats_more_option_namecard), R.drawable.chats_icon_contact, object : BottomPanelClickListener {
+                BottomPanelItem(getString(R.string.chats_more_option_namecard), R.drawable.chats_conversation_panel_card_icon, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         val intent = Intent(this@ChatGroupConversationActivity, SendContactActivity::class.java)
                         intent.putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, GroupUtil.addressFromGid(accountContext, groupId))

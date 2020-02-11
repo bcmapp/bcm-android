@@ -7,5 +7,9 @@
         <item name="chats_conversation_media_progress_income_color">@color/chats_media_progress_income_color</item>
         <item name="chats_conversation_outgo_background_color">@color/chats_message_outgo_background_color</item>
         <item name="chats_conversation_income_background_color">@color/chats_message_income_background_color</item>
+        <item name="chats_conversation_income_text_color">@color/chats_message_income_text_color</item>
+        <item name="chats_conversation_income_icon_color">@color/chats_message_income_text_color</item>
+        <item name="chats_conversation_outgo_button_background_color">@color/chats_message_outgo_button_background_color</item>
+        <item name="chats_conversation_income_button_background_color">@color/chats_message_income_button_background_color</item>
     </style>
 </resources>

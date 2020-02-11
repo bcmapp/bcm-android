@@ -14,7 +14,6 @@ import com.bcm.messenger.common.database.model.AttachmentDbModel
 import com.bcm.messenger.common.database.records.MessageRecord
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
-import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.DateUtils
 import com.bcm.messenger.utility.permission.PermissionUtil
 import com.orhanobut.logger.Logger
@@ -183,11 +182,11 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
 
 
     fun setProgressDrawableResource(resourceId: Int) {
-        setProgressDrawable(AppUtil.getDrawable(resources, resourceId))
+        setProgressDrawable(context.getDrawable(resourceId))
     }
 
 
-    fun setProgressDrawable(progressDrawable: Drawable) {
+    fun setProgressDrawable(progressDrawable: Drawable?) {
         audio_progress.progressDrawable = progressDrawable
     }
 

@@ -39,5 +39,8 @@
     <attr name="chats_conversation_media_progress_income_color" format="color" />
     <attr name="chats_conversation_outgo_background_color" format="color" />
     <attr name="chats_conversation_income_background_color" format="color" />
-
+    <attr name="chats_conversation_income_text_color" format="color" />
+    <attr name="chats_conversation_income_icon_color" format="color" />
+    <attr name="chats_conversation_outgo_button_background_color" format="color" />
+    <attr name="chats_conversation_income_button_background_color" format="color" />
 </resources>

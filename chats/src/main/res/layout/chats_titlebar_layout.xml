@@ -18,7 +18,7 @@
         android:id="@+id/chat_title_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/common_bcm_app_title_bar_height"
+        android:minHeight="52dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

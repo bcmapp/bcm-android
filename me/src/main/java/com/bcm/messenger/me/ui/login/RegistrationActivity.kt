@@ -72,7 +72,7 @@ class RegistrationActivity : ThemeBaseActivity() {
 
         window.setStatusBarLightMode()
 
-        ALog.i("REGCOLOR",  "${this.getAttrColor(R.attr.common_background_color)}")
+        ALog.i("REGCOLOR",  "${this.getAttrColor(R.attr.common_view_background)}")
 
 
         val f = StartupFragment()

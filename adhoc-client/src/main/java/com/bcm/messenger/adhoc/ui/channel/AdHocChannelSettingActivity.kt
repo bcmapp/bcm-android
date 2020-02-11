@@ -221,7 +221,7 @@ class AdHocChannelSettingActivity : AccountSwipeBaseActivity(),
                         window.setStatusBarLightMode()
                         channel_control_name.setTextColor(getColorCompat(R.color.common_color_black))
                     } else {
-                        channel_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_white)
+                        channel_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_white_color)
                         channel_control_name.setTextColor(getColorCompat(R.color.common_color_white))
                     }
                 }

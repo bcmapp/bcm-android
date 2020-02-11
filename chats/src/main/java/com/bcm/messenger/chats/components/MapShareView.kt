@@ -12,6 +12,7 @@ import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.core.MapApiConstants
 import kotlinx.android.synthetic.main.chats_share_map_view.view.*
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.utils.getAttribute
 import com.bcm.messenger.common.utils.getColorCompat
 
 /**
@@ -35,10 +36,10 @@ class MapShareView : ConstraintLayout {
         location_address?.setTextColor(context.getColorCompat(mainTextColor))
         if (isSendByMe) {
             location_title?.setBackgroundResource(R.drawable.chats_location_sent_top_bg)
-            location_address?.setBackgroundResource(R.color.common_color_379BFF)
+            location_address?.setBackgroundResource(context.getAttribute(R.attr.chats_conversation_outgo_background_color))
         } else {
             location_title?.setBackgroundResource(R.drawable.chats_location_receive_top_bg)
-            location_address?.setBackgroundResource(R.color.common_color_white)
+            location_address?.setBackgroundResource(context.getAttribute(R.attr.chats_conversation_income_background_color))
         }
     }
 

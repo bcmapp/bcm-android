@@ -58,8 +58,8 @@ class CommonLoadingView @JvmOverloads constructor(context: Context, attrs: Attri
         }
 
         val clr = when (color) {
-            COLOR_BLACK -> context.getAttrColor(R.attr.common_black)
-            COLOR_WHITE -> context.getAttrColor(R.attr.common_white)
+            COLOR_BLACK -> context.getAttrColor(R.attr.common_black_color)
+            COLOR_WHITE -> context.getAttrColor(R.attr.common_white_color)
             else -> context.getAttrColor(R.attr.common_foreground_color)
         }
 

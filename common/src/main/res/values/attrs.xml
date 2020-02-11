@@ -308,12 +308,9 @@
     <attr name="common_text_green_color" format="color" />
     <attr name="common_text_white_color" format="color" />
     <attr name="common_text_black_color" format="color" />
-    <attr name="common_background_color" format="color" />
     <attr name="common_foreground_color" format="color" />
     <attr name="common_progress_tint_color" format="color"/>
     <attr name="common_secondary_blue_color" format="color"/>
-    <attr name="common_white" format="color"/>
-    <attr name="common_black" format="color"/>
 
     <attr name="common_ripple_color" format="color" />
     <attr name="common_icon_color" format="color" />
@@ -321,6 +318,7 @@
     <attr name="common_selected_color" format="color" />
     <attr name="common_black_color" format="color" />
     <attr name="common_white_color" format="color" />
+    <attr name="common_grey_color" format="color" />
 
     <attr name="common_button_blue_color" format="color" />
     <attr name="common_button_blue_sub_color" format="color" />

@@ -4,5 +4,5 @@
     <corners
         android:topRightRadius="@dimen/chats_conversation_item_radius"
         android:topLeftRadius="@dimen/chats_conversation_item_radius" />
-    <solid android:color="@color/common_color_379BFF"/>
+    <solid android:color="?attr/chats_conversation_outgo_background_color"/>
 </shape>

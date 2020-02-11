@@ -45,7 +45,7 @@ class AppNotificationNoticer : ConstraintLayout {
         initView()
 
         if (background == null) {
-            setBackgroundColor(context.getColorCompat(R.color.common_background_color))
+            setBackgroundColor(context.getColorCompat(R.color.common_view_background))
         }
     }
 

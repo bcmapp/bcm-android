@@ -205,7 +205,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="fill_status_bar">true</item>
         <item name="show_bottom_line">false</item>
-        <item name="title_bar_background">?attr/common_background_color</item>
+        <item name="title_bar_background">?attr/common_view_background</item>
         <item name="title_bar_height">52dp</item>
 
         <item name="left_type">image</item>

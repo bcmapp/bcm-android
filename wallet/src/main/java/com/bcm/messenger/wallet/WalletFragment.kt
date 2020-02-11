@@ -250,12 +250,12 @@ class WalletFragment : BaseFragment() {
         val context = context ?: return
         if (mAdapter.getSecretMode()) {
             val drawable = AppUtil.getDrawable(context.resources, R.drawable.wallet_assets_hide_icon)
-            drawable.setTint(context.getAttrColor(R.attr.common_background_color))
+            drawable.setTint(context.getAttrColor(R.attr.common_view_background))
             home_total_title.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
             home_total_balance.text = getString(R.string.wallet_secret_text)
         } else {
             val drawable = AppUtil.getDrawable(context.resources, R.drawable.wallet_assets_hide_icon)
-            drawable.setTint(context.getAttrColor(R.attr.common_background_color))
+            drawable.setTint(context.getAttrColor(R.attr.common_view_background))
             home_total_title.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
             val total = mAdapter.getTotalMoney().setScale(2, BigDecimal.ROUND_HALF_UP)
             home_total_balance.text = getString(R.string.wallet_home_total_balance,

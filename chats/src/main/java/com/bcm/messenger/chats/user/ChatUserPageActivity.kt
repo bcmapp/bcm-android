@@ -101,12 +101,12 @@ class ChatUserPageActivity : AccountSwipeBaseActivity(), RecipientModifiedListen
                         isBgLight = it
                         if (it) {
                             window.setStatusBarLightMode()
-                            chat_user_name.setTextColor(getAttrColor(R.attr.common_black))
+                            chat_user_name.setTextColor(getAttrColor(R.attr.common_black_color))
                             if (!mRecipient.isLogin) {
                                 chat_user_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
                             }
                         } else {
-                            chat_user_title_bar.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_white)
+                            chat_user_title_bar.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_white_color)
                             chat_user_title_bar.setRightTextColor(getColorCompat(R.color.common_color_white))
                             chat_user_name.setTextColor(getColorCompat(R.color.common_color_white))
                             if (!mRecipient.isLogin) {

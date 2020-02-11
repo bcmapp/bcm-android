@@ -4,7 +4,7 @@
                                              android:id="@+id/login_success_layout"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
-                                             android:background="@color/common_background_color"
+                                             android:background="@color/common_view_background"
                                              android:paddingLeft="15dp"
                                              android:paddingRight="15dp"
                                              android:visibility="visible">
