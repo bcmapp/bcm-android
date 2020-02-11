@@ -14,7 +14,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="left"
-        android:textColor="@color/common_content_primary_color"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="15sp"
         android:layout_marginTop="18dp"
         android:layout_marginBottom="18dp"
@@ -40,7 +40,7 @@
         android:id="@+id/currency_line"
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_line_height"
-        android:background="@color/common_line_color"
+        android:background="?attr/common_item_line_color"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

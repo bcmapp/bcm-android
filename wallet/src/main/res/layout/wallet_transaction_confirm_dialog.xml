@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#ffeeeeee">
+        android:background="?attr/common_view_background">
 
         <TextView
             android:id="@+id/transfer_confirm_title"
@@ -18,7 +18,7 @@
             android:layout_height="40dp"
             android:gravity="center"
             android:text="@string/wallet_transfer_fee_choose_title"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="12sp"
             android:paddingStart="@dimen/common_horizontal_gap"
             android:paddingEnd="@dimen/common_horizontal_gap"
@@ -45,7 +45,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_line_height"
-        android:background="@color/common_line_color"/>
+        android:background="?attr/common_item_line_color"/>
 
     <LinearLayout
         android:id="@+id/transfer_confirm_amount_layout"
@@ -67,7 +67,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_line_height"
-        android:background="@color/common_color_e8e8e8"
+        android:background="?attr/common_item_line_color"
         android:layout_marginStart="@dimen/common_horizontal_gap"
         android:layout_marginEnd="@dimen/common_horizontal_gap"/>
 
@@ -92,7 +92,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_line_height"
-        android:background="@color/common_line_color"
+        android:background="?attr/common_item_line_color"
         android:layout_marginStart="@dimen/common_horizontal_gap"
         android:layout_marginEnd="@dimen/common_horizontal_gap"/>
 
@@ -117,7 +117,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_line_height"
-        android:background="@color/common_line_color"
+        android:background="?attr/common_item_line_color"
         android:layout_marginStart="@dimen/common_horizontal_gap"
         android:layout_marginEnd="@dimen/common_horizontal_gap"/>
 
@@ -141,16 +141,16 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_line_height"
-        android:background="@color/common_line_color"
+        android:background="?attr/common_item_line_color"
         android:layout_marginStart="@dimen/common_horizontal_gap"
         android:layout_marginEnd="@dimen/common_horizontal_gap"/>
 
-    <com.bcm.messenger.common.ui.StateButton
+    <Button
         android:id="@+id/transfer_confirm_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/wallet_transfer_confirm_action_text"
-        style="@style/CommonDarkBigTextStyle"
+        style="@style/CommonBlueButton"
         android:layout_marginStart="@dimen/common_horizontal_gap"
         android:layout_marginEnd="@dimen/common_horizontal_gap"
         android:layout_marginTop="20dp"

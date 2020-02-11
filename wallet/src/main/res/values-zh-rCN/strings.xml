@@ -57,11 +57,11 @@
     <string name="wallet_welcome_active_button">激活</string>
     <string name="wallet_welcome_import_button">导入</string>
     <string name="wallet_home_total_title">总资产</string>
-    <string name="wallet_home_total_balance">%1$s %2$s</string>
+    <string name="wallet_home_total_balance">%s</string>
     <string name="wallet_logo_description">钱包类型图标</string>
     <string name="wallet_balance_text">%1$f</string>
     <string name="wallet_money_text">≈%1$s %2$s</string>
-    <string name="wallet_secret_text">******</string>
+    <string name="wallet_secret_text">\????</string>
     <string name="wallet_syncing_text">------</string>
     <string name="wallet_home_popup_description">Wallet Home Popup</string>
     <string name="wallet_home_import_confirm_title">输入密码</string>

@@ -3,6 +3,7 @@ package com.bcm.messenger.wallet.activity
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -22,6 +23,8 @@ class CurrencyActivity : AccountSwipeBaseActivity() {
     private var mCurrencyCode = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        intent.putExtra(ARouterConstants.PARAM.PARAM_ENTER_ANIM, R.anim.common_slide_from_bottom_fast)
+        intent.putExtra(ARouterConstants.PARAM.PARAM_EXIT_ANIM, R.anim.common_slide_to_bottom_fast)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.wallet_currency_activity)
 

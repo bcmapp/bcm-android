@@ -23,18 +23,18 @@
 
     </ScrollView>
 
-    <com.bcm.messenger.common.ui.StateButton
+    <Button
         android:id="@+id/transfer_btn"
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        style="@style/CommonDarkBigTextStyle"
+        style="@style/CommonBlueButton"
+        android:textColor="?attr/common_white"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:enabled="false"
         android:text="@string/wallet_transfer_title"
         android:textAllCaps="false"
-        app:backgroundRound="true"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

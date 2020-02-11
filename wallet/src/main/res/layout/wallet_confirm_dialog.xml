@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:gravity="center"
-        android:textColor="#030303"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="18sp"
         tools:text="Title"/>
 
@@ -27,7 +27,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:textColor="@color/wallet_content_second_color"
+        android:textColor="?attr/common_text_secondary_color"
         android:textSize="14sp"
         tools:text="Tip"/>
 
@@ -41,7 +41,7 @@
         android:background="@drawable/wallet_import_content_bg"
         android:gravity="center"
         android:padding="10dp"
-        android:textColor="@color/wallet_content_main_color"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="13sp"
         android:visibility="gone"
         tools:text="Content"/>
@@ -80,6 +80,7 @@
             android:paddingBottom="9dp"
             android:background="@drawable/wallet_import_content_bg"
             android:inputType="text"
+            android:textColor="?attr/common_text_main_color"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -89,7 +90,7 @@
             android:id="@+id/confirm_clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/common_clear_circle_icon"
+            android:src="@drawable/common_input_clear_icon"
             android:contentDescription=""
             android:scaleType="centerInside"
             android:padding="5dp"
@@ -125,23 +126,27 @@
         android:orientation="horizontal"
         android:padding="@dimen/common_horizontal_gap">
 
-        <com.bcm.messenger.common.ui.StateButton
+        <Button
             android:id="@+id/confirm_cancel"
-            style="@style/CommonDarkThinBigTextStyle"
+            style="@style/CommonBlueButton"
+            android:layout_marginStart="15dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textColor="?attr/common_white"
             android:layout_marginEnd="15dp"
             android:layout_weight="1"
             android:text="@string/wallet_transaction_transfer_action"
             android:textAllCaps="false"/>
 
-        <com.bcm.messenger.common.ui.StateButton
+        <Button
             android:id="@+id/confirm_ok"
-            style="@style/CommonDarkBigTextStyle"
+            style="@style/CommonBlueButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="19dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
             android:layout_weight="1"
+            android:textColor="?attr/common_black"
             android:text="@string/wallet_transaction_receive_action"
             android:textAllCaps="false"/>
 

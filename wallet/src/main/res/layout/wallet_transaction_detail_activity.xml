@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="20dp"
                 android:gravity="center"
-                android:textColor="@color/common_content_primary_color"
+                android:textColor="?attr/common_text_main_color"
                 android:textSize="24sp"/>
 
             <LinearLayout
@@ -59,7 +59,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/common_line_height"
-                android:background="@color/common_line_color"/>
+                android:background="?attr/common_item_line_color"/>
 
             <LinearLayout
                 android:id="@+id/record_from_layout"
@@ -82,7 +82,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/common_line_height"
-                android:background="@color/common_line_color"/>
+                android:background="?attr/common_item_line_color"/>
 
             <LinearLayout
                 android:id="@+id/record_to_layout"
@@ -103,7 +103,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/common_line_height"
-                android:background="@color/common_line_color"/>
+                android:background="?attr/common_item_line_color"/>
 
             <LinearLayout
                 android:id="@+id/record_fee_layout"
@@ -125,7 +125,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/common_line_height"
-                android:background="@color/common_line_color"/>
+                android:background="?attr/common_item_line_color"/>
 
             <LinearLayout
                 android:id="@+id/record_tx_layout"
@@ -145,7 +145,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/common_line_height"
-                android:background="@color/common_line_color"/>
+                android:background="?attr/common_item_line_color"/>
 
             <LinearLayout
                 android:id="@+id/record_block_layout"
@@ -166,7 +166,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/common_line_height"
-                android:background="@color/common_line_color"/>
+                android:background="?attr/common_item_line_color"/>
 
             <LinearLayout
                 android:id="@+id/record_time_layout"
@@ -187,7 +187,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/common_line_height"
-                android:background="@color/common_line_color"/>
+                android:background="?attr/common_item_line_color"/>
 
 
             <ImageView
@@ -204,7 +204,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="@string/wallet_transaction_detail_copy_url_description"
-                android:textColor="@color/common_app_primary_color"
+                android:textColor="?attr/common_button_blue_color"
                 android:textSize="15sp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"/>

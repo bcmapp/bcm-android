@@ -2,13 +2,13 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_enabled="true">
         <shape>
-            <solid android:color="@color/common_color_black"/>
+            <solid android:color="?attr/common_foreground_color"/>
             <corners android:radius="100dp"/>
         </shape>
     </item>
     <item android:state_enabled="false">
         <shape>
-            <solid android:color="@color/common_disable_color"/>
+            <solid android:color="?attr/common_view_background"/>
             <corners android:radius="100dp"/>
         </shape>
     </item>

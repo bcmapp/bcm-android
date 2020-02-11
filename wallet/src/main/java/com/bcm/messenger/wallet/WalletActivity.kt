@@ -3,7 +3,10 @@ package com.bcm.messenger.wallet
 import android.os.Bundle
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountSwipeBaseActivity
+import com.bcm.messenger.common.theme.ThemeManager
 import com.bcm.messenger.common.ui.CommonTitleBar2
+import com.bcm.messenger.common.utils.getAttrColor
+import com.bcm.messenger.common.utils.setTransparencyBar
 import com.bcm.route.annotation.Route
 import kotlinx.android.synthetic.main.wallet_activity_main.*
 
@@ -14,11 +17,9 @@ import kotlinx.android.synthetic.main.wallet_activity_main.*
 class WalletActivity : AccountSwipeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        disableStatusBarLightMode()
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.wallet_activity_main)
-
+        title_bar.setLeftIconColor(getAttrColor(R.attr.common_background_color))
         title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
                 finish()
@@ -26,5 +27,10 @@ class WalletActivity : AccountSwipeBaseActivity() {
         })
 
         initFragment(R.id.wallet_main_container, WalletFragment(), null)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        title_bar.setLeftIconColor(getAttrColor(R.attr.common_background_color))
     }
 }

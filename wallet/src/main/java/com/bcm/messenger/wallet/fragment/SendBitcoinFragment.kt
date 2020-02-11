@@ -1,7 +1,6 @@
 package com.bcm.messenger.wallet.fragment
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableStringBuilder
@@ -17,7 +16,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.wallet.R
@@ -194,10 +193,10 @@ class SendBitcoinFragment : BaseFragment(), ITransferAction {
         fee_suggest_type?.text = feePlan.name
         val feeCost = mFeePlan?.fee ?: "0"
         val span = SpannableStringBuilder(StringAppearanceUtil.applyAppearance(BtcExchangeCalculator.convertAmountDisplay(coin = *Array(1, { feeCost })).toString(),
-                15.dp2Px(), getColorCompat(R.color.wallet_content_main_color)))
+                15.dp2Px(), getAttrColor(R.attr.common_text_secondary_color)))
         span.append("\n")
         span.append(StringAppearanceUtil.applyAppearance("≈" +
-                BtcExchangeCalculator.convertMoneyDisplay(coin = *Array(1, { feeCost })), 12.dp2Px(), Color.parseColor("#C2C2C2")))
+                BtcExchangeCalculator.convertMoneyDisplay(coin = *Array(1, { feeCost })), 12.dp2Px(), getAttrColor(R.attr.common_text_third_color)))
         fee_suggest_count?.text = span
     }
 

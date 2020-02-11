@@ -10,9 +10,7 @@
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/receive_title_bar"
         style="@style/CommonTitleBarStyle"
-        app:title_bar_background="@color/common_color_transparent"
         app:center_text="@string/wallet_receive_title"
-        app:center_text_color="@color/common_color_white"
         app:left_image="@drawable/common_arrow_back_icon"
         app:left_image_color="?attr/common_foreground_color"
         app:layout_constraintLeft_toLeftOf="parent"

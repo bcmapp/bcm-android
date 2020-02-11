@@ -13,7 +13,7 @@
         android:layout_height="54dp"
         android:gravity="center"
         android:text="@string/wallet_transfer_fee_high_description"
-        android:textColor="@color/common_color_131313"
+        android:textColor="?attr/common_text_secondary_color"
         android:textSize="16sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +36,7 @@
         android:id="@+id/fee_line"
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_line_height"
-        android:background="@color/common_color_e8e8e8"
+        android:background="?attr/common_item_line_color"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

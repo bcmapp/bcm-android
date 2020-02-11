@@ -3,13 +3,13 @@
         android:color="@color/common_app_primary_color">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/common_disable_color"/>
+            <solid android:color="?attr/common_view_background_grey"/>
             <corners android:radius="0dp"/>
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/common_color_white"/>
+            <solid android:color="?attr/common_background_color"/>
             <corners android:radius="0dp"/>
         </shape>
     </item>

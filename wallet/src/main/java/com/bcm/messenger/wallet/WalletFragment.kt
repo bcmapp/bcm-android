@@ -10,13 +10,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.BaseFragment
-import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.getColor
+import com.bcm.messenger.common.utils.getStatusBarHeight
+import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.view.setLeftDrawable
+import com.bcm.messenger.common.utils.view.setRightDrawable
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
+import com.bcm.messenger.wallet.activity.CurrencyActivity
 import com.bcm.messenger.wallet.activity.WalletListActivity
-import com.bcm.messenger.wallet.activity.WalletSettingsActivity
 import com.bcm.messenger.wallet.model.BCMWallet
 import com.bcm.messenger.wallet.model.BCMWalletAccountDisplay
 import com.bcm.messenger.wallet.model.WalletDisplay
@@ -72,49 +77,30 @@ class WalletFragment : BaseFragment() {
             refreshPage(true)
         }
 
-        home_total_title.setOnClickListener {
+        home_total_balance.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
             mAdapter.changeSecretMode(!mAdapter.getSecretMode())
         }
 
-        home_popup.setOnClickListener {
+
+        home_balance_currency.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
             }
-            //点击右上角菜单
-            pop_background.visibility = View.VISIBLE
-            popup_full_setting.visibility = View.VISIBLE
-        }
 
-        pop_background.setOnClickListener{
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-            pop_background.visibility = View.GONE
-            popup_full_setting.visibility = View.GONE
-        }
-
-        popup_full_setting.setOnClickListener{
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-            pop_background.visibility = View.GONE
-            popup_full_setting.visibility = View.GONE
-
-            //跳转到钱包设置页面
-            val intent = Intent(activity, WalletSettingsActivity::class.java)
+            val intent = Intent(context, CurrencyActivity::class.java)
             startBcmActivity(intent)
         }
-        home_wallet_shade.setOnClickListener {
-            //do nothing,只是为了拦截下层UI的事件
-        }
+
         home_wallet_shade.setOnContentClickListener {
             if (!home_layout.isRefreshing) {
                 refreshPage(true)
             }
         }
+
+        home_balance_currency.setRightDrawable(R.drawable.wallet_arrow_drop_down, R.attr.common_background_color)
 
         mAdapter = WalletTypesAdapter(activity
                 ?: return, object : WalletTypesAdapter.WalletActionListener {
@@ -247,25 +233,19 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun updateWalletTotal() {
-        val context = context ?: return
+        home_balance_currency.text = mWalletModel?.getManager()?.getCurrentCurrency() ?: ""
         if (mAdapter.getSecretMode()) {
-            val drawable = AppUtil.getDrawable(context.resources, R.drawable.wallet_assets_hide_icon)
-            drawable.setTint(context.getAttrColor(R.attr.common_view_background))
-            home_total_title.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
+            home_total_balance.setLeftDrawable(R.drawable.wallet_assets_hide_icon, R.attr.common_background_color)
             home_total_balance.text = getString(R.string.wallet_secret_text)
         } else {
-            val drawable = AppUtil.getDrawable(context.resources, R.drawable.wallet_assets_hide_icon)
-            drawable.setTint(context.getAttrColor(R.attr.common_view_background))
-            home_total_title.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
+            home_total_balance.setLeftDrawable(R.drawable.wallet_assets_show_icon, R.attr.common_background_color)
             val total = mAdapter.getTotalMoney().setScale(2, BigDecimal.ROUND_HALF_UP)
-            home_total_balance.text = getString(R.string.wallet_home_total_balance,
-                    WalletSettings.getCurrencyShortyUnit(mWalletModel?.getManager()?.getCurrentCurrency() ?: ""),
-                    EthExchangeCalculator.FormatterMoney.format(total))
+            home_total_balance.text = getString(R.string.wallet_home_total_balance, EthExchangeCalculator.FormatterMoney.format(total))
         }
     }
 
     private fun showBackupDot(show: Boolean) {
-        home_backup_dot?.visibility = if (show) View.VISIBLE else View.GONE
+
     }
 
     private fun checkCoinTypeComplete(displayList: List<BCMWalletAccountDisplay>) {

@@ -13,7 +13,7 @@
         app:right_type="text"
         app:right_text="@string/wallet_currency_edit_save_text"
         app:right_text_size="16sp"
-        app:right_text_color="@color/common_app_primary_color" />
+        app:right_text_color="?attr/common_text_main_color" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/currency_list"

@@ -78,11 +78,11 @@
     <string name="wallet_welcome_active_button">Activate</string>
     <string name="wallet_welcome_import_button">Import</string>
     <string name="wallet_home_total_title">Total Assets</string>
-    <string name="wallet_home_total_balance">%1$s %2$s</string>
+    <string name="wallet_home_total_balance">%s</string>
     <string name="wallet_logo_description">wallet type logo</string>
     <string name="wallet_balance_text">%1$f</string>
     <string name="wallet_money_text">≈%1$s %2$s</string>
-    <string name="wallet_secret_text">******</string>
+    <string name="wallet_secret_text">\????</string>
     <string name="wallet_syncing_text">------</string>
     <string name="wallet_home_popup_description">Wallet Home Popup</string>
     <string name="wallet_home_import_confirm_title">Enter Password</string>

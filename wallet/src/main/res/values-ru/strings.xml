@@ -61,11 +61,11 @@
     <string name="wallet_welcome_active_button">Активир.</string>
     <string name="wallet_welcome_import_button">Импорт</string>
     <string name="wallet_home_total_title">Всего активов</string>
-    <string name="wallet_home_total_balance">%1$s %2$s</string>
+    <string name="wallet_home_total_balance">%s</string>
     <string name="wallet_logo_description">логотип типа кош.</string>
     <string name="wallet_balance_text">%1$f</string>
     <string name="wallet_money_text">≈%1$s %2$s</string>
-    <string name="wallet_secret_text">******</string>
+    <string name="wallet_secret_text">\????</string>
     <string name="wallet_syncing_text">------</string>
     <string name="wallet_home_popup_description">Всп. окно кошелька</string>
     <string name="wallet_home_import_confirm_title">Введите пароль</string>

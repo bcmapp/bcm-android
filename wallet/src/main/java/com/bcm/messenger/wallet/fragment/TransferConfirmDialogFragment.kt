@@ -10,7 +10,9 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.*
 import androidx.fragment.app.DialogFragment
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getDrawable
 import com.bcm.messenger.wallet.R
 import kotlinx.android.synthetic.main.wallet_transaction_confirm_dialog.*
 
@@ -52,7 +54,7 @@ class TransferConfirmDialogFragment : DialogFragment() {
         val span = SpannableString(name)
         span.setSpan(AbsoluteSizeSpan(16, true), 0, name.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         span.setSpan(StyleSpan(android.graphics.Typeface.BOLD), 0, name.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        span.setSpan(ForegroundColorSpan(getColorCompat(R.color.wallet_content_main_color)), 0, name.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(ForegroundColorSpan(getAttrColor(R.attr.common_text_secondary_color)), 0, name.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
         val builder = SpannableStringBuilder(span)
         transfer_confirm_from.text = builder
@@ -70,7 +72,7 @@ class TransferConfirmDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = Dialog(activity)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window?.setBackgroundDrawableResource(R.color.common_color_white)    //设置Dialog背景透明效果
+        dialog.window?.setBackgroundDrawableResource(R.color.common_background_color)    //设置Dialog背景透明效果
         dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         dialog.setCanceledOnTouchOutside(true)
 

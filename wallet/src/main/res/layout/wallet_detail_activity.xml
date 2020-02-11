@@ -39,24 +39,29 @@
         android:paddingBottom="10dp"
         android:paddingTop="10dp">
 
-        <com.bcm.messenger.common.ui.StateButton
+        <Button
             android:id="@+id/detail_transfer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/wallet_transaction_transfer_action"
             android:textAllCaps="false"
-            style="@style/CommonDarkThinBigTextStyle"/>
+            android:textColor="?attr/common_white"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            style="@style/CommonBlueButton"/>
 
-        <com.bcm.messenger.common.ui.StateButton
+        <Button
             android:id="@+id/detail_receive"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/wallet_transaction_receive_action"
             android:textAllCaps="false"
-            android:layout_marginStart="19dp"
-            style="@style/CommonDarkBigTextStyle"/>
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:textColor="?attr/common_black"
+            style="@style/CommonBlueButton"/>
 
     </LinearLayout>
 

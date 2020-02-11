@@ -101,53 +101,8 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
-    <style name="BcmActivityTheme.Basic" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@color/common_color_white</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
-
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowIsTranslucent">false</item>
-        <item name="android:statusBarColor">@color/common_color_transparent</item>
-
-        <item name="colorPrimary">@color/common_color_black</item>
-        <item name="colorPrimaryDark">@color/common_color_black</item>
-        <item name="colorAccent">@color/common_color_379BFF</item>
-
-        <item name="fill_status_bar">true</item>
-        <item name="show_bottom_line">false</item>
-        <item name="title_bar_background">@color/common_color_white</item>
-        <item name="title_bar_height">52dp</item>
-
-        <item name="left_type">image</item>
-        <item name="left_image">@drawable/common_arrow_back_icon</item>
-        <item name="left_text_size">17sp</item>
-        <item name="left_text_color">@color/common_color_black</item>
-
-        <item name="right_type">none</item>
-        <item name="right_text_size">17sp</item>
-        <item name="right_text_color">@color/common_color_black</item>
-
-        <item name="center_type">text</item>
-        <item name="center_text_color">@color/common_color_black</item>
-        <item name="center_text_size">17sp</item>
-    </style>
-
-    <style name="BcmActivityTheme.Transparent.Full" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@color/common_color_transparent</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
-
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-    </style>
-
     <!--Transparent-->
-    <style name="CommonTransparentStatusBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="CommonTransparentStatusBar" parent="CommonBcmTheme.Basic">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowBackground">@color/common_color_transparent</item>

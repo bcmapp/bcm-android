@@ -61,11 +61,11 @@
     <string name="wallet_welcome_active_button">सक्रिय करें</string>
     <string name="wallet_welcome_import_button">इंपोर्ट करें</string>
     <string name="wallet_home_total_title">कुल संपत्तियां</string>
-    <string name="wallet_home_total_balance">%1$s %2$s</string>
+    <string name="wallet_home_total_balance">%s</string>
     <string name="wallet_logo_description">वैलेट टाइप लोगो</string>
     <string name="wallet_balance_text">%1$f</string>
     <string name="wallet_money_text">≈%1$s %2$s</string>
-    <string name="wallet_secret_text">******</string>
+    <string name="wallet_secret_text">\????</string>
     <string name="wallet_syncing_text">------</string>
     <string name="wallet_home_popup_description">वैलेट होम पॉपप</string>
     <string name="wallet_home_import_confirm_title">पासवर्ड डालें</string>

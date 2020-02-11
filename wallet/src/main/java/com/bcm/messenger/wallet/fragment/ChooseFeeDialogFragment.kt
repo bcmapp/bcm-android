@@ -68,7 +68,7 @@ class ChooseFeeDialogFragment : DialogFragment() {
         val ctx = context ?: return super.onCreateDialog(savedInstanceState)
         val dialog = Dialog(ctx)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window?.setBackgroundDrawableResource(R.color.common_color_white)    //设置Dialog背景透明效果
+        dialog.window?.setBackgroundDrawableResource(R.color.common_background_color)    //设置Dialog背景透明效果
         dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         dialog.setCanceledOnTouchOutside(true)
 

@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="@string/wallet_available_assets"
-            android:textColor="@color/common_color_606060"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="15sp"
             android:gravity="left"
             app:layout_constraintTop_toTopOf="parent"
@@ -31,7 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:textColor="#303030"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="16sp"
             android:textStyle="bold"
             android:gravity="left"
@@ -47,7 +47,7 @@
             android:layout_marginLeft="-15dp"
             android:layout_marginRight="-15dp"
             android:layout_marginTop="10dp"
-            android:background="@color/common_division_color"
+            android:background="?attr/common_item_line_color"
             app:layout_constraintTop_toBottomOf="@id/assets_count"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -64,7 +64,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/wallet_transfer_to_address_head"
-            android:textColor="@color/common_color_606060"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="15sp"
             android:gravity="left"
             app:layout_constraintTop_toTopOf="parent"
@@ -81,8 +81,8 @@
             android:ellipsize="middle"
             android:hint="@string/wallet_transfer_to_address_hint"
             android:singleLine="true"
-            android:textColor="#303030"
-            android:textColorHint="#c2c2c2"
+            android:textColor="?attr/common_text_secondary_color"
+            android:textColorHint="?attr/common_text_third_color"
             android:textSize="15sp"
             android:gravity="left"
             app:layout_constraintStart_toStartOf="parent"
@@ -117,7 +117,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/common_line_height"
             android:layout_marginTop="10dp"
-            android:background="@color/common_division_color"
+            android:background="?attr/common_item_line_color"
             app:layout_constraintTop_toBottomOf="@id/to_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -134,7 +134,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/wallet_transfer_amount_head"
-            android:textColor="@color/common_color_606060"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="15sp"
             android:gravity="left"
             app:layout_constraintTop_toTopOf="parent"
@@ -150,8 +150,8 @@
             android:hint="@string/wallet_transfer_amount_hint"
             android:inputType="numberDecimal"
             android:maxLength="10"
-            android:textColor="#303030"
-            android:textColorHint="#c2c2c2"
+            android:textColor="?attr/common_text_secondary_color"
+            android:textColorHint="?attr/common_text_third_color"
             android:textSize="15sp"
             android:gravity="left"
             app:layout_constraintStart_toStartOf="parent"
@@ -163,7 +163,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
-            android:textColor="@color/wallet_content_main_color"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="@+id/amount_content"
             app:layout_constraintEnd_toStartOf="@+id/amount_all_division"
@@ -175,7 +175,7 @@
             android:layout_width="@dimen/common_line_height"
             android:layout_height="15dp"
             android:layout_marginEnd="15dp"
-            android:background="@color/common_division_color"
+            android:background="?attr/common_item_line_color"
             app:layout_constraintBottom_toBottomOf="@+id/amount_content"
             app:layout_constraintEnd_toStartOf="@+id/amount_all_btn"
             app:layout_constraintTop_toTopOf="@+id/amount_content" />
@@ -185,7 +185,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/wallet_amount_choose_all"
-            android:textColor="#303030"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="@+id/amount_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -196,7 +196,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/common_line_height"
             android:layout_marginTop="10dp"
-            android:background="@color/common_division_color"
+            android:background="?attr/common_item_line_color"
             app:layout_constraintTop_toBottomOf="@id/amount_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -214,7 +214,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="@string/wallet_transfer_fee_head"
-            android:textColor="@color/common_color_606060"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="15sp"
             android:gravity="left"
             app:layout_constraintTop_toTopOf="parent"
@@ -228,7 +228,7 @@
             android:layout_height="wrap_content"
             android:drawablePadding="4dp"
             android:text="@string/wallet_transfer_fee_switch"
-            android:textColor="@color/common_color_A8A8A8"
+            android:textColor="?attr/common_text_third_color"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -265,7 +265,7 @@
             android:drawablePadding="4dp"
             android:drawableEnd="@drawable/wallet_arrow_right"
             android:gravity="center_vertical"
-            android:textColor="@color/common_color_606060"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -276,7 +276,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/common_line_height"
             android:layout_marginTop="10dp"
-            android:background="@color/common_division_color"
+            android:background="?attr/common_item_line_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -301,7 +301,7 @@
             android:inputType="text"
             android:hint="@string/wallet_transfer_memo_hint"
             android:textColor="@color/wallet_content_main_color"
-            android:textColorHint="#c2c2c2"
+            android:textColorHint="?attr/common_text_third_color"
             android:textSize="15sp"
             android:gravity="left"/>
 
@@ -310,7 +310,7 @@
             android:layout_height="@dimen/common_line_height"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:background="@color/common_division_color"/>
+            android:background="?attr/common_item_line_color"/>
 
         <EditText
             android:id="@+id/btc_fee_price"
@@ -319,8 +319,8 @@
             android:background="@null"
             android:inputType="numberDecimal"
             android:hint="@string/wallet_transfer_btc_fee_hint"
-            android:textColor="@color/wallet_content_main_color"
-            android:textColorHint="#c2c2c2"
+            android:textColor="?attr/common_text_main_color"
+            android:textColorHint="?attr/common_text_third_color"
             android:textSize="15sp"
             android:gravity="left"/>
 
@@ -328,7 +328,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/common_line_height"
             android:layout_marginTop="10dp"
-            android:background="@color/common_division_color"/>
+            android:background="?attr/common_item_line_color"/>
 
     </LinearLayout>
 
@@ -345,7 +345,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="@string/wallet_transfer_gas_head"
-            android:textColor="@color/common_color_606060"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="15sp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -360,8 +360,8 @@
                 android:background="@null"
                 android:inputType="numberDecimal"
                 android:hint="@string/wallet_transfer_gas_hint"
-                android:textColor="#303030"
-                android:textColorHint="#c2c2c2"
+                android:textColor="?attr/common_text_secondary_color"
+                android:textColorHint="?attr/common_text_third_color"
                 android:textSize="15sp"
                 android:gravity="left"
                 app:layout_constraintTop_toTopOf="parent"
@@ -375,8 +375,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:hint="@string/wallet_transfer_gas_unit"
-                android:textColor="#303030"
-                android:textColorHint="#c2c2c2"
+                android:textColor="?attr/common_text_secondary_color"
+                android:textColorHint="?attr/common_text_third_color"
                 android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -388,14 +388,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/common_line_height"
             android:layout_marginTop="10dp"
-            android:background="@color/common_division_color" />
+            android:background="?attr/common_item_line_color" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="@string/wallet_transfer_limit_head"
-            android:textColor="@color/common_color_606060"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="15sp" />
 
         <EditText
@@ -406,8 +406,8 @@
             android:inputType="numberSigned"
             android:background="@null"
             android:hint="@string/wallet_transfer_limit_hint"
-            android:textColor="#303030"
-            android:textColorHint="#c2c2c2"
+            android:textColor="?attr/common_text_secondary_color"
+            android:textColorHint="?attr/common_text_third_color"
             android:textSize="15sp"
             android:gravity="left"/>
 
@@ -415,14 +415,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/common_line_height"
             android:layout_marginTop="10dp"
-            android:background="@color/common_division_color" />
+            android:background="?attr/common_item_line_color" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="@string/wallet_transfer_data_head"
-            android:textColor="@color/common_color_606060"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="15sp" />
 
         <EditText
@@ -432,8 +432,8 @@
             android:layout_marginTop="10dp"
             android:background="@null"
             android:hint="@string/wallet_transfer_data_hint"
-            android:textColor="#303030"
-            android:textColorHint="#c2c2c2"
+            android:textColor="?attr/common_text_secondary_color"
+            android:textColorHint="?attr/common_text_third_color"
             android:textSize="15sp"
             android:gravity="left"/>
 
@@ -441,7 +441,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/common_line_height"
             android:layout_marginTop="10dp"
-            android:background="@color/common_division_color" />
+            android:background="?attr/common_item_line_color" />
 
     </LinearLayout>
 

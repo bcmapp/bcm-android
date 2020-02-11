@@ -373,6 +373,7 @@ class AmeConversationViewModel(
 
     private fun sendHideMessage(context: Context, message: OutgoingLocationMessage, callback: ((success: Boolean) -> Unit)? = null) {
         Observable.create<Unit> {
+            ALog.i("sendHideMessage", message.messageBody)
             it.onNext(MessageSender.sendHideMessage(context, mAccountContext, message))
             it.onComplete()
         }.subscribeOn(Schedulers.io())
