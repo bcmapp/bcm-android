@@ -106,7 +106,6 @@
             app:layout_constraintTop_toBottomOf="@id/relogin_input_pin_nikename"
             tools:hint="slsslslsl"
             app:showClearButton="true"
-            app:clearButtonResource="@drawable/common_input_clear_icon"
             app:clearButtonPadding="10dp"
             app:clearButtonHeight="12dp"
             app:clearButtonWidth="12dp"

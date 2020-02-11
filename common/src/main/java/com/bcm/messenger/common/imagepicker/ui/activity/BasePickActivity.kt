@@ -17,7 +17,9 @@ import com.bumptech.glide.util.Util
 
 open class BasePickActivity : ThemeBaseActivity() {
     private val idleHandler = MessageQueue.IdleHandler {
-        window?.setStatusBarLightMode()
+        if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK != Configuration.UI_MODE_NIGHT_YES) {
+            window.setStatusBarLightMode()
+        }
         return@IdleHandler false
     }
 

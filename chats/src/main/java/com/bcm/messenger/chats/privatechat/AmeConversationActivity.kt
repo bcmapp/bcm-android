@@ -265,7 +265,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
             }
         } else if (requestCode == SEND_CONTACT && data != null) {
             try {
-                val event = GsonUtils.fromJson<SendContactEvent>(data.getStringExtra(ARouterConstants.PARAM.PARAM_DATA), object : TypeToken<SendContactEvent>(){}.type)
+                val event = GsonUtils.fromJson<SendContactEvent>(data.getStringExtra(ARouterConstants.PARAM.PARAM_DATA), object : TypeToken<SendContactEvent>() {}.type)
                 if (event.groupId == 0L) {
                     event.dataList.forEach { contactContent ->
                         sendContactMessage(contactContent)
@@ -276,7 +276,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                         }
                     }, 1000)
                 }
-            }catch (ex: Exception) {
+            } catch (ex: Exception) {
                 ALog.e(TAG, "onActivityResult send_contact", ex)
             }
         }
@@ -447,14 +447,15 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                 }
             }
 
-            override fun onAudioStateChanged(state: Int, recordUri: Uri?, byteSize:Long, playTime:Long) {
+            override fun onAudioStateChanged(state: Int, recordUri: Uri?, byteSize: Long, playTime: Long) {
                 when (state) {
                     ConversationInputPanel.OnConversationInputListener.AUDIO_START -> {
                     }
                     ConversationInputPanel.OnConversationInputListener.AUDIO_COMPLETE -> {
                         mConversationModel?.sendMediaMessage(this@AmeConversationActivity, getMasterSecret(),
                                 createOutgoingMessage("", SlideDeck().apply { addSlide(AudioSlide(this@AmeConversationActivity, recordUri, byteSize, playTime, MediaUtil.AUDIO_AAC, true)) },
-                                (mRecipient.expireMessages * 1000).toLong(), -1, (mConversationModel?.getThreadId() ?: 0L) <= 0L)) {
+                                        (mRecipient.expireMessages * 1000).toLong(), -1, (mConversationModel?.getThreadId()
+                                        ?: 0L) <= 0L)) {
 
                             if (it && null != recordUri) {
                                 AmeDispatcher.io.dispatch {
@@ -612,8 +613,8 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
             "Tiktalk"
         }
 
-        val chatBurn  = ChatTitleDropItem(icon, R.color.common_text_main_color, tickTalkTitle) {
-            ChatsBurnSetting.configBurnSetting(this, mRecipient, accountContext.masterSecret?:return@ChatTitleDropItem) {
+        val chatBurn = ChatTitleDropItem(icon, R.color.common_text_main_color, tickTalkTitle) {
+            ChatsBurnSetting.configBurnSetting(this, mRecipient, accountContext.masterSecret ?: return@ChatTitleDropItem) {
             }
         }
 
@@ -809,13 +810,12 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
     }
 
     private fun createOutgoingMessage(body: String): OutgoingTextMessage {
-
         val groupShareContent = AmeGroupMessage.GroupShareContent.fromLink(body)
-       return if (groupShareContent != null) {
-                OutgoingLocationMessage(mRecipient, AmeGroupMessage(AmeGroupMessage.GROUP_SHARE_CARD, groupShareContent).toString(), (mRecipient.expireMessages * 1000).toLong())
-            } else {
-                OutgoingEncryptedMessage(mRecipient, body, (mRecipient.expireMessages * 1000).toLong())
-            }
+        return if (groupShareContent != null) {
+            OutgoingLocationMessage(mRecipient, AmeGroupMessage(AmeGroupMessage.GROUP_SHARE_CARD, groupShareContent).toString(), (mRecipient.expireMessages * 1000).toLong())
+        } else {
+            OutgoingEncryptedMessage(mRecipient, body, (mRecipient.expireMessages * 1000).toLong())
+        }
     }
 
     private fun sendMessage(messageText: CharSequence) {
@@ -888,7 +888,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(e: UserOfflineEvent){
+    fun onEvent(e: UserOfflineEvent) {
         if (!isFinishing && e.address == mRecipient.address) {
             ToastUtil.show(this, getString(R.string.chats_text_recipient_not_online, mRecipient.name))
         }

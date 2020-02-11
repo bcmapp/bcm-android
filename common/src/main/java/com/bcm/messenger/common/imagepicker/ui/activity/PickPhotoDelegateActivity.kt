@@ -23,7 +23,6 @@ class PickPhotoDelegateActivity : ThemeBaseActivity(), BcmPickPhotoCropHelper.On
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.decorView.background = AppUtil.getDrawable(resources, R.color.common_color_transparent)
 
         BcmPickPhotoCropHelper.addOnImageCropCompleteListener(this)
 

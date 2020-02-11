@@ -80,7 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:src="@drawable/me_setting_profile_qr_code_icon"
-            android:tint="?attr/common_icon_color_grey"
+            android:tint="?attr/common_icon_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/head_view_arrow"
             app:layout_constraintTop_toTopOf="parent" />

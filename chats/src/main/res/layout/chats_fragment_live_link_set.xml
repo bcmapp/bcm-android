@@ -68,7 +68,6 @@
         android:singleLine="true"
         app:clearButtonHeight="12dp"
         app:clearButtonPadding="10dp"
-        app:clearButtonResource="@drawable/chats_12_delete_input_blk"
         app:clearButtonWidth="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

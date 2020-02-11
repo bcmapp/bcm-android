@@ -140,7 +140,7 @@
         <attr name="right_text_size" format="reference|dimension" />
         <attr name="right_text_image" format="reference" />
         <attr name="right_image" format="reference" />
-        <attr name="right_image_color" format="reference|color" />
+        <attr name="right_image_color" format="color|reference" />
         <attr name="right_custom_view" format="reference" />
 
         <attr name="center_type" format="reference|enum">
@@ -315,6 +315,7 @@
     <attr name="common_ripple_color" format="color" />
     <attr name="common_icon_color" format="color" />
     <attr name="common_icon_color_grey" format="color" />
+    <attr name="common_icon_verify_go_disabled_color" format="color" />
     <attr name="common_selected_color" format="color" />
     <attr name="common_black_color" format="color" />
     <attr name="common_white_color" format="color" />

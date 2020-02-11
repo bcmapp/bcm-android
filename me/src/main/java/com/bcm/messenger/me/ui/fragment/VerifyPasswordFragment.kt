@@ -1,5 +1,6 @@
 package com.bcm.messenger.me.ui.fragment
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -82,8 +83,6 @@ class VerifyPasswordFragment : BaseFragment() {
             verify_pin_input_text?.requestFocus()
             verify_pin_input_text?.showKeyboard()
         }, 250)
-
-        activity?.window?.setStatusBarLightMode()
     }
 
     fun setCallback(callback: (success: Boolean) -> Unit): VerifyPasswordFragment {
@@ -111,13 +110,13 @@ class VerifyPasswordFragment : BaseFragment() {
             verify_pin_input_clear.alpha = 1f
             verify_pin_input_clear.isEnabled = true
             verify_pin_input_go.isEnabled = true
-            verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_icon)
+            verify_pin_input_go.drawable.setTint(getAttrColor(R.attr.common_button_blue_color))
             verify_pin_error.visibility = View.GONE
         } else {
             verify_pin_input_clear.alpha = 0.7f
             verify_pin_input_clear.isEnabled = false
             verify_pin_input_go.isEnabled = false
-            verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_disabled_icon)
+            verify_pin_input_go.drawable.setTint(getAttrColor(R.attr.common_icon_verify_go_disabled_color))
         }
     }
 

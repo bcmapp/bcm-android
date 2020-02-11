@@ -3,12 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/common_color_white">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/profile_title_bar"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         app:center_text="@string/me_profile_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/me_profile_picture"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="17sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -52,7 +52,8 @@
             android:id="@+id/profile_icon_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/common_right_arrow_icon"
+            android:src="@drawable/common_arrow_right_icon"
+            android:tint="?attr/common_icon_color_grey"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
@@ -60,7 +61,7 @@
         <View
             android:layout_width="0dp"
             android:layout_height="@dimen/common_line_height"
-            android:background="@color/common_line_color"
+            android:background="?attr/common_item_line_color"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
@@ -72,8 +73,8 @@
         android:layout_width="0dp"
         android:layout_height="52dp"
         app:setting_item_name="@string/me_profile_nickname"
-        app:setting_item_name_color="@color/common_color_black"
-        app:setting_item_tip_color="@color/common_content_second_color"
+        app:setting_item_name_color="?attr/common_text_main_color"
+        app:setting_item_tip_color="?attr/common_text_secondary_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profile_photo_item" />
@@ -94,7 +95,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:textSize="17sp"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:text="ID"/>
         <TextView
             android:id="@+id/profile_id_content"
@@ -103,14 +104,14 @@
             android:textSize="17sp"
             android:maxLines="1"
             android:ellipsize="end"
-            android:textColor="@color/common_color_black_30"
+            android:textColor="?attr/common_text_third_color"
             android:layout_weight="1"/>
         <TextView
             android:id="@+id/profile_id_copy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="17sp"
-            android:textColor="@color/common_color_379BFF"
+            android:textColor="?attr/common_text_blue_color"
             android:padding="15dp"
             android:text="@string/common_invite_share_copy"/>
     </LinearLayout>
@@ -135,7 +136,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="left"
-            android:textColor="@color/common_color_black_70"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="14sp"
             android:text="@string/me_other_local_display_title"
             android:visibility="visible"
@@ -146,7 +147,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="left"
-            android:textColor="@color/common_color_black_70"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="14sp"
             android:text="@string/me_other_local_display_clear"
             android:visibility="visible"
@@ -170,7 +171,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/me_other_local_display_avatar"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="17sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -192,7 +193,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/me_other_local_empty_action"
-            android:textColor="@color/common_content_second_color"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="17sp"
             android:visibility="gone"
             android:lineSpacingExtra="0dp"
@@ -204,7 +205,8 @@
             android:id="@+id/profile_display_icon_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/common_right_arrow_icon"
+            android:src="@drawable/common_arrow_right_icon"
+            android:tint="?attr/common_icon_color_grey"
             android:paddingStart="10dp"
             android:paddingEnd="0dp"
             android:scaleType="centerInside"
@@ -215,7 +217,7 @@
         <View
             android:layout_width="0dp"
             android:layout_height="@dimen/common_line_height"
-            android:background="@color/common_line_color"
+            android:background="?attr/common_item_line_color"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
@@ -227,8 +229,8 @@
         android:layout_width="0dp"
         android:layout_height="52dp"
         app:setting_item_name="@string/me_other_local_display_name"
-        app:setting_item_name_color="@color/common_color_black"
-        app:setting_item_tip_color="@color/common_content_second_color"
+        app:setting_item_name_color="?attr/common_text_main_color"
+        app:setting_item_tip_color="?attr/common_text_secondary_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profile_display_photo_item" />
@@ -238,7 +240,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/me_other_local_display_comment"
-        android:textColor="@color/common_color_black_70"
+        android:textColor="?attr/common_text_third_color"
         android:textSize="13sp"
         android:layout_marginTop="10dp"
         android:paddingStart="@dimen/common_horizontal_gap"

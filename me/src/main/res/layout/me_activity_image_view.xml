@@ -7,7 +7,8 @@
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/photo_preview_dock"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:title_bar_background="@color/common_color_transparent"
         app:left_image="@drawable/common_arrow_back_icon"
         app:left_image_color="?attr/common_white_color"

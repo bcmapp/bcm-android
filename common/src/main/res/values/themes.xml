@@ -55,10 +55,11 @@
         <item name="common_ripple_color">@color/common_default_ripple_color</item>
         <item name="common_icon_color">@color/common_default_icon_color</item>
         <item name="common_icon_color_grey">@color/common_default_icon_grey_color</item>
+        <item name="common_icon_verify_go_disabled_color">@color/common_verify_go_icon_color</item>
         <item name="common_selected_color">@color/common_default_selected_color</item>
         <item name="common_black_color">@color/common_color_black</item>
         <item name="common_white_color">@color/common_color_white</item>
-        <item name="common_grey_color"></item>
+        <item name="common_grey_color">@color/common_default_grey_color</item>
 
         <item name="common_button_blue_color">@color/common_blue_button_color</item>
         <item name="common_button_blue_sub_color">@color/common_blue_sub_button_color</item>
@@ -86,7 +87,17 @@
     </style>
 
     <style name="CommonBcmTheme.Transparent" parent="CommonBcmTheme.Basic">
-        <item name="android:windowBackground">@color/common_70_transparent</item>
+        <item name="android:windowBackground">@color/common_color_transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="CommonBcmTheme.Transparent.Full" parent="CommonBcmTheme.Transparent">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
 

@@ -45,7 +45,6 @@
         android:textSize="14sp"
         app:clearButtonHeight="12dp"
         app:clearButtonPadding="10dp"
-        app:clearButtonResource="@drawable/common_clear_circle_icon"
         app:clearButtonWidth="12dp"
         app:paddingEnd="15dp"
         app:showClearButton="false"/>
@@ -81,7 +80,6 @@
         android:textSize="14sp"
         app:clearButtonHeight="12dp"
         app:clearButtonPadding="10dp"
-        app:clearButtonResource="@drawable/common_clear_circle_icon"
         app:clearButtonWidth="12dp"
         app:paddingEnd="15dp"
         app:showClearButton="false"/>

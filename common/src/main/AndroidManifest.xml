@@ -102,18 +102,18 @@
 
         <activity
             android:name="com.bcm.messenger.common.imagepicker.ui.activity.ImageCropActivity"
-            android:theme="@style/CommonTransparentStatusBar">
+            android:theme="@style/CommonBcmTheme.Basic">
 
         </activity>
 
         <activity android:name=".imagepicker.ui.activity.PickPhotoActivity"
-            android:theme="@style/CommonTransparentStatusBar" />
+            android:theme="@style/CommonBcmTheme.Basic" />
 
         <activity android:name=".imagepicker.ui.activity.PickPhotoPreviewActivity"
-            android:theme="@style/CommonTransparentStatusBar" />
+            android:theme="@style/CommonBcmTheme.Basic" />
 
         <activity android:name=".imagepicker.ui.activity.PickPhotoDelegateActivity"
-            android:theme="@style/CommonTransparentStatusBar" />
+            android:theme="@style/CommonBcmTheme.Transparent" />
 
         <provider android:name=".providers.PartProvider"
             android:grantUriPermissions="true"

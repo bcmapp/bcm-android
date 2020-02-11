@@ -1,6 +1,7 @@
 package com.bcm.messenger.common.ui
 
 import android.content.Context
+import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.View
@@ -19,7 +20,7 @@ class DataPicker @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     init {
         val array = context.obtainStyledAttributes(attrs, R.styleable.DataPicker)
-//        textColor = array.getColor(R.styleable.DataPicker_textColor, 0)
+        textColor = array.getColor(R.styleable.DataPicker_textColor, 0)
         dividerColor = array.getColor(R.styleable.DataPicker_dividerColor, 0)
         dividerHeight = array.getDimension(R.styleable.DataPicker_dividerHeight, 0f)
         array.recycle()
@@ -33,40 +34,49 @@ class DataPicker @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
 
         if (textColor != 0) {
-            for (i in 0 until childCount) {
-                updateView(getChildAt(i))
-            }
+            updateView()
         }
     }
 
     override fun addView(child: View?) {
         super.addView(child)
-        updateView(child)
+        updateView()
     }
 
     override fun addView(child: View?, index: Int) {
         super.addView(child, index)
-        updateView(child)
+        updateView()
     }
 
     override fun addView(child: View?, params: ViewGroup.LayoutParams?) {
         super.addView(child, params)
-        updateView(child)
+        updateView()
     }
 
     override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {
         super.addView(child, index, params)
-        updateView(child)
+        updateView()
     }
 
     override fun addView(child: View?, width: Int, height: Int) {
         super.addView(child, width, height)
-        updateView(child)
+        updateView()
     }
 
-    private fun updateView(view: View?) {
-        if (view is EditText) {
-            if (textColor != 0) {
+    private fun updateView() {
+        try {
+            val field = NumberPicker::class.java.getDeclaredField("mSelectorWheelPaint")
+            if (field != null) {
+                field.isAccessible = true
+                (field.get(this) as Paint).color = textColor
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        for (i in 0 until childCount) {
+            val view = getChildAt(i)
+            if (view is EditText && textColor != 0) {
                 view.setTextColor(textColor)
             }
         }

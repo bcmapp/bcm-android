@@ -7,11 +7,12 @@
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/pick_photo_title_bar"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:left_type="text"
         app:left_text="@string/common_cancel"
         app:right_type="text"
-        app:right_text_color="@color/common_app_primary_color"/>
+        app:right_text_color="?attr/common_text_blue_color"/>
 
     <FrameLayout
         android:id="@+id/pick_photo_content_layout"

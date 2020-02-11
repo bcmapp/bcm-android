@@ -30,7 +30,7 @@
             android:layout_marginTop="12dp"
             android:gravity="center"
             android:singleLine="true"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="17sp"
             android:textStyle="bold"
             tools:text="ddasdas" />
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:gravity="center"
-            android:textColor="@color/common_color_A8A8A8"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="14sp"
             tools:text="(100)" />
     </LinearLayout>

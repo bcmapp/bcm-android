@@ -26,7 +26,7 @@
             android:name="com.bcm.messenger.me.ui.profile.ImageViewActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/BcmActivityTheme.Transparent.Full" />
+            android:theme="@style/CommonBcmTheme.Transparent.Full" />
         <activity
             android:name="com.bcm.messenger.me.ui.setting.AboutActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"

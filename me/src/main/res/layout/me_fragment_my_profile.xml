@@ -142,7 +142,7 @@
         app:setting_item_name="@string/me_profile_add_me"
         app:setting_item_name_color="?attr/common_text_main_color"
         app:setting_item_right="none"
-        app:setting_item_right_custom="@drawable/common_qr_code_black_icon"
+        app:setting_item_right_custom="@drawable/me_my_profile_qr_icon"
         app:setting_item_tip_color="?attr/common_text_secondary_color" />
 
     <com.bcm.messenger.common.ui.CommonSettingItem

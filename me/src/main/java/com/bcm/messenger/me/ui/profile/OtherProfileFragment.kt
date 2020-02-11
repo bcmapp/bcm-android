@@ -20,6 +20,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.me.R
@@ -199,9 +200,9 @@ class OtherProfileFragment : BaseFragment(), RecipientModifiedListener {
                 profile_display_alias_item?.setTip(recipient.localName ?: "")
             }
             if (recipient.localName.isNullOrEmpty() && recipient.localAvatar.isNullOrEmpty()) {
-                profile_display_clear?.setTextColor(getColorCompat(R.color.common_color_black_70))
+                profile_display_clear?.setTextColor(getAttrColor(R.attr.common_text_main_color))
             } else {
-                profile_display_clear?.setTextColor(getColorCompat(R.color.common_content_warning_color))
+                profile_display_clear?.setTextColor(getAttrColor(R.attr.common_text_warn_color))
             }
         }
     }

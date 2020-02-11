@@ -294,7 +294,6 @@ interface CropResultCallback {
 fun imageLoadOption(): RequestOptions {
     return RequestOptions()
             .centerCrop()
-            .placeholder(R.color.common_color_white)
             .error(R.drawable.common_image_broken_img)
             .priority(Priority.LOW)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)

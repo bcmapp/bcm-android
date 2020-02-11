@@ -129,6 +129,7 @@
     <color name="common_underline_color">#E0E0E0</color>
     <color name="common_default_icon_color">#000000</color>
     <color name="common_default_icon_grey_color">#E0E0E0</color>
+    <color name="common_verify_go_icon_color">#202122</color>
 
     <color name="common_default_background_color">#FFFFFF</color>
     <color name="common_progress_tint_color">#80FFFFFF</color>
@@ -141,6 +142,7 @@
     <color name="common_default_ripple_background_color">#FFFFFF</color>
     <color name="common_default_selected_color">#379BFF</color>
     <color name="common_default_30_transparent">#4DFFFFFF</color>
+    <color name="common_default_grey_color">#E0E0E0</color>
 
     <color name="common_blue_button_color">#379BFF</color>
     <color name="common_blue_sub_button_color">#19379BFF</color>

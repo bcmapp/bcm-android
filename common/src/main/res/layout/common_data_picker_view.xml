@@ -5,47 +5,46 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/common_color_white"
+    android:background="?attr/common_view_background_dark_grey"
     android:gravity="center_horizontal">
 
     <TextView
         android:id="@+id/data_picker_title"
         android:layout_width="match_parent"
         android:layout_height="58dp"
-        android:background="@color/common_color_white"
+        android:background="?attr/common_view_background_dark_grey"
         android:gravity="center"
-        android:textColor="@color/common_color_606060"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="15sp"
         tools:text="Title" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/common_background_F2F3F4"/>
+        android:background="?attr/common_item_line_color"/>
 
     <com.bcm.messenger.common.ui.DataPicker
         android:id="@+id/data_picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/common_color_white"
-        app:dividerColor="@color/common_color_379BFF"
+        android:background="?attr/common_view_background_dark_grey"
+        app:dividerColor="?attr/common_button_blue_color"
         app:dividerHeight="1dp"
-        app:textColor="@color/common_color_black"/>
+        app:textColor="?attr/common_text_main_color"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="@color/common_background_F2F3F4"/>
+        android:background="?attr/common_item_line_color"/>
 
     <TextView
         android:id="@+id/data_picker_done"
         android:layout_width="match_parent"
         android:layout_height="58dp"
-        android:background="@color/common_color_white"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:background="@drawable/common_item_ripple_dark_grey_bg"
         android:gravity="center"
         android:text="@string/common_done"
-        android:textColor="@color/common_color_379BFF"
+        android:textColor="?attr/common_text_blue_color"
         android:textSize="15sp" />
 
 </LinearLayout>

@@ -18,7 +18,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.MediaUtil
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getScreenPixelSize
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.AppContextHolder
@@ -215,13 +215,13 @@ class ImageViewActivity : FullTransSwipeBaseActivity(), RecipientModifiedListene
 
     private fun requestPhoto(recipient: Recipient) {
         if (isLocalAvatarNull()) {
-            image_root?.setBackgroundColor(getColorCompat(R.color.common_color_transparent))
+            image_root?.setBackgroundColor(getAttrColor(R.attr.common_view_background_transparent))
             photo_preview_dock?.visibility = View.GONE
             avatar_container?.visibility = View.GONE
             handleMore()
             return
         } else {
-            image_root?.setBackgroundColor(getColorCompat(R.color.common_color_black))
+            image_root?.setBackgroundColor(getAttrColor(R.attr.common_black_color))
             photo_preview_dock?.visibility = View.VISIBLE
             avatar_container?.visibility = View.VISIBLE
         }

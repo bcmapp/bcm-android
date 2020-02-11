@@ -1,5 +1,6 @@
 package com.bcm.messenger.common.imagepicker.ui.activity
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
@@ -145,7 +146,9 @@ class PickPhotoPreviewActivity : BasePickActivity() {
                             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         } else {
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            window.setStatusBarLightMode()
+            if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+                window.setStatusBarLightMode()
+            }
         }
     }
 }
