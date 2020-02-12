@@ -21,9 +21,7 @@
         style="@style/CommonTitleBarStyle"
         app:left_image="@drawable/common_arrow_back_icon"
         app:left_image_color="?attr/common_foreground_color"
-        app:center_text="@string/common_scan_title"
-        app:center_text_color="@color/common_color_white"
-        app:title_bar_background="@color/common_color_black" />
+        app:center_text="@string/common_scan_title" />
 
     <LinearLayout
         android:id="@+id/scan_tool_layout"

@@ -16,6 +16,7 @@
         app:left_image="@drawable/common_arrow_back_icon"
         app:left_image_color="?attr/common_foreground_color"
         app:right_image="@drawable/common_info_icon"
+        app:right_image_color="?attr/common_foreground_color"
         app:right_type="image"
         app:title_bar_background="@color/common_color_transparent"
         app:layout_constraintTop_toTopOf="parent"
