@@ -373,9 +373,9 @@ class AdHocMainFragment: BaseFragment(),
             ALog.i(TAG, "setData session: ${data.sessionId}, lastState: ${data.lastState}")
             if (data.lastState != AdHocSession.STATE_SUCCESS) {
                 val d = if (data.lastState == AdHocSession.STATE_SENDING) {
-                    getDrawable(R.drawable.common_doing_icon)
+                    context.getDrawable(R.drawable.common_doing_icon)
                 }else {
-                    getDrawable(R.drawable.adhoc_session_failure_icon)
+                    context.getDrawable(R.drawable.adhoc_session_failure_icon)
                 }
                 d.setBounds(0, 0, d.intrinsicWidth, d.intrinsicHeight)
                 builder.append(StringAppearanceUtil.addImage("  $text", d, 0))
