@@ -9,5 +9,6 @@
         android:id="@+id/group_control_option"
         android:layout_width="56dp"
         android:layout_height="56dp"
+        android:tint="?attr/common_foreground_color"
         />
 </RelativeLayout>

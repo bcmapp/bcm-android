@@ -586,10 +586,12 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
     override fun bindViewHolder(adapter: AmeRecycleViewAdapter<AmeGroupMemberInfo>, viewHolder: AmeRecycleViewAdapter.ViewHolder<AmeGroupMemberInfo>) {
         when (viewHolder.getData()) {
             AmeGroupMemberInfo.MEMBER_ADD_MEMBER -> {
-                (viewHolder as OptionHolder).imageView.setImageResource(R.drawable.chats_group_member_invite_icon)
+                val imageView = (viewHolder as OptionHolder).imageView
+                imageView.setImageResource(R.drawable.chats_group_member_invite_icon)
             }
             AmeGroupMemberInfo.MEMBER_REMOVE -> {
-                (viewHolder as OptionHolder).imageView.setImageResource(R.drawable.chats_group_member_remove_icon)
+                val imageView = (viewHolder as OptionHolder).imageView
+                imageView.setImageResource(R.drawable.chats_group_member_remove_icon)
             }
             else -> {
                 val data = viewHolder.getData()
