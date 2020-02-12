@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="17dp"
                 android:gravity="center"
-                android:textColor="?attr/common_background_color"
+                android:textColor="?attr/common_activity_background"
                 android:textStyle="bold"
                 android:textSize="30sp"
                 tools:text="$ 2400.12"/>
@@ -69,7 +69,7 @@
                 android:gravity="center"
                 android:paddingEnd="0dp"
                 android:textStyle="bold"
-                android:textColor="?attr/common_background_color"
+                android:textColor="?attr/common_activity_background"
                 android:textSize="17sp"
                 />
         </LinearLayout>

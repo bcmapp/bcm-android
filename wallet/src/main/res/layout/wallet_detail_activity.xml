@@ -46,7 +46,7 @@
             android:layout_weight="1"
             android:text="@string/wallet_transaction_transfer_action"
             android:textAllCaps="false"
-            android:textColor="?attr/common_white"
+            android:textColor="?attr/common_white_color"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             style="@style/CommonBlueButton"/>
@@ -60,7 +60,7 @@
             android:textAllCaps="false"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:textColor="?attr/common_black"
+            android:textColor="?attr/common_black_color"
             style="@style/CommonBlueButton"/>
 
     </LinearLayout>

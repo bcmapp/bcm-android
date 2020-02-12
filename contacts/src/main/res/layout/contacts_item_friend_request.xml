@@ -35,7 +35,8 @@
         app:layout_constraintBottom_toTopOf="@+id/friend_req_detail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/friend_req_avatar"
-        app:srcCompat="@drawable/common_right_arrow_icon" />
+        app:srcCompat="@drawable/common_right_icon"
+        android:tint="?attr/common_text_third_color" />
 
     <com.bcm.messenger.common.ui.emoji.EmojiTextView
         android:id="@+id/friend_req_name"

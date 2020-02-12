@@ -22,6 +22,7 @@ import com.bcm.messenger.common.finder.BcmFinderType
 import com.bcm.messenger.common.finder.SearchItemData
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -187,7 +188,8 @@ class CurrentSearchFragment : BaseFragment(), ISearchAction, AdHocChannelLogic.I
             } else {
                 moreLayout.visibility = View.VISIBLE
                 contentLine.visibility = View.GONE
-                moreFlag.setImageResource(R.drawable.common_right_arrow_icon)
+                moreFlag.setImageResource(R.drawable.common_right_icon)
+                moreFlag.setColorFilter(getAttrColor(R.attr.common_text_third_color))
                 moreDescription.text = sd.moreDescription
             }
 

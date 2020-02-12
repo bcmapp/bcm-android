@@ -23,7 +23,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:text="@string/chats_group_actor_creator"
-        android:textColor="#FF379BFF"
+        android:textColor="?attr/common_button_blue_color"
         android:textSize="10sp"/>
 
     <com.bcm.messenger.common.ui.emoji.EmojiTextView
@@ -35,7 +35,7 @@
         android:gravity="center"
         android:text="ABC"
         android:ellipsize="end"
-        android:textColor="#FF000000"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="10sp"
         />
 

@@ -132,7 +132,7 @@
             android:layout_marginStart="15dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="?attr/common_white"
+            android:textColor="?attr/common_white_color"
             android:layout_marginEnd="15dp"
             android:layout_weight="1"
             android:text="@string/wallet_transaction_transfer_action"
@@ -146,7 +146,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:layout_weight="1"
-            android:textColor="?attr/common_black"
+            android:textColor="?attr/common_black_color"
             android:text="@string/wallet_transaction_receive_action"
             android:textAllCaps="false"/>
 

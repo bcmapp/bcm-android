@@ -20,6 +20,7 @@ import com.bcm.messenger.common.ui.adapter.ListDataSource
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
+import com.bcm.messenger.common.utils.view.setRightDrawable
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
@@ -200,6 +201,8 @@ class CleanStorageActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.I
         val sizeView = view.findViewById<TextView>(R.id.clear_conversation_size)
 
         init {
+            sizeView.setRightDrawable(R.drawable.common_right_icon, R.attr.common_text_third_color)
+
             view.findViewById<TextView>(R.id.text_clear_all).setOnClickListener {
                 if (CleanConversationStorageLogic.isAllCollectionFinished()) {
                     activity.showCleanAllConversationStoragePop()
@@ -214,6 +217,10 @@ class CleanStorageActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.I
         val sizeView = view.findViewById<TextView>(R.id.clear_conversation_size)
         val nameView = view.findViewById<TextView>(R.id.clear_conversation_name)
         val recipientPhotoView = view.findViewById<RecipientAvatarView>(R.id.clear_conversation_photo)
+
+        init {
+            sizeView.setRightDrawable(R.drawable.common_right_icon, R.attr.common_text_third_color)
+        }
     }
 
 }

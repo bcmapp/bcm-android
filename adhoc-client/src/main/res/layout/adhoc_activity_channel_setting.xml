@@ -112,7 +112,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="15dp"
-                        android:src="@drawable/common_right_arrow_icon" />
+                        android:src="@drawable/common_right_icon"
+                        android:tint="?attr/common_text_third_color" />
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView

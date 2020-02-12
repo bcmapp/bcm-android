@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/common_color_white">
+    android:layout_height="match_parent">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/group_notice_edit_title"
@@ -14,6 +13,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         app:right_text="@string/chats_edit"
+        app:right_text_color="?attr/common_text_main_color"
         app:right_type="text" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,7 +39,7 @@
             android:layout_marginTop="7dp"
             android:gravity="center"
             android:maxLines="1"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="15sp"
             app:layout_constraintStart_toEndOf="@id/group_owner_avatar"
             app:layout_constraintTop_toTopOf="parent"
@@ -53,7 +53,7 @@
             android:layout_marginTop="5dp"
             android:gravity="center"
             android:maxLines="1"
-            android:textColor="@color/common_color_A8A8A8"
+            android:textColor="?attr/common_text_third_color"
             android:textSize="13sp"
             app:layout_constraintStart_toEndOf="@id/group_owner_avatar"
             app:layout_constraintTop_toBottomOf="@id/group_owner_name_text"
@@ -66,7 +66,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="20dp"
-            android:background="@color/common_line_color"
+            android:background="?attr/common_item_line_color"
             app:layout_constraintTop_toBottomOf="@id/group_owner_avatar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -79,7 +79,7 @@
             android:lineSpacingMultiplier="1.2"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="17sp"
             app:layout_constraintTop_toBottomOf="@id/content_divider"
             app:layout_constraintStart_toStartOf="parent"
@@ -87,38 +87,19 @@
             tools:text="Stop all the clocks, cut off the telephone, Prevent the dog from barking with a juicy bone, Silence the pianos and with muffled drum Bring out the coffin, let the mourners come." />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <TextView
         android:id="@+id/no_notice_layout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="@string/chats_no_note_for_new_members"
+        android:textColor="?attr/common_text_main_color"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/group_notice_edit_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <ImageView
-            android:id="@+id/no_notice_image"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/chats_group_notice_empty_icon"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="@string/chats_no_note_for_new_members"
-            android:textColor="@color/common_color_A8A8A8"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/no_notice_image" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

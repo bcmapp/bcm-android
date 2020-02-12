@@ -48,6 +48,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/edit_name_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/edit_name_input"
-        app:srcCompat="@drawable/common_clear_circle_icon" />
+        app:srcCompat="@drawable/common_input_clear_icon"
+        android:tint="@color/common_foreground_color" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

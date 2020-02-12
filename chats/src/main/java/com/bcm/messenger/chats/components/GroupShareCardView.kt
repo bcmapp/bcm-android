@@ -85,9 +85,9 @@ class GroupShareCardView @JvmOverloads constructor(context: Context, attrs: Attr
             share_action_tv.setBackgroundResource(R.drawable.chats_group_share_card_incoming_button)
             share_action_tv.setTextColor(context.getAttrColor(R.attr.common_text_blue_color))
 
-            share_arrow_iv.setImageResource(R.drawable.common_right_arrow_icon)
-            share_arrow_iv.drawable.setTint(context.getAttrColor(R.attr.common_icon_color_grey))
-            drawable?.setTint(context.getAttrColor(R.attr.common_icon_color))
+            share_arrow_iv.setImageResource(R.drawable.common_right_icon)
+            share_arrow_iv.drawable.setTint(context.getAttrColor(R.attr.common_text_third_color))
+            drawable?.setTint(context.getAttrColor(R.attr.common_text_third_color))
         } else {
             setBackgroundResource(R.drawable.chats_share_card_outgoing_bg)
 
@@ -97,7 +97,7 @@ class GroupShareCardView @JvmOverloads constructor(context: Context, attrs: Attr
             share_action_tv.setBackgroundResource(R.drawable.chats_group_share_card_outgoing_button)
             share_action_tv.setTextColor(context.getAttrColor(R.attr.common_text_white_color))
 
-            share_arrow_iv.setImageResource(R.drawable.common_right_arrow_icon)
+            share_arrow_iv.setImageResource(R.drawable.common_right_icon)
             share_arrow_iv.drawable.setTint(context.getAttrColor(R.attr.common_white_color))
             drawable?.setTint(context.getAttrColor(R.attr.common_white_color))
         }

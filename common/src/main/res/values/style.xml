@@ -97,7 +97,7 @@
 
     <style name="CommonPrimaryTextBgStyle">
         <item name="android:background">@drawable/common_primary_thick_round_selector</item>
-        <item name="android:textColor">?attr/common_background_color</item>
+        <item name="android:textColor">?attr/common_activity_background</item>
         <item name="android:gravity">center</item>
     </style>
 
@@ -142,7 +142,7 @@
 
     <style name="CommonDarkTextBgStyle">
         <item name="android:background">@drawable/common_dark_thick_round_selector</item>
-        <item name="android:textColor">?attr/common_background_color</item>
+        <item name="android:textColor">?attr/common_activity_background</item>
         <item name="android:gravity">center</item>
     </style>
 

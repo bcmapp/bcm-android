@@ -100,7 +100,7 @@ class WalletFragment : BaseFragment() {
             }
         }
 
-        home_balance_currency.setRightDrawable(R.drawable.wallet_arrow_drop_down, R.attr.common_background_color)
+        home_balance_currency.setRightDrawable(R.drawable.wallet_arrow_drop_down, R.attr.common_activity_background)
 
         mAdapter = WalletTypesAdapter(activity
                 ?: return, object : WalletTypesAdapter.WalletActionListener {
@@ -235,10 +235,10 @@ class WalletFragment : BaseFragment() {
     private fun updateWalletTotal() {
         home_balance_currency.text = mWalletModel?.getManager()?.getCurrentCurrency() ?: ""
         if (mAdapter.getSecretMode()) {
-            home_total_balance.setLeftDrawable(R.drawable.wallet_assets_hide_icon, R.attr.common_background_color)
+            home_total_balance.setLeftDrawable(R.drawable.wallet_assets_hide_icon, R.attr.common_activity_background)
             home_total_balance.text = getString(R.string.wallet_secret_text)
         } else {
-            home_total_balance.setLeftDrawable(R.drawable.wallet_assets_show_icon, R.attr.common_background_color)
+            home_total_balance.setLeftDrawable(R.drawable.wallet_assets_show_icon, R.attr.common_activity_background)
             val total = mAdapter.getTotalMoney().setScale(2, BigDecimal.ROUND_HALF_UP)
             home_total_balance.text = getString(R.string.wallet_home_total_balance, EthExchangeCalculator.FormatterMoney.format(total))
         }

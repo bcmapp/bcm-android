@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/common_color_white">
+    android:layout_height="match_parent">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/title_bar"
@@ -40,8 +39,8 @@
             android:text=""
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:textColor="#131313"
-            android:textColorHint="#C2C2C2"
+            android:textColor="?attr/common_text_main_color"
+            android:textColorHint="?attr/common_text_third_color"
             android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

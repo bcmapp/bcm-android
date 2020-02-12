@@ -1,6 +1,7 @@
 package com.bcm.messenger.wallet.fragment
 
 import android.app.Dialog
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
@@ -8,6 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.wallet.R
 import com.bcm.messenger.wallet.model.FeePlan
 import kotlinx.android.synthetic.main.wallet_choose_fee_dialog.*
@@ -68,7 +70,7 @@ class ChooseFeeDialogFragment : DialogFragment() {
         val ctx = context ?: return super.onCreateDialog(savedInstanceState)
         val dialog = Dialog(ctx)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window?.setBackgroundDrawableResource(R.color.common_background_color)    //设置Dialog背景透明效果
+        dialog.window?.setBackgroundDrawable(ColorDrawable(getAttrColor(R.attr.common_activity_background)))    //设置Dialog背景透明效果
         dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         dialog.setCanceledOnTouchOutside(true)
 

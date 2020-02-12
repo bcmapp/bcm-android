@@ -14,6 +14,7 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.RecipientAvatarView
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getColorCompat
 import com.bcm.messenger.contacts.R
 import com.bcm.messenger.utility.StringAppearanceUtil
@@ -96,7 +97,10 @@ class SearchResultListAdapter(context: Context, val mListener: SearchActionListe
             } else {
                 moreLayout.visibility = View.VISIBLE
                 contentLine.visibility = View.GONE
-                moreFlag.setImageResource(R.drawable.common_right_arrow_icon)
+                moreFlag.setImageResource(R.drawable.common_right_icon)
+                getContext()?.let {
+                    moreFlag.setColorFilter(it.getAttrColor(R.attr.common_text_secondary_color))
+                }
                 moreDescription.text = sd.moreDescription
             }
 

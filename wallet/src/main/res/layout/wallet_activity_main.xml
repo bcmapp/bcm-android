@@ -8,7 +8,7 @@
         style="@style/CommonTitleBarStyle"
         app:title_bar_background="?attr/common_foreground_color"
         app:left_image="@drawable/common_arrow_back_icon"
-        app:left_image_color="?attr/common_background_color"
+        app:left_image_color="?attr/common_activity_background"
         app:center_text="@string/wallet_home_total_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

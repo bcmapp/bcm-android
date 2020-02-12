@@ -1,6 +1,7 @@
 package com.bcm.messenger.wallet.fragment
 
 import android.app.Dialog
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -72,7 +73,7 @@ class TransferConfirmDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = Dialog(activity)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window?.setBackgroundDrawableResource(R.color.common_background_color)    //设置Dialog背景透明效果
+        dialog.window?.setBackgroundDrawable(ColorDrawable(getAttrColor(R.attr.common_activity_background)))    //设置Dialog背景透明效果
         dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         dialog.setCanceledOnTouchOutside(true)
 

@@ -19,7 +19,7 @@ class WalletActivity : AccountSwipeBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.wallet_activity_main)
-        title_bar.setLeftIconColor(getAttrColor(R.attr.common_background_color))
+        title_bar.setLeftIconColor(getAttrColor(R.attr.common_activity_background))
         title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
                 finish()
@@ -31,6 +31,6 @@ class WalletActivity : AccountSwipeBaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        title_bar.setLeftIconColor(getAttrColor(R.attr.common_background_color))
+        title_bar.setLeftIconColor(getAttrColor(R.attr.common_activity_background))
     }
 }

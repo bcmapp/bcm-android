@@ -22,6 +22,7 @@ import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.common.utils.view.setTopDrawable
 import com.bcm.messenger.utility.QREncoder
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
@@ -153,16 +154,28 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
         val groupInfo = mGroupModel.getGroupInfo()
         group_share_name.text = if (groupInfo.name.isNullOrEmpty()) {
             getString(R.string.common_chats_group_default_name)
-        }else {
+        } else {
             groupInfo.name
         }
         group_share_logo.showGroupAvatar(accountContext, mGroupModel.groupId(), false)
     }
 
+    private fun updateButtonState(enable: Boolean) {
+        val tint = if (enable) {
+            R.attr.common_foreground_color
+        } else {
+            R.attr.common_text_third_color
+        }
+        group_share_forward_btn.isEnabled = enable
+        group_share_forward_btn.setTopDrawable(R.drawable.chats_group_share_forward_icon, tint)
+        group_share_copy_btn.isEnabled = enable
+        group_share_copy_btn.setTopDrawable(R.drawable.chats_group_share_copy_icon, tint)
+        group_share_save_btn.isEnabled = enable
+        group_share_save_btn.setTopDrawable(R.drawable.chats_group_share_save_icon, tint)
+    }
+
     private fun switchGroupShareQR(toShow: Boolean) {
-        group_share_forward_btn.isEnabled = toShow
-        group_share_copy_btn.isEnabled = toShow
-        group_share_save_btn.isEnabled = toShow
+        updateButtonState(toShow)
 
         if (mGroupModel.myRole() == AmeGroupMemberInfo.OWNER) {
             group_admin_disable_tip.visibility = View.GONE

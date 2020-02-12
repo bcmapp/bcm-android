@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_color_F6F7F9"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:focusable="true"
     android:focusableInTouchMode="true">
@@ -17,10 +16,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:left_text="@string/chats_cancel"
-        app:left_text_color="@color/common_color_black"
+        app:left_text_color="?attr/common_text_main_color"
         app:left_type="text"
         app:right_text="@string/chats_save"
-        app:right_text_color="@color/common_color_379BFF"
+        app:right_text_color="?attr/common_button_blue_color"
         app:right_type="text" />
 
     <com.bcm.messenger.common.ui.emoji.EmojiEditText
@@ -28,7 +27,7 @@
         android:layout_width="0dp"
         android:layout_height="44dp"
         android:layout_marginTop="30dp"
-        android:background="@color/common_color_white"
+        android:background="?attr/common_view_background_dark_grey"
         android:ems="10"
         android:maxLength="30"
         android:hint="@string/chats_group_profile_name"
@@ -37,6 +36,7 @@
         android:paddingEnd="54dp"
         android:paddingStart="15dp"
         android:textSize="16sp"
+        android:textColor="?attr/common_text_main_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_name_title_bar" />
@@ -49,6 +49,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/edit_name_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/edit_name_input"
-        app:srcCompat="@drawable/common_clear_circle_icon" />
+        app:srcCompat="@drawable/common_input_clear_icon"
+        android:tint="?attr/common_foreground_color"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
