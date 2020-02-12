@@ -487,10 +487,12 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
             audioViewStub.get().setProgressDrawableResource(R.drawable.chats_audio_send_top_progress_bg)
             audioViewStub.get().setAudioAppearance(R.drawable.chats_conversation_item_play_icon, R.drawable.chats_conversation_item_pause_icon,
                     context.getAttrColor(R.attr.common_white_color),
+                    context.getAttrColor(R.attr.common_white_color),
                     context.getAttrColor(R.attr.common_text_white_color))
         } else {
             audioViewStub.get().setProgressDrawableResource(R.drawable.chats_audio_receive_top_progress_bg)
             audioViewStub.get().setAudioAppearance(R.drawable.chats_conversation_item_play_icon, R.drawable.chats_conversation_item_pause_icon,
+                    context.getAttrColor(R.attr.chats_conversation_income_icon_color),
                     context.getAttrColor(R.attr.chats_conversation_income_text_color),
                     context.getAttrColor(R.attr.chats_conversation_income_text_color))
         }

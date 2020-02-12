@@ -191,9 +191,11 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
     }
 
 
-    fun setAudioAppearance(playRes: Int, pauseRes: Int, decorationColor: Int, textColor: Int) {
+    fun setAudioAppearance(playRes: Int, pauseRes: Int, iconColor: Int, decorationColor: Int, textColor: Int) {
         audio_play.setImageResource(playRes)
+        audio_play.drawable.setTint(iconColor)
         audio_pause.setImageResource(pauseRes)
+        audio_pause.drawable.setTint(iconColor)
         audio_decoration.setBackgroundColor(decorationColor)
         audio_timestamp.setTextColor(textColor)
     }

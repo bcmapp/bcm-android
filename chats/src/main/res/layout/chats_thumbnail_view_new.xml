@@ -24,21 +24,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="center"
-            android:background="@color/common_10_transparent"/>
+            android:background="?attr/common_icon_background"/>
 
         <ImageView
             android:id="@+id/thumbnail_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            tools:src="@drawable/common_image_place_img"/>
+            android:scaleType="fitXY" />
 
         <ImageView
             android:id="@+id/thumbnail_not_found_cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="center"
-            android:background="@color/common_color_white_50"/>
+            android:background="?attr/common_icon_background"/>
 
         <ProgressBar
             android:id="@+id/thumbnail_progress"
@@ -59,7 +58,7 @@
         android:id="@+id/thumbnail_download"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_download_circle_fill_white_48dp"
+        android:src="@drawable/chats_conversation_item_download_icon"
         android:longClickable="false"
         android:padding="15dp"
         android:visibility="gone"
@@ -72,9 +71,9 @@
 
     <ImageView
         android:id="@+id/thumbnail_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/common_video_play"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/chats_media_play_icon"
         android:contentDescription=""
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@id/thumbnail_card"
@@ -87,8 +86,7 @@
         android:id="@+id/thumbnail_size"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/chats_thumbnail_time_bg"
-        android:textColor="@color/common_color_white"
+        android:textColor="?attr/common_text_white_color"
         android:textSize="12sp"
         android:padding="5dp"
         android:textAlignment="textEnd"

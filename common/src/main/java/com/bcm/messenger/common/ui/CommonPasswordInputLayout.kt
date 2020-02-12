@@ -22,10 +22,9 @@ class CommonPasswordInputLayout : ConstraintLayout {
    
     private var showSecret: Boolean = false
 
-    constructor(context: Context) : this(context, null) {}
+    constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0) {
-    }
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         LayoutInflater.from(context).inflate(R.layout.common_password_layout, this)

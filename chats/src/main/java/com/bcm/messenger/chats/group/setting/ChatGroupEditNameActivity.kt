@@ -54,7 +54,7 @@ class ChatGroupEditNameActivity : AccountSwipeBaseActivity() {
         })
 
         edit_name_input.filters = arrayOf(InputLengthFilter())
-        edit_name_input.setText(groupModel.getGroupInfo()?.name ?: "")
+        edit_name_input.setText(groupModel.getGroupInfo().name ?: "")
         edit_name_input.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s != null && s.isNotEmpty()) {

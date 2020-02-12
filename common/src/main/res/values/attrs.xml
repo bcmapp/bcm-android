@@ -318,6 +318,7 @@
     <attr name="common_icon_color_light_grey" format="color" />
     <attr name="common_icon_background" format="color" />
     <attr name="common_icon_verify_go_disabled_color" format="color" />
+    <attr name="common_icon_clear_color" format="color" />
     <attr name="common_selected_color" format="color" />
     <attr name="common_black_color" format="color" />
     <attr name="common_white_color" format="color" />

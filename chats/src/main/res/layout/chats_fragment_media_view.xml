@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:textColor="@color/common_color_white"
+                android:textColor="?attr/common_white_color"
                 android:textSize="16sp" />
 
         </LinearLayout>
@@ -86,7 +86,8 @@
         android:layout_height="wrap_content"
         android:background="@color/common_10_transparent"
         android:visibility="gone"
-        android:src="@drawable/common_video_play"
+        android:src="@drawable/chats_media_play_icon"
+        android:tint="?attr/common_white_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

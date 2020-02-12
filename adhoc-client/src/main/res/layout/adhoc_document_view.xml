@@ -83,7 +83,7 @@
         android:background="@drawable/common_item_ripple_transparent_bg"
         android:contentDescription="@string/common_audio_download_accessibility_description"
         android:focusable="true"
-        android:src="@drawable/ic_download_circle_fill_white_48dp"
+        android:src="@drawable/chats_conversation_item_download_icon"
         app:layout_constraintStart_toStartOf="@id/document_body"
         app:layout_constraintEnd_toEndOf="@id/document_body"
         app:layout_constraintTop_toTopOf="@id/document_body"

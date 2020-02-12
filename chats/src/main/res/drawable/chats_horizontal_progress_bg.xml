@@ -3,7 +3,7 @@
     <item android:id="@android:id/background">
         <shape>
             <corners android:radius="2dp"/>
-            <solid android:color="@color/common_color_transparent" />
+            <solid android:color="?attr/common_view_background_transparent" />
         </shape>
     </item>
 
@@ -12,7 +12,7 @@
         <clip>
             <shape>
                 <corners android:radius="2dp"/>
-                <solid android:color="@color/common_10_transparent"/>
+                <solid android:color="?attr/common_progress_tint_color"/>
             </shape>
         </clip>
 

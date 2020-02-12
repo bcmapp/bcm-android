@@ -35,10 +35,10 @@
 
         <ImageView
             android:id="@+id/chats_media_download_flow_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:scaleType="centerInside"
-            android:src="@drawable/chats_more_option_save_icon"
+            android:src="@drawable/chats_media_view_save_icon"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -57,10 +57,10 @@
 
         <ImageView
             android:id="@+id/chats_media_pool_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:scaleType="centerInside"
-            android:src="@drawable/chats_more_option_pool_icon"
+            android:src="@drawable/chats_media_view_more_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

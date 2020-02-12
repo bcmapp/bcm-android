@@ -73,18 +73,16 @@ class ChatThumbnailView @JvmOverloads constructor(context: Context, attrs: Attri
     private var mMaxWidth = 0
     private var mMaxHeight = 0
 
-    private var mPlaceHolderResource = R.drawable.common_image_place_img
-    private var mPlaceDrawable: Drawable? = context.getDrawable(R.drawable.common_image_place_img)
-    private var mPlaceVideoResource = R.drawable.common_video_place_img
-    private var mPlaceVideo = context.getDrawable(R.drawable.common_video_place_img)
+    private var mPlaceHolderResource = R.drawable.chats_media_placeholder_image_icon
+    private var mPlaceDrawable: Drawable? = context.getDrawable(R.drawable.chats_media_placeholder_image_icon)
+    private var mPlaceVideo = context.getDrawable(R.drawable.chats_media_placeholder_video_icon)
 
-    private var mErrorImageResource = R.drawable.common_image_broken_img
-    private var mErrorDrawable: Drawable? = context.getDrawable(R.drawable.common_image_broken_img)
-    private var mErrorVideoResource = R.drawable.common_video_broken_img
-    private var mErrorVideo = context.getDrawable(R.drawable.common_video_broken_img)
+    private var mErrorImageResource = R.drawable.chats_media_placeholder_image_broken_icon
+    private var mErrorDrawable: Drawable? = context.getDrawable(R.drawable.chats_media_placeholder_image_broken_icon)
+    private var mErrorVideo = context.getDrawable(R.drawable.chats_media_placeholder_video_broken_icon)
 
-    private var mNotFoundImage = context.getDrawable(R.drawable.common_image_not_found_img)
-    private var mNotFoundVideo = context.getDrawable(R.drawable.common_video_not_found_img)
+    private var mNotFoundImage = context.getDrawable(R.drawable.chats_media_placeholder_image_missing_icon)
+    private var mNotFoundVideo = context.getDrawable(R.drawable.chats_media_placeholder_video_missing_icon)
 
     private var mImageRadius = 0
     private var mIsVideo = false

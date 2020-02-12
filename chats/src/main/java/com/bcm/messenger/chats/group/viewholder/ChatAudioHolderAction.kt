@@ -11,9 +11,7 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
-import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.common.utils.getAttrColor
 
 /**
  * Created by wjh on 2018/10/23
@@ -27,24 +25,26 @@ class ChatAudioHolderAction(accountContext: AccountContext) : BaseChatHolderActi
         bodyView.setDownloadClickListener(mDownloadClickListener)
 
         val content = messageRecord.message?.content as? AmeGroupMessage.AudioContent ?: return
+        val context = bodyView.context
         bodyView.setAudio(accountContext.masterSecret ?: return, messageRecord)
         if (messageRecord.isSendByMe) {
             bodyView.setProgressDrawableResource(R.drawable.chats_audio_send_top_progress_bg)
 
-            bodyView.setAudioAppearance(R.drawable.chats_conversation_item_play_icon, R.drawable.chats_audio_send_pause_icon,
-                    AppUtil.getColor(bodyView.resources, R.color.chats_audio_send_decoration_color),
-                    AppUtil.getColor(bodyView.resources, R.color.common_color_white))
-        }else {
+            bodyView.setAudioAppearance(R.drawable.chats_conversation_item_play_icon, R.drawable.chats_conversation_item_pause_icon,
+                    context.getAttrColor(R.attr.common_white_color),
+                    context.getAttrColor(R.attr.common_white_color),
+                    context.getAttrColor(R.attr.common_text_white_color))
+        } else {
             bodyView.setProgressDrawableResource(R.drawable.chats_audio_receive_top_progress_bg)
-            bodyView.setAudioAppearance(R.drawable.chats_audio_receive_play_icon, R.drawable.chats_audio_receive_pause_icon,
-                    AppUtil.getColor(bodyView.resources, R.color.chats_audio_receive_decoration_color),
-                    AppUtil.getColor(bodyView.resources, R.color.common_color_black))
+            bodyView.setAudioAppearance(R.drawable.chats_conversation_item_play_icon, R.drawable.chats_conversation_item_pause_icon,
+                    context.getAttrColor(R.attr.chats_conversation_income_icon_color),
+                    context.getAttrColor(R.attr.chats_conversation_income_text_color),
+                    context.getAttrColor(R.attr.chats_conversation_income_text_color))
         }
 
-        if(messageRecord.attachmentUri.isNullOrEmpty() || !content.isExist(accountContext)) {
+        if (messageRecord.attachmentUri.isNullOrEmpty() || !content.isExist(accountContext)) {
             bodyView.doDownloadAction()
         }
-
     }
 
     override fun unBind() {
@@ -61,11 +61,11 @@ class ChatAudioHolderAction(accountContext: AccountContext) : BaseChatHolderActi
 
         override fun onClick(v: View, data: Any) {
 
-            if(data is AmeGroupMessageDetail) {
+            if (data is AmeGroupMessageDetail) {
                 val content = data.message.content as AmeGroupMessage.AudioContent
-                if(content.isExist(accountContext)) {
+                if (content.isExist(accountContext)) {
                     updateAudioMessage(v, data)
-                }else {
+                } else {
 
                     MessageFileHandler.downloadAttachment(accountContext, data, object : MessageFileHandler.MessageFileCallback {
                         override fun onResult(success: Boolean, uri: Uri?) {
@@ -81,10 +81,9 @@ class ChatAudioHolderAction(accountContext: AccountContext) : BaseChatHolderActi
 
         private fun updateAudioMessage(v: View, messageRecord: AmeGroupMessageDetail) {
 
-            if(mBaseView == v) {
+            if (mBaseView == v) {
                 mBaseView?.setAudio(accountContext.masterSecret ?: return, messageRecord)
             }
-
         }
     }
 }

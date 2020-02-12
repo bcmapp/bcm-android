@@ -58,6 +58,7 @@
         <item name="common_icon_color_light_grey">@color/common_default_icon_light_grey_color</item>
         <item name="common_icon_background">@color/common_default_icon_background</item>
         <item name="common_icon_verify_go_disabled_color">@drawable/common_verify_go_icon_selector</item>
+        <item name="common_icon_clear_color">@drawable/common_input_clear_selector</item>
         <item name="common_selected_color">@color/common_default_selected_color</item>
         <item name="common_black_color">@color/common_color_black</item>
         <item name="common_white_color">@color/common_color_white</item>
