@@ -41,9 +41,6 @@ class AdHocChatTitleBar: androidx.constraintlayout.widget.ConstraintLayout, Reci
             height = context.getStatusBarHeight()
         }
 
-        // not handle click event
-        custom_view.setOnClickListener {}
-
         bar_back.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
                 return@setOnClickListener
@@ -85,25 +82,6 @@ class AdHocChatTitleBar: androidx.constraintlayout.widget.ConstraintLayout, Reci
         }
         bar_title.text = name
         bar_right.setSession(accountContext, session)
-    }
-
-    fun addCustomView(view:View, marginLeft:Int = 0, marginTop:Int = 0, marginRight:Int = 0, marginBottom:Int = 0){
-        if (view.parent != null){
-            val p = view.parent as ViewGroup
-            p.removeView(view)
-        }
-
-        val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        params.setMargins(marginLeft, marginTop, marginRight, marginBottom)
-        view.layoutParams = params
-
-        custom_view.addView(view)
-    }
-
-    fun removeCustomView(view:View){
-        if (view.parent == custom_view){
-            custom_view.removeView(view)
-        }
     }
 
     override fun onChannelUserChanged(sessionList: List<String>) {

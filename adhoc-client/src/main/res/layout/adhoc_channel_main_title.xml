@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:inAnimation="@anim/common_popup_drop_in"
         android:outAnimation="@anim/common_popup_drop_out"
-        android:gravity="left"
+        android:gravity="start"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -19,21 +19,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="12dp"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="20sp"
             android:textStyle="bold"
             android:text="@string/adhoc_main_title"
-            android:gravity="left|center_vertical"/>
+            android:gravity="start|center_vertical"/>
 
         <com.bcm.messenger.common.ui.emoji.EmojiTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="12dp"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="20sp"
             android:textStyle="bold"
             android:text="@string/adhoc_main_title"
-            android:gravity="left|center_vertical"/>
+            android:gravity="start|center_vertical"/>
 
     </TextSwitcher>
 
@@ -44,8 +44,9 @@
         android:textSize="12sp"
         android:textColor="@color/common_color_379BFF"
         android:text="@string/adhoc_amin_airchat_on"
-        android:drawableEnd="@drawable/adhoc_main_status_right_icon"
-        android:gravity="left"
+        android:drawablePadding="5dp"
+        android:drawableEnd="@drawable/common_right_12_icon"
+        android:gravity="start|center_vertical"
         app:layout_constraintTop_toBottomOf="@id/adhoc_main_text_title"
         app:layout_constraintStart_toStartOf="@id/adhoc_main_text_title" />
 

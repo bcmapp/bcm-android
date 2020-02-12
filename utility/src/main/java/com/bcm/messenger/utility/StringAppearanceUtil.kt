@@ -76,8 +76,12 @@ object StringAppearanceUtil {
     }
 
     fun addImage(context: Context, content: CharSequence, imageResId: Int, size: Int, index: Int): CharSequence {
-        val drawable = context.resources.getDrawable(imageResId, null)
-        drawable.setBounds(0, 0, size, size)
+        return addImage(context, content, imageResId, size, 0, index)
+    }
+
+    fun addImage(context: Context, content: CharSequence, imageResId: Int, size: Int, top:Int, index: Int): CharSequence {
+        val drawable = context.getDrawable(imageResId) ?: return SpannableString(content)
+        drawable.setBounds(0, top, size, size)
         return addImage(content, drawable, index)
     }
 

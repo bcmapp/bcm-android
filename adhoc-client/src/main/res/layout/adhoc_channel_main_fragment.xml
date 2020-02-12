@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/common_color_white"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/common_activity_background">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/adhoc_main_toolbar"
@@ -17,6 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:left_type="hide"
         app:right_image="@drawable/adhoc_add_channel"
+        app:right_image_color="?attr/common_foreground_color"
         app:right_type="image"
         app:title_bar_height="64dp" />
 
@@ -35,13 +36,14 @@
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:background="@drawable/common_item_red_ripple_bg"
-        android:gravity="left|center_vertical"
+        android:gravity="start|center_vertical"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:textSize="14sp"
-        android:textColor="@color/common_color_white"
+        android:textColor="?attr/common_activity_background"
         android:visibility="gone"
-        android:drawableEnd="@drawable/adhoc_main_device_error_arrow"
+        android:drawablePadding="5dp"
+        android:drawableEnd="@drawable/common_right_16_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/adhoc_main_toolbar"

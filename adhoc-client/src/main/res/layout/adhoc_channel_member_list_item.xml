@@ -26,7 +26,7 @@
         android:layout_marginEnd="30dp"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textColor="@color/common_color_black"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="17sp"
         app:layout_constraintStart_toEndOf="@id/adhoc_member_item_avatar"
         app:layout_constraintEnd_toEndOf="parent"

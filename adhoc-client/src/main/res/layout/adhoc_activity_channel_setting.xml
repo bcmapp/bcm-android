@@ -119,8 +119,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/group_member_recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/common_color_white" />
+                    android:layout_height="wrap_content" />
 
                 <com.bcm.messenger.common.ui.CommonSettingItem
                     android:id="@+id/channel_invite_item"

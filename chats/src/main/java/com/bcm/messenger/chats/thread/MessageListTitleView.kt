@@ -194,7 +194,7 @@ class  MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySt
                 spanString.setSpan(AbsoluteSizeSpan(12, true), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spanString.setSpan(ForegroundColorSpan(context.getColorCompat(R.color.common_text_blue_color)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 builder.append(spanString)
-                builder.append(StringAppearanceUtil.addImage(context, " ", R.drawable.chats_main_status_right_icon, 12.dp2Px(), 0))
+                builder.append(StringAppearanceUtil.addImage(context, " ", R.drawable.common_right_icon, 16.dp2Px(), 5.dp2Px(),0))
 
                 builder
             }
@@ -212,7 +212,7 @@ class  MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySt
                 spanString.setSpan(AbsoluteSizeSpan(12, true), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spanString.setSpan(ForegroundColorSpan(context.getColorCompat(R.color.common_text_blue_color)), 0, spanString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 builder.append(spanString)
-                builder.append(StringAppearanceUtil.addImage(context, " ", R.drawable.chats_main_status_right_icon, 12.dp2Px(), 0))
+                builder.append(StringAppearanceUtil.addImage(context, " ", R.drawable.common_right_icon, 16.dp2Px(), 5.dp2Px(), 0))
 
                 builder
             }

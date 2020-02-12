@@ -12,15 +12,14 @@
         app:left_type="text"
         app:left_text="@string/common_cancel"
         app:right_text="@string/adhoc_join_channel_join"
-        app:right_type="text"
-        app:right_text_color="@color/common_app_primary_color"/>
+        app:right_type="text"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginStart="15dp"
-        android:textColor="#A8A8A8"
+        android:textColor="?attr/common_text_third_color"
         android:textSize="13sp"
         android:text="@string/adhoc_join_channel_name"/>
 
@@ -39,8 +38,8 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:singleLine="true"
-        android:textColor="@color/common_color_black"
-        android:textColorHint="#7fffffff"
+        android:textColor="?attr/common_text_main_color"
+        android:textColorHint="?attr/common_text_secondary_color"
         android:textCursorDrawable="@drawable/common_edit_cursor_shape"
         android:textSize="14sp"
         app:clearButtonHeight="12dp"
@@ -54,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginStart="15dp"
-        android:textColor="#A8A8A8"
+        android:textColor="?attr/common_text_third_color"
         android:textSize="13sp"
         android:text="@string/adhoc_join_pass_code"/>
 
@@ -74,8 +73,8 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:singleLine="true"
-        android:textColor="@color/common_color_black"
-        android:textColorHint="#7fffffff"
+        android:textColor="?attr/common_text_main_color"
+        android:textColorHint="?attr/common_text_secondary_color"
         android:textCursorDrawable="@drawable/common_edit_cursor_shape"
         android:textSize="14sp"
         app:clearButtonHeight="12dp"

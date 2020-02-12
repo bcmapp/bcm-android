@@ -309,6 +309,7 @@
     <attr name="common_text_white_color" format="color" />
     <attr name="common_text_black_color" format="color" />
     <attr name="common_foreground_color" format="color" />
+    <attr name="common_background_color" format="color" />
     <attr name="common_progress_tint_color" format="color"/>
     <attr name="common_secondary_blue_color" format="color"/>
 

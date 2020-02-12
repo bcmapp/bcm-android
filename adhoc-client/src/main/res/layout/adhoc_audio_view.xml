@@ -42,7 +42,7 @@
                 android:layout_height="15dp"
                 android:contentDescription="@string/common_audio_pause_accessibility_description"
                 android:scaleType="centerInside"
-                android:src="@drawable/chats_audio_send_pause_icon"
+                android:src="@drawable/chats_conversation_item_pause_icon"
                 android:visibility="gone"/>
 
         </FrameLayout>
@@ -61,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:textColor="@color/common_color_white"
+            android:textColor="?attr/common_text_white_color"
             android:visibility="gone"
             tools:text="00:15"
             tools:visibility="visible"/>

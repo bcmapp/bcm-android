@@ -12,7 +12,7 @@
         <clip>
             <shape>
                 <corners android:radius="@dimen/chats_conversation_item_radius"/>
-                <solid android:color="?chats_conversation_audio_progress_outgo_color"/>
+                <solid android:color="?attr/chats_conversation_audio_progress_outgo_color"/>
             </shape>
         </clip>
 

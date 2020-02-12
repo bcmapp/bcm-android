@@ -54,7 +54,6 @@ class AdHocInviteJoinActivity : AccountSwipeBaseActivity() {
                             startBcmActivityForResult(intent, SELECT_SESSION_REQ)
                         })
                         .withDoneTitle(getString(R.string.common_cancel))
-                        .withCancelable(false)
                         .show(this@AdHocInviteJoinActivity)
             }
         })

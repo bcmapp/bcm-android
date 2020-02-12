@@ -24,6 +24,7 @@ import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.server.ConnectState
+import com.bcm.messenger.common.theme.ThemeManager
 import com.bcm.messenger.common.ui.BcmRecyclerView
 import com.bcm.messenger.common.ui.CommonShareView
 import com.bcm.messenger.common.ui.ConstraintPullDownLayout
@@ -76,6 +77,12 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (ThemeManager.isDarkTheme(this)) {
+            window.setStatusBarDarkMode()
+        } else {
+            window.setStatusBarLightMode()
+        }
+
         if (accountContext != AMELogin.majorContext) {
             setAccountContext(AMELogin.majorContext)
         }
@@ -193,6 +200,12 @@ class HomeActivity : AccountSwipeBaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        if (ThemeManager.isDarkTheme(this)) {
+            window.setStatusBarDarkMode()
+        } else {
+            window.setStatusBarLightMode()
+        }
+
         home_profile_layout.onResume()
         titleView.update()
 

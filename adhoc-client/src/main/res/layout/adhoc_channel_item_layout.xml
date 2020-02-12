@@ -39,7 +39,7 @@
             android:textSize="17sp"
             android:maxLines="1"
             android:ellipsize="end"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:layout_marginEnd="10dp"
             android:gravity="left"/>
 
@@ -49,7 +49,7 @@
             android:layout_height="16dp"
             android:scaleType="center"
             android:visibility="gone"
-            android:src="@drawable/adhoc_channel_list_pin"
+            android:src="@drawable/common_pin_icon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/adhoc_channel_item_mute"
             tools:visibility="visible"/>

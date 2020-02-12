@@ -48,7 +48,7 @@
             android:singleLine="true"
             android:ellipsize="end"
             android:textSize="17sp"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             app:layout_constraintTop_toTopOf="@id/search_content_photo"

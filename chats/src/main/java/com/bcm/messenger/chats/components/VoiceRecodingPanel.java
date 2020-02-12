@@ -3,9 +3,16 @@ package com.bcm.messenger.chats.components;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.text.format.DateUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,12 +26,17 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bcm.messenger.chats.R;
 import com.bcm.messenger.common.ui.KeyboardAwareLinearLayout;
 import com.bcm.messenger.utility.ViewUtils;
 import com.bcm.messenger.utility.concurrent.ListenableFuture;
 import com.bcm.messenger.utility.concurrent.SettableFuture;
+
+import org.w3c.dom.Text;
+
 import java.util.concurrent.TimeUnit;
+
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
@@ -77,7 +89,7 @@ public class VoiceRecodingPanel implements KeyboardAwareLinearLayout.OnKeyboardS
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 this.actionInProgress = true;
-                if (null != listener){
+                if (null != listener) {
                     listener.onStartClicked();
                 }
                 break;
@@ -131,10 +143,10 @@ public class VoiceRecodingPanel implements KeyboardAwareLinearLayout.OnKeyboardS
     }
 
     private void stopRedDot() {
-        if(alphaIn != null) {
+        if (alphaIn != null) {
             alphaIn.cancel();
         }
-        if(alphaOut != null) {
+        if (alphaOut != null) {
             alphaOut.cancel();
         }
         alphaIn = null;
@@ -273,12 +285,20 @@ public class VoiceRecodingPanel implements KeyboardAwareLinearLayout.OnKeyboardS
 
     private static class SlideToCancel {
 
-        private final View slideToCancelView;
+        private final TextView slideToCancelView;
 
         private float startPositionX;
 
-        public SlideToCancel(View slideToCancelView) {
+        public SlideToCancel(TextView slideToCancelView) {
             this.slideToCancelView = slideToCancelView;
+
+            Context context = slideToCancelView.getContext();
+            int clr = context.getResources().getColor(R.color.common_foreground_color);
+            for (Drawable drawable : slideToCancelView.getCompoundDrawables()) {
+                if (drawable != null) {
+                    drawable.setColorFilter(new PorterDuffColorFilter(clr, PorterDuff.Mode.SRC_IN));
+                }
+            }
         }
 
         public void display(float startPositionX) {

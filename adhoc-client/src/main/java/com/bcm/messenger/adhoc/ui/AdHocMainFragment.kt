@@ -33,6 +33,7 @@ import com.bcm.messenger.common.BaseFragment
 import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.theme.ThemeManager
 import com.bcm.messenger.common.ui.CommonSearchBar
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.activity.SearchActivity
@@ -98,6 +99,7 @@ class AdHocMainFragment: BaseFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         deviceStateListener = AdHocDeviceStateListener(accountContext)
         adHocStep = AdHocConnectingStep(accountContext)
 
@@ -371,7 +373,7 @@ class AdHocMainFragment: BaseFragment(),
             ALog.i(TAG, "setData session: ${data.sessionId}, lastState: ${data.lastState}")
             if (data.lastState != AdHocSession.STATE_SUCCESS) {
                 val d = if (data.lastState == AdHocSession.STATE_SENDING) {
-                    getDrawable(R.drawable.adhoc_session_sending_icon)
+                    getDrawable(R.drawable.common_doing_icon)
                 }else {
                     getDrawable(R.drawable.adhoc_session_failure_icon)
                 }
