@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:textColor="@color/common_color_black"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="15sp"
         tools:text="Ben" />
 

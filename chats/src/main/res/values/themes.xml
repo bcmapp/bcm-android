@@ -12,4 +12,24 @@
         <item name="chats_conversation_outgo_button_background_color">@color/chats_message_outgo_button_background_color</item>
         <item name="chats_conversation_income_button_background_color">@color/chats_message_income_button_background_color</item>
     </style>
+
+    <style name="ChatsMediaBrowserTheme" parent="CommonBcmTheme.Basic">
+        <item name="chats_media_browser_tab_selected_background">@color/chats_media_browser_selected_color</item>
+        <item name="chats_media_browser_tab_unselected_background">@color/chats_media_browser_unselected_color</item>
+        <item name="chats_media_browser_text_selected_color">@color/chats_media_browser_text_selected_color</item>
+        <item name="chats_media_browser_text_unselected_color">@color/chats_media_browser_text_unselected_color</item>
+    </style>
+
+    <style name="ChatsForwardDialogStyle" parent="Theme.AppCompat.DayNight.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowSoftInputMode">adjustPan</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/common_color_transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+
+        <item name="chats_forward_dialog_background">@color/chats_forward_dialog_background_color</item>
+        <item name="chats_forward_dialog_detail_background">@color/chats_forward_dialog_detail_background_color</item>
+    </style>
 </resources>

@@ -31,12 +31,12 @@
         android:id="@+id/recent_title"
         android:layout_width="match_parent"
         android:layout_height="27dp"
-        android:background="@color/common_background_F2F3F4"
+        android:background="?attr/common_view_background_grey"
         android:gravity="center_vertical"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:text="@string/chats_forward_recent_chats"
-        android:textColor="@color/common_content_second_color"
+        android:textColor="?attr/common_text_secondary_color"
         android:textSize="15sp"/>
 
 </LinearLayout>

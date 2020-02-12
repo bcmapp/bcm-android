@@ -69,7 +69,7 @@ class ChatForwardDialog(private val accountContext: AccountContext) : DialogFrag
     private val groupMessageList = mutableListOf<AmeGroupMessageDetail>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return Dialog(context, R.style.ForwardDialogStyle)
+        return Dialog(context, R.style.ChatsForwardDialogStyle)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

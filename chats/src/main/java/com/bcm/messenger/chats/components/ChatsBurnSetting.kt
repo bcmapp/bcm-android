@@ -58,11 +58,8 @@ object ChatsBurnSetting {
 
                     Observable.create(ObservableOnSubscribe<Boolean> {
                         val goon = if (recipient.expireMessages != expire) {
-
                             Repository.getRecipientRepo(recipient.address.context())?.setExpireTime(recipient, expire.toLong())
-
                             true
-
                         } else {
                             false
                         }
@@ -72,23 +69,18 @@ object ChatsBurnSetting {
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe({ result ->
                                 if (result) {
-
                                     ViewModelProviders.of(activity).get(AmeConversationViewModel::class.java).sendMediaMessage(activity,
                                             masterSecret,
                                             OutgoingExpirationUpdateMessage(recipient, AmeTimeUtil.getMessageSendTime(), expire * 1000L)) { success ->
-
                                         if (success) {
                                             finish()
                                         }
                                     }
-
                                 }
                             }, {
                                 ALog.e("ChatsBurnSetting", "callBurnAfterRead error", it)
                             })
-
                 }
-
         pickView.show()
     }
 

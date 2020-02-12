@@ -6,12 +6,11 @@
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/title_bar"
-        style="@style/CommonTitleBarStyle"
-        app:left_type="text"
-        app:left_text=""
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:right_type="text"
         app:right_text="@string/common_multi_select"
-        app:right_text_color="@color/common_app_primary_color"
+        app:right_text_color="?attr/common_text_blue_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

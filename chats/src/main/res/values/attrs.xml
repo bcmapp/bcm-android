@@ -43,4 +43,14 @@
     <attr name="chats_conversation_income_icon_color" format="color" />
     <attr name="chats_conversation_outgo_button_background_color" format="color" />
     <attr name="chats_conversation_income_button_background_color" format="color" />
+    
+    <!-- Media Browser -->
+    <attr name="chats_media_browser_tab_selected_background" format="color" />
+    <attr name="chats_media_browser_tab_unselected_background" format="color" />
+    <attr name="chats_media_browser_text_selected_color" format="color" />
+    <attr name="chats_media_browser_text_unselected_color" format="color" />
+
+    <!-- Forward Dialog -->
+    <attr name="chats_forward_dialog_background" format="color" />
+    <attr name="chats_forward_dialog_detail_background" format="color" />
 </resources>

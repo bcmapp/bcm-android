@@ -32,8 +32,6 @@ class ForwardContactFragment : BaseFragment(), IContactsCallback {
                 fragmentManager?.popBackStack()
             }
         })
-
-        activity?.window?.setStatusBarLightMode()
     }
 
     override fun onStart() {

@@ -111,7 +111,7 @@
             android:name="com.bcm.messenger.chats.forward.ForwardActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".QRCodeDisplayActivity"
             android:launchMode="singleTask"
@@ -121,7 +121,8 @@
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateUnchanged" />
+            android:windowSoftInputMode="stateUnchanged"
+            android:theme="@style/ChatsMediaBrowserTheme"/>
 
         <activity
             android:name=".clean.CleanStorageActivity"

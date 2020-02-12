@@ -151,7 +151,6 @@ class ForwardRecentFragment : BaseFragment(), IForwardSelectProvider {
             val view = layoutInflater.inflate(R.layout.chats_forward_recent_item, parent, false)
             return RecentViewHolder(view)
         }
-
     }
 
     private inner class RecentViewHolder(itemView: View) : LinearBaseAdapter.ViewHolder<Recipient>(itemView), RecipientModifiedListener {

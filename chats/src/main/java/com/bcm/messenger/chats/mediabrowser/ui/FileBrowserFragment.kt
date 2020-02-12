@@ -29,7 +29,7 @@ import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.GroupUtil
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.chats_file_browser_fragment.*
@@ -109,7 +109,6 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
                         it.selectionList.size == adapter?.getContentSize() -> callback?.invoke(MediaBrowserActivity.SELECT_ALL)
                         else -> callback?.invoke(MediaBrowserActivity.DESELECT_ALL)
                     }
-
                 }
             }
         })
@@ -123,10 +122,8 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
                     threadId = it
                     initPrivateResource(activity, threadId, getMasterSecret())
                 }
-
             }
         }
-
     }
 
     fun initView(context: Context) {
@@ -190,7 +187,7 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
 
     private fun showNoContent() {
         file_browser_list.visibility = View.GONE
-        no_conten_page.visibility = View.VISIBLE
+        no_content_page.visibility = View.VISIBLE
     }
 
 
@@ -228,7 +225,6 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
                     mediaHandleViewModel?.setSelecting(false)
                 }
             }
-
         } else {
             ToastUtil.show(AppContextHolder.APP_CONTEXT, getString(R.string.chats_select_file_first))
         }
@@ -283,7 +279,7 @@ class FileBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy, RecipientMod
     private fun doForDelete(selectionList: MutableList<MediaBrowseData>, callback: (fail: List<MediaBrowseData>) -> Unit) {
         AmePopup.bottom.newBuilder()
                 .withTitle(getString(R.string.chats_media_browser_delete_fromat, selectionList.size))
-                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_media_browser_delete), getColorCompat(R.color.common_color_ff3737)) {
+                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_media_browser_delete), getAttrColor(R.attr.common_text_warn_color)) {
                     deleteSelectedItem(selectionList)
                     callback(emptyList())
                 })

@@ -126,13 +126,15 @@
 
     <color name="common_underline_color">#303030</color>
     <color name="common_default_icon_color">#FFFFFF</color>
-    <color name="common_default_icon_grey_color">#303030</color>
+    <color name="common_default_icon_grey_color">#606060</color>
     <color name="common_verify_go_icon_color">#000000</color>
+    <color name="common_default_icon_light_grey_color">#303030</color>
+    <color name="common_default_icon_background">#26BDC4CB</color>
 
     <color name="common_default_background_color">#000000</color>
     <color name="common_progress_tint_color">#80000000</color>
-    <color name="common_default_background_grey_color">#202122</color>
-    <color name="common_default_dark_grey_background_color">#202122</color>
+    <color name="common_default_background_grey_color">#1D1E1F</color>
+    <color name="common_default_dark_grey_background_color">#1D1E1F</color>
     <color name="common_default_foreground_color">#FFFFFF</color>
 
     <color name="common_default_switcher_color">#379BFF</color>
@@ -146,6 +148,6 @@
     <color name="common_blue_sub_button_color">#33379BFF</color>
     <color name="common_red_button_color">#FF3737</color>
     <color name="common_red_sub_button_color">#33FF3737</color>
-    <color name="common_disabled_button_color">#202122</color>
+    <color name="common_disabled_button_color">#1D1E1F</color>
     <color name="common_secondary_blue_color">#32379BFF</color>
 </resources>

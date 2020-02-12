@@ -2,12 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             android:background="@color/common_color_white">
+                                             xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/forward_contact_title_bar"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:center_text="@string/chats_forward_send_to"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"

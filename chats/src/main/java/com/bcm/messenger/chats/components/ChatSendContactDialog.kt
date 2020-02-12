@@ -1,5 +1,6 @@
 package com.bcm.messenger.chats.components
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,9 +31,6 @@ class ChatSendContactDialog : DialogFragment() {
     private var mCallback: ((sendList: List<Recipient>, comment: CharSequence?) -> Unit)? = null
 
     private var mAdapter = object : LinearBaseAdapter<Recipient>() {
-
-        private val mInflater: LayoutInflater = LayoutInflater.from(AppContextHolder.APP_CONTEXT)
-
         override fun onBindContentHolder(holder: ViewHolder<Recipient>, trueData: Recipient?) {
             if (holder is ContactViewHolder) {
                 holder.bind()
@@ -40,7 +38,7 @@ class ChatSendContactDialog : DialogFragment() {
         }
 
         override fun onCreateContentHolder(parent: ViewGroup): ViewHolder<Recipient> {
-            return ContactViewHolder(mInflater.inflate(R.layout.chats_send_contact_item, parent, false))
+            return ContactViewHolder(layoutInflater.inflate(R.layout.chats_send_contact_item, parent, false))
         }
 
         inner class ContactViewHolder(itemView: View) : ViewHolder<Recipient>(itemView) {
@@ -53,13 +51,12 @@ class ChatSendContactDialog : DialogFragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.ForwardDialogStyle)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.chats_dialog_send_contact, container, false)
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return Dialog(requireContext(), R.style.ChatsForwardDialogStyle)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

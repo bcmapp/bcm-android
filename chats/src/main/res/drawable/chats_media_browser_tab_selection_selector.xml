@@ -2,12 +2,14 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true">
         <shape>
-            <solid android:color="@color/common_color_black"/>
+            <corners android:radius="14dp"/>
+            <solid android:color="?attr/chats_media_browser_tab_selected_background"/>
         </shape>
     </item>
     <item android:state_selected="false">
         <shape>
-            <solid android:color="@color/common_color_white"/>
+            <corners android:radius="14dp"/>
+            <solid android:color="?attr/chats_media_browser_tab_unselected_background"/>
         </shape>
     </item>
 </selector>

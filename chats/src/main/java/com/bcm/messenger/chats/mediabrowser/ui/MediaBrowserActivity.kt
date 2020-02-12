@@ -23,7 +23,7 @@ import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.AmeAppLifecycle
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.route.annotation.Route
@@ -298,7 +298,7 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
         if (currentPage >= 0) {
             val titleView = getTitleView(currentPage)
             titleView.isSelected = false
-            titleView.setTextColor(getColorCompat(R.color.common_color_black))
+            titleView.setTextColor(getAttrColor(R.attr.chats_media_browser_text_unselected_color))
             currentMenuProxy().active(false)
         }
 
@@ -307,7 +307,7 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
         currentMenuProxy().active(true)
         val titleView = getTitleView(currentPage)
         titleView.isSelected = true
-        titleView.setTextColor(getColorCompat(R.color.common_color_white))
+        titleView.setTextColor(getAttrColor(R.attr.chats_media_browser_text_selected_color))
 
         enableOption(browser_save_img, currentPage != LINK_PAGE)
 

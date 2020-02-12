@@ -1,119 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/common_view_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/chats_media_browser_title"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:center_text="@string/chats_media_and_files"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:right_type="text"
         app:right_text="@string/chats_select"
-        app:right_text_color="@color/common_color_black" />
-
-    <View
-        android:id="@+id/chats_media_browser_title_background"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/common_color_white"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chats_media_browser_title"
-        />
+        app:right_text_color="?attr/common_title_bar_right_text_color"
+        app:right_type="text" />
 
     <LinearLayout
         android:id="@+id/chats_media_browser_selector"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/common_horizontal_gap"
+        android:layout_height="48dp"
         android:layout_marginStart="@dimen/common_horizontal_gap"
-        android:layout_marginTop="10dp"
-        android:padding="1dp"
-        android:background="@drawable/chats_header_border_selector"
+        android:layout_marginEnd="@dimen/common_horizontal_gap"
+        android:gravity="center_vertical"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chats_media_browser_title">
+
         <TextView
             android:id="@+id/media_browser_media_title"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="28dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:background="@drawable/chats_header_left_selector"
+            android:background="@drawable/chats_media_browser_tab_selection_selector"
             android:ellipsize="end"
+            android:gravity="center"
             android:text="@string/chats_browser_media_title"
-            android:textColor="@color/common_color_black"
-            android:textSize="13sp"/>
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/common_color_black"/>
+            android:textSize="13sp" />
+
         <TextView
             android:id="@+id/media_browser_file_title"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="28dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:background="@drawable/chats_header_selection_selector"
+            android:background="@drawable/chats_media_browser_tab_selection_selector"
             android:ellipsize="end"
+            android:gravity="center"
             android:text="@string/chats_browser_file_title"
-            android:textColor="@color/common_color_black"
-            android:textSize="13sp"/>
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/common_color_black"/>
+            android:textSize="13sp" />
+
         <TextView
             android:id="@+id/media_browser_link_title"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="28dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:background="@drawable/chats_header_right_selector"
+            android:background="@drawable/chats_media_browser_tab_selection_selector"
             android:ellipsize="end"
+            android:gravity="center"
             android:text="@string/chats_media_link_title"
-            android:textColor="@color/common_color_black"
-            android:textSize="13sp"/>
+            android:textSize="13sp" />
     </LinearLayout>
 
     <com.bcm.messenger.common.ui.NoScrollViewPager
         android:id="@+id/media_browser_content"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:overScrollMode="never"
-        android:layout_marginTop = "2dp"
+        android:layout_marginTop="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chats_media_browser_title_background"/>
+        app:layout_constraintTop_toBottomOf="@id/chats_media_browser_selector" />
 
     <LinearLayout
         android:id="@+id/media_browser_more_layout"
         android:layout_width="match_parent"
         android:layout_height="44dp"
+        android:background="?attr/common_view_background"
+        android:gravity="center_vertical"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/media_browser_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/chats_black_opacity_70"
-        android:visibility="gone"
-        >
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/selection_size_view"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            android:textColor="@color/common_color_white"
-            android:gravity="center_vertical"
-            android:visibility="gone"
-            android:layout_weight="1"/>
+            android:textColor="?attr/common_text_main_color"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/browser_share_img"
@@ -121,7 +99,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:scaleType="center"
-            android:src="@drawable/chats_option_forward_icon" />
+            android:src="@drawable/chats_conversation_forward_icon"
+            android:tint="?attr/common_icon_color" />
 
         <ImageView
             android:id="@+id/browser_save_img"
@@ -129,7 +108,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:scaleType="center"
-            android:src="@drawable/chats_option_download_icon" />
+            android:src="@drawable/chats_conversation_save_icon"
+            android:tint="?attr/common_icon_color" />
 
         <ImageView
             android:id="@+id/browser_delete_img"
@@ -137,7 +117,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:scaleType="center"
-            android:src="@drawable/chats_option_delete_icon" />
+            android:src="@drawable/chats_conversation_delete_icon" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

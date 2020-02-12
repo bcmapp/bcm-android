@@ -332,7 +332,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
 
     fun setLeftIcon(@DrawableRes resId: Int, @AttrRes color: Int = 0) {
         leftType = TYPE_IMAGE
-        if (color == 0) {
+        if (color != 0) {
             leftImageColor = context.getAttrColor(color)
         }
 
@@ -372,7 +372,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
     }
 
     fun setLeftTextSize(size: Float) {
-        title_bar_left_text.setTextSize(size)
+        title_bar_left_text.textSize = size
     }
 
     fun setLeftClickable(isClickable: Boolean) {

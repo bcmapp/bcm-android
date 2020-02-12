@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/common_color_white">
+    android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/file_browser_list"
@@ -13,10 +12,10 @@
         android:scrollbars="vertical" />
 
     <FrameLayout
-        android:id="@+id/no_conten_page"
+        android:id="@+id/no_content_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F2F3F4"
+        android:background="?attr/common_view_background_grey"
         android:visibility="gone">
 
         <TextView
@@ -25,8 +24,8 @@
             android:layout_height="44dp"
             android:gravity="center"
             android:textSize="13sp"
-            android:textColor="@color/common_color_606060"
-            android:background="@color/common_color_white"
+            android:textColor="?attr/common_text_secondary_color"
+            android:background="?attr/common_view_background"
             android:text="@string/chats_media_browser_no_content" />
     </FrameLayout>
 </FrameLayout>

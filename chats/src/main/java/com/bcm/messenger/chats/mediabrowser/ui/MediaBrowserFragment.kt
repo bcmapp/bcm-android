@@ -88,7 +88,7 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
     private fun init(context: Context, address: Address, viewModel: BaseMediaBrowserViewModel, handleViewModel: MediaHandleViewModel) {
         //
         media_browser_recycler_view.layoutManager = GridLayoutManager(context, 3)
-        val browserAdapter = MediaBrowserAdapter(accountContext, handleViewModel, no_conten_page, isDeleteMode, context) { dataList ->
+        val browserAdapter = MediaBrowserAdapter(accountContext, handleViewModel, no_content_page, isDeleteMode, context) { dataList ->
             indexId.let {
                 for ((index, data) in dataList.withIndex()) {
                     if (data.msgSource is MessageRecord) {
@@ -211,7 +211,7 @@ class MediaBrowserFragment : BaseFragment(), IMediaBrowserMenuProxy {
         val size = (mHandleViewModel?.selection?.value?.selectionList?.size ?: 0)
         AmePopup.bottom.newBuilder()
                 .withTitle(getString(R.string.chats_media_browser_delete_fromat, size))
-                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_media_browser_delete), getColorCompat(R.color.common_color_ff3737)) {
+                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_media_browser_delete), getAttrColor(R.attr.common_text_warn_color)) {
                     AmeAppLifecycle.showLoading()
                     mHandleViewModel?.selection?.value?.let {
                         val list = it.selectionList.toList()

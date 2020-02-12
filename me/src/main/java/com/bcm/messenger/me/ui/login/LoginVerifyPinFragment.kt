@@ -259,13 +259,11 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
             verify_pin_input_clear.alpha = 1f
             verify_pin_input_clear.isEnabled = true
             verify_pin_input_go.isEnabled = true
-            verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_icon)
             verify_pin_error.visibility = View.GONE
         } else {
             verify_pin_input_clear.alpha = 0.7f
             verify_pin_input_clear.isEnabled = false
             verify_pin_input_go.isEnabled = false
-            verify_pin_input_go.setImageResource(R.drawable.me_password_verify_go_disabled_icon)
         }
     }
 

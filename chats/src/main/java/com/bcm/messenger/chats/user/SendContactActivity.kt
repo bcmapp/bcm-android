@@ -16,9 +16,7 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.common.utils.view.resetDrawable
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.utility.setDrawableLeft
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_activity_send_contact.*
@@ -113,17 +111,13 @@ class SendContactActivity : AccountSwipeBaseActivity(), IContactsCallback {
     override fun onModeChanged(multiSelect: Boolean) {
         ALog.i(TAG, "onModeChanged: $multiSelect")
         mMultiMode = multiSelect
-        val left = title_bar?.getLeftView()?.second as? TextView
-        val right = title_bar?.getRightView()?.second as? TextView
         selectSet.clear()
         if (!multiSelect) {
-            left?.text = ""
-            left?.setDrawableLeft(R.drawable.common_arrow_back_icon, R.attr.common_foreground_color)
-            right?.text = getString(R.string.common_multi_select)
+            title_bar?.setLeftIcon(R.drawable.common_arrow_back_icon)
+            title_bar?.setRightText(getString(R.string.common_multi_select))
         } else {
-            left?.text = getString(R.string.chats_select_mode_cancel_btn)
-            left?.resetDrawable()
-            right?.text = "${getString(R.string.chats_done)}(${selectSet.size})"
+            title_bar?.setLeftText(getString(R.string.chats_select_mode_cancel_btn))
+            title_bar?.setRightText("${getString(R.string.chats_done)}(${selectSet.size})")
         }
     }
 
