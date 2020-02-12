@@ -89,7 +89,7 @@
                         android:paddingEnd="0dp"
                         android:paddingBottom="10dp"
                         android:text="@string/adhoc_airchat_setting_members"
-                        android:textColor="@color/common_color_black"
+                        android:textColor="?attr/common_text_main_color"
                         android:textSize="17sp" />
 
                     <View
