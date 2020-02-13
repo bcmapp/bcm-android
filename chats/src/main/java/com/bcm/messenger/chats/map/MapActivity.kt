@@ -69,8 +69,6 @@ class MapActivity : SwipeBaseActivity(), MapActionCallback {
             return
         }
         meId = me.address.toString()
-
-        window?.setStatusBarLightMode()
     }
 
     override fun onBackPressed() {

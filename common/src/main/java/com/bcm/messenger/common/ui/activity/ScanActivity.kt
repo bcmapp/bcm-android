@@ -15,14 +15,10 @@ import android.hardware.Camera.CameraInfo
 import android.os.*
 import android.provider.MediaStore
 import android.view.*
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.AccountSwipeBaseActivity
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -30,11 +26,10 @@ import com.bcm.messenger.common.ui.scan.CameraManager
 import com.bcm.messenger.common.ui.scan.ScannerView
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmFileUtils
-import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.utility.BitmapUtils
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.permission.PermissionUtil
-import com.bcm.route.api.BcmRouter
 import com.google.zxing.*
 import com.google.zxing.common.HybridBinarizer
 import com.google.zxing.qrcode.QRCodeReader
@@ -271,9 +266,6 @@ class ScanActivity : AccountSwipeBaseActivity(), TextureView.SurfaceTextureListe
         if (intent.hasExtra(INTENT_EXTRA_CHARSET)) {
             mScanCharSet = intent.getStringExtra(INTENT_EXTRA_CHARSET)
         }
-        if (intent.hasExtra(INTENT_EXTRA_MYCODE)) {
-            mShowMyCode = intent.getBooleanExtra(INTENT_EXTRA_MYCODE, false)
-        }
 
         if (intent.hasExtra(INTENT_EXTRA_TITLE)) {
             scan_title_bar.setCenterText(intent.getStringExtra(INTENT_EXTRA_TITLE))
@@ -281,18 +273,7 @@ class ScanActivity : AccountSwipeBaseActivity(), TextureView.SurfaceTextureListe
         if (intent.getBooleanExtra(INTENT_EXTRA_BACKUP, false)) {
             scan_title_bar.setRightIcon(R.drawable.common_info_icon)
         } else {
-            val textView = TextView(this)
-            textView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            val padding = resources.getDimensionPixelSize(R.dimen.common_horizontal_gap)
-            textView.setPadding(padding, 0, padding, 0)
-            textView.textSize = 15f
-            textView.setTextColor(AppUtil.getColor(resources, R.color.common_color_white))
-            textView.setText(R.string.common_scan_album)
-            textView.gravity = Gravity.CENTER
             scan_title_bar.setRightText(getString(R.string.common_scan_album))
-            textView.setOnClickListener {
-                openAlbum()
-            }
         }
 
         PermissionUtil.checkCamera(this) { granted ->
@@ -307,20 +288,10 @@ class ScanActivity : AccountSwipeBaseActivity(), TextureView.SurfaceTextureListe
     }
 
     private fun initView() {
-
         scan_flash_btn.setOnClickListener {
             switchTorch(!mTorchOn)
         }
-        scan_qr_btn.setOnClickListener {
-            BcmRouter.getInstance().get(ARouterConstants.Activity.ME_QR).startBcmActivity(accountContext,this)
-        }
         switchTorch(mTorchOn)
-
-        val codeDrawable = AppUtil.getDrawable(resources, R.drawable.common_scan_my_qr)
-        codeDrawable.setBounds(0, 0, AppUtil.dp2Px(resources, 36), AppUtil.dp2Px(resources, 36))
-        scan_qr_btn.setCompoundDrawables(null, codeDrawable, null, null)
-
-        scan_qr_btn.visibility = if (mShowMyCode) View.VISIBLE else View.GONE
     }
 
     override fun onResume() {
@@ -432,7 +403,7 @@ class ScanActivity : AccountSwipeBaseActivity(), TextureView.SurfaceTextureListe
 
         PermissionUtil.checkStorage(this) { granted ->
             if (granted) {
-                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 val wrapperIntent = Intent.createChooser(intent, getString(R.string.common_scan_choose_qr_title))
                 startActivityForResult(wrapperIntent, REQUEST_SCAN_CODE_PICK)
             }
@@ -448,7 +419,7 @@ class ScanActivity : AccountSwipeBaseActivity(), TextureView.SurfaceTextureListe
             mTorchOn = torch
             cameraManager.setTorch(torch)
             val drawable = AppUtil.getDrawable(resources, if (torch) R.drawable.common_scan_flash_on else R.drawable.common_scan_flash_off)
-            val size = AppUtil.dp2Px(resources, 36)
+            val size = 36.dp2Px()
             drawable.setBounds(0, 0, size, size)
             scan_flash_btn.setCompoundDrawables(null, drawable, null, null)
 

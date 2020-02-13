@@ -27,7 +27,7 @@ class ChatVideoHolderAction(accountContext: AccountContext) : BaseChatHolderActi
         ALog.d("ChatVideoHolderAction", "bind")
         body.setThumbnailClickListener(mPreviewClickListener)
         body.setDownloadClickListener(mDownloadClickListener)
-        body.setThumbnailAppearance(R.drawable.common_video_place_img, R.drawable.common_video_broken_img, body.resources.getDimensionPixelSize(R.dimen.chats_conversation_item_radius))
+        body.setThumbnailAppearance(R.drawable.chats_media_placeholder_video_icon, R.drawable.chats_media_placeholder_video_broken_icon, body.resources.getDimensionPixelSize(R.dimen.chats_conversation_item_radius))
         // MARK: Temporary set mastersecret
         body.setImage(accountContext.masterSecret ?: return, glideRequests, message)
     }

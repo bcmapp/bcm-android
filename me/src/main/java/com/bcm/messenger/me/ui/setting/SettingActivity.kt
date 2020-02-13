@@ -84,7 +84,7 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
         super.onResume()
         notification_noticer.checkNotice()
         privacy_pin_lock.setTip(if (AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip),
-                contentColor = getColorCompat(R.color.common_content_second_color))
+                contentColor = getAttrColor(R.attr.common_text_secondary_color))
         checkBackup()
     }
 
@@ -251,7 +251,7 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
     }
 
     private fun initData() {
-        val tipColor = getColorCompat(R.color.common_content_second_color)
+        val tipColor = getAttrColor(R.attr.common_text_secondary_color)
         setting_language.setTip(LanguageViewModel.getDisplayName(SuperPreferences.getLanguageString(this, Locale.getDefault().language)), contentColor = tipColor)
 
         setting_storage.setTip(getString(R.string.me_setting_data_stoarge_calulating_tip), contentColor = tipColor)
@@ -272,7 +272,7 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
         }
 
         privacy_pin_lock.setTip(if (AmePinLogic.hasPin()) getString(R.string.me_setting_pin_on_tip) else getString(R.string.me_setting_pin_off_tip),
-                contentColor = getColorCompat(R.color.common_content_second_color))
+                contentColor = getAttrColor(R.attr.common_text_secondary_color))
 
         setting_rtc_p2p.setSwitchStatus(SuperPreferences.isTurnOnly(this))
     }
@@ -314,7 +314,7 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
         if (hadBackup) {
             head_view_id.setCompoundDrawables(null, null, null, null)
         } else {
-            head_view_id.setDrawableLeft(R.drawable.common_not_backup_icon)
+            head_view_id.setDrawableLeft(R.drawable.common_warning_icon)
         }
     }
 }

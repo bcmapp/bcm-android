@@ -43,21 +43,9 @@
             android:drawablePadding="10dp"
             android:text="@string/common_scan_flash_button"
             android:textSize="13sp"
-            android:textColor="@color/common_color_white"
+            android:textColor="?attr/common_text_white_color"
             android:gravity="center"
             android:enabled="false"/>
-
-        <TextView
-            android:id="@+id/scan_qr_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/common_scan_my_qr"
-            android:drawablePadding="10dp"
-            android:text="@string/common_scan_qr_button"
-            android:textSize="13sp"
-            android:textColor="@color/common_color_white"
-            android:gravity="center"/>
 
     </LinearLayout>
 

@@ -134,7 +134,7 @@ data class MediaViewData(val indexId: Long,
         when (msgType) {
             MSG_TYPE_PRIVATE -> {
                 try {
-                    videoPlayer.setVideoThumbnail(Uri.parse("android.resource://${AppContextHolder.APP_CONTEXT.packageName}/${R.drawable.common_video_place_img}"), glide)
+                    videoPlayer.setVideoThumbnail(Uri.parse("android.resource://${AppContextHolder.APP_CONTEXT.packageName}/${R.drawable.chats_media_placeholder_video_icon}"), glide)
                 } catch (ex: Exception) {
                 }
             }
@@ -151,7 +151,7 @@ data class MediaViewData(val indexId: Long,
                                     view.setVideoThumbnail(uri, glide)
                                 } else {
                                     try {
-                                        view.setVideoThumbnail(Uri.parse("android.resource://${AppContextHolder.APP_CONTEXT.packageName}/${R.drawable.common_video_place_img}"), glide)
+                                        view.setVideoThumbnail(Uri.parse("android.resource://${AppContextHolder.APP_CONTEXT.packageName}/${R.drawable.chats_media_placeholder_video_icon}"), glide)
                                     } catch (ex: Exception) {
                                     }
                                 }

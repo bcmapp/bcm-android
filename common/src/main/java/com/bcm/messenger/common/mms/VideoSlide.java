@@ -49,7 +49,7 @@ public class VideoSlide extends Slide {
 
   @Override
   public @DrawableRes int getPlaceholderRes(Theme theme) {
-    return R.drawable.common_video_place_img;
+    return R.drawable.common_pick_photo_video_icon;
   }
 
   @Override

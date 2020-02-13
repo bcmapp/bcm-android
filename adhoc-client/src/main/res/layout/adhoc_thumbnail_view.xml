@@ -67,7 +67,7 @@
         android:id="@+id/thumbnail_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/common_video_play"
+        android:src="@drawable/chats_media_play_icon"
         android:contentDescription=""
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@id/thumbnail_card"

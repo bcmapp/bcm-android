@@ -173,7 +173,7 @@ class MyProfileFragment : BaseFragment(), RecipientModifiedListener {
             if (hadBackup) {
                 profile_account_item.hideTip()
             } else {
-                profile_account_item.setTip(getString(R.string.me_not_backed_up), R.drawable.common_not_backup_icon)
+                profile_account_item.setTip(getString(R.string.me_not_backed_up), R.drawable.common_warning_icon)
             }
         }
     }

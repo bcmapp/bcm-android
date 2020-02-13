@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:scaleType="centerInside"
         android:padding="10dp"
-        android:src="@drawable/common_round_bg_close"
+        android:src="@drawable/common_input_clear_icon"
         android:contentDescription=""
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"

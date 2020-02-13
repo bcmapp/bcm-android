@@ -114,7 +114,7 @@
                 android:id="@+id/home_profile_backup_icon"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:src="@drawable/common_not_backup_icon"
+                android:src="@drawable/common_warning_icon"
                 app:layout_constraintEnd_toEndOf="@id/home_profile_more"
                 app:layout_constraintTop_toTopOf="@id/home_profile_more" />
 

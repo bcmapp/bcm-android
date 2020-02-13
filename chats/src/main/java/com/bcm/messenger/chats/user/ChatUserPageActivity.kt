@@ -28,7 +28,6 @@ import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.QuickOpCheck
-import com.bcm.messenger.utility.setDrawableRight
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
 import io.reactivex.Observable
@@ -99,18 +98,21 @@ class ChatUserPageActivity : AccountSwipeBaseActivity(), RecipientModifiedListen
                 if (success && bitmap != null) {
                     chat_user_top_bg.setGradientBackground(bitmap) {
                         isBgLight = it
+                        val drawable = getDrawable(R.drawable.common_arrow_right_icon)
                         if (it) {
                             window.setStatusBarLightMode()
                             chat_user_name.setTextColor(getAttrColor(R.attr.common_black_color))
                             if (!mRecipient.isLogin) {
-                                chat_user_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
+                                drawable?.setTint(getAttrColor(R.attr.common_black_color))
+                                chat_user_name.setCompoundDrawables(null, null, drawable, null)
                             }
                         } else {
                             chat_user_title_bar.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_white_color)
-                            chat_user_title_bar.setRightTextColor(getColorCompat(R.color.common_color_white))
-                            chat_user_name.setTextColor(getColorCompat(R.color.common_color_white))
+                            chat_user_title_bar.setRightTextColor(getAttrColor(R.attr.common_text_white_color))
+                            chat_user_name.setTextColor(getAttrColor(R.attr.common_text_white_color))
                             if (!mRecipient.isLogin) {
-                                chat_user_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
+                                drawable?.setTint(getAttrColor(R.attr.common_white_color))
+                                chat_user_name.setCompoundDrawables(null, null, drawable, null)
                             }
                         }
                     }
@@ -294,10 +296,13 @@ class ChatUserPageActivity : AccountSwipeBaseActivity(), RecipientModifiedListen
         chat_user_img.setPhoto(recipient)
         chat_user_name.text = recipient.name
         if (!recipient.isLogin) {
+            val drawable = getDrawable(R.drawable.common_arrow_right_icon)
             if (isBgLight) {
-                chat_user_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
+                drawable?.setTint(getAttrColor(R.attr.common_black_color))
+                chat_user_name.setCompoundDrawables(null, null, drawable, null)
             } else {
-                chat_user_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
+                drawable?.setTint(getAttrColor(R.attr.common_white_color))
+                chat_user_name.setCompoundDrawables(null, null, drawable, null)
             }
         }
         chat_user_title_bar.setCenterText(recipient.name)
@@ -402,7 +407,7 @@ class ChatUserPageActivity : AccountSwipeBaseActivity(), RecipientModifiedListen
         } else {
             AmePopup.bottom.newBuilder()
                     .withTitle(getString(R.string.chats_block_confirm_title, recipient.name))
-                    .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_block_confirm_action), getColorCompat(R.color.common_color_ff3737)) {
+                    .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_block_confirm_action), getAttrColor(R.attr.common_text_warn_color)) {
                         blockHandling = true
                         AmeModuleCenter.contact(accountContext)?.blockContact(recipient.address, true) {
                             notify(it)

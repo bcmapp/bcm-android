@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:scaleType="centerInside"
-            android:src="@drawable/common_tag_close"
+            android:src="@drawable/common_close_icon"
             android:paddingStart="@dimen/common_horizontal_gap"
             android:paddingEnd="@dimen/common_horizontal_gap"
             android:contentDescription="@string/wallet_transfer_confirm_close_description"

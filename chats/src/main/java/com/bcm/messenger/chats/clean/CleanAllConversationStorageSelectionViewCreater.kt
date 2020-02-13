@@ -64,9 +64,9 @@ class CleanAllConversationStorageSelectionViewCreater(var storage: ConversationS
 
     private fun stateIcon(selected:Boolean): Int {
         return if (selected){
-            R.drawable.common_tick_green_icon
+            R.drawable.common_tick_icon
         } else {
-            R.drawable.common_tick_empty_icon
+            0
         }
     }
 

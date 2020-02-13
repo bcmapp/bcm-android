@@ -524,9 +524,9 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         mediaThumbnailStub.get().visibility = View.VISIBLE
         val radius = resources.getDimensionPixelSize(R.dimen.chats_conversation_item_radius)
         if (MediaUtil.isVideo(slide.contentType)) {
-            mediaThumbnailStub.get().setThumbnailAppearance(R.drawable.common_video_place_img, R.drawable.common_video_place_img, radius)
+            mediaThumbnailStub.get().setThumbnailAppearance(R.drawable.chats_media_placeholder_video_icon, R.drawable.chats_media_placeholder_video_broken_icon, radius)
         } else {
-            mediaThumbnailStub.get().setThumbnailAppearance(R.drawable.common_image_place_img, R.drawable.common_image_broken_img, radius)
+            mediaThumbnailStub.get().setThumbnailAppearance(R.drawable.chats_media_placeholder_image_icon, R.drawable.chats_media_placeholder_image_broken_icon, radius)
         }
 
         mediaThumbnailStub.get().setImage(masterSecret, glideRequests, messageRecord)

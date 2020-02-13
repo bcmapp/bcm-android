@@ -14,10 +14,7 @@ import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
-import com.bcm.messenger.common.utils.AmeAppLifecycle
-import com.bcm.messenger.common.utils.getColor
-import com.bcm.messenger.common.utils.getString
-import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.setDrawableLeft
 import com.bcm.route.api.BcmRouter
@@ -43,23 +40,25 @@ class GroupJoiningReviewItem @JvmOverloads constructor(context: Context, attrs: 
 
         join_action_accept_iv.setOnClickListener {
             val data = mRequestData ?: return@setOnClickListener
-            val groupModel = GroupLogic.get(AMELogin.majorContext).getModel(data.gid)?:return@setOnClickListener
+            val groupModel = GroupLogic.get(AMELogin.majorContext).getModel(data.gid)
+                    ?: return@setOnClickListener
             AmeAppLifecycle.showLoading()
-            
-            val reviewRequest = BcmReviewGroupJoinRequest(data.uid, data.reqId,true)
+
+            val reviewRequest = BcmReviewGroupJoinRequest(data.uid, data.reqId, true)
             groupModel.reviewJoinRequests(listOf(reviewRequest)) { succeed, error ->
                 ALog.d(TAG, "reviewJoinRequests success: $succeed, error: $error")
                 AmeAppLifecycle.hideLoading()
                 if (succeed) {
                     AmeAppLifecycle.succeed(getString(R.string.chats_group_join_approve_success), true)
-                }else {
+                } else {
                     AmeAppLifecycle.failure(getString(R.string.chats_group_join_approve_fail), true)
                 }
             }
         }
         join_action_deny_iv.setOnClickListener {
             val data = mRequestData ?: return@setOnClickListener
-            val groupModel = GroupLogic.get(AMELogin.majorContext).getModel(data.gid)?:return@setOnClickListener
+            val groupModel = GroupLogic.get(AMELogin.majorContext).getModel(data.gid)
+                    ?: return@setOnClickListener
             AmeAppLifecycle.showLoading()
             val reviewRequest = BcmReviewGroupJoinRequest(data.uid, data.reqId, false)
             groupModel.reviewJoinRequests(listOf(reviewRequest)) { succeed, error ->
@@ -67,7 +66,7 @@ class GroupJoiningReviewItem @JvmOverloads constructor(context: Context, attrs: 
                 AmeAppLifecycle.hideLoading()
                 if (succeed) {
                     AmeAppLifecycle.succeed(getString(R.string.chats_group_join_reject_success), true)
-                }else {
+                } else {
                     AmeAppLifecycle.failure(getString(R.string.chats_group_join_reject_fail), true)
                 }
             }
@@ -75,11 +74,13 @@ class GroupJoiningReviewItem @JvmOverloads constructor(context: Context, attrs: 
         join_member_comment_tv.setOnClickListener {
             if (mInviter != null) {
                 val address = mInviter?.address ?: return@setOnClickListener
-                AmeModuleCenter.contact(address.context())?.openContactDataActivity(context, address, mRequestData?.gid ?: 0)
+                AmeModuleCenter.contact(address.context())?.openContactDataActivity(context, address, mRequestData?.gid
+                        ?: 0)
             }
         }
         join_member_all_item.setOnClickListener {
-            BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_JOIN_CHECK).putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, mRequestData?.gid ?: -1).startBcmActivity(AMELogin.majorContext, context)
+            BcmRouter.getInstance().get(ARouterConstants.Activity.GROUP_JOIN_CHECK).putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, mRequestData?.gid
+                    ?: -1).startBcmActivity(AMELogin.majorContext, context)
         }
     }
 
@@ -101,33 +102,34 @@ class GroupJoiningReviewItem @JvmOverloads constructor(context: Context, attrs: 
 
             if (data.comment.isNullOrEmpty()) {
                 join_member_comment_tv.visibility = View.GONE
-            }else {
+            } else {
                 join_member_comment_tv.visibility = View.VISIBLE
                 join_member_comment_tv.text = data.comment
             }
 
-        }else {
+        } else {
             mInviter = Recipient.from(accountContext, data.inviter!!, true)
             mInviter?.addListener(this)
 
             join_member_comment_tv.visibility = View.VISIBLE
-            join_member_comment_tv.text = context.getString(R.string.chats_group_join_check_invited_comment, mInviter?.name ?: "")
+            join_member_comment_tv.text = context.getString(R.string.chats_group_join_check_invited_comment, mInviter?.name
+                    ?: "")
         }
         join_member_avatar.setPhoto(mJoiner)
         join_member_name_tv.text = if (!mJoiner?.localName.isNullOrEmpty()) {
             mJoiner?.localName
-        }else if(!mJoiner?.bcmName.isNullOrEmpty()) {
+        } else if (!mJoiner?.bcmName.isNullOrEmpty()) {
             mJoiner?.bcmName
-        }else {
+        } else {
             data.name
         }
 
         if (data.read) {
             join_member_name_tv.setDrawableLeft(0)
-        }else {
-            join_member_name_tv.setDrawableLeft(R.drawable.common_new_notify_icon)
+        } else {
+            join_member_name_tv.setDrawableLeft(R.drawable.chats_group_join_new_icon)
         }
-        when(data.status) {
+        when (data.status) {
             BcmGroupJoinStatus.WAIT_OWNER_REVIEW -> {
                 join_action_status_tv.visibility = View.GONE
                 join_action_accept_iv.visibility = View.VISIBLE
@@ -138,23 +140,24 @@ class GroupJoiningReviewItem @JvmOverloads constructor(context: Context, attrs: 
                 join_action_accept_iv.visibility = View.GONE
                 join_action_deny_iv.visibility = View.GONE
                 join_action_status_tv.text = context.getString(R.string.chats_group_join_approved_state)
-                join_action_status_tv.setTextColor(getColor(R.color.common_app_green_color))
+                join_action_status_tv.setTextColor(context.getAttrColor(R.attr.common_text_green_color))
             }
             BcmGroupJoinStatus.OWNER_REJECTED -> {
                 join_action_status_tv.visibility = View.VISIBLE
                 join_action_accept_iv.visibility = View.GONE
                 join_action_deny_iv.visibility = View.GONE
                 join_action_status_tv.text = context.getString(R.string.chats_group_join_rejected_state)
-                join_action_status_tv.setTextColor(getColor(R.color.common_content_warning_color))
+                join_action_status_tv.setTextColor(context.getAttrColor(R.attr.common_text_warn_color))
             }
-            else -> {}
+            else -> {
+            }
         }
 
         if (mUnHandleCount > 0) {
             join_member_all_item.visibility = View.VISIBLE
             join_member_all_item.setTip(mUnHandleCount.toString(), if (mUnReadCount > 0) R.drawable.common_red_dot else 0)
 
-        }else {
+        } else {
             join_member_all_item.visibility = View.GONE
         }
     }

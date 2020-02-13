@@ -41,12 +41,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="40dp"
-                    android:drawableEnd="@drawable/common_right_arrow_white_icon"
+                    android:drawableEnd="@drawable/common_arrow_right_icon"
                     android:ellipsize="end"
                     android:gravity="center"
                     android:maxWidth="300dp"
                     android:maxLines="1"
-                    android:textColor="@color/common_color_white"
+                    android:textColor="?attr/common_text_white_color"
                     android:textSize="17sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -188,7 +188,7 @@
                 app:setting_item_head="@string/chats_group_setting_other_title"
                 app:setting_item_line="false"
                 app:setting_item_name="@string/chats_group_setting_leave_head"
-                app:setting_item_name_color="@color/common_content_warning_color"
+                app:setting_item_name_color="?attr/common_text_warn_color"
                 app:setting_item_right="none"
                 app:setting_item_right_custom="@drawable/chats_group_setting_delete_icon"/>
 

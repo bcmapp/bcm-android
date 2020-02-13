@@ -34,7 +34,6 @@ import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
-import com.bcm.messenger.utility.setDrawableRight
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.chats_group_setting_activity.*
 import org.greenrobot.eventbus.Subscribe
@@ -201,9 +200,9 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
                     AmeAppLifecycle.showLoading()
                     doSetOwnerJoinConfirm(switch)
                 } else {
-                    val oneText = StringAppearanceUtil.applyAppearance(getString(R.string.chats_group_share_noapproval_pending_request_confirm_approve), color = getColorCompat(R.color.common_content_warning_color))
-                    val twoText = StringAppearanceUtil.applyAppearance(getString(R.string.chats_group_share_noapproval_pending_request_confirm_reject), color = getColorCompat(R.color.common_content_warning_color))
-                    var thirdText = StringAppearanceUtil.applyAppearance(getString(R.string.common_later), color = getColorCompat(R.color.common_color_black))
+                    val oneText = StringAppearanceUtil.applyAppearance(getString(R.string.chats_group_share_noapproval_pending_request_confirm_approve), color = getAttrColor(R.attr.common_text_warn_color))
+                    val twoText = StringAppearanceUtil.applyAppearance(getString(R.string.chats_group_share_noapproval_pending_request_confirm_reject), color = getAttrColor(R.attr.common_text_warn_color))
+                    var thirdText = StringAppearanceUtil.applyAppearance(getString(R.string.common_later), color = getAttrColor(R.attr.common_text_main_color))
                     thirdText = StringAppearanceUtil.applyAppearance(this, thirdText, true)
                     AlertDialog.Builder(this).setTitle(getString(R.string.chats_group_share_noapproval_pending_request_confirm_title))
                             .setItems(arrayOf(oneText, twoText, thirdText)) { dialog, which ->
@@ -267,7 +266,7 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
             if (alpha >= 0.5f && !lightMode) {
                 lightMode = true
                 window.setStatusBarLightMode()
-                chats_group_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_foreground_color)
+                chats_group_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_icon_color)
             } else if (alpha < 0.5f && lightMode) {
                 lightMode = false
                 if (isBgLight) {
@@ -310,12 +309,15 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
 
     private fun updateGroupInfoViews() {
         group_control_name?.text = mGroupModel.groupName()
+        val drawable = getDrawable(R.drawable.common_arrow_right_icon)
         if (lightMode) {
-            group_control_name.setTextColor(getColorCompat(R.color.common_color_black))
-            group_control_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
+            group_control_name.setTextColor(getAttrColor(R.attr.common_text_black_color))
+            drawable?.setTint(getAttrColor(R.attr.common_black_color))
+            group_control_name.setCompoundDrawables(null, null, drawable, null)
         } else {
-            group_control_name.setTextColor(getColorCompat(R.color.common_color_white))
-            group_control_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
+            group_control_name.setTextColor(getAttrColor(R.attr.common_text_white_color))
+            drawable?.setTint(getAttrColor(R.attr.common_white_color))
+            group_control_name.setCompoundDrawables(null, null, drawable, null)
         }
         chats_group_setting_title.setCenterText(mGroupModel.groupName() ?: "")
         chats_group_control_avatar.setLoadCallback { bitmap ->
@@ -324,12 +326,14 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
                     isBgLight = it
                     if (it) {
                         window.setStatusBarLightMode()
-                        group_control_name.setTextColor(getColorCompat(R.color.common_color_black))
-                        group_control_name.setDrawableRight(R.drawable.common_right_arrow_black_icon)
+                        group_control_name.setTextColor(getAttrColor(R.attr.common_text_black_color))
+                        drawable?.setTint(getAttrColor(R.attr.common_black_color))
+                        group_control_name.setCompoundDrawables(null, null, drawable, null)
                     } else if (!lightMode) {
                         chats_group_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_white_color)
-                        group_control_name.setTextColor(getColorCompat(R.color.common_color_white))
-                        group_control_name.setDrawableRight(R.drawable.common_right_arrow_white_icon)
+                        group_control_name.setTextColor(getAttrColor(R.attr.common_text_white_color))
+                        drawable?.setTint(getAttrColor(R.attr.common_white_color))
+                        group_control_name.setCompoundDrawables(null, null, drawable, null)
                     }
                 }
         }
@@ -403,10 +407,10 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
                     } else {
                         ""
                     }
-                    joining_request_item.setTip(tipContent, tipIcon, getColorCompat(R.color.common_content_second_color))
+                    joining_request_item.setTip(tipContent, tipIcon, getAttrColor(R.attr.common_text_secondary_color))
 
                 } else {
-                    joining_request_item.setTip("", 0, getColorCompat(R.color.common_content_second_color))
+                    joining_request_item.setTip("", 0, getAttrColor(R.attr.common_text_secondary_color))
                 }
             } else {
                 joining_request_item.visibility = View.GONE
@@ -432,9 +436,9 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
         if (joiningRequest.isEmpty()) {
             leaveGroup()
         } else {
-            val oneText = StringAppearanceUtil.applyAppearance(getString(R.string.chats_group_share_leave_pending_request_confirm_approve), color = getColorCompat(R.color.common_content_warning_color))
-            val twoText = StringAppearanceUtil.applyAppearance(getString(R.string.chats_group_share_leave_pending_request_confirm_reject), color = getColorCompat(R.color.common_content_warning_color))
-            var thirdText = StringAppearanceUtil.applyAppearance(getString(R.string.common_later), color = getColorCompat(R.color.common_color_black))
+            val oneText = StringAppearanceUtil.applyAppearance(getString(R.string.chats_group_share_leave_pending_request_confirm_approve), color = getAttrColor(R.attr.common_text_warn_color))
+            val twoText = StringAppearanceUtil.applyAppearance(getString(R.string.chats_group_share_leave_pending_request_confirm_reject), color = getAttrColor(R.attr.common_text_warn_color))
+            var thirdText = StringAppearanceUtil.applyAppearance(getString(R.string.common_later), color = getAttrColor(R.attr.common_text_main_color))
             thirdText = StringAppearanceUtil.applyAppearance(this, thirdText, true)
             AlertDialog.Builder(this).setTitle(getString(R.string.chats_group_share_leave_pending_request_confirm_title))
                     .setItems(arrayOf(oneText, twoText, thirdText)) { dialog, which ->

@@ -255,7 +255,7 @@ class GroupShareSettingsActivity : AccountSwipeBaseActivity() {
             group_share_loading.visibility = View.GONE
         } else {
             group_share_qr.setImageResource(0)
-            group_share_loading.setImageResource(R.drawable.common_refresh_black_icon)
+            group_share_loading.setImageResource(R.drawable.common_refresh_icon)
             group_share_loading.setOnClickListener {
                 if (QuickOpCheck.getDefault().isQuick) {
                     return@setOnClickListener

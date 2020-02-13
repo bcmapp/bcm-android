@@ -44,7 +44,7 @@
         android:maxLines="1"
         android:paddingStart="10dp"
         android:paddingEnd="15dp"
-        android:textColor="@color/common_color_black"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/block_user_img"
@@ -57,7 +57,7 @@
         android:id="@+id/gray_line"
         android:layout_width="0dp"
         android:layout_height="@dimen/common_line_height"
-        android:background="@color/common_line_color"
+        android:background="?attr/common_item_line_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
