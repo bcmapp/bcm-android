@@ -86,7 +86,7 @@
 
     <style name="CommonPrimaryThinTextBgStyle">
         <item name="android:background">@drawable/common_primary_thin_round_selector</item>
-        <item name="android:textColor">@color/common_app_primary_color</item>
+        <item name="android:textColor">?attr/common_text_blue_color</item>
         <item name="android:gravity">center</item>
     </style>
 
@@ -114,9 +114,9 @@
 
     <!-- Password style -->
     <style name="CommonImportantEditStyle">
-        <item name="android:textColor">@color/common_color_606060</item>
+        <item name="android:textColor">?attr/common_secondary_blue_color</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:textColorHint">#C2C2C2</item>
+        <item name="android:textColorHint">?attr/common_text_third_color</item>
         <item name="android:singleLine">true</item>
         <item name="android:padding">12dp</item>
         <item name="android:background">@drawable/common_password_bg</item>

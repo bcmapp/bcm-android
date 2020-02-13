@@ -91,7 +91,7 @@ class CommonPasswordInputLayout : ConstraintLayout {
             val anim = RotateAnimation(0f, 359f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
             anim.interpolator = LinearInterpolator()
             anim.repeatCount = Animation.INFINITE
-            anim.duration = 1200
+            anim.duration = 3000
             anim.fillAfter = true
             password_action.clearAnimation()
             password_action.startAnimation(anim)
@@ -125,11 +125,11 @@ class CommonPasswordInputLayout : ConstraintLayout {
     fun openPasswordEye(open: Boolean) {
         this.showSecret = open
         if (open) {
-            password_eye.setImageResource(R.drawable.common_visible_icon)
+            password_eye.setImageResource(R.drawable.common_eye_on_icon)
             password_text.inputType = EditorInfo.TYPE_TEXT_VARIATION_NORMAL or EditorInfo.TYPE_CLASS_TEXT
 
         } else {
-            password_eye.setImageResource(R.drawable.common_invisible_icon)
+            password_eye.setImageResource(R.drawable.common_eye_off_icon)
 
             password_text.inputType = EditorInfo.TYPE_TEXT_VARIATION_PASSWORD or EditorInfo.TYPE_CLASS_TEXT
         }

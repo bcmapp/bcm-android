@@ -56,8 +56,8 @@
 
         <com.bcm.messenger.common.ui.BadgeLayout
             android:id="@+id/bar_right_layout"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
             android:layout_marginEnd="@dimen/common_horizontal_gap"
             android:gravity="center"
             android:minWidth="38dp"
@@ -76,7 +76,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
         </com.bcm.messenger.common.ui.BadgeLayout>
 
         <com.bcm.messenger.common.ui.emoji.EmojiTextView

@@ -18,6 +18,18 @@
         android:layout_marginTop="6dp"
         android:contentDescription="@string/chats_conversation_item_photo_description" />
 
+    <ImageView
+        android:id="@+id/contact_burn_ring"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/common_tiktalk_ring"
+        android:scaleType="fitXY"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="9dp"
+        android:layout_marginEnd="9dp"
+        android:visibility="gone"
+        />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_line_height"

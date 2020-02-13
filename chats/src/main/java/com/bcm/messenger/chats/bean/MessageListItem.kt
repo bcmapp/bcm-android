@@ -1,6 +1,7 @@
 package com.bcm.messenger.chats.bean
 
 import android.content.Context
+import android.opengl.Visibility
 import android.text.SpannableStringBuilder
 import android.util.AttributeSet
 import android.view.View
@@ -57,6 +58,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
     private lateinit var dateView: TextView
     private lateinit var alertView: AlertView
     private lateinit var contactPhotoImage: RecipientAvatarView
+    private lateinit var ring:View
 
     private var groupId = 0L
 
@@ -91,6 +93,8 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         this.dateView = findViewById(R.id.date)
         this.alertView = findViewById(R.id.indicators_parent)
         this.contactPhotoImage = findViewById(R.id.contact_photo_image)
+        this.ring = findViewById(R.id.contact_burn_ring)
+
     }
 
     override fun bind(masterSecret: MasterSecret, threadRecord: ThreadRecord,
@@ -344,9 +348,16 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
             alertView.setNotificationAlert(unreadCount, false, anim && lastThread?.id == threadRecord.id)
         }
 
+        if (this.recipient?.expireMessages?:0 > 0) {
+            ring.visibility = View.VISIBLE
+        } else {
+            ring.visibility = View.GONE
+        }
+
     }
 
     private fun setGroup(accountContext: AccountContext, threadRecord: ThreadRecord, anim: Boolean) {
+        ring.visibility = View.GONE
         this.lastThread = threadRecord
         this.recipient = threadRecord.getRecipient(accountContext)
         this.recipient?.addListener(this)

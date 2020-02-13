@@ -16,7 +16,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
         android:gravity="center"
-        android:textColor="@color/common_content_primary_color"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="17sp"
         tools:text="@string/me_confirm_dialog_title_placeholder"/>
 
@@ -28,7 +28,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="13dp"
         android:gravity="center"
-        android:textColor="#303030"
+        android:textColor="?attr/common_text_secondary_color"
         android:textSize="14sp"
         tools:text="@string/me_confirm_dialog_tip_placeholder"/>
 

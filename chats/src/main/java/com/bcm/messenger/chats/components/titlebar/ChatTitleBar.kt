@@ -88,6 +88,13 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
                 bar_add_friend.visibility = View.VISIBLE
                 bar_title_sub.text = context.getString(R.string.chats_recipient_stranger_role)
             }
+
+            if (recipient.expireMessages > 0) {
+                bar_right_layout.setBackgroundResource(R.drawable.common_tiktalk_ring)
+            } else {
+                bar_right_layout.setBackgroundResource(0)
+            }
+
             bar_recipient_photo.showPrivateAvatar(recipient)
         }
         setMultiSelectionMode(mMultiSelect)

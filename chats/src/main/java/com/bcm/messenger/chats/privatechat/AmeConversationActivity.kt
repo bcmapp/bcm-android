@@ -615,15 +615,31 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
 
         val chatBurn = ChatTitleDropItem(icon, R.color.common_text_main_color, tickTalkTitle) {
             ChatsBurnSetting.configBurnSetting(this, mRecipient, accountContext.masterSecret ?: return@ChatTitleDropItem) {
+                chat_title_bar.setPrivateChat(mRecipient)
             }
         }
 
         val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, R.color.common_text_main_color, getString(R.string.chats_message_clear_history)) {
             AmePopup.bottom.newBuilder()
-                    .withTitle(getString(R.string.chats_user_clear_history_title, mRecipient.name))
-                    .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clear), getColorCompat(R.color.common_color_ff3737)) {
-                        val threadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, 0L)
-                        Repository.getChatRepo(accountContext)?.cleanChatMessages(threadId)
+                    .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_user_clear_history)) {
+                        AmePopup.bottom.newBuilder()
+                                .withTitle(getString(R.string.chats_user_clear_history_title, mRecipient.name))
+                                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clear), getColorCompat(R.color.common_color_ff3737)) {
+                                    val threadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, 0L)
+                                    Repository.getChatRepo(accountContext)?.cleanChatMessages(threadId)
+                                })
+                                .withDoneTitle(getString(R.string.common_cancel))
+                                .show(this)
+                    })
+                    .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_more_option_shredder)) {
+                        checkRecipientBlock {
+                            if (it) {
+                                AmeModuleCenter.user(accountContext)?.showClearHistoryConfirm(this@AmeConversationActivity, {
+                                    mConversationModel?.clearConversationHistory(this@AmeConversationActivity)
+                                }, {
+                                })
+                            }
+                        }
                     })
                     .withDoneTitle(getString(R.string.common_cancel))
                     .show(this)
