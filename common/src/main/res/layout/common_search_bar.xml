@@ -19,7 +19,7 @@
 
     <EditText
         android:id="@+id/common_search_text"
-        android:layout_width="12dp"
+        android:layout_width="0dp"
         android:layout_height="36dp"
         android:drawableStart="@drawable/common_search_icon"
         android:drawablePadding="6dp"
