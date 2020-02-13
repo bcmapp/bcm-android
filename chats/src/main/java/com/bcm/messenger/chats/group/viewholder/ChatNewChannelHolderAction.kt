@@ -35,7 +35,7 @@ class ChatNewChannelHolderAction(accountContext: AccountContext) : BaseChatHolde
         if (message.isSendByMe) {
             bodyView.setLinkAppearance(R.color.common_color_white, R.color.common_color_white, true)
         } else {
-            bodyView.setLinkAppearance(R.color.common_color_black, R.color.common_color_379BFF, false)
+            bodyView.setLinkAppearance(R.color.common_text_main_color, R.color.common_color_379BFF, false)
         }
 
         bodyView.setTitleContent(data.name, data.intro)

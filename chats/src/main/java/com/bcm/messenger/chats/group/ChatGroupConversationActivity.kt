@@ -239,7 +239,7 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
                         startBcmActivityForResult(accountContext, intent, SEND_CONTACT)
                     }
                 }),
-                BottomPanelItem(getString(R.string.chats_more_option_tv), R.drawable.chats_72_tv, object : BottomPanelClickListener {
+                BottomPanelItem(getString(R.string.chats_more_option_tv), R.drawable.chats_conversation_panel_live_icon, object : BottomPanelClickListener {
 
                     @SuppressLint("CheckResult")
                     override fun onClick(name: String, view: View) {

@@ -14,10 +14,7 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.ui.emoji.EmojiTextView
-import com.bcm.messenger.common.utils.dp2Px
-import com.bcm.messenger.common.utils.getColorCompat
-import com.bcm.messenger.common.utils.getScreenWidth
-import com.bcm.messenger.common.utils.hideKeyboard
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.MultiClickObserver
 
@@ -41,12 +38,12 @@ open class ChatMessageHolderAction(accountContext: AccountContext) : BaseChatHol
         val text = textFromMessage(message)
         if (!message.isSendByMe) {
             if (message.message.type == AmeGroupMessage.NONSUPPORT){
-                body.setTextColor(body.context.getColorCompat(R.color.common_color_A8A8A8))
+                body.setTextColor(body.context.getAttrColor(R.attr.common_text_third_color))
             } else {
-                body.setTextColor(body.context.getColorCompat(R.color.common_color_black))
+                body.setTextColor(body.context.getAttrColor(R.attr.common_text_main_color))
             }
         } else {
-            body.setTextColor(body.context.getColorCompat(R.color.common_color_white))
+            body.setTextColor(body.context.getAttrColor(R.attr.common_white_color))
         }
 
         ChatViewHolder.interceptMessageText(body, message, text)

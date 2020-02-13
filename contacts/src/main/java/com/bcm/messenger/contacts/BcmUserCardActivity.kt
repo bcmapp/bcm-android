@@ -18,7 +18,7 @@ import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.route.api.BcmRouter
@@ -176,10 +176,10 @@ class BcmUserCardActivity: AccountSwipeBaseActivity(), RecipientModifiedListener
 
         if (allowChat) {
             friend_chat.isEnabled = true
-            friend_chat.setTextColor(getColorCompat(R.color.common_color_379BFF))
+            friend_chat.setTextColor(getAttrColor(R.attr.common_text_blue_color))
         } else {
             friend_chat.isEnabled = false
-            friend_chat.setTextColor(getColorCompat(R.color.common_app_gray_color))
+            friend_chat.setTextColor(getAttrColor(R.attr.common_text_secondary_color))
         }
 
         if (!allowAdd) {

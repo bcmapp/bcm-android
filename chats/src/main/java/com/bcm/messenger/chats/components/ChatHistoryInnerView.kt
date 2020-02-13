@@ -19,6 +19,7 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.getString
 import com.bcm.messenger.utility.InputLengthFilter
@@ -73,8 +74,8 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
     private fun setStyle() {
         when (inView) {
             1 -> {
-                textColor = getColor(R.color.common_color_black)
-                nameColor = getColor(R.color.common_color_black)
+                textColor = context.getAttrColor(R.attr.common_text_main_color)
+                nameColor = context.getAttrColor(R.attr.common_text_main_color)
                 bold = true
             }
             2 -> {
@@ -83,8 +84,8 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
                 bold = false
             }
             3 -> {
-                textColor = getColor(R.color.common_content_second_color)
-                nameColor = getColor(R.color.common_color_616161)
+                textColor = context.getAttrColor(R.attr.common_text_third_color)
+                nameColor = context.getAttrColor(R.attr.common_text_secondary_color)
                 bold = false
             }
         }

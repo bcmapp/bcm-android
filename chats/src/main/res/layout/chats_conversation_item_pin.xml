@@ -20,7 +20,7 @@
         android:paddingBottom="@dimen/chats_conversation_tip_vertical_padding"
         android:paddingTop="@dimen/chats_conversation_tip_vertical_padding"
         android:textAllCaps="false"
-        android:textColor="@color/common_content_second_color"
+        android:textColor="?attr/common_text_secondary_color"
         android:textSize="13sp"
         tools:text="3 unread messages" />
 

@@ -15,6 +15,7 @@ import com.bcm.messenger.common.grouprepository.modeltransform.GroupMessageTrans
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.BaseAccountHolder
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.QuickOpCheck
@@ -99,7 +100,9 @@ class SystemTipsViewHolder(accountContext: AccountContext, containerView: View) 
                 context.getString(R.string.common_chats_group_request_detail_description)
             }
             val span = SpannableStringBuilder(text)
-            span.append(StringAppearanceUtil.applyAppearance(context, StringAppearanceUtil.applyAppearance(part, color = getColor(R.color.common_color_black)), true))
+
+            val clr = itemView.context.getAttrColor(R.attr.common_text_main_color)
+            span.append(StringAppearanceUtil.applyAppearance(context, StringAppearanceUtil.applyAppearance(part, color = clr), true))
             itemView.chats_tips?.text = span
             itemView.chats_tips?.setOnClickListener {
                 if (QuickOpCheck.getDefault().isQuick) {
