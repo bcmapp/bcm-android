@@ -5,18 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingTop="20dp"
-    android:background="@color/common_view_background">
+    android:paddingTop="20dp">
 
     <TextView
         android:id="@+id/text_clear_all"
         android:layout_width="0dp"
         android:layout_height="44dp"
-        android:background="@color/common_color_white"
         android:gravity="center_vertical"
         android:paddingStart="@dimen/common_horizontal_gap"
         android:text="@string/chats_clear_all_text"
-        android:textColor="@color/common_color_black"
+        android:textColor="?attr/common_text_main_color"
         android:textSize="17sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/clear_conversation_title"

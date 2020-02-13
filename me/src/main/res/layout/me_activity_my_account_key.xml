@@ -46,7 +46,7 @@
                 android:layout_marginEnd="45dp"
                 android:layout_marginBottom="200dp"
                 android:drawablePadding="5dp"
-                android:drawableStart="@drawable/common_content_warning_icon"
+                android:drawableStart="@drawable/common_warning_icon"
                 android:textSize="13sp"
                 android:textColor="?attr/common_text_secondary_color"
                 android:text="@string/me_account_not_backup_warning" />

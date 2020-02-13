@@ -2,7 +2,6 @@ package com.bcm.messenger.chats.components
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.text.*
 import android.text.style.URLSpan
@@ -353,33 +352,32 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
     private fun updateMessageText(messageRecord: MessageRecord) {
         ALog.d(TAG, "Conversation messageRecord duration: ${messageRecord.callDuration}, type: ${messageRecord.type}")
         val callContent = resources.getString(R.string.chats_call_finish_message_holder, DateUtils.convertMinuteAndSecond(messageRecord.callDuration.toLong()))
-        val d: Drawable
+        val d = getDrawable(R.drawable.chats_conversation_item_call_icon)
         val drawableSize = 20.dp2Px()
+        val tintColor = if (messageRecord.isOutgoing()) {
+            context.getAttrColor(R.attr.chats_conversation_outgo_icon_color)
+        } else {
+            context.getAttrColor(R.attr.common_icon_color_light_grey)
+        }
+        d.setTint(tintColor)
+        d.setBounds(0, 0, drawableSize, drawableSize)
         if (messageRecord.isMissedCall()) {
             var text: CharSequence
             if (messageRecord.isOutgoingMissedCall()) {
-                d = AppUtil.getDrawable(resources, R.drawable.chats_message_call_sent_icon)
-                d.setBounds(0, 0, drawableSize, drawableSize)
                 text = resources.getString(R.string.chats_call_unanswer_message_description)
                 text = "$text  "
                 bodyTextView?.text = StringAppearanceUtil.addImage(text, d, text.length - 1)
             } else {
-                d = AppUtil.getDrawable(resources, R.drawable.chats_message_call_received_icon)
-                d.setBounds(0, 0, drawableSize, drawableSize)
                 text = resources.getString(R.string.chats_call_untook_message_description)
                 text = "  $text"
                 bodyTextView?.text = StringAppearanceUtil.addImage(text, d, 0)
             }
 
         } else if (messageRecord.isOutgoingCall()) {
-            d = AppUtil.getDrawable(resources, R.drawable.chats_message_call_sent_icon)
-            d.setBounds(0, 0, drawableSize, drawableSize)
             val t = "$callContent  "
             bodyTextView?.text = StringAppearanceUtil.addImage(t, d, t.length - 1)
 
         } else if (messageRecord.isIncomingCall()) {
-            d = AppUtil.getDrawable(resources, R.drawable.chats_message_call_received_icon)
-            d.setBounds(0, 0, drawableSize, drawableSize)
             bodyTextView?.text = StringAppearanceUtil.addImage("  $callContent", d, 0)
 
         } else if (isCaptionlessMms(messageRecord)) {
@@ -545,9 +543,9 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         val mapShareView = mapShareStub.get()
         mapShareView.visibility = View.VISIBLE
         if (messageRecord.isOutgoing()) {
-            mapShareView.setAppearance(R.color.common_color_white, true)
+            mapShareView.setAppearance(R.attr.common_text_white_color, true)
         } else {
-            mapShareView.setAppearance(R.color.common_color_black, false)
+            mapShareView.setAppearance(R.attr.common_text_main_color, false)
         }
         mapShareView.setMap(glideRequests, content)
         mapShareView.setOnClickListener { v ->
@@ -579,13 +577,13 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         shareChannelView.visibility = View.VISIBLE
         if (messageRecord.isOutgoing()) {
             shareChannelView.setBackgroundResource(R.drawable.chats_conversation_send_bubble_bg)
-            shareChannelView.setLinkAppearance(R.color.common_color_white, R.color.common_color_white, true)
+            shareChannelView.setLinkAppearance(R.attr.common_text_main_color, R.attr.common_text_main_color, true)
         } else {
             shareChannelView.setBackgroundResource(R.drawable.chats_conversation_received_bubble_bg)
-            shareChannelView.setLinkAppearance(R.color.common_color_black, R.color.common_color_379BFF, false)
+            shareChannelView.setLinkAppearance(R.attr.common_black_color, R.attr.common_text_blue_color, false)
         }
         shareChannelView.setTitleContent(content.name, content.intro)
-        shareChannelView.setAvater(GroupUtil.addressFromGid(getAccountContext(), content.gid))
+        shareChannelView.setAvatar(GroupUtil.addressFromGid(getAccountContext(), content.gid))
         shareChannelView.setLink(context.getString(R.string.chats_channel_share_describe), false)
         updateAlpha(messageRecord, newGroupShareViewWrapperStub.get(), null)
     }
@@ -596,13 +594,13 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         shareChannelView.visibility = View.VISIBLE
         if (messageRecord.isOutgoing()) {
             shareChannelView.setBackgroundResource(R.drawable.chats_conversation_send_bubble_bg)
-            shareChannelView.setLinkAppearance(R.color.common_color_white, R.color.common_color_white, true)
+            shareChannelView.setLinkAppearance(R.attr.common_text_main_color, R.attr.common_text_main_color, true)
         } else {
             shareChannelView.setBackgroundResource(R.drawable.chats_conversation_received_bubble_bg)
-            shareChannelView.setLinkAppearance(R.color.common_color_black, R.color.common_color_379BFF, false)
+            shareChannelView.setLinkAppearance(R.attr.common_black_color, R.attr.common_text_blue_color, false)
         }
         shareChannelView.setTitleContent(content.name, content.intro)
-        shareChannelView.setAvater(GroupUtil.addressFromGid(getAccountContext(), content.gid))
+        shareChannelView.setAvatar(GroupUtil.addressFromGid(getAccountContext(), content.gid))
         shareChannelView.setLink(content.channel, true)
         shareChannelView.setChannelClickListener(object : ShareChannelView.ChannelOnClickListener {
             override fun onClick(v: View) {
@@ -685,7 +683,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         specialNotifyText?.text = content.getDescribe(0, getAccountContext())
         if (content.tipType == AmeGroupMessage.SystemContent.TIP_CHAT_STRANGER_RESTRICTION && !messageRecipient.isFriend) {
             val span = SpannableStringBuilder(content.getDescribe(0, getAccountContext()))
-            var addSpan = StringAppearanceUtil.applyAppearance(context.getString(R.string.chats_relation_add_friend_action), color = getColor(R.color.common_color_black))
+            var addSpan = StringAppearanceUtil.applyAppearance(context.getString(R.string.chats_relation_add_friend_action), color = context.getAttrColor(R.attr.common_text_main_color))
             addSpan = StringAppearanceUtil.applyAppearance(context, addSpan, true)
             span.append(addSpan)
             specialNotifyText?.text = span
@@ -801,8 +799,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         }
         if (messageRecord.expiresTime > 0 && shouldExpiration) {
             if (messageRecord.expiresStartTime > 0) {
-                alertView?.setExpirationTimer(messageRecord.expiresStartTime,
-                        messageRecord.expiresTime)
+                alertView?.setExpirationTimer(messageRecord.expiresStartTime, messageRecord.expiresTime)
                 alertView?.setExpirationVisible(true)
                 val color = if (messageRecord.getRecipient(getAccountContext()).expireMessages > 0) {
                     R.attr.common_text_secondary_color
@@ -811,18 +808,15 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                 }
                 alertView?.setExpirationColor(color)
             } else if (!messageRecord.isOutgoing() && !messageRecord.isMediaPending()) {
-
                 Observable.create<Boolean> {
                     val id = messageRecord.id
                     Repository.getChatRepo(getAccountContext())?.setMessageExpiresStart(messageRecord.id)
                     ExpirationManager.get(getAccountContext()).scheduleDeletion(id, messageRecord.isMediaMessage(), messageRecord.expiresTime)
                     it.onNext(true)
                     it.onComplete()
-
                 }.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
-
                         }, {
                             ALog.e(TAG, "setExpiration error", it)
                         })
@@ -886,7 +880,6 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
     private fun showPopWindowForMediaItem(messageRecord: MessageRecord, anchorView: View) {
-
         val slide = when {
             hasThumbnail(messageRecord) -> messageRecord.getImageAttachment()
             hasVideo(messageRecord) -> messageRecord.getVideoAttachment()
@@ -916,7 +909,6 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                     override fun onCopy() {}
 
                     override fun onForward() {
-
                         BcmRouter.getInstance().get(ARouterConstants.Activity.FORWARD)
                                 .putLong(ForwardActivity.INDEX_ID, messageRecord.id)
                                 .putLong(ForwardActivity.GID, ARouterConstants.PRIVATE_MEDIA_CHAT)
@@ -939,7 +931,6 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
     private fun showPopWindowForTextItem(messageRecord: MessageRecord, anchorView: View, text: String = "", copyVisible: Boolean = false, forwardable: Boolean = true) {
-
         longClickCheck.isLongClick = true
         ConversationItemPopWindow.ItemPopWindowBuilder(context)
                 .withAnchorView(anchorView)
@@ -963,7 +954,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                         if (TextUtils.isEmpty(text)) {
                             return
                         }
-                        AppUtil.saveCodeToBoard(context, text)
+                        context.saveTextToBoard(text)
                         AmeAppLifecycle.succeed(getString(R.string.common_copied), true)
                     }
 
@@ -1014,7 +1005,6 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
     private inner class ClickListener(private val parent: OnClickListener?) : OnClickListener {
-
         override fun onClick(v: View) {
             if (isInMultiSelectMode) {
                 performMultiSelect()
@@ -1039,14 +1029,12 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                             })
                             .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.common_delete)) {
                                 Observable.create<Unit> {
-
                                     Repository.getChatRepo(getAccountContext())?.deleteMessage(messageRecord)
                                     it.onComplete()
 
                                 }.subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe({}, {})
-
                             })
                             .withDoneTitle(getString(R.string.common_cancel))
                             .show(context as? FragmentActivity)

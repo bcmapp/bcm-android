@@ -9,7 +9,7 @@
         android:state_enabled="true"
         android:state_checked="false"/>
 
-    <item android:drawable="@drawable/common_checkbox_selected_grey"
+    <item android:drawable="@drawable/common_checkbox_disable"
         android:state_enabled="false"
         android:state_checked="true"/>
 

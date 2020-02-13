@@ -22,7 +22,7 @@ class HistoryView @JvmOverloads constructor(context: Context, attrs: AttributeSe
         this.inView = inView
         if (inView == 2) {
             chats_history_title.setTextColor(context.getAttrColor(R.attr.common_text_white_color))
-            chats_history_view_more.setTextColor(context.getAttrColor(R.attr.common_text_third_color))
+            chats_history_view_more.setTextColor(context.getAttrColor(R.attr.chats_conversation_outgo_text_secondary_color))
             chats_history_icon.drawable.setTint(context.getAttrColor(R.attr.common_white_color))
         } else {
             chats_history_title.setTextColor(context.getAttrColor(R.attr.common_text_main_color))

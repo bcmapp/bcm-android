@@ -80,8 +80,8 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mTopUnreadBubble?.setOrientationIcon(R.drawable.chats_10_up)
-        mBottomUnreadBubble?.setOrientationIcon(R.drawable.chats_10_down)
+        mTopUnreadBubble?.setOrientationIcon(R.drawable.chats_conversation_bubble_up_icon)
+        mBottomUnreadBubble?.setOrientationIcon(R.drawable.chats_conversation_bubble_down_icon)
 
         mLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, true)
 

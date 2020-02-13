@@ -42,7 +42,7 @@ class ChatNewChannelHolderAction(accountContext: AccountContext) : BaseChatHolde
         if (data.gid > 0) {
             val address = GroupUtil.addressFromGid(AMELogin.majorContext, data.gid)
             if (address != null) {
-                bodyView.setAvater(address)
+                bodyView.setAvatar(address)
             }
         }
         bodyView.setLink(data.channel, true)

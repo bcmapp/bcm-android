@@ -86,12 +86,12 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
                     path.isNotEmpty() -> setCacheAvatar(path)
                     !groupInfo?.spliceAvatarPath.isNullOrEmpty() -> setCacheAvatar(groupInfo?.spliceAvatarPath!!)
                     else -> {
-                        setImageResource(R.drawable.common_group_default_logo)
+                        setImageResource(R.drawable.common_group_default_avatar_logo)
                     }
                 }
             }
             else -> {
-                setImageResource(R.drawable.common_group_default_logo)
+                setImageResource(R.drawable.common_group_default_avatar_logo)
             }
         }
 
@@ -144,7 +144,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
             background = createBackground(corner.toFloat())
             glide.asBitmap()
                     .load(Uri.fromFile(File(path)))
-                    .error(R.drawable.common_group_default_logo)
+                    .error(R.drawable.common_group_default_avatar_logo)
                     .apply(RequestOptions.bitmapTransform(RoundedCorners(corner)))
                     .listener(object : RequestListener<Bitmap> {
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {

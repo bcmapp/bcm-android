@@ -155,7 +155,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
             builder.append(createNewJoinRequestDescription())
         } else if (record.isAtMeMessage() && !record.isRead()) {
             val desc = StringAppearanceUtil.applyAppearance(AppContextHolder.APP_CONTEXT.getString(R.string.chats_at_me_description),
-                    color = getColor(R.color.common_content_warning_color))
+                    color = context.getAttrColor(R.attr.common_text_warn_color))
             builder.append(desc)
         }
         builder.append(displayBody)
@@ -168,7 +168,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
 
     private fun createNewJoinRequestDescription(): CharSequence {
         return StringAppearanceUtil.applyAppearance(getString(R.string.chats_group_new_join_request_description),
-                color = getColor(R.color.common_content_warning_color))
+                color = context.getAttrColor(R.attr.common_text_warn_color))
     }
 
     private fun getUnreadCountString(unreadCount: Int): String {
@@ -199,12 +199,13 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         var builder: SpannableStringBuilder? = null
         if (record.isPending()) {
             builder = SpannableStringBuilder()
-            val drawable = AppUtil.getDrawable(resources, R.drawable.common_chat_list_sending)
+            val drawable = AppUtil.getDrawable(resources, R.drawable.chats_message_list_sending_icon)
+            drawable.setTint(context.getAttrColor(R.attr.common_icon_color_grey))
             drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
             builder.append(StringAppearanceUtil.addImage("  ", drawable, 0))
         } else if (record.isFailed() || record.isPendingInsecureFallback()) {
             builder = SpannableStringBuilder()
-            builder.append(StringAppearanceUtil.addImage(context, "  ", R.drawable.common_content_warning_icon, 12.dp2Px(), 0))
+            builder.append(StringAppearanceUtil.addImage(context, "  ", R.drawable.chats_message_list_warn_icon, 12.dp2Px(), 0))
         }
 
         val text: CharSequence = try {
@@ -212,7 +213,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
                 if (record.snippetContent.isEmpty()) {
                     ""
                 } else {
-                    builder = SpannableStringBuilder(StringAppearanceUtil.applyAppearance(context.getString(R.string.common_thread_draft), color = getColor(R.color.common_color_ff3737)))
+                    builder = SpannableStringBuilder(StringAppearanceUtil.applyAppearance(context.getString(R.string.common_thread_draft), color = context.getAttrColor(R.attr.common_text_warn_color)))
                     builder.append(" ")
                     record.snippetContent
                 }

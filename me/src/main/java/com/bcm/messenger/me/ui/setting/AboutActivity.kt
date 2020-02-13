@@ -104,7 +104,7 @@ class AboutActivity : AccountSwipeBaseActivity() {
         about_update_title.visibility = View.VISIBLE
         about_update_btn.text = getString(R.string.me_about_latest_version_status)
         about_update_btn.setTextColor(getColorCompat(R.color.common_disable_color))
-        about_update_btn.background = AppUtil.getDrawable(resources, R.drawable.common_grey_big_corner_bg)
+        about_update_btn.background = AppUtil.getDrawable(resources, R.drawable.common_rectangle_8_bg)
     }
 
     override fun onResume() {

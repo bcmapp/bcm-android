@@ -3,12 +3,12 @@
 
     <item
         android:id="@android:id/background"
-        android:drawable="@color/common_color_white_transparent_30" />
+        android:drawable="?attr/common_grey_color" />
 
 
     <item android:id="@android:id/progress">
         <clip>
-            <color android:color="@color/common_color_white" />
+            <color android:color="?attr/common_white_color" />
         </clip>
     </item>
 

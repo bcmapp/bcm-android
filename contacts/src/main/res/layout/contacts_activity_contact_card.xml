@@ -71,7 +71,7 @@
         android:id="@+id/friend_chat"
         style="@style/CommonLightBlueButton"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/common_blue_light_bg"
+        android:background="@drawable/common_button_blue_light_bg"
         android:text="@string/contacts_user_card_chat"
         android:textColor="@color/common_color_white"
         android:textStyle="bold"

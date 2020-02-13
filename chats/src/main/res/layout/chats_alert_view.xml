@@ -7,7 +7,7 @@
         android:id="@+id/sms_failed_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/common_content_warning_icon"
+        android:src="@drawable/common_warning_icon"
         android:visibility="gone"
         tools:visibility="gone"/>
 
@@ -43,7 +43,7 @@
             android:id="@+id/notification_unread_indicator"
             android:layout_width="9dp"
             android:layout_height="9dp"
-            android:src="@drawable/common_grey_dot_circle"
+            android:src="@drawable/chats_alert_view_unread_indicator"
             app:layout_constraintTop_toTopOf="@id/notification_indicator"
             app:layout_constraintEnd_toEndOf="@id/notification_indicator"
             app:layout_constraintHorizontal_bias="0.1"/>

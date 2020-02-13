@@ -3,8 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="52dp"
-    android:background="@color/common_color_white">
+    android:layout_height="52dp">
 
     <TextView
         android:id="@+id/clear_conversation_name"
@@ -12,12 +11,11 @@
         android:layout_height="match_parent"
         android:layout_alignStart="@id/clear_conversation_photo"
         android:layout_alignEnd="@id/clear_conversation_size"
-        android:background="@color/common_color_white"
         android:gravity="left|center_vertical"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:text="@string/chats_clear_all_text"
-        android:textColor="@color/common_color_black"
+        android:textColor="@color/common_text_main_color"
         android:textSize="17sp"
         android:maxLines="1"
         android:ellipsize="end"
@@ -55,7 +53,7 @@
         android:layout_height="0.5dp"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="61dp"
-        android:background="#E8E8E8"
+        android:background="?attr/common_item_line_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

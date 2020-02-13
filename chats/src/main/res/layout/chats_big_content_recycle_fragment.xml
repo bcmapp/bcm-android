@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/common_view_background">
 
     <com.bcm.messenger.chats.components.recyclerview.MoveRecyclerView
         android:id="@+id/big_content_recycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/common_color_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,7 +19,7 @@
         android:id="@+id/chat_tts_notice_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/common_view_background"
+        android:background="?attr/common_view_background_grey"
         android:paddingStart="@dimen/common_horizontal_gap"
         android:paddingTop="10dp"
         android:paddingEnd="@dimen/common_horizontal_gap"
@@ -40,7 +40,8 @@
             android:paddingEnd="10dp"
             android:paddingBottom="10dp"
             android:scaleType="centerInside"
-            android:src="@drawable/common_tag_close"
+            android:src="@drawable/common_close_icon"
+            android:tint="?attr/common_icon_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -55,7 +56,7 @@
             android:paddingEnd="16dp"
             android:text="@string/chats_setting_title"
             android:textAllCaps="false"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -69,7 +70,7 @@
             android:gravity="left|top"
             android:lineSpacingExtra="0dp"
             android:text="@string/chats_tts_not_support"
-            android:textColor="@color/common_color_black"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/chat_tts_notice_close"

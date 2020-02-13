@@ -202,8 +202,8 @@ public class ThreadRecord extends DisplayRecord {
         s.append(" ");
         s.append(sequence);
         SpannableString spannable = new SpannableString(s);
-        spannable.setSpan(new ImageSpan(context, R.drawable.common_chat_list_failed),
-                0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        spannable.setSpan(new ImageSpan(context, R.drawable.common_chat_list_failed),
+//                0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannable;
     }
 
@@ -212,8 +212,8 @@ public class ThreadRecord extends DisplayRecord {
         s.append(" ");
         s.append(sequence);
         SpannableString spannable = new SpannableString(s);
-        spannable.setSpan(new ImageSpan(context, R.drawable.common_chat_list_sending),
-                0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        spannable.setSpan(new ImageSpan(context, R.drawable.common_chat_list_sending),
+//                0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannable;
     }
 

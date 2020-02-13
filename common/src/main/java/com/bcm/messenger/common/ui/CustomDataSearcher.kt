@@ -1,7 +1,5 @@
 package com.bcm.messenger.common.ui
 
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,8 +7,6 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.LinearInterpolator
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -43,15 +39,13 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     private var mLastSearchText: String? = null//
     private var mLastSearchList: List<T>? = null//
 
-    private var mSearchingAnim: ObjectAnimator? = null
-
     private var mHasSearchChanged = false
         @Synchronized set
         @Synchronized get
 
-    constructor(context: Context) : this(context, null) {}
+    constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0) {}
+    constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
 
     constructor(context: Context, attributeSet: AttributeSet?, defStyleAttr: Int) : super(context, attributeSet, defStyleAttr) {
 
@@ -80,12 +74,6 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
         }
 
         layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-        mSearchingAnim = ObjectAnimator.ofFloat(common_searching_iv, "rotation", 360f, 0f).apply {
-            duration = 1500
-            repeatCount = Animation.INFINITE
-            repeatMode = ValueAnimator.RESTART
-            interpolator = LinearInterpolator(context, attributeSet)
-        }
 
         enableIMESearch(false)
 
@@ -249,7 +237,7 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     private fun showSearching() {
         common_searching_iv?.post {
             common_searching_iv?.visibility = View.VISIBLE
-            mSearchingAnim?.start()
+            common_searching_iv?.startAnim()
         }
     }
 
@@ -259,7 +247,7 @@ open class CustomDataSearcher<T> : ConstraintLayout, TextView.OnEditorActionList
     private fun hideSearching() {
         common_searching_iv?.post {
             common_searching_iv?.visibility = View.GONE
-            mSearchingAnim?.cancel()
+            common_searching_iv?.stopAnim()
         }
     }
 

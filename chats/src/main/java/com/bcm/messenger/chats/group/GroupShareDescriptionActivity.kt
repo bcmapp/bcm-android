@@ -12,7 +12,7 @@ import com.bcm.messenger.common.mms.GlideApp
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.base64Decode
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.annotation.Route
@@ -96,8 +96,8 @@ class GroupShareDescriptionActivity : AccountSwipeBaseActivity() {
     private fun updateDescription(isValid: Boolean) {
         if (isValid) {
             GlideApp.with(this).load(mShareContent?.groupIcon)
-                    .placeholder(R.drawable.common_group_default_logo)
-                    .error(R.drawable.common_group_default_logo)
+                    .placeholder(R.drawable.common_group_default_avatar_logo)
+                    .error(R.drawable.common_group_default_avatar_logo)
                     .into(group_share_logo)
 
             val groupName = if (mShareContent?.groupName.isNullOrEmpty()) {
@@ -107,21 +107,21 @@ class GroupShareDescriptionActivity : AccountSwipeBaseActivity() {
             }
             val builder = SpannableStringBuilder(groupName)
             builder.append("\n\n")
-            builder.append(StringAppearanceUtil.applyAppearance(mShareContent?.toOldLink() ?: "", color = getColorCompat(R.color.common_app_primary_color)))
+            builder.append(StringAppearanceUtil.applyAppearance(mShareContent?.toOldLink() ?: "", color = getAttrColor(R.attr.common_text_blue_color)))
             group_share_name_tv.text = builder
 
-            val notice = StringAppearanceUtil.applyFilterAppearanceIgnoreCase(getString(R.string.chats_group_share_description_notice), "BCM", color = getColorCompat(R.color.common_app_primary_color))
+            val notice = StringAppearanceUtil.applyFilterAppearanceIgnoreCase(getString(R.string.chats_group_share_description_notice), "BCM", color = getAttrColor(R.attr.common_text_blue_color))
             group_share_notice_tv.text = notice
 
-            group_share_join_btn.setTextColor(getColorCompat(R.color.common_color_white))
-            group_share_join_btn.setBackgroundResource(R.drawable.common_blue_bg)
+            group_share_join_btn.setTextColor(getAttrColor(R.attr.common_text_main_color))
+            group_share_join_btn.setBackgroundResource(R.drawable.common_rectangle_8_blue_bg)
             group_share_join_btn.isEnabled = true
 
         }else {
-            group_share_logo.setImageResource(R.drawable.common_group_default_logo)
-            group_share_name_tv.text = StringAppearanceUtil.applyAppearance(getString(R.string.chats_group_share_description_invalid_text), color = getColorCompat(R.color.common_content_warning_color))
-            group_share_join_btn.setTextColor(getColorCompat(R.color.common_disable_color))
-            group_share_join_btn.setBackgroundResource(R.drawable.common_grey_bg)
+            group_share_logo.setImageResource(R.drawable.common_group_default_avatar_logo)
+            group_share_name_tv.text = StringAppearanceUtil.applyAppearance(getString(R.string.chats_group_share_description_invalid_text), color = getAttrColor(R.attr.common_text_warn_color))
+            group_share_join_btn.setTextColor(getAttrColor(R.attr.common_text_secondary_color))
+            group_share_join_btn.setBackgroundResource(R.drawable.common_rectangle_8_grey_bg)
             group_share_join_btn.isEnabled = false
         }
     }

@@ -51,9 +51,8 @@ object QrCodeReaderPopWindow {
         ALog.d(TAG, "measure width: ${popupWindow.contentView.measuredWidth}, height: ${popupWindow.contentView.measuredHeight}")
 
         val sx = (scanTag.sx - measureW / 2.0f).toInt()
-        val sy =  (scanTag.sy - measureH).toInt()
-        if(sy >= 0) {
-
+        val sy = (scanTag.sy - measureH).toInt()
+        if (sy >= 0) {
             when {
                 sx < 0 -> popupWindow.showAtLocation(anchorView, Gravity.START or Gravity.TOP, 0,
                         sy)
@@ -62,9 +61,7 @@ object QrCodeReaderPopWindow {
                 else -> popupWindow.showAtLocation(anchorView, Gravity.START or Gravity.TOP, sx,
                         sy)
             }
-
-        }else {
-
+        } else {
             when {
                 sx < 0 -> popupWindow.showAtLocation(anchorView, Gravity.START or Gravity.TOP, 0,
                         scanTag.sy.toInt())
@@ -75,11 +72,10 @@ object QrCodeReaderPopWindow {
             }
         }
 
-        if(autoDismiss) {
+        if (autoDismiss) {
             contentView.postDelayed({
                 popupWindow.dismiss()
             }, 1500)
         }
     }
-
 }

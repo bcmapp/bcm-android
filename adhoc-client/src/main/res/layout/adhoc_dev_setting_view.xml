@@ -10,7 +10,7 @@
         android:id="@+id/adhoc_dev_setting_title_bar"
         style="@style/CommonTitleBarStyle"
         app:center_text="Debug Center"
-        app:left_image="@drawable/common_24_close"
+        app:left_image="@drawable/common_close_icon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>

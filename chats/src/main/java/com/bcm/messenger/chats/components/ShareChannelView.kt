@@ -9,11 +9,11 @@ import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.annotation.ColorRes
+import androidx.annotation.AttrRes
 import com.bcm.messenger.chats.R
-import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.ui.GroupMemberPhotoView
+import com.bcm.messenger.common.utils.getAttrColor
 
 /**
  * Created by zjl on 2018/6/9.
@@ -47,11 +47,11 @@ class ShareChannelView : FrameLayout {
     }
 
 
-    fun setLinkAppearance(@ColorRes mainTextColor: Int, @ColorRes linkColor: Int, isSendByMe: Boolean) {
-        title.setTextColor(AppUtil.getColor(resources, mainTextColor))
-        content.setTextColor(AppUtil.getColor(resources, mainTextColor))
-        link.setTextColor(AppUtil.getColor(resources, linkColor))
-        viewBtn.setTextColor(AppUtil.getColor(resources, linkColor))
+    fun setLinkAppearance(@AttrRes mainTextColor: Int, @AttrRes linkColor: Int, isSendByMe: Boolean) {
+        title.setTextColor(context.getAttrColor(mainTextColor))
+        content.setTextColor(context.getAttrColor(mainTextColor))
+        link.setTextColor(context.getAttrColor(linkColor))
+        viewBtn.setTextColor(context.getAttrColor(linkColor))
         if (isSendByMe) {
             viewBtn.setBackgroundResource(R.drawable.chats_channel_view_white_bg)
         } else {
@@ -60,7 +60,7 @@ class ShareChannelView : FrameLayout {
     }
 
 
-    fun setAvater(address: Address) {
+    fun setAvatar(address: Address) {
         avater.setAvatar(address)
     }
 

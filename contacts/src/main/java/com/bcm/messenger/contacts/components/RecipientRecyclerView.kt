@@ -365,7 +365,7 @@ class RecipientRecyclerView @JvmOverloads constructor(
 
     private fun changeSelectView(selectView: ImageView, isChecked: Boolean) {
         if (!selectView.isEnabled) {
-            selectView.setImageResource(R.drawable.common_checkbox_selected_grey)
+            selectView.setImageResource(R.drawable.common_checkbox_disable)
         } else if (isChecked) {
             selectView.setImageResource(R.drawable.common_checkbox_selected)
         } else {

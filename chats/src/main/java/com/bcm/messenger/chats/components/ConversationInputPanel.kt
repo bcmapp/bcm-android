@@ -626,7 +626,7 @@ class ConversationInputPanel : androidx.constraintlayout.widget.ConstraintLayout
 
                 panel_reply_content_tv.tag = replyContent
                 panel_reply_content_tv.visibility = View.VISIBLE
-                panel_reply_content_tv.text = replyContent.getReplyDescribe(messageDetail.gid, accountContext, false)
+                panel_reply_content_tv.text = replyContent.getReplyDescribe(context, messageDetail.gid, accountContext, false)
                 panel_reply_text_tv.visibility = View.GONE
 
                 panel_reply_close_iv.setOnClickListener {

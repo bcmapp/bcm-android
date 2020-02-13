@@ -53,8 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription=""
-                android:scaleType="fitXY"
-                tools:src="@drawable/common_message_icon" />
+                android:scaleType="fitXY" />
 
         </FrameLayout>
 

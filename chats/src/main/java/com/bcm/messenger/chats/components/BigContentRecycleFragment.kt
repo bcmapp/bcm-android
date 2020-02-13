@@ -164,7 +164,6 @@ class BigContentRecycleFragment(accountContext: AccountContext) : BaseFragment()
                     play()
                 setPlay()
             }
-
         }
     }
 
@@ -174,7 +173,7 @@ class BigContentRecycleFragment(accountContext: AccountContext) : BaseFragment()
             ttsPlay = false
             tts?.stop()
             tts_speak.removeCallbacks(playRunnable)
-            tts_speak.setImageResource(R.drawable.chats_40_tts_off)
+            tts_speak.setImageResource(R.drawable.chats_conversation_tts_vol_1)
         } else {
             ttsPlay = true
             play()
@@ -184,9 +183,9 @@ class BigContentRecycleFragment(accountContext: AccountContext) : BaseFragment()
 
     fun setImage() {
         if (ttsPlay) {
-            tts_speak.setImageResource(R.drawable.chats_40_tts3)
+            tts_speak.setImageResource(R.drawable.chats_conversation_tts_vol_3)
         } else {
-            tts_speak.setImageResource(R.drawable.chats_40_tts_off)
+            tts_speak.setImageResource(R.drawable.chats_conversation_tts_vol_1)
         }
     }
 
@@ -195,9 +194,9 @@ class BigContentRecycleFragment(accountContext: AccountContext) : BaseFragment()
             context?.let {
                 tts_speak.post {
                     anim = AnimationDrawable()
-                    anim?.addFrame(getDrawable(R.drawable.chats_40_tts1), 300)
-                    anim?.addFrame(getDrawable(R.drawable.chats_40_tts2), 300)
-                    anim?.addFrame(getDrawable(R.drawable.chats_40_tts3), 300)
+                    anim?.addFrame(getDrawable(R.drawable.chats_conversation_tts_vol_1), 300)
+                    anim?.addFrame(getDrawable(R.drawable.chats_conversation_tts_vol_2), 300)
+                    anim?.addFrame(getDrawable(R.drawable.chats_conversation_tts_vol_3), 300)
                     anim?.isOneShot = false
                     tts_speak.setImageDrawable(anim)
                     anim?.start()
@@ -220,10 +219,8 @@ class BigContentRecycleFragment(accountContext: AccountContext) : BaseFragment()
                         ttsPlay = false
                         setImage()
                     }
-
                 }
             }
-
         }
     }
 
@@ -239,7 +236,6 @@ class BigContentRecycleFragment(accountContext: AccountContext) : BaseFragment()
                 initPrivateResources()
             }
         }
-
     }
 
     @SuppressLint("CheckResult")
@@ -605,6 +601,5 @@ class BigContentRecycleFragment(accountContext: AccountContext) : BaseFragment()
         fun getIndexId(): Long {
             return indexId
         }
-
     }
 }

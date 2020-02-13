@@ -7,7 +7,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import com.bcm.messenger.chats.R
-
+import com.bcm.messenger.common.utils.getDrawable
 
 
 /**
@@ -24,9 +24,9 @@ class UnreadMessageBubbleView : RelativeLayout {
 
     private var unreadCountText: TextView? = null
 
-    constructor(context: Context) : super(context) {}
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -40,7 +40,7 @@ class UnreadMessageBubbleView : RelativeLayout {
 
 
     fun setOrientationIcon(@DrawableRes resId: Int) {
-        val drawable = resources.getDrawable(resId)
+        val drawable = getDrawable(resId)
         drawable.setBounds(0, 0, drawable.minimumWidth, drawable.minimumHeight)
         unreadCountText?.setCompoundDrawables(drawable, null, null, null)
     }

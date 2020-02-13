@@ -16,10 +16,7 @@ import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.BcmFileUtils
-import com.bcm.messenger.common.utils.BcmGroupNameUtil
-import com.bcm.messenger.common.utils.getString
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.GsonUtils
 import com.bcm.messenger.utility.StringAppearanceUtil
@@ -37,7 +34,7 @@ import kotlin.collections.HashMap
 import kotlin.math.min
 
 /**
- * 
+ *
  * Created by bcm.social.01 on 2018/6/13.
  */
 class AmeGroupMessage<out T : AmeGroupMessage.Content>(
@@ -229,7 +226,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     open class ThumbnailContent(url: String = "", sign: String = "", size: Long = 0L, var thumbnail_url: String = "", var sign_thumbnail: String = "", mimeType: String = "") : AttachmentContent(url, sign, size, mimeType) {
 
         /**
-         * 
+         *
          */
         fun getThumbnailExtension(): String {
             val thumb = if (thumbnail_url.isEmpty()) {
@@ -279,11 +276,13 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     abstract class AttachmentContent(var url: String = "", var sign: String = "", var size: Long = 0L, var mimeType: String = "") : Content() {
-        companion object {//
+        companion object {
+            //
             const val SIZE_MAX = 64 * 1024 * 1024
         }
+
         /**
-         * 
+         *
          */
         fun getExtension(): String {
             val index = url.lastIndexOf(File.separator)
@@ -295,7 +294,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         }
 
         /**
-         * 
+         *
          */
         open fun getPath(accountContext: AccountContext): Pair<String, String> {
             return Pair(AmeFileUploader.get(accountContext).ENCRYPT_DIRECTORY, AmeFileUploader.get(accountContext).DECRYPT_DIRECTORY)
@@ -342,7 +341,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         }
 
 
-        open fun isReady() :Boolean {
+        open fun isReady(): Boolean {
             return true
         }
 
@@ -432,13 +431,13 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             fun getTypeNameBySuffix(suffix: String): String {
                 return if (suffix.length > 3) {
                     suffix.substring(0, 3).toUpperCase(Locale.getDefault())
-                }else {
+                } else {
                     suffix.toUpperCase(Locale.getDefault())
                 }
             }
 
             /**
-             * 
+             *
              */
             fun getTypeColor(ext: String): Int {
                 return when (ext) {
@@ -597,7 +596,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         }
 
         override fun isReady(): Boolean {
-            return when(tipType) {
+            return when (tipType) {
                 TIP_JOIN, TIP_SUBSCRIBE, TIP_UNSUBSCRIBE, TIP_GROUP_INVITE_STRANGER, TIP_JOIN_GROUP_REQUEST -> {
                     ready
                 }
@@ -627,7 +626,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             }
         }
 
-        private fun getSystemTip(gid:Long, accountContext: AccountContext): CharSequence {
+        private fun getSystemTip(gid: Long, accountContext: AccountContext): CharSequence {
 
             if (senderRecipient == null) {
                 if (!TextUtils.isEmpty(sender)) {
@@ -655,10 +654,10 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     val operators = getViewNameFromOperators(context, accountContext, gid, senderRecipient, ol)
                     if (sender.isNullOrEmpty()) {
                         context.getString(R.string.common_chats_group_join_request_description, operators.second)
-                    }else {
+                    } else {
                         if (theOperator.size > 1) {
                             context.getString(R.string.common_chats_group_invite_multi_description, operators.first, theOperator.size)
-                        }else {
+                        } else {
                             context.getString(R.string.common_chats_group_invite_single_description, operators.first, operators.second)
                         }
                     }
@@ -667,8 +666,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     val operators = getViewNameFromOperators(context, accountContext, gid, senderRecipient, ol)
                     if (operators.first.isEmpty()) {
                         context.getString(R.string.common_chats_group_join, operators.second)
-                    }
-                    else if (operators.second.isEmpty() || operators.first == operators.second) {
+                    } else if (operators.second.isEmpty() || operators.first == operators.second) {
                         context.getString(R.string.common_chats_group_join, operators.first)
                     } else {
                         context.getString(R.string.common_chats_group_invite, operators.first, operators.second)
@@ -712,11 +710,13 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     if (senderRecipient?.address?.serialize() == accountContext.uid) {
                         context.getString(R.string.common_chats_group_you_recall_message)
                     } else {
-                        context.getString(R.string.common_chats_peer_recall_message, senderRecipient?.name ?: "")
+                        context.getString(R.string.common_chats_peer_recall_message, senderRecipient?.name
+                                ?: "")
                     }
                 }
                 TIP_BLOCK -> {
-                    context.getString(R.string.common_chats_user_block_system_notice, senderRecipient?.name ?: "")
+                    context.getString(R.string.common_chats_user_block_system_notice, senderRecipient?.name
+                            ?: "")
                 }
                 TIP_UNBLOCK -> {
                     context.getString(R.string.common_chats_user_unblock_system_notice, senderRecipient?.name
@@ -731,12 +731,12 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                 TIP_CHAT_STRANGER_RESTRICTION -> {
                     val target = if (ol.size <= 0) {
                         null
-                    }else {
+                    } else {
                         ol[0]
                     }
                     if (target == null) {
                         ""
-                    }else {
+                    } else {
                         if (target.relationship == RecipientRepo.Relationship.FRIEND) {
                             context.getString(R.string.common_chats_stranger_disturb_notice, target.name)
 
@@ -758,7 +758,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     }
                 }
                 TIP_DECRYPT_FAIL -> {
-                    context.getString(R.string.common_message_decrypted_fail_error, extra?:"")
+                    context.getString(R.string.common_message_decrypted_fail_error, extra ?: "")
                 }
                 else -> {
                     ""
@@ -767,7 +767,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         }
 
         /**
-         * 
+         *
          */
         private fun getViewNameFromOperators(context: Context, accountContext: AccountContext, gid: Long, from: Recipient?, operators: MutableList<Recipient>): Pair<String, String> {
             if (groupMembers == null) {
@@ -813,14 +813,14 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
             if (fromViewName.isNotEmpty()) {
                 //"A"
-                if (fromViewName != context.getString(R.string.common_chats_system_tip_you)){
+                if (fromViewName != context.getString(R.string.common_chats_system_tip_you)) {
                     fromViewName = "\"$fromViewName\""
                 }
             }
 
             if (doneViewName.isNotEmpty()) {
                 //"A, B"
-                if (doneViewName != context.getString(R.string.common_chats_system_tip_you_lower_case)){
+                if (doneViewName != context.getString(R.string.common_chats_system_tip_you_lower_case)) {
                     doneViewName = "\"$doneViewName\""
                 }
             }
@@ -830,14 +830,14 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         }
 
         /**
-         * 
+         *
          */
-        private fun groupMemberName(recipient: Recipient, member:AmeGroupMemberInfo?) :String {
+        private fun groupMemberName(recipient: Recipient, member: AmeGroupMemberInfo?): String {
             return BcmGroupNameUtil.getGroupMemberName(recipient, member)
         }
 
         /**
-         * 
+         *
          */
         private fun syncMemberInfo(accountContext: AccountContext, gid: Long, uidList: List<String>) {
             AmeModuleCenter.group(accountContext)?.getMembers(gid, uidList) {
@@ -885,7 +885,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     /**
-     * 
+     *
      */
     class ContactContent(val nickName: String = "", @SerializedName("phoneNumber") val uid: String = "", val url: String = "") : Content() {
         override fun getDescribe(gid: Long, accountContext: AccountContext): CharSequence {
@@ -894,7 +894,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     /**
-     * 
+     *
      */
     class GroupShareContent(val groupId: Long, val groupName: String?, val groupIcon: String?, val shareCode: String, val shareSignature: String, val ekey: String?, val timestamp: Long, var shareLink: String?) : Content() {
 
@@ -906,7 +906,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             private const val SHARE_SCHEME_NEW_URL = "bcm://scheme.bcm-im.com/joingroup/new_chat_page"
 
             fun fromJson(jsonString: String): GroupShareContent {
-                return GsonUtils.fromJson(jsonString, object : TypeToken<GroupShareContent>(){}.type)
+                return GsonUtils.fromJson(jsonString, object : TypeToken<GroupShareContent>() {}.type)
             }
 
             fun fromClipboard(clipText: String): GroupShareContent? {
@@ -941,10 +941,10 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     val timestamp = timestampParam?.toLong() ?: System.currentTimeMillis()
                     if (linkUrl.startsWith(SHARE_LINK) && gid > 0L && !code.isNullOrEmpty() && !signature.isNullOrEmpty()) {
                         GroupShareContent(gid, name, icon, code, signature, ekey, timestamp, null)
-                    }else {
+                    } else {
                         null
                     }
-                }catch (ex: Exception) {
+                } catch (ex: Exception) {
                     ALog.e("GroupShareContent", "fromUrl error", ex)
                     null
                 }
@@ -967,10 +967,10 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                     val timestamp = timestampParam?.toLong() ?: System.currentTimeMillis()
                     if ((bcmUrl.startsWith(SHARE_SCHEME_URL) || bcmUrl.startsWith(SHARE_SCHEME_NEW_URL)) && gid != 0L && !code.isNullOrEmpty() && !signature.isNullOrEmpty()) {
                         GroupShareContent(gid, name, icon, code, signature, ekey, timestamp, null)
-                    }else {
+                    } else {
                         null
                     }
-                }catch (ex: Exception) {
+                } catch (ex: Exception) {
                     ALog.e("GroupShareContent", "fromUrl error", ex)
                     null
                 }
@@ -991,10 +991,10 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         fun toOldLink(): String {
             return try {
                 // ，
-                "$SHARE_LINK?gid=$groupId&name=${URLEncoder.encode(if(groupName.isNullOrEmpty())
+                "$SHARE_LINK?gid=$groupId&name=${URLEncoder.encode(if (groupName.isNullOrEmpty())
                     getString(R.string.common_chats_group_default_name) else groupName, "UTF-8")}&code=${URLEncoder.encode(shareCode, "UTF-8")}" +
                         "&signature=${URLEncoder.encode(shareSignature, "UTF-8")}&ekey=${URLEncoder.encode(ekey, "UTF-8")}&timestamp=$timestamp"
-            }catch (ex: Exception) {
+            } catch (ex: Exception) {
                 ALog.e("GroupShareContent", "toLink error", ex)
                 ""
             }
@@ -1002,11 +1002,11 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
         fun toBcmSchemeUrl(): String {
             return try {
-                "$SHARE_SCHEME_NEW_URL?gid=${groupId}&name=${URLEncoder.encode(if(groupName.isNullOrEmpty())
+                "$SHARE_SCHEME_NEW_URL?gid=${groupId}&name=${URLEncoder.encode(if (groupName.isNullOrEmpty())
                     getString(R.string.common_chats_group_default_name) else groupName, "UTF-8")}" +
                         "&code=${URLEncoder.encode(shareCode, "UTF-8")}&signature=${URLEncoder.encode(shareSignature, "UTF-8")}" +
                         "&ekey=${URLEncoder.encode(ekey, "UTF-8")}&timestamp=$timestamp"
-            }catch (ex: Exception) {
+            } catch (ex: Exception) {
                 ALog.e("GroupShareContent", "toBcmSchemeUrl error", ex)
                 ""
             }
@@ -1022,7 +1022,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
                 json.put("icon", groupIcon)
                 json.put("ekey", ekey)
                 return json.toString()
-            }catch (ex: Exception) {
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
             return ""
@@ -1043,7 +1043,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
     }
 
     /**
-     * 
+     *
      */
     class ReplyContent(@SerializedName("replyMid") val mid: Long, @SerializedName("replyUid") val uid: String,
                        @SerializedName("replyContent") val replyString: String, @SerializedName("replyText") val text: String) : Content() {
@@ -1081,59 +1081,34 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
         }
 
         /**
-         * 
+         *
          */
-        fun getReplyDescribe(gid:Long, accountContext: AccountContext, isOutgoing: Boolean): CharSequence {
+        fun getReplyDescribe(context: Context, gid: Long, accountContext: AccountContext, isOutgoing: Boolean): CharSequence {
             val contentBuilder = SpannableStringBuilder()
-            val resource = AppContextHolder.APP_CONTEXT.resources
+            val size = 16.dp2Px()
+            val color = if (isOutgoing) {
+                context.getAttrColor(R.attr.common_white_color)
+            } else {
+                context.getAttrColor(R.attr.common_icon_color_grey)
+            }
             val icon = when (replyMessage.type) {
                 IMAGE -> {
-                    if (isOutgoing) {
-                        AppUtil.getDrawable(resource, R.drawable.common_chats_reply_image_sent_icon)
-                    } else {
-                        AppUtil.getDrawable(resource, R.drawable.common_chats_reply_image_received_icon)
-                    }
+                    context.getDrawable(R.drawable.common_chats_conversation_reply_image_icon)
                 }
                 VIDEO -> {
-                    if (isOutgoing) {
-                        AppUtil.getDrawable(resource, R.drawable.common_chats_reply_video_sent_icon)
-                    } else {
-                        AppUtil.getDrawable(resource, R.drawable.common_chats_reply_video_received_icon)
-                    }
+                    context.getDrawable(R.drawable.common_chats_conversation_reply_video_icon)
                 }
                 FILE -> {
-                    if (isOutgoing) {
-                        AppUtil.getDrawable(resource, R.drawable.common_chats_reply_file_sent_icon)
-
-                    } else {
-                        AppUtil.getDrawable(resource, R.drawable.common_chats_reply_file_received_icon)
-                    }
+                    context.getDrawable(R.drawable.common_chats_conversation_reply_file_icon)
                 }
                 AUDIO -> {
-                    if (isOutgoing) {
-                        AppUtil.getDrawable(resource, R.drawable.common_chats_reply_audio_sent_icon)
-
-                    } else {
-                        AppUtil.getDrawable(resource, R.drawable.common_chats_reply_audio_received_icon)
-
-                    }
+                    context.getDrawable(R.drawable.common_chats_conversation_reply_audio_icon)
                 }
                 LOCATION -> {
-                    if (isOutgoing) {
-                        AppUtil.getDrawable(resource, R.drawable.common_chats_reply_location_sent_icon)
-
-                    } else {
-                        AppUtil.getDrawable(resource, R.drawable.common_chats_reply_location_received_icon)
-                    }
+                    context.getDrawable(R.drawable.common_chats_conversation_reply_location_icon)
                 }
                 CONTACT -> {
-                    if (isOutgoing) {
-                        AppUtil.getDrawable(resource, R.drawable.common_chats_reply_namecard_sent_icon)
-
-                    } else {
-                        AppUtil.getDrawable(resource, R.drawable.common_chats_reply_namecard_received_icon)
-                    }
-
+                    context.getDrawable(R.drawable.common_chats_conversation_reply_contact_icon)
                 }
                 else -> {
                     null
@@ -1141,7 +1116,8 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
             }
             if (icon != null) {
-                icon.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
+                icon.setTint(color)
+                icon.setBounds(0, 0, size, size)
                 contentBuilder.append(StringAppearanceUtil.addImage(" ", icon, 0))
                 contentBuilder.append(" ")
             }
@@ -1220,7 +1196,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
             return action == 3
         }
 
-        fun isRemovePlayback():Boolean{
+        fun isRemovePlayback(): Boolean {
             return action == 4
         }
 
@@ -1258,7 +1234,7 @@ class AmeGroupMessage<out T : AmeGroupMessage.Content>(
 
     class SecureContent() : Content()
 
-    class GroupShareSettingRefreshContent(val shareCode:String, val shareSetting: String, val shareSettingSign:String, val shareAndOwnerConfirmSign:String, val needConfirm:Int, val ekey: String? ):Content() {
+    class GroupShareSettingRefreshContent(val shareCode: String, val shareSetting: String, val shareSettingSign: String, val shareAndOwnerConfirmSign: String, val needConfirm: Int, val ekey: String?) : Content() {
 
     }
 

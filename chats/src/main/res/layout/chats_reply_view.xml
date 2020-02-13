@@ -22,7 +22,7 @@
             android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:recipient_photo_custom_img="@drawable/common_image_place_img" />
+            app:recipient_photo_custom_img="@drawable/common_chats_conversation_reply_image_icon" />
 
         <com.bcm.messenger.common.ui.IndividualAvatarView
             android:id="@+id/reply_photo"
@@ -50,7 +50,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="left"
-            android:textColor="@color/common_title_color"
+            android:textColor="?attr/common_text_main_color"
             android:textSize="16sp"
             android:singleLine="true"
             android:ellipsize="end"
@@ -63,7 +63,7 @@
             android:id="@+id/reply_source_content"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/common_content_second_color"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="12sp"
             android:singleLine="true"
             android:ellipsize="end"
@@ -77,7 +77,7 @@
             android:id="@+id/reply_source_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/common_content_second_color"
+            android:textColor="?attr/common_text_secondary_color"
             android:textSize="12sp"
             android:singleLine="true"
             android:ellipsize="end"
@@ -102,7 +102,7 @@
         android:id="@+id/reply_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/common_color_black"
+        android:textColor="?attr/common_text_main_color"
         android:autoLink="all"
         android:maxWidth="260dp"
         android:textSize="@dimen/chats_conversation_item_body_text_size"

@@ -132,7 +132,8 @@
         <activity
             android:name=".history.ChatHistoryActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatsConversationTheme"/>
         <activity
             android:name=".group.live.ChatLiveSettingActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|fontScale"

@@ -19,9 +19,9 @@
 
     <EditText
         android:id="@+id/common_search_text"
-        android:layout_width="0dp"
+        android:layout_width="12dp"
         android:layout_height="36dp"
-        android:drawableStart="@drawable/common_search_bar_icon"
+        android:drawableStart="@drawable/common_search_icon"
         android:drawablePadding="6dp"
         android:paddingStart="@dimen/common_horizontal_gap"
         android:paddingEnd="30dp"
@@ -45,7 +45,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:src="@drawable/common_clear_icon"
+        android:src="@drawable/common_input_clear_icon"
+        android:tint="?attr/common_icon_color_grey"
         android:scaleType="centerInside"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="@id/common_search_text"
@@ -53,16 +54,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:visibility="visible"/>
 
-    <ImageView
+    <com.bcm.messenger.common.ui.CommonLoadingView
         android:id="@+id/common_searching_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/common_loading_icon"
-        android:scaleType="centerInside"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="@id/common_search_text"
         app:layout_constraintBottom_toBottomOf="@+id/common_search_text"
         app:layout_constraintEnd_toStartOf="@id/common_search_close"
+        app:circle_size="small"
         tools:visibility="visible"/>
 
 </merge>

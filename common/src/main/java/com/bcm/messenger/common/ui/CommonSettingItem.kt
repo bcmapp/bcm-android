@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.common_setting_item.view.*
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getAttribute
-import com.bcm.messenger.common.utils.getColorCompat
 
 /**
  * Created by wjh on 2018/6/6
@@ -311,7 +310,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
             RIGHT_YES -> {
                 item_right.visibility = View.VISIBLE
                 item_right_body.clearAnimation()
-                item_right_body.setImageResource(R.drawable.common_tick_green_icon)
+                item_right_body.setImageResource(R.drawable.common_tick_icon)
             }
         }
     }

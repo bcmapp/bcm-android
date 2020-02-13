@@ -3,7 +3,6 @@ package com.bcm.messenger.chats.components
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.View
@@ -13,11 +12,9 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.MessageFileHandler
 import com.bcm.messenger.chats.group.viewholder.ChatViewHolder
 import com.bcm.messenger.chats.util.ChatComponentListener
-import com.bcm.messenger.chats.util.LongClickCheck
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
-import com.bcm.messenger.common.crypto.encrypt.BCMEncryptUtils
 import com.bcm.messenger.common.grouprepository.manager.MessageDataManager
 import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.mms.DecryptableStreamUriLoader
@@ -25,9 +22,9 @@ import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.ui.IndividualAvatarView
-import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmGroupNameUtil
-import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -59,9 +56,9 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
     init {
         ALog.d(TAG, "init")
         View.inflate(context, R.layout.chats_reply_view, this)
-        mImagePlaceHolder = R.drawable.common_image_place_img
-        mImageError = R.drawable.common_image_broken_img
-        mImageRadius = AppUtil.dp2Px(resources, 6)
+        mImagePlaceHolder = R.drawable.chats_media_placeholder_image_icon
+        mImageError = R.drawable.chats_media_placeholder_image_broken_icon
+        mImageRadius = 6.dp2Px()
 
         reply_image.radius = mImageRadius.toFloat()
         super.setOnClickListener { v ->
@@ -95,7 +92,7 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
         val groupModel = GroupLogic.get(accountContext).getModel(messageRecord.gid)
         reply_to.text = if (recipient == null) {
             null
-        }else {
+        } else {
             BcmGroupNameUtil.getGroupMemberName(recipient, groupModel?.getGroupMember(recipient.address.serialize()))
         }
         when {
@@ -112,30 +109,30 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
             else -> {
                 reply_source_text.visibility = View.GONE
                 reply_source_content.visibility = View.VISIBLE
-                reply_source_content.text = content.getReplyDescribe(messageRecord.gid, accountContext, messageRecord.isSendByMe)
+                reply_source_content.text = content.getReplyDescribe(context, messageRecord.gid, accountContext, messageRecord.isSendByMe)
             }
         }
         setReplaySnapshot(accountContext, messageRecord)
         ChatViewHolder.interceptMessageText(reply_text, messageRecord, content.text)
     }
 
-    fun setAppearance(isOutgoing: Boolean) {
+    private fun setAppearance(isOutgoing: Boolean) {
         if (isOutgoing) {
-            reply_to.setTextColor(AppUtil.getColor(resources, R.color.common_color_white))
-            reply_text.setTextColor(AppUtil.getColor(resources, R.color.common_color_white))
-            reply_text.setLinkTextColor(AppUtil.getColor(resources, R.color.common_color_white))
-            reply_source_text.setTextColor(Color.parseColor("#AAD5FF"))
-            reply_source_content.setTextColor(Color.parseColor("#AAD5FF"))
+            reply_to.setTextColor(context.getAttrColor(R.attr.common_text_white_color))
+            reply_text.setTextColor(context.getAttrColor(R.attr.common_text_white_color))
+            reply_text.setLinkTextColor(context.getAttrColor(R.attr.common_text_white_color))
+            reply_source_text.setTextColor(context.getAttrColor(R.attr.chats_conversation_outgo_text_secondary_color))
+            reply_source_content.setTextColor(context.getAttrColor(R.attr.chats_conversation_outgo_text_secondary_color))
 
-            reply_line.setBackgroundColor(AppUtil.getColor(resources, R.color.common_color_white_30))
+            reply_line.setBackgroundColor(context.getAttrColor(R.attr.chats_conversation_outgo_background_color))
         } else {
-            reply_to.setTextColor(AppUtil.getColor(resources, R.color.common_color_black))
-            reply_text.setTextColor(AppUtil.getColor(resources, R.color.common_color_black))
-            reply_text.setLinkTextColor(AppUtil.getColor(resources, R.color.common_app_primary_color))
-            reply_source_text.setTextColor(AppUtil.getColor(resources, R.color.common_content_second_color))
-            reply_source_content.setTextColor(AppUtil.getColor(resources, R.color.common_content_second_color))
+            reply_to.setTextColor(context.getAttrColor(R.attr.common_text_main_color))
+            reply_text.setTextColor(context.getAttrColor(R.attr.common_text_main_color))
+            reply_text.setLinkTextColor(context.getAttrColor(R.attr.common_text_blue_color))
+            reply_source_text.setTextColor(context.getAttrColor(R.attr.common_text_secondary_color))
+            reply_source_content.setTextColor(context.getAttrColor(R.attr.common_text_secondary_color))
 
-            reply_line.setBackgroundColor(Color.parseColor("#E8E8E8"))
+            reply_line.setBackgroundColor(context.getAttrColor(R.attr.chats_conversation_income_background_color))
         }
     }
 
@@ -204,7 +201,6 @@ class ChatReplyView @JvmOverloads constructor(context: Context, attrs: Attribute
                                                         ALog.e(TAG, "buildThumbnailRequest failback error", ex)
                                                     }
                                                 }
-
                                             }, {
                                                 ALog.e(TAG, "setReplaySnapshot downloadThumbnail error", it)
                                             })

@@ -39,7 +39,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:scaleType="centerInside"
-            android:src="@drawable/common_search_bar_icon"/>
+            android:src="@drawable/common_search_icon"/>
 
         <TextView
             android:id="@+id/channel_share_title"

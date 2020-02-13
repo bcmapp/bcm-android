@@ -86,7 +86,7 @@
         android:ellipsize="end"
         android:layout_marginTop="15dp"
         android:padding="15dp"
-        android:background="@drawable/common_grey_bg"
+        android:background="@drawable/common_rectangle_8_bg"
         app:layout_constraintTop_toBottomOf="@id/join_member_avatar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

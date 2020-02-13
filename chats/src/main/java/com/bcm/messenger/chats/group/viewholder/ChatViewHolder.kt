@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.text.StaticLayout
 import android.text.style.URLSpan
 import android.util.LongSparseArray
 import android.view.View
@@ -25,7 +24,6 @@ import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.chats.group.logic.MessageSender
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
-import com.bcm.messenger.chats.util.ClickSpanTouchHandler
 import com.bcm.messenger.chats.util.LinkUrlSpan
 import com.bcm.messenger.chats.util.LongClickCheck
 import com.bcm.messenger.chats.util.TelUrlSpan

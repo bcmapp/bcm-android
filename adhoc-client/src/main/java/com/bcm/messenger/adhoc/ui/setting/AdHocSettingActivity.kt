@@ -64,7 +64,7 @@ class AdHocSettingActivity : AccountSwipeBaseActivity() {
             adhoc_setting_mode_enable.setTextColor(AppUtil.getColor(resources, R.color.common_color_ff3737))
         } else {
             AmeModuleCenter.login().setAdHocUid("")
-            adhoc_setting_mode_enable.setBackgroundResource(R.drawable.common_blue_bg)
+            adhoc_setting_mode_enable.setBackgroundResource(R.drawable.common_rectangle_8_blue_bg)
             adhoc_setting_mode_enable.text = getString(R.string.adhoc_setting_enable_airchat)
             adhoc_setting_mode_enable.setTextColor(AppUtil.getColor(resources, R.color.common_color_white))
         }

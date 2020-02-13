@@ -6,7 +6,7 @@
     android:autoLink="all"
     android:background="@drawable/chats_conversation_received_bubble_bg"
     android:textColor="?attr/common_text_main_color"
-    android:textColorLink="@color/common_app_primary_color"
+    android:textColorLink="?attr/common_text_blue_color"
     android:textSize="@dimen/chats_conversation_item_body_text_size"
     android:paddingBottom="@dimen/chats_conversation_item_vertical_gap"
     android:paddingEnd="@dimen/chats_conversation_item_horizontal_gap"

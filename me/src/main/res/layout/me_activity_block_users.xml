@@ -6,10 +6,11 @@
 
     <com.bcm.messenger.common.ui.CommonTitleBar2
         android:id="@+id/block_user_title_bar"
-        style="@style/CommonTitleBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:right_type="text"
         app:right_text="@string/me_self_edit_button"
-        app:right_text_color="@color/common_color_379BFF"
+        app:right_text_color="?attr/common_text_blue_color"
         app:center_text="@string/me_setting_blocked_user_title"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +30,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:textSize="16sp"
-        android:textColor="@color/common_color_A8A8A8"
+        android:textColor="?attr/common_text_secondary_color"
         android:text="@string/me_no_block_user"
         android:visibility="gone" />
 </androidx.constraintlayout.widget.ConstraintLayout>

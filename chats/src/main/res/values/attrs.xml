@@ -41,6 +41,8 @@
     <attr name="chats_conversation_income_background_color" format="color" />
     <attr name="chats_conversation_income_text_color" format="color" />
     <attr name="chats_conversation_income_icon_color" format="color" />
+    <attr name="chats_conversation_outgo_icon_color" format="color" />
+    <attr name="chats_conversation_outgo_text_secondary_color" format="color" />
     <attr name="chats_conversation_outgo_button_background_color" format="color" />
     <attr name="chats_conversation_income_button_background_color" format="color" />
     

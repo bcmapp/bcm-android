@@ -22,7 +22,7 @@
             android:scaleType="centerCrop"
             android:contentDescription=""
             android:layout_gravity="center"
-            tools:src="@drawable/common_group_default_logo"/>
+            tools:src="@drawable/common_group_default_avatar_logo"/>
 
     </androidx.cardview.widget.CardView>
 

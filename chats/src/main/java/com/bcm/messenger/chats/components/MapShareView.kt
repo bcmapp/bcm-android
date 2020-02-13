@@ -3,7 +3,7 @@ package com.bcm.messenger.chats.components
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import androidx.annotation.ColorRes
+import androidx.annotation.AttrRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -12,8 +12,8 @@ import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.core.MapApiConstants
 import kotlinx.android.synthetic.main.chats_share_map_view.view.*
 import com.bcm.messenger.common.mms.GlideRequests
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getAttribute
-import com.bcm.messenger.common.utils.getColorCompat
 
 /**
  * Created by zjl on 2018/6/23.
@@ -31,9 +31,9 @@ class MapShareView : ConstraintLayout {
     }
 
 
-    fun setAppearance(@ColorRes mainTextColor: Int, isSendByMe: Boolean) {
-        location_title?.setTextColor(context.getColorCompat(mainTextColor))
-        location_address?.setTextColor(context.getColorCompat(mainTextColor))
+    fun setAppearance(@AttrRes mainTextColor: Int, isSendByMe: Boolean) {
+        location_title?.setTextColor(context.getAttrColor(mainTextColor))
+        location_address?.setTextColor(context.getAttrColor(mainTextColor))
         if (isSendByMe) {
             location_title?.setBackgroundResource(R.drawable.chats_location_sent_top_bg)
             location_address?.setBackgroundResource(context.getAttribute(R.attr.chats_conversation_outgo_background_color))

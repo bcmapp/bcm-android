@@ -76,7 +76,7 @@
         android:ellipsize="end"
         android:layout_marginStart="45dp"
         android:layout_marginEnd="45dp"
-        android:background="@drawable/common_blue_bg"
+        android:background="@drawable/common_rectangle_8_blue_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

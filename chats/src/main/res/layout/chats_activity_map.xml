@@ -37,7 +37,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
-        android:drawableStart="@drawable/common_search_bar_icon"
+        android:drawableStart="@drawable/common_search_icon"
         android:drawablePadding="10dp"
         android:paddingStart="@dimen/common_horizontal_gap"
         android:paddingEnd="30dp"
@@ -88,7 +88,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@color/common_color_white"
+        android:background="?attr/common_view_background"
         android:visibility="gone">
 
         <com.bcm.messenger.chats.components.LocationItemSearcher

@@ -84,7 +84,7 @@ class AmeNoteActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.IViewH
 
         updateNoteList()
 
-        val d = getDrawable(R.drawable.common_content_warning_icon)
+        val d = getDrawable(R.drawable.common_warning_icon)
         d.setBounds(0, 0, d.intrinsicWidth, d.intrinsicHeight)
         me_note_empty_note_tip.text = StringAppearanceUtil.addImage("  " + getString(R.string.me_note_if_you_lost_your_password_or_delete_the_app_you_will_lose_all_your_data_in_the_vault),
                 d, 0)

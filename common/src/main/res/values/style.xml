@@ -78,38 +78,9 @@
         <item name="android:windowExitAnimation">@anim/common_popup_alpha_out</item>
     </style>
 
-    <style name="CommonToolbarTitleStyle">
-        <item name="android:textSize">@dimen/common_title_bar_text_size</item>
-        <item name="android:textColor">@color/common_title_bar_text_color</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <style name="CommonToolbarRightTitleStyle">
-        <item name="android:textSize">@dimen/common_title_bar_right_text_size</item>
-        <item name="android:textColor">@color/common_title_bar_right_text_color</item>
-        <item name="android:layout_gravity">right|center_vertical</item>
-        <item name="android:layout_marginRight">15dp</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
     <style name="CommonPrimaryTextBgStyle">
         <item name="android:background">@drawable/common_primary_thick_round_selector</item>
         <item name="android:textColor">?attr/common_activity_background</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="CommonPrimaryBlueText">
-        <item name="android:background">@drawable/common_blue_bg</item>
-        <item name="android:textColor">@color/common_color_379BFF</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="CommonPrimaryRedText">
-        <item name="android:background">@drawable/common_white_bg</item>
-        <item name="android:textColor">@color/common_content_warning_color</item>
         <item name="android:gravity">center</item>
     </style>
 
@@ -125,27 +96,6 @@
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="CommonSecondTextButtonStyle">
-        <item name="android:background">@drawable/common_green_stroke_big_corner_bg</item>
-        <item name="android:textColor">@color/common_app_green_color</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="CommonSwitchStyle">
-        <!--Colour switch on-->
-        <item name="colorControlActivated">@color/common_app_primary_color</item>
-        <!--Colour switch off-->
-        <item name="colorSwitchThumbNormal">@color/common_color_F1F2F3</item>
-        <!--Forground colour-->
-        <item name="android:colorForeground">@color/common_color_F1F2F3</item>
-    </style>
-
-    <style name="CommonDarkTextBgStyle">
-        <item name="android:background">@drawable/common_dark_thick_round_selector</item>
-        <item name="android:textColor">?attr/common_activity_background</item>
-        <item name="android:gravity">center</item>
-    </style>
-
     <style name="CommonPrimaryBigTextStyle" parent="CommonPrimaryTextBgStyle">
         <item name="android:textSize">16sp</item>
         <item name="android:paddingTop">11dp</item>
@@ -154,30 +104,12 @@
         <item name="android:paddingEnd">6dp</item>
     </style>
 
-    <style name="CommonDarkThinTextBgStyle">
-        <item name="android:background">@drawable/common_dark_thin_round_selector</item>
-        <item name="android:textColor">?attr/common_text_main_color</item>
-        <item name="android:gravity">center</item>
-    </style>
-
     <style name="CommonPrimaryThinBigTextStyle" parent="CommonPrimaryThinTextBgStyle">
         <item name="android:textSize">16sp</item>
         <item name="android:paddingTop">11dp</item>
         <item name="android:paddingBottom">11dp</item>
         <item name="android:paddingStart">6dp</item>
         <item name="android:paddingEnd">6dp</item>
-    </style>
-
-    <style name="CommonDarkBigTextStyle" parent="CommonDarkTextBgStyle">
-        <item name="android:textSize">16sp</item>
-        <item name="android:paddingTop">11dp</item>
-        <item name="android:paddingBottom">11dp</item>
-    </style>
-
-    <style name="CommonDarkThinBigTextStyle" parent="CommonDarkThinTextBgStyle">
-        <item name="android:textSize">16sp</item>
-        <item name="android:paddingTop">11dp</item>
-        <item name="android:paddingBottom">11dp</item>
     </style>
 
     <!-- Password style -->
@@ -230,7 +162,7 @@
         <item name="android:layout_marginEnd">45dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:background">@drawable/common_blue_bg</item>
+        <item name="android:background">@drawable/common_rectangle_8_blue_bg</item>
         <item name="android:gravity">center</item>
     </style>
 
@@ -241,7 +173,7 @@
         <item name="android:layout_marginEnd">45dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:background">@drawable/common_blue_light_bg</item>
+        <item name="android:background">@drawable/common_button_blue_light_bg</item>
         <item name="android:gravity">center</item>
     </style>
 

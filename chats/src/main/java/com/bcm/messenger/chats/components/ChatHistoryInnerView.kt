@@ -79,8 +79,8 @@ class ChatHistoryInnerView @JvmOverloads constructor(context: Context, attrs: At
                 bold = true
             }
             2 -> {
-                textColor = getColor(R.color.chats_mine_tips_text_color)
-                nameColor = getColor(R.color.common_color_EBF5FF)
+                textColor = context.getAttrColor(R.attr.common_text_white_color)
+                nameColor = context.getAttrColor(R.attr.chats_conversation_outgo_text_secondary_color)
                 bold = false
             }
             3 -> {
