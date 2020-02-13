@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -32,8 +31,6 @@ import com.bcm.messenger.common.ui.KeyboardAwareLinearLayout;
 import com.bcm.messenger.utility.ViewUtils;
 import com.bcm.messenger.utility.concurrent.ListenableFuture;
 import com.bcm.messenger.utility.concurrent.SettableFuture;
-
-import org.w3c.dom.Text;
 
 import java.util.concurrent.TimeUnit;
 
