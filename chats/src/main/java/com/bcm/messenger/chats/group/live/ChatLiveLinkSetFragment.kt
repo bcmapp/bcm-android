@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.util.analyseYoutubeUrl
 import com.bcm.messenger.common.ui.popup.ToastUtil
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.hideKeyboard
 import com.bcm.messenger.common.utils.showKeyboard
 import com.bcm.messenger.common.video.VideoPlayer
@@ -71,16 +72,18 @@ class ChatLiveLinkSetFragment : Fragment() {
 
         chats_link_tv_link.requestFocus()
         chats_link_tv_link.showKeyboard()
+        chats_live_next.isEnabled = false
 
         chats_link_tv_link.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
+                val context = this@ChatLiveLinkSetFragment.context?:return
                 if (s.isNullOrBlank()) {
                     chats_link_tv_link.hideClearButton()
-                    chats_live_next.setImageResource(R.drawable.chats_48_next_grey)
+                    chats_live_next.setColorFilter(context.getAttrColor(R.attr.common_text_secondary_color))
                     chats_live_next.isEnabled = false
                 } else {
                     chats_link_tv_link.showClearButton()
-                    chats_live_next.setImageResource(R.drawable.chats_48_next)
+                    chats_live_next.setColorFilter(context.getAttrColor(R.attr.common_foreground_color))
                     chats_live_next.isEnabled = true
                 }
             }
@@ -121,12 +124,12 @@ class ChatLiveLinkSetFragment : Fragment() {
     }
 
     private fun startAnimator() {
-        chats_live_next.setImageResource(R.drawable.chats_48_loading_black)
-        animator = ObjectAnimator.ofFloat(chats_live_next, "rotation", 0f, 360f).setDuration(500)
+        chats_live_next.setImageResource(R.drawable.common_loading_outer_large_icon)
+        animator = ObjectAnimator.ofFloat(chats_live_next, "rotation", 0f, 360f).setDuration(3000)
         animator?.repeatCount = -1
         animator?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationCancel(animation: Animator?) {
-                chats_live_next?.setImageResource(R.drawable.chats_48_next_grey)
+                chats_live_next.setImageResource(R.drawable.common_next_icon)
                 chats_live_next?.rotation = 0f
             }
         })
