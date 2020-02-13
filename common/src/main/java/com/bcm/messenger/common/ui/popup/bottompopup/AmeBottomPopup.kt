@@ -282,11 +282,10 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
                 return cellView
             } else {
                 val sepView = View(inflater.context)
-                sepView.setBackgroundColor(AppContextHolder.APP_CONTEXT.getAttrColor(R.attr.common_text_secondary_color))
                 sepView.layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         5.dp2Px())
-                sepView.setBackgroundColor(getColor(R.color.common_underline_color))
+                sepView.setBackgroundColor(inflater.context.getAttrColor(R.attr.common_item_line_color))
                 parent.addView(sepView)
                 return sepView
             }
