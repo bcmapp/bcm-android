@@ -102,7 +102,7 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     fun setProgressDrawableResource(resourceId: Int) {
-        setProgressDrawable(AppUtil.getDrawable(resources, resourceId))
+        setProgressDrawable(context.getDrawable(resourceId)?:return)
     }
 
 

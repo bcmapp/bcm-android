@@ -12,6 +12,7 @@
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:theme="@style/ChatsConversationTheme"
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".ui.channel.AdHocPreviewActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
