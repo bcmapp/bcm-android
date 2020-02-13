@@ -805,9 +805,9 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                         messageRecord.expiresTime)
                 alertView?.setExpirationVisible(true)
                 val color = if (messageRecord.getRecipient(getAccountContext()).expireMessages > 0) {
-                    R.color.common_color_white_50
+                    R.attr.common_text_secondary_color
                 } else {
-                    R.color.common_color_88c0c0c0
+                    R.attr.common_text_third_color
                 }
                 alertView?.setExpirationColor(color)
             } else if (!messageRecord.isOutgoing() && !messageRecord.isMediaPending()) {

@@ -31,7 +31,7 @@
             android:id="@+id/notification_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/common_mute_grey"
+            android:src="@drawable/common_mute_icon"
             android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -3,7 +3,7 @@
 android:color="@color/common_color_C2C2C2">
 <item android:id="@android:id/mask">
     <shape android:shape="oval">
-        <solid android:color="@color/common_color_white"/>
+        <solid android:color="?attr/common_background_color"/>
     </shape>
 </item>
 <item>
@@ -11,11 +11,11 @@ android:color="@color/common_color_C2C2C2">
         <size
             android:width="10dp"
             android:height="10dp"/>
-        <solid android:color="#606060"/>
+        <solid android:color="?attr/common_text_secondary_color"/>
         <stroke
             android:dashWidth="1dp"
             android:width="1dp"
-            android:color="@color/common_color_white"/>
+            android:color="?attr/common_background_color"/>
     </shape>
 </item>
 </ripple>

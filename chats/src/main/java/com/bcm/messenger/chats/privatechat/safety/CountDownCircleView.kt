@@ -8,11 +8,13 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.animation.LinearInterpolator
+import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
 import androidx.appcompat.widget.AppCompatTextView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.getAttrColor
 import java.util.*
 
 /**
@@ -40,13 +42,13 @@ class CountDownCircleView : AppCompatTextView {
     }
 
     private fun init() {
-        mPaint.color = AppUtil.getColor(context.resources, R.color.common_color_white_50)
+        mPaint.color = context.getAttrColor(R.attr.common_text_secondary_color)
         mPaint.isAntiAlias = true
         mPaint.style = Paint.Style.FILL
     }
 
-    fun setColor(@ColorRes color: Int) {
-        mPaint.color = AppUtil.getColor(context.resources, color)
+    fun setColor(@AttrRes color: Int) {
+        mPaint.color = context.getAttrColor(color)
     }
 
     private fun calculateProgress(startedAt: Long, expiresIn: Long): Float {

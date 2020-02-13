@@ -11,6 +11,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.privatechat.safety.CountDownCircleView
@@ -149,7 +150,7 @@ class AlertView : LinearLayout {
         expirationTimer.start(started, expiresIn)
     }
 
-    fun setExpirationColor(@ColorRes color: Int) {
+    fun setExpirationColor(@AttrRes color: Int) {
         expirationTimer.setColor(color)
     }
 
