@@ -8,8 +8,8 @@
     <path
         android:pathData="M11.855,7c0.22,0 0.412,0.081 0.575,0.244 0.163,0.163 0.244,0.36 0.244,0.59 0,0.22 -0.076,0.407 -0.23,0.56a0.78,0.78 0,0 1,-0.575 0.23,0.78 0.78,0 0,1 -0.575,-0.23 0.763,0.763 0,0 1,-0.23 -0.56c0,-0.22 0.08,-0.415 0.237,-0.582A0.738,0.738 0,0 1,11.855 7zM10,10.803v-0.546l2.674,-0.115v5.823c0,0.326 0.178,0.489 0.532,0.489h0.762V17h-3.824v-0.546h0.704c0.422,0 0.633,-0.202 0.633,-0.604v-4.242c0,-0.537 -0.307,-0.805 -0.92,-0.805H10z"
         android:strokeWidth=".3"
-        android:fillColor="#000"
-        android:strokeColor="#000"
+        android:fillColor="?attr/common_foreground_color"
+        android:strokeColor="?attr/common_foreground_color"
         android:fillType="evenOdd"/>
   </group>
   <group>
@@ -18,7 +18,7 @@
         android:strokeWidth="1"
         android:pathData="M12,12m-9.5,0a9.5,9.5 0,1 1,19 0a9.5,9.5 0,1 1,-19 0"
         android:fillColor="#00000000"
-        android:strokeColor="#000"
+        android:strokeColor="?attr/common_foreground_color"
         android:fillType="evenOdd"/>
   </group>
 </vector>

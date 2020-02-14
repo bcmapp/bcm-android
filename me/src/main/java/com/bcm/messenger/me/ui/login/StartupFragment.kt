@@ -98,10 +98,9 @@ class StartupFragment : AbsRegistrationFragment() {
                                     f.arguments = arg
                                     val transaction = supportFragmentManager.beginTransaction()
                                             .replace(R.id.register_container, f, "generate_key_2")
-                                    if (arguments?.getBoolean(RegistrationActivity.CREATE_ACCOUNT_ID, false) != true) {
-                                        transaction.addToBackStack("generate_key_2")
-                                    }
-                                    transaction.commitAllowingStateLoss()
+                                            .addToBackStack("generate_key_2")
+                                            .commitAllowingStateLoss()
+
                                     f.setKeyPair(it)
                                 }
                             } else {

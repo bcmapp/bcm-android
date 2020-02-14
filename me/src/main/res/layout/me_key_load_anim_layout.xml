@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/common_activity_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/key_layout"
@@ -130,7 +131,7 @@
     <Button
         android:id="@+id/key_link_next"
         style="@style/CommonBlueButton"
-        android:layout_marginTop="150dp"
+        android:layout_marginBottom="30dp"
         android:scaleX="0"
         android:scaleY="0"
         android:text="@string/common_next"
@@ -138,26 +139,21 @@
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/account_key_anim_tips" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-    <ImageView
-        android:id="@+id/startup_back_btn"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:padding="12dp"
-        android:src="@drawable/common_arrow_back_icon"
+
+    <com.bcm.messenger.common.ui.CommonTitleBar2
+        android:id="@+id/account_key_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:left_type="image"
+        app:left_image="@drawable/common_arrow_back_icon"
+        app:right_type="image"
+        app:right_image="@drawable/common_info_icon"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/account_info_btn"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:padding="12dp"
-        android:src="@drawable/common_info_icon"
-        android:tint="?attr/common_foreground_color"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <TextView
         android:id="@+id/account_key_title"
@@ -169,7 +165,7 @@
         android:textStyle="bold"
         android:textColor="@color/common_text_main_color"
         android:text="@string/me_generated_key"
-        app:layout_constraintTop_toBottomOf="@id/account_info_btn"
+        app:layout_constraintTop_toBottomOf="@id/account_key_title_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 

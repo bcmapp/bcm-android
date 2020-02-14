@@ -67,10 +67,11 @@ class PickNicknameFragment : AbsRegistrationFragment() {
                     val uid = BCMPrivateKeyUtils.provideUid(keyPair.publicKey.serialize())
                     val f = RegisterSucceedFragment()
                     activity?.supportFragmentManager?.beginTransaction()
-                            ?.replace(R.id.register_container, f)
+                            ?.replace(R.id.register_container, f, "register_succeed")
+                            ?.addToBackStack("register_succeed")
                             ?.commitAllowingStateLoss()
 
-                    new_nickname.postDelayed({
+                    AmeDispatcher.mainThread.dispatch({
                         if (AmeModuleCenter.login().getLoginAccountContextList().size == 1) {
                             BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH)
                                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

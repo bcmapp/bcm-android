@@ -94,7 +94,9 @@ class RegistrationActivity : ThemeBaseActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (supportFragmentManager.backStackEntryCount > 1) {
-                supportFragmentManager.popBackStack()
+                for (i in 1 until supportFragmentManager.backStackEntryCount) {
+                    supportFragmentManager.popBackStack()
+                }
                 return true
             } else {
                 if (AMELogin.isLogin || AmeModuleCenter.login().accountSize() > 0) {

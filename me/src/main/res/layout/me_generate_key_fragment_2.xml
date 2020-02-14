@@ -172,9 +172,11 @@
     <include
         android:id="@+id/key_load_anim_layout"
         layout="@layout/me_key_load_anim_layout"
+        android:visibility="invisible"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
 
     <TextView

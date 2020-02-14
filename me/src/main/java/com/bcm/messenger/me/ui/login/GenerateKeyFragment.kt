@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
@@ -30,8 +31,8 @@ import kotlin.math.min
 
 class GenerateKeyFragment : AbsRegistrationFragment() {
 
-    private var action = -1
     private var keyPair: ECKeyPair? = null
+    private var genTime:Long = 0L
     private var nonce: Long = 0
     private val CHALLENGE_KEY_LENGTH = 32
     private var target: String? = null
@@ -51,13 +52,55 @@ class GenerateKeyFragment : AbsRegistrationFragment() {
             hideButtonAnimation()
         }
 
+        key_link_next?.setOnClickListener {
+            activity?.apply {
+                val key = keyPair
+
+                if (null != key && nonce >= 0) {
+                    val f = SetPasswordFragment()
+                    f.initParams(nonce, key)
+                    supportFragmentManager.beginTransaction()
+                            .replace(R.id.register_container, f, "set_password_fragment")
+                            .addToBackStack("set_password_fragment")
+                            .commit()
+                }
+            }
+        }
+
+        account_key_title_bar.setListener(object :CommonTitleBar2.TitleBarClickListener() {
+            override fun onClickLeft() {
+                activity?.onBackPressed()
+            }
+
+            override fun onClickRight() {
+                UserModuleImp().gotoBackupTutorial()
+            }
+        })
+
         target = arguments?.getString("target")
 
         showCircleAnimation()
+
+        val keyPair = this.keyPair
+        if (keyPair != null && stopped) {
+            key_load_anim_layout.visibility = View.VISIBLE
+            val pubArray = keyPair.publicKey.serialize()
+            anim_text_one?.setText(HexUtil.toString(pubArray))
+            val privateArray = keyPair.privateKey.serialize()
+            anim_text_two?.setText(HexUtil.toString(privateArray))
+
+            key_link_next.visibility = View.VISIBLE
+            key_link_next.scaleX = 1.0f
+            key_link_next.scaleY = 1.0f
+            account_key_title_bar?.visibility = View.VISIBLE
+
+            anim_key_gen_date.text = getString(R.string.me_str_generation_key_date, SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(genTime)))
+        }
     }
 
     fun setKeyPair(keyPair: ECKeyPair) {
         this.keyPair = keyPair
+        this.genTime = System.currentTimeMillis()
     }
 
     private fun showCircleAnimation() {
@@ -376,15 +419,17 @@ class GenerateKeyFragment : AbsRegistrationFragment() {
         if (stopped) {
             return
         }
-        val height = AppContextHolder.APP_CONTEXT.getScreenHeight() - AppContextHolder.APP_CONTEXT.getStatusBarHeight()
+
         if (startup_key == null) return
-        anim_key_gen_date.text = getString(R.string.me_str_generation_key_date, SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(System.currentTimeMillis())))
+        anim_key_gen_date.text = getString(R.string.me_str_generation_key_date, SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(genTime)))
+
+        key_load_anim_layout.visibility = View.VISIBLE
         AnimatorSet().apply {
-            play(ObjectAnimator.ofFloat(key_load_anim_layout, "translationY", 0f, -1000f).apply {
+            play(ObjectAnimator.ofFloat(key_load_anim_layout, "translationY", 1f*AppContextHolder.APP_CONTEXT.getScreenHeight(), 1000f).apply {
                 duration = 400
             }).before(AnimatorSet().apply {
-                play(ObjectAnimator.ofFloat(startup_key, "translationY", -500f, 0f - startup_key.bottom))
-                        .with(ObjectAnimator.ofFloat(key_load_anim_layout, "translationY", -1000f, 0f-AppContextHolder.APP_CONTEXT.getScreenHeight()))
+                play(ObjectAnimator.ofFloat(startup_key, "translationY", startup_key.bottom*-1f))
+                        .with(ObjectAnimator.ofFloat(key_load_anim_layout, "translationY", 1000f, 0f))
                 duration = 1500
                 addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationStart(animation: Animator?) {
@@ -402,20 +447,6 @@ class GenerateKeyFragment : AbsRegistrationFragment() {
     private fun startShowNextAnim() {
         if (stopped) {
             return
-        }
-        key_link_next?.setOnClickListener {
-            activity?.apply {
-                val key = keyPair
-
-                if (null != key && nonce >= 0) {
-                    val f = SetPasswordFragment()
-                    f.initParams(nonce, key)
-                    supportFragmentManager.beginTransaction()
-                            .replace(R.id.register_container, f, "set_password_fragment")
-//                            .addToBackStack("generate_key_fragment")
-                            .commit()
-                }
-            }
         }
 
         AnimatorSet().apply {
@@ -435,20 +466,14 @@ class GenerateKeyFragment : AbsRegistrationFragment() {
                                     val privateArray = keyPair.privateKey.serialize()
                                     anim_text_two?.setText(HexUtil.toString(privateArray))
                                 }
-                                account_info_btn?.visibility = View.VISIBLE
-                                startup_back_btn?.visibility = View.VISIBLE
+                                key_link_next.visibility = View.VISIBLE
+                                account_key_title_bar?.visibility = View.VISIBLE
                             }
                         })
                     }
             )
 
         }.addToList(animatorSetList).start()
-        account_info_btn?.setOnClickListener {
-            UserModuleImp().gotoBackupTutorial()
-        }
-        startup_back_btn?.setOnClickListener {
-            activity?.onBackPressed()
-        }
     }
 
     @SuppressLint("CheckResult")

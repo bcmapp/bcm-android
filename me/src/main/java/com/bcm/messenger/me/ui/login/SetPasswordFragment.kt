@@ -57,7 +57,7 @@ class SetPasswordFragment : AbsRegistrationFragment() {
             f.initParams(nonce, keyPair, new_password_edit.text.toString(), "")
             activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.register_container, f, "pick_nickname_fragment")
-                    ?.addToBackStack("set_password_fragment")
+                    ?.addToBackStack("pick_nickname_fragment")
                     ?.commit()
         }
 
