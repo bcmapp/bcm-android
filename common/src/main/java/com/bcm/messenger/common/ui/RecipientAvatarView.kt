@@ -228,7 +228,7 @@ class RecipientAvatarView @JvmOverloads constructor(context: Context, attrs: Att
 
     fun setPrivateElevation(elevation: Float) {
         if (elevation != this.elevation) {
-            setBackgroundResource(R.drawable.common_white_circle)
+            setBackgroundResource(R.drawable.common_item_ripple_oval_bg)
             this.elevation = elevation
         }
     }

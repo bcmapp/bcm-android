@@ -3,8 +3,6 @@ package com.bcm.messenger.common
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.Looper
-import android.os.MessageQueue
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import com.bcm.messenger.common.core.setLocale
@@ -30,20 +28,9 @@ open class SwipeBaseActivity : ThemeBaseActivity(), SwipeBackActivityBase {
 
     private var disableDefaultTransition = false
     private var disabledClipboardCheck = false
-    private var disabledLightStatusBar = false
 
     private var checkDisposable: Disposable? = null
     private var checkStartTime = System.currentTimeMillis()
-
-    private val idleHandler = MessageQueue.IdleHandler {
-        if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
-            disabledLightStatusBar = true
-        }
-        if (!disabledLightStatusBar) {
-            window?.setStatusBarLightMode()
-        }
-        return@IdleHandler false
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!disableDefaultTransition) {
@@ -65,8 +52,6 @@ open class SwipeBaseActivity : ThemeBaseActivity(), SwipeBackActivityBase {
         mHelper = SwipeBackActivityHelper(this)
         mHelper.onActivityCreate()
         swipeBackLayout.setScrimColor(getColorCompat(R.color.common_color_transparent))
-
-        Looper.myQueue().addIdleHandler(idleHandler)
 
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onActivityCreate(this)
     }
@@ -104,11 +89,6 @@ open class SwipeBaseActivity : ThemeBaseActivity(), SwipeBackActivityBase {
             ALog.i(TAG, "SwipeBaseActivity onPause, Start check clipboard time to pause time less then 1 seconds, means have pin lock, canceled check")
             checkDisposable?.dispose()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Looper.myQueue().removeIdleHandler(idleHandler)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

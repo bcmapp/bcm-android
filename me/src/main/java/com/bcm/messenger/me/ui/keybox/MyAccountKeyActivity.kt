@@ -17,6 +17,7 @@ import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.theme.ThemeManager
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.IndividualAvatarView
 import com.bcm.messenger.common.ui.popup.AmePopup
@@ -89,8 +90,6 @@ class MyAccountKeyActivity : AccountSwipeBaseActivity() {
     }
 
     private fun initData() {
-
-        keybox_account_entrance?.visibility = View.GONE
         keybox_account_divider?.visibility = View.GONE
         keybox_account_qr?.visibility = View.VISIBLE
 
@@ -174,7 +173,7 @@ class MyAccountKeyActivity : AccountSwipeBaseActivity() {
         AmePopup.loading.show(this, false)
         Observable.create(ObservableOnSubscribe<Bitmap> {
             val qrEncoder = QREncoder(QRExport.accountDataToAccountJson(accountData), dimension = 225.dp2Px(), charset = "utf-8")
-            val bitmap = qrEncoder.encodeAsBitmap()
+            val bitmap = qrEncoder.encodeAsBitmap(!ThemeManager.isDarkTheme(this))
             it.onNext(bitmap)
             it.onComplete()
         }).subscribeOn(Schedulers.io())

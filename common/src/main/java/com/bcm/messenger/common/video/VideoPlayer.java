@@ -119,7 +119,7 @@ public class VideoPlayer extends FrameLayout {
         exoPlayer.setVolume(audioVolume);
 
         if (audioVolume == 0) {
-            audioView.setImageResource(R.drawable.ic_mute_16);
+            audioView.setImageResource(R.drawable.common_video_player_mute_icon);
             isMuted = true;
         }
     }
@@ -380,7 +380,7 @@ public class VideoPlayer extends FrameLayout {
         if (exoPlayer != null) {
             exoPlayer.setVolume(0);
         }
-        audioView.setImageResource(R.drawable.ic_mute_16);
+        audioView.setImageResource(R.drawable.common_video_player_mute_icon);
         if (volumeChangeListener != null) {
             volumeChangeListener.onVolumeChanged(0);
         }
@@ -391,7 +391,7 @@ public class VideoPlayer extends FrameLayout {
         if (exoPlayer != null) {
             exoPlayer.setVolume(audioVolume);
         }
-        audioView.setImageResource(R.drawable.ic_unmute_16);
+        audioView.setImageResource(R.drawable.common_video_player_unmute_icon);
         if (volumeChangeListener != null) {
             volumeChangeListener.onVolumeChanged(5);
         }

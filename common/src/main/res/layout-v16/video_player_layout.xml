@@ -26,7 +26,7 @@
         android:paddingStart="0dp"
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
-        android:src="@drawable/common_media_unmute_icon"
+        android:src="@drawable/common_video_player_unmute_icon"
         android:tint="?attr/common_white_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent" />

@@ -19,6 +19,7 @@ import com.bcm.messenger.common.recipients.RecipientModifiedListener
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.ExpirationUtil
 import com.bcm.messenger.common.utils.GroupDescription
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.utility.StringAppearanceUtil
 import java.util.*
 
@@ -174,7 +175,8 @@ class ConversationStatusItem : LinearLayout, RecipientModifiedListener, Bindable
     private fun setEndSessionRecord(messageRecord: MessageRecord) {
         setShowed(true)
         icon?.visibility = View.VISIBLE
-        icon?.setImageResource(R.drawable.ic_refresh_white_24dp)
+        icon?.setImageResource(R.drawable.common_refresh_icon)
+        icon?.drawable?.setTint(context.getAttrColor(R.attr.common_white_color))
         body?.text = messageRecord.body
     }
 

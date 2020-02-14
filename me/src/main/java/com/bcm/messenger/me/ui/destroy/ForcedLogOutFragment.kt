@@ -13,7 +13,6 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.front
-import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
@@ -50,8 +49,6 @@ class ForcedLogOutFragment : Fragment() {
         }
 
         init()
-
-        activity?.window?.setStatusBarLightMode()
     }
 
     private fun gotoReLogin(uid:String) {

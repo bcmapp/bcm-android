@@ -5,5 +5,5 @@
     <color name="me_pin_input_round">#9BCDFF</color>
     <color name="me_pin_input_gray">#1AD8D8D8</color>
 
-    <color name="me_account_key_qr_bg_color">#FFFFFF</color>
+    <color name="me_account_key_qr_bg_color">#00000000</color>
 </resources>

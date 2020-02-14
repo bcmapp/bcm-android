@@ -35,4 +35,8 @@
         <item name="android:background">@drawable/me_input_bg</item>
         <item name="android:clickable">true</item>
     </style>
+
+    <style name="MeMyAccountKeyTheme" parent="CommonBcmTheme.Basic">
+        <item name="me_account_key_qr_code_background">@drawable/me_account_key_qr_bg</item>
+    </style>
 </resources>

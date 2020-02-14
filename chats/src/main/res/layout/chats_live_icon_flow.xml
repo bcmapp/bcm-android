@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/common_white_circle"
+    android:background="@drawable/common_item_ripple_oval_bg"
     android:elevation="10dp"
     tools:context="com.bcm.messenger.chats.components.LiveIconFlowWindow">
 

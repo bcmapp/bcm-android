@@ -9,7 +9,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.ui.keybox.VerifyKeyActivity
@@ -39,8 +38,6 @@ class AccountSwitcherActivity : ThemeBaseActivity() {
             }
             startBcmActivity(AmeLoginLogic.getAccountContext(uid), intent)
         }
-
-        window.setStatusBarLightMode()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

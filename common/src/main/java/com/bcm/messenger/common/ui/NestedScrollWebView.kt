@@ -181,7 +181,7 @@ class NestedScrollWebView : WebView, NestedScrollingChild {
             }
 
             override fun getDefaultVideoPoster(): Bitmap? {
-                return super.getDefaultVideoPoster() ?: return BitmapFactory.decodeResource(AppContextHolder.APP_CONTEXT.resources, R.drawable.common_web_shortcut)
+                return super.getDefaultVideoPoster() ?: return BitmapFactory.decodeResource(AppContextHolder.APP_CONTEXT.resources, R.drawable.ic_launch_logo_0)
             }
         }
 

@@ -3,4 +3,6 @@
         <attr name="icon" format="reference" />
         <attr name="itemTxt" format="string" />
     </declare-styleable>
+
+    <attr name="me_account_key_qr_code_background" format="reference" />
 </resources>

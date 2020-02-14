@@ -190,7 +190,9 @@ class MediaViewActivity : FullTransSwipeBaseActivity() {
             saveMedia()
         }).withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_delete)) {
             deleteMedia()
-        })
+        }).withDismissListener {
+            enterFullScreen()
+        }
 
         popup.show(this)
     }

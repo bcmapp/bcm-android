@@ -32,7 +32,8 @@
             android:windowSoftInputMode="stateUnchanged|adjustResize"/>
         <activity
             android:name="com.bcm.messenger.me.ui.keybox.MyAccountKeyActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/MeMyAccountKeyTheme"/>
         <activity
             android:name="com.bcm.messenger.me.ui.login.backup.AccountSecurityActivity"
             android:screenOrientation="portrait"/>
