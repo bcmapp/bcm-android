@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:src="@drawable/chats_maps_gps_icon"
+        android:src="@drawable/chats_map_gps_icon"
         app:layout_constraintStart_toEndOf="@id/locate_name"
         app:layout_constraintTop_toTopOf="@id/locate_name"
         app:layout_constraintBottom_toBottomOf="@id/locate_name"

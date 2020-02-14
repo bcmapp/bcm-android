@@ -145,11 +145,11 @@ class ConversationItemPopWindow private constructor(context: Context, anchorView
         val size = AppUtil.dp2Px(context.resources, 40)
         val p = ImageView(context)
         p.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        p.setImageResource(R.drawable.chats_pop_privious_icon)
+        p.setImageResource(R.drawable.chats_conversation_pop_previous_icon)
         p.layoutParams = ViewGroup.LayoutParams(size, size)
         val n = ImageView(context)
         n.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        n.setImageResource(R.drawable.chats_pop_next_icon)
+        n.setImageResource(R.drawable.chats_conversation_pop_next_icon)
         n.layoutParams = ViewGroup.LayoutParams(size, size)
         return Pair(p, n)
     }
@@ -379,7 +379,7 @@ class ConversationItemPopWindow private constructor(context: Context, anchorView
                     tv.text = context.getString(R.string.chats_forward)
                 }
                 TYPE_UNSEND -> {
-                    val d = AppUtil.getDrawable(context.resources, R.drawable.chats_conversation_pop_unsend_icon)
+                    val d = AppUtil.getDrawable(context.resources, R.drawable.chats_conversation_pop_recall_icon)
                     d.setBounds(0, 0, d.intrinsicWidth, d.intrinsicHeight)
                     tv.setCompoundDrawables(null, d, null, null)
                     tv.text = context.getString(R.string.chats_text_recall)
@@ -391,7 +391,7 @@ class ConversationItemPopWindow private constructor(context: Context, anchorView
                     tv.text = context.getString(R.string.chats_delete)
                 }
                 TYPE_PIN -> {
-                    val d = AppUtil.getDrawable(context.resources, R.drawable.chats_20_stick_on_top)
+                    val d = AppUtil.getDrawable(context.resources, R.drawable.chats_conversation_pop_pin_icon)
                     d.setBounds(0, 0, d.intrinsicWidth, d.intrinsicHeight)
                     tv.setCompoundDrawables(null, d, null, null)
                     tv.text = context.getString(R.string.chats_pin)

@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="37dp"
         android:layout_marginEnd="22dp"
-        android:src="@drawable/chats_24_emoji_delete"
+        android:src="@drawable/chats_conversation_panel_emoji_delete_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 

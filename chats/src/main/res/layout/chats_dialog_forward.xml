@@ -338,7 +338,7 @@
         android:id="@+id/forward_mode_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/chats_forward_unchecked"
+        android:drawableStart="@drawable/common_checkbox_unselected"
         android:drawablePadding="5dp"
         android:paddingStart="@dimen/common_horizontal_gap"
         android:paddingTop="10dp"

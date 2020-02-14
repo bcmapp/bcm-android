@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.bcm.messenger.chats.R;
 import com.bcm.messenger.common.ui.KeyboardAwareLinearLayout;
+import com.bcm.messenger.common.utils.AppUtilKotlinKt;
 import com.bcm.messenger.utility.ViewUtils;
 import com.bcm.messenger.utility.concurrent.ListenableFuture;
 import com.bcm.messenger.utility.concurrent.SettableFuture;
@@ -158,7 +159,8 @@ public class VoiceRecodingPanel implements KeyboardAwareLinearLayout.OnKeyboardS
             if (null != listener) {
                 listener.onCancelClicked();
             }
-            recordDotView.setImageResource(R.drawable.chats_record_cancel_dot);
+            recordDotView.setImageResource(R.drawable.common_close_icon);
+            recordDotView.getDrawable().setTint(AppUtilKotlinKt.getAttrColor(recordDotView.getContext(), R.attr.common_setting_item_warn_color));
         }
     }
 

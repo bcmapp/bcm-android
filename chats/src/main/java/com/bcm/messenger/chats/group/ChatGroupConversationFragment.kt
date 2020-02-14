@@ -129,9 +129,9 @@ class ChatGroupConversationFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         ALog.i(TAG, "onViewCreated")
         topUnreadBubble = view.findViewById(R.id.message_unread_up_bubble)
-        topUnreadBubble?.setOrientationIcon(R.drawable.chats_10_up)
+        topUnreadBubble?.setOrientationIcon(R.drawable.chats_conversation_bubble_up_icon)
         bottomUnreadBubble = view.findViewById(R.id.message_unread_down_bubble)
-        bottomUnreadBubble?.setOrientationIcon(R.drawable.chats_10_down)
+        bottomUnreadBubble?.setOrientationIcon(R.drawable.chats_conversation_bubble_down_icon)
         layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, true)
         group_conversation_list.setHasFixedSize(false)
         group_conversation_list.layoutManager = layoutManager

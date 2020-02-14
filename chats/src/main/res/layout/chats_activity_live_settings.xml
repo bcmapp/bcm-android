@@ -9,7 +9,7 @@
         android:id="@+id/chats_live_settings_bar"
         style="@style/CommonTitleBarStyle"
         app:center_text="@string/chats_live_settings_title"
-        app:left_image="@drawable/chats_24_close"
+        app:left_image="@drawable/common_close_icon"
         app:right_type="text"
         app:right_text_color="@color/common_color_379BFF"
         app:layout_constraintEnd_toEndOf="parent"

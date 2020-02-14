@@ -44,7 +44,7 @@
         android:layout_alignBottom="@id/contact_photo_image"
         android:layout_alignEnd="@id/contact_photo_image"
         android:contentDescription="@string/chats_conversation_item_pin_description"
-        android:src="@drawable/chats_14_stick_on_top"
+        android:src="@drawable/chats_conversation_pin_top_icon"
         android:visibility="gone"
         tools:visibility="visible"/>
 
@@ -75,7 +75,7 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_marginStart="5dp"
-            android:src="@drawable/chats_16_tv"
+            android:src="@drawable/chats_message_list_live_icon"
             android:visibility="gone" />
 
     </LinearLayout>

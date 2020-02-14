@@ -25,7 +25,7 @@
         android:layout_marginBottom="0dp"
         android:layout_marginEnd="0dp"
         android:layout_marginStart="0dp"
-        android:src="@drawable/chats_drag_location_icon"
+        android:src="@drawable/chats_map_drag_location_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -238,7 +238,7 @@ class ChatForwardDialog(private val accountContext: AccountContext) : DialogFrag
 
     private fun switchForwardHistoryMode() {
         if (!forward_mode_text.isActivated) {
-            forward_mode_text.setDrawableLeft(R.drawable.chats_forward_checked)
+            forward_mode_text.setDrawableLeft(R.drawable.common_checkbox_selected)
             forwardHistory = true
             forward_mode_text.isActivated = true
             if (dialogType == FORWARD_GROUP_MULTIPLE) {
@@ -247,7 +247,7 @@ class ChatForwardDialog(private val accountContext: AccountContext) : DialogFrag
                 forward_history_layout.setHistoryData(accountContext, privateMessageList, true)
             }
         } else {
-            forward_mode_text.setDrawableLeft(R.drawable.chats_forward_unchecked)
+            forward_mode_text.setDrawableLeft(R.drawable.common_checkbox_unselected)
             forwardHistory = false
             forward_mode_text.isActivated = false
             if (dialogType == FORWARD_GROUP_MULTIPLE) {

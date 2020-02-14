@@ -22,11 +22,12 @@
 
     <ImageView
         android:id="@+id/live_delete_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginStart="32dp"
         android:layout_marginBottom="10dp"
-        android:src="@drawable/chats_live_32_remove"
+        android:src="@drawable/chats_conversation_delete_icon"
+        android:tint="?attr/common_white_color"
         app:layout_constraintBottom_toTopOf="@+id/live_delete_text"
         app:layout_constraintStart_toStartOf="parent" />
 

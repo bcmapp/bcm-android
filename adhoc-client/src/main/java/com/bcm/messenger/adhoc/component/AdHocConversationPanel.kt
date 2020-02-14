@@ -140,13 +140,13 @@ class AdHocConversationPanel : androidx.constraintlayout.widget.ConstraintLayout
             if (show) {
                 if (panel_emoji_container.visibility != View.VISIBLE) {
                     panel_emoji_container.visibility = View.VISIBLE
-                    panel_emoji_toggle.setImageDrawable(AppUtil.getDrawable(resources, R.drawable.chats_keyboard))
+                    panel_emoji_toggle.setImageDrawable(AppUtil.getDrawable(resources, R.drawable.chats_conversation_keyboard_icon))
                     mListener?.onEmojiPanelShow(show)
                 }
             } else {
                 if (panel_emoji_container.visibility == View.VISIBLE) {
                     panel_emoji_container.visibility = View.GONE
-                    panel_emoji_toggle.setImageDrawable(AppUtil.getDrawable(resources, R.drawable.chats_emoji))
+                    panel_emoji_toggle.setImageDrawable(AppUtil.getDrawable(resources, R.drawable.chats_conversation_emoji_icon))
                     mListener?.onEmojiPanelShow(show)
                 }
             }

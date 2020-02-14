@@ -143,32 +143,6 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/panel_burn_toggle"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/chats_destroy_msg_icon"
-                android:visibility="gone"
-                android:layout_marginStart="3dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:visibility="gone" />
-
-            <TextView
-                android:id="@+id/panel_burn_delay_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/common_text_secondary_color"
-                android:textSize="7sp"
-                android:textStyle="bold"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/panel_burn_toggle"
-                app:layout_constraintEnd_toEndOf="@id/panel_burn_toggle"
-                app:layout_constraintStart_toStartOf="@id/panel_burn_toggle"
-                app:layout_constraintTop_toTopOf="@id/panel_burn_toggle"
-                tools:text="1h"/>
-
-            <ImageView
                 android:id="@+id/panel_emoji_toggle"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
@@ -199,7 +173,7 @@
                 android:layout_marginStart="6dp"
                 android:layout_marginEnd="3dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/panel_burn_toggle"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/panel_emoji_toggle"
                 app:layout_constraintTop_toTopOf="parent"/>
 
