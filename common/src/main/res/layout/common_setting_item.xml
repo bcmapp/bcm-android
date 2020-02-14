@@ -9,19 +9,20 @@
         android:id="@+id/item_head"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="left|center_vertical"
-        android:textSize="14sp"
-        android:singleLine="true"
         android:ellipsize="end"
+        android:gravity="left|center_vertical"
         android:paddingStart="@dimen/common_horizontal_gap"
-        android:paddingEnd="@dimen/common_horizontal_gap"
         android:paddingTop="26dp"
+        android:paddingEnd="@dimen/common_horizontal_gap"
         android:paddingBottom="10dp"
+        android:singleLine="true"
+        android:textSize="14sp"
+        android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="header"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="header" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_content_layout"
@@ -29,23 +30,23 @@
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/common_horizontal_gap"
         android:paddingEnd="@dimen/common_horizontal_gap"
-        app:layout_constraintTop_toBottomOf="@id/item_head"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_head">
 
         <FrameLayout
             android:id="@+id/item_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             android:gravity="center"
             android:paddingStart="0dp"
             android:paddingEnd="15dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible">
 
             <ImageView
@@ -64,9 +65,9 @@
             android:gravity="center"
             android:paddingStart="10dp"
             android:paddingEnd="0dp"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible">
 
             <ImageView
@@ -75,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription=""
                 android:scaleType="fitCenter"
-                tools:src="@drawable/common_arrow_right_icon"/>
+                tools:src="@drawable/common_arrow_right_icon" />
 
         </FrameLayout>
 
@@ -86,24 +87,24 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            app:layout_constraintStart_toEndOf="@id/item_left"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/item_right"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintStart_toEndOf="@id/item_left"
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.bcm.messenger.common.ui.emoji.EmojiTextView
                 android:id="@+id/item_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:textSize="17sp"
                 android:lineSpacingExtra="3dp"
                 android:maxLines="1"
-                android:ellipsize="end"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                android:textSize="17sp"
                 app:layout_constraintEnd_toStartOf="@id/item_center_right"
-                tools:text="About"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="About" />
 
             <com.bcm.messenger.common.ui.emoji.EmojiTextView
                 android:id="@+id/item_sub_name"
@@ -112,36 +113,36 @@
                 android:layout_marginTop="5dp"
                 android:gravity="left"
                 android:textSize="13sp"
-                app:layout_constraintTop_toBottomOf="@id/item_name"
-                app:layout_constraintStart_toStartOf="@id/item_name"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/item_name"
+                app:layout_constraintTop_toBottomOf="@id/item_name"
                 tools:text="About"
-                tools:visibility="gone"/>
+                tools:visibility="gone" />
 
             <FrameLayout
                 android:id="@+id/item_center_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                app:layout_constraintTop_toTopOf="@id/item_name"
                 app:layout_constraintBottom_toBottomOf="@id/item_name"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/item_name"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintTop_toTopOf="@id/item_name">
 
                 <com.bcm.messenger.common.ui.emoji.EmojiTextView
                     android:id="@+id/item_tip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
+                    android:drawableStart="@drawable/common_warning_icon"
+                    android:drawablePadding="5dp"
+                    android:ellipsize="end"
+                    android:lineSpacingExtra="0dp"
+                    android:singleLine="true"
                     android:textSize="17sp"
                     android:visibility="gone"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:drawablePadding="5dp"
-                    android:drawableStart="@drawable/common_warning_icon"
-                    android:lineSpacingExtra="0dp"
                     tools:text="testtesttesttesttesttest"
-                    tools:visibility="visible"/>
+                    tools:visibility="visible" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/item_switch"
@@ -150,7 +151,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:visibility="gone"
                     app:thumbTint="@color/common_color_white"
-                    tools:visibility="gone"/>
+                    tools:visibility="gone" />
 
             </FrameLayout>
 
@@ -162,8 +163,8 @@
             android:layout_height="0.5dp"
             android:background="?attr/common_item_line_color"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/item_center"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/item_center" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

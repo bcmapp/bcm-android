@@ -32,7 +32,7 @@
 
         <item name="common_setting_item_background">@color/common_default_background_color</item>
         <item name="common_setting_item_main_text_color">@color/common_text_main_color</item>
-        <item name="common_setting_item_detail_text_color">@color/common_text_secondary_color</item>
+        <item name="common_setting_item_detail_text_color">@color/common_text_third_color</item>
         <item name="common_setting_item_tip_text_color">@color/common_text_third_color</item>
         <item name="common_setting_item_warn_color">@color/common_text_warning_color</item>
         <item name="common_setting_item_switcher_color">@color/common_default_switcher_color</item>

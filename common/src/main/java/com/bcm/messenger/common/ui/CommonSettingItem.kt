@@ -54,7 +54,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         val logoSize = typeArray.getDimensionPixelSize(R.styleable.CommonSettingItemStyle_setting_item_logo_size, 0)
         mIconColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_logo_color, context.getAttrColor(R.attr.common_icon_color))
         val head = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_head) ?: ""
-        mHeadColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_head_color, context.getAttrColor(R.attr.common_text_secondary_color))
+        mHeadColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_head_color, context.getAttrColor(R.attr.common_text_third_color))
         val name = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_name) ?: ""
         val subName = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_sub_name) ?: ""
         mNameColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_name_color, context.getAttrColor(R.attr.common_setting_item_main_text_color))
@@ -122,7 +122,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
 
     }
 
-    fun setOnTipClickListener(listener: View.OnClickListener) {
+    fun setOnTipClickListener(listener: OnClickListener) {
         item_tip.setOnClickListener(listener)
     }
 

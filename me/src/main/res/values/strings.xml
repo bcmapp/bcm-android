@@ -296,7 +296,7 @@
     <!--Settings-->
     <string name="me_setting_title">Settings</string>
     <string name="me_setting_general_head">APP SETTINGS</string>
-    <string name="me_setting_account_setting_head">ACCOUNT_SETTINGS</string>
+    <string name="me_setting_account_setting_head">ACCOUNT SETTINGS</string>
     <string name="me_setting_notifications_head">NOTIFICATIONS</string>
     <string name="me_settings_notification_disabled">BCM checked the notification is disabled. Would you like to enable the notification?</string>
     <string name="me_setting_notification_title">Notifications</string>
