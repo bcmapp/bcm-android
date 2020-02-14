@@ -265,7 +265,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="4dp"
-            android:drawableEnd="@drawable/wallet_arrow_right"
+            android:drawableEnd="@drawable/common_right_16_icon"
             android:gravity="center_vertical"
             android:textColor="?attr/common_text_secondary_color"
             android:textSize="15sp"

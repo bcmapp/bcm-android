@@ -29,9 +29,11 @@
 
         <ImageView
             android:id="@+id/about_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/me_bcm_logo" />
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/common_circle_highlight_background"
+            app:srcCompat="@drawable/ic_launch_logo_0"
+            android:tint="?attr/common_background_color"/>
 
         <TextView
             android:id="@+id/about_version"
