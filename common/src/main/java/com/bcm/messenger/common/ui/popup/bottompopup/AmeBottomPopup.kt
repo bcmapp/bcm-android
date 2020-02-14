@@ -105,11 +105,9 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
         }
 
         fun show(activity: FragmentActivity?) {
+            activity?:return
             if (config.doneTitle.isNotEmpty()) {
                 withPopItem(PopupItem.SEP)
-                if (config.doneTextColor == 0) {
-                    config.doneTextColor = activity?.getAttrColor(R.attr.common_text_main_color) ?: 0
-                }
             }
             instance().show(activity, config)
         }
@@ -122,9 +120,9 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
         return Builder()
     }
 
-    private fun show(activity: FragmentActivity?, config: PopConfig) {
+    private fun show(activity: FragmentActivity, config: PopConfig) {
         dismiss()
-        if (activity != null && !activity.isFinishing) {
+        if (!activity.isFinishing) {
             activity.application.registerActivityLifecycleCallbacks(this)
             attachActivity = WeakReference(activity)
 
@@ -251,7 +249,9 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
 
             if (config.doneTitle.isNotEmpty()) {
                 done_action.text = config.doneTitle
-                done_action.setTextColor(config.doneTextColor)
+                if (config.doneTextColor > 0) {
+                    done_action.setTextColor(config.doneTextColor)
+                }
                 done_action.setOnClickListener {
                     dismiss()
                     config.doneAction(it)
