@@ -19,6 +19,7 @@ import com.bcm.messenger.chats.util.AttachmentUtils
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.AccountSwipeBaseActivity
+import com.bcm.messenger.common.audio.ChatsAudioPlayer
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoConstants
 import com.bcm.messenger.common.imagepicker.BcmPickPhotoView
@@ -488,5 +489,8 @@ class AdHocConversationActivity : AccountSwipeBaseActivity() {
                 })
     }
 
-
+    override fun onPause() {
+        super.onPause()
+        ChatsAudioPlayer.instance.stop()
+    }
 }

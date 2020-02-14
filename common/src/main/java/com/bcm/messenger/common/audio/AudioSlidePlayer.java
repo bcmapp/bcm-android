@@ -18,7 +18,9 @@ import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
+import com.bcm.messenger.common.attachments.Attachment;
 import com.bcm.messenger.common.utils.AppUtil;
+import com.bcm.messenger.common.utils.log.ACLog;
 import com.orhanobut.logger.Logger;
 
 import com.bcm.messenger.common.R;
@@ -35,17 +37,14 @@ public class AudioSlidePlayer implements SensorEventListener {
 
     private static final String TAG = AudioSlidePlayer.class.getSimpleName();
 
-    private static @NonNull
-    Optional<AudioSlidePlayer> playing = Optional.absent();
-
     private final @NonNull
     Context context;
-    private final @NonNull
+    private final @Nullable
     MasterSecret masterSecret;
     private final @NonNull
     AudioSlide slide;
     private final @NonNull
-    Handler progressEventHandler;
+    ProgressEventHandler progressEventHandler;
     private final @NonNull
     AudioManager audioManager;
     private final @NonNull
@@ -66,18 +65,14 @@ public class AudioSlidePlayer implements SensorEventListener {
     private boolean forSensor = false;//
 
     public synchronized static AudioSlidePlayer createFor(@NonNull Context context,
-                                                          MasterSecret masterSecret,
+                                                          @Nullable  MasterSecret masterSecret,
                                                           @NonNull AudioSlide slide,
                                                           @NonNull Listener listener) {
-        if (playing.isPresent() && playing.get().getAudioSlide().equals(slide)) {
-            playing.get().setListener(listener);
-            return playing.get();
-        } else {
-            return new AudioSlidePlayer(context, masterSecret, slide, listener);
-        }
+        return new AudioSlidePlayer(context, masterSecret, slide, listener);
     }
 
     private AudioSlidePlayer(@NonNull Context context,
+                             @Nullable
                              MasterSecret masterSecret,
                              @NonNull AudioSlide slide,
                              @NonNull Listener listener) {
@@ -97,44 +92,31 @@ public class AudioSlidePlayer implements SensorEventListener {
         }
     }
 
-    public void prepareDuration() {
+    public static long getDuration(Context context, MasterSecret masterSecret, Attachment attachment) {
+        long duration = 0;
         try {
-            prepare();
-        } catch (IOException e) {
-            Log.w(TAG, e);
+            MediaPlayerWrapper mediaPlayer = new MediaPlayerWrapper();
+            AttachmentServer audioAttachmentServer = new AttachmentServer(context, masterSecret, attachment);
+            audioAttachmentServer.start();
+            mediaPlayer.setDataSource(context, audioAttachmentServer.getUri());
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+
+            mediaPlayer.setOnPreparedListener(mp -> {
+            });
+
+            mediaPlayer.prepare();
+            duration = mediaPlayer.getDuration();
+            audioAttachmentServer.stop();
+        } catch (Throwable e) {
+            ACLog.e(masterSecret.getAccountContext(), "AudioSlidePlayer", "getDuration", e);
         }
-    }
-
-    public void prepare() throws IOException {
-        if (this.mediaPlayer != null)
-            return;
-
-        this.mediaPlayer = new MediaPlayerWrapper();
-        this.audioAttachmentServer = new AttachmentServer(context, masterSecret, slide.asAttachment());
-        audioAttachmentServer.start();
-        mediaPlayer.setDataSource(context, audioAttachmentServer.getUri());
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mediaPlayer.setOnPreparedListener(mp -> {
-            synchronized (AudioSlidePlayer.this) {
-                notifyOnPrepare(mediaPlayer.getDuration());
-                mediaPlayer = null;
-                if (audioAttachmentServer != null) {
-                    audioAttachmentServer.stop();
-                    audioAttachmentServer = null;
-                }
-                if (wakeLock != null && wakeLock.isHeld()) {
-                    wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY);
-                }
-                progressEventHandler.sendEmptyMessage(0);
-            }
-        });
-
-        mediaPlayer.prepareAsync();
+        return duration;
     }
 
     public synchronized void play(final double progress) throws IOException {
-//        play(progress, false);
-        play(0, false);
+        play(progress, false);
+        //play(0, false);
     }
 
     private synchronized void play(final double progress, boolean earpiece) throws IOException {
@@ -163,8 +145,6 @@ public class AudioSlidePlayer implements SensorEventListener {
 
                     sensorManager.registerListener(AudioSlidePlayer.this, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
                     mediaPlayer.start();
-
-                    setPlaying(AudioSlidePlayer.this);
                 }
 
                 notifyOnStart(mediaPlayer.getDuration());
@@ -237,8 +217,6 @@ public class AudioSlidePlayer implements SensorEventListener {
 
         Log.w(TAG, "Stop called forSensor:" + forSensor);
 
-        removePlaying(this);
-
         if (this.mediaPlayer != null) {
             this.mediaPlayer.stop();
             this.mediaPlayer.release();
@@ -259,20 +237,14 @@ public class AudioSlidePlayer implements SensorEventListener {
 
     public synchronized void stop() {
         stop(false);
-    }
-
-
-    public synchronized static void stopAll() {
-        if (playing.isPresent()) {
-            playing.get().stop();
-        }
+        notifyOnStop();
     }
 
     public void setListener(@NonNull Listener listener) {
         this.listener = new WeakReference<>(listener);
 
         if (this.mediaPlayer != null && this.mediaPlayer.isPlaying()) {
-            notifyOnStart(this.mediaPlayer.getDuration());
+            progressEventHandler.notifyProgress();
         }
     }
 
@@ -289,15 +261,6 @@ public class AudioSlidePlayer implements SensorEventListener {
             return new Pair<>((double) mediaPlayer.getCurrentPosition() / (double) mediaPlayer.getDuration(),
                     mediaPlayer.getCurrentPosition());
         }
-    }
-
-    private void notifyOnPrepare(long totalMills) {
-        Util.runOnMain(new Runnable() {
-            @Override
-            public void run() {
-                getListener().onPrepare(AudioSlidePlayer.this, totalMills);
-            }
-        });
     }
 
     private void notifyOnStart(long totalMills) {
@@ -355,21 +318,6 @@ public class AudioSlidePlayer implements SensorEventListener {
             };
     }
 
-    private synchronized static void setPlaying(@NonNull AudioSlidePlayer player) {
-        if (playing.isPresent() && playing.get() != player) {
-            playing.get().notifyOnStop();
-            playing.get().stop();
-        }
-
-        playing = Optional.of(player);
-    }
-
-    private synchronized static void removePlaying(@NonNull AudioSlidePlayer player) {
-        if (playing.isPresent() && playing.get() == player) {
-            playing = Optional.absent();
-        }
-    }
-
     @Override
     public void onSensorChanged(SensorEvent event) {
 
@@ -423,6 +371,10 @@ public class AudioSlidePlayer implements SensorEventListener {
 
     }
 
+    public long progress() {
+        return progressEventHandler.progress();
+    }
+
     public interface Listener {
         void onPrepare(AudioSlidePlayer player, long totalMills);
 
@@ -441,13 +393,26 @@ public class AudioSlidePlayer implements SensorEventListener {
             this.playerReference = new WeakReference<>(player);
         }
 
+        public long progress() {
+            AudioSlidePlayer player = playerReference.get();
+            if (player == null) {
+                return 0;
+            }
+
+            return player.getProgress().second;
+        }
+
         @Override
         public void handleMessage(Message msg) {
+            notifyProgress();
+        }
+
+        public void notifyProgress() {
             AudioSlidePlayer player = playerReference.get();
             if (player == null) {
                 return;
             }
-            synchronized (player) {
+            synchronized (AudioSlidePlayer.class) {
                 if (player.mediaPlayer == null || !player.mediaPlayer.isPlaying()) {
                     return;
                 }

@@ -37,6 +37,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.audio.AudioSlidePlayer
+import com.bcm.messenger.common.audio.ChatsAudioPlayer
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
@@ -443,10 +444,11 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
         super.onPause()
         ALog.d(TAG, "onPause begin")
         bottom_panel.voiceRecodingPanel.onPause()
-        AudioSlidePlayer.stopAll()
         liveController?.onPause()
         hideKeyboard()
         ALog.d(TAG, "onPause end")
+
+        ChatsAudioPlayer.instance.stop()
     }
 
     override fun onStop() {

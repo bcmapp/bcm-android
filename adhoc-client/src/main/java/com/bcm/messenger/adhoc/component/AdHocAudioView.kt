@@ -10,19 +10,24 @@ import com.bcm.messenger.adhoc.logic.AdHocMessageDetail
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.attachments.DatabaseAttachment
 import com.bcm.messenger.common.audio.AudioSlidePlayer
+import com.bcm.messenger.common.audio.ChatsAudioPlayer
 import com.bcm.messenger.common.core.AmeGroupMessage
+import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.mms.AudioSlide
+import com.bcm.messenger.common.mms.Slide
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.DateUtils
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.permission.PermissionUtil
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.adhoc_audio_view.view.*
+import java.lang.ref.WeakReference
 import kotlin.math.min
 
 /**
@@ -36,14 +41,14 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
         private const val AUDIO_BACKWARD = 5
     }
 
-    private var audioSlidePlayer: AudioSlidePlayer? = null
+    private var slide: AudioSlide? = null
     private var playingPosition: Long = 0 //unit second
     private var backwardsCounter = 0 //handle audio back cause error
 
     private var mAdHocMessage: AdHocMessageDetail? = null
 
     private var mCurrentControlView: View? = null
-    private var accountContext:AccountContext? = null
+    private var accountContext: AccountContext? = null
 
     /**
      *
@@ -82,27 +87,42 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
         this.accountContext = accountContext
         val content = messageRecord.getMessageBody()?.content as AmeGroupMessage.AudioContent
         val slide = AudioSlide(context, messageRecord.toAttachmentUri(), content.size, content.duration, false)
+        this.slide = slide
         displayControl(audio_play)
         if (messageRecord.toAttachmentUri() == null) {
             ALog.w(TAG, "setAudio fail, uri is null")
             audio_play?.isClickable = false
             audio_pause?.isClickable = false
-        }else {
+        } else {
             audio_play?.isClickable = true
             audio_pause?.isClickable = true
         }
-        AudioSlidePlayer.stopAll()
-        this.audioSlidePlayer = AudioSlidePlayer.createFor(context, null, slide, this)
-        audio_progress.progress = 0
-        updateMediaDuration(accountContext, audioSlidePlayer, slide.duration)
-        if (slide.duration <= 0) {
-            audioSlidePlayer?.prepareDuration()
-        }
 
+        updateMediaDuration(accountContext, slide, slide.duration)
+        checkDuration(accountContext, slide)
+
+        if (ChatsAudioPlayer.instance.isPlaying(slide)) {
+            togglePlayToPause()
+            ChatsAudioPlayer.instance.setEventListener(this)
+        }
+    }
+
+    private fun checkDuration(accountContext: AccountContext, slide: AudioSlide) {
+        if (slide.duration <= 0) {
+            val weakThis = WeakReference(this)
+            AmeDispatcher.singleScheduler.scheduleDirect {
+                val duration = ChatsAudioPlayer.getDuration(null, slide)
+                AmeDispatcher.mainThread.dispatch {
+                    if (slide.uri == weakThis.get()?.slide?.uri) {
+                        updateMediaDuration(accountContext, slide, duration)
+                    }
+                }
+            }
+        }
     }
 
     fun setProgressDrawableResource(resourceId: Int) {
-        setProgressDrawable(context.getDrawable(resourceId)?:return)
+        setProgressDrawable(context.getDrawable(resourceId) ?: return)
     }
 
 
@@ -119,20 +139,22 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     fun cleanup() {
-        if (this.audioSlidePlayer != null && audio_pause.visibility == View.VISIBLE) {
-            this.audioSlidePlayer?.stop()
+        if (ChatsAudioPlayer.instance.isPlaying(slide?:return)) {
+            ChatsAudioPlayer.instance.setEventListener(null)
         }
     }
 
     override fun onPrepare(player: AudioSlidePlayer?, totalMills: Long) {
-        val accountContext = this.accountContext?:return
-        updateMediaDuration(accountContext, player, totalMills)
+        if (this.slide?.uri == player?.audioSlide?.uri) {
+            val accountContext = this.accountContext ?: return
+            updateMediaDuration(accountContext, player?.audioSlide, totalMills)
+        }
     }
 
     override fun onStart(player: AudioSlidePlayer?, totalMills: Long) {
-        val accountContext = this.accountContext?:return
-        updateMediaDuration(accountContext, player, totalMills)
-        if (this.audioSlidePlayer?.audioSlide == player?.audioSlide) {
+        val accountContext = this.accountContext ?: return
+        if (this.slide?.uri == player?.audioSlide?.uri) {
+            updateMediaDuration(accountContext, player?.audioSlide, totalMills)
             if (audio_pause.visibility != View.VISIBLE) {
                 togglePlayToPause()
             }
@@ -141,25 +163,40 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
 
     override fun onStop(player: AudioSlidePlayer?) {
         ALog.i("AudioView", "onStop" + audio_progress.progress)
-        if (this.audioSlidePlayer?.audioSlide == player?.audioSlide) {
-            togglePauseToPlay()
-            backwardsCounter = AUDIO_BACKWARD
-            onProgress(player, 0.0, 0)
+        if (this.slide?.uri == player?.audioSlide?.uri) {
+            onStop(slide)
+        }
+    }
+
+    private fun onStop(slide: AudioSlide?) {
+        togglePauseToPlay()
+        backwardsCounter = AUDIO_BACKWARD
+
+        slide?:return
+        if (!ChatsAudioPlayer.instance.isPlaying(slide)) {
+            onProgress(slide, 0.0, 0)
+        } else if(slide.duration - slide.duration *progress < 1000) {
+            onProgress(slide, 0.0, 0)
         }
     }
 
     override fun onProgress(player: AudioSlidePlayer?, progress: Double, millis: Long) {
         ALog.d(TAG, "onProgress progress: $progress, mills: $millis")
-        if (this.audioSlidePlayer?.audioSlide != player?.audioSlide) {
+        onProgress(player?.audioSlide, progress, millis)
+    }
+
+    private fun onProgress(audioSlide: AudioSlide?, progress: Double, millis: Long){
+        ALog.d(TAG, "onProgress progress: $progress, mills: $millis")
+        if (this.slide?.uri != audioSlide?.uri) {
             return
         }
         val position = millis / 1000L
         if (0L == millis) {
-            audio_timestamp.text = DateUtils.convertMinuteAndSecond(player?.audioSlide?.duration
+            audio_timestamp.text = DateUtils.convertMinuteAndSecond(audioSlide?.duration
                     ?: 0)
         } else if (position != playingPosition) {
             playingPosition = position
-            audio_timestamp.text = DateUtils.convertMinuteAndSecond((player?.audioSlide?.duration
+            audio_timestamp.text = DateUtils.convertMinuteAndSecond((audioSlide?.duration
                     ?: 0) - millis)
         }
 
@@ -182,10 +219,9 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
 
-    private fun updateMediaDuration(accountContext: AccountContext, player: AudioSlidePlayer?, duration: Long) {
+    private fun updateMediaDuration(accountContext: AccountContext, audioSlide: AudioSlide?, duration: Long) {
 
         ALog.d(TAG, "updateMediaDuration: $duration")
-        val audioSlide = player?.audioSlide
         if (audioSlide?.duration != duration) {
             if (audioSlide != null) {
                 audioSlide.duration = duration
@@ -208,17 +244,16 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
                         })
             }
         }
-        if (this.audioSlidePlayer?.audioSlide == audioSlide) {
-            if (duration <= 0) {
-                audio_timestamp.visibility = View.GONE
-            } else {
-                audio_timestamp.visibility = View.VISIBLE
-                audio_timestamp.text = DateUtils.convertMinuteAndSecond(duration)
-            }
-            audio_decoration.layoutParams = audio_decoration.layoutParams.apply {
-                width = min(3.dp2Px() * (duration / 1000).toInt(), 150.dp2Px())
-                if (width == 0) width = 5.dp2Px()
-            }
+
+        if (duration <= 0) {
+            audio_timestamp.visibility = View.GONE
+        } else {
+            audio_timestamp.visibility = View.VISIBLE
+            audio_timestamp.text = DateUtils.convertMinuteAndSecond(duration)
+        }
+        audio_decoration.layoutParams = audio_decoration.layoutParams.apply {
+            width = min(3.dp2Px() * (duration / 1000).toInt(), 150.dp2Px())
+            if (width == 0) width = 5.dp2Px()
         }
     }
 
@@ -236,16 +271,18 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     private fun realDoPlayAction(toPlay: Boolean) {
-        if (audioSlidePlayer == null) {
-            return
-        }
+        val slide = this.slide?:return
         try {
             if (toPlay) {
                 togglePlayToPause()
-                audioSlidePlayer?.play(progress)
+                if (ChatsAudioPlayer.instance.isPlaying(slide)) {
+                    ChatsAudioPlayer.instance.resume(progress)
+                } else {
+                    ChatsAudioPlayer.instance.play(null, slide, this)
+                }
             } else {
-                audioSlidePlayer?.stop()
-                onStop(audioSlidePlayer)
+                ChatsAudioPlayer.instance.stop()
+                onStop(slide)
             }
         } catch (ex: Exception) {
             ALog.e(TAG, "realDoPlay fail", ex)

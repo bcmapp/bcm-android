@@ -30,6 +30,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.audio.AudioSlidePlayer
+import com.bcm.messenger.common.audio.ChatsAudioPlayer
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.getSelectedLocale
@@ -324,7 +325,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
 
         bottom_panel.voiceRecodingPanel.onPause()
         markLastSeen()
-        AudioSlidePlayer.stopAll()
+        ChatsAudioPlayer.instance.stop()
 
         mScreenshotManager?.removeScreenshotListener()
         mScreenshotManager = null
