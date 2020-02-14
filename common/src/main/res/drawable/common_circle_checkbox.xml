@@ -2,6 +2,6 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@drawable/common_checkbox_selected" android:state_selected="true" />
     <item android:drawable="@drawable/common_checkbox_selected" android:state_checked="true" />
-    <item android:drawable="@drawable/common_checkbox_disable" android:state_enabled="false"/>
+    <item android:drawable="@drawable/common_checkbox_unselected" android:state_enabled="false"/>
     <item android:drawable="@drawable/common_checkbox_unselected" />
 </selector>
