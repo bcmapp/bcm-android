@@ -63,7 +63,7 @@ class ChatsAudioPlayer {
     }
 
     fun isPlaying(slide: AudioSlide): Boolean {
-        return slide.uri != null && slide.uri == playingSlide?.uri
+        return slide.uri != null && slide.uri == playingSlide?.uri && (player?.playing()==true)
     }
 
     fun progress(): Long {

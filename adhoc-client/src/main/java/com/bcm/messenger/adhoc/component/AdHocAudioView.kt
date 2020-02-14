@@ -104,6 +104,8 @@ class AdHocAudioView @JvmOverloads constructor(context: Context, attrs: Attribut
         if (ChatsAudioPlayer.instance.isPlaying(slide)) {
             togglePlayToPause()
             ChatsAudioPlayer.instance.setEventListener(this)
+        } else {
+            audio_progress.progress  = 0
         }
     }
 

@@ -119,7 +119,6 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         } else {
             AudioSlide(context, messageRecord.getFilePartUri(accountContext), content.size, content.duration, false, true)
         }
-
         this.slide = slide
 
         displayControl(audio_play)
@@ -129,7 +128,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
             else -> false
         }
 
-        audio_progress.progress = 0
+
         updateMediaDuration(slide, slide.duration)
         checkDuration(masterSecret, slide)
 
@@ -146,6 +145,8 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         if (ChatsAudioPlayer.instance.isPlaying(slide)) {
             togglePlayToPause()
             ChatsAudioPlayer.instance.setEventListener(this)
+        } else {
+            audio_progress.progress = 0
         }
     }
 
@@ -157,6 +158,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         val showControls = !messageRecord.isFailed() && (!messageRecord.isOutgoing() || messageRecord.isPending())
         val attachment = messageRecord.getAudioAttachment() ?: return
         val slide = AudioSlide(context, attachment.getPartUri(), attachment.dataSize, attachment.duration, attachment.isVoiceNote())
+        this.slide = slide
 
         displayControl(audio_play)
         mShowPending = if (showControls && slide.isPendingDownload) {
@@ -165,7 +167,6 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
             showControls && attachment.transferState == AttachmentDbModel.TransferState.STARTED.state
         }
 
-        audio_progress.progress = 0
         updateMediaDuration(slide, slide.duration)
         checkDuration(masterSecret, slide)
 
@@ -182,6 +183,8 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
         if (ChatsAudioPlayer.instance.isPlaying(slide)) {
             togglePlayToPause()
             ChatsAudioPlayer.instance.setEventListener(this)
+        } else {
+            audio_progress.progress = 0
         }
     }
 

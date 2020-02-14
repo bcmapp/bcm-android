@@ -28,6 +28,8 @@ import com.bcm.messenger.common.attachments.AttachmentServer;
 import com.bcm.messenger.common.crypto.MasterSecret;
 import com.bcm.messenger.common.mms.AudioSlide;
 import com.bcm.messenger.utility.Util;
+
+import org.jetbrains.annotations.NotNull;
 import org.whispersystems.libsignal.util.guava.Optional;
 
 import java.io.IOException;
@@ -373,6 +375,10 @@ public class AudioSlidePlayer implements SensorEventListener {
 
     public long progress() {
         return progressEventHandler.progress();
+    }
+
+    public boolean playing() {
+        return mediaPlayer != null;
     }
 
     public interface Listener {
