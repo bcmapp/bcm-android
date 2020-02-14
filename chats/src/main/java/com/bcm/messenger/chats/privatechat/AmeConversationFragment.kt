@@ -260,15 +260,15 @@ class AmeConversationFragment : BaseFragment(), RecipientModifiedListener {
     }
 
     private fun setBackground(expire: Int) {
-        private_conversation_root?.post {
-            if (expire > 0) {
-                private_conversation_root?.setBackgroundResource(R.drawable.chats_auto_delete_bg)
-                mStickNoticeLayout?.setBackgroundResource(R.drawable.chats_auto_delete_bg)
-            } else {
-                private_conversation_root?.setBackgroundColor(getAttrColor(R.attr.common_view_background_grey))
-                mStickNoticeLayout?.setBackgroundColor(getAttrColor(R.attr.common_view_background_grey))
-            }
-        }
+//        private_conversation_root?.post {
+//            if (expire > 0) {
+//                private_conversation_root?.setBackgroundResource(R.drawable.chats_auto_delete_bg)
+//                mStickNoticeLayout?.setBackgroundResource(R.drawable.chats_auto_delete_bg)
+//            } else {
+//                private_conversation_root?.setBackgroundColor(getAttrColor(R.attr.common_view_background_grey))
+//                mStickNoticeLayout?.setBackgroundColor(getAttrColor(R.attr.common_view_background_grey))
+//            }
+//        }
     }
 
     fun getExitView(indexId: Long): View? {
