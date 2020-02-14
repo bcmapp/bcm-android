@@ -9,7 +9,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.provider.AmeProvider
 import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.common.utils.setStatusBarLightMode
 import kotlinx.android.synthetic.main.chats_activity_map_preview.*
 import com.bcm.messenger.common.SwipeBaseActivity
 
@@ -35,8 +34,6 @@ class MapPreviewActivity : SwipeBaseActivity() {
         title = intent.getStringExtra(ARouterConstants.PARAM.MAP.TITLE)
         addresss = intent.getStringExtra(ARouterConstants.PARAM.MAP.ADDRESS)
         initView()
-
-        window?.setStatusBarLightMode()
     }
 
     fun initView() {
@@ -51,5 +48,4 @@ class MapPreviewActivity : SwipeBaseActivity() {
         location_title.text = title
         location_address.text = addresss
     }
-
 }

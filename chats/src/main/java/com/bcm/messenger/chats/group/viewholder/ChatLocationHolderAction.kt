@@ -41,9 +41,9 @@ class ChatLocationHolderAction(accountContext: AccountContext) : BaseChatHolderA
         body.setOnClickListener(this)
         val data = message.message?.content as AmeGroupMessage.LocationContent
         if (message.isSendByMe) {
-            body.setAppearance(R.color.common_default_background_color, true)
+            body.setAppearance(R.attr.common_text_white_color, true)
         } else {
-            body.setAppearance(R.color.common_text_main_color, false)
+            body.setAppearance(R.attr.common_text_main_color, false)
         }
         body.setMap(glideRequests, data)
     }

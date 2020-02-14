@@ -29,7 +29,6 @@ import com.bcm.messenger.chats.util.ScreenshotManager
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.ShareElements
-import com.bcm.messenger.common.audio.AudioSlidePlayer
 import com.bcm.messenger.common.audio.ChatsAudioPlayer
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.AmeGroupMessage
@@ -602,7 +601,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
     }
 
     private fun showDropMenu() {
-        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, R.color.common_text_main_color, getString(R.string.chats_media_and_files)) {
+        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, 0, getString(R.string.chats_media_and_files)) {
             MediaBrowserActivity.router(accountContext, mRecipient.address)
         }
 
@@ -614,18 +613,18 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
             "Tiktalk"
         }
 
-        val chatBurn = ChatTitleDropItem(icon, R.color.common_text_main_color, tickTalkTitle) {
+        val chatBurn = ChatTitleDropItem(icon, 0, tickTalkTitle) {
             ChatsBurnSetting.configBurnSetting(this, mRecipient, accountContext.masterSecret ?: return@ChatTitleDropItem) {
                 chat_title_bar.setPrivateChat(mRecipient)
             }
         }
 
-        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, R.color.common_text_main_color, getString(R.string.chats_message_clear_history)) {
+        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, 0, getString(R.string.chats_message_clear_history)) {
             AmePopup.bottom.newBuilder()
                     .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_user_clear_history)) {
                         AmePopup.bottom.newBuilder()
                                 .withTitle(getString(R.string.chats_user_clear_history_title, mRecipient.name))
-                                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clear), getColorCompat(R.color.common_color_ff3737)) {
+                                .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clear), getAttrColor(R.attr.common_text_warn_color)) {
                                     val threadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, 0L)
                                     Repository.getChatRepo(accountContext)?.cleanChatMessages(threadId)
                                 })

@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.utils.AppUtil
+import com.bcm.messenger.common.utils.getAttribute
 
 
 /**
@@ -31,7 +32,7 @@ class ChatTitleDropMenu : PopupWindow() {
         animationStyle = 0
 
         val contentView = LayoutInflater.from(anchor.context).inflate(R.layout.chats_title_bar_menu_layout, null) as LinearLayout
-        contentView.setBackgroundResource(R.color.common_default_background_color)
+        contentView.setBackgroundResource(contentView.context.getAttribute(R.attr.common_view_background))
         contentView.setOnClickListener {
             dismiss()
         }

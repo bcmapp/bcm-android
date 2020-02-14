@@ -11,7 +11,7 @@ import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.common.theme.ThemeManager
 import com.bcm.messenger.common.ui.CommonSettingItem
 import com.bcm.messenger.common.ui.CommonTitleBar2
-import com.bcm.messenger.common.utils.getColorCompat
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.ViewUtils
 import kotlinx.android.synthetic.main.me_activity_theme_settings.*
@@ -137,8 +137,8 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
 
         val lightStartTime = SuperPreferences.getLightStartTime(this, "07:00")
         val darkStartTime = SuperPreferences.getDarkStartTime(this, "22:00")
-        theme_schedule_light.setTip(lightStartTime, contentColor = getColorCompat(R.color.common_text_third_color))
-        theme_schedule_dark.setTip(darkStartTime, contentColor = getColorCompat(R.color.common_text_third_color))
+        theme_schedule_light.setTip(lightStartTime, contentColor = getAttrColor(R.attr.common_text_third_color))
+        theme_schedule_dark.setTip(darkStartTime, contentColor = getAttrColor(R.attr.common_text_third_color))
 
         when (currentThemeSetting) {
             ThemeManager.THEME_SYSTEM -> theme_follow_system.showRightStatus(CommonSettingItem.RIGHT_YES)
@@ -162,10 +162,10 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
         TimePickerDialog(this, { _, hourOfDay, minute ->
             val newTime = String.format("%02d:%02d", hourOfDay, minute)
             if (isLight) {
-                weakThis.get()?.theme_schedule_light?.setTip(newTime, contentColor = getColorCompat(R.color.common_text_third_color))
+                weakThis.get()?.theme_schedule_light?.setTip(newTime, contentColor = getAttrColor(R.attr.common_text_third_color))
                 SuperPreferences.setLightStartTime(this, newTime)
             } else {
-                weakThis.get()?.theme_schedule_dark?.setTip(newTime, contentColor = getColorCompat(R.color.common_text_third_color))
+                weakThis.get()?.theme_schedule_dark?.setTip(newTime, contentColor = getAttrColor(R.attr.common_text_third_color))
                 SuperPreferences.setDarkStartTime(this, newTime)
             }
             ThemeManager.themeTimeChanged()

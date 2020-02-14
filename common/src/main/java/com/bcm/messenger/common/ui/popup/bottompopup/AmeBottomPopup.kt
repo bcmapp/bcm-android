@@ -12,7 +12,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import kotlinx.android.synthetic.main.common_bottom_popup_base_layout.*
@@ -63,7 +62,7 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
     }
 
     class Builder {
-        private val config = PopConfig("", "", AppContextHolder.APP_CONTEXT.getAttrColor(R.attr.common_text_main_color), {}, true, ArrayList(), {}, null)
+        private val config = PopConfig("", "", 0, {}, true, ArrayList(), {}, null)
 
         fun withTitle(title: String): Builder {
             config.title = title
@@ -108,6 +107,9 @@ class AmeBottomPopup : Application.ActivityLifecycleCallbacks {
         fun show(activity: FragmentActivity?) {
             if (config.doneTitle.isNotEmpty()) {
                 withPopItem(PopupItem.SEP)
+                if (config.doneTextColor == 0) {
+                    config.doneTextColor = activity?.getAttrColor(R.attr.common_text_main_color) ?: 0
+                }
             }
             instance().show(activity, config)
         }

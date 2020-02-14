@@ -66,7 +66,6 @@
                 android:background="@drawable/common_item_ripple_oval_transparent_bg"
                 android:scaleType="centerInside"
                 android:src="@drawable/home_new_chat_icon"
-                android:tint="?attr/common_icon_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/home_toolbar_more"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -81,7 +80,6 @@
                 android:background="@drawable/common_item_ripple_oval_transparent_bg"
                 android:scaleType="centerInside"
                 android:src="@drawable/home_more_icon"
-                android:tint="?attr/common_icon_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

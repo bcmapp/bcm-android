@@ -366,12 +366,12 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
     }
 
     private fun showDropMenu() {
-        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, R.color.common_text_main_color, getString(R.string.chats_media_and_files)) {
+        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, 0, getString(R.string.chats_media_and_files)) {
             val groupModel = this.groupModel?:return@ChatTitleDropItem
             MediaBrowserActivity.router(accountContext, GroupUtil.addressFromGid(accountContext, groupModel.groupId()))
         }
 
-        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, R.color.common_text_main_color, getString(R.string.chats_message_clear_history)) {
+        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, 0, getString(R.string.chats_message_clear_history)) {
             val groupModel = this.groupModel?:return@ChatTitleDropItem
             AmePopup.bottom.newBuilder()
                     .withTitle(getString(R.string.chats_user_clear_history_title, groupModel.groupName()))

@@ -117,7 +117,7 @@
                     android:id="@+id/theme_disabled"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:setting_item_line="true"
+                    app:setting_item_line="false"
                     app:setting_item_name="@string/me_theme_settings_disabled"
                     app:setting_item_right="none"
                     app:setting_item_switch="none" />

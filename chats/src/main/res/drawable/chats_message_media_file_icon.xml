@@ -5,14 +5,13 @@
     android:viewportHeight="48">
   <path
       android:pathData="M24,24m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0"
-      android:fillColor="#B3B3B3"
-      android:fillAlpha=".149"
+      android:fillColor="?attr/common_icon_background"
       android:fillType="evenOdd"/>
   <group>
     <clip-path android:pathData="M12,12h24v24L12,36z M 0,0"/>
     <path
         android:pathData="M18,22h12a2,2 0,0 1,2 2v7a2,2 0,0 1,-2 2L18,33a2,2 0,0 1,-2 -2v-7a2,2 0,0 1,2 -2zM19,18.5h10a1,1 0,0 1,1 1v1L18,20.5v-1a1,1 0,0 1,1 -1zM21,15h6a1,1 0,0 1,1 1v1L20,17L20,16a1,1 0,0 1,1 -1z"
-        android:fillColor="#000"
+        android:fillColor="?attr/common_icon_color"
         android:fillType="evenOdd"/>
   </group>
 </vector>

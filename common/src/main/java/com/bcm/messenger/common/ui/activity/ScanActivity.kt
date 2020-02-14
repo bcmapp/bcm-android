@@ -234,8 +234,6 @@ class ScanActivity : AccountSwipeBaseActivity(), TextureView.SurfaceTextureListe
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        window?.setBackgroundDrawable(AppUtil.getDrawable(resources, R.color.common_color_black))
-
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         // Stick to the orientation the activity was started with. We cannot declare this in the

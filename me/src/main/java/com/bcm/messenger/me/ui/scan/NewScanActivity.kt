@@ -69,7 +69,6 @@ class NewScanActivity : ThemeBaseActivity() {
 
         ALog.i("REGCOLOR",  "${this.getAttrColor(R.attr.common_view_background)}")
 
-
         initFragment()
     }
 

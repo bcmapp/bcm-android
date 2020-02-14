@@ -54,7 +54,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         val logoSize = typeArray.getDimensionPixelSize(R.styleable.CommonSettingItemStyle_setting_item_logo_size, 0)
         mIconColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_logo_color, context.getAttrColor(R.attr.common_icon_color))
         val head = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_head) ?: ""
-        mHeadColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_head_color, context.getAttrColor(R.attr.common_setting_item_background))
+        mHeadColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_head_color, context.getAttrColor(R.attr.common_text_secondary_color))
         val name = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_name) ?: ""
         val subName = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_sub_name) ?: ""
         mNameColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_name_color, context.getAttrColor(R.attr.common_setting_item_main_text_color))
@@ -185,9 +185,9 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
             item_head.visibility = View.VISIBLE
             item_head.text = head
             if (headColor == null) {
-                item_name.setTextColor(mHeadColor)
+                item_head.setTextColor(mHeadColor)
             } else {
-                item_name.setTextColor(headColor)
+                item_head.setTextColor(headColor)
             }
         }
     }

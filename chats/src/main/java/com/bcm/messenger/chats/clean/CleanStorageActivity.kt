@@ -201,7 +201,7 @@ class CleanStorageActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.I
         val sizeView = view.findViewById<TextView>(R.id.clear_conversation_size)
 
         init {
-            sizeView.setRightDrawable(R.drawable.common_right_icon, R.attr.common_text_third_color)
+            sizeView.setRightDrawable(R.drawable.common_right_icon, R.attr.common_icon_color_grey)
 
             view.findViewById<TextView>(R.id.text_clear_all).setOnClickListener {
                 if (CleanConversationStorageLogic.isAllCollectionFinished()) {
@@ -219,8 +219,7 @@ class CleanStorageActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.I
         val recipientPhotoView = view.findViewById<RecipientAvatarView>(R.id.clear_conversation_photo)
 
         init {
-            sizeView.setRightDrawable(R.drawable.common_right_icon, R.attr.common_text_third_color)
+            sizeView.setRightDrawable(R.drawable.common_right_icon, R.attr.common_icon_color_grey)
         }
     }
-
 }

@@ -5,21 +5,20 @@
     android:viewportHeight="48">
   <path
       android:pathData="M24,24m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0"
-      android:fillColor="#B3B3B3"
-      android:fillAlpha=".149"
+      android:fillColor="?attr/common_icon_background"
       android:fillType="evenOdd"/>
   <group>
     <clip-path android:pathData="M12,12h24v24L12,36z M 0,0"/>
     <path
         android:pathData="M31.5,20l-0.787,10.23A3,3 0,0 1,27.722 33L20.278,33a3,3 0,0 1,-2.991 -2.77L16.5,20h15zM26.6,23.005a1,1 0,0 0,-1.095 0.895l-0.5,5a1,1 0,0 0,1.99 0.2l0.5,-5a1,1 0,0 0,-0.895 -1.095zM21.517,23l-0.117,0.005a1,1 0,0 0,-0.895 1.095l0.5,5a1,1 0,1 0,1.99 -0.2l-0.5,-5a1,1 0,0 0,-1.095 -0.895z"
-        android:fillColor="#000"
+        android:fillColor="?attr/common_icon_color"
         android:fillType="evenOdd"/>
   </group>
   <group>
     <clip-path android:pathData="M12,12h24v24L12,36z M 0,0"/>
     <path
         android:pathData="M16,19a1,1 0,1 1,0 -2h16a1,1 0,0 1,0 2L16,19z"
-        android:fillColor="#000"
+        android:fillColor="?attr/common_icon_color"
         android:fillType="nonZero"/>
   </group>
   <group>
@@ -27,8 +26,8 @@
     <path
         android:pathData="M23,15h2"
         android:strokeWidth="2"
-        android:fillColor="#00000000"
-        android:strokeColor="#000"
+        android:fillColor="?attr/common_icon_color"
+        android:strokeColor="?attr/common_icon_color"
         android:fillType="evenOdd"
         android:strokeLineCap="round"/>
   </group>
