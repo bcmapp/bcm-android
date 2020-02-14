@@ -356,7 +356,7 @@ class ChatAudioView @JvmOverloads constructor(context: Context, attrs: Attribute
     private fun realDoPlayAction(toPlay: Boolean) {
         val slide = this.slide?:return
         val masterSecret = this.accountContext?.masterSecret?:return
-        if (slide.uri == null) {
+        if (slide.uri == null || slide.duration <= 0) {
             return
         }
         try {
