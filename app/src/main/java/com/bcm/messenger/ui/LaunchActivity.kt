@@ -18,9 +18,7 @@ import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.theme.ThemeManager
 import com.bcm.messenger.common.ui.activity.DatabaseMigrateActivity
-import com.bcm.messenger.common.utils.setTranslucentStatus
-import com.bcm.messenger.common.utils.setTransparencyBar
-import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.logic.SchemeLaunchHelper
 import com.bcm.messenger.me.ui.login.RegistrationActivity
 import com.bcm.messenger.me.utils.BcmUpdateUtil
@@ -59,8 +57,11 @@ class LaunchActivity : ThemeBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setTranslucentStatus()
-        window.setTransparencyBar(ThemeManager.isDarkTheme(this))
+        if (ThemeManager.isDarkTheme(this)) {
+            window.setStatusBarDarkMode()
+        } else {
+            window.setStatusBarLightMode()
+        }
 
         if (quickOp.isQuick || savedInstanceState != null) {
             finish()

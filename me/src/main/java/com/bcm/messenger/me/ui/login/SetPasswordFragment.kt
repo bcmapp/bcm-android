@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.NestedScrollView
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
@@ -34,9 +35,11 @@ class SetPasswordFragment : AbsRegistrationFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        set_password_back.setOnClickListener {
-            activity?.onBackPressed()
-        }
+        set_password_back.setListener(object :CommonTitleBar2.TitleBarClickListener() {
+            override fun onClickLeft() {
+                activity?.onBackPressed()
+            }
+        })
         set_new_password_done_button.setOnClickListener {
             if (!checkInputLegitimate()){
                 AmePopup.loading.dismiss()

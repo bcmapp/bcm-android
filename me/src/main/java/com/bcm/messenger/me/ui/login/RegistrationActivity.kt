@@ -8,7 +8,9 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.theme.ThemeManager
 import com.bcm.messenger.common.utils.getAttrColor
+import com.bcm.messenger.common.utils.setStatusBarDarkMode
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
@@ -70,7 +72,11 @@ class RegistrationActivity : ThemeBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_registration)
 
-        window.setStatusBarLightMode()
+        if (ThemeManager.isDarkTheme(this)) {
+            window.setStatusBarDarkMode()
+        } else {
+            window.setStatusBarLightMode()
+        }
 
         ALog.i("REGCOLOR",  "${this.getAttrColor(R.attr.common_view_background)}")
 
