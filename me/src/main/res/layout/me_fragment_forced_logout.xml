@@ -84,6 +84,7 @@
         android:layout_marginTop="60dp"
         android:layout_marginStart="24dp"
         android:src="@drawable/me_force_logout_phone"
+        android:tint="?attr/common_foreground_color"
         app:layout_constraintStart_toEndOf="@id/force_logout_arrow"
         app:layout_constraintTop_toBottomOf="@id/force_logout_content" />
 
