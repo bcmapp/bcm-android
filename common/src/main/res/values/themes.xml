@@ -109,7 +109,6 @@
     <style name="CommonTransparentStatusBar" parent="CommonBcmTheme.Basic">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowBackground">@color/common_color_transparent</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
