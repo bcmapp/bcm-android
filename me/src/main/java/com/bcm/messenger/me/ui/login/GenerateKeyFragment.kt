@@ -10,10 +10,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.getColorCompat
-import com.bcm.messenger.common.utils.getScreenHeight
-import com.bcm.messenger.common.utils.getStatusBarHeight
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.provider.UserModuleImp
@@ -236,8 +233,9 @@ class GenerateKeyFragment : AbsRegistrationFragment() {
         if (stopped) {
             return
         }
+        val context = this.context
         if (context != null)
-            hash_generated_running_text.setTextColor(getColorCompat(R.color.common_color_black_30))
+            hash_generated_running_text.setTextColor(context.getAttrColor(R.attr.common_text_secondary_color))
         AnimatorSet().apply {
             duration = 200
             play(ObjectAnimator.ofFloat(hash_generated_running_text, "alpha", 0f, 1f))
