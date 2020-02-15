@@ -124,5 +124,33 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <LinearLayout
+        android:id="@+id/map_invalid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:background="@color/common_background_color"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/map_title_bar"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chats_can_t_access_map"
+            android:textSize="20sp"
+            android:textColor="@color/common_color_black"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:paddingStart="45dp"
+            android:paddingEnd="45dp"
+            android:gravity="center"
+            android:text="@string/chats_the_map_service_inaccessible"
+            android:textSize="14sp"
+            android:textColor="#606060"/>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
 

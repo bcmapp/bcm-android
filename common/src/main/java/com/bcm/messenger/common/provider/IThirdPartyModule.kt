@@ -31,21 +31,6 @@ interface IUmengModule : IRouteProvider {
     fun onAccountLogout(context: Context, uid: String)
 }
 
-interface IAMapModule : IRouteProvider {
-
-    fun getWorkFragment(): Fragment
-
-    fun getPreviewFragment(): Fragment
-
-    fun isSupport(context: Context): Boolean
-
-    fun isSupport(context: Context, latitude: Double, longitude: Double): Boolean
-
-    fun toGDLatLng(context: Context, latitude: Double, longitude: Double): Pair<Double, Double>
-
-    fun fromGDLatLng(context: Context, latitude: Double, longitude: Double): Pair<Double, Double>
-}
-
 interface IAFModule : IRouteProvider {
 
     fun onAppInit(context: Application)

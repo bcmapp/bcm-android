@@ -88,9 +88,6 @@
             android:theme="@style/CommonTransparentStatusBar"
             android:screenOrientation="portrait"/>
 
-        <activity android:name="com.bcm.messenger.common.ui.activity.ApkInstallRequestActivity"
-            android:theme="@style/BcmActivityTheme.Transparent.Full" />
-
         <activity
             android:name="com.bcm.messenger.common.ui.activity.WebActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"

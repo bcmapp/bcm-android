@@ -1,4 +1,4 @@
-include ':app', ':utility', ':wallet', ':chats', ':me', ':contacts', ':common', ':netswitchy', ':adhoc-client', ':umeng', ':amap', ':login', ':appsflyer'
+include ':app', ':utility', ':wallet', ':chats', ':me', ':contacts', ':common', ':netswitchy', ':adhoc-client', ':umeng', ':login', ':appsflyer'
 //include ':thirdpart:wallet_support'
 //include ':thirdpart:adhoclib:imcore'
 //include ':thirdpart:signal-protocol'

@@ -6,13 +6,10 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bcm.messenger.chats.R
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.imagepicker.widget.CropRoundCornerTransform
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.core.MapApiConstants
-import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IAMapModule
 import kotlinx.android.synthetic.main.chats_share_map_view.view.*
 import com.bcm.messenger.common.mms.GlideRequests
 
@@ -76,34 +73,13 @@ class MapShareView : ConstraintLayout {
     }
 
     private fun getMap(context: Context, lat: Double, lon: Double, mapType: Int, width: Int, height: Int, zoom: String): String {
-        val provider = AmeProvider.get<IAMapModule>(ARouterConstants.Provider.PROVIDER_AMAP)
-        var latitude = lat
-        var longitude = lon
-        val type = if (provider?.isSupport(context, lat, lon) == true) {
-            val locationPair = provider.toGDLatLng(context, latitude, longitude)
-            latitude = locationPair.first
-            longitude = locationPair.second
-            MapApiConstants.GDMAP
-        } else {
-            MapApiConstants.GOOGLEMAP
-        }
-
         var builder: StringBuilder? = null
-        if (type == MapApiConstants.GDMAP) {
-            builder = StringBuilder(MapApiConstants.gdImgUrl)
-            builder.append("?location=").append(longitude).append(",").append(latitude)
-            builder.append("&zoom=").append(zoom)
-            builder.append("&size=").append(AppUtil.dp2Px(resources, width)).append("*").append(AppUtil.dp2Px(resources, height))
-            builder.append("&markers=").append("mid").append(",").append(",A:").append(longitude).append(",").append(latitude)
-            builder.append("&key=").append(MapApiConstants.gdMapKey)
-        } else if (type == MapApiConstants.GOOGLEMAP) {
-            builder = StringBuilder(MapApiConstants.googleImgeUrl)
-            builder.append("?center=").append(latitude).append(",").append(longitude)
-            builder.append("&zoom=").append(zoom)
-            builder.append("&size=").append(AppUtil.dp2Px(resources, width)).append("x").append(AppUtil.dp2Px(resources, height))
-            builder.append("&markers=").append(latitude).append(",").append(longitude)
-            builder.append("&key=").append(MapApiConstants.googlePlaceKey)
-        }
+        builder = StringBuilder(MapApiConstants.googleImgeUrl)
+        builder.append("?center=").append(lat).append(",").append(lon)
+        builder.append("&zoom=").append(zoom)
+        builder.append("&size=").append(AppUtil.dp2Px(resources, width)).append("x").append(AppUtil.dp2Px(resources, height))
+        builder.append("&markers=").append(lat).append(",").append(lon)
+        builder.append("&key=").append(MapApiConstants.googlePlaceKey)
 
         return builder.toString()
     }

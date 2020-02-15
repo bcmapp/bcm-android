@@ -278,8 +278,6 @@ object ARouterConstants {
 
         const val PROVIDER_UMENG = PREFIX.OTHER + "/provider/umeng"
 
-        const val PROVIDER_AMAP = PREFIX.OTHER + "/provider/amap"
-
         const val PROVIDER_AFLIB = PREFIX.OTHER + "provider/aflib"
     }
 

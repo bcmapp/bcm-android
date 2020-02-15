@@ -13,7 +13,6 @@ import com.bcm.messenger.chats.BuildConfig
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.components.ChatThumbnailView
 import com.bcm.messenger.chats.mediapreview.MediaViewActivity
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.core.AmeFileUploader
@@ -24,10 +23,8 @@ import com.bcm.messenger.common.grouprepository.model.AmeHistoryMessageDetail
 import com.bcm.messenger.common.mms.PartAuthority
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.providers.PartProvider
-import com.bcm.messenger.common.ui.activity.ApkInstallRequestActivity
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.*
-import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Util
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -48,31 +45,16 @@ open class ChatPreviewClickListener(private val accountContext: AccountContext) 
             AmeAppLifecycle.hideLoading()
             ALog.d(TAG, "doForOtherFile path: $path, uri: $uri, contentType: $contentType")
 
-            var isApk = false
-            if (path != null) {
-                isApk = AppUtil.isApkFile(context, path)
-            }
-            if (isApk) {
-                if (AppUtil.checkInstallPermission(context)) {
-                    BcmFileUtils.installApk(context, path ?: "")
-                } else {
-                    AppContextHolder.APP_CONTEXT.startActivity(Intent(context, ApkInstallRequestActivity::class.java).apply {
-                        putExtra(ARouterConstants.PARAM.PARAM_APK, path)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    })
-                }
+            val finalContentType = if (contentType.isNullOrEmpty()) {
+                "*/*"
             } else {
-                val finalContentType = if (contentType.isNullOrEmpty()) {
-                    "*/*"
-                } else {
-                    contentType
-                }
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.addCategory(Intent.CATEGORY_DEFAULT)
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                intent.setDataAndType(uri, finalContentType)
-                gotoActivity(context, intent, null, false)
+                contentType
             }
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.addCategory(Intent.CATEGORY_DEFAULT)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.setDataAndType(uri, finalContentType)
+            gotoActivity(context, intent, null, false)
         }
 
         AmeAppLifecycle.showLoading()

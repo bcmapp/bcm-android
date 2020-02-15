@@ -642,5 +642,7 @@
     <string name="chats_media_view_video_expire">यह वीडियो एक्सपायर हो गया है या डिलीट हो गया है</string>
     <string name="chats_media_view_audio_expire">एक्सपायर हुए ऑडिए मैसेज</string>
     <string name="chats_disabled_by_admin">Disabled by admin</string>
+    <string name="chats_can_t_access_map">Can’t Access Map</string>
+    <string name="chats_the_map_service_inaccessible">The map service we provided might be inaccessible for your region.</string>
 
 </resources>

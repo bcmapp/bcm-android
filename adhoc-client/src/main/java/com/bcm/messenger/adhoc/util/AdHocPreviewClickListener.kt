@@ -16,7 +16,6 @@ import com.bcm.messenger.chats.util.ChatComponentListener
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.ShareElements
-import com.bcm.messenger.common.ui.activity.ApkInstallRequestActivity
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.AppUtil
@@ -58,22 +57,17 @@ open class AdHocPreviewClickListener(private val accountContext: AccountContext)
             ALog.i(TAG, "doForOtherUri: $uri, path: $path")
             AmeAppLifecycle.hideLoading()
 
-            if (path != null && AppUtil.isApkFile(context, path)) {
-                context.startActivity(Intent(context, ApkInstallRequestActivity::class.java).apply {
-                    putExtra(ARouterConstants.PARAM.PARAM_APK, path)
-                })
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.addCategory(Intent.CATEGORY_DEFAULT)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            val type = if (mimeType.isNullOrEmpty()) {
+                BcmFileUtils.getMimeType(context, path)
             } else {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.addCategory(Intent.CATEGORY_DEFAULT)
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                val type = if (mimeType.isNullOrEmpty()) {
-                    BcmFileUtils.getMimeType(context, path)
-                } else {
-                    mimeType
-                }
-                intent.setDataAndType(uri, type)
-                gotoActivity(context, intent, null, false)
+                mimeType
             }
+            intent.setDataAndType(uri, type)
+            gotoActivity(context, intent, null, false)
+
         }
 
         AmeAppLifecycle.showLoading()

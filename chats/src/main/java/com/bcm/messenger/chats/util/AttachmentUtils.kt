@@ -55,22 +55,30 @@ object AttachmentUtils {
     fun getDocumentSlide(context: Context, uri: Uri): Slide? {
         if (uri.scheme == "file") {
             val file = File(uri.path)
-            return DocumentSlide(context, uri, getMimeType(file.name), file.length(), file.name)
+            var fileName = file.name
+            if (fileName.endsWith(".apk", true)) {
+                fileName = "$fileName.1"
+            }
+            return DocumentSlide(context, uri, getMimeType(file.name), file.length(), fileName)
         }
         var cursor: Cursor? = null
         try {
             cursor = context.contentResolver.query(uri, null, null, null, null)
             if (cursor != null && cursor.moveToFirst()) {
-                val fileName = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
+                var fileName = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
                 val fileSize = cursor.getLong(cursor.getColumnIndexOrThrow(OpenableColumns.SIZE))
                 var mimeType = context.contentResolver.getType(uri)
                 if (mimeType == null) {
                     mimeType = "application/octet-stream"
                 }
+
+                if (fileName.endsWith(".apk", true)){
+                    fileName = "$fileName.1"
+                }
                 return DocumentSlide(context, uri, mimeType, fileSize, fileName)
             }
         } finally {
-            if (cursor != null) cursor.close()
+            cursor?.close()
         }
         return null
     }
@@ -163,6 +171,9 @@ object AttachmentUtils {
 
                 }
                 else -> {
+                    if (attachmentName.endsWith(".apk", true)) {
+                        attachmentName = "$attachmentName.1"
+                    }
                     AmeGroupMessage.FileContent("", attachmentName, attachmentSize, mimeType)
                 }
             }

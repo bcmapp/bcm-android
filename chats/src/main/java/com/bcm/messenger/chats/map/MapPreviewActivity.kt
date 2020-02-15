@@ -8,7 +8,6 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.provider.AmeProvider
-import com.bcm.messenger.common.provider.IAMapModule
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 import kotlinx.android.synthetic.main.chats_activity_map_preview.*
@@ -25,7 +24,6 @@ class MapPreviewActivity : SwipeBaseActivity() {
     private var title: String? = null
     private var addresss: String? = null
     private var mapType: Int = 0
-    private var mapFragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,12 +40,7 @@ class MapPreviewActivity : SwipeBaseActivity() {
     }
 
     fun initView() {
-        val provider = AmeProvider.get<IAMapModule>(ARouterConstants.Provider.PROVIDER_AMAP)
-        mapFragment = if (provider?.isSupport(this, latitude, longitude) == true) {
-            initFragment(R.id.map_preview_fragment, provider.getPreviewFragment(), null)
-        } else {
-            initFragment(R.id.map_preview_fragment, GooglePreviewFragment(), null)
-        }
+        initFragment(R.id.map_preview_fragment, GooglePreviewFragment(), null)
         ViewCompat.setTransitionName(findViewById(R.id.map_preview_fragment), ShareElements.Activity.PREVIEW_MAP)
 
         map_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {

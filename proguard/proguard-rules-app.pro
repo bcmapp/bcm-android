@@ -26,20 +26,6 @@
 -keep public class android.support.design.internal.BottomNavigationPresenter { *; }
 -keep public class android.support.design.internal.BottomNavigationItemView { *; }
 
-
-# Amap
--keep class com.amap.api.location.**{*;}
--keep class com.amap.api.fence.**{*;}
--keep class com.autonavi.aps.amapapi.model.**{*;}
-
-# Amap search
--keep class com.amap.api.services.**{*;}
-
-# Amap 2D Map
--keep class com.amap.api.maps2d.**{*;}
--keep class com.amap.api.mapcore2d.**{*;}
--keep class com.amap.api.maps.**{*;}
-
 -keepclassmembers class * {
    public <init> (org.json.JSONObject);
 }
@@ -186,7 +172,6 @@
 -dontwarn org.conscrypt.**
 -dontwarn org.spongycastle.pqc.**
 -dontwarn dalvik.**
--dontwarn com.amap.api.**
 -dontwarn edu.umd.cs.findbugs.annotations.**
 -dontwarn build.**
 -dontwarn org.fusesource.leveldbjni.**

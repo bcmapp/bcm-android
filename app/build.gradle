@@ -191,8 +191,6 @@ dependencies {
 
     officialImplementation project(':umeng')
     releaseOfficialImplementation project(':umeng')
-    officialImplementation project(':amap')
-    releaseOfficialImplementation project(':amap')
     releaseGoogleImplementation project(':appsflyer')
     release9appsImplementation project(':appsflyer')
     releaseApkpureImplementation project(':appsflyer')

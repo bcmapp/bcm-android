@@ -78,14 +78,19 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, MapBaseInterface, Goog
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val activity = activity ?: return
         mapFragment = childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
-        mapFragment?.getMapAsync(this)
-        googleClient = GoogleApiClient.Builder(activity)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(activity, this)
-                .build()
-        locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        mGeoDataClient = Places.getGeoDataClient(context as Activity, null)
+
+        try {
+            mapFragment?.getMapAsync(this)
+            googleClient = GoogleApiClient.Builder(activity)
+                    .addApi(Places.GEO_DATA_API)
+                    .addApi(Places.PLACE_DETECTION_API)
+                    .enableAutoManage(activity, this)
+                    .build()
+            locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            mGeoDataClient = Places.getGeoDataClient(context as Activity, null)
+        } catch (e:Throwable) {
+            ALog.e("GoogleMapFragment", "onViewCreated", e)
+        }
     }
 
     override fun onDestroy() {
