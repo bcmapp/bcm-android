@@ -154,7 +154,13 @@ public class MediaUtil {
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
         }
 
-        return getCorrectedMimeType(type);
+        String mimeType = getCorrectedMimeType(type);
+
+        if(mimeType != null && mimeType.endsWith("android.package-archive")) {
+            return "application/octet-stream";
+        } else {
+            return mimeType;
+        }
     }
 
     public static @Nullable
