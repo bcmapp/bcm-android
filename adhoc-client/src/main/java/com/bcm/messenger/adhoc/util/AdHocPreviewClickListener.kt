@@ -63,8 +63,14 @@ open class AdHocPreviewClickListener(private val accountContext: AccountContext)
             val type = if (mimeType.isNullOrEmpty()) {
                 BcmFileUtils.getMimeType(context, path)
             } else {
-                mimeType
+                if(mimeType.endsWith("android.package-archive",true)) {
+                    "application/octet-stream"
+                } else {
+                    mimeType
+                }
             }
+
+
             intent.setDataAndType(uri, type)
             gotoActivity(context, intent, null, false)
 
