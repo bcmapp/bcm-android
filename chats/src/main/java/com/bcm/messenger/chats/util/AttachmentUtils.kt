@@ -68,7 +68,7 @@ object AttachmentUtils {
                 var fileName = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
                 val fileSize = cursor.getLong(cursor.getColumnIndexOrThrow(OpenableColumns.SIZE))
                 var mimeType = context.contentResolver.getType(uri)
-                if (mimeType == null) {
+                if (mimeType == null || mimeType.endsWith("android.package-archive",true)) {
                     mimeType = "application/octet-stream"
                 }
 
@@ -88,7 +88,11 @@ object AttachmentUtils {
             return ""
         val stringArray = fileName.split(".")
         val suffix = stringArray.last()
-        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(suffix) ?: ""
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(suffix) ?: ""
+        if (mimeType.endsWith("android.package-archive",true)) {
+             return "application/octet-stream"
+        }
+        return mimeType
     }
 
 
@@ -173,6 +177,10 @@ object AttachmentUtils {
                 else -> {
                     if (attachmentName.endsWith(".apk", true)) {
                         attachmentName = "$attachmentName.1"
+                    }
+
+                    if (mimeType.endsWith("android.package-archive",true)) {
+                        mimeType = "application/octet-stream"
                     }
                     AmeGroupMessage.FileContent("", attachmentName, attachmentSize, mimeType)
                 }

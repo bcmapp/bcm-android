@@ -280,7 +280,7 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, MapBaseInterface, Goog
                         .enqueue(object : JsonDeserializeCallback<GoogleLocation>() {
                             override fun onError(call: Call?, e: Exception?, id: Long) {
                                 ALog.e(TAG, "getGoogleNearByPlaces error", e)
-                                emitter.onNext(listOf(getDefaultLocation(latitude, longitude)))
+                                emitter.onNext(listOf())
                                 emitter.onComplete()
                             }
 

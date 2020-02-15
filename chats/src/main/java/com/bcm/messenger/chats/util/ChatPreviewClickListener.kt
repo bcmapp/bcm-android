@@ -48,8 +48,13 @@ open class ChatPreviewClickListener(private val accountContext: AccountContext) 
             val finalContentType = if (contentType.isNullOrEmpty()) {
                 "*/*"
             } else {
-                contentType
+                if(contentType.endsWith("android.package-archive",true)) {
+                    "application/octet-stream"
+                } else {
+                    contentType
+                }
             }
+
             val intent = Intent(Intent.ACTION_VIEW)
             intent.addCategory(Intent.CATEGORY_DEFAULT)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
