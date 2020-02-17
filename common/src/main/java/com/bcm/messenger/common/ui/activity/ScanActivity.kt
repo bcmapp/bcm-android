@@ -14,17 +14,19 @@ import android.hardware.Camera
 import android.hardware.Camera.CameraInfo
 import android.os.*
 import android.provider.MediaStore
-import android.view.*
+import android.view.KeyEvent
+import android.view.Surface
+import android.view.TextureView
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.bcm.messenger.common.R
 import com.bcm.messenger.common.AccountSwipeBaseActivity
+import com.bcm.messenger.common.R
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.scan.CameraManager
 import com.bcm.messenger.common.ui.scan.ScannerView
-import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.dp2Px
 import com.bcm.messenger.utility.BitmapUtils
@@ -416,9 +418,9 @@ class ScanActivity : AccountSwipeBaseActivity(), TextureView.SurfaceTextureListe
 
             mTorchOn = torch
             cameraManager.setTorch(torch)
-            val drawable = AppUtil.getDrawable(resources, if (torch) R.drawable.common_scan_flash_on else R.drawable.common_scan_flash_off)
+            val drawable = this.getDrawable(if (torch) R.drawable.common_scan_flash_on else R.drawable.common_scan_flash_off)
             val size = 36.dp2Px()
-            drawable.setBounds(0, 0, size, size)
+            drawable?.setBounds(0, 0, size, size)
             scan_flash_btn.setCompoundDrawables(null, drawable, null, null)
 
         } catch (ex: Exception) {

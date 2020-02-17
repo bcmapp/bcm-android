@@ -19,7 +19,6 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.ui.scan.CameraManager
 import com.bcm.messenger.common.utils.AmeAppLifecycle
-import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.RxBus
 import com.bcm.messenger.me.R
@@ -358,7 +357,7 @@ class ScanFragment : Fragment(), TextureView.SurfaceTextureListener {
         try {
             mTorchOn = torch
             cameraManager.setTorch(torch)
-            val drawable = AppUtil.getDrawable(resources, if (torch) R.drawable.common_scan_flash_on else R.drawable.common_scan_flash_off)
+            val drawable = this.context?.getDrawable(if (torch) R.drawable.common_scan_flash_on else R.drawable.common_scan_flash_off)
             scan_flash_btn?.setImageDrawable(drawable)
 
         } catch (ex: Exception) {
