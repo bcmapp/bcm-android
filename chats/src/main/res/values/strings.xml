@@ -22,6 +22,7 @@
     <string name="chats_item_set_unread">Set Unread</string>
     <string name="chats_item_set_mute">Set mute</string>
     <string name="chats_item_set_not_mute">Set not mute</string>
+    <string name="chats_message_list_unread_text">%d unread chats</string>
 
     <string name="chats_title">Chats</string>
     <string name="chats_no_conversation_main">No Chats</string>

@@ -1,7 +1,6 @@
 package com.bcm.messenger.chats.bean
 
 import android.content.Context
-import android.opengl.Visibility
 import android.text.SpannableStringBuilder
 import android.util.AttributeSet
 import android.view.View
@@ -60,7 +59,8 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
     private lateinit var contactPhotoImage: RecipientAvatarView
     private lateinit var ring:View
 
-    private var groupId = 0L
+    var groupId = 0L
+        private set
 
     private lateinit var threadRecord: ThreadRecord
     private var lastThread: ThreadRecord? = null

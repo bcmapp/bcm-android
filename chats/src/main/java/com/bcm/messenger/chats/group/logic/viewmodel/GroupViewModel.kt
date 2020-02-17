@@ -17,7 +17,6 @@ import com.bcm.messenger.common.grouprepository.model.AmeGroupMessageDetail
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.log.ACLog
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
-import com.bcm.messenger.utility.logger.ALog
 import com.orhanobut.logger.Logger
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -380,7 +379,7 @@ class GroupViewModel(private val accountContext: AccountContext, private val gro
         if (modelCache.myRole == AmeGroupMemberInfo.VISITOR) {
             return modelCache.getMemberList().size
         }
-        return modelCache.info?.memberCount ?: 0
+        return modelCache.info.memberCount
     }
 
     fun myRole(): Long {

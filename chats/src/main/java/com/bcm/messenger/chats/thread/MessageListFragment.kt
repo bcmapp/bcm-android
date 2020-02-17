@@ -61,6 +61,7 @@ class MessageListFragment : BaseFragment() {
 
     private var firstVisiblePosition = 0
     private var lastVisiblePosition = 0
+    private var maxItemCount = 0
 
     private var webAlertData: AmePushProcess.SystemNotifyData.WebAlertData? = null
     var callback: MessageListCallback? = null
@@ -133,6 +134,10 @@ class MessageListFragment : BaseFragment() {
                 callback?.onClickInvite()
             }
         }
+
+        chats_list_unread_text.setOnClickListener {
+            goToNextUnread()
+        }
     }
 
     private fun initData() {
@@ -141,6 +146,11 @@ class MessageListFragment : BaseFragment() {
             ALog.i(TAG, "updateThread, size: ${data.data.size}")
             mAdapter?.setThreadList(data.data)
             showShadeView(false)
+
+            if (maxItemCount == 0) {
+                maxItemCount = (chats_list.height - 36.dp2Px()) / 66.dp2Px()
+            }
+            checkInvisibleUnreadCount()
         })
 
         AmePushProcess.checkSystemBannerNotice()
@@ -167,6 +177,27 @@ class MessageListFragment : BaseFragment() {
         }
     }
 
+    private fun checkInvisibleUnreadCount() {
+        val threadCount = mAdapter?.itemCount ?: 0
+        if (threadCount > maxItemCount) {
+            var threadUnreadCount = 0
+            for (i in maxItemCount until threadCount) {
+                val unreadCount = mAdapter?.getUnreadCount(i) ?: 0
+                if (unreadCount > 0) {
+                    threadUnreadCount++
+                }
+            }
+            if (threadUnreadCount > 0) {
+                chats_list_unread_text.text = getString(R.string.chats_message_list_unread_text, threadUnreadCount)
+                chats_list_unread_text.visibility = View.VISIBLE
+            } else {
+                chats_list_unread_text.visibility = View.GONE
+            }
+        } else {
+            chats_list_unread_text.visibility = View.GONE
+        }
+    }
+
     /**
      * 显示下一个未读消息
      */
@@ -176,7 +207,7 @@ class MessageListFragment : BaseFragment() {
             val threadCount = mAdapter?.itemCount ?: 0
             val visibleLength = lastVisiblePosition - firstVisiblePosition
             if (threadCount > visibleLength) {
-                for (i in firstVisiblePosition + 1 until threadCount) {
+                for (i in lastVisiblePosition + 1 until threadCount) {
                     if (mAdapter?.getUnreadCount(i) ?: 0 > 0) {
                         val length = i - firstVisiblePosition
                         if (length > visibleLength) {

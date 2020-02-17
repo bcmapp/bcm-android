@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.bean.MessageListItem
+import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.crypto.MasterSecret
@@ -26,7 +27,6 @@ import com.bcm.messenger.utility.Conversions
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
-import io.reactivex.Observable
 import kotlinx.android.synthetic.main.chats_message_list_header_friend_requset.view.*
 import kotlinx.android.synthetic.main.chats_message_list_header_multi_device.view.*
 import java.security.MessageDigest
@@ -232,8 +232,8 @@ class MessageListAdapter(context: Context,
                         .setAnchorView(it)
                         .setSelectedCallback { index ->
                             when (index) {
-                                0 -> {/*TODO: Set unread*/}
-                                1 -> {/*TODO: Set mute*/}
+                                0 -> setUnread()
+                                1 -> switchMute()
                                 2 -> switchPin()
                                 3 -> confirmDelete()
                             }
@@ -263,15 +263,21 @@ class MessageListAdapter(context: Context,
                     .show()
         }
 
+        private fun setUnread() {
+            ThreadListViewModel.getCurrentThreadModel()?.setUnreadOrRead(chatItem.threadId, chatItem.unreadCount == 0)
+        }
+
         private fun switchMute() {
-            val muteTime = if (chatItem.recipient?.isMuted == true) {
-                0L
+            val isMute = chatItem.recipient?.isMuted ?: true
+            if (chatItem.recipient?.isGroupRecipient == true) {
+                GroupLogic.get(AMELogin.majorContext).muteGroup(chatItem.groupId, !isMute) { _, _ -> }
             } else {
-                System.currentTimeMillis() + TimeUnit.DAYS.toMillis(3650)
-            }
-
-            Observable.create<Unit> {
-
+                val muteTime = if (isMute) {
+                    0L
+                } else {
+                    System.currentTimeMillis() + TimeUnit.DAYS.toMillis(3650)
+                }
+                AmeModuleCenter.contact(AMELogin.majorContext)?.setMute(chatItem.recipient?.address?.serialize() ?: "", muteTime, null)
             }
         }
 

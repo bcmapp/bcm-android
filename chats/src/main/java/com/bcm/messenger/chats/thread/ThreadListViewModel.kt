@@ -327,4 +327,20 @@ class ThreadListViewModel(
                     callback?.invoke(false)
                 })
     }
+
+    fun setUnreadOrRead(threadId: Long, isUnread: Boolean) {
+        Observable.create<Unit> {
+            if (isUnread) {
+                threadRepo.increaseUnreadCount(threadId, 1)
+            } else {
+                threadRepo.setRead(threadId, true)
+            }
+            it.onComplete()
+        }.subscribeOn(AmeDispatcher.ioScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                }, {
+                    ALog.e(TAG, "setUnreadOrRead error", it)
+                })
+    }
 }

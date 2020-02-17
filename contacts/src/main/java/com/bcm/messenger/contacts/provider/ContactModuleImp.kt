@@ -449,5 +449,17 @@ class ContactModuleImp : IContactModule {
         mProfileLogic.updateShareLink(context, handledRecipient, callback)
     }
 
-
+    override fun setMute(targetUid: String, muteTime: Long, callback: ((result: Boolean) -> Unit)?) {
+        Observable.create<Unit> {
+            val recipient = Recipient.from(accountContext, targetUid, false)
+            Repository.getRecipientRepo(accountContext)?.setMuted(recipient, muteTime)
+            it.onComplete()
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    callback?.invoke(true)
+                }, {
+                    callback?.invoke(false)
+                })
+    }
 }

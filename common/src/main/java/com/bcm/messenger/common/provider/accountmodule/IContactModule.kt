@@ -82,4 +82,6 @@ interface IContactModule : IAmeAccountModule {
     fun uploadBcmAvatar(context: Context, recipient: Recipient, avatarBitmap: Bitmap, callback: (success: Boolean) -> Unit)
 
     fun updateShareLink(context: Context, handledRecipient: Recipient, callback: (success: Boolean) -> Unit)
+
+    fun setMute(targetUid: String, muteTime: Long, callback: ((result: Boolean) -> Unit)?)
 }
