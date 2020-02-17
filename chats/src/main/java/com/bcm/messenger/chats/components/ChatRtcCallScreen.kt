@@ -339,6 +339,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
         mCallEvent = event
         mHasRemoteVideo = event.isRemoteVideoEnabled
         mLocalVideoStatus = event.localCameraState
+
         mLastSwitchStatus = mLocalVideoStatus.activeDirection == CameraState.Direction.FRONT
         mMiniMode = miniMode
 
@@ -424,26 +425,31 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     }
 
     private fun setLocalVideoShow(show: Boolean) {
+        if (mCallEvent?.state != WebRtcViewModel.State.CALL_CONNECTED && show) {
+            return
+        }
         ALog.d(TAG, "setLocalVideoShow: $show")
-        if (show && local_render_layout.isHidden) {
+        if (show) {
             local_render_layout.isHidden = false
             local_render_layout.getSurface()?.setMirror(true)
             local_render_layout.getSurface()?.setZOrderMediaOverlay(true)
         } else if (!show && !local_render_layout.isHidden) {
             local_render_layout.isHidden = true
-
         }
         checkUserInfoShow()
         rtc_title.visibility = if (!show && !mMiniMode) View.VISIBLE else View.GONE
         rtc_video_btn.setChecked(show)
+        ALog.d(TAG, "setLocalVideoShow render: ${local_render_layout.isHidden}")
     }
 
     private fun setRemoteVideoShow(show: Boolean) {
+        if (mCallEvent?.state != WebRtcViewModel.State.CALL_CONNECTED && show) {
+            return
+        }
         ALog.d(TAG, "setRemoteVideoShow: $show")
         mHasRemoteVideo = show
-        if (show && remote_render_layout.isHidden) {
+        if (show) {
             remote_render_layout.isHidden = false
-
         } else if (!show && !remote_render_layout.isHidden) {
             remote_render_layout.isHidden = true
         }
@@ -858,17 +864,19 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     }
 
     private fun setLocalAndRemoteRender(localRenderer: SurfaceViewRenderer?, remoteRenderer: SurfaceViewRenderer?) {
-        ALog.d(TAG, "setLocalAndRemoteRender")
+        ALog.d(TAG, "setLocalAndRemoteRender $localRenderer $remoteRenderer")
         local_render_layout.setSurface(localRenderer)
         remote_render_layout.setSurface(remoteRenderer)
     }
 
     private fun handleVideoAction(switchStatus: Boolean) {
-        ALog.d(TAG, "handleVideoAction switch: $switchStatus")
-        if (switchStatus) {
-            handleCameraOpen()
-        } else {
-            closeLocalVideo()
+        ALog.d(TAG, "handleVideoAction switch: $switchStatus ${mCallEvent?.state}")
+        if (mCallEvent?.state == WebRtcViewModel.State.CALL_CONNECTED) {
+            if (switchStatus) {
+                handleCameraOpen()
+            } else {
+                closeLocalVideo()
+            }
         }
     }
 

@@ -259,7 +259,11 @@ public class SignalServiceCipher {
   private SignalServiceCallMessage createCallMessage(CallMessage content) {
     if (content.hasOffer()) {
       CallMessage.Offer offerContent = content.getOffer();
-      return SignalServiceCallMessage.forOffer(new OfferMessage(offerContent.getId(), offerContent.getDescription()));
+      CallMessage.Offer.CallType callType = CallMessage.Offer.CallType.AUDIO;
+      if (offerContent.hasType()) {
+        callType = offerContent.getType();
+      }
+      return SignalServiceCallMessage.forOffer(new OfferMessage(offerContent.getId(), offerContent.getDescription(), callType));
     } else if (content.hasAnswer()) {
       CallMessage.Answer answerContent = content.getAnswer();
       return SignalServiceCallMessage.forAnswer(new AnswerMessage(answerContent.getId(), answerContent.getDescription()));

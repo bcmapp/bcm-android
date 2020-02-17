@@ -340,6 +340,7 @@ object BcmChatCore {
         if (callMessage.offerMessage.isPresent) {
             val offer = callMessage.offerMessage.get()
             builder.setOffer(CallMessage.Offer.newBuilder()
+                    .setType(offer.callType())
                     .setId(offer.id)
                     .setDescription(offer.description))
         } else if (callMessage.answerMessage.isPresent) {

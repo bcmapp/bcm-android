@@ -530,7 +530,7 @@
     <string name="chats_more_option_camera">カメラ</string>
     <string name="chats_more_option_album">アルバム</string>
     <string name="chats_more_option_file">ファイル</string>
-    <string name="chats_more_option_call">通話</string>
+    <string name="chats_more_option_call">语音通話</string>
     <string name="chats_more_option_location">位置</string>
     <string name="chats_more_option_namecard">名刺</string>
     <string name="chats_more_option_tv">動画を同期中</string>
@@ -693,6 +693,7 @@
     <string name="chats_media_view_audio_expire">音声チャットメッセージの期限が切れ</string>
     <string name="chats_disabled_by_admin">Disabled by admin</string>
     <string name="chats_message_clear_history">Clear History</string>
+    <string name="chats_more_option_video_call">Video Call</string>
     <string name="chats_can_t_access_map">Can’t Access Map</string>
     <string name="chats_the_map_service_inaccessible">The map service we provided might be inaccessible for your region.</string>
 

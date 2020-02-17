@@ -78,7 +78,6 @@ class ChatRtcCallActivity : AccountSwipeBaseActivity() {
         setSwipeBackEnable(false)
         setContentView(R.layout.chats_activity_webrtc_call)
         initializeResources()
-        WebRtcCallService.clearWebRtcCallType()
 
         PermissionUtil.checkAudio(this) { granted ->
             if (!granted) {
@@ -96,7 +95,7 @@ class ChatRtcCallActivity : AccountSwipeBaseActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        WebRtcCallService.clearWebRtcCallType()
+        //WebRtcCallService.clearWebRtcCallType()
     }
 
     override fun onDestroy() {
@@ -104,6 +103,7 @@ class ChatRtcCallActivity : AccountSwipeBaseActivity() {
         ALog.i(TAG, "onDestroy")
         unregisterReceiver(mHeadsetReceiver)
         chats_rtc_screen?.setOnChatRtcCallActionListener(null)
+        WebRtcCallService.clearWebRtcCallType()
     }
 
     override fun onBackPressed() {

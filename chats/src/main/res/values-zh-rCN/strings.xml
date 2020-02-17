@@ -522,7 +522,7 @@
     <string name="chats_more_option_camera">相机</string>
     <string name="chats_more_option_album">相册</string>
     <string name="chats_more_option_file">文件</string>
-    <string name="chats_more_option_call">电话</string>
+    <string name="chats_more_option_call">语音通话</string>
     <string name="chats_more_option_location">位置</string>
     <string name="chats_more_option_namecard">名片</string>
     <string name="chats_more_option_tv">视频放映</string>
@@ -682,6 +682,7 @@
     <string name="chats_media_view_audio_expire">语音消息过期</string>
     <string name="chats_disabled_by_admin">管理员已禁用</string>
     <string name="chats_message_clear_history">清理记录</string>
+    <string name="chats_more_option_video_call">视频通话</string>
     <string name="chats_can_t_access_map">无法访问地图</string>
     <string name="chats_the_map_service_inaccessible">我们提供的地图服务可能在您所在的地区无法访问。</string>
 

@@ -80,6 +80,7 @@ import org.whispersystems.signalservice.api.messages.calls.SignalServiceCallMess
 import org.whispersystems.signalservice.api.messages.calls.TurnServerInfo;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.api.push.exceptions.UnregisteredUserException;
+import org.whispersystems.signalservice.internal.push.SignalServiceProtos;
 import org.whispersystems.signalservice.internal.util.concurrent.SettableFuture;
 
 import java.nio.ByteBuffer;
@@ -129,6 +130,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     public static final String EXTRA_ICE_SDP_MID = "ice_sdp_mid";
     public static final String EXTRA_ICE_SDP_LINE_INDEX = "ice_sdp_line_index";
     public static final String EXTRA_RESULT_RECEIVER = "result_receiver";
+    public static final String EXTRA_CALL_TYPE = "call_type";
 
     public static final String ACTION_INCOMING_CALL = "CALL_INCOMING";
     public static final String ACTION_OUTGOING_CALL = "CALL_OUTGOING";
@@ -473,8 +475,15 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         this.mIncoming.set(true);
         final String offer = intent.getStringExtra(EXTRA_REMOTE_DESCRIPTION);
         this.callId = intent.getLongExtra(EXTRA_CALL_ID, -1L);
+        sCurrentCallType = intent.getIntExtra(EXTRA_CALL_TYPE, CameraState.Direction.NONE.ordinal());
         this.pendingIncomingIceUpdates = new LinkedList<>();
         this.recipient = getRemoteRecipient(intent);
+
+        if (sCurrentCallType != CameraState.Direction.NONE.ordinal()) {
+            localCameraState = new CameraState(CameraState.Direction.FRONT, localCameraState.getCameraCount());
+        } else {
+            localCameraState = new CameraState(CameraState.Direction.NONE, localCameraState.getCameraCount());
+        }
 
         setCallInProgressNotification(TYPE_INCOMING_RINGING, recipient);
 
@@ -578,6 +587,16 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         this.callId = SecureRandom.getInstance("SHA1PRNG").nextLong();
         this.pendingOutgoingIceUpdates = new LinkedList<>();
 
+        int cameraType = intent.getIntExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, CameraState.Direction.NONE.ordinal());
+        boolean videoCall = (cameraType == CameraState.Direction.FRONT.ordinal()
+                || cameraType == CameraState.Direction.BACK.ordinal());
+
+        if (cameraType == CameraState.Direction.FRONT.ordinal()) {
+            localCameraState = new CameraState(CameraState.Direction.FRONT, localCameraState.getCameraCount());
+        } else {
+            localCameraState = new CameraState(CameraState.Direction.NONE, localCameraState.getCameraCount());
+        }
+
         setCallInProgressNotification(TYPE_OUTGOING_RINGING, recipient);
         startCallActivity(WebRtcCallService.accountContext, intent.getIntExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, CameraState.Direction.NONE.ordinal()));
 
@@ -628,8 +647,11 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
                     ALog.logForSecret(TAG, "Sending offer: " + sdp.description);
 
+                    SignalServiceProtos.CallMessage.Offer.CallType type = videoCall?
+                        SignalServiceProtos.CallMessage.Offer.CallType.VIDEO: SignalServiceProtos.CallMessage.Offer.CallType.AUDIO;
+
                     ListenableFutureTask<Boolean> listenableFutureTask = sendMessage(WebRtcCallService.accountContext, recipient,
-                            SignalServiceCallMessage.forOffer(new OfferMessage(WebRtcCallService.this.callId, sdp.description)));
+                            SignalServiceCallMessage.forOffer(new OfferMessage(WebRtcCallService.this.callId, sdp.description, type)));
                     if (listenableFutureTask != null) {
                         listenableFutureTask.addListener(new FailureListener<Boolean>(CallState.STATE_DIALING, callId) {
                             @Override

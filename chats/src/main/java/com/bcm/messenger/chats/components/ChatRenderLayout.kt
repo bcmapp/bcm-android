@@ -24,9 +24,9 @@ class ChatRenderLayout : ViewGroup {
     var isHidden: Boolean = true
         set(value) {
             Log.d(TAG, "isHidden: $value")
-            if (field == value) {
-                return
-            }
+//            if (field == value) {
+//                return
+//            }
             if (value) {
                 showRender(mSurfaceViewRender, false)
             } else {

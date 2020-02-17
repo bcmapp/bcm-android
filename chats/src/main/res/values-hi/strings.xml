@@ -491,7 +491,7 @@
     <string name="chats_more_option_camera">कैमरा</string>
     <string name="chats_more_option_album">एलबम</string>
     <string name="chats_more_option_file">फाइल</string>
-    <string name="chats_more_option_call">कॉल</string>
+    <string name="chats_more_option_call">Voice Call</string>
     <string name="chats_more_option_location">स्‍थान</string>
     <string name="chats_more_option_namecard">नाम कार्ड</string>
     <string name="chats_more_option_tv">सिंक वीडियो</string>
@@ -643,6 +643,7 @@
     <string name="chats_media_view_audio_expire">एक्सपायर हुए ऑडिए मैसेज</string>
     <string name="chats_disabled_by_admin">Disabled by admin</string>
     <string name="chats_message_clear_history">Clear History</string>
+    <string name="chats_more_option_video_call">Video Call</string>
     <string name="chats_can_t_access_map">Can’t Access Map</string>
     <string name="chats_the_map_service_inaccessible">The map service we provided might be inaccessible for your region.</string>
 

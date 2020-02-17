@@ -472,26 +472,27 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
             }
         })
 
-        bottom_panel.addOptionItem(BottomPanelItem(getString(R.string.chats_more_option_camera), R.drawable.chats_conversation_panel_cam_icon, object : BottomPanelClickListener {
-            override fun onClick(name: String, view: View) {
-                checkRecipientBlock {
-                    if (it) {
-                        PermissionUtil.checkCamera(this@AmeConversationActivity) {
-                            if (!it) {
-                                return@checkCamera
-                            }
-                            try {
-                                BcmPickPhotoView.Builder(this@AmeConversationActivity)
-                                        .setCapturePhoto(true)
-                                        .build().start()
-                            } catch (e: IOException) {
-                                e.printStackTrace()
+        bottom_panel.addOptionItem(
+                BottomPanelItem(getString(R.string.chats_more_option_camera), R.drawable.chats_conversation_panel_cam_icon, object : BottomPanelClickListener {
+                    override fun onClick(name: String, view: View) {
+                        checkRecipientBlock {
+                            if (it) {
+                                PermissionUtil.checkCamera(this@AmeConversationActivity) {
+                                    if (!it) {
+                                        return@checkCamera
+                                    }
+                                    try {
+                                        BcmPickPhotoView.Builder(this@AmeConversationActivity)
+                                                .setCapturePhoto(true)
+                                                .build().start()
+                                    } catch (e: IOException) {
+                                        e.printStackTrace()
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
-        }),
+                }),
                 BottomPanelItem(getString(R.string.chats_more_option_album), R.drawable.chats_conversation_panel_pic_icon, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         checkRecipientBlock {
@@ -537,25 +538,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                             Log.w(TAG, "couldn't complete ACTION_OPEN_DOCUMENT, no activity found. falling back.")
                         }
                     }
-                }))
-
-        if (!mRecipient.isGroupRecipient && !mRecipient.isLogin) {
-            bottom_panel.addOptionItem(
-                    BottomPanelItem(getString(R.string.chats_more_option_call), R.drawable.chats_conversation_panel_voice_call_icon, object : BottomPanelClickListener {
-                        override fun onClick(name: String, view: View) {
-                            checkRecipientBlock {
-                                if (it) {
-                                    if (mRecipient.isFriend || mRecipient.isAllowStranger) {
-                                        AmeModuleCenter.chat(accountContext)?.startRtcCallService(this@AmeConversationActivity, mRecipient.address, CameraState.Direction.NONE.ordinal)
-                                    } else {
-                                        ToastUtil.show(this@AmeConversationActivity, getString(R.string.common_chats_stranger_disturb_notice, mRecipient.name), Toast.LENGTH_LONG)
-                                    }
-                                }
-                            }
-                        }
-                    }))
-        }
-        bottom_panel.addOptionItem(
+                }),
                 BottomPanelItem(getString(R.string.chats_more_option_location), R.drawable.chats_conversation_panel_location_icon, object : BottomPanelClickListener {
                     override fun onClick(name: String, view: View) {
                         checkRecipientBlock {
@@ -581,6 +564,38 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                         }
                     }
                 }))
+
+
+
+        if (!mRecipient.isGroupRecipient && !mRecipient.isLogin) {
+            bottom_panel.addOptionItem(
+                    BottomPanelItem(getString(R.string.chats_more_option_call), R.drawable.chats_conversation_panel_voice_call_icon, object : BottomPanelClickListener {
+                        override fun onClick(name: String, view: View) {
+                            checkRecipientBlock {
+                                if (it) {
+                                    if (mRecipient.isFriend || mRecipient.isAllowStranger) {
+                                        AmeModuleCenter.chat(accountContext)?.startRtcCallService(this@AmeConversationActivity, mRecipient.address, CameraState.Direction.NONE.ordinal)
+                                    } else {
+                                        ToastUtil.show(this@AmeConversationActivity, getString(R.string.common_chats_stranger_disturb_notice, mRecipient.name), Toast.LENGTH_LONG)
+                                    }
+                                }
+                            }
+                        }
+                    }),
+                    BottomPanelItem(getString(R.string.chats_more_option_video_call), R.drawable.chats_conversation_panel_video_call_icon, object : BottomPanelClickListener {
+                        override fun onClick(name: String, view: View) {
+                            checkRecipientBlock {
+                                if (it) {
+                                    if (mRecipient.isFriend || mRecipient.isAllowStranger) {
+                                        AmeModuleCenter.chat(accountContext)?.startRtcCallService(this@AmeConversationActivity, mRecipient.address, CameraState.Direction.FRONT.ordinal)
+                                    } else {
+                                        ToastUtil.show(this@AmeConversationActivity, getString(R.string.common_chats_stranger_disturb_notice, mRecipient.name), Toast.LENGTH_LONG)
+                                    }
+                                }
+                            }
+                        }
+                    }))
+        }
 
         swipeBackLayout.addSwipeListener(object : SwipeBackLayout.SwipeListener {
             override fun onScrollStateChange(state: Int, scrollPercent: Float) {
@@ -614,7 +629,8 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
         }
 
         val chatBurn = ChatTitleDropItem(icon, 0, tickTalkTitle) {
-            ChatsBurnSetting.configBurnSetting(this, mRecipient, accountContext.masterSecret ?: return@ChatTitleDropItem) {
+            ChatsBurnSetting.configBurnSetting(this, mRecipient, accountContext.masterSecret
+                    ?: return@ChatTitleDropItem) {
                 chat_title_bar.setPrivateChat(mRecipient)
             }
         }
@@ -712,8 +728,10 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
         ALog.i(TAG, "handleSendImage size: ${selectPaths.size}")
         Observable.fromIterable(selectPaths).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).map { path ->
             val uri = if (takenPhoto) Uri.fromFile(File(path)) else AppUtil.getImageContentUri(this@AmeConversationActivity, path)
-            val slide = AttachmentUtils.getImageSlide(this@AmeConversationActivity, uri) ?: throw Exception("ImageSlide is null")
-            createOutgoingMessage("", SlideDeck().apply { addSlide(slide) }, (mRecipient.expireMessages * 1000).toLong(), -1, (mConversationModel?.getThreadId() ?: 0L) <= 0L)
+            val slide = AttachmentUtils.getImageSlide(this@AmeConversationActivity, uri)
+                    ?: throw Exception("ImageSlide is null")
+            createOutgoingMessage("", SlideDeck().apply { addSlide(slide) }, (mRecipient.expireMessages * 1000).toLong(), -1, (mConversationModel?.getThreadId()
+                    ?: 0L) <= 0L)
         }.delay(1500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -729,8 +747,10 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
         }
         ALog.i(TAG, "handleSendDocument size: ${selectUris.size}")
         Observable.fromIterable(selectUris).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).map { uri ->
-            val slide = AttachmentUtils.getDocumentSlide(AppContextHolder.APP_CONTEXT, uri) ?: throw Exception("DocumentSlide is null")
-            createOutgoingMessage("", SlideDeck().apply { addSlide(slide) }, (mRecipient.expireMessages * 1000).toLong(), -1, (mConversationModel?.getThreadId() ?: 0L) <= 0L)
+            val slide = AttachmentUtils.getDocumentSlide(AppContextHolder.APP_CONTEXT, uri)
+                    ?: throw Exception("DocumentSlide is null")
+            createOutgoingMessage("", SlideDeck().apply { addSlide(slide) }, (mRecipient.expireMessages * 1000).toLong(), -1, (mConversationModel?.getThreadId()
+                    ?: 0L) <= 0L)
         }.delay(1500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -748,7 +768,8 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                 BcmRouter.getInstance()
                         .get(ARouterConstants.Activity.CHAT_USER_PATH)
                         .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, mRecipient.address)
-                        .putLong(ARouterConstants.PARAM.PARAM_THREAD, mConversationModel?.getThreadId() ?: 0L)
+                        .putLong(ARouterConstants.PARAM.PARAM_THREAD, mConversationModel?.getThreadId()
+                                ?: 0L)
                         .startBcmActivity(accountContext, this, DELETE_REQUEST_CODE)
             }, 200)
         }

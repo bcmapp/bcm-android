@@ -87,7 +87,7 @@ dependencies {
     api 'com.bcm.router:router:1.0.0'
     kapt 'com.bcm.router:processor:1.0.0'
 
-//    api project(':thirdpart:signal-protocol')
+    //api project(':thirdpart:signal-protocol')
     api("com.sdk.crashreport:crashreport:2.2.6-bcm") {
         exclude group: 'com.squareup.okhttp3', module: 'okhttp'
     }

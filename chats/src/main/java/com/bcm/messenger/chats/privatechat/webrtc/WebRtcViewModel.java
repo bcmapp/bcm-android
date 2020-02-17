@@ -122,6 +122,6 @@ public class WebRtcViewModel {
         if (recipient != null) {
             address = recipient.getAddress().toString();
         }
-        return "[State: " + state + ", recipient: " + address + ", identity: " + identityKey + ", remoteVideo: " + remoteVideoEnabled + ", localVideo: " + localCameraState.isEnabled() + "]";
+        return "[State: " + state + ", recipient: " + address + ", identity: " + identityKey + ", remoteVideo: " + remoteVideoEnabled + ", localVideo: " + localCameraState.isEnabled() + " lcamera:"+ localCameraState.isEnabled() +"]";
     }
 }

@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.bcm.messenger.chats.privatechat.core.ChatHttp;
 import com.bcm.messenger.chats.privatechat.logic.MessageSender;
+import com.bcm.messenger.chats.privatechat.webrtc.CameraState;
 import com.bcm.messenger.chats.privatechat.webrtc.WebRtcCallService;
 import com.bcm.messenger.common.ARouterConstants;
 import com.bcm.messenger.common.AccountContext;
@@ -280,6 +281,8 @@ public class PushDecryptJob extends ContextJob {
             Intent intent = new Intent(context, WebRtcCallService.class);
             intent.setAction(WebRtcCallService.ACTION_INCOMING_CALL);
             intent.putExtra(WebRtcCallService.EXTRA_CALL_ID, message.getId());
+            CameraState.Direction callType = message.callType()== SignalServiceProtos.CallMessage.Offer.CallType.VIDEO? CameraState.Direction.FRONT:CameraState.Direction.NONE;
+            intent.putExtra(WebRtcCallService.EXTRA_CALL_TYPE, callType.ordinal());
             intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, Address.from(accountContext, envelope.getSource()));
             intent.putExtra(WebRtcCallService.EXTRA_REMOTE_DESCRIPTION, message.getDescription());
             intent.putExtra(WebRtcCallService.EXTRA_TIMESTAMP, envelope.getTimestamp());
