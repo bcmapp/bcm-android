@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/common_color_white"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -35,7 +34,7 @@
         android:paddingStart="@dimen/common_horizontal_gap"
         android:paddingEnd="@dimen/common_horizontal_gap"
         android:textSize="13sp"
-        android:textColor="@color/common_content_second_color"
+        android:textColor="?attr/common_text_secondary_color"
         android:text="@string/adhoc_session_recent_item_title"
         app:layout_constraintTop_toBottomOf="@id/adhoc_session_searchbar"
         app:layout_constraintStart_toStartOf="parent"

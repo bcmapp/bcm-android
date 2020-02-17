@@ -211,7 +211,7 @@ class AmeNoteActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapter.IViewH
                 timestamp.text = formatTime()
 
                 if (data.pin){
-                    timestamp.setRightDrawable(R.drawable.common_pin_icon, R.attr.common_foreground_color)
+                    timestamp.setRightDrawable(R.drawable.common_pin_icon)
                 } else {
                     timestamp.resetDrawable()
                 }
