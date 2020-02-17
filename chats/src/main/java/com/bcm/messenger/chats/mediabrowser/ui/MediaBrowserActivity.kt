@@ -7,12 +7,10 @@ import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.viewpager.widget.ViewPager
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.mediabrowser.BaseMediaBrowserViewModel
 import com.bcm.messenger.chats.mediabrowser.IMediaBrowserMenuProxy
@@ -28,7 +26,9 @@ import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.route.annotation.Route
 import com.bcm.route.api.BcmRouter
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.chats_media_browser_activity.*
+import kotlinx.android.synthetic.main.chats_media_browser_tab_item_layout.view.*
 
 
 /**
@@ -56,7 +56,7 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
         const val NONE_OBJECT = -1
     }
 
-    private var currentPage = -1
+    private var currentPage = 0
     private lateinit var address: Address
     private var indexId = -1L
     private var isDeleteMode = false
@@ -75,19 +75,9 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
         isDeleteMode = intent.getBooleanExtra(BROWSER_MODE, false)
 
         initPages()
+        initTabLayout()
         initSelection()
 
-        media_browser_media_title.setOnClickListener {
-            showMediaPager()
-        }
-
-        media_browser_file_title.setOnClickListener {
-            showFilePager()
-        }
-
-        media_browser_link_title.setOnClickListener {
-            showLinkPager()
-        }
         selectBtnChange(SELECT_ALL)
 
         if (isDeleteMode) {
@@ -114,26 +104,10 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
             }
         })
 
-        showMediaPager()
-
         refresh()
     }
 
     private fun initPages() {
-        media_browser_content.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-
-            }
-
-            override fun onPageSelected(position: Int) {
-                showPage(position)
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {
-
-            }
-        })
-
         val fms = ArrayList<Fragment>()
         menuProxyList = ArrayList()
 
@@ -181,7 +155,51 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
                 return fms.size
             }
         }
-        media_browser_content.isSlidingEnable = false
+    }
+
+    private fun initTabLayout() {
+        val titleList = mutableListOf(
+                getString(R.string.chats_browser_media_title),
+                getString(R.string.chats_browser_file_title),
+                getString(R.string.chats_media_link_title)
+        )
+
+        media_browser_tab.setupWithViewPager(media_browser_content)
+        for (i in 0 until 3) {
+            val tabView = media_browser_tab.getTabAt(i) ?: continue
+            val view = layoutInflater.inflate(R.layout.chats_media_browser_tab_item_layout, tabView.view, false)
+            view.media_browser_tab_text.text = titleList[i]
+            if (i == 0) {
+                view.media_browser_tab_text.isSelected = true
+            }
+            tabView.customView = view
+        }
+        media_browser_tab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(p0: TabLayout.Tab?) {
+            }
+
+            override fun onTabUnselected(p0: TabLayout.Tab?) {
+                p0?.customView?.media_browser_tab_text?.apply {
+                    currentMenuProxy().active(false)
+                    isSelected = false
+                    setTextColor(getAttrColor(R.attr.chats_media_browser_text_unselected_color))
+                }
+            }
+
+            override fun onTabSelected(p0: TabLayout.Tab?) {
+                if (p0 != null && p0.position != currentPage) {
+                    currentPage = p0.position
+                    currentMenuProxy().active(true)
+                    viewModel.setSelecting(false)
+                    enableOption(browser_save_img, currentPage != 2)
+                }
+
+                p0?.customView?.media_browser_tab_text?.apply {
+                    isSelected = true
+                    setTextColor(getAttrColor(R.attr.chats_media_browser_text_selected_color))
+                }
+            }
+        })
     }
 
     private fun initSelection() {
@@ -266,52 +284,6 @@ class MediaBrowserActivity : AccountSwipeBaseActivity() {
             address = newAddress
             refresh()
         }
-    }
-
-    private fun showMediaPager() {
-        showPage(IMAGE_PAGE)
-    }
-
-    private fun showFilePager() {
-        showPage(FILE_PAGE)
-    }
-
-    private fun showLinkPager() {
-        showPage(LINK_PAGE)
-    }
-
-    private fun getTitleView(page: Int): TextView {
-        return when (page) {
-            IMAGE_PAGE -> media_browser_media_title
-            FILE_PAGE -> media_browser_file_title
-            else -> media_browser_link_title
-        }
-    }
-
-    private fun showPage(pageIndex: Int) {
-        if (currentPage == pageIndex) {
-            return
-        }
-
-        selectBtnChange(SELECT_ALL)
-
-        if (currentPage >= 0) {
-            val titleView = getTitleView(currentPage)
-            titleView.isSelected = false
-            titleView.setTextColor(getAttrColor(R.attr.chats_media_browser_text_unselected_color))
-            currentMenuProxy().active(false)
-        }
-
-        currentPage = pageIndex
-        media_browser_content.setCurrentItem(currentPage, true)
-        currentMenuProxy().active(true)
-        val titleView = getTitleView(currentPage)
-        titleView.isSelected = true
-        titleView.setTextColor(getAttrColor(R.attr.chats_media_browser_text_selected_color))
-
-        enableOption(browser_save_img, currentPage != LINK_PAGE)
-
-        viewModel.setSelecting(false)
     }
 
     fun selectBtnChange(selectStyle: Int?) {

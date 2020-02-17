@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import com.bcm.messenger.common.preferences.SuperPreferences
 import com.bcm.messenger.utility.AppContextHolder
@@ -69,18 +70,43 @@ class ThemeTimerManager {
         val lightLongTime = lightCalendar.time.time
         val darkLongTime = darkCalendar.time.time
 
-        if (lightLongTime > darkLongTime) {
-            if (currentTime in darkLongTime..lightLongTime) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
+        if (isScheduleCustomTheme()) {
+            if (currentTime == lightLongTime) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            } else if (currentTime == darkLongTime) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }
         } else {
-            if (currentTime in lightLongTime..darkLongTime) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            if (lightLongTime > darkLongTime) {
+                if (currentTime in darkLongTime..lightLongTime) {
+                    if (!isDarkMode()) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+                } else {
+                    if (isDarkMode()) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+                }
             } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                if (currentTime in lightLongTime..darkLongTime) {
+                    if (isDarkMode()) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+                } else {
+                    if (!isDarkMode()) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+                }
             }
         }
+    }
+
+    private fun isDarkMode(): Boolean {
+        return AppContextHolder.APP_CONTEXT.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    private fun isScheduleCustomTheme(): Boolean {
+        val setting = SuperPreferences.getCurrentThemeSetting(AppContextHolder.APP_CONTEXT, ThemeManager.THEME_SYSTEM)
+        return setting == ThemeManager.THEME_SCHEDULE_LIGHT || setting == ThemeManager.THEME_SCHEDULE_DARK
     }
 }

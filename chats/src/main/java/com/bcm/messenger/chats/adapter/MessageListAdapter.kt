@@ -26,11 +26,13 @@ import com.bcm.messenger.utility.Conversions
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.chats_message_list_header_friend_requset.view.*
 import kotlinx.android.synthetic.main.chats_message_list_header_multi_device.view.*
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.HashSet
 
 /**
@@ -259,6 +261,18 @@ class MessageListAdapter(context: Context,
                     }
                     .setNegativeButton(R.string.chats_cancel, null)
                     .show()
+        }
+
+        private fun switchMute() {
+            val muteTime = if (chatItem.recipient?.isMuted == true) {
+                0L
+            } else {
+                System.currentTimeMillis() + TimeUnit.DAYS.toMillis(3650)
+            }
+
+            Observable.create<Unit> {
+
+            }
         }
 
         fun updatePin() {

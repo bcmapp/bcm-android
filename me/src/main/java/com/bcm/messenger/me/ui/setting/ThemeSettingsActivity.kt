@@ -40,38 +40,39 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
         })
 
         theme_light.setOnClickListener {
+            if (currentThemeSetting == ThemeManager.THEME_SYSTEM) {
+                return@setOnClickListener
+            }
             theme_select_light.setBackgroundResource(R.drawable.me_theme_settings_selected_bg)
             theme_select_dark.background = null
 
-            theme_follow_system.showRightStatus(CommonSettingItem.RIGHT_NONE)
-            theme_schedule.showRightStatus(CommonSettingItem.RIGHT_NONE)
-            theme_disabled.showRightStatus(CommonSettingItem.RIGHT_YES)
-
-            ViewUtils.fadeOut(theme_schedule_layout, 250)
-
-            SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_LIGHT)
+            if (ThemeManager.isScheduleTheme(this)) {
+                SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_SCHEDULE_LIGHT)
+            } else {
+                ViewUtils.fadeOut(theme_schedule_layout, 250)
+                SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_LIGHT)
+            }
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             ThemeManager.stopTimer()
         }
         theme_dark.setOnClickListener {
+            if (currentThemeSetting == ThemeManager.THEME_SYSTEM) {
+                return@setOnClickListener
+            }
             theme_select_light.background = null
             theme_select_dark.setBackgroundResource(R.drawable.me_theme_settings_selected_bg)
 
-            theme_follow_system.showRightStatus(CommonSettingItem.RIGHT_NONE)
-            theme_schedule.showRightStatus(CommonSettingItem.RIGHT_NONE)
-            theme_disabled.showRightStatus(CommonSettingItem.RIGHT_YES)
-
-            ViewUtils.fadeOut(theme_schedule_layout, 250)
-
-            SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_DARK)
+            if (ThemeManager.isScheduleTheme(this)) {
+                SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_SCHEDULE_DARK)
+            } else {
+                ViewUtils.fadeOut(theme_schedule_layout, 250)
+                SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_DARK)
+            }
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             ThemeManager.stopTimer()
         }
 
         theme_follow_system.setOnClickListener {
-            theme_select_light.background = null
-            theme_select_dark.background = null
-
             theme_follow_system.showRightStatus(CommonSettingItem.RIGHT_YES)
             theme_schedule.showRightStatus(CommonSettingItem.RIGHT_NONE)
             theme_disabled.showRightStatus(CommonSettingItem.RIGHT_NONE)
@@ -83,31 +84,30 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
             ThemeManager.stopTimer()
         }
         theme_schedule.setOnClickListener {
-            theme_select_light.background = null
-            theme_select_dark.background = null
-
+            if (currentThemeSetting == ThemeManager.THEME_SCHEDULE) {
+                return@setOnClickListener
+            }
             theme_follow_system.showRightStatus(CommonSettingItem.RIGHT_NONE)
             theme_schedule.showRightStatus(CommonSettingItem.RIGHT_YES)
             theme_disabled.showRightStatus(CommonSettingItem.RIGHT_NONE)
 
             ViewUtils.fadeIn(theme_schedule_layout, 250)
 
-            SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_CUSTOM)
+            SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_SCHEDULE)
             ThemeManager.startTimer()
         }
         theme_disabled.setOnClickListener {
-            theme_select_light.background = null
-            theme_select_dark.background = null
-
             theme_follow_system.showRightStatus(CommonSettingItem.RIGHT_NONE)
             theme_schedule.showRightStatus(CommonSettingItem.RIGHT_NONE)
             theme_disabled.showRightStatus(CommonSettingItem.RIGHT_YES)
 
             val nightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
             if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
+                currentThemeSetting = ThemeManager.THEME_DARK
                 theme_select_dark.setBackgroundResource(R.drawable.me_theme_settings_selected_bg)
                 SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_DARK)
             } else {
+                currentThemeSetting = ThemeManager.THEME_LIGHT
                 theme_select_light.setBackgroundResource(R.drawable.me_theme_settings_selected_bg)
                 SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_LIGHT)
             }
@@ -150,10 +150,18 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
                 theme_select_dark.setBackgroundResource(R.drawable.me_theme_settings_selected_bg)
                 theme_disabled.showRightStatus(CommonSettingItem.RIGHT_YES)
             }
-            ThemeManager.THEME_CUSTOM -> {
+            ThemeManager.THEME_SCHEDULE,
+            ThemeManager.THEME_SCHEDULE_LIGHT,
+            ThemeManager.THEME_SCHEDULE_DARK -> {
                 theme_schedule.showRightStatus(CommonSettingItem.RIGHT_YES)
                 theme_schedule_layout.visibility = View.VISIBLE
             }
+        }
+
+        if (ThemeManager.isDarkTheme(this)) {
+            theme_select_dark.setBackgroundResource(R.drawable.me_theme_settings_selected_bg)
+        } else {
+            theme_select_light.setBackgroundResource(R.drawable.me_theme_settings_selected_bg)
         }
     }
 

@@ -26,7 +26,9 @@ open class ThemeManager {
         const val THEME_SYSTEM = 0
         const val THEME_LIGHT = 1
         const val THEME_DARK = 2
-        const val THEME_CUSTOM = 3
+        const val THEME_SCHEDULE = 3
+        const val THEME_SCHEDULE_LIGHT = 4
+        const val THEME_SCHEDULE_DARK = 5
 
         @JvmStatic
         private var timerManager: ThemeTimerManager? = null
@@ -37,7 +39,13 @@ open class ThemeManager {
                 THEME_SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                 THEME_LIGHT-> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 THEME_DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                THEME_CUSTOM -> {
+                THEME_SCHEDULE -> startTimer()
+                THEME_SCHEDULE_LIGHT -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    startTimer()
+                }
+                THEME_SCHEDULE_DARK -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                     startTimer()
                 }
             }
@@ -75,6 +83,11 @@ open class ThemeManager {
         @JvmStatic
         fun isDarkTheme(activity: Activity): Boolean {
             return activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        }
+
+        fun isScheduleTheme(context: Context): Boolean {
+            val theme = getCurrentTheme(context)
+            return theme == THEME_SCHEDULE || theme == THEME_SCHEDULE_LIGHT || theme == THEME_SCHEDULE_DARK
         }
 
         protected fun getCurrentTheme(context: Context): Int {
