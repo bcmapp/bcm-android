@@ -177,7 +177,7 @@
         android:background="@drawable/common_rectangle_8_red_bg"
         android:gravity="center"
         android:text="@string/me_log_out"
-        android:textColor="?attr/common_text_main_color"
+        android:textColor="?attr/common_white_color"
         android:textSize="17sp"
         app:layout_constraintBottom_toTopOf="@id/profile_destroy_btn"
         app:layout_constraintEnd_toEndOf="parent"

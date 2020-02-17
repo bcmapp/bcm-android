@@ -151,6 +151,7 @@
         android:layout_height="wrap_content"
         android:text="@string/wallet_transfer_confirm_action_text"
         style="@style/CommonBlueButton"
+        android:textColor="?attr/common_white_color"
         android:layout_marginStart="@dimen/common_horizontal_gap"
         android:layout_marginEnd="@dimen/common_horizontal_gap"
         android:layout_marginTop="20dp"

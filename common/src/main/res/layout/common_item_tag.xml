@@ -16,5 +16,5 @@
           android:paddingLeft="@dimen/common_horizontal_gap"
           android:paddingRight="@dimen/common_horizontal_gap"
           android:paddingTop="5dp"
-          android:textColor="?attr/common_text_main_color"
+          android:textColor="?attr/common_white_color"
           tools:text="Hello World"/>

@@ -48,6 +48,7 @@
         style="@style/CommonBlueButton"
         android:layout_marginBottom="64dp"
         android:text="@string/me_create_a_note"
+        android:textColor="?attr/common_white_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

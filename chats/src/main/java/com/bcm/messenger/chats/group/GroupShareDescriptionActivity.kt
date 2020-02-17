@@ -113,7 +113,7 @@ class GroupShareDescriptionActivity : AccountSwipeBaseActivity() {
             val notice = StringAppearanceUtil.applyFilterAppearanceIgnoreCase(getString(R.string.chats_group_share_description_notice), "BCM", color = getAttrColor(R.attr.common_text_blue_color))
             group_share_notice_tv.text = notice
 
-            group_share_join_btn.setTextColor(getAttrColor(R.attr.common_text_main_color))
+            group_share_join_btn.setTextColor(getAttrColor(R.attr.common_white_color))
             group_share_join_btn.setBackgroundResource(R.drawable.common_rectangle_8_blue_bg)
             group_share_join_btn.isEnabled = true
 

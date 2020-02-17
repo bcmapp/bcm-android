@@ -75,6 +75,7 @@
             android:layout_width="8dp"
             android:layout_height="8dp"
             android:layout_marginStart="15dp"
+            android:textColor="?attr/common_white_color"
             android:background="@drawable/common_rectangle_8_red_bg"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"

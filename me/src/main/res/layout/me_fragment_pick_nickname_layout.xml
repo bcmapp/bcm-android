@@ -53,6 +53,7 @@
             android:layout_marginBottom="30dp"
             android:enabled="false"
             android:text="@string/common_string_save"
+            android:textColor="?attr/common_white_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
