@@ -7,26 +7,37 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.bean.MessageListItem
 import com.bcm.messenger.chats.group.logic.GroupLogic
+import com.bcm.messenger.chats.privatechat.logic.MessageSender
 import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
+import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.common.sms.OutgoingLocationMessage
 import com.bcm.messenger.common.ui.CommonSearchBar
 import com.bcm.messenger.common.ui.adapter.LinearBaseAdapter
+import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.BcmPopupMenu
+import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getColor
 import com.bcm.messenger.common.utils.getString
 import com.bcm.messenger.utility.Conversions
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.chats_message_list_header_friend_requset.view.*
 import kotlinx.android.synthetic.main.chats_message_list_header_multi_device.view.*
 import java.security.MessageDigest
@@ -235,7 +246,7 @@ class MessageListAdapter(context: Context,
                                 0 -> setUnread()
                                 1 -> switchMute()
                                 2 -> switchPin()
-                                3 -> confirmDelete()
+                                3 -> if (chatItem.groupId > 0) deleteGroupChat() else deletePrivateChat()
                             }
                         }
                         .show(x, y)
@@ -252,7 +263,7 @@ class MessageListAdapter(context: Context,
             ThreadListViewModel.getCurrentThreadModel()?.setPin(chatItem.threadId, !isPinned) {}
         }
 
-        private fun confirmDelete() {
+        private fun deleteGroupChat() {
             AlertDialog.Builder(chatItem.context)
                     .setTitle(R.string.chats_item_confirm_delete_title)
                     .setMessage(R.string.chats_item_confirm_delete_message)
@@ -261,6 +272,31 @@ class MessageListAdapter(context: Context,
                     }
                     .setNegativeButton(R.string.chats_cancel, null)
                     .show()
+        }
+
+        private fun deletePrivateChat() {
+            AmePopup.bottom.newBuilder()
+                    .withTitle(chatItem.context.getString(R.string.chats_item_delete_private_chat_title, chatItem.recipient?.name))
+                    .withPopItem(AmeBottomPopup.PopupItem(chatItem.context.getString(R.string.chats_item_delete_private_both, chatItem.recipient?.name), chatItem.context.getAttrColor(R.attr.common_text_warn_color)) {
+                        val recipient = chatItem.recipient ?: return@PopupItem
+                        Observable.create<Unit> { emitter ->
+                            val clearMessage = AmeGroupMessage(AmeGroupMessage.CONTROL_MESSAGE, AmeGroupMessage.ControlContent(AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE, Recipient.major().address.serialize(), "", 0L)).toString()
+                            val message = OutgoingLocationMessage(recipient, clearMessage, (recipient.expireMessages * 1000).toLong())
+                            MessageSender.send(chatItem.context, AMELogin.majorContext, message, chatItem.threadId, null)
+                            emitter.onNext(Unit)
+                            emitter.onComplete()
+                        }.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(chatItem.recipient, chatItem.threadId) {}
+                                }, {
+                                })
+                    })
+                    .withPopItem(AmeBottomPopup.PopupItem(chatItem.context.getString(R.string.chats_item_delete_private_local), chatItem.context.getAttrColor(R.attr.common_text_warn_color)) {
+                        ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(chatItem.recipient, chatItem.threadId) {}
+                    })
+                    .withDoneTitle(chatItem.context.getString(R.string.chats_cancel))
+                    .show(chatItem.context as? FragmentActivity)
         }
 
         private fun setUnread() {
