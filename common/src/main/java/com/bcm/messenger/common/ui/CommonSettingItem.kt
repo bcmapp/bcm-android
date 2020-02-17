@@ -63,7 +63,7 @@ class CommonSettingItem @JvmOverloads constructor(context: Context, attrs: Attri
         val tipText = typeArray.getString(R.styleable.CommonSettingItemStyle_setting_item_tip_text) ?: ""
         mTipColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_tip_color, context.getAttrColor(R.attr.common_setting_item_warn_color))
         mTipIcon = typeArray.getResourceId(R.styleable.CommonSettingItemStyle_setting_item_tip_icon, 0)
-        mTipIconColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_tip_icon_color, context.getAttrColor(R.attr.common_icon_color))
+        mTipIconColor = typeArray.getColor(R.styleable.CommonSettingItemStyle_setting_item_tip_icon_color, context.getAttrColor(R.attr.common_setting_item_warn_color))
         val switchStatus = typeArray.getInt(R.styleable.CommonSettingItemStyle_setting_item_switch, 0)
         val rightStatus = typeArray.getInt(R.styleable.CommonSettingItemStyle_setting_item_right, RIGHT_ARROW)
         val customRightDrawable = typeArray.getResourceId(R.styleable.CommonSettingItemStyle_setting_item_right_custom, 0)
