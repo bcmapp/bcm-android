@@ -24,8 +24,8 @@ import java.io.IOException
 class PushHideMessageSendJob(
         context: Context,
         accountContext: AccountContext,
-        private val messageType:Long,
         private val messageId: Long,
+        private val messageType:Long,
         destination: Address)
     : PushSendJob(
         context,
