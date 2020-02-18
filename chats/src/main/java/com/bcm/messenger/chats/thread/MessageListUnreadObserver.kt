@@ -10,7 +10,6 @@ import com.bcm.messenger.common.event.AccountLoginStateChangedEvent
 import com.bcm.messenger.common.event.FriendRequestEvent
 import com.bcm.messenger.common.event.HomeTabEvent
 import com.bcm.messenger.common.event.HomeTabEvent.Companion.TAB_ADHOC
-import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.utils.RxBus
 import com.bcm.messenger.login.logic.AmeLoginLogic

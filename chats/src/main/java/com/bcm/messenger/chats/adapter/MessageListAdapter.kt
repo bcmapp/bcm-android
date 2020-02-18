@@ -18,6 +18,7 @@ import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.ThreadRecord
+import com.bcm.messenger.common.event.TextSendEvent
 import com.bcm.messenger.common.mms.GlideRequests
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
@@ -40,6 +41,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.chats_message_list_header_friend_requset.view.*
 import kotlinx.android.synthetic.main.chats_message_list_header_multi_device.view.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
@@ -222,6 +226,8 @@ class MessageListAdapter(context: Context,
         private var x = 0
         private var y = 0
 
+        private var deleteMsgId = 0L
+
         init {
             chatItem.setOnTouchListener { _, event ->
                 if (event.action == MotionEvent.ACTION_DOWN) {
@@ -278,25 +284,42 @@ class MessageListAdapter(context: Context,
             AmePopup.bottom.newBuilder()
                     .withTitle(chatItem.context.getString(R.string.chats_item_delete_private_chat_title, chatItem.recipient?.name))
                     .withPopItem(AmeBottomPopup.PopupItem(chatItem.context.getString(R.string.chats_item_delete_private_both, chatItem.recipient?.name), chatItem.context.getAttrColor(R.attr.common_text_warn_color)) {
-                        val recipient = chatItem.recipient ?: return@PopupItem
-                        Observable.create<Unit> { emitter ->
-                            val clearMessage = AmeGroupMessage(AmeGroupMessage.CONTROL_MESSAGE, AmeGroupMessage.ControlContent(AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE, Recipient.major().address.serialize(), "", 0L)).toString()
-                            val message = OutgoingLocationMessage(recipient, clearMessage, (recipient.expireMessages * 1000).toLong())
-                            MessageSender.send(chatItem.context, AMELogin.majorContext, message, chatItem.threadId, null)
-                            emitter.onNext(Unit)
-                            emitter.onComplete()
-                        }.subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({
-                                    ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(chatItem.recipient, chatItem.threadId) {}
-                                }, {
-                                })
+                        realDelete()
                     })
                     .withPopItem(AmeBottomPopup.PopupItem(chatItem.context.getString(R.string.chats_item_delete_private_local), chatItem.context.getAttrColor(R.attr.common_text_warn_color)) {
                         ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(chatItem.recipient, chatItem.threadId) {}
                     })
                     .withDoneTitle(chatItem.context.getString(R.string.chats_cancel))
                     .show(chatItem.context as? FragmentActivity)
+        }
+
+        private fun realDelete() {
+            val recipient = chatItem.recipient ?: return
+
+            AmePopup.loading.show(chatItem.context as? FragmentActivity)
+            EventBus.getDefault().register(this)
+            Observable.create<Unit> { emitter ->
+                val clearMessage = AmeGroupMessage(AmeGroupMessage.CONTROL_MESSAGE, AmeGroupMessage.ControlContent(AmeGroupMessage.ControlContent.ACTION_CLEAR_MESSAGE, Recipient.major().address.serialize(), "", 0L)).toString()
+                val message = OutgoingLocationMessage(recipient, clearMessage, (recipient.expireMessages * 1000).toLong())
+                MessageSender.send(chatItem.context, AMELogin.majorContext, message, chatItem.threadId) { messageId ->
+                    deleteMsgId = messageId
+                }
+                emitter.onComplete()
+            }.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                    }, {
+                        AmePopup.loading.dismiss()
+                    })
+        }
+
+        @Subscribe(threadMode = ThreadMode.MAIN)
+        fun onEvent(event: TextSendEvent) {
+            if (event.messageId == deleteMsgId) {
+                EventBus.getDefault().unregister(this)
+                AmePopup.loading.dismiss()
+                ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(chatItem.recipient, chatItem.threadId) {}
+            }
         }
 
         private fun setUnread() {

@@ -40,7 +40,7 @@ import org.greenrobot.eventbus.ThreadMode
  * Created by Kin on 2019/12/30
  */
 class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
-    private val TAG = "HomeProfileView"
+    private val TAG = "HomeProfileLayout"
 
     interface HomeProfileListener {
         fun onClickExit()
@@ -126,8 +126,6 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
     private fun initView() {
         setBackgroundResource(context.getAttribute(R.attr.common_view_background))
 
-        hideAllViews()
-
         home_profile_status_fill.layoutParams = home_profile_status_fill.layoutParams.apply {
             height = statusBarHeight
         }
@@ -205,6 +203,8 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
                 return listener?.onInterceptEvent(ev) ?: false
             }
         }
+
+        hideAllViews()
     }
 
     fun setViewsAlpha(alpha: Float) {

@@ -16,6 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import com.bcm.messenger.utility.logger.ALog
 import kotlin.math.abs
 
 /**
@@ -333,6 +334,7 @@ class ConstraintPullDownLayout @JvmOverloads constructor(context: Context, attrs
      * @param callback 回调
      */
     fun setCallback(callback: PullDownLayoutCallback) {
+        ALog.i(TAG, "Set callback for $this")
         this.callback = callback
     }
 

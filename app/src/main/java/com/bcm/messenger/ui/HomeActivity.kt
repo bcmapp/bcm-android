@@ -514,6 +514,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
                 ALog.i(TAG, "PullDownView onTouchDown.")
             }
         }
+        ALog.i(TAG, "Set callback for $home_pull_down_layout from $this")
         home_pull_down_layout.setCallback(callback)
 
         home_toolbar_avatar.setOnClickListener {

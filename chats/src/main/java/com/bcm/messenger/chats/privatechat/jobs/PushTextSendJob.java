@@ -91,12 +91,9 @@ public class PushTextSendJob extends PushSendJob {
             }
 
             chatRepo.setMessageSendFail(record.getId());
-
         } finally {
             checkMessageType(record);
         }
-
-
     }
 
     @Override

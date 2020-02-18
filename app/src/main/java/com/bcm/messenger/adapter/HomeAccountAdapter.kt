@@ -44,6 +44,18 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
 
     var listener: AdapterListener? = null
 
+    private val comparator = Comparator<HomeAccountItem> { o1, o2 ->
+        if (o1.type == o2.type) {
+            when {
+                o1.accountContext.uid == AMELogin.majorUid -> -1
+                o2.accountContext.uid == AMELogin.majorUid -> 1
+                else -> -(o1.account.lastLoginTime - o2.account.lastLoginTime).toInt()
+            }
+        } else {
+            o1.type - o2.type
+        }
+    }
+
     private val width = AppContextHolder.APP_CONTEXT.getScreenWidth() - 120.dp2Px()
     private val height = if (AppContextHolder.APP_CONTEXT.checkDeviceHasNavigationBar()) {
         getRealScreenHeight() - AppContextHolder.APP_CONTEXT.getNavigationBarHeight()
@@ -181,18 +193,6 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
         }
 
         return -1
-    }
-
-    private val comparator = Comparator<HomeAccountItem> { o1, o2 ->
-        if (o1.type == o2.type) {
-            when {
-                o1.accountContext.uid == AMELogin.majorUid -> -1
-                o2.accountContext.uid == AMELogin.majorUid -> 1
-                else -> -(o1.account.lastLoginTime - o2.account.lastLoginTime).toInt()
-            }
-        } else {
-            o1.type - o2.type
-        }
     }
 
     fun resortAccounts() {
