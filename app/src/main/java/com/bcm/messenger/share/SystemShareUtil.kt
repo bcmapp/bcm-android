@@ -18,6 +18,7 @@ import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.sms.OutgoingEncryptedMessage
 import com.bcm.messenger.common.utils.BcmFileUtils
+import com.bcm.messenger.common.utils.ChatTimestamp
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -55,7 +56,7 @@ object SystemShareUtil {
         val deck = SlideDeck()
         deck.addSlide(AttachmentUtils.getImageSlide(AppContextHolder.APP_CONTEXT, uri)?:return)
 
-        val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(recipient, deck, "", AmeTimeUtil.getMessageSendTime(),
+        val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(recipient, deck, "", ChatTimestamp.getTime(masterSecret.accountContext, threadId),
                 -1, recipient.expireMessages * 1000L, ThreadRepo.DistributionTypes.CONVERSATION))
 
 
@@ -77,7 +78,7 @@ object SystemShareUtil {
         val deck = SlideDeck()
         deck.addSlide(AttachmentUtils.getDocumentSlide(AppContextHolder.APP_CONTEXT, uri)?:return)
 
-        val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(recipient, deck, "", AmeTimeUtil.getMessageSendTime(),
+        val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(recipient, deck, "", ChatTimestamp.getTime(masterSecret.accountContext, threadId),
                 -1, recipient.expireMessages * 1000L, ThreadRepo.DistributionTypes.CONVERSATION))
 
         Observable.create<Long> {

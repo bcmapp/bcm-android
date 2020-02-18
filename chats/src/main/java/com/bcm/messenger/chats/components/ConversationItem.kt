@@ -1018,7 +1018,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
                                     Observable.create<Unit> {
                                         if (messageRecipient.isPushGroupRecipient) {
                                         } else {
-                                            MessageSender.resend(context, masterSecret.accountContext, messageRecord)
+                                            MessageSender.resend(context, messageRecord.threadId, masterSecret.accountContext, messageRecord)
                                         }
                                         it.onComplete()
 

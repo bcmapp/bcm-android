@@ -33,6 +33,7 @@ import com.bcm.messenger.common.core.AmeLanguageUtilsKt;
 import com.bcm.messenger.common.database.model.PrivateChatDbModel;
 import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
+import com.bcm.messenger.common.database.repositories.ThreadRepo;
 import com.bcm.messenger.common.event.MessageReceiveNotifyEvent;
 import com.bcm.messenger.common.metrics.MetricsConstKt;
 import com.bcm.messenger.common.preferences.SuperPreferences;
@@ -1489,7 +1490,9 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         }
 
         ListenableFutureTask<Boolean> listenableFutureTask = new ListenableFutureTask<>(() -> {
-            BcmChatCore.INSTANCE.sendCallMessage(accountContext, new SignalServiceAddress(recipient.getAddress().serialize()), callMessage);
+            ThreadRepo threadRepo = Repository.getInstance(accountContext).getThreadRepo();
+            long threadId = threadRepo.getThreadIdIfExist(recipient);
+            BcmChatCore.INSTANCE.sendCallMessage(accountContext, threadId, new SignalServiceAddress(recipient.getAddress().serialize()), callMessage);
             return true;
         }, null, serviceExecutor);
 
