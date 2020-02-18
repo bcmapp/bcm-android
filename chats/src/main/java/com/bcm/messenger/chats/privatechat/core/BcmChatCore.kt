@@ -11,6 +11,7 @@ import com.bcm.messenger.common.core.AddressUtil
 import com.bcm.messenger.common.crypto.SecurityEvent
 import com.bcm.messenger.common.crypto.storage.SignalProtocolStoreImpl
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.utils.ChatTimestamp
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.logger.ALog
@@ -87,9 +88,9 @@ object BcmChatCore {
      */
 
     @Throws(IOException::class, UntrustedIdentityException::class)
-    fun sendCallMessage(accountContext: AccountContext, recipient: SignalServiceAddress, message: SignalServiceCallMessage) {
+    fun sendCallMessage(accountContext: AccountContext, threadId: Long, recipient: SignalServiceAddress, message: SignalServiceCallMessage) {
         val content = createCallContent(message)
-        sendMessage(accountContext, recipient, AmeTimeUtil.getMessageSendTime(), content, PushPurpose.CALLING)
+        sendMessage(accountContext, recipient, ChatTimestamp.getTime(accountContext, threadId), content, PushPurpose.CALLING)
     }
 
     /**
@@ -183,7 +184,7 @@ object BcmChatCore {
 
 
     @Throws(IOException::class, UntrustedIdentityException::class)
-    fun sendMessage(accountContext: AccountContext, message: SignalServiceSyncMessage) {
+    fun sendMessage(accountContext: AccountContext, threadId: Long, message: SignalServiceSyncMessage) {
         val content: ByteArray
 
         if (message.contacts.isPresent) {
@@ -202,7 +203,7 @@ object BcmChatCore {
             throw IOException("Unsupported sync message!")
         }
 
-        sendMessage(accountContext, mySignalAddress(accountContext), AmeTimeUtil.getMessageSendTime(), content, PushPurpose.NORMAL)
+        sendMessage(accountContext, mySignalAddress(accountContext), ChatTimestamp.getTime(accountContext, threadId), content, PushPurpose.NORMAL)
     }
 
     @Throws(IOException::class, UntrustedIdentityException::class)

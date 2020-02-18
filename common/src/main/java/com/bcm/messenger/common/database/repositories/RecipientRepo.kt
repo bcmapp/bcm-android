@@ -11,10 +11,7 @@ import com.bcm.messenger.common.database.records.PrivacyProfile
 import com.bcm.messenger.common.database.records.RecipientSettings
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.sms.OutgoingLocationMessage
-import com.bcm.messenger.common.utils.GroupUtil
-import com.bcm.messenger.common.utils.IdentityUtil
-import com.bcm.messenger.common.utils.RxBus
-import com.bcm.messenger.common.utils.isReleaseBuild
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.Base64
@@ -88,7 +85,7 @@ class RecipientRepo(
         }
         val message = OutgoingLocationMessage(recipient, blockMessage, recipient.expireMessages * 1000L)
         val threadId = repository.threadRepo.getThreadIdFor(recipient)
-        val messageId = repository.chatRepo.insertOutgoingTextMessage(threadId, message, AmeTimeUtil.getMessageSendTime(), null)
+        val messageId = repository.chatRepo.insertOutgoingTextMessage(threadId, message, ChatTimestamp.getTime(accountContext, threadId), null)
         repository.chatRepo.setMessageSendSuccess(messageId)
 
         RxBus.post(recipient.address.toString(), threadId)
@@ -356,7 +353,7 @@ class RecipientRepo(
         }
         val textMessage = OutgoingLocationMessage(recipient, messageBody.toString(), expiresTime)
         val threadId = repository.threadRepo.getThreadIdFor(recipient)
-        val messageId = repository.chatRepo.insertOutgoingTextMessage(threadId, textMessage, AmeTimeUtil.getMessageSendTime(), null)
+        val messageId = repository.chatRepo.insertOutgoingTextMessage(threadId, textMessage, ChatTimestamp.getTime(accountContext, threadId), null)
         repository.chatRepo.setMessageSendSuccess(messageId)
 
         RxBus.post(recipient.address.toString(), threadId)

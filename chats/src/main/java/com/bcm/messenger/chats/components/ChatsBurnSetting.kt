@@ -10,6 +10,7 @@ import com.bcm.messenger.common.mms.OutgoingExpirationUpdateMessage
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.DataPickerPopupWindow
 import com.bcm.messenger.common.ui.popup.ToastUtil
+import com.bcm.messenger.common.utils.ChatTimestamp
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
@@ -19,7 +20,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 object ChatsBurnSetting {
-    fun configBurnSetting(activity: FragmentActivity, recipient: Recipient, masterSecret: MasterSecret, finish: () -> Unit) {
+    fun configBurnSetting(activity: FragmentActivity, threadId:Long, recipient: Recipient, masterSecret: MasterSecret, finish: () -> Unit) {
         fun getBurnExpireFromIndex(index: Int): Int {
             return when (index) {
                 0 -> 0
@@ -71,7 +72,7 @@ object ChatsBurnSetting {
                                 if (result) {
                                     ViewModelProviders.of(activity).get(AmeConversationViewModel::class.java).sendMediaMessage(activity,
                                             masterSecret,
-                                            OutgoingExpirationUpdateMessage(recipient, AmeTimeUtil.getMessageSendTime(), expire * 1000L)) { success ->
+                                            OutgoingExpirationUpdateMessage(recipient, ChatTimestamp.getTime(masterSecret.accountContext, threadId), expire * 1000L)) { success ->
                                         if (success) {
                                             finish()
                                         }

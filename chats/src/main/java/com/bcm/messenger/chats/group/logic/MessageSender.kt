@@ -156,7 +156,7 @@ class MessageSender(private val mAccountContext: AccountContext) {
     fun sendTextMessage(groupId: Long, text: String, callback: SenderCallback? = null, extContent: AmeGroupMessageDetail.ExtensionContent? = null) {
         val messageDetail = AmeGroupMessageDetail().apply {
             gid = groupId
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             senderId = mAccountContext.uid
             isSendByMe = true
             attachmentUri = ""
@@ -185,21 +185,21 @@ class MessageSender(private val mAccountContext: AccountContext) {
 
     fun sendContactMessage(groupId: Long, contact: AmeGroupMessage.ContactContent, callback: SenderCallback?) {
         sendTextMessage(groupId, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             message = AmeGroupMessage(AmeGroupMessage.CONTACT, contact)
         }, callback)
     }
 
     fun sendGroupShareMessage(groupId: Long, content: AmeGroupMessage.GroupShareContent, callback: SenderCallback?) {
         sendTextMessage(groupId, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             message = AmeGroupMessage(AmeGroupMessage.GROUP_SHARE_CARD, content)
         }, callback)
     }
 
     fun sendShareChannelMessage(groupId: Long, shareChannelContent: AmeGroupMessage.NewShareChannelContent, callback: SenderCallback?) {
         sendTextMessage(groupId, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             message = AmeGroupMessage(AmeGroupMessage.NEWSHARE_CHANNEL, shareChannelContent)
         }, callback)
     }
@@ -208,21 +208,21 @@ class MessageSender(private val mAccountContext: AccountContext) {
 
         ALog.d(TAG, "sendLocationMessage latitude: $latitude, longitude: $longitude")
         sendTextMessage(groupId, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             message = AmeGroupMessage(AmeGroupMessage.LOCATION, AmeGroupMessage.LocationContent(latitude, longitude, mapType, title, address))
         }, callback)
     }
 
     fun sendHistoryMessage(groupId: Long, historyContent: AmeGroupMessage.HistoryContent, callback: SenderCallback?) {
         sendTextMessage(groupId, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             message = AmeGroupMessage(AmeGroupMessage.CHAT_HISTORY, historyContent)
         }, callback)
     }
 
     fun sendReplyMessage(groupId: Long, text: CharSequence, replyContent: AmeGroupMessage.ReplyContent, callback: SenderCallback? = null, extContent: AmeGroupMessageDetail.ExtensionContent? = null) {
         sendTextMessage(groupId, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             var replyString = replyContent.replyString
             val message = replyContent.getReplyMessage()
             if (message.type == AmeGroupMessage.LINK) {
@@ -238,7 +238,7 @@ class MessageSender(private val mAccountContext: AccountContext) {
 
     fun sendShareChannelMessage(groupId: Long, groupInfo: AmeGroupInfo, callback: SenderCallback?) {
         sendTextMessage(groupId, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             message = AmeGroupMessage(AmeGroupMessage.NEWSHARE_CHANNEL,
                     AmeGroupMessage.NewShareChannelContent(groupInfo.channelKey
                             ?: "",
@@ -248,7 +248,7 @@ class MessageSender(private val mAccountContext: AccountContext) {
 
     fun sendVideoMessage(masterSecret: MasterSecret, groupId: Long, uri: Uri, content: AmeGroupMessage.VideoContent, path: String?, callback: SenderCallback?) {
         sendMediaMessage(masterSecret, groupId, path, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             attachmentUri = uri.toString()
             message = AmeGroupMessage(AmeGroupMessage.VIDEO, content)
 
@@ -257,7 +257,7 @@ class MessageSender(private val mAccountContext: AccountContext) {
 
     fun sendImageMessage(masterSecret: MasterSecret, groupId: Long, content: AmeGroupMessage.ImageContent, uri: Uri, filePath: String, callback: SenderCallback?) {
         sendMediaMessage(masterSecret, groupId, filePath, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             attachmentUri = uri.toString()
             message = AmeGroupMessage(AmeGroupMessage.IMAGE, content)
         }, callback)
@@ -265,7 +265,7 @@ class MessageSender(private val mAccountContext: AccountContext) {
 
     fun sendDocumentMessage(masterSecret: MasterSecret, groupId: Long, content: AmeGroupMessage.FileContent, path: String, callback: SenderCallback?) {
         sendMediaMessage(masterSecret, groupId, path, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             attachmentUri = BcmFileUtils.getFileUri(path).toString()
             message = AmeGroupMessage(AmeGroupMessage.FILE, content)
         }, callback)
@@ -273,7 +273,7 @@ class MessageSender(private val mAccountContext: AccountContext) {
 
     fun sendAudioMessage(masterSecret: MasterSecret, groupId: Long, content: AmeGroupMessage.AudioContent, path: String, callback: SenderCallback?) {
         sendMediaMessage(masterSecret, groupId, path, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             attachmentUri = BcmFileUtils.getFileUri(path).toString()
             message = AmeGroupMessage(AmeGroupMessage.AUDIO, content)
         }, callback)
@@ -281,7 +281,7 @@ class MessageSender(private val mAccountContext: AccountContext) {
 
     fun sendPinMessage(groupId: Long, mid: Long, callback: SenderCallback?) {
         sendTextMessage(groupId, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             message = AmeGroupMessage(AmeGroupMessage.PIN, AmeGroupMessage.PinContent(mid))
         }, callback)
     }
@@ -436,7 +436,7 @@ class MessageSender(private val mAccountContext: AccountContext) {
 
     private fun realSendLiveMessage(groupId: Long, sourceUrl: String, playSource: AmeGroupMessage.LiveContent.PlaySource, liveId: Long, duration: Long, currentSeekTime: Long, action: Int, callback: SenderCallback?) {
         sendTextMessage(groupId, AmeGroupMessageDetail().apply {
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             message = AmeGroupMessage(AmeGroupMessage.LIVE_MESSAGE, AmeGroupMessage.LiveContent(liveId, action, AmeTimeUtil.serverTimeMillis(), sourceUrl, duration, currentSeekTime, playSource))
         }, callback)
     }
@@ -711,7 +711,7 @@ class MessageSender(private val mAccountContext: AccountContext) {
             senderId = mAccountContext.uid
             isSendByMe = true
             attachmentUri = ""
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             this.message = message
         }
 

@@ -374,7 +374,7 @@ class AmeConversationViewModel(
     private fun sendHideMessage(context: Context, message: OutgoingLocationMessage, callback: ((success: Boolean) -> Unit)? = null) {
         Observable.create<Unit> {
             ALog.i("sendHideMessage", message.messageBody)
-            it.onNext(MessageSender.sendHideMessage(context, mAccountContext, message))
+            it.onNext(MessageSender.sendHideMessage(context, getThreadId(), mAccountContext, message))
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -410,7 +410,7 @@ class AmeConversationViewModel(
             Observable.create<Unit> {
                 val messages = repository.chatRepo.getDecryptFailedData(mThreadId, lastShowDialogTime)
                 messages.forEach { record ->
-                    MessageSender.resend(activity, mAccountContext, record)
+                    MessageSender.resend(activity, getThreadId(), mAccountContext, record)
                 }
                 it.onComplete()
             }.subscribeOn(Schedulers.io())
@@ -527,7 +527,7 @@ class AmeConversationViewModel(
                     }
                     val textMessage = OutgoingLocationMessage(recipient, restrictBody.toString(), expiresIn)
                     val chatRepo = repository.chatRepo
-                    val messageId = chatRepo.insertOutgoingTextMessage(threadId, textMessage, AmeTimeUtil.getMessageSendTime(), null)
+                    val messageId = chatRepo.insertOutgoingTextMessage(threadId, textMessage, ChatTimestamp.getTime(mAccountContext, threadId), null)
                     chatRepo.setMessageSendSuccess(messageId)
 
                     it.onNext(threadId)

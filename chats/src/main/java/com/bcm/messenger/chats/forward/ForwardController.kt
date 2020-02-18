@@ -21,6 +21,7 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.sms.OutgoingEncryptedMessage
 import com.bcm.messenger.common.sms.OutgoingLocationMessage
 import com.bcm.messenger.common.utils.BcmFileUtils
+import com.bcm.messenger.common.utils.ChatTimestamp
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -107,8 +108,11 @@ object ForwardController {
                             val deck = SlideDeck()
                             deck.addSlide(slide)
 
-                            val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(message.recipient, deck, "", AmeTimeUtil.getMessageSendTime(),
-                                    -1, message.recipient.expireMessages * 1000L, ThreadRepo.DistributionTypes.DEFAULT))
+                            val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(message.recipient, deck, "",
+                                    ChatTimestamp.getTime(masterSecret.accountContext, threadId),
+                                    -1,
+                                    message.recipient.expireMessages * 1000L,
+                                    ThreadRepo.DistributionTypes.DEFAULT))
 
                             Observable.create<Long> {
 
@@ -133,7 +137,7 @@ object ForwardController {
                             val deck = SlideDeck()
                             deck.addSlide(slide)
 
-                            val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(message.recipient, deck, "", AmeTimeUtil.getMessageSendTime(),
+                            val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(message.recipient, deck, "", ChatTimestamp.getTime(masterSecret.accountContext, threadId),
                                     -1, message.recipient.expireMessages * 1000L, ThreadRepo.DistributionTypes.DEFAULT))
 
                             Observable.create<Long> {
@@ -159,7 +163,7 @@ object ForwardController {
                             val deck = SlideDeck()
                             deck.addSlide(slide)
 
-                            val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(message.recipient, deck, "", AmeTimeUtil.getMessageSendTime(),
+                            val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(message.recipient, deck, "", ChatTimestamp.getTime(masterSecret.accountContext, threadId),
                                     -1, message.recipient.expireMessages * 1000L, ThreadRepo.DistributionTypes.DEFAULT))
 
                             Observable.create<Long> {
@@ -410,7 +414,8 @@ object ForwardController {
                                     val deck = SlideDeck()
                                     deck.addSlide(slide ?: return@downloadGroupFile)
 
-                                    val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(message.recipient, deck, "", AmeTimeUtil.getMessageSendTime(),
+                                    val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(message.recipient, deck, "",
+                                            ChatTimestamp.getTime(accountContext, threadId),
                                             -1, message.recipient.expireMessages * 1000L, ThreadRepo.DistributionTypes.CONVERSATION))
                                     it.onNext(secureMessage)
                                     it.onComplete()
@@ -440,7 +445,8 @@ object ForwardController {
                                     val deck = SlideDeck()
                                     deck.addSlide(slide ?: return@downloadGroupFile)
 
-                                    val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(message.recipient, deck, "", AmeTimeUtil.getMessageSendTime(),
+                                    val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(message.recipient, deck, "",
+                                            ChatTimestamp.getTime(accountContext, threadId),
                                             -1, message.recipient.expireMessages * 1000L, ThreadRepo.DistributionTypes.CONVERSATION))
                                     it.onNext(secureMessage)
                                     it.onComplete()
@@ -469,7 +475,8 @@ object ForwardController {
                                     val deck = SlideDeck()
                                     deck.addSlide(slide ?: return@downloadGroupFile)
 
-                                    val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(message.recipient, deck, "", AmeTimeUtil.getMessageSendTime(),
+                                    val secureMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(message.recipient, deck, "",
+                                            ChatTimestamp.getTime(accountContext, threadId),
                                             -1, message.recipient.expireMessages * 1000L, ThreadRepo.DistributionTypes.CONVERSATION))
                                     it.onNext(secureMessage)
                                     it.onComplete()

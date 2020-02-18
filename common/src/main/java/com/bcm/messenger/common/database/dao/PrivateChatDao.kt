@@ -99,6 +99,9 @@ interface PrivateChatDao {
     @Query("UPDATE ${PrivateChatDbModel.TABLE_NAME} SET date_sent = :dataSent WHERE id = :id")
     fun updateDataSent(id: Long, dataSent: Long)
 
+    @Query("SELECT date_sent FROM ${PrivateChatDbModel.TABLE_NAME} WHERE thread_id = :threadId ORDER BY id DESC LIMIT 1")
+    fun queryLastMessageTime(threadId: Long): Long
+
     @Query("UPDATE ${PrivateChatDbModel.TABLE_NAME} SET type = :type WHERE id = :id")
     fun updateType(id: Long, type: Long)
 

@@ -357,6 +357,10 @@ class PrivateChatRepo(
         updateStatus(messageId, BASE_TYPE_MASK, BASE_SENDING_TYPE)
     }
 
+    fun getLastMessageTime(threadId: Long): Long {
+        return chatDao.queryLastMessageTime(threadId)
+    }
+
     fun updateBundleMessage(messageId: Long): Long {
         val model = chatDao.queryChatMessage(messageId)
         if (model != null) {

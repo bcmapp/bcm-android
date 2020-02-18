@@ -15,7 +15,9 @@ import com.bcm.messenger.common.crypto.storage.TextSecureIdentityKeyStore;
 import com.bcm.messenger.common.crypto.storage.TextSecureSessionStore;
 import com.bcm.messenger.common.database.records.IdentityRecord;
 import com.bcm.messenger.common.database.repositories.IdentityRepo;
+import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
+import com.bcm.messenger.common.database.repositories.ThreadRepo;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.sms.IncomingIdentityDefaultMessage;
 import com.bcm.messenger.common.sms.IncomingIdentityVerifiedMessage;
@@ -67,9 +69,16 @@ public class IdentityUtil {
         return future;
     }
 
-    public static void markIdentityVerified(Context context, MasterSecretUnion masterSecret,
-                                            Recipient recipient, boolean verified, boolean remote) {
-        long time = AmeTimeUtil.INSTANCE.getMessageSendTime();
+    public static void markIdentityVerified(Recipient recipient, boolean verified, boolean remote) {
+
+        PrivateChatRepo repo = Repository.getChatRepo(recipient.getAddress().context());
+        ThreadRepo threadRepo = Repository.getThreadRepo(recipient.getAddress().context());
+        if (repo == null || threadRepo == null) {
+            return;
+        }
+
+        long threadId = threadRepo.getThreadIdFor(recipient);
+        long time = ChatTimestamp.getTime(recipient.getAddress().context(), threadId);
         if (remote) {
             IncomingTextMessage incoming = new IncomingTextMessage(recipient.getAddress(), 1, time, null, Optional.<SignalServiceGroup>absent(), 0);
 
@@ -78,7 +87,7 @@ public class IdentityUtil {
             else
                 incoming = new IncomingIdentityDefaultMessage(incoming);
 
-            Repository.getChatRepo(recipient.getAddress().context()).insertIncomingTextMessage(incoming);
+            repo.insertIncomingTextMessage(incoming);
         } else {
             OutgoingTextMessage outgoing;
 
@@ -87,10 +96,8 @@ public class IdentityUtil {
             else
                 outgoing = new OutgoingIdentityDefaultMessage(recipient);
 
-            long threadId = Repository.getThreadRepo(recipient.getAddress().context()).getThreadIdFor(recipient);
-
             Log.w(TAG, "Inserting verified outbox...");
-            Repository.getChatRepo(recipient.getAddress().context()).insertOutgoingTextMessage(threadId, outgoing, time, null);
+            repo.insertOutgoingTextMessage(threadId, outgoing, time, null);
         }
     }
 
@@ -144,7 +151,7 @@ public class IdentityUtil {
                     identityRecord.getIdentityKey().equals(verifiedMessage.getIdentityKey()) &&
                     identityRecord.getVerifyStatus() != IdentityRepo.VerifiedStatus.DEFAULT) {
                 identityRepo.setVerified(recipient.getAddress().serialize(), identityRecord.getIdentityKey(), IdentityRepo.VerifiedStatus.DEFAULT);
-                markIdentityVerified(context, masterSecret, recipient, false, true);
+                markIdentityVerified(recipient, false, true);
             }
 
             if (verifiedMessage.getVerified() == VerifiedMessage.VerifiedState.VERIFIED &&
@@ -153,7 +160,7 @@ public class IdentityUtil {
                             identityRecord.getVerifyStatus() != IdentityRepo.VerifiedStatus.VERIFIED)) {
                 saveIdentity(context, accountContext, verifiedMessage.getDestination(), verifiedMessage.getIdentityKey(), true);
                 identityRepo.setVerified(recipient.getAddress().serialize(), verifiedMessage.getIdentityKey(), IdentityRepo.VerifiedStatus.DEFAULT);
-                markIdentityVerified(context, masterSecret, recipient, true, true);
+                markIdentityVerified(recipient, true, true);
             }
         }
     }

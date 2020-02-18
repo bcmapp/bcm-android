@@ -538,7 +538,7 @@ object GroupMessageLogic : AccountContextMap<GroupMessageLogic.GroupMessageLogic
                 detail.apply {
                     this.gid = gid
                     this.serverIndex = msg.mid
-                    sendTime = AmeTimeUtil.getMessageSendTime()
+                    sendTime = AmeTimeUtil.serverTimeMillis()
                     sendState = AmeGroupMessageDetail.SendState.SEND_FAILED
                     senderId = detail.senderId
                     isSendByMe = true

@@ -629,7 +629,8 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
         }
 
         val chatBurn = ChatTitleDropItem(icon, 0, tickTalkTitle) {
-            ChatsBurnSetting.configBurnSetting(this, mRecipient, accountContext.masterSecret
+            val threadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, 0L)
+            ChatsBurnSetting.configBurnSetting(this, threadId, mRecipient, accountContext.masterSecret
                     ?: return@ChatTitleDropItem) {
                 chat_title_bar.setPrivateChat(mRecipient)
             }
@@ -833,10 +834,11 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
     }
 
     private fun createOutgoingMessage(body: String, slideDeck: SlideDeck, expiresIn: Long, subscriptionId: Int, initiating: Boolean): OutgoingMediaMessage {
+        val threadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, 0L)
         var outgoingMessage = OutgoingMediaMessage(mRecipient,
                 slideDeck,
                 body,
-                AmeTimeUtil.getMessageSendTime(),
+                ChatTimestamp.getTime(accountContext, threadId),
                 subscriptionId,
                 expiresIn,
                 ThreadRepo.DistributionTypes.DEFAULT)
@@ -872,9 +874,10 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
     private fun sendLocationMessage(locationData: String) {
         val expireIn = mRecipient.expireMessages * 1000L
         if (mRecipient.isGroupRecipient) {
+            val threadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, 0L)
             val outgoingMessage = OutgoingComplexMediaMessage(mRecipient,
                     locationData,
-                    AmeTimeUtil.getMessageSendTime(),
+                    ChatTimestamp.getTime(accountContext, threadId),
                     -1,
                     expireIn,
                     ThreadRepo.DistributionTypes.DEFAULT,

@@ -10,7 +10,6 @@ import kotlin.math.abs
 object AmeTimeUtil {
     private var serverTime = 0L
     private var markSystemRunTime = 0L
-    private var lastMessageSendTime = 0L
 
     fun updateServerTimeMillis(time:Long){
         if (time > 0){
@@ -23,17 +22,6 @@ object AmeTimeUtil {
                 ALog.i("AmeTimeUtil", "server time ignore $time server time:$serverTime")
             }
         }
-    }
-
-    @Synchronized
-    fun getMessageSendTime(): Long{
-        var time = serverTimeMillis()
-        if (time <= lastMessageSendTime) {
-            time = ++lastMessageSendTime
-        } else {
-            lastMessageSendTime = time
-        }
-        return time
     }
 
     fun serverTimeMillis():Long {

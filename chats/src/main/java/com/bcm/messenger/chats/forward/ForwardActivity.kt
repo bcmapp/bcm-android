@@ -22,6 +22,7 @@ import com.bcm.messenger.common.provider.IForwardSelectProvider.ForwardSelectCal
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
+import com.bcm.messenger.common.utils.ChatTimestamp
 import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.utility.AmeTimeUtil
 import com.bcm.messenger.utility.AppContextHolder
@@ -377,7 +378,7 @@ class ForwardActivity : AccountSwipeBaseActivity() {
                     val deck = SlideDeck()
                     deck.addSlide(slide)
 
-                    val outgoingMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(recipient, deck, "", AmeTimeUtil.getMessageSendTime(),
+                    val outgoingMessage = OutgoingSecureMediaMessage(OutgoingMediaMessage(recipient, deck, "", ChatTimestamp.getTime(accountContext, threadId),
                             -1, expiresIn, ThreadRepo.DistributionTypes.CONVERSATION))
 
                     Observable.create<Long> {

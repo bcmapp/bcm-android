@@ -39,6 +39,7 @@ import com.bcm.messenger.common.provider.AmeModuleCenter;
 import com.bcm.messenger.common.recipients.Recipient;
 import com.bcm.messenger.common.sms.OutgoingLocationMessage;
 import com.bcm.messenger.common.sms.OutgoingTextMessage;
+import com.bcm.messenger.common.utils.ChatTimestamp;
 import com.bcm.messenger.utility.AmeTimeUtil;
 import com.bcm.messenger.utility.AppContextHolder;
 import com.bcm.messenger.utility.logger.ALog;
@@ -81,7 +82,7 @@ public class MessageSender {
         }
 
         long messageId = chatRepo.insertOutgoingTextMessage(allocatedThreadId,
-                message, AmeTimeUtil.INSTANCE.getMessageSendTime(), insertListener);
+                message, ChatTimestamp.getTime(accountContext, threadId), insertListener);
 
         if (!recipient.isFriend() && !recipient.isAllowStranger()) {
             chatRepo.setMessageSendFail(messageId);
@@ -115,7 +116,7 @@ public class MessageSender {
 
         //
         long messageId = chatRepo.insertOutgoingTextMessage(allocatedThreadId,
-                message, AmeTimeUtil.INSTANCE.getMessageSendTime(), insertListener);
+                message, ChatTimestamp.getTime(accountContext, threadId), insertListener);
 
         sendTextMessage(context, accountContext, recipient, messageId, message.getExpiresIn(), true);
 
@@ -127,6 +128,7 @@ public class MessageSender {
      * @param message
      */
     public static void sendHideMessage(@NonNull final Context context,
+                                       final long threadId,
                                        @NonNull final AccountContext accountContext,
                                        @NonNull final OutgoingLocationMessage message) {
         ALog.i(TAG, "Send hide message");
@@ -143,7 +145,7 @@ public class MessageSender {
         ChatHideMessage controlMessage = new ChatHideMessage();
         controlMessage.setContent(message.getMessageBody());
         controlMessage.setDestinationAddress(message.getRecipient().getAddress().toString());
-        controlMessage.setSendTime(AmeTimeUtil.INSTANCE.getMessageSendTime());
+        controlMessage.setSendTime(ChatTimestamp.getTime(accountContext, threadId));
         long messageId = dao.saveHideMessage(controlMessage);
 
         sendHideMessagePush(context, accountContext, message.getRecipient(), messageId);
@@ -203,6 +205,7 @@ public class MessageSender {
      * @param messageRecord Message to resend.
      */
     public static void resend(@NonNull Context context,
+                              long threadId,
                               @NonNull AccountContext accountContext,
                               @NonNull MessageRecord messageRecord) {
         try {
@@ -215,7 +218,7 @@ public class MessageSender {
                 if (repo == null) {
                     return;
                 }
-                repo.updateDateSentForResending(messageId, AmeTimeUtil.INSTANCE.getMessageSendTime());
+                repo.updateDateSentForResending(messageId, ChatTimestamp.getTime(accountContext, threadId));
                 repo.updateExpiresTime(messageId, expiresIn);
                 if (messageRecord.isMediaMessage()) {
                     sendMediaMessage(context, accountContext, recipient, messageId, expiresIn);

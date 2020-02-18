@@ -876,7 +876,8 @@ public class PushDecryptJob extends ContextJob {
         String message = new AmeGroupMessage<>(AmeGroupMessage.RECEIPT, new AmeGroupMessage.ReceiptContent(messageId)).toString();
         OutgoingLocationMessage outgoingLocationMessage = new OutgoingLocationMessage(recipient, message, 0);
         if (masterSecret.getMasterSecret().isPresent()) {
-            MessageSender.sendHideMessage(AppContextHolder.APP_CONTEXT, accountContext, outgoingLocationMessage);
+            long threadId = threadRepo.getThreadIdIfExist(recipient);
+            MessageSender.sendHideMessage(AppContextHolder.APP_CONTEXT, threadId, accountContext, outgoingLocationMessage);
         }
     }
 

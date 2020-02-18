@@ -45,7 +45,7 @@ public class IncomingTextMessage implements Parcelable {
     private final boolean push;
     private final int subscriptionId;
     private final long expiresInMillis;
-    private final long receivedTimestamp = AmeTimeUtil.INSTANCE.getMessageSendTime();
+    private final long receivedTimestamp = AmeTimeUtil.INSTANCE.serverTimeMillis();
 
 
     protected int payloadType = 0;

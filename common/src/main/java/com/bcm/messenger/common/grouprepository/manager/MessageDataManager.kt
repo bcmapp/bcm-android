@@ -610,7 +610,7 @@ object MessageDataManager {
         ALog.d(TAG, "systemNotice groupId: $groupId, read: $read, type: ${content.tipType}")
         val messageDetail = AmeGroupMessageDetail().apply {
             gid = groupId
-            sendTime = AmeTimeUtil.getMessageSendTime()
+            sendTime = AmeTimeUtil.serverTimeMillis()
             sendState = AmeGroupMessageDetail.SendState.SEND_FAILED //，，
             senderId = accountContext.uid
             isSendByMe = true
