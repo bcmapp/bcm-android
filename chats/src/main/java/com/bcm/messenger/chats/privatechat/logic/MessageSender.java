@@ -130,6 +130,7 @@ public class MessageSender {
     public static void sendHideMessage(@NonNull final Context context,
                                        final long threadId,
                                        @NonNull final AccountContext accountContext,
+                                       final long messageType,
                                        @NonNull final OutgoingLocationMessage message) {
         ALog.i(TAG, "Send hide message");
 
@@ -148,7 +149,7 @@ public class MessageSender {
         controlMessage.setSendTime(ChatTimestamp.getTime(accountContext, threadId));
         long messageId = dao.saveHideMessage(controlMessage);
 
-        sendHideMessagePush(context, accountContext, message.getRecipient(), messageId);
+        sendHideMessagePush(context, accountContext, message.getRecipient(), messageId, messageType);
     }
 
     /**
@@ -320,10 +321,10 @@ public class MessageSender {
         }
     }
 
-    private static void sendHideMessagePush(Context context, AccountContext accountContext, Recipient recipient, long messageId) {
+    private static void sendHideMessagePush(Context context, AccountContext accountContext, Recipient recipient, long messageId, long messageType) {
         JobManager jobManager = AmeModuleCenter.INSTANCE.accountJobMgr(accountContext);
         if (jobManager != null) {
-            jobManager.add(new PushHideMessageSendJob(context, accountContext, messageId, recipient.getAddress()));
+            jobManager.add(new PushHideMessageSendJob(context, accountContext, messageId, messageType, recipient.getAddress()));
         }
     }
 

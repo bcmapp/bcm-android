@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.chats.privatechat.jobs.HideMessageSendResult
 import com.bcm.messenger.chats.privatechat.logic.MarkReadReceiver
 import com.bcm.messenger.chats.privatechat.logic.MessageSender
 import com.bcm.messenger.common.ARouterConstants
@@ -39,6 +40,7 @@ import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.lang.ref.WeakReference
 import java.util.*
 
 /**
@@ -81,7 +83,14 @@ class AmeConversationViewModel(
 
     private var hasMessageHandling = false
     private var hasProfileKeyRequest = false
-    private var needRequestProfileKey = false
+    private var needRequestProfileKey = NeedProfileKeyState.INIT
+
+    private enum class NeedProfileKeyState {
+        INIT,
+        REQUESTING,
+        REQUESTED,
+        NOTNEED,
+    }
 
     private val identityRecords = IdentityRecordList()
 
@@ -136,7 +145,6 @@ class AmeConversationViewModel(
             clearMessageId = -10086L
             hasMessageHandling = false
             hasProfileKeyRequest = false
-            needRequestProfileKey = false
             mHasMore = false
 
             RxBus.subscribe<PrivateChatEvent>(PrivateChatRepo.CHANGED_TAG + threadId) {
@@ -371,10 +379,10 @@ class AmeConversationViewModel(
     }
 
 
-    private fun sendHideMessage(context: Context, message: OutgoingLocationMessage, callback: ((success: Boolean) -> Unit)? = null) {
+    private fun sendHideMessage(context: Context, messageType:Long, message: OutgoingLocationMessage, callback: ((success: Boolean) -> Unit)? = null) {
         Observable.create<Unit> {
             ALog.i("sendHideMessage", message.messageBody)
-            it.onNext(MessageSender.sendHideMessage(context, getThreadId(), mAccountContext, message))
+            it.onNext(MessageSender.sendHideMessage(context, getThreadId(), mAccountContext, messageType, message))
             it.onComplete()
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -485,14 +493,21 @@ class AmeConversationViewModel(
 
     fun checkProfileKeyUpdateToDate(context: Context) {
         mRecipient?.let { recipient ->
-            Observable.create<Pair<Boolean, Boolean>> {
+            Observable.create<Pair<Boolean, NeedProfileKeyState>> {
                 val hasRequest = if (mThreadId > 0L) {
                     repository.threadRepo.hasProfileRequest(mThreadId)
                 } else {
                     false
                 }
+
                 val needProfileKey = recipient.resolve().checkNeedProfileKey()
-                it.onNext(Pair(hasRequest, needProfileKey))
+
+                val needProfile = if (needProfileKey) {
+                    this.needRequestProfileKey
+                } else {
+                    NeedProfileKeyState.NOTNEED
+                }
+                it.onNext(Pair(hasRequest, needProfile))
                 it.onComplete()
             }.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -559,38 +574,49 @@ class AmeConversationViewModel(
 
     private fun checkExchangeProfileKey(context: Context) {
 
-        if (!hasProfileKeyRequest && !needRequestProfileKey) {
+        if (!hasProfileKeyRequest && needRequestProfileKey != NeedProfileKeyState.INIT) {
             ALog.i(TAG, "checkExchangeProfileKey no need exchange")
             return
         }
+
         try {
             mRecipient?.let { recipient ->
                 ALog.i(TAG, "checkExchangeProfileKey begin")
                 val profileData = Recipient.major().privacyProfile
                 val hasRequest = hasProfileKeyRequest
-                val needProfileKey = needRequestProfileKey
-                hasProfileKeyRequest = false
-                needRequestProfileKey = false
-                val profileContent = when {
-                    needProfileKey -> {
-                        ALog.i(TAG, "checkExchangeProfileKey Message type is ${AmeGroupMessage.ExchangeProfileContent.REQUEST}")
-                        AmeGroupMessage(AmeGroupMessage.EXCHANGE_PROFILE, AmeGroupMessage.ExchangeProfileContent(profileData.nameKey
-                                ?: "", profileData.avatarKey ?: "",
-                                profileData.version, AmeGroupMessage.ExchangeProfileContent.REQUEST)).toString()
+                val needProfileKey = needRequestProfileKey == NeedProfileKeyState.INIT
+
+                if (needRequestProfileKey == NeedProfileKeyState.INIT) {
+                    val messageType = AmeGroupMessage.EXCHANGE_PROFILE
+                    val profileContent = when {
+                        needProfileKey -> {
+                            ALog.i(TAG, "checkExchangeProfileKey Message type is ${AmeGroupMessage.ExchangeProfileContent.REQUEST}")
+                            needRequestProfileKey = NeedProfileKeyState.REQUESTING
+                            AmeGroupMessage(AmeGroupMessage.EXCHANGE_PROFILE, AmeGroupMessage.ExchangeProfileContent(profileData.nameKey
+                                    ?: "", profileData.avatarKey ?: "",
+                                    profileData.version, AmeGroupMessage.ExchangeProfileContent.REQUEST)).toString()
+                        }
+                        hasRequest -> {
+                            ALog.i(TAG, "checkExchangeProfileKey Message type is ${AmeGroupMessage.ExchangeProfileContent.RESPONSE}")
+                            AmeGroupMessage(AmeGroupMessage.EXCHANGE_PROFILE, AmeGroupMessage.ExchangeProfileContent(profileData.nameKey
+                                    ?: "", profileData.avatarKey ?: "",
+                                    profileData.version, AmeGroupMessage.ExchangeProfileContent.RESPONSE)).toString()
+                        }
+                        else -> return
                     }
-                    hasRequest -> {
-                        ALog.i(TAG, "checkExchangeProfileKey Message type is ${AmeGroupMessage.ExchangeProfileContent.RESPONSE}")
-                        AmeGroupMessage(AmeGroupMessage.EXCHANGE_PROFILE, AmeGroupMessage.ExchangeProfileContent(profileData.nameKey
-                                ?: "", profileData.avatarKey ?: "",
-                                profileData.version, AmeGroupMessage.ExchangeProfileContent.RESPONSE)).toString()
+
+                    if (!isReleaseBuild()) {
+                        ALog.d(TAG, "checkExchangeProfile profileContent: $profileContent")
                     }
-                    else -> return
+
+                    val message = OutgoingLocationMessage(recipient, profileContent, (recipient.expireMessages * 1000).toLong())
+                    val weakThis = WeakReference(this)
+                    sendHideMessage(context, messageType, message) {
+                        if (weakThis.get()?.needRequestProfileKey == NeedProfileKeyState.REQUESTING && !it) {
+                            weakThis.get()?.needRequestProfileKey = NeedProfileKeyState.INIT
+                        }
+                    }
                 }
-                if (!isReleaseBuild()) {
-                    ALog.d(TAG, "checkExchangeProfile profileContent: $profileContent")
-                }
-                val message = OutgoingLocationMessage(recipient, profileContent, (recipient.expireMessages * 1000).toLong())
-                sendHideMessage(context, message)
             }
         } catch (ex: Exception) {
             ALog.e(TAG, "checkExchangeProfileKey error", ex)
@@ -843,6 +869,19 @@ class AmeConversationViewModel(
             ALog.i(TAG, "receive messageReceiveNotifyEvent")
             updateThread(e.threadId)
         }
-
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(e:HideMessageSendResult) {
+        if (e.messageType == AmeGroupMessage.EXCHANGE_PROFILE && e.messageType == AmeGroupMessage.EXCHANGE_PROFILE) {
+            if (needRequestProfileKey == NeedProfileKeyState.REQUESTING) {
+                if (e.succeed) {
+                    needRequestProfileKey = NeedProfileKeyState.REQUESTED
+                } else {
+                    needRequestProfileKey = NeedProfileKeyState.INIT
+                }
+            }
+        }
+    }
+
 }

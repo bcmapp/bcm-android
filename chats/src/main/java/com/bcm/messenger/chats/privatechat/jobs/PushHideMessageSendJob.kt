@@ -12,6 +12,7 @@ import com.bcm.messenger.common.jobs.RetrieveProfileJob
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.logger.ALog
+import org.greenrobot.eventbus.EventBus
 import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import org.whispersystems.signalservice.api.push.exceptions.UnregisteredUserException
@@ -23,6 +24,7 @@ import java.io.IOException
 class PushHideMessageSendJob(
         context: Context,
         accountContext: AccountContext,
+        private val messageType:Long,
         private val messageId: Long,
         destination: Address)
     : PushSendJob(
@@ -42,14 +44,19 @@ class PushHideMessageSendJob(
     override fun onPushSend(masterSecret: MasterSecret?) {
         val message = repository.chatHideMessageRepo.queryHideMessage(messageId)
 
+        var succeed = false
         try {
             ALog.i(TAG, "Push send $messageId, time is ${message.sendTime}")
             deliver(message)
+            succeed = true
             ALog.i(TAG, "Push send completed")
         } catch (e: InsecureFallbackApprovalException) {
             ALog.e(TAG, "Push send fail", e)
         } catch (e: UntrustedIdentityException) {
             AmeModuleCenter.accountJobMgr(accountContext)?.add(RetrieveProfileJob(context, accountContext, Recipient.from(accountContext, e.e164Number, false)))
+        } finally {
+            val address = Address.from(accountContext, message.destinationAddress)
+            EventBus.getDefault().post(HideMessageSendResult(messageType, address, succeed))
         }
     }
 
