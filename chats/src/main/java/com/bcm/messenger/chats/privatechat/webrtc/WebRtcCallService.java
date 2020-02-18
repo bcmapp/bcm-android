@@ -162,26 +162,26 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     static final int NOTIFICATION_SIMPLY = 1;
 
     static final int NOTIFICATION_IMPORTANT = 2;
-    private static int sCurrentCallType = -1;
+    private static CameraState.Direction sCurrentCallType = CameraState.Direction.INIT;
     private static AccountContext accountContext;
 
     public static void checkHasWebRtcCall(AccountContext accountContext) {
-        if (sCurrentCallType != -1 && accountContext.equals(WebRtcCallService.accountContext)) {
+        if (sCurrentCallType != CameraState.Direction.INIT && accountContext.equals(WebRtcCallService.accountContext)) {
             startCallActivity(accountContext, sCurrentCallType);
         }
     }
 
     public static void clearWebRtcCallType() {
-        sCurrentCallType = -1;
+        sCurrentCallType = CameraState.Direction.INIT;
     }
 
-    private static void startCallActivity(AccountContext accountContext, int callType) {
+    private static void startCallActivity(AccountContext accountContext, CameraState.Direction callType) {
         sCurrentCallType = callType;
         ALog.i(TAG, "start call activity:" + callType);
 
         IChatModule provider = AmeModuleCenter.INSTANCE.chat(accountContext);
         if (provider != null) {
-            provider.startRtcCallActivity(AppContextHolder.APP_CONTEXT, callType);
+            provider.startRtcCallActivity(AppContextHolder.APP_CONTEXT, callType.toString());
         }
     }
 
@@ -246,6 +246,8 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     private String currentMetric = "";
 
     private AtomicBoolean mMsgInserted = new AtomicBoolean(false);
+
+    private boolean videoCall = false;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -475,11 +477,17 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         this.mIncoming.set(true);
         final String offer = intent.getStringExtra(EXTRA_REMOTE_DESCRIPTION);
         this.callId = intent.getLongExtra(EXTRA_CALL_ID, -1L);
-        sCurrentCallType = intent.getIntExtra(EXTRA_CALL_TYPE, CameraState.Direction.NONE.ordinal());
+        String camera = intent.getStringExtra(EXTRA_CALL_TYPE);
+        if (null == camera) {
+            camera = CameraState.Direction.NONE.toString();
+        }
+        sCurrentCallType = CameraState.Direction.valueOf(camera);
         this.pendingIncomingIceUpdates = new LinkedList<>();
         this.recipient = getRemoteRecipient(intent);
 
-        if (sCurrentCallType != CameraState.Direction.NONE.ordinal()) {
+        videoCall = sCurrentCallType == CameraState.Direction.FRONT
+                || sCurrentCallType == CameraState.Direction.BACK;
+        if (videoCall) {
             localCameraState = new CameraState(CameraState.Direction.FRONT, localCameraState.getCameraCount());
         } else {
             localCameraState = new CameraState(CameraState.Direction.NONE, localCameraState.getCameraCount());
@@ -587,18 +595,23 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         this.callId = SecureRandom.getInstance("SHA1PRNG").nextLong();
         this.pendingOutgoingIceUpdates = new LinkedList<>();
 
-        int cameraType = intent.getIntExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, CameraState.Direction.NONE.ordinal());
-        boolean videoCall = (cameraType == CameraState.Direction.FRONT.ordinal()
-                || cameraType == CameraState.Direction.BACK.ordinal());
+        String camera = intent.getStringExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE);
+        if (null == camera) {
+            camera = CameraState.Direction.NONE.toString();
+        }
 
-        if (cameraType == CameraState.Direction.FRONT.ordinal()) {
+        CameraState.Direction cameraType = CameraState.Direction.valueOf(camera);
+        videoCall = (cameraType == CameraState.Direction.FRONT
+                || cameraType == CameraState.Direction.BACK);
+
+        if (videoCall) {
             localCameraState = new CameraState(CameraState.Direction.FRONT, localCameraState.getCameraCount());
         } else {
             localCameraState = new CameraState(CameraState.Direction.NONE, localCameraState.getCameraCount());
         }
 
         setCallInProgressNotification(TYPE_OUTGOING_RINGING, recipient);
-        startCallActivity(WebRtcCallService.accountContext, intent.getIntExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, CameraState.Direction.NONE.ordinal()));
+        startCallActivity(WebRtcCallService.accountContext, cameraType);
 
         ALog.d(TAG, "handleOutgoingCall:" + recipient.getAddress());
 
@@ -839,7 +852,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                 this.lockManager.updatePhoneState(LockManager.PhoneState.INTERACTIVE);
 
                 sendMessage(WebRtcViewModel.State.CALL_INCOMING, recipient, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled);
-                startCallActivity(WebRtcCallService.accountContext, CameraState.Direction.NONE.ordinal());
+                startCallActivity(WebRtcCallService.accountContext, CameraState.Direction.NONE);
                 audioManager.initializeAudioForCall();
                 audioManager.startIncomingRinger();
 
@@ -885,7 +898,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             return;
         }
 
-        startCallActivity(WebRtcCallService.accountContext, CameraState.Direction.NONE.ordinal());
+        startCallActivity(WebRtcCallService.accountContext, CameraState.Direction.NONE);
         setCallInProgressNotification(TYPE_ESTABLISHED, recipient);
 
         audioManager.startCommunication(currentState == CallState.STATE_REMOTE_RINGING);
@@ -1190,7 +1203,6 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
             return;
         }
 
-        AudioManager audioManager = AppUtil.INSTANCE.getAudioManager(this);
         boolean muted = intent.getBooleanExtra(EXTRA_MUTE, false);
 
         if (this.peerConnection != null) {
@@ -1206,8 +1218,10 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
         }
 
         if (muted) {
+            sCurrentCallType = CameraState.Direction.NONE;
             localCameraState = new CameraState(CameraState.Direction.NONE, localCameraState.getCameraCount());
         } else {
+            sCurrentCallType = CameraState.Direction.FRONT;
             localCameraState = new CameraState(CameraState.Direction.FRONT, localCameraState.getCameraCount());
         }
 
@@ -1357,9 +1371,11 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
     private synchronized void terminate() {
         ALog.i(TAG, "terminate");
         try {
-            EventBus.getDefault().postSticky(new WebRtcViewModel(WebRtcViewModel.State.CALL_DISCONNECTED, recipient, localCameraState, localRenderer, remoteRenderer, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled));
+            EventBus.getDefault().postSticky(new WebRtcViewModel(WebRtcViewModel.State.CALL_DISCONNECTED, false, recipient, localCameraState, localRenderer, remoteRenderer, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled));
 
-            sCurrentCallType = -1;
+            sCurrentCallType = CameraState.Direction.INIT;
+            videoCall = false;
+
             mMsgInserted.set(false);
 
             lockManager.updatePhoneState(LockManager.PhoneState.PROCESSING);
@@ -1424,7 +1440,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                              boolean microphoneEnabled) {
 
         handleForCallTime(state, recipient);
-        EventBus.getDefault().postSticky(new WebRtcViewModel(state, recipient, localCameraState, localRenderer, remoteRenderer, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled));
+        EventBus.getDefault().postSticky(new WebRtcViewModel(state, videoCall, recipient, localCameraState, localRenderer, remoteRenderer, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled));
     }
 
     private void sendMessage(@NonNull WebRtcViewModel.State state,
@@ -1435,7 +1451,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
                              boolean bluetoothAvailable, boolean microphoneEnabled) {
 
         handleForCallTime(state, recipient);
-        EventBus.getDefault().postSticky(new WebRtcViewModel(state, recipient, identityKey, localCameraState, localRenderer, remoteRenderer, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled));
+        EventBus.getDefault().postSticky(new WebRtcViewModel(state, videoCall, recipient, identityKey, localCameraState, localRenderer, remoteRenderer, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled));
     }
 
 
@@ -1484,7 +1500,7 @@ public class WebRtcCallService extends Service implements PeerConnection.Observe
 
         Optional<HangupMessage> hangupMessageOptional = callMessage.getHangupMessage();
         if (hangupMessageOptional.isPresent()) {
-            EventBus.getDefault().postSticky(new WebRtcViewModel(WebRtcViewModel.State.CALL_DISCONNECTED, recipient, localCameraState, localRenderer, remoteRenderer, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled));
+            EventBus.getDefault().postSticky(new WebRtcViewModel(WebRtcViewModel.State.CALL_DISCONNECTED, videoCall, recipient, localCameraState, localRenderer, remoteRenderer, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled));
         }
 
         networkExecutor.execute(listenableFutureTask);

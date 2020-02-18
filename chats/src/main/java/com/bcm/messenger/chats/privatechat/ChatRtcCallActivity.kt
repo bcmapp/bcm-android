@@ -145,10 +145,10 @@ class ChatRtcCallActivity : AccountSwipeBaseActivity() {
 
 
     private fun initializeResources() {
-        val callType = intent.getIntExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, CameraState.Direction.NONE.ordinal)
-        mCallType = when (callType) {
-            CameraState.Direction.FRONT.ordinal -> CameraState(CameraState.Direction.FRONT, 2)
-            CameraState.Direction.BACK.ordinal -> CameraState(CameraState.Direction.BACK, 2)
+        val callType = intent.getStringExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE)?:CameraState.Direction.NONE.toString()
+        mCallType = when (CameraState.Direction.valueOf(callType)) {
+            CameraState.Direction.FRONT -> CameraState(CameraState.Direction.FRONT, 2)
+            CameraState.Direction.BACK -> CameraState(CameraState.Direction.BACK, 2)
             else -> CameraState.UNKNOWN
         }
 

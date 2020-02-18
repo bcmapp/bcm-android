@@ -155,7 +155,7 @@ object ChatCallFloatWindow {
                             override fun onComplete() {
                                 mHandler.post {
                                     ALog.i(TAG, "ChatCallFloatWindow got click")
-                                    AmeModuleCenter.chat(accountContext)?.startRtcCallActivity(AppContextHolder.APP_CONTEXT, currentCallState.localCameraState.activeDirection.ordinal)
+                                    AmeModuleCenter.chat(accountContext)?.startRtcCallActivity(AppContextHolder.APP_CONTEXT, currentCallState.localCameraState.activeDirection.toString())
                                 }
                             }
                         })

@@ -574,7 +574,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                             checkRecipientBlock {
                                 if (it) {
                                     if (mRecipient.isFriend || mRecipient.isAllowStranger) {
-                                        AmeModuleCenter.chat(accountContext)?.startRtcCallService(this@AmeConversationActivity, mRecipient.address, CameraState.Direction.NONE.ordinal)
+                                        AmeModuleCenter.chat(accountContext)?.startRtcCallService(this@AmeConversationActivity, mRecipient.address, CameraState.Direction.NONE.toString())
                                     } else {
                                         ToastUtil.show(this@AmeConversationActivity, getString(R.string.common_chats_stranger_disturb_notice, mRecipient.name), Toast.LENGTH_LONG)
                                     }
@@ -587,7 +587,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                             checkRecipientBlock {
                                 if (it) {
                                     if (mRecipient.isFriend || mRecipient.isAllowStranger) {
-                                        AmeModuleCenter.chat(accountContext)?.startRtcCallService(this@AmeConversationActivity, mRecipient.address, CameraState.Direction.FRONT.ordinal)
+                                        AmeModuleCenter.chat(accountContext)?.startRtcCallService(this@AmeConversationActivity, mRecipient.address, CameraState.Direction.FRONT.toString())
                                     } else {
                                         ToastUtil.show(this@AmeConversationActivity, getString(R.string.common_chats_stranger_disturb_notice, mRecipient.name), Toast.LENGTH_LONG)
                                     }

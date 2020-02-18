@@ -3,7 +3,7 @@ package com.bcm.messenger.chats.privatechat.webrtc;
 import androidx.annotation.NonNull;
 
 public class CameraState {
-    public static final CameraState UNKNOWN = new CameraState(Direction.NONE, 0);
+    public static final CameraState UNKNOWN = new CameraState(Direction.INIT, 0);
 
     private final Direction activeDirection;
     private final int       cameraCount;
@@ -22,11 +22,11 @@ public class CameraState {
     }
 
     public boolean isEnabled() {
-        return this.activeDirection != Direction.NONE;
+        return this.activeDirection != Direction.NONE && this.activeDirection != Direction.INIT;
     }
 
     public enum Direction {
-        FRONT, BACK, NONE, PENDING
+        INIT, FRONT, BACK, NONE, PENDING
     }
 
     @Override

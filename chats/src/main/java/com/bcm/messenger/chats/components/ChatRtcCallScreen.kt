@@ -230,7 +230,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                 return granted
             }
         })
-        
+
         rtc_right_btn.setOnControlActionListener(object : ChatRtcCallItem.OnControlActionListener {
             override fun onChecked(type: Int, isChecked: Boolean): Boolean {
 
@@ -261,7 +261,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
                 return granted
             }
         })
-        
+
         rtc_end_btn.setType(ChatRtcCallItem.TYPE_END)
         rtc_end_btn.setOnClickListener {
             handleEndCall()
@@ -271,7 +271,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
         rtc_accept_btn.setOnClickListener {
             handleAcceptCall()
         }
-        
+
         rtc_decline_btn.setType(ChatRtcCallItem.TYPE_DECLINE)
         rtc_decline_btn.setOnClickListener {
             handleDenyCall()
@@ -407,6 +407,15 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             WebRtcViewModel.State.CALL_OUTGOING -> handleOutgoingCall(event)
             WebRtcViewModel.State.CALL_BUSY -> handleCallBusy(event)
             WebRtcViewModel.State.UNTRUSTED_IDENTITY -> handleUntrustedIdentity(event)
+        }
+
+        if (event.isVideoCall) {
+            rtc_video_btn.isEnabled = true
+            rtc_video_btn.visibility = View.VISIBLE
+
+            rtc_video_btn.setChecked(event.localCameraState.isEnabled)
+        } else {
+            rtc_video_btn.visibility = View.GONE
         }
     }
 
@@ -613,10 +622,12 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             intent.putExtra(WebRtcCallService.EXTRA_MUTE, true)
             callRtcService(intent)
 
-            rtc_right_btn.setType(ChatRtcCallItem.TYPE_SPEAKER)
-            rtc_right_btn.setChecked(false)
+            if (mCallEvent?.state == WebRtcViewModel.State.CALL_CONNECTED) {
+                rtc_right_btn.setType(ChatRtcCallItem.TYPE_SPEAKER)
+                rtc_right_btn.setChecked(false)
 
-            handleSpeaker(false)
+                handleSpeaker(false)
+            }
         } catch (ex: Exception) {
             ALog.e(TAG, "closeLocalVideo error", ex)
         }
@@ -650,15 +661,17 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     private fun handleCameraOpen() {
         ALog.d(TAG, "handleCameraOpen")
         try {
-            val isSpeakerOn = !checkPluginHeadsets()
 
             val intent = Intent(context, WebRtcCallService::class.java)
             intent.action = WebRtcCallService.ACTION_SET_MUTE_VIDEO
             intent.putExtra(WebRtcCallService.EXTRA_MUTE, false)
             callRtcService(intent)
-            rtc_right_btn.setType(ChatRtcCallItem.TYPE_SWITCH)
 
-            handleSpeaker(isSpeakerOn)
+            if (mCallEvent?.state == WebRtcViewModel.State.CALL_CONNECTED) {
+                rtc_right_btn.setType(ChatRtcCallItem.TYPE_SWITCH)
+                val isSpeakerOn = !checkPluginHeadsets()
+                handleSpeaker(isSpeakerOn)
+            }
         } catch (ex: Exception) {
             ALog.e(TAG, "openBackVideo error", ex)
         }
@@ -871,12 +884,10 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
     private fun handleVideoAction(switchStatus: Boolean) {
         ALog.d(TAG, "handleVideoAction switch: $switchStatus ${mCallEvent?.state}")
-        if (mCallEvent?.state == WebRtcViewModel.State.CALL_CONNECTED) {
-            if (switchStatus) {
-                handleCameraOpen()
-            } else {
-                closeLocalVideo()
-            }
+        if (switchStatus) {
+            handleCameraOpen()
+        } else {
+            closeLocalVideo()
         }
     }
 

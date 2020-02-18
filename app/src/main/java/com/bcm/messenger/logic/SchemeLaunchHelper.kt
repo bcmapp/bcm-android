@@ -199,7 +199,7 @@ class SchemeLaunchHelper(val context: Context) {
                     }
                     val call = event.callEvent
                     if (call != null) {
-                        AmeModuleCenter.chat(AMELogin.majorContext)?.startRtcCallService(AppContextHolder.APP_CONTEXT, call.address, CameraState.Direction.NONE.ordinal)
+                        AmeModuleCenter.chat(AMELogin.majorContext)?.startRtcCallService(AppContextHolder.APP_CONTEXT, call.address, CameraState.Direction.NONE.toString())
                     }
                 }
 

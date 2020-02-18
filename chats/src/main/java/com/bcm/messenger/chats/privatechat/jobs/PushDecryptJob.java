@@ -282,7 +282,7 @@ public class PushDecryptJob extends ContextJob {
             intent.setAction(WebRtcCallService.ACTION_INCOMING_CALL);
             intent.putExtra(WebRtcCallService.EXTRA_CALL_ID, message.getId());
             CameraState.Direction callType = message.callType()== SignalServiceProtos.CallMessage.Offer.CallType.VIDEO? CameraState.Direction.FRONT:CameraState.Direction.NONE;
-            intent.putExtra(WebRtcCallService.EXTRA_CALL_TYPE, callType.ordinal());
+            intent.putExtra(WebRtcCallService.EXTRA_CALL_TYPE, callType.toString());
             intent.putExtra(WebRtcCallService.EXTRA_REMOTE_ADDRESS, Address.from(accountContext, envelope.getSource()));
             intent.putExtra(WebRtcCallService.EXTRA_REMOTE_DESCRIPTION, message.getDescription());
             intent.putExtra(WebRtcCallService.EXTRA_TIMESTAMP, envelope.getTimestamp());

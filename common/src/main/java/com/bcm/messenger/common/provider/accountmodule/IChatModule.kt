@@ -17,12 +17,12 @@ interface IChatModule : IAmeAccountModule {
      * @param address peer uid
      * @param callType #WebRtcCallService
      */
-    fun startRtcCallService(context: Context, address: Address, callType: Int)
+    fun startRtcCallService(context: Context, address: Address, callType: String)
 
     /**
      * run rtc call UI
      */
-    fun startRtcCallActivity(context: Context, callType: Int? = null)
+    fun startRtcCallActivity(context: Context, callType: String)
 
     /**
      * delete group message list

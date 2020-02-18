@@ -27,29 +27,35 @@ public class WebRtcViewModel {
     }
 
 
-    private final @NonNull  State       state;
-    private final @Nullable  Recipient   recipient;
-    private final @Nullable IdentityKey identityKey;
+    private final @NonNull
+    State state;
+    private final @Nullable
+    Recipient recipient;
+    private final @Nullable
+    IdentityKey identityKey;
+    private final
+    boolean videoCall;
 
     private final boolean remoteVideoEnabled;
 
     private final boolean isBluetoothAvailable;
     private final boolean isMicrophoneEnabled;
 
-    private final CameraState         localCameraState;
+    private final CameraState localCameraState;
     private final SurfaceViewRenderer localRenderer;
     private final SurfaceViewRenderer remoteRenderer;
 
-    public WebRtcViewModel(@NonNull State               state,
-                           @Nullable Recipient           recipient,
-                           @NonNull CameraState         localCameraState,
+    public WebRtcViewModel(@NonNull State state,
+                           boolean videoCall,
+                           @Nullable Recipient recipient,
+                           @NonNull CameraState localCameraState,
                            @Nullable SurfaceViewRenderer localRenderer,
                            @Nullable SurfaceViewRenderer remoteRenderer,
-                           boolean             remoteVideoEnabled,
-                           boolean             isBluetoothAvailable,
-                           boolean             isMicrophoneEnabled)
-    {
+                           boolean remoteVideoEnabled,
+                           boolean isBluetoothAvailable,
+                           boolean isMicrophoneEnabled) {
         this(state,
+                videoCall,
                 recipient,
                 null,
                 localCameraState,
@@ -60,40 +66,49 @@ public class WebRtcViewModel {
                 isMicrophoneEnabled);
     }
 
-    public WebRtcViewModel(@NonNull  State               state,
-                           @Nullable  Recipient           recipient,
-                           @Nullable IdentityKey         identityKey,
-                           @NonNull  CameraState         localCameraState,
-                           @Nullable  SurfaceViewRenderer localRenderer,
-                           @Nullable  SurfaceViewRenderer remoteRenderer,
-                           boolean             remoteVideoEnabled,
-                           boolean             isBluetoothAvailable,
-                           boolean             isMicrophoneEnabled)
-    {
-        this.state                = state;
-        this.recipient            = recipient;
-        this.localCameraState     = localCameraState;
-        this.localRenderer        = localRenderer;
-        this.remoteRenderer       = remoteRenderer;
-        this.identityKey          = identityKey;
-        this.remoteVideoEnabled   = remoteVideoEnabled;
+    public WebRtcViewModel(@NonNull State state,
+                           boolean videoCall,
+                           @Nullable Recipient recipient,
+                           @Nullable IdentityKey identityKey,
+                           @NonNull CameraState localCameraState,
+                           @Nullable SurfaceViewRenderer localRenderer,
+                           @Nullable SurfaceViewRenderer remoteRenderer,
+                           boolean remoteVideoEnabled,
+                           boolean isBluetoothAvailable,
+                           boolean isMicrophoneEnabled) {
+        this.state = state;
+        this.videoCall = videoCall;
+        this.recipient = recipient;
+        this.localCameraState = localCameraState;
+        this.localRenderer = localRenderer;
+        this.remoteRenderer = remoteRenderer;
+        this.identityKey = identityKey;
+        this.remoteVideoEnabled = remoteVideoEnabled;
         this.isBluetoothAvailable = isBluetoothAvailable;
-        this.isMicrophoneEnabled  = isMicrophoneEnabled;
+        this.isMicrophoneEnabled = isMicrophoneEnabled;
     }
 
-    public @NonNull State getState() {
+    public @NonNull
+    State getState() {
         return state;
     }
 
-    public @Nullable Recipient getRecipient() {
+    public @Nullable
+    Recipient getRecipient() {
         return recipient;
     }
 
-    public @NonNull CameraState getLocalCameraState() {
+    public @NonNull
+    CameraState getLocalCameraState() {
         return localCameraState;
     }
 
-    public @Nullable IdentityKey getIdentityKey() {
+    public boolean isVideoCall() {
+        return videoCall;
+    }
+
+    public @Nullable
+    IdentityKey getIdentityKey() {
         return identityKey;
     }
 
@@ -109,19 +124,22 @@ public class WebRtcViewModel {
         return isMicrophoneEnabled;
     }
 
-    public @Nullable SurfaceViewRenderer getLocalRenderer() {
+    public @Nullable
+    SurfaceViewRenderer getLocalRenderer() {
         return localRenderer;
     }
 
-    public @Nullable SurfaceViewRenderer getRemoteRenderer() {
+    public @Nullable
+    SurfaceViewRenderer getRemoteRenderer() {
         return remoteRenderer;
     }
 
-    public @NonNull String toString() {
+    public @NonNull
+    String toString() {
         String address = "";
         if (recipient != null) {
             address = recipient.getAddress().toString();
         }
-        return "[State: " + state + ", recipient: " + address + ", identity: " + identityKey + ", remoteVideo: " + remoteVideoEnabled + ", localVideo: " + localCameraState.isEnabled() + " lcamera:"+ localCameraState.isEnabled() +"]";
+        return "[State: " + state + ", recipient: " + address + ", identity: " + identityKey + ", remoteVideo: " + remoteVideoEnabled + ", localVideo: " + localCameraState.isEnabled() + " lcamera:" + localCameraState.isEnabled() + "]";
     }
 }

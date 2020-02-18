@@ -72,7 +72,7 @@ class ChatModuleImp : IChatModule {
         WebRtcCallService.checkHasWebRtcCall(accountContext)
     }
 
-    override fun startRtcCallService(context: Context, address: Address, callType: Int) {
+    override fun startRtcCallService(context: Context, address: Address, callType: String) {
         try {
             if (ChatCallFloatWindow.hasWebRtcCalling()) {
                 ALog.i(TAG, "startRtcCallService fail, hasWebRtcCalling")
@@ -89,7 +89,7 @@ class ChatModuleImp : IChatModule {
         }
     }
 
-    override fun startRtcCallActivity(context: Context, callType: Int?) {
+    override fun startRtcCallActivity(context: Context, callType: String) {
         try {
             ALog.d(TAG, "startRtcCallActivity")
             if (ChatCallFloatWindow.hasWebRtcCalling()) {
@@ -97,9 +97,7 @@ class ChatModuleImp : IChatModule {
                 return
             }
             val activityIntent = Intent(context, ChatRtcCallActivity::class.java)
-            if (callType != null) {
-                activityIntent.putExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, callType)
-            }
+            activityIntent.putExtra(ARouterConstants.PARAM.PRIVATE_CALL.PARAM_CALL_TYPE, callType)
             context.startBcmActivity(accountContext, activityIntent)
         } catch (ex: Exception) {
             ALog.e(TAG, "startRtcCallService fail", ex)
