@@ -52,7 +52,9 @@ class HomeProfileLayout @JvmOverloads constructor(context: Context, attrs: Attri
 
     private val statusBarHeight = context.getStatusBarHeight()
     private var listener: HomeProfileListener? = null
-    private val viewPagerAdapter = HomeAccountAdapter(context)
+    private val viewPagerAdapter by lazy {
+        HomeAccountAdapter(context)
+    }
 
     private var toScrollUid = ""
     private var isStop = false

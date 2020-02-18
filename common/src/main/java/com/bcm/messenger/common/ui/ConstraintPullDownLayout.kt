@@ -32,7 +32,9 @@ class ConstraintPullDownLayout @JvmOverloads constructor(context: Context, attrs
     }
 
     abstract class PullDownLayoutCallback {
-        open fun onTouchDown() {}
+        open fun onTouchDown() {
+            ALog.i(TAG, "$this onTouchDown.")
+        }
 
         /**
          * TopView的高度改变了
@@ -46,7 +48,9 @@ class ConstraintPullDownLayout @JvmOverloads constructor(context: Context, attrs
          */
         open fun onScrollViewScrolled(scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int) {}
 
-        open fun onTouchUp(direction: Int) {}
+        open fun onTouchUp(direction: Int) {
+            ALog.i(TAG, "$this onTouchUp.")
+        }
     }
 
     private var lastX = 0f // 初始X坐标
@@ -244,19 +248,18 @@ class ConstraintPullDownLayout @JvmOverloads constructor(context: Context, attrs
                     touchEvent = true
                     if (clickToClose) {
                         hideAnim().start()
+                        callback?.onTouchUp(MOVE_UP)
                     }
                 } else {
                     when {
                         // TopView当前高度大于100px且滑动方向向下，或者TopView高度大于最大高度-100px，播放展示动画
                         (topViewCurrentHeight > topViewMinHeight + reboundSize && moveDirection == MOVE_DOWN) || topViewCurrentHeight >= topViewMaxHeight - reboundSize -> {
                             expandAnim().start()
-//                            moveDirection = MOVE_DOWN
                             needCallback = moveDirection == MOVE_DOWN
                         }
                         // TopView当前高度小于最大高度-100px且滑动方向向上，或者TopView高度小于100px，播放关闭动画
                         (topViewCurrentHeight < topViewMaxHeight - reboundSize && moveDirection == MOVE_UP) || topViewCurrentHeight <= topViewMinHeight + reboundSize -> {
                             hideAnim().start()
-//                            moveDirection = MOVE_UP
                             needCallback = moveDirection == MOVE_UP
                         }
                     }
@@ -266,7 +269,6 @@ class ConstraintPullDownLayout @JvmOverloads constructor(context: Context, attrs
                     callback?.onTouchUp(moveDirection)
                 }
                 needVibrate = true
-//                moveDirection = MOVE_NONE
             }
         }
         return touchEvent

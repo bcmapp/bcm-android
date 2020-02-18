@@ -494,6 +494,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
             }
 
             override fun onTouchUp(direction: Int) {
+                super.onTouchUp(direction)
                 ALog.i(TAG, "PullDownView onTouchUp, direction = $direction")
                 when (direction) {
                     ConstraintPullDownLayout.MOVE_UP -> {
@@ -511,6 +512,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
             }
 
             override fun onTouchDown() {
+                super.onTouchDown()
                 ALog.i(TAG, "PullDownView onTouchDown.")
             }
         }
