@@ -52,8 +52,8 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
                 ViewUtils.fadeOut(theme_schedule_layout, 250)
                 SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_LIGHT)
             }
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             ThemeManager.stopTimer()
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
         theme_dark.setOnClickListener {
             if (currentThemeSetting == ThemeManager.THEME_SYSTEM) {
@@ -68,8 +68,8 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
                 ViewUtils.fadeOut(theme_schedule_layout, 250)
                 SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_DARK)
             }
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             ThemeManager.stopTimer()
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
 
         theme_follow_system.setOnClickListener {
@@ -80,8 +80,9 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
             ViewUtils.fadeOut(theme_schedule_layout, 250)
 
             SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_SYSTEM)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+
             ThemeManager.stopTimer()
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
         theme_schedule.setOnClickListener {
             if (currentThemeSetting == ThemeManager.THEME_SCHEDULE) {

@@ -5,7 +5,7 @@
     android:viewportHeight="48">
   <path
       android:pathData="M24,24m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0"
-      android:fillColor="?attr/common_icon_background"
+      android:fillColor="?attr/chats_conversation_download_icon_background_color"
       android:fillType="evenOdd"/>
   <group>
     <clip-path android:pathData="m12,12h24v24h-24z M 0,0"/>

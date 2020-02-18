@@ -16,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:right_text="@string/me_submit"
         app:right_text_color="?attr/common_text_third_color"
+        app:right_text_style="bold"
         app:right_type="text" />
 
     <androidx.constraintlayout.widget.ConstraintLayout

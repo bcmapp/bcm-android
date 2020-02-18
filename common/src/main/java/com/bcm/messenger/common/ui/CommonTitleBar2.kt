@@ -57,6 +57,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
     private var leftTextColor = 0
     private var leftTextSize = 0f
     private var leftTextImage = 0
+    private var leftTextStyle = 0
     private var leftImage = 0
     private var leftImageColor = 0
     private var leftCustomViewRes = 0
@@ -68,6 +69,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
     private var rightTextColor = 0
     private var rightTextSize = 0f
     private var rightTextImage = 0
+    private var rightTextStyle = 0
     private var rightImage = 0
     private var rightImageColor = 0
     private var rightCustomViewRes = 0
@@ -114,6 +116,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
                 leftTextColor = array.getColor(R.styleable.CommonTitleBar2_left_text_color, context.getAttrColor(R.attr.common_title_bar_left_text_color))
                 leftTextSize = array.getDimension(R.styleable.CommonTitleBar2_left_text_size, 17f.sp2Px())
                 leftTextImage = array.getResourceId(R.styleable.CommonTitleBar2_left_text_image, 0)
+                leftTextStyle = array.getInt(R.styleable.CommonTitleBar2_left_text_style, 0)
             }
             TYPE_IMAGE -> {
                 leftImage = array.getResourceId(R.styleable.CommonTitleBar2_left_image, R.drawable.common_arrow_back_icon)
@@ -129,6 +132,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
                 rightTextColor = array.getColor(R.styleable.CommonTitleBar2_right_text_color, context.getAttrColor(R.attr.common_title_bar_right_text_color))
                 rightTextSize = array.getDimension(R.styleable.CommonTitleBar2_right_text_size, 17f.sp2Px())
                 rightTextImage = array.getResourceId(R.styleable.CommonTitleBar2_right_text_image, 0)
+                rightTextStyle = array.getInt(R.styleable.CommonTitleBar2_right_text_style, 0)
             }
             TYPE_IMAGE -> {
                 rightImage = array.getResourceId(R.styleable.CommonTitleBar2_right_image, 0)
@@ -213,6 +217,11 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
                 title_bar_left_text.text = leftText
                 title_bar_left_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, leftTextSize)
                 title_bar_left_text.setTextColor(leftTextColor)
+                title_bar_left_text.typeface = if (leftTextStyle == STYLE_BOLD) {
+                    Typeface.DEFAULT_BOLD
+                } else {
+                    Typeface.DEFAULT
+                }
             }
             TYPE_IMAGE -> {
                 title_bar_left_text.visibility = View.GONE
@@ -246,6 +255,11 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
                 title_bar_right_text.text = rightText
                 title_bar_right_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, rightTextSize)
                 title_bar_right_text.setTextColor(rightTextColor)
+                title_bar_right_text.typeface = if (rightTextStyle == STYLE_BOLD) {
+                    Typeface.DEFAULT_BOLD
+                } else {
+                    Typeface.DEFAULT
+                }
             }
             TYPE_IMAGE -> {
                 title_bar_right_text.visibility = View.GONE

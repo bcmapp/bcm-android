@@ -110,6 +110,7 @@
                     android:layout_height="wrap_content"
                     app:setting_item_line="true"
                     app:setting_item_name="@string/me_theme_settings_schedule"
+                    app:setting_item_name_color="?attr/common_setting_item_main_text_color"
                     app:setting_item_right="none"
                     app:setting_item_switch="none" />
 

@@ -18,7 +18,6 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.cardview.widget.CardView
 import com.bcm.messenger.common.AccountContext
-import com.bcm.messenger.common.BuildConfig
 import com.bcm.messenger.common.R
 import com.bcm.messenger.common.core.BcmHttpApiHelper
 import com.bcm.messenger.common.database.records.PrivacyProfile
@@ -57,21 +56,23 @@ class IndividualAvatarView : CardView {
         const val KEYBOX_PHOTO_TYPE = 4//
         const val NAME_CARD_TYPE = 5//
 
+        private const val PORTRAIT_URL = "https://d2v3nvtmbzuzi.cloudfront.net/default_avatar"
+
         //
         private val portraitMap by lazy {
             val map = hashMapOf<String, String>()
             for ((i, char) in ('A'..'Z').withIndex()) {
                 val index = if (i < 20) i + 21 else i + 1
-                map[char.toString()] = String.format(Locale.US, "${BuildConfig.DOWNLOAD_URL}/default/portrait_%03d.png", index)
+                map[char.toString()] = String.format(Locale.US, "$PORTRAIT_URL/portrait_%03d.png", index)
             }
             for ((i, char) in ('a'..'z').withIndex()) {
                 val index = if (i < 20) i + 21 else i + 1
-                map[char.toString()] = String.format(Locale.US, "${BuildConfig.DOWNLOAD_URL}/default/portrait_%03d.png", index)
+                map[char.toString()] = String.format(Locale.US, "$PORTRAIT_URL/portrait_%03d.png", index)
             }
             for (i in 0 until 10) {
-                map[i.toString()] = String.format(Locale.US, "${BuildConfig.DOWNLOAD_URL}/default/portrait_%03d.png", i + 21)
+                map[i.toString()] = String.format(Locale.US, "$PORTRAIT_URL/portrait_%03d.png", i + 21)
             }
-            map["#"] = "${BuildConfig.DOWNLOAD_URL}/default/portrait_001.png"
+            map["#"] = "$PORTRAIT_URL/portrait_001.png"
             return@lazy map
         }
 
@@ -132,10 +133,10 @@ class IndividualAvatarView : CardView {
         }
 
         /**
-         * @param letter 
-         * @param size 
-         * @param color 
-         * @param background 
+         * @param letter
+         * @param size
+         * @param color
+         * @param background
          */
         fun createConvertText(resources: Resources, letter: String, size: Int, fontSize: Int, color: Int, background: Int): BitmapDrawable {
 
@@ -155,9 +156,6 @@ class IndividualAvatarView : CardView {
             return BitmapDrawable(resources, newBitmap)
         }
 
-        /**
-         * 
-         */
         fun createCoverText(resources: Resources, bitmap: Bitmap, letter: String, textColor: Int): BitmapDrawable {
             val width = bitmap.width
             val height = bitmap.height
@@ -182,22 +180,14 @@ class IndividualAvatarView : CardView {
         fun onLoaded(recipient: Recipient?, bitmap: Bitmap?, success: Boolean)
     }
 
-    /**
-     */
     private var mTextAppearance: Pair<Int, Int>
 
     private var mCurrentRecipient: Recipient? = null//
     private var mCurrentRequestObj: Any? = null//
     private var mCurrentText: String? = null //
 
-    /**
-     * 
-     */
     private var mRequestManager: GlideRequests? = null
 
-    /**
-     * 
-     */
     private var mWaitingRunnable: Runnable? = null
 
     private var mOval: Boolean = false
@@ -258,18 +248,14 @@ class IndividualAvatarView : CardView {
         }
     }
 
-
-    /**
-     * 
-     */
     fun setCallback(callback: RecipientPhotoCallback?) {
         mCallback = callback
     }
 
     /**
-     * 
-     * @param size 
-     * @param color 
+     *
+     * @param size
+     * @param color
      */
     fun setNameAppearance(size: Int, color: Int) {
         mTextAppearance = Pair(size, color)
@@ -282,9 +268,6 @@ class IndividualAvatarView : CardView {
         }
     }
 
-    /**
-     * 
-     */
     private fun clearArgument() {
         mCurrentRequestObj = null
         mCurrentRecipient = null
@@ -338,23 +321,19 @@ class IndividualAvatarView : CardView {
         clearArgument()
     }
 
-    /**
-     * 
-     */
     fun setPhoto(recipient: Recipient?, alterName: String?, photoType: Int) {
         try {
             if (mRequestManager == null) {
                 mRequestManager = GlideApp.with(AppContextHolder.APP_CONTEXT)
             }
-            requestPhoto(recipient?.address?.context(),mRequestManager ?: return, recipient, alterName, photoType)
-
+            requestPhoto(recipient?.address?.context(), mRequestManager ?: return, recipient, alterName, photoType)
         } catch (ex: Exception) {
             ALog.e(TAG, "setPhoto error", ex)
         }
     }
 
     /**
-     * 
+     *
      * @param recipient
      */
     fun setPhoto(recipient: Recipient?) {
@@ -362,15 +341,14 @@ class IndividualAvatarView : CardView {
             if (mRequestManager == null) {
                 mRequestManager = GlideApp.with(AppContextHolder.APP_CONTEXT)
             }
-            requestPhoto(recipient?.address?.context(),mRequestManager ?: return, recipient, null)
-
+            requestPhoto(recipient?.address?.context(), mRequestManager ?: return, recipient, null)
         } catch (ex: Exception) {
             ALog.e(TAG, "setPhoto error", ex)
         }
     }
 
     /**
-     * 
+     *
      * @param recipient
      * @param photoType
      */
@@ -380,7 +358,6 @@ class IndividualAvatarView : CardView {
                 mRequestManager = GlideApp.with(AppContextHolder.APP_CONTEXT)
             }
             requestPhoto(recipient?.address?.context(), mRequestManager ?: return, recipient, null, photoType)
-
         } catch (ex: Exception) {
             ALog.e(TAG, "setPhoto error", ex)
         }
@@ -676,7 +653,7 @@ class IndividualAvatarView : CardView {
                         }
                     }
                 })
-            } else  {
+            } else {
                 val avatar = recipient.getPrivacyAvatar(desireHD)
                 if (avatar.isNullOrEmpty()) {
                     ALog.i(TAG, "requestPhoto check need download Avatar desireHD: $desireHD, size: $size")

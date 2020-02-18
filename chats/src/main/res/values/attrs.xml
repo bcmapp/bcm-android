@@ -45,6 +45,7 @@
     <attr name="chats_conversation_outgo_text_secondary_color" format="color" />
     <attr name="chats_conversation_outgo_button_background_color" format="color" />
     <attr name="chats_conversation_income_button_background_color" format="color" />
+    <attr name="chats_conversation_download_icon_background_color" format="color" />
     
     <!-- Media Browser -->
     <attr name="chats_media_browser_tab_selected_background" format="color" />

@@ -22,7 +22,7 @@
     <string name="chats_item_set_not_mute">取消免打扰</string>
     <string name="chats_message_list_unread_text">%d会话未读</string>
     <string name="chats_item_delete_private_chat_title">删除和%s的会话并清除本地记录</string>
-    <string name="chats_item_delete_private_both">删除我的和%s的几率</string>
+    <string name="chats_item_delete_private_both">删除我的和%s的记录</string>
     <string name="chats_item_delete_private_local">仅删除我的记录</string>
 
     <string name="chats_title">聊天</string>

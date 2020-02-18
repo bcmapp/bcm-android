@@ -125,6 +125,10 @@
         <attr name="left_text_color" format="reference|color" />
         <attr name="left_text_size" format="reference|dimension" />
         <attr name="left_text_image" format="reference" />
+        <attr name="left_text_style" format="reference|enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+        </attr>
         <attr name="left_image" format="reference" />
         <attr name="left_image_color" format="color|reference" />
         <attr name="left_custom_view" format="reference" />
@@ -139,6 +143,10 @@
         <attr name="right_text_color" format="reference|color" />
         <attr name="right_text_size" format="reference|dimension" />
         <attr name="right_text_image" format="reference" />
+        <attr name="right_text_style" format="reference|enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+        </attr>
         <attr name="right_image" format="reference" />
         <attr name="right_image_color" format="color|reference" />
         <attr name="right_custom_view" format="reference" />

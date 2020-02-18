@@ -49,6 +49,7 @@
     <color name="chats_message_outgo_button_background_color">#19FFFFFF</color>
     <color name="chats_message_income_button_background_color">#19379BFF</color>
     <color name="chats_message_outgo_text_secondary_color">#80FFFFFF</color>
+    <color name="chats_message_download_icon_background_color">#4CFFFFFF</color>
 
     <color name="chats_media_browser_selected_color">#E0E0E0</color>
     <color name="chats_media_browser_unselected_color">#FFFFFF</color>

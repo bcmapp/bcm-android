@@ -13,6 +13,7 @@
         <item name="chats_conversation_outgo_button_background_color">@color/chats_message_outgo_button_background_color</item>
         <item name="chats_conversation_income_button_background_color">@color/chats_message_income_button_background_color</item>
         <item name="chats_conversation_outgo_text_secondary_color">@color/chats_message_outgo_text_secondary_color</item>
+        <item name="chats_conversation_download_icon_background_color">@color/chats_message_download_icon_background_color</item>
     </style>
 
     <style name="ChatsMediaBrowserTheme" parent="CommonBcmTheme.Basic">

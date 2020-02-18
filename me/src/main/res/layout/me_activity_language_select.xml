@@ -15,6 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:left_text="@string/common_cancel"
         app:left_type="text"
+        app:right_text_style="bold"
         app:right_text="@string/common_done"
         app:right_type="text" />
 

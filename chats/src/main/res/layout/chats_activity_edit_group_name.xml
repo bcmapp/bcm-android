@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
@@ -20,6 +19,7 @@
         app:left_type="text"
         app:right_text="@string/chats_save"
         app:right_text_color="?attr/common_button_blue_color"
+        app:right_text_style="bold"
         app:right_type="text" />
 
     <com.bcm.messenger.common.ui.emoji.EmojiEditText
@@ -29,14 +29,14 @@
         android:layout_marginTop="30dp"
         android:background="?attr/common_view_background_dark_grey"
         android:ems="10"
-        android:maxLength="30"
         android:hint="@string/chats_group_profile_name"
         android:inputType="textPersonName"
+        android:maxLength="30"
         android:maxLines="1"
-        android:paddingEnd="54dp"
         android:paddingStart="15dp"
-        android:textSize="16sp"
+        android:paddingEnd="54dp"
         android:textColor="?attr/common_text_main_color"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_name_title_bar" />
@@ -46,10 +46,10 @@
         android:layout_width="44dp"
         android:layout_height="44dp"
         android:scaleType="center"
+        android:tint="?attr/common_foreground_color"
         app:layout_constraintBottom_toBottomOf="@+id/edit_name_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/edit_name_input"
-        app:srcCompat="@drawable/common_input_clear_icon"
-        android:tint="?attr/common_foreground_color"/>
+        app:srcCompat="@drawable/common_input_clear_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
