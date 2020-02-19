@@ -47,9 +47,9 @@ class HomeAccountAdapter(private val context: Context) : PagerAdapter() {
     private val comparator = Comparator<HomeAccountItem> { o1, o2 ->
         if (o1.type == o2.type) {
             when {
-                o1.accountContext.uid == AMELogin.majorUid -> -1
-                o2.accountContext.uid == AMELogin.majorUid -> 1
-                else -> -(o1.account.lastLoginTime - o2.account.lastLoginTime).toInt()
+//                o1.accountContext.uid == AMELogin.majorUid -> -1
+//                o2.accountContext.uid == AMELogin.majorUid -> 1
+                else -> (o1.account.lastLoginTime - o2.account.lastLoginTime).toInt()
             }
         } else {
             o1.type - o2.type

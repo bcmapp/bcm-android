@@ -470,7 +470,7 @@ class HomeActivity : AccountSwipeBaseActivity() {
                         val ctx = home_profile_layout.getCloseAccount()
                         if (ctx != null && ctx.uid != AMELogin.majorUid) {
                             AmeModuleCenter.login().setMajorAccount(ctx)
-                            home_profile_layout.resetPosition()
+//                            home_profile_layout.resetPosition()
                         } else {
                             home_profile_layout.checkCurrentPage(accountRecipient.address.serialize())
                         }
