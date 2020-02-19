@@ -1,41 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.bcm.messenger.common.ui.InputAwareLayout
-    android:id="@+id/layout_container"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:clipChildren="false"
-    android:clipToPadding="false">
-
-    <com.bcm.messenger.chats.components.titlebar.ChatTitleBar
-        android:id="@+id/chat_title_bar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.bcm.messenger.common.ui.InputAwareLayout
+        android:id="@+id/layout_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <FrameLayout
-        android:id="@+id/fragment_content"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-    <LinearLayout
-        android:id="@+id/conversation_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:clipChildren="false"
-        android:clipToPadding="false"
-        android:gravity="bottom"
-        android:orientation="vertical">
+        android:clipToPadding="false">
 
-        <com.bcm.messenger.chats.components.ConversationInputPanel
-            android:id="@+id/bottom_panel"
+        <com.bcm.messenger.chats.components.titlebar.ChatTitleBar
+            android:id="@+id/chat_title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <FrameLayout
+            android:id="@+id/fragment_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <LinearLayout
+            android:id="@+id/conversation_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:chats_isGroup="false"/>
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="bottom"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <com.bcm.messenger.chats.components.ConversationInputPanel
+                android:id="@+id/bottom_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:chats_isGroup="false"/>
 
-</com.bcm.messenger.common.ui.InputAwareLayout>
+        </LinearLayout>
+
+    </com.bcm.messenger.common.ui.InputAwareLayout>
+    <ViewStub
+        android:id="@+id/chat_guide_stub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout="@layout/chats_conversation_guide_page"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -113,6 +113,7 @@
             tools:visibility="gone">
 
             <LinearLayout
+                android:id="@+id/bar_center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -128,15 +129,6 @@
                     android:textColor="?attr/common_text_main_color"
                     android:textSize="17sp"
                     tools:text="Title" />
-
-                <ImageView
-                    android:id="@+id/bar_add_friend"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="5dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/chats_add_friend_icon"
-                    android:visibility="gone" />
             </LinearLayout>
 
             <com.bcm.messenger.common.ui.emoji.EmojiTextView

@@ -4,7 +4,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.annotation.DrawableRes
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
@@ -30,7 +32,7 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
     private var mMultiSelect: Boolean = false
     private var mInPrivateChat: Boolean = false
     private var mCallback: OnChatTitleCallback? = null
-    private var address:Address? = null
+    private var address: Address? = null
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -51,21 +53,61 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
         bar_recipient_photo.setOnClickListener {
             mCallback?.onRight(mMultiSelect)
         }
-        bar_title_main.setOnClickListener {
+        bar_center.setOnClickListener {
             mCallback?.onTitle(mMultiSelect)
         }
         bar_title_whole.setOnClickListener {
             mCallback?.onTitle(mMultiSelect)
         }
-
-        bar_add_friend.setOnClickListener {
-            BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND).putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS,
-                    address?:return@setOnClickListener).startBcmActivity(AMELogin.majorContext, context)
-        }
     }
 
     fun setOnChatTitleCallback(callback: OnChatTitleCallback?) {
         mCallback = callback
+    }
+
+    fun addOption(@DrawableRes icon: Int, invoke: (() -> Unit)? = null) {
+        if (existOption(icon)) {
+            return
+        }
+
+        val imageView = ImageView(context)
+        imageView.scaleType = ImageView.ScaleType.CENTER
+        val padding = 5.dp2Px()
+        imageView.setPadding(padding, padding, padding, padding)
+        imageView.setImageResource(icon)
+        imageView.tag = icon
+        imageView.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        bar_center.addView(imageView)
+
+        if (null != invoke) {
+            imageView.setOnClickListener {
+                invoke.invoke()
+            }
+        }
+    }
+
+    fun removeOption(@DrawableRes icon: Int) {
+        for (i in 0 until bar_center.childCount) {
+            val child = bar_center.getChildAt(i) ?: continue
+            if (child is ImageView) {
+                if (child.tag == icon) {
+                    bar_center.removeView(child)
+                    break
+                }
+            }
+        }
+    }
+
+    private fun existOption(@DrawableRes icon: Int): Boolean {
+        for (i in 0 until bar_center.childCount) {
+            val child = bar_center.getChildAt(i) ?: continue
+            if (child is ImageView) {
+                if (child.tag == icon) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     fun setPrivateChat(recipient: Recipient?) {
@@ -80,12 +122,10 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
                 bar_title_layout.visibility = View.GONE
                 bar_title_whole.visibility = View.VISIBLE
                 bar_title_whole.text = recipient.name
-                bar_add_friend.visibility = View.GONE
             } else {
                 bar_title_layout.visibility = View.VISIBLE
                 bar_title_whole.visibility = View.GONE
                 bar_title_main.text = recipient.name
-                bar_add_friend.visibility = View.VISIBLE
                 bar_title_sub.text = context.getString(R.string.chats_recipient_stranger_role)
             }
 

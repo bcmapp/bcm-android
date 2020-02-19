@@ -11,22 +11,15 @@
   <group>
     <clip-path android:pathData="m12,12h24v24h-24z M 0,0"/>
     <path
-        android:pathData="m18,22h12c1.1046,0 2,0.8954 2,2v7c0,1.1046 -0.8954,2 -2,2h-12c-1.1046,0 -2,-0.8954 -2,-2v-7c0,-1.1046 0.8954,-2 2,-2z"
+        android:pathData="m20.3333,27v1.6667c0,1.1111 -0.2778,2.5 -0.8333,4.1667h-2.6667c0.5556,-2.2208 0.8333,-3.6093 0.8333,-4.1653v-1.6681zM25.3333,27v5h-2.6667v-5zM30.3333,27v2.4969c0,0.8344 0.2778,1.6687 0.8333,2.5031h-2.6667c-0.5556,-1.1111 -0.8333,-1.9444 -0.8333,-2.5v-2.5zM28.5,15c1.1046,0 2,0.8954 2,2v5h-13v-5c0,-1.1046 0.8954,-2 2,-2z"
         android:fillColor="#000"
         android:fillType="evenOdd"/>
   </group>
   <group>
     <clip-path android:pathData="m12,12h24v24h-24z M 0,0"/>
     <path
-        android:pathData="m19,18.5h10c0.5523,0 1,0.4477 1,1v1h-12v-1c0,-0.5523 0.4477,-1 1,-1z"
-        android:fillColor="#000"
-        android:fillType="evenOdd"/>
-  </group>
-  <group>
-    <clip-path android:pathData="m12,12h24v24h-24z M 0,0"/>
-    <path
-        android:pathData="m21,15h6c0.5523,0 1,0.4477 1,1v1h-8v-1c0,-0.5523 0.4477,-1 1,-1z"
-        android:fillColor="#000"
+        android:pathData="M16.5,23.5L31.5,23.5A1,1 0,0 1,32.5 24.5L32.5,24.5A1,1 0,0 1,31.5 25.5L16.5,25.5A1,1 0,0 1,15.5 24.5L15.5,24.5A1,1 0,0 1,16.5 23.5z"
+        android:fillColor="#ff3737"
         android:fillType="evenOdd"/>
   </group>
 </vector>

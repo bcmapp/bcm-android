@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.common.utils.getColorCompat
 import kotlinx.android.synthetic.main.chats_title_bar_drop_item_view.view.*
 
@@ -26,7 +27,7 @@ class ChatTitleDropItemView : FrameLayout {
             val drawable = context.getDrawable(item.icon)
             drawable?.also {
                 if (item.tint != 0) {
-                    it.setTint(context.getColorCompat(item.tint))
+                    it.setTint(context.getAttrColor(item.tint))
                 }
                 it.setBounds(0, 0, drawable.minimumWidth, drawable.minimumHeight)
             }

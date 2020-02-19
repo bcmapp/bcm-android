@@ -700,6 +700,9 @@
     <string name="chats_disabled_by_admin">Disabled by admin</string>
     <string name="chats_message_clear_history">Clear History</string>
     <string name="chats_more_option_video_call">Video Call</string>
+    <string name="chats_tap_friend_s_name_above_for_the_quick_menu">Tap friend’s name above for the quick menu</string>
+    <string name="chats_conversation_guide_tiktalk_tip">In tiktalk mode, messages are self-destructing</string>
+    <string name="chats_conversation_guide_shreddler_tip">Chat shredder is moved into the quick menu</string>
     <string name="chats_can_t_access_map">Can’t Access Map</string>
     <string name="chats_the_map_service_inaccessible">The map service we provided might be inaccessible for your region.</string>
 
