@@ -7,6 +7,7 @@ import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.event.HomeTopEvent
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.IAmeAppModule
+import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.startBcmActivity
 import com.bcm.messenger.logic.EnvSettingLogic
 import com.bcm.messenger.share.SystemShareActivity
@@ -89,8 +90,13 @@ class AmeAppModuleImpl : IAmeAppModule {
     override fun gotoHome(accountContext: AccountContext, event: HomeTopEvent) {
         val intent = Intent(AppContextHolder.APP_CONTEXT, HomeActivity::class.java).apply {
             putExtra(ARouterConstants.PARAM.PARAM_DATA, event.toString())
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        AppContextHolder.APP_CONTEXT.startBcmActivity(AMELogin.majorContext, intent)
+        val activity = AmeAppLifecycle.current()
+        if (activity != null) {
+            activity.startBcmActivity(AMELogin.majorContext, intent)
+        } else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            AppContextHolder.APP_CONTEXT.startBcmActivity(AMELogin.majorContext, intent)
+        }
     }
 }

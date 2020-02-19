@@ -115,11 +115,9 @@ class RequestAddFriendActivity : AccountSwipeBaseActivity(), RecipientModifiedLi
                     setResult(Activity.RESULT_OK)
                     finish()
                 }
-            }else {
+            } else {
                 AmePopup.result.failure(this, getString(R.string.contacts_request_friend_fail), true)
             }
         }
     }
-
-
 }

@@ -1,5 +1,6 @@
 package com.bcm.messenger.contacts
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.bcm.messenger.common.ARouterConstants
@@ -195,10 +196,11 @@ class BcmUserCardActivity : AccountSwipeBaseActivity(), RecipientModifiedListene
 
     private fun addFriend() {
         val address = mRecipient?.address ?: return
-        BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND)
-                .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
-                .putString(ARouterConstants.PARAM.PARAM_NICK, mOtherNick)
-                .startBcmActivity(accountContext, this)
+        val intent = Intent(this, RequestAddFriendActivity::class.java).apply {
+            putExtra(ARouterConstants.PARAM.PARAM_ADDRESS, address)
+            putExtra(ARouterConstants.PARAM.PARAM_NICK, mOtherNick)
+        }
+        startBcmActivity(intent)
     }
 
     private fun goChat() {

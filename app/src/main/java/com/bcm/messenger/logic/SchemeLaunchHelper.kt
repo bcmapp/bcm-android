@@ -157,11 +157,11 @@ class SchemeLaunchHelper(val context: Context) {
 
     private fun handleTopEvent(accountContext: AccountContext, data: String?) {
         try {
-            val current = AmeAppLifecycle.current() ?: return
             if (!data.isNullOrEmpty()) {
                 val event = GsonUtils.fromJson<HomeTopEvent>(data, object : TypeToken<HomeTopEvent>() {}.type)
                 fun continueAction() {
                     if (event.finishTop) {
+                        val current = AmeAppLifecycle.current() ?: return
                         BcmRouter.getInstance().get(ARouterConstants.Activity.APP_HOME_PATH).startBcmActivity(AMELogin.majorContext, current)
                     }
 
