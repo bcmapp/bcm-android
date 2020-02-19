@@ -29,6 +29,8 @@ import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.ui.emoji.EmojiTextView
 import com.bcm.messenger.common.utils.BcmFileUtils
 import com.bcm.messenger.common.utils.dp2Px
+import com.bcm.messenger.common.utils.px2Dp
+import com.bcm.messenger.common.utils.sp2Px
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.logger.ALog
@@ -486,7 +488,7 @@ class IndividualAvatarView : CardView {
         return if (mTextAppearance.first > 0) {
             mTextAppearance.first.toFloat()
         } else {
-            size - size * 3.0f / 5.0f
+            (size.px2Dp()*0.4f).sp2Px()
         }
     }
 
