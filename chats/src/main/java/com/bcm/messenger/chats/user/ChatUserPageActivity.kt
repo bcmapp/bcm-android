@@ -172,19 +172,6 @@ class ChatUserPageActivity : AccountSwipeBaseActivity(), RecipientModifiedListen
             }
         }
 
-        chat_user_clear.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-            AmePopup.bottom.newBuilder()
-                    .withTitle(getString(R.string.chats_user_clear_history_title, mRecipient.name))
-                    .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clear), getColorCompat(R.color.common_color_ff3737)) {
-                        clearChatHistory()
-                    })
-                    .withDoneTitle(getString(R.string.common_cancel))
-                    .show(this)
-        }
-
         chat_user_block.setSwitchEnable(false)
         chat_user_block.setOnClickListener {
             if (QuickOpCheck.getDefault().isQuick) {
@@ -341,39 +328,6 @@ class ChatUserPageActivity : AccountSwipeBaseActivity(), RecipientModifiedListen
         } else {
             chat_user_mute.setSwitchStatus(false)
         }
-    }
-
-    private fun clearChatHistory() {
-        if (historyClearing) {
-            Toast.makeText(this@ChatUserPageActivity, getString(R.string.chats_user_clearing_notice), Toast.LENGTH_SHORT).show()
-            return
-        }
-        historyClearing = true
-        chat_user_clear.showRightStatus(CommonSettingItem.RIGHT_LOADING)
-
-        Observable.create(ObservableOnSubscribe<Boolean> {
-            try {
-                // Delete chat history
-                Repository.getChatRepo(accountContext)?.cleanChatMessages(threadId)
-                it.onNext(true)
-            } catch (ex: Exception) {
-                it.onError(ex)
-            } finally {
-                it.onComplete()
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnTerminate {
-                    chat_user_clear.showRightStatus(CommonSettingItem.RIGHT_NONE)
-                }
-                .subscribe({
-                    historyClearing = false
-                    AmePopup.result.succeed(this, getString(R.string.chats_user_clear_success))
-
-                }, {
-                    historyClearing = false
-                    AmePopup.result.failure(this, getString(R.string.chats_user_clear_fail))
-                })
     }
 
     private fun blockChatUser(recipient: Recipient) {

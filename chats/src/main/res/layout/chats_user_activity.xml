@@ -91,19 +91,9 @@
                 app:setting_item_line="false"/>
 
             <com.bcm.messenger.common.ui.CommonSettingItem
-                android:id="@+id/chat_user_clear"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:setting_item_name="@string/chats_user_clear_history"
-                app:setting_item_right="none"
-                app:setting_item_right_custom="@drawable/chats_conversation_detail_clear_history_icon"
-                app:setting_item_head="@string/chats_user_setting_clear_history_title"
-                app:setting_item_line="false"/>
-
-            <com.bcm.messenger.common.ui.CommonSettingItem
                 android:id="@+id/chat_user_block"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/chats_setting_item_height"
+                android:layout_height="wrap_content"
                 app:setting_item_name="@string/chats_user_block"
                 app:setting_item_right="none"
                 app:setting_item_head="@string/chats_group_setting_other_title"
