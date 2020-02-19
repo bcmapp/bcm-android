@@ -366,7 +366,6 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
             setLocalVideoShow(false)
             setRemoteVideoShow(mHasRemoteVideo)
-
         } else {
             rtc_screen_minimize_iv.visibility = View.VISIBLE
             rtc_video_btn.visibility = View.VISIBLE
@@ -409,13 +408,16 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             WebRtcViewModel.State.UNTRUSTED_IDENTITY -> handleUntrustedIdentity(event)
         }
 
-        if (event.isVideoCall) {
-            rtc_video_btn.isEnabled = true
-            rtc_video_btn.visibility = View.VISIBLE
 
-            rtc_video_btn.setChecked(event.localCameraState.isEnabled)
-        } else {
-            rtc_video_btn.visibility = View.GONE
+        if (!miniMode) {
+            if (event.isVideoCall) {
+                rtc_video_btn.isEnabled = true
+                rtc_video_btn.visibility = View.VISIBLE
+
+                rtc_video_btn.setChecked(event.localCameraState.isEnabled)
+            } else {
+                rtc_video_btn.visibility = View.GONE
+            }
         }
     }
 
@@ -442,9 +444,18 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             local_render_layout.isHidden = false
             local_render_layout.getSurface()?.setMirror(true)
             local_render_layout.getSurface()?.setZOrderMediaOverlay(true)
+
+            if (rtc_right_btn.getType() != ChatRtcCallItem.TYPE_SWITCH) {
+                rtc_right_btn.setType(ChatRtcCallItem.TYPE_SWITCH)
+            }
         } else if (!show && !local_render_layout.isHidden) {
             local_render_layout.isHidden = true
+
+            if (rtc_right_btn.getType() == ChatRtcCallItem.TYPE_SWITCH) {
+                rtc_right_btn.setType(ChatRtcCallItem.TYPE_SPEAKER)
+            }
         }
+
         checkUserInfoShow()
         rtc_title.visibility = if (!show && !mMiniMode) View.VISIBLE else View.GONE
         rtc_video_btn.setChecked(show)
