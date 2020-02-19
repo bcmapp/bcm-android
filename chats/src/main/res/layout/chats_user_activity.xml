@@ -106,6 +106,7 @@
                 android:layout_height="@dimen/chats_setting_item_height"
                 app:setting_item_name="@string/chats_user_block"
                 app:setting_item_right="none"
+                app:setting_item_head="@string/chats_group_setting_other_title"
                 app:setting_item_switch="off"/>
 
             <com.bcm.messenger.common.ui.CommonSettingItem

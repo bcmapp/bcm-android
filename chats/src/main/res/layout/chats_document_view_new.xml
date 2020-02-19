@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/document_container"
@@ -20,9 +20,9 @@
             android:gravity="center"
             android:textSize="12sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             tools:text="PDF" />
 
         <TextView
@@ -33,9 +33,9 @@
             android:maxLines="1"
             android:textColor="?attr/common_text_main_color"
             android:textSize="9sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/document_icon"
-            app:layout_constraintEnd_toEndOf="parent"
             tools:text="24kb" />
 
         <ProgressBar
@@ -43,15 +43,15 @@
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:progressDrawable="@drawable/chats_inverse_progress_bg"
-            android:indeterminateDrawable="@drawable/chats_inverse_progress_bg"
-            android:visibility="gone"
             android:indeterminate="false"
+            android:indeterminateDrawable="@drawable/chats_inverse_progress_bg"
             android:max="100"
-            app:layout_constraintStart_toStartOf="@id/document_icon"
-            app:layout_constraintEnd_toEndOf="@id/document_icon"
-            app:layout_constraintTop_toTopOf="@id/document_icon"
+            android:progressDrawable="@drawable/chats_inverse_progress_bg"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/document_icon"
+            app:layout_constraintEnd_toEndOf="@id/document_icon"
+            app:layout_constraintStart_toStartOf="@id/document_icon"
+            app:layout_constraintTop_toTopOf="@id/document_icon"
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -76,17 +76,18 @@
 
     <ImageView
         android:id="@+id/document_download"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/common_item_ripple_transparent_bg"
         android:contentDescription="@string/common_audio_download_accessibility_description"
         android:focusable="true"
         android:src="@drawable/chats_conversation_item_download_icon"
-        app:layout_constraintStart_toStartOf="@id/document_body"
-        app:layout_constraintEnd_toEndOf="@id/document_body"
-        app:layout_constraintTop_toTopOf="@id/document_body"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/document_body"
-        android:visibility="gone" />
+        app:layout_constraintEnd_toEndOf="@id/document_body"
+        app:layout_constraintStart_toStartOf="@id/document_body"
+        app:layout_constraintTop_toTopOf="@id/document_body" />
 
-</merge>
+</androidx.constraintlayout.widget.ConstraintLayout>

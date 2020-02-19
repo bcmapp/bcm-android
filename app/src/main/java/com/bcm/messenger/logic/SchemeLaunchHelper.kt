@@ -175,7 +175,7 @@ class SchemeLaunchHelper(val context: Context) {
                                     .putLong(ARouterConstants.PARAM.PARAM_GROUP_ID, gid)
                                     .startBcmActivity(accountContext)
 
-                        }else if (con.path == ARouterConstants.Activity.CHAT_CONVERSATION_PATH) {
+                        } else if (con.path == ARouterConstants.Activity.CHAT_CONVERSATION_PATH) {
                             val address = Address.from(accountContext, con.address)
                             val threadId = con.threadId
                             if (threadId <= 0) {
@@ -186,7 +186,7 @@ class SchemeLaunchHelper(val context: Context) {
                                             .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
                                             .startBcmActivity(accountContext)
                                 }
-                            }else {
+                            } else {
                                 BcmRouter.getInstance()
                                         .get(con.path)
                                         .putLong(ARouterConstants.PARAM.PARAM_THREAD, threadId)
@@ -287,7 +287,7 @@ class SchemeLaunchHelper(val context: Context) {
             val accountContext = checkTargetHashRight(notify.targetHash) ?: return
             notify.contactChat?.uid?.let {
                 try {
-                    val decryptSource = if(Address.isUid(it)){
+                    val decryptSource = if (Address.isUid(it)) {
                         it
                     } else {
                         BCMEncryptUtils.decryptSource(accountContext, it.toByteArray())
@@ -299,12 +299,12 @@ class SchemeLaunchHelper(val context: Context) {
                 }
             }
 
-                when {
-                    notify.contactChat != null -> toChat(accountContext, notify.contactChat)
-                    notify.groupChat != null -> toGroup(accountContext, notify.groupChat)
-                    notify.friendMsg != null -> toFriendReq(accountContext, notify.contactChat)
-                    notify.adhocChat != null -> toAdHoc(accountContext, notify.adhocChat)
-                }
+            when {
+                notify.contactChat != null -> toChat(accountContext, notify.contactChat)
+                notify.groupChat != null -> toGroup(accountContext, notify.groupChat)
+                notify.friendMsg != null -> toFriendReq(accountContext, notify.contactChat)
+                notify.adhocChat != null -> toAdHoc(accountContext, notify.adhocChat)
+            }
 
         } catch (e: JsonSyntaxException) {
             ALog.e(TAG, e)

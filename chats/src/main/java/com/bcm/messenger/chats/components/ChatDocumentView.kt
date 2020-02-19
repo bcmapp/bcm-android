@@ -169,21 +169,24 @@ class ChatDocumentView @JvmOverloads constructor(context: Context, attrs: Attrib
 
 
     private fun displayControl(state: Int) {
-        when(state) {
+        when (state) {
             STATE_COMPLETE -> {
                 mShowPending = false
                 ViewUtils.fadeOut(document_progress, TRANSITION_MS)
                 ViewUtils.fadeOut(document_download, TRANSITION_MS)
+                ViewUtils.fadeIn(document_icon, TRANSITION_MS)
             }
             STATE_PROGRESS -> {
                 mShowPending = true
                 ViewUtils.fadeIn(document_progress, TRANSITION_MS)
+                ViewUtils.fadeIn(document_icon, TRANSITION_MS)
                 ViewUtils.fadeOut(document_download, TRANSITION_MS)
             }
             STATE_DOWNLOAD -> {
                 mShowPending = false
                 ViewUtils.fadeIn(document_download, TRANSITION_MS)
                 ViewUtils.fadeOut(document_progress, TRANSITION_MS)
+                document_icon.visibility = View.INVISIBLE
             }
         }
     }
@@ -249,7 +252,7 @@ class ChatDocumentView @JvmOverloads constructor(context: Context, attrs: Attrib
         override fun onClick(v: View) {
             if (downloadListener != null) {
                 val data = mPrivateMessage ?: mGroupMessage
-                if(data != null && !mShowPending) {
+                if (data != null && !mShowPending) {
                     downloadListener?.onClick(v, data)
                 }
 

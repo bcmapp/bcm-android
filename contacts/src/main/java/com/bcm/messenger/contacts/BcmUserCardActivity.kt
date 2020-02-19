@@ -25,7 +25,7 @@ import com.bcm.route.api.BcmRouter
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.contacts_activity_contact_card.*
 
-class BcmUserCardActivity: AccountSwipeBaseActivity(), RecipientModifiedListener {
+class BcmUserCardActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
 
     private var mRecipient: Recipient? = null
     private var groupMemberInfo: AmeGroupMemberInfo? = null
@@ -120,8 +120,8 @@ class BcmUserCardActivity: AccountSwipeBaseActivity(), RecipientModifiedListener
                     })
                 }
                 builder.withDoneTitle(getString(R.string.common_cancel))
-                .withCancelable(true)
-                .show(this@BcmUserCardActivity)
+                        .withCancelable(true)
+                        .show(this@BcmUserCardActivity)
             }
         })
 
@@ -198,14 +198,14 @@ class BcmUserCardActivity: AccountSwipeBaseActivity(), RecipientModifiedListener
         BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND)
                 .putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS, address)
                 .putString(ARouterConstants.PARAM.PARAM_NICK, mOtherNick)
-                .startBcmActivity(accountContext,this)
+                .startBcmActivity(accountContext, this)
     }
 
     private fun goChat() {
         val recipient = mRecipient ?: return
         if (AmeModuleCenter.adhoc().isAdHocMode()) {
             AmeModuleCenter.adhoc().gotoPrivateChat(this, recipient.address.serialize())
-        }else {
+        } else {
             AmeProvider.get<IAmeAppModule>(ARouterConstants.Provider.PROVIDER_APPLICATION_BASE)?.gotoHome(accountContext, HomeTopEvent(true,
                     HomeTopEvent.ConversationEvent.fromPrivateConversation(recipient.address.serialize(), false)))
         }

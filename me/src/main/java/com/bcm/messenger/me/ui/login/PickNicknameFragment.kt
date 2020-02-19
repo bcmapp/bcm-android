@@ -8,9 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bcm.messenger.common.ARouterConstants
-import com.bcm.messenger.common.event.NewAccountAddedEvent
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.ui.CommonTitleBar2
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
 import com.bcm.messenger.common.utils.startBcmActivity
@@ -20,7 +20,6 @@ import com.bcm.messenger.me.ui.base.AbsRegistrationFragment
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.route.api.BcmRouter
 import kotlinx.android.synthetic.main.me_fragment_pick_nickname_layout.*
-import org.greenrobot.eventbus.EventBus
 import org.whispersystems.libsignal.ecc.ECKeyPair
 
 class PickNicknameFragment : AbsRegistrationFragment() {
@@ -43,6 +42,12 @@ class PickNicknameFragment : AbsRegistrationFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        nickname_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
+            override fun onClickLeft() {
+                fragmentManager?.popBackStack()
+            }
+        })
+
         nick_done_button.setOnClickListener {
             AmePopup.loading.show(activity, false)
             val keyPair = this.keyPair

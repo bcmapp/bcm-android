@@ -72,12 +72,6 @@ class RegistrationActivity : ThemeBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.me_activity_registration)
 
-        if (ThemeManager.isDarkTheme(this)) {
-            window.setStatusBarDarkMode()
-        } else {
-            window.setStatusBarLightMode()
-        }
-
         ALog.i("REGCOLOR",  "${this.getAttrColor(R.attr.common_view_background)}")
 
 
@@ -88,6 +82,12 @@ class RegistrationActivity : ThemeBaseActivity() {
         supportFragmentManager.beginTransaction()
                 .add(R.id.register_container, f, "startup")
                 .commitNowAllowingStateLoss()
+
+        if (ThemeManager.isDarkTheme(this)) {
+            window.setStatusBarDarkMode()
+        } else {
+            window.setStatusBarLightMode()
+        }
 
     }
 
