@@ -17,6 +17,7 @@ import com.bcm.messenger.common.api.BindableConversationListItem
 import com.bcm.messenger.common.api.Unbindable
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
+import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.getSelectedLocale
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.database.records.ThreadRecord
@@ -375,7 +376,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         this.contactPhotoImage.showGroupAvatar(accountContext, groupId)
         this.fromView.text = groupInfo?.displayName ?: ""
         if (null != groupInfo) {
-            if (groupInfo.legitimateState == AmeGroupInfo.LegitimateState.ILLEGAL) {
+            if (groupInfo.role == AmeGroupMemberInfo.VISITOR) {
                 alertView.setNone()
             } else {
                 if (groupInfo.mute) {
