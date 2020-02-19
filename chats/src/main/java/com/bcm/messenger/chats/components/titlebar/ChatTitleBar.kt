@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.annotation.AttrRes
 import androidx.annotation.DrawableRes
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.ARouterConstants
@@ -56,26 +57,27 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
         bar_center.setOnClickListener {
             mCallback?.onTitle(mMultiSelect)
         }
-        bar_title_whole.setOnClickListener {
-            mCallback?.onTitle(mMultiSelect)
-        }
     }
 
     fun setOnChatTitleCallback(callback: OnChatTitleCallback?) {
         mCallback = callback
     }
 
-    fun addOption(@DrawableRes icon: Int, invoke: (() -> Unit)? = null) {
+    fun addOption(@DrawableRes icon: Int, @AttrRes tint:Int = R.attr.common_foreground_color, invoke: (() -> Unit)? = null) {
         if (existOption(icon)) {
             return
         }
 
         val imageView = ImageView(context)
         imageView.scaleType = ImageView.ScaleType.CENTER
-        val padding = 5.dp2Px()
-        imageView.setPadding(padding, padding, padding, padding)
+        val hp = 2.dp2Px()
+        imageView.setPadding(hp, 0, hp, 0)
         imageView.setImageResource(icon)
+        if (tint != 0) {
+            imageView.setColorFilter(context.getAttrColor(tint))
+        }
         imageView.tag = icon
+        imageView.visibility = View.VISIBLE
         imageView.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
         bar_center.addView(imageView)
 
@@ -114,18 +116,14 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
         mInPrivateChat = true
         if (recipient == null) {
             bar_title_layout.visibility = View.GONE
-            bar_title_whole.visibility = View.GONE
             return
         } else {
             address = recipient.address
+            bar_title_main.text = recipient.name
             if (recipient.isFriend) {
-                bar_title_layout.visibility = View.GONE
-                bar_title_whole.visibility = View.VISIBLE
-                bar_title_whole.text = recipient.name
+                bar_title_sub.visibility = View.GONE
             } else {
-                bar_title_layout.visibility = View.VISIBLE
-                bar_title_whole.visibility = View.GONE
-                bar_title_main.text = recipient.name
+                bar_title_sub.visibility = View.VISIBLE
                 bar_title_sub.text = context.getString(R.string.chats_recipient_stranger_role)
             }
 
@@ -145,15 +143,15 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
 
         address = GroupUtil.addressFromGid(accountContext, gid)
 
-        bar_title_layout.visibility = View.GONE
-        bar_title_whole.visibility = View.VISIBLE
-        bar_title_whole.text = "$name($memberCount)"
+        bar_title_sub.visibility = View.GONE
+        bar_title_main.visibility = View.VISIBLE
+        bar_title_main.text = "$name($memberCount)"
         bar_recipient_photo.showGroupAvatar(accountContext, gid)
         setMultiSelectionMode(mMultiSelect)
     }
 
     fun updateGroupName(name: String, memberCount: Int) {
-        bar_title_whole.text = "$name($memberCount)"
+        bar_title_main.text = "$name($memberCount)"
     }
 
     fun updateGroupAvatar(accountContext: AccountContext, gid: Long, path: String) {

@@ -77,27 +77,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </com.bcm.messenger.common.ui.BadgeLayout>
-
-        <com.bcm.messenger.common.ui.emoji.EmojiTextView
-            android:id="@+id/bar_title_whole"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="middle"
-            android:gravity="center"
-            android:paddingStart="5dp"
-            android:paddingTop="5dp"
-            android:paddingEnd="5dp"
-            android:paddingBottom="5dp"
-            android:singleLine="true"
-            android:textColor="?attr/common_text_main_color"
-            android:textSize="17sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/bar_right_layout"
-            app:layout_constraintStart_toEndOf="@id/bar_back_text"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Group Title Group Title Group Title Group Title Group Title Group Title Group Title" />
-
-
         <LinearLayout
             android:id="@+id/bar_title_layout"
             android:layout_width="0dp"

@@ -162,10 +162,10 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
         }
 
 
-        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, 0, getString(R.string.chats_media_and_files))
-        val chatBurn = ChatTitleDropItem(R.drawable.chats_message_burn_icon, 0, "Tiktalk")
-        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, 0, getString(R.string.chats_message_clear_history))
-        val shred = ChatTitleDropItem(R.drawable.chats_message_shred_icon, 0, getString(R.string.chats_more_option_shredder))
+        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, R.attr.common_foreground_color, getString(R.string.chats_media_and_files))
+        val chatBurn = ChatTitleDropItem(R.drawable.chats_message_burn_icon, R.attr.common_foreground_color, "Tiktalk")
+        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, R.attr.common_foreground_color, getString(R.string.chats_message_clear_history))
+        val shred = ChatTitleDropItem(R.drawable.chats_message_shred_icon, R.attr.common_foreground_color, getString(R.string.chats_more_option_shredder))
         val menulist = listOf(chatFile,chatBurn, chatClear, shred)
         guide.checkShow(chat_guide_stub, menulist, mRecipient)
     }
@@ -421,6 +421,8 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
             }
         })
 
+        chat_title_bar.addOption(R.drawable.common_arrow_down)
+
 
         layout_container.addOnKeyboardShownListener(object : KeyboardAwareLinearLayout.OnKeyboardShownListener {
             override fun onKeyboardShown() {
@@ -673,6 +675,13 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
 
         val dropMenu = ChatTitleDropMenu()
         dropMenu.updateMenu(actionList)
+        dropMenu.setOnDismissListener {
+            chat_title_bar.removeOption(R.drawable.common_arrow_up)
+            chat_title_bar.addOption(R.drawable.common_arrow_down)
+        }
+
+        chat_title_bar.removeOption(R.drawable.common_arrow_down)
+        chat_title_bar.addOption(R.drawable.common_arrow_up)
         dropMenu.show(chat_title_bar)
     }
 
@@ -702,10 +711,12 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
 
     private fun updateTitleBar() {
         if (!mRecipient.isFriend) {
-            chat_title_bar.addOption(R.drawable.chats_add_friend_icon) {
+            chat_title_bar.removeOption(R.drawable.common_arrow_down)
+            chat_title_bar.addOption(R.drawable.chats_add_friend_icon, 0) {
                 BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND).putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS,
                         mRecipient.address).startBcmActivity(accountContext, this)
             }
+            chat_title_bar.addOption(R.drawable.common_arrow_down)
         } else {
             chat_title_bar.removeOption(R.drawable.chats_add_friend_icon)
         }

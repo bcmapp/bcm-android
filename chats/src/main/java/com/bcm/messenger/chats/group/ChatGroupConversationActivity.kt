@@ -163,6 +163,8 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
             }
         })
 
+        chat_title_bar.addOption(R.drawable.common_arrow_down)
+
         layout_container.addOnKeyboardShownListener(object : KeyboardAwareLinearLayout.OnKeyboardShownListener {
             override fun onKeyboardShown() {
                 fragment?.scrollToBottom(false)
@@ -366,12 +368,12 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
     }
 
     private fun showDropMenu() {
-        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, 0, getString(R.string.chats_media_and_files)) {
+        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, R.attr.common_foreground_color, getString(R.string.chats_media_and_files)) {
             val groupModel = this.groupModel?:return@ChatTitleDropItem
             MediaBrowserActivity.router(accountContext, GroupUtil.addressFromGid(accountContext, groupModel.groupId()))
         }
 
-        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, 0, getString(R.string.chats_message_clear_history)) {
+        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, R.attr.common_foreground_color, getString(R.string.chats_message_clear_history)) {
             val groupModel = this.groupModel?:return@ChatTitleDropItem
             AmePopup.bottom.newBuilder()
                     .withTitle(getString(R.string.chats_user_clear_history_title, groupModel.groupName()))
@@ -392,6 +394,14 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
 
         val dropMenu = ChatTitleDropMenu()
         dropMenu.updateMenu(actionList)
+        dropMenu.setOnDismissListener {
+            chat_title_bar.removeOption(R.drawable.common_arrow_up)
+            chat_title_bar.addOption(R.drawable.common_arrow_down)
+        }
+
+        chat_title_bar.removeOption(R.drawable.common_arrow_down)
+        chat_title_bar.addOption(R.drawable.common_arrow_up)
+
         dropMenu.show(chat_title_bar)
     }
 
