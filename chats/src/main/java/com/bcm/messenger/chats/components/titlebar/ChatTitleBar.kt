@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.DrawableRes
 import com.bcm.messenger.chats.R
+import com.bcm.messenger.chats.components.ChatsBurnSetting
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
@@ -127,10 +128,14 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
                 bar_title_sub.text = context.getString(R.string.chats_recipient_stranger_role)
             }
 
-            if (recipient.expireMessages > 0) {
+            val type = ChatsBurnSetting.expireToType(recipient.expireMessages)
+            if (type > 0) {
                 bar_right_layout.setBackgroundResource(R.drawable.common_tiktalk_ring)
+                burn_time.visibility = View.VISIBLE
+                burn_time.text = ChatsBurnSetting.typeToString(type)
             } else {
                 bar_right_layout.setBackgroundResource(0)
+                burn_time.visibility = View.GONE
             }
 
             bar_recipient_photo.showPrivateAvatar(recipient)

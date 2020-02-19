@@ -8,6 +8,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.components.AlertView
+import com.bcm.messenger.chats.components.ChatsBurnSetting
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.common.ARouterConstants
@@ -34,6 +35,7 @@ import kotlinx.android.synthetic.main.chats_list_item_view.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.w3c.dom.Text
 import java.util.*
 
 
@@ -58,6 +60,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
     private lateinit var alertView: AlertView
     private lateinit var contactPhotoImage: RecipientAvatarView
     private lateinit var ring:View
+    private lateinit var burnTime:TextView
 
     var groupId = 0L
         private set
@@ -94,7 +97,7 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         this.alertView = findViewById(R.id.indicators_parent)
         this.contactPhotoImage = findViewById(R.id.contact_photo_image)
         this.ring = findViewById(R.id.contact_burn_ring)
-
+        this.burnTime = findViewById(R.id.burn_time)
     }
 
     override fun bind(masterSecret: MasterSecret, threadRecord: ThreadRecord,
@@ -348,16 +351,21 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
             alertView.setNotificationAlert(unreadCount, false, anim && lastThread?.id == threadRecord.id)
         }
 
-        if (this.recipient?.expireMessages?:0 > 0) {
+        val type = ChatsBurnSetting.expireToType(this.recipient?.expireMessages?:0)
+        if (type > 0) {
             ring.visibility = View.VISIBLE
+            burnTime.visibility = View.VISIBLE
+            burnTime.text = ChatsBurnSetting.typeToString(type)
         } else {
             ring.visibility = View.GONE
+            burnTime.visibility = View.GONE
         }
 
     }
 
     private fun setGroup(accountContext: AccountContext, threadRecord: ThreadRecord, anim: Boolean) {
         ring.visibility = View.GONE
+        burnTime.visibility = View.GONE
         this.lastThread = threadRecord
         this.recipient = threadRecord.getRecipient(accountContext)
         this.recipient?.addListener(this)

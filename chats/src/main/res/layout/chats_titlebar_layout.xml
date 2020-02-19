@@ -76,6 +76,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/burn_time"
+                android:layout_width="wrap_content"
+                android:layout_height="12dp"
+                android:background="@drawable/chats_burn_time_background"
+                android:textSize="8sp"
+                android:textColor="#ffffff"
+                android:paddingEnd="3dp"
+                android:paddingStart="3dp"
+                android:gravity="center"
+                tools:text="5M"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
         </com.bcm.messenger.common.ui.BadgeLayout>
         <LinearLayout
             android:id="@+id/bar_title_layout"
