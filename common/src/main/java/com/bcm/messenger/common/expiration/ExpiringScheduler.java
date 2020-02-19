@@ -1,7 +1,6 @@
 package com.bcm.messenger.common.expiration;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.bcm.messenger.common.AccountContext;
 import com.bcm.messenger.common.database.records.MessageRecord;
@@ -9,7 +8,6 @@ import com.bcm.messenger.common.database.repositories.PrivateChatRepo;
 import com.bcm.messenger.common.database.repositories.Repository;
 import com.bcm.messenger.common.utils.AppUtil;
 import com.bcm.messenger.common.utils.log.ACLog;
-import com.bcm.messenger.utility.logger.ALog;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,12 +26,10 @@ public class ExpiringScheduler implements IExpiringScheduler {
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     private final Context context;
-    private final PrivateChatRepo chatRepo;
 
     public ExpiringScheduler(Context context, AccountContext accountContext) {
         this.accountContext = accountContext;
         this.context = context.getApplicationContext();
-        this.chatRepo = Repository.getChatRepo(accountContext);
 
         executor.execute(new LoadTask());
         executor.execute(new ProcessTask());
@@ -71,6 +67,7 @@ public class ExpiringScheduler implements IExpiringScheduler {
 
     private class LoadTask implements Runnable {
         public void run() {
+            PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
             if (null != chatRepo) {
                 List<MessageRecord> messageRecords = chatRepo.getExpirationStartedMessages();
                 for (MessageRecord record : messageRecords) {
@@ -85,6 +82,7 @@ public class ExpiringScheduler implements IExpiringScheduler {
     private class ProcessTask implements Runnable {
         public void run() {
             while (true) {
+                PrivateChatRepo chatRepo = Repository.getChatRepo(accountContext);
                 ExpiringMessageReference expiredMessage = null;
                 synchronized (expiringMessageReferences) {
                     try {

@@ -457,7 +457,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
     fun disableRight() {
         when (rightType) {
             TYPE_IMAGE -> title_bar_right_img.alpha = 0.5f
-            TYPE_TEXT -> title_bar_right_text.alpha = 0.5f
+            TYPE_TEXT -> title_bar_right_text.setTextColor(context.getAttrColor(R.attr.common_text_third_color))
             TYPE_CUSTOM -> rightCustomView?.alpha = 0.5f
         }
 
@@ -467,7 +467,7 @@ class CommonTitleBar2 @JvmOverloads constructor(context: Context, attrs: Attribu
     fun enableRight() {
         when (rightType) {
             TYPE_IMAGE -> title_bar_right_img.alpha = 1.0f
-            TYPE_TEXT -> title_bar_right_text.alpha = 1.0f
+            TYPE_TEXT -> title_bar_right_text.setTextColor(context.getAttrColor(R.attr.common_text_third_color))
             TYPE_CUSTOM -> rightCustomView?.alpha = 1.0f
         }
 

@@ -47,11 +47,12 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
             theme_select_dark.background = null
 
             if (ThemeManager.isScheduleTheme(this)) {
-                SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_SCHEDULE_LIGHT)
+                currentThemeSetting = ThemeManager.THEME_SCHEDULE_LIGHT
             } else {
+                currentThemeSetting = ThemeManager.THEME_LIGHT
                 ViewUtils.fadeOut(theme_schedule_layout, 250)
-                SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_LIGHT)
             }
+            SuperPreferences.setCurrentThemeSetting(this, currentThemeSetting)
             ThemeManager.stopTimer()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
@@ -63,11 +64,12 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
             theme_select_dark.setBackgroundResource(R.drawable.me_theme_settings_selected_bg)
 
             if (ThemeManager.isScheduleTheme(this)) {
-                SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_SCHEDULE_DARK)
+                currentThemeSetting = ThemeManager.THEME_SCHEDULE_DARK
             } else {
+                currentThemeSetting = ThemeManager.THEME_DARK
                 ViewUtils.fadeOut(theme_schedule_layout, 250)
-                SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_DARK)
             }
+            SuperPreferences.setCurrentThemeSetting(this, currentThemeSetting)
             ThemeManager.stopTimer()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
@@ -79,6 +81,7 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
 
             ViewUtils.fadeOut(theme_schedule_layout, 250)
 
+            currentThemeSetting = ThemeManager.THEME_SYSTEM
             SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_SYSTEM)
 
             ThemeManager.stopTimer()
@@ -94,6 +97,7 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
 
             ViewUtils.fadeIn(theme_schedule_layout, 250)
 
+            currentThemeSetting = ThemeManager.THEME_SCHEDULE
             SuperPreferences.setCurrentThemeSetting(this, ThemeManager.THEME_SCHEDULE)
             ThemeManager.startTimer()
         }

@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import com.bcm.messenger.common.preferences.SuperPreferences
+import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.utility.AppContextHolder
 import java.util.*
 
@@ -102,7 +103,8 @@ class ThemeTimerManager {
     }
 
     private fun isDarkMode(): Boolean {
-        return AppContextHolder.APP_CONTEXT.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        val activity = AmeAppLifecycle.current() ?: return false
+        return activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
     }
 
     private fun isScheduleCustomTheme(): Boolean {
