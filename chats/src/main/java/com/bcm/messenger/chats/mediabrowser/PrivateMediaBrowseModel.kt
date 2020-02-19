@@ -133,7 +133,6 @@ class PrivateMediaBrowseModel(accountContext: AccountContext) : BaseMediaBrowser
             val successSet = mutableSetOf<String>()
             fail.addAll(mediaDataList)
             try {
-
                 for (data in mediaDataList) {
                     if (mStop) {
                         break
@@ -147,7 +146,7 @@ class PrivateMediaBrowseModel(accountContext: AccountContext) : BaseMediaBrowser
                                 AttachmentDownloadJob(AppContextHolder.APP_CONTEXT, accountContext, record.id,
                                         attachmentSlide.id, attachmentSlide.uniqueId, true).onRun(mMasterSecret)
                             }
-                            val file = AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, mMasterSecret, attachmentSlide.dataUri
+                            val file = AttachmentSaver.saveAttachment(AppContextHolder.APP_CONTEXT, mMasterSecret, attachmentSlide.getPartUri()
                                     ?: continue, attachmentSlide.contentType, attachmentSlide.fileName)
                             if (file != null) {
                                 fail.remove(data)
