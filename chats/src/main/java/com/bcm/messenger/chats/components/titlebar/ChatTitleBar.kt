@@ -58,6 +58,10 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
         bar_center.setOnClickListener {
             mCallback?.onTitle(mMultiSelect)
         }
+
+        bar_title_sub.setOnClickListener {
+            mCallback?.onTitle(mMultiSelect)
+        }
     }
 
     fun setOnChatTitleCallback(callback: OnChatTitleCallback?) {
