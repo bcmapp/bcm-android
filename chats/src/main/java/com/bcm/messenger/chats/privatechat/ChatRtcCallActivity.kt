@@ -103,7 +103,6 @@ class ChatRtcCallActivity : AccountSwipeBaseActivity() {
         ALog.i(TAG, "onDestroy")
         unregisterReceiver(mHeadsetReceiver)
         chats_rtc_screen?.setOnChatRtcCallActionListener(null)
-        WebRtcCallService.clearWebRtcCallType()
     }
 
     override fun onBackPressed() {

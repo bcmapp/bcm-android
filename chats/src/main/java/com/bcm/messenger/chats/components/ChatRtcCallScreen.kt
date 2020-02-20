@@ -418,6 +418,15 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
             } else {
                 rtc_video_btn.visibility = View.GONE
             }
+
+            if (event.state == WebRtcViewModel.State.CALL_CONNECTED) {
+                if (event.isMicrophoneEnabled) {
+                    if (rtc_left_btn.isChecked()) {
+                        rtc_left_btn.setChecked(false)
+                    }
+                    handleSetMuteAudio(false)
+                }
+            }
         }
     }
 
