@@ -345,7 +345,7 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
         rtc_left_btn.setChecked(!event.isMicrophoneEnabled)
 
-        ALog.d(TAG, "setCallState, mini: $miniMode, hasLocalVideo: $mLocalVideoStatus")
+        ALog.d(TAG, "setCallState, mini: $miniMode, hasLocalVideo: $mLocalVideoStatus, mute${!event.isMicrophoneEnabled}")
         if (mMiniMode) {
             rtc_screen_minimize_iv.visibility = View.GONE
             rtc_video_btn.visibility = View.GONE
@@ -749,12 +749,22 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     }
 
     private fun handleIncomingCall(event: WebRtcViewModel) {
-        rtc_video_btn.visibility = View.GONE
+        if (event.isVideoCall) {
+            rtc_video_btn.visibility = View.VISIBLE
+        } else {
+            rtc_video_btn.visibility = View.GONE
+        }
+
         setCard(event.recipient, "")
     }
 
     private fun handleOutgoingCall(event: WebRtcViewModel) {
-        rtc_video_btn.visibility = View.GONE
+        if (event.isVideoCall) {
+            rtc_video_btn.visibility = View.VISIBLE
+        } else {
+            rtc_video_btn.visibility = View.GONE
+        }
+
         rtc_title.visibility = View.GONE
         rtc_left_btn.visibility = View.GONE
         rtc_right_btn.visibility = View.GONE
@@ -775,7 +785,12 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
     private fun handleCallRinging(event: WebRtcViewModel) {
         ALog.d(TAG, "handleCallRinging")
-        rtc_video_btn.visibility = View.GONE
+        if (event.isVideoCall) {
+            rtc_video_btn.visibility = View.VISIBLE
+        } else {
+            rtc_video_btn.visibility = View.GONE
+        }
+
         rtc_title.visibility = View.GONE
         rtc_left_btn.visibility = View.GONE
         rtc_right_btn.visibility = View.GONE
@@ -784,7 +799,11 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
 
     private fun handleCallBusy(event: WebRtcViewModel) {
         ALog.d(TAG, "handleCallBusy")
-        rtc_video_btn.visibility = View.GONE
+        if (event.isVideoCall) {
+            rtc_video_btn.visibility = View.VISIBLE
+        } else {
+            rtc_video_btn.visibility = View.GONE
+        }
         rtc_title.visibility = View.GONE
         rtc_left_btn.visibility = View.GONE
         rtc_right_btn.visibility = View.GONE
@@ -850,7 +869,11 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     }
 
     private fun handleNoSuchUser(event: WebRtcViewModel) {
-        rtc_video_btn.visibility = View.GONE
+        if (event.isVideoCall) {
+            rtc_video_btn.visibility = View.VISIBLE
+        } else {
+            rtc_video_btn.visibility = View.GONE
+        }
         rtc_passive_layout.visibility = View.GONE
         rtc_active_layout.visibility = View.GONE
         handleTerminate(event.recipient)
