@@ -13,7 +13,6 @@ import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.bean.MessageListItem
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.privatechat.logic.MessageSender
-import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.crypto.MasterSecret
@@ -66,6 +65,9 @@ class MessageListAdapter(context: Context,
 
     interface IThreadHolderDelete {
         fun onViewClicked(adapter: MessageListAdapter, viewHolder: RecyclerView.ViewHolder)
+        fun setPin(threadId: Long, isPinned: Boolean)
+        fun deleteConversation(recipient: Recipient?, threadId: Long)
+        fun setRead(threadId: Long, isUnread: Boolean)
     }
 
     private var mDigest = MessageDigest.getInstance("SHA1")
@@ -266,7 +268,7 @@ class MessageListAdapter(context: Context,
         }
 
         private fun switchPin() {
-            ThreadListViewModel.getCurrentThreadModel()?.setPin(chatItem.threadId, !isPinned) {}
+            delegate.setPin(chatItem.threadId, !isPinned)
         }
 
         private fun deleteGroupChat() {
@@ -274,7 +276,7 @@ class MessageListAdapter(context: Context,
                     .setTitle(R.string.chats_item_confirm_delete_title)
                     .setMessage(R.string.chats_item_confirm_delete_message)
                     .setPositiveButton(StringAppearanceUtil.applyAppearance(getString(R.string.chats_item_delete), color = getColor(R.color.common_color_ff3737))) { _, _ ->
-                        ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(chatItem.recipient, chatItem.threadId) {}
+                        delegate.deleteConversation(chatItem.recipient, chatItem.threadId)
                     }
                     .setNegativeButton(R.string.chats_cancel, null)
                     .show()
@@ -287,7 +289,7 @@ class MessageListAdapter(context: Context,
                         realDelete()
                     })
                     .withPopItem(AmeBottomPopup.PopupItem(chatItem.context.getString(R.string.chats_item_delete_private_local), chatItem.context.getAttrColor(R.attr.common_text_warn_color)) {
-                        ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(chatItem.recipient, chatItem.threadId) {}
+                        delegate.deleteConversation(chatItem.recipient, chatItem.threadId)
                     })
                     .withDoneTitle(chatItem.context.getString(R.string.chats_cancel))
                     .show(chatItem.context as? FragmentActivity)
@@ -318,12 +320,12 @@ class MessageListAdapter(context: Context,
             if (event.messageId == deleteMsgId) {
                 EventBus.getDefault().unregister(this)
                 AmePopup.loading.dismiss()
-                ThreadListViewModel.getCurrentThreadModel()?.deleteConversation(chatItem.recipient, chatItem.threadId) {}
+                delegate.deleteConversation(chatItem.recipient, chatItem.threadId)
             }
         }
 
         private fun setUnread() {
-            ThreadListViewModel.getCurrentThreadModel()?.setUnreadOrRead(chatItem.threadId, chatItem.unreadCount == 0)
+            delegate.setRead(chatItem.threadId, chatItem.unreadCount == 0)
         }
 
         private fun switchMute() {

@@ -16,12 +16,13 @@ import com.bcm.messenger.chats.group.ChatGroupCreateActivity
 import com.bcm.messenger.chats.group.logic.GroupLogic
 import com.bcm.messenger.chats.group.logic.viewmodel.GroupViewModel
 import com.bcm.messenger.chats.mediabrowser.ui.MediaBrowserActivity
-import com.bcm.messenger.chats.thread.ThreadListViewModel
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountSwipeBaseActivity
 import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
 import com.bcm.messenger.common.core.corebean.BcmReviewGroupJoinRequest
+import com.bcm.messenger.common.database.repositories.Repository
+import com.bcm.messenger.common.database.repositories.ThreadRepo
 import com.bcm.messenger.common.event.GroupNameOrAvatarChanged
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.ui.CommonTitleBar2
@@ -33,8 +34,12 @@ import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.route.api.BcmRouter
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.chats_group_setting_activity.*
 import org.greenrobot.eventbus.Subscribe
 import java.lang.ref.WeakReference
@@ -49,6 +54,7 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
 
     private lateinit var mGroupModel: GroupViewModel
     private lateinit var mDataSource: ListDataSource<AmeGroupMemberInfo>
+    private var threadRepo: ThreadRepo? = null
 
     private var lightMode = false
     private var isBgLight = true
@@ -70,6 +76,7 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
         this.mGroupModel = model
 
         mGroupModel.setThreadId(intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, -1))
+        threadRepo = Repository.getThreadRepo(accountContext)
         initView()
     }
 
@@ -87,13 +94,7 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
             AmePopup.bottom.newBuilder()
                     .withTitle(getString(R.string.chats_user_clear_history_title, mGroupModel.groupName()))
                     .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clear), AmeBottomPopup.PopupItem.CLR_RED) {
-
-                        ThreadListViewModel.getCurrentThreadModel()?.deleteGroupConversation(mGroupModel.groupId(), mGroupModel.threadId()) {
-                            if (it) {
-                                RxBus.post(ChatGroupContentClear(mGroupModel.groupId()))
-                                ToastUtil.show(this@ChatGroupSettingActivity, getString(R.string.chats_clean_succeed))
-                            }
-                        }
+                        deleteChat()
                     })
                     .withDoneTitle(getString(R.string.chats_cancel))
                     .show(this)
@@ -380,13 +381,11 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
         stick_on_top_switch.setOnClickListener {
             val switch = !stick_on_top_switch.getSwitchStatus()
             stick_on_top_switch.setSwitchStatus(switch)
-            ThreadListViewModel.getCurrentThreadModel()?.setPin(mGroupModel.threadId(), switch) {}
+            setPin(switch)
         }
         stick_on_top_switch?.setSwitchStatus(false)
-        val weakThis = WeakReference(this)
-        ThreadListViewModel.getCurrentThreadModel()?.checkPin(mGroupModel.threadId()) {
-            weakThis.get()?.stick_on_top_switch?.setSwitchStatus(it)
-        }
+
+        checkPin()
     }
 
 
@@ -534,6 +533,43 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
         startBcmActivity(accountContext, Intent(this, ChatGroupNoticeActivity::class.java).apply {
             putExtra(ARouterConstants.PARAM.PARAM_GROUP_ID, groupId)
         })
+    }
+
+    private fun setPin(isPinned: Boolean) {
+        AmeDispatcher.io.dispatch {
+            threadRepo?.also {
+                if (isPinned) {
+                    it.setPinTime(mGroupModel.threadId())
+                } else {
+                    it.removePinTime(mGroupModel.threadId())
+                }
+            }
+        }
+    }
+
+    private fun checkPin() {
+        val weakThis = WeakReference(this)
+        Observable.create<Boolean> {
+            it.onNext(threadRepo?.getPinTime(mGroupModel.threadId()) ?: 0 > 0)
+            it.onComplete()
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    weakThis.get()?.stick_on_top_switch?.setSwitchStatus(it)
+                }, {})
+    }
+
+    private fun deleteChat() {
+        Observable.create<Unit> {
+            threadRepo?.deleteConversationForGroup(mGroupModel.groupId(), mGroupModel.threadId())
+            it.onNext(Unit)
+            it.onComplete()
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    RxBus.post(ChatGroupContentClear(mGroupModel.groupId()))
+                    ToastUtil.show(this@ChatGroupSettingActivity, getString(R.string.chats_clean_succeed))
+                }, {})
     }
 
 

@@ -9,7 +9,6 @@ import com.bcm.messenger.common.database.records.ThreadRecord
 import com.bcm.messenger.common.database.repositories.Repository
 import com.bcm.messenger.common.provider.AmeModuleCenter
 import com.bcm.messenger.common.recipients.Recipient
-import com.bcm.messenger.common.utils.GroupUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -31,12 +30,6 @@ class ThreadListViewModel(
 
     companion object {
         private const val TAG = "ThreadListViewModel"
-
-        private var sCurrent: ThreadListViewModel? = null
-
-        fun getCurrentThreadModel(): ThreadListViewModel? {
-            return sCurrent
-        }
 
         /**
          * 缓存
@@ -90,7 +83,8 @@ class ThreadListViewModel(
 
             Observable.create(ObservableOnSubscribe<Long> {
                 try {
-                    it.onNext(Repository.getThreadRepo(accountContext)?.getThreadIdIfExist(recipient) ?: 0L)
+                    it.onNext(Repository.getThreadRepo(accountContext)?.getThreadIdIfExist(recipient)
+                            ?: 0L)
                 } catch (ex: Exception) {
                     it.onError(ex)
                 } finally {
@@ -163,7 +157,6 @@ class ThreadListViewModel(
     }
 
     init {
-        sCurrent = this
         if (localLiveData == null) {
             localLiveData = threadRepo.getAllThreadsLiveData()
             localLiveData?.observeForever(threadObserver)
@@ -183,32 +176,7 @@ class ThreadListViewModel(
         localLiveData?.removeObserver(threadObserver)
         localLiveData = null
         mNewListRef.set(listOf())
-        sCurrent = null
         super.onCleared()
-    }
-
-    /**
-     * 检测是否有置顶
-     */
-    fun checkPin(threadId: Long, callback: (isPined: Boolean) -> Unit) {
-        Observable.create(ObservableOnSubscribe<Boolean> {
-            try {
-                if (threadId <= 0L) {
-                    it.onNext(false)
-                } else {
-                    it.onNext(threadRepo.getPinTime(threadId) > 0L)
-                }
-            } finally {
-                it.onComplete()
-            }
-        }).subscribeOn(AmeDispatcher.ioScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ pin ->
-                    callback.invoke(pin)
-                }, {
-                    ALog.e(TAG, "checkPin error", it)
-                    callback.invoke(false)
-                })
     }
 
     /**
@@ -217,36 +185,6 @@ class ThreadListViewModel(
     fun setPin(threadId: Long, toPin: Boolean, callback: (success: Boolean) -> Unit) {
         Observable.create(ObservableOnSubscribe<Boolean> {
             try {
-                if (threadId <= 0L) {
-                    it.onNext(false)
-                } else {
-                    if (toPin) {
-                        threadRepo.setPinTime(threadId)
-                    } else {
-                        threadRepo.removePinTime(threadId)
-                    }
-                    it.onNext(true)
-                }
-            } finally {
-                it.onComplete()
-            }
-        }).subscribeOn(AmeDispatcher.ioScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ success ->
-                    callback.invoke(success)
-                }, {
-                    ALog.e(TAG, "setPin error", it)
-                    callback.invoke(false)
-                })
-    }
-
-    /**
-     * 设置置顶
-     */
-    fun setPin(recipient: Recipient, toPin: Boolean, callback: (success: Boolean) -> Unit) {
-        Observable.create(ObservableOnSubscribe<Boolean> {
-            try {
-                val threadId = threadRepo.getThreadIdFor(recipient.address.serialize())
                 if (threadId <= 0L) {
                     it.onNext(false)
                 } else {
@@ -299,31 +237,6 @@ class ThreadListViewModel(
                     callback?.invoke(true)
                 }, {
                     ALog.e(TAG, "deleteConversation error", it)
-                    callback?.invoke(false)
-                })
-    }
-
-    fun deleteGroupConversation(groupId: Long, threadId: Long, callback: ((success: Boolean) -> Unit)? = null) {
-        Observable.create(ObservableOnSubscribe<Boolean> {
-            try {
-                val actualThreadId = if (threadId <= 0L) {
-                    threadRepo.getThreadIdIfExist(GroupUtil.addressFromGid(mAccountContext, groupId).serialize())
-                } else {
-                    threadId
-                }
-                threadRepo.deleteConversationForGroup(groupId, actualThreadId)
-                it.onNext(true)
-            } catch (ex: Exception) {
-                it.onError(ex)
-            } finally {
-                it.onComplete()
-            }
-        }).subscribeOn(AmeDispatcher.ioScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ success ->
-                    callback?.invoke(success)
-                }, {
-                    ALog.e(TAG, "deleteGroupConversation error", it)
                     callback?.invoke(false)
                 })
     }

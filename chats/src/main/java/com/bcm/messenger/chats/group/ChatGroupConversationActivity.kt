@@ -36,7 +36,6 @@ import com.bcm.messenger.chats.util.AttachmentUtils
 import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.ShareElements
 import com.bcm.messenger.common.AccountSwipeBaseActivity
-import com.bcm.messenger.common.audio.AudioSlidePlayer
 import com.bcm.messenger.common.audio.ChatsAudioPlayer
 import com.bcm.messenger.common.core.AmeGroupMessage
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
@@ -378,13 +377,7 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
             AmePopup.bottom.newBuilder()
                     .withTitle(getString(R.string.chats_user_clear_history_title, groupModel.groupName()))
                     .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clear), AmeBottomPopup.PopupItem.CLR_RED) {
-
-                        ThreadListViewModel.getCurrentThreadModel()?.deleteGroupConversation(groupModel.groupId(), groupModel.threadId()) {
-                            if (it) {
-                                RxBus.post(ChatGroupContentClear(groupModel.groupId()))
-                                ToastUtil.show(this, getString(R.string.chats_clean_succeed))
-                            }
-                        }
+                        deleteChat()
                     })
                     .withDoneTitle(getString(R.string.chats_cancel))
                     .show(this)
@@ -970,5 +963,20 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         liveController?.onConfigurationChanged(newConfig)
+    }
+
+    private fun deleteChat() {
+        Observable.create<Unit> {
+            Repository.getThreadRepo(accountContext)?.also { threadRepo ->
+                threadRepo.deleteConversationForGroup(groupId, threadId)
+                it.onNext(Unit)
+            }
+            it.onComplete()
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    RxBus.post(ChatGroupContentClear(groupId))
+                    ToastUtil.show(this, getString(R.string.chats_clean_succeed))
+                }, {})
     }
 }

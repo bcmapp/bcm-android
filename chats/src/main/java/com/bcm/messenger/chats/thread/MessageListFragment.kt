@@ -236,6 +236,18 @@ class MessageListFragment : BaseFragment() {
                             ?: return, item.distributionType, item.lastSeen)
                 }
             }
+
+            override fun setPin(threadId: Long, isPinned: Boolean) {
+                viewModel.setPin(threadId, isPinned) {}
+            }
+
+            override fun deleteConversation(recipient: Recipient?, threadId: Long) {
+                viewModel.deleteConversation(recipient, threadId) {}
+            }
+
+            override fun setRead(threadId: Long, isUnread: Boolean) {
+                viewModel.setUnreadOrRead(threadId, isUnread)
+            }
         })
         chats_list.adapter = adapter
         mAdapter = adapter
