@@ -19,7 +19,10 @@ open class ThemeManager {
     }
 
     fun onResume(activity: Activity) {
-        // DO noting.
+        val theme = getCurrentTheme(activity)
+        if (theme != currentTheme) {
+            activity.recreate()
+        }
     }
 
     companion object {

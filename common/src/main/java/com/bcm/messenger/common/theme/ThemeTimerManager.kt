@@ -72,31 +72,32 @@ class ThemeTimerManager {
         val darkLongTime = darkCalendar.time.time
 
         if (isScheduleCustomTheme()) {
-            if (currentTime == lightLongTime) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            } else if (currentTime == darkLongTime) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            if (currentTime >= SuperPreferences.getCustomThemeEndTime(AppContextHolder.APP_CONTEXT)) {
+                SuperPreferences.setCustomThemeEndTime(AppContextHolder.APP_CONTEXT, 0L)
+                SuperPreferences.setCurrentThemeSetting(AppContextHolder.APP_CONTEXT, ThemeManager.THEME_SCHEDULE)
+            } else {
+                return
             }
-        } else {
-            if (lightLongTime > darkLongTime) {
-                if (currentTime in darkLongTime..lightLongTime) {
-                    if (!isDarkMode()) {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
-                } else {
-                    if (isDarkMode()) {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
+        }
+
+        if (lightLongTime > darkLongTime) {
+            if (currentTime in darkLongTime..lightLongTime) {
+                if (!isDarkMode()) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 }
             } else {
-                if (currentTime in lightLongTime..darkLongTime) {
-                    if (isDarkMode()) {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
-                } else {
-                    if (!isDarkMode()) {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
+                if (isDarkMode()) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            }
+        } else {
+            if (currentTime in lightLongTime..darkLongTime) {
+                if (isDarkMode()) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            } else {
+                if (!isDarkMode()) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 }
             }
         }

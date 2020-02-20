@@ -11,7 +11,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 
 public class SuperPreferences {
@@ -43,6 +42,7 @@ public class SuperPreferences {
     private static final String THEME_PREF = "pref_theme";
     private static final String THEME_LIGHT_START = "pref_light_start";
     private static final String THEME_DARK_START = "pref_dark_start";
+    private static final String THEME_CUSTOM_END = "pref_custom_end";
 
     public static SharedPreferences getSuperPreferences(Context context, String table) {
         return context.getSharedPreferences(table, Context.MODE_PRIVATE);
@@ -250,5 +250,13 @@ public class SuperPreferences {
 
     public static void setDarkStartTime(Context context, String startTime) {
         context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putString(THEME_DARK_START, startTime).apply();
+    }
+
+    public static long getCustomThemeEndTime(Context context) {
+        return context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).getLong(THEME_CUSTOM_END, 0);
+    }
+
+    public static void setCustomThemeEndTime(Context context, long endTime) {
+        context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE).edit().putLong(THEME_CUSTOM_END, endTime).apply();
     }
 }

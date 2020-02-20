@@ -357,7 +357,7 @@ class ConversationItem @JvmOverloads constructor(context: Context, attrs: Attrib
         val tintColor = if (messageRecord.isOutgoing()) {
             context.getAttrColor(R.attr.chats_conversation_outgo_icon_color)
         } else {
-            context.getAttrColor(R.attr.common_icon_color_light_grey)
+            context.getAttrColor(R.attr.common_icon_color_grey)
         }
         d.setTint(tintColor)
         d.setBounds(0, 0, drawableSize, drawableSize)

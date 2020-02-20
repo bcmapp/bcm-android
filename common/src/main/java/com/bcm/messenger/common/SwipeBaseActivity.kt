@@ -171,16 +171,4 @@ open class SwipeBaseActivity : ThemeBaseActivity(), SwipeBackActivityBase {
                     ClipboardUtil.checkClipboard(this)
                 }
     }
-
-    override fun recreate() {
-        if (AmeAppLifecycle.current() == this) {
-            super.finish()
-            overridePendingTransition(0, R.anim.common_popup_alpha_out)
-            startActivity(intent.apply {
-                putExtra(ARouterConstants.PARAM.PARAM_ENTER_ANIM, R.anim.common_popup_alpha_in)
-            })
-        } else {
-            super.recreate()
-        }
-    }
 }

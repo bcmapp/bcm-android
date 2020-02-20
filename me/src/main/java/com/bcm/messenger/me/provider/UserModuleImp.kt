@@ -18,11 +18,9 @@ import com.bcm.messenger.common.provider.accountmodule.IUserModule
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.server.IServerConnectForceLogoutListener
 import com.bcm.messenger.common.server.KickEvent
+import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.centerpopup.AmeCenterPopup
-import com.bcm.messenger.common.utils.AmeAppLifecycle
-import com.bcm.messenger.common.utils.BCMPrivateKeyUtils
-import com.bcm.messenger.common.utils.BcmFileUtils
-import com.bcm.messenger.common.utils.startBcmActivity
+import com.bcm.messenger.common.utils.*
 import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
@@ -32,11 +30,8 @@ import com.bcm.messenger.me.logic.FeedbackReport
 import com.bcm.messenger.me.ui.keybox.SwitchAccount
 import com.bcm.messenger.me.ui.note.AmeNoteActivity
 import com.bcm.messenger.me.ui.note.AmeNoteUnlockActivity
-import com.bcm.messenger.me.utils.MeConfirmDialog
-import com.bcm.messenger.utility.AppContextHolder
+import com.bcm.messenger.utility.*
 import com.bcm.messenger.utility.Base64
-import com.bcm.messenger.utility.BitmapUtils
-import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.foreground.AppForeground
 import com.bcm.messenger.utility.logger.ALog
@@ -272,11 +267,14 @@ class UserModuleImp : IUserModule
     }
 
     override fun showClearHistoryConfirm(context: Context, confirmCallback: () -> Unit, cancelCallback: () -> Unit) {
-        MeConfirmDialog.showForClearHistory(context, {
-            confirmCallback.invoke()
-        }, {
-            cancelCallback.invoke()
-        })
+        AmePopup.center.newBuilder()
+                .withTitle(context.getString(R.string.me_confirm_clear_history_title))
+                .withContent(context.getString(R.string.me_confirm_clear_history_notice))
+                .withCancelTitle(StringAppearanceUtil.applyAppearance(context.getString(R.string.me_confirm_clear_history_ok_text), color = context.getAttrColor(R.attr.common_text_warn_color)).toString())
+                .withCancelListener(confirmCallback)
+                .withOkTitle(context.getString(R.string.common_cancel))
+                .withOkListener(cancelCallback)
+                .show(context as? FragmentActivity)
     }
 
     override fun checkUseDefaultPin(callback: (result: Boolean, defaultPin: String?) -> Unit) {

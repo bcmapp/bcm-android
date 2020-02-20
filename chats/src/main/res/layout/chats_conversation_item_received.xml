@@ -204,7 +204,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:singleLine="false"
-            android:textColor="?attr/common_text_secondary_color"
+            android:textColor="?attr/common_text_third_color"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -18,8 +18,9 @@ class AmeConversationGuide {
     companion object {
         private const val CONVERSATION_GUIDE_DISABLE = "conversation_guide_disable"
     }
+
     private val config = SPEditor(SuperPreferences.LOGIN_PROFILE_PREFERENCES)
-    fun checkShow(stubView:ViewStub, menulist:List<ChatTitleDropItem>,recipient: Recipient) {
+    fun checkShow(stubView: ViewStub, menuList: List<ChatTitleDropItem>, recipient: Recipient) {
         if (!config.get(CONVERSATION_GUIDE_DISABLE, false)) {
             val rootView = stubView.inflate()
 
@@ -28,27 +29,27 @@ class AmeConversationGuide {
             rootView.findViewById<ChatTitleBar>(R.id.chat_guide_title_bar).setPrivateChat(recipient)
 
             val menu = rootView.findViewById<LinearLayout>(R.id.chat_guide_drop_menu)
-            for (i in menulist) {
+            for (i in menuList) {
                 val v = ChatTitleDropItemView(stubView.context)
-                v.setViewItem(i){}
+                v.setViewItem(i) {}
                 menu.addView(v)
             }
 
             val guide2 = rootView.findViewById<View>(R.id.chat_guide_2)
             val guide3 = rootView.findViewById<View>(R.id.chat_guide_3)
             val guide4 = rootView.findViewById<View>(R.id.chat_guide_4)
-            
+
             val next = rootView.findViewById<Button>(R.id.chat_guide_next)
             val tip = rootView.findViewById<TextView>(R.id.chats_guide_tip)
 
-            val showGuideFinish:View.OnClickListener = View.OnClickListener {
+            val showGuideFinish: View.OnClickListener = View.OnClickListener {
                 ViewUtils.fadeOut(rootView, 250)
                 rootView.visibility = View.GONE
 
                 config.set(CONVERSATION_GUIDE_DISABLE, true)
             }
 
-            val showGuide4:View.OnClickListener = View.OnClickListener {
+            val showGuide4: View.OnClickListener = View.OnClickListener {
                 guide3.visibility = View.GONE
                 guide4.visibility = View.VISIBLE
                 tip.text = next.context.getString(R.string.chats_conversation_guide_shreddler_tip)

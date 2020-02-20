@@ -16,13 +16,14 @@ import com.bcm.messenger.me.R
 import com.bcm.messenger.utility.ViewUtils
 import kotlinx.android.synthetic.main.me_activity_theme_settings.*
 import java.lang.ref.WeakReference
+import java.util.*
 
 /**
  * Created by Kin on 2020/2/4
  */
 class ThemeSettingsActivity : SwipeBaseActivity() {
     private var currentTheme = 0
-    private var currentThemeSetting = AppCompatDelegate.getDefaultNightMode()
+    private var currentThemeSetting = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,12 +49,18 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
 
             if (ThemeManager.isScheduleTheme(this)) {
                 currentThemeSetting = ThemeManager.THEME_SCHEDULE_LIGHT
+                val endTime = timeToLong(theme_schedule_dark.getTip())
+                if (System.currentTimeMillis() < endTime) {
+                    SuperPreferences.setCustomThemeEndTime(this, endTime)
+                } else {
+                    SuperPreferences.setCustomThemeEndTime(this, endTime + 1440000)
+                }
             } else {
+                ThemeManager.stopTimer()
                 currentThemeSetting = ThemeManager.THEME_LIGHT
                 ViewUtils.fadeOut(theme_schedule_layout, 250)
             }
             SuperPreferences.setCurrentThemeSetting(this, currentThemeSetting)
-            ThemeManager.stopTimer()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
         theme_dark.setOnClickListener {
@@ -65,12 +72,18 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
 
             if (ThemeManager.isScheduleTheme(this)) {
                 currentThemeSetting = ThemeManager.THEME_SCHEDULE_DARK
+                val endTime = timeToLong(theme_schedule_light.getTip())
+                if (System.currentTimeMillis() < endTime) {
+                    SuperPreferences.setCustomThemeEndTime(this, endTime)
+                } else {
+                    SuperPreferences.setCustomThemeEndTime(this, endTime + 1440000)
+                }
             } else {
+                ThemeManager.stopTimer()
                 currentThemeSetting = ThemeManager.THEME_DARK
                 ViewUtils.fadeOut(theme_schedule_layout, 250)
             }
             SuperPreferences.setCurrentThemeSetting(this, currentThemeSetting)
-            ThemeManager.stopTimer()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
 
@@ -181,7 +194,54 @@ class ThemeSettingsActivity : SwipeBaseActivity() {
                 weakThis.get()?.theme_schedule_dark?.setTip(newTime, contentColor = getAttrColor(R.attr.common_text_third_color))
                 SuperPreferences.setDarkStartTime(this, newTime)
             }
+            checkAndUpdateCustomEndTime()
             ThemeManager.themeTimeChanged()
         }, 0, 0, true).show()
+    }
+
+    private fun timeToLong(time: String): Long {
+        val splitTime = time.split(":")
+
+        val calendar = Calendar.getInstance()
+        val targetCalendar = Calendar.getInstance()
+
+        targetCalendar.clear()
+        targetCalendar.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DATE], splitTime[0].toInt(), splitTime[1].toInt())
+
+        return targetCalendar.time.time
+    }
+
+    private fun checkAndUpdateCustomEndTime() {
+        if (currentThemeSetting == ThemeManager.THEME_SCHEDULE_LIGHT) {
+            val darkTime = timeToLong(theme_schedule_dark.getTip())
+            val customEndTime = SuperPreferences.getCustomThemeEndTime(this)
+            val newEndTime = when {
+                darkTime < customEndTime - 1440000 -> darkTime + 1440000
+                darkTime < customEndTime -> {
+                    if (System.currentTimeMillis() > darkTime) {
+                        darkTime + 1440000
+                    } else {
+                        darkTime
+                    }
+                }
+                else -> darkTime
+            }
+            SuperPreferences.setCustomThemeEndTime(this, newEndTime)
+        } else if (currentThemeSetting == ThemeManager.THEME_SCHEDULE_DARK) {
+            val lightTime = timeToLong(theme_schedule_light.getTip())
+            val customEndTime = SuperPreferences.getCustomThemeEndTime(this)
+            val newEndTime = when {
+                lightTime < customEndTime - 1440000 -> lightTime + 1440000
+                lightTime < customEndTime -> {
+                    if (System.currentTimeMillis() > lightTime) {
+                        lightTime + 1440000
+                    } else {
+                        lightTime
+                    }
+                }
+                else -> lightTime
+            }
+            SuperPreferences.setCustomThemeEndTime(this, newEndTime)
+        }
     }
 }

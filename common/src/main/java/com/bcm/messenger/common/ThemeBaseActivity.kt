@@ -6,6 +6,7 @@ import android.os.Looper
 import android.os.MessageQueue
 import androidx.appcompat.app.AppCompatActivity
 import com.bcm.messenger.common.theme.ThemeManager
+import com.bcm.messenger.common.utils.AmeAppLifecycle
 import com.bcm.messenger.common.utils.setStatusBarLightMode
 
 /**
@@ -40,5 +41,17 @@ open class ThemeBaseActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Looper.myQueue().removeIdleHandler(idleHandler)
+    }
+
+    override fun recreate() {
+        if (AmeAppLifecycle.current() == this) {
+            super.finish()
+            overridePendingTransition(0, R.anim.common_popup_alpha_out)
+            startActivity(intent.apply {
+                putExtra(ARouterConstants.PARAM.PARAM_ENTER_ANIM, R.anim.common_popup_alpha_in)
+            })
+        } else {
+            super.recreate()
+        }
     }
 }

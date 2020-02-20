@@ -17,33 +17,6 @@
         android:layout_marginBottom="6dp"
         android:contentDescription="@string/chats_conversation_item_photo_description" />
 
-    <ImageView
-        android:id="@+id/contact_burn_ring"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="9dp"
-        android:layout_marginEnd="9dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/common_tiktalk_ring"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/burn_time"
-        android:layout_width="22dp"
-        android:layout_height="12dp"
-        android:background="@drawable/chats_burn_time_background"
-        android:textSize="8sp"
-        android:textColor="#ffffff"
-        android:maxLines="1"
-        android:layout_alignStart="@id/contact_photo_image"
-        android:layout_marginStart="14dp"
-        android:layout_marginTop="52dp"
-        android:paddingEnd="3dp"
-        android:paddingStart="3dp"
-        android:gravity="center"
-        tools:text="5M"/>
-
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_line_height"

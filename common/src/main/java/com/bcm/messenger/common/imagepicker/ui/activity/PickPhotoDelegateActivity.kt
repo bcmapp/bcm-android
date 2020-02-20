@@ -4,12 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import com.bcm.messenger.common.R
 import com.bcm.messenger.common.ThemeBaseActivity
 import com.bcm.messenger.common.imagepicker.*
 import com.bcm.messenger.common.imagepicker.bean.SelectedModel
 import com.bcm.messenger.common.provider.AMELogin
-import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.messenger.utility.permission.PermissionUtil
 
