@@ -4,11 +4,11 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import com.bcm.messenger.chats.R
-import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.common.utils.getAttribute
 
 
@@ -39,6 +39,9 @@ class ChatTitleDropMenu : PopupWindow() {
 
         for (i in itemList) {
             val v = ChatTitleDropItemView(anchor.context)
+            v.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                weight = 1f
+            }
             contentView.addView(v)
             v.setViewItem(i) {
                 dismiss()

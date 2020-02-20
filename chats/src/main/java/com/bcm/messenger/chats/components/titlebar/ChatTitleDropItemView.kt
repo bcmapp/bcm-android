@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.FrameLayout
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.common.utils.getAttrColor
-import com.bcm.messenger.common.utils.getColorCompat
 import kotlinx.android.synthetic.main.chats_title_bar_drop_item_view.view.*
 
 /**
