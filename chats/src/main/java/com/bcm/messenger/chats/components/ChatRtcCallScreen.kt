@@ -624,6 +624,19 @@ class ChatRtcCallScreen : ConstraintLayout, RecipientModifiedListener {
     private fun handleSetMuteAudio(isMute: Boolean) {
         ALog.d(TAG, "handleSetMuteAudio: $isMute")
         try {
+            val callEvent = mCallEvent
+            if (null != callEvent) {
+                mCallEvent = WebRtcViewModel(callEvent.state,
+                        callEvent.isVideoCall,
+                        callEvent.recipient,
+                        callEvent.identityKey,
+                        callEvent.localCameraState,
+                        callEvent.localRenderer,
+                        callEvent.remoteRenderer,
+                        callEvent.isRemoteVideoEnabled,
+                        callEvent.isBluetoothAvailable,
+                        !isMute)
+            }
             val intent = Intent(context, WebRtcCallService::class.java)
             intent.action = WebRtcCallService.ACTION_SET_MUTE_AUDIO
             intent.putExtra(WebRtcCallService.EXTRA_MUTE, isMute)
