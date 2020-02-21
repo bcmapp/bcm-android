@@ -28,7 +28,7 @@ class ProfileActivity : SwipeBaseActivity() {
             recipient = if (address == null) {
                 val accountContext =
                         intent.getSerializableExtra(ARouterConstants.PARAM.PARAM_ACCOUNT_CONTEXT) as AccountContext
-                Recipient.login(accountContext)
+                accountContext.recipient
             } else {
                 Recipient.from(address, true)
             }

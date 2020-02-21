@@ -377,6 +377,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
                             ?: throw Exception("avatarHD is null"), avatarKey, privacyProfile.version)
 
                     ALog.d(TAG, "setEncryptAvatar hd: $encryptHdAvatar ld: $encryptLdAvatar")
+                    ALog.i(TAG, "uploading avatar")
                     return RxIMHttp.get(mAccountContext).put<AmeEmpty>(BcmHttpApiHelper.getApi(UPLOAD_ENCRYPT_AVATAR_PATH)
                             , String.format("{\"hdAvatar\":\"%s\", \"ldAvatar\":\"%s\"}", encryptHdAvatar, encryptLdAvatar)
                             , AmeEmpty::class.java)
@@ -1327,8 +1328,14 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
     fun fetchProfileWithNoQueue(uid: String): Recipient? {
         try {
             val recipientDao = Repository.getRecipientRepo(AMELogin.majorContext)
-            if (null != recipientDao?.getRecipient(uid)) {
-                return Recipient.from(mAccountContext, uid, false)
+            val recipientSettings = recipientDao?.getRecipient(uid)
+            if (recipientSettings != null) {
+                return if (mAccountContext.uid == uid) {
+                    mAccountContext.recipient.fillSettings(recipientSettings)
+                    mAccountContext.recipient
+                } else {
+                    Recipient.from(mAccountContext, uid, false)
+                }
             }
 
             if (!NetworkUtil.isConnected()) {

@@ -63,7 +63,7 @@ open class AccountSwipeBaseActivity : SwipeBaseActivity() {
     fun setAccountContext(context: AccountContext) {
         if (!::accountContextObj.isInitialized || accountContextObj != context) {
             accountContextObj = context
-            setAccountRecipient(Recipient.login(context))
+            setAccountRecipient(context.recipient)
         }
     }
 

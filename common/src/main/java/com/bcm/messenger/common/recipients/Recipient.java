@@ -234,23 +234,8 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
     @NonNull
-    public static Recipient login(@NonNull AccountContext context) throws Exception {
-        String loginUid = context.getUid();
-        ALog.d(TAG, "loginUid:" + loginUid);
-        if (TextUtils.isEmpty(loginUid)) {
-            throw new Exception(("login uid is null"));
-        }
-        return getProvider(context).getRecipient(AppContextHolder.APP_CONTEXT, Address.from(context, loginUid), null, true);
-    }
-
-    @NonNull
-    public static Recipient major() throws Exception {
-        String majorUid = AMELogin.INSTANCE.getMajorUid();
-        ALog.d(TAG, "majorUid:" + majorUid);
-        if (TextUtils.isEmpty(majorUid)) {
-            throw new Exception(("major uid is null"));
-        }
-        return getProvider(AMELogin.INSTANCE.getMajorContext()).getRecipient(AppContextHolder.APP_CONTEXT, Address.from(AMELogin.INSTANCE.getMajorContext(), majorUid), null, true);
+    public static Recipient major() {
+        return AMELogin.INSTANCE.getMajorContext().getRecipient();
     }
 
     @NonNull
@@ -418,7 +403,6 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
             this.participants.addAll(stale.participants);
             this.listeners.addAll(stale.listeners);
             this.featureSupport = stale.featureSupport;
-
         }
 
         try {
@@ -433,6 +417,10 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
         }catch (Exception ex) {
             ALog.e(TAG, "recipient constructor error");
         }
+    }
+
+    public static Recipient alloc(Address address) {
+        return new Recipient(address, null);
     }
 
 
@@ -471,6 +459,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
                 }
 
                 if (Recipient.this.fillSettings(details.getSettings())) {
+                    ALog.i("dsfasfsfsa", address.serialize() + "  " + privacyProfile.getAvatarHDUri() + "  " +privacyProfile.getAvatarLDUri());
                     changed = true;
                 }
                 if (!listeners.isEmpty()) {
@@ -479,6 +468,7 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
                     }
                 }
                 if (notify && changed) {
+                    ALog.i("dsfasfsfsa1", address.serialize() + "  " + privacyProfile.getAvatarHDUri() + "  " +privacyProfile.getAvatarLDUri());
                     notifyListeners();
                 }
             }
@@ -526,7 +516,8 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
     }
 
 
-    private boolean fillSettings(@Nullable RecipientSettings settings) {
+    public boolean fillSettings(@Nullable RecipientSettings settings) {
+
         if (settings != null) {
             this.mutedUntil = settings.getMuteUntil();
             this.blocked = settings.isBlocked();

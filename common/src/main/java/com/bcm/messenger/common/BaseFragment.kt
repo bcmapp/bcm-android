@@ -38,7 +38,7 @@ open class BaseFragment : Fragment() {
         ALog.d(TAG, "setAccountContext: $context")
         if (!::accountContextObj.isInitialized || accountContextObj != context) {
             accountContextObj = context
-            setAccountRecipient(Recipient.login(context))
+            setAccountRecipient(context.recipient)
         }
     }
 

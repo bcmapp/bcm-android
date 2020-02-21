@@ -569,6 +569,6 @@ class UserModuleImp : IUserModule
             return
         }
 
-        SwitchAccount.switchAccount(accountContext, activity, Recipient.login(accountContext))
+        SwitchAccount.switchAccount(accountContext, activity, accountContext.recipient)
     }
 }

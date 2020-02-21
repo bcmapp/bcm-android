@@ -1,8 +1,12 @@
 package com.bcm.messenger.common
 
+import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.crypto.AccountMasterSecret
 import com.bcm.messenger.common.crypto.MasterSecret
 import com.bcm.messenger.common.provider.AmeModuleCenter
+import com.bcm.messenger.common.recipients.LoginRecipient
+import com.bcm.messenger.common.recipients.Recipient
+import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.proguard.NotGuard
 import java.io.Serializable
 
@@ -23,6 +27,8 @@ class AccountContext(val uid: String, val token: String, val password: String) :
         get() {
             return AccountMasterSecret.get(this)
         }
+
+    val recipient get() = LoginRecipient.get(this)
 
     var isSignedPreKeyRegistered: Boolean
         set(value) {

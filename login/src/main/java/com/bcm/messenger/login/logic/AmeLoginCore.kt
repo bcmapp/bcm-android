@@ -134,7 +134,7 @@ object AmeLoginCore {
                 .subscribeOn(AmeDispatcher.ioScheduler)
                 .observeOn(AmeDispatcher.ioScheduler)
                 .map {
-                    val recipient = Recipient.login(accountContext)
+                    val recipient = accountContext.recipient
                     val privacyProfile = recipient.privacyProfile
                     privacyProfile.allowStranger = privacy.allowStrangerMessage
                     Repository.getRecipientRepo(accountContext)?.setPrivacyProfile(recipient, privacyProfile)

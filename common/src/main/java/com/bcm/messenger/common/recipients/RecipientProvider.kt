@@ -6,6 +6,7 @@ import com.bcm.messenger.common.core.Address
 import com.bcm.messenger.common.database.records.RecipientSettings
 import com.bcm.messenger.common.database.repositories.RecipientRepo
 import com.bcm.messenger.common.database.repositories.Repository
+import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.utility.AppContextHolder
 import com.bcm.messenger.utility.LRUCache
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -36,6 +37,9 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
 
         @Synchronized
         fun findCache(address: Address): Recipient? {
+            if (address.isCurrentLogin) {
+                return address.context().recipient
+            }
             return mCommonCache[address] ?: mUncommonCache[address]
         }
 
@@ -93,13 +97,16 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
         var current = findCache(address)
         if (!useCache(current, asynchronous)) {
             current = Recipient(address, current)
-            if (asynchronous) {
-                handleFetchDetailTask(context, current)
-            } else {
-                val newDetail = details ?: RecipientDetails(address.serialize(), null, null, null, null)
-                updateRecipientDetails(context, current, newDetail)
-            }
 
+            AmeDispatcher.io.dispatch {
+                val recipientDao = Repository.getRecipientRepo(AMELogin.majorContext)
+                val setting = recipientDao?.getRecipient(address.serialize())
+                if (null != setting) {
+                    current.updateRecipientDetails(RecipientDetails(address.serialize(), null, null, setting, null))
+                }
+
+                handleFetchDetailTask(context, current)
+            }
         } else {
             current?.updateRecipientDetails(details, true)
         }
@@ -186,7 +193,6 @@ internal class RecipientProvider(private val mAccountContext: AccountContext) {
                 getRecipientDetails(AppContextHolder.APP_CONTEXT, targetMap)
                 it.onNext(true)
                 it.onComplete()
-
             }.delaySubscription(500, TimeUnit.MILLISECONDS, AmeDispatcher.ioScheduler)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
