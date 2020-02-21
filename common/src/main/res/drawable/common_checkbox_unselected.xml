@@ -8,7 +8,7 @@
       android:strokeAlpha=".3"
       android:fillAlpha=".5"
       android:strokeWidth="1.5"
-      android:fillColor="?attr/common_view_background_grey"
+      android:fillColor="#F6F7F8"
       android:fillType="evenOdd"
       android:strokeColor="?attr/common_foreground_color"/>
 </vector>

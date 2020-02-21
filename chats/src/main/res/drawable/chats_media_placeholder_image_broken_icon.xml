@@ -9,7 +9,7 @@
       <clip-path android:pathData="m6.1163,3.4333l23.9087,2.0917l-2.0917,23.9087l-23.9087,-2.0917z M 0,0"/>
       <path
           android:pathData="m13.9233,17.4156 l1.9168,2.6799 3.3169,-3.4754 3.4092,5.3174l-11.9543,-1.0459z"
-          android:fillColor="?attr/common_icon_color_grey"
+          android:fillColor="#C0C0C0"
           android:fillAlpha=".3"
           android:fillType="evenOdd"/>
     </group>
@@ -27,7 +27,7 @@
       <clip-path android:pathData="m6.1163,3.4333l23.9087,2.0917l-2.0917,23.9087l-23.9087,-2.0917z M 0,0"/>
       <path
           android:pathData="M13.7559,13.638m-1.4943,-0.1307a1.5,1.5 50.0459,1 1,2.9886 0.2615a1.5,1.5 50.0459,1 1,-2.9886 -0.2615"
-          android:fillColor="?attr/common_icon_color_grey"
+          android:fillColor="#C0C0C0"
           android:fillAlpha=".3"
           android:fillType="evenOdd"/>
     </group>
@@ -38,7 +38,7 @@
       <clip-path android:pathData="m1.9865,5.7865l23.9087,-2.0917l2.0917,23.9087l-23.9087,2.0917z M 0,0"/>
       <path
           android:pathData="m12.1029,18.2007 l2.353,2.3063 2.663,-3.9986 4.2807,4.6446l-11.9543,1.0459z"
-          android:fillColor="?attr/common_icon_color_grey"
+          android:fillColor="#C0C0C0"
           android:fillAlpha=".3"
           android:fillType="evenOdd"/>
     </group>
@@ -56,14 +56,14 @@
       <clip-path android:pathData="m1.9865,5.7865l23.9087,-2.0917l2.0917,23.9087l-23.9087,2.0917z M 0,0"/>
       <path
           android:pathData="M11.2821,14.5095m-1.4943,0.1307a1.5,1.5 133.3024,1 1,2.9886 -0.2615a1.5,1.5 133.3024,1 1,-2.9886 0.2615"
-          android:fillColor="?attr/common_icon_color_grey"
+          android:fillColor="#C0C0C0"
           android:fillAlpha=".3"
           android:fillType="evenOdd"/>
     </group>
   </group>
   <path
       android:pathData="m27.061,3.0374c0.4231,0.355 0.4783,0.9858 0.1233,1.4088l-0.6428,0.766c-0.355,0.4231 -0.9858,0.4783 -1.4088,0.1233 -0.4231,-0.355 -0.4783,-0.9858 -0.1233,-1.4088l0.6428,-0.766c0.355,-0.4231 0.9858,-0.4783 1.4088,-0.1233zM18.987,1.9854 L19.329,2.9251c0.1889,0.519 -0.0787,1.0928 -0.5977,1.2817 -0.519,0.1889 -1.0928,-0.0787 -1.2817,-0.5977l-0.342,-0.9397c-0.1889,-0.519 0.0787,-1.0928 0.5977,-1.2817 0.519,-0.1889 1.0928,0.0787 1.2817,0.5977zM22.5917,1.0299c0.5439,0.0959 0.9071,0.6146 0.8112,1.1585l-0.1736,0.9848c-0.0959,0.5439 -0.6146,0.9071 -1.1585,0.8112 -0.5439,-0.0959 -0.9071,-0.6146 -0.8112,-1.1585l0.1736,-0.9848c0.0959,-0.5439 0.6146,-0.9071 1.1585,-0.8112z"
-      android:fillColor="?attr/common_icon_color_grey"
+      android:fillColor="#C0C0C0"
       android:fillAlpha=".3"
       android:fillType="evenOdd"/>
 </vector>

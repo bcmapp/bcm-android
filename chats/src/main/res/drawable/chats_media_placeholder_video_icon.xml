@@ -16,7 +16,7 @@
   <path
       android:pathData="m18.0192,16.8638 l-3.0154,1.759c-0.4771,0.2783 -1.0894,0.1171 -1.3676,-0.3599 -0.0892,-0.1529 -0.1362,-0.3268 -0.1362,-0.5039l-0,-3.5179c-0,-0.5523 0.4477,-1 1,-1 0.1771,0 0.3509,0.047 0.5039,0.1362l3.0154,1.759c0.4771,0.2783 0.6382,0.8906 0.3599,1.3676 -0.0869,0.149 -0.2109,0.273 -0.3599,0.3599z"
       android:strokeAlpha="0.3"
-      android:fillColor="?attr/common_icon_color_grey"
+      android:fillColor="#C0C0C0"
       android:fillType="evenOdd"
       android:fillAlpha="0.3"/>
 </vector>

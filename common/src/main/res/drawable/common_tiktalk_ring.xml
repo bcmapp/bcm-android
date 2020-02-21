@@ -5,82 +5,82 @@
     android:viewportHeight="56">
   <path
       android:pathData="M28,2.5m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M35.88,3.748m-1.4266,-0.4635a1.5,1.5 63.8204,1 1,2.8532 0.9271a1.5,1.5 63.8204,1 1,-2.8532 -0.9271"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M42.989,7.37m-1.2135,-0.8817a1.5,1.5 106.3868,1 1,2.4271 1.7634a1.5,1.5 106.3868,1 1,-2.4271 -1.7634"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M48.63,13.011m-0.8817,-1.2135a1.5,1.5 98.6079,1 1,1.7634 2.4271a1.5,1.5 98.6079,1 1,-1.7634 -2.4271"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M52.252,20.12m-0.4635,-1.4266a1.5,1.5 108.9085,1 1,0.9271 2.8532a1.5,1.5 108.9085,1 1,-0.9271 -2.8532"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M53.5,28m-0,-1.5a1.5,1.5 0,1 1,-0 3a1.5,1.5 0,1 1,-0 -3"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M52.252,35.88m0.4635,-1.4266a1.5,1.5 63.248,1 1,-0.9271 2.8532a1.5,1.5 63.248,1 1,0.9271 -2.8532"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M48.63,42.989m0.8817,-1.2135a1.5,1.5 77.8504,1 1,-1.7634 2.4271a1.5,1.5 77.8504,1 1,1.7634 -2.4271"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M42.989,48.63m1.2135,-0.8817a1.5,1.5 96.5881,1 1,-2.4271 1.7634a1.5,1.5 96.5881,1 1,2.4271 -1.7634"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M35.88,52.252m1.4266,-0.4635a1.5,1.5 117.0891,1 1,-2.8532 0.9271a1.5,1.5 117.0891,1 1,2.8532 -0.9271"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M28,53.5m1.5,-0a1.5,1.5 0,1 1,-3 -0a1.5,1.5 0,1 1,3 -0"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M20.12,52.252m1.4266,0.4635a1.5,1.5 62.7238,1 1,-2.8532 -0.9271a1.5,1.5 62.7238,1 1,2.8532 0.9271"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M13.011,48.63m1.2135,0.8817a1.5,1.5 87.5423,1 1,-2.4271 -1.7634a1.5,1.5 87.5423,1 1,2.4271 1.7634"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M7.37,42.989m0.8817,1.2135a1.5,1.5 101.8497,1 1,-1.7634 -2.4271a1.5,1.5 101.8497,1 1,1.7634 2.4271"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M3.748,35.88m0.4635,1.4266a1.5,1.5 117.2997,1 1,-0.9271 -2.8532a1.5,1.5 117.2997,1 1,0.9271 2.8532"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M2.5,28m0,1.5a1.5,1.5 0,1 1,0 -3a1.5,1.5 0,1 1,0 3"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M3.748,20.12m-0.4635,1.4266a1.5,1.5 105.869,1 1,0.9271 -2.8532a1.5,1.5 105.869,1 1,-0.9271 2.8532"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M7.37,13.011m-0.8817,1.2135a1.5,1.5 94.8937,1 1,1.7634 -2.4271a1.5,1.5 94.8937,1 1,-1.7634 2.4271"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M13.011,7.37m-1.2135,0.8817a1.5,1.5 88.6816,1 1,2.4271 -1.7634a1.5,1.5 88.6816,1 1,-2.4271 1.7634"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M20.12,3.748m-1.4266,0.4635a1.5,1.5 113.6999,1 1,2.8532 -0.9271a1.5,1.5 113.6999,1 1,-2.8532 0.9271"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillType="evenOdd"/>
 </vector>

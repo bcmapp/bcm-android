@@ -5,15 +5,15 @@
     android:viewportHeight="40">
   <path
       android:pathData="M20,20m-20,0a20,20 0,1 1,40 0a20,20 0,1 1,-40 0"
-      android:fillColor="?attr/common_foreground_color"
+      android:fillColor="#000000"
       android:fillAlpha=".3"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M20,0c11.046,0 20,8.954 20,20s-8.954,20 -20,20S0,31.046 0,20 8.954,0 20,0zM19.761,11.403a0.455,0.455 0,0 0,-0.616 0.184l-4.787,8.891a0.91,0.91 0,0 0,0.8 1.34L20,21.818v6.38a0.455,0.455 0,0 0,0.855 0.215l4.787,-8.891a0.91,0.91 0,0 0,-0.8 -1.34L20,18.182v-6.38a0.455,0.455 0,0 0,-0.239 -0.4z"
-      android:fillColor="?attr/common_background_color"
+      android:fillColor="#fff"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M20,0c11.046,0 20,8.954 20,20s-8.954,20 -20,20S0,31.046 0,20 8.954,0 20,0zM19.761,11.403a0.455,0.455 0,0 0,-0.616 0.184l-4.787,8.891a0.91,0.91 0,0 0,0.8 1.34L20,21.818v6.38a0.455,0.455 0,0 0,0.855 0.215l4.787,-8.891a0.91,0.91 0,0 0,-0.8 -1.34L20,18.182v-6.38a0.455,0.455 0,0 0,-0.239 -0.4z"
-      android:fillColor="?attr/common_background_color"
+      android:fillColor="#fff"
       android:fillType="evenOdd"/>
 </vector>

@@ -4,11 +4,11 @@ import zipfile
 
 valid_module_list = ['adhoc-client','common','login','me','chats','wallet','framework','contacts','app']
 #valid_dir_list = ['src','main','res','values','strings.xml']
-valid_dir_list = ['src','main','res','drawable-xhdpi']
+valid_dir_list = ['src','main','res','drawable']
 
 def zip_file_in_dir(filename,fromDir,toDir, zipf):
     
-    for i in [d for d in os.listdir(fromDir) if d in valid_dir_list or d in valid_module_list or d.endswith(".png")]:
+    for i in [d for d in os.listdir(fromDir) if d in valid_dir_list or d in valid_module_list or d.endswith(".xml")]:
         t=os.path.join(fromDir,i)
         #if os.path.isfile(t) and filename in os.path.split(t)[1]:
         if os.path.isfile(t):
@@ -18,8 +18,14 @@ def zip_file_in_dir(filename,fromDir,toDir, zipf):
             #if not os.path.isdir(dest):
             #    os.makedirs(dest)
             #shutil.copyfile(x, os.path.join(dest, ori[1]))
-            zipf.write(t, os.path.relpath(t))
-            print('zip: '+os.path.relpath(t))
+            f = open(t, "r")
+            str = f.read()
+            #print (str)
+            if str.find("fillColor") > 0:
+                print str.find("fillColor")
+            if str.find('android:fillColor="?attr') > 0:
+                zipf.write(t, os.path.relpath(t))
+                print('zip: '+os.path.relpath(t))
         elif os.path.isdir(t):
             zip_file_in_dir(filename, t, toDir, zipf)
 

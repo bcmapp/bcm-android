@@ -8,7 +8,7 @@
     <path
         android:pathData="m12.996,17.2487 l2.143,2.5026 3.0013,-3.7513 3.8596,5h-12z"
         android:strokeAlpha="0.3"
-        android:fillColor="?attr/common_icon_color_grey"
+        android:fillColor="#C0C0C0"
         android:fillType="evenOdd"
         android:fillAlpha="0.3"/>
   </group>
@@ -28,7 +28,7 @@
     <path
         android:pathData="M12.5,13.5m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"
         android:strokeAlpha="0.3"
-        android:fillColor="?attr/common_icon_color_grey"
+        android:fillColor="#C0C0C0"
         android:fillType="evenOdd"
         android:fillAlpha="0.3"/>
   </group>
