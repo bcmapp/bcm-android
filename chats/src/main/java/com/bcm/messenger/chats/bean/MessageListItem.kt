@@ -104,12 +104,12 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         this.selectedThreads = selectedThreads
         this.threadId = threadRecord.id
         this.glideRequests = glideRequests
+        this.unreadCount = threadRecord.unreadCount
         this.distributionType = threadRecord.distributionType
         this.lastSeen = threadRecord.lastSeenTime
         if (threadRecord.getRecipient(masterSecret.accountContext).isGroupRecipient) {
             setGroup(masterSecret.accountContext, threadRecord, lastThread?.id == threadRecord.id)
         } else {
-            this.unreadCount = threadRecord.unreadCount
             setPrivate(masterSecret.accountContext, threadRecord, lastThread?.id == threadRecord.id)
         }
         setBatchState(batchMode)
@@ -353,10 +353,6 @@ class MessageListItem @JvmOverloads constructor(context: Context, attrs: Attribu
         this.groupId = this.recipient?.groupId ?: 0L
         ALog.logForSecret(TAG, "setGroup thread: ${threadRecord.id}, groupId: $groupId")
         val groupInfo = GroupLogic.get(accountContext).getGroupInfo(groupId)
-        this.unreadCount = 0
-        if (groupInfo?.role != AmeGroupMemberInfo.VISITOR) {
-            this.unreadCount = threadRecord.unreadCount
-        }
         this.contactPhotoImage.showGroupAvatar(accountContext, groupId)
         this.fromView.text = groupInfo?.displayName ?: ""
         if (null != groupInfo) {

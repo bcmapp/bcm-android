@@ -2,6 +2,7 @@ package com.bcm.messenger.chats.group.logic.cache
 
 import android.annotation.SuppressLint
 import com.bcm.messenger.chats.group.logic.GroupLogic
+import com.bcm.messenger.chats.group.logic.GroupMessageLogic
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.corebean.AmeGroupInfo
 import com.bcm.messenger.common.core.corebean.AmeGroupMemberInfo
@@ -13,6 +14,7 @@ import com.bcm.messenger.common.grouprepository.manager.GroupMemberManager
 import com.bcm.messenger.common.grouprepository.modeltransform.GroupInfoTransform
 import com.bcm.messenger.common.grouprepository.room.entity.GroupInfo
 import com.bcm.messenger.common.grouprepository.room.entity.GroupMember
+import com.bcm.messenger.common.grouprepository.room.entity.GroupMessage
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.utility.logger.ALog
 import io.reactivex.Observable
@@ -138,6 +140,12 @@ class GroupCache(private val accountContext: AccountContext, val cacheReady: () 
             if (role == AmeGroupMemberInfo.VISITOR) {
                 GroupLiveInfoManager.get(accountContext).deleteLiveInfoWhenLeaveGroup(gid)
                 GroupInfoDataManager.clearShareSetting(accountContext, group.gid)
+
+                val threadId = Repository.getThreadRepo(accountContext)?.getThreadIdIfExist(Recipient.recipientFromNewGroupId(accountContext, gid))
+                if (threadId != null && threadId > 0) {
+                    GroupMessageLogic.get(accountContext).readAllMessage(gid, threadId, System.currentTimeMillis())
+                }
+
                 myGroupList.remove(gid)
                 otherGroupList[gid] = group
             } else {
