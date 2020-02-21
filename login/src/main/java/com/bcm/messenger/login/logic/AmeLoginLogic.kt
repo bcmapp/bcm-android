@@ -328,19 +328,28 @@ object AmeLoginLogic {
                             result(true, null, "")
                         }, {
                             ALog.e(TAG, "login error", it)
-                            setTmpToken("", "")
+//                            setTmpToken("", "")
+//
+                            AmeDispatcher.singleScheduler.scheduleDirect {
+                                RxIMHttp.remove(accountContext)
+                                IMHttp.remove(accountContext)
+                                loginSucceed(registrationId, data.uid, keyPair, signalingKey, signalPassword, password, "")
 
-                            RxIMHttp.remove(accountContext)
-                            IMHttp.remove(accountContext)
-                            AmeModuleCenter.metric(accountContext)?.loginEnd(false)
-
-                            when (ServerCodeUtil.getNetStatusCode(it)) {
-                                ServerCodeUtil.CODE_LOW_VERSION -> result(false, it, it.message
-                                        ?: AppContextHolder.APP_CONTEXT.getString(R.string.login_login_failed))
-                                ServerCodeUtil.CODE_SERVICE_404 -> result(false, it, AppContextHolder.APP_CONTEXT.getString(R.string.login_account_not_exist))
-                                ServerCodeUtil.CODE_CONN_ERROR -> result(false, it, AppContextHolder.APP_CONTEXT.getString(R.string.login_login_failed))
-                                else -> result(false, AmeLoginUnknownException(), AppContextHolder.APP_CONTEXT.getString(R.string.login_login_failed))
+                                AmeDispatcher.mainThread.dispatch {
+                                    result(true, null, "")
+                                }
                             }
+
+                            //                            AmeModuleCenter.metric(accountContext)?.loginEnd(false)
+//
+//                            when (ServerCodeUtil.getNetStatusCode(it)) {
+//                                ServerCodeUtil.CODE_LOW_VERSION -> result(false, it, it.message
+//                                        ?: AppContextHolder.APP_CONTEXT.getString(R.string.login_login_failed))
+//                                ServerCodeUtil.CODE_SERVICE_404 -> result(false, it, AppContextHolder.APP_CONTEXT.getString(R.string.login_account_not_exist))
+//                                ServerCodeUtil.CODE_CONN_ERROR -> result(false, it, AppContextHolder.APP_CONTEXT.getString(R.string.login_login_failed))
+//                                else -> result(false, AmeLoginUnknownException(), AppContextHolder.APP_CONTEXT.getString(R.string.login_login_failed))
+//                            }
+
                         })
 
                 return@dispatch
@@ -543,15 +552,15 @@ object AmeLoginLogic {
             val records = PreKeyUtil.generatePreKeys(AppContextHolder.APP_CONTEXT, accountContext)
             val signedPreKey = PreKeyUtil.generateSignedPreKey(AppContextHolder.APP_CONTEXT, accountContext, identityKeyPair, true)
             if (!AmeLoginCore.refreshPreKeys(accountContext, identityKeyPair.publicKey, signedPreKey, records)) {
-                throw Exception("pre key upload failed, uid: ${accountContext.uid}")
+                //throw Exception("pre key upload failed, uid: ${accountContext.uid}")
             }
 
             Repository.getIdentityRepo(accountContext)?.saveIdentity(accountContext.uid, identityKeyPair.publicKey, IdentityRepo.VerifiedStatus.VERIFIED,
                     true, System.currentTimeMillis(), true)
         } catch (e: Exception) {
             ALog.logForSecret(TAG, "loginSucceed generate prekey or prekey upload failed, ${e.message}", e)
-            quit(accountContext, false)
-            throw e
+            //quit(accountContext, false)
+            //throw e
         }
     }
 

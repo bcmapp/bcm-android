@@ -536,18 +536,18 @@ class UserModuleImp : IUserModule
         ALog.i(TAG, "handleAccountExceptionLogout ${event.type}")
         val activity = AmeAppLifecycle.current() ?: return
         ALog.i(TAG, "handleAccountExceptionLogout 1 ${event.type}")
-        if (event.accountContext == accountContext) {
-            ALog.i(TAG, "handleAccountExceptionLogout 2 ${event.type}")
-            try {
-                when (event.type) {
-                    AccountKickedEvent.TYPE_EXPIRE -> AccountForceLogout.handleTokenExpire(accountContext, activity)
-                    AccountKickedEvent.TYPE_EXCEPTION_LOGIN -> AccountForceLogout.handleForceLogout(accountContext, event.data)
-                    AccountKickedEvent.TYPE_ACCOUNT_GONE -> AccountForceLogout.handleAccountGone(accountContext, activity)
-                }
-            } catch (ex: Exception) {
-                ALog.e(TAG, "handleAccountExceptionLogout error", ex)
-            }
-        }
+//        if (event.accountContext == accountContext) {
+//            ALog.i(TAG, "handleAccountExceptionLogout 2 ${event.type}")
+//            try {
+//                when (event.type) {
+//                    AccountKickedEvent.TYPE_EXPIRE -> AccountForceLogout.handleTokenExpire(accountContext, activity)
+//                    AccountKickedEvent.TYPE_EXCEPTION_LOGIN -> AccountForceLogout.handleForceLogout(accountContext, event.data)
+//                    AccountKickedEvent.TYPE_ACCOUNT_GONE -> AccountForceLogout.handleAccountGone(accountContext, activity)
+//                }
+//            } catch (ex: Exception) {
+//                ALog.e(TAG, "handleAccountExceptionLogout error", ex)
+//            }
+//        }
     }
 
     override fun isPinLocked(): Boolean {

@@ -39,9 +39,6 @@ class ChatTitleDropMenu : PopupWindow() {
 
         for (i in itemList) {
             val v = ChatTitleDropItemView(anchor.context)
-            v.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-                weight = 1f
-            }
             contentView.addView(v)
             v.setViewItem(i) {
                 dismiss()
