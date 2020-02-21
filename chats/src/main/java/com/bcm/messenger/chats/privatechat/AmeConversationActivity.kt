@@ -658,18 +658,22 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                     .show(this)
         }
 
-        val shred = ChatTitleDropItem(R.drawable.chats_message_shred_icon, 0, getString(R.string.chats_more_option_shredder)) {
-            checkRecipientBlock {
-                if (it) {
-                    AmeModuleCenter.user(accountContext)?.showClearHistoryConfirm(this@AmeConversationActivity, {
-                        mConversationModel?.clearConversationHistory(this@AmeConversationActivity)
-                    }, {
-                    })
+        val actionList = if (!mRecipient.isLogin) {
+            val shred = ChatTitleDropItem(R.drawable.chats_message_shred_icon, 0, getString(R.string.chats_more_option_shredder)) {
+                checkRecipientBlock {
+                    if (it) {
+                        AmeModuleCenter.user(accountContext)?.showClearHistoryConfirm(this@AmeConversationActivity, {
+                            mConversationModel?.clearConversationHistory(this@AmeConversationActivity)
+                        }, {
+                        })
+                    }
                 }
             }
-        }
 
-        val actionList = listOf(chatFile, chatBurn, chatClear, shred)
+            listOf(chatFile, chatBurn, chatClear, shred)
+        } else {
+            listOf(chatFile, chatBurn, chatClear)
+        }
 
         val dropMenu = ChatTitleDropMenu()
         dropMenu.updateMenu(actionList)
