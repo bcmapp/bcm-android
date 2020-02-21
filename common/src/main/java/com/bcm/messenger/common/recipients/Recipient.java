@@ -812,10 +812,17 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
             } else {
                 name = getBcmName();
             }
+
             if (name == null) {
-                name = address.format();
+                if (isLogin()) {
+                    name = address.context().getName();
+                }
+                if (name == null) {
+                    name = address.format();
+                }
             }
         }
+
         return name;
     }
 
