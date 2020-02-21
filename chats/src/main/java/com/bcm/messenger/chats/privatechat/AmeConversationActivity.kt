@@ -634,9 +634,9 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
         var icon = R.drawable.chats_message_burn_icon
         val tickTalkTitle = if (mRecipient.expireMessages > 0) {
             icon = R.drawable.chats_message_burn_enable_icon
-            "Tiktalk・${ChatsBurnSetting.typeToString(ChatsBurnSetting.expireToType(mRecipient.expireMessages))}"
+            "${getString(R.string.chats_more_tiktalk)}・${ChatsBurnSetting.typeToString(ChatsBurnSetting.expireToType(mRecipient.expireMessages))}"
         } else {
-            "Tiktalk"
+            getString(R.string.chats_more_tiktalk)
         }
 
         val chatBurn = ChatTitleDropItem(icon, 0, tickTalkTitle) {

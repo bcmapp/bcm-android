@@ -705,5 +705,6 @@
     <string name="chats_conversation_guide_shreddler_tip">Chat shredder is moved into the quick menu</string>
     <string name="chats_can_t_access_map">Can’t Access Map</string>
     <string name="chats_the_map_service_inaccessible">The map service we provided might be inaccessible for your region.</string>
+    <string name="chats_more_tiktalk">Tiktalk</string>
 
 </resources>

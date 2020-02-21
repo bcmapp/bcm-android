@@ -688,5 +688,6 @@
     <string name="chats_conversation_guide_shreddler_tip">聊天碎纸机功能已移至快捷菜单</string>
     <string name="chats_can_t_access_map">无法访问地图</string>
     <string name="chats_the_map_service_inaccessible">我们提供的地图服务可能在您所在的地区无法访问。</string>
+    <string name="chats_more_tiktalk">滴答</string>
 
 </resources>
