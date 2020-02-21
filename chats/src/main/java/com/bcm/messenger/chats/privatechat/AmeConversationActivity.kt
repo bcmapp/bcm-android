@@ -160,10 +160,10 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
         }
 
 
-        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, R.attr.common_foreground_color, getString(R.string.chats_media_and_files))
-        val chatBurn = ChatTitleDropItem(R.drawable.chats_message_burn_icon, R.attr.common_foreground_color, "Tiktalk")
-        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, R.attr.common_foreground_color, getString(R.string.chats_message_clear_history))
-        val shred = ChatTitleDropItem(R.drawable.chats_message_shred_icon, R.attr.common_foreground_color, getString(R.string.chats_more_option_shredder))
+        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, 0, getString(R.string.chats_media_and_files))
+        val chatBurn = ChatTitleDropItem(R.drawable.chats_message_burn_icon, 0, "Tiktalk")
+        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, 0, getString(R.string.chats_message_clear_history))
+        val shred = ChatTitleDropItem(R.drawable.chats_message_shred_icon, 0, getString(R.string.chats_more_option_shredder))
         val menulist = listOf(chatFile,chatBurn, chatClear, shred)
         guide.checkShow(chat_guide_stub, menulist, mRecipient)
     }
@@ -627,7 +627,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
     }
 
     private fun showDropMenu() {
-        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, R.attr.common_foreground_color, getString(R.string.chats_media_and_files)) {
+        val chatFile = ChatTitleDropItem(R.drawable.chats_message_media_file_icon, 0, getString(R.string.chats_media_and_files)) {
             MediaBrowserActivity.router(accountContext, mRecipient.address)
         }
 
@@ -639,7 +639,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
             "Tiktalk"
         }
 
-        val chatBurn = ChatTitleDropItem(icon, R.attr.common_foreground_color, tickTalkTitle) {
+        val chatBurn = ChatTitleDropItem(icon, 0, tickTalkTitle) {
             val threadId = intent.getLongExtra(ARouterConstants.PARAM.PARAM_THREAD, 0L)
             ChatsBurnSetting.configBurnSetting(this, threadId, mRecipient, accountContext.masterSecret
                     ?: return@ChatTitleDropItem) {
@@ -647,7 +647,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
             }
         }
 
-        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, R.attr.common_foreground_color, getString(R.string.chats_message_clear_history)) {
+        val chatClear = ChatTitleDropItem(R.drawable.chats_message_clear_history_icon, 0, getString(R.string.chats_message_clear_history)) {
             AmePopup.bottom.newBuilder()
                     .withTitle(getString(R.string.chats_user_clear_history_title, mRecipient.name))
                     .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.chats_clear), getAttrColor(R.attr.common_text_warn_color)) {
@@ -658,7 +658,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                     .show(this)
         }
 
-        val shred = ChatTitleDropItem(R.drawable.chats_message_shred_icon, R.attr.common_foreground_color, getString(R.string.chats_more_option_shredder)) {
+        val shred = ChatTitleDropItem(R.drawable.chats_message_shred_icon, 0, getString(R.string.chats_more_option_shredder)) {
             checkRecipientBlock {
                 if (it) {
                     AmeModuleCenter.user(accountContext)?.showClearHistoryConfirm(this@AmeConversationActivity, {
