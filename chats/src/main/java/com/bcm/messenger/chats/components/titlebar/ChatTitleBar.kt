@@ -10,14 +10,12 @@ import androidx.annotation.AttrRes
 import androidx.annotation.DrawableRes
 import com.bcm.messenger.chats.R
 import com.bcm.messenger.chats.components.ChatsBurnSetting
-import com.bcm.messenger.common.ARouterConstants
 import com.bcm.messenger.common.AccountContext
 import com.bcm.messenger.common.core.Address
-import com.bcm.messenger.common.provider.AMELogin
 import kotlinx.android.synthetic.main.chats_titlebar_layout.view.*
 import com.bcm.messenger.common.recipients.Recipient
 import com.bcm.messenger.common.utils.*
-import com.bcm.route.api.BcmRouter
+import com.bcm.messenger.utility.QuickOpCheck
 
 /**
  * Created by bcm.social.01 on 2019/1/27.
@@ -47,12 +45,21 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
         }
 
         bar_back_text.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
             mCallback?.onLeft(mMultiSelect)
         }
         bar_back_img.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
             mCallback?.onLeft(mMultiSelect)
         }
         bar_recipient_photo.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
             mCallback?.onRight(mMultiSelect)
         }
         bar_center.setOnClickListener {
@@ -68,7 +75,7 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
         mCallback = callback
     }
 
-    fun addOption(@DrawableRes icon: Int, @AttrRes tint:Int = R.attr.common_foreground_color, invoke: (() -> Unit)? = null) {
+    fun addOption(@DrawableRes icon: Int, @AttrRes tint: Int = R.attr.common_foreground_color, width: Int = ViewGroup.LayoutParams.WRAP_CONTENT, invoke: (() -> Unit)? = null) {
         if (existOption(icon)) {
             return
         }
@@ -83,7 +90,8 @@ class ChatTitleBar : androidx.constraintlayout.widget.ConstraintLayout {
         }
         imageView.tag = icon
         imageView.visibility = View.VISIBLE
-        imageView.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        imageView.layoutParams = LinearLayout.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT)
+        imageView.scaleType = ImageView.ScaleType.FIT_CENTER
         bar_center.addView(imageView)
 
         if (null != invoke) {

@@ -162,7 +162,7 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
             }
         })
 
-        chat_title_bar.addOption(R.drawable.common_arrow_down)
+        chat_title_bar.addOption(R.drawable.common_arrow_down, width = 16.dp2Px())
 
         layout_container.addOnKeyboardShownListener(object : KeyboardAwareLinearLayout.OnKeyboardShownListener {
             override fun onKeyboardShown() {
@@ -389,11 +389,11 @@ class ChatGroupConversationActivity : AccountSwipeBaseActivity(), RecipientModif
         dropMenu.updateMenu(actionList)
         dropMenu.setOnDismissListener {
             chat_title_bar.removeOption(R.drawable.common_arrow_up)
-            chat_title_bar.addOption(R.drawable.common_arrow_down)
+            chat_title_bar.addOption(R.drawable.common_arrow_down, width = 16.dp2Px())
         }
 
         chat_title_bar.removeOption(R.drawable.common_arrow_down)
-        chat_title_bar.addOption(R.drawable.common_arrow_up)
+        chat_title_bar.addOption(R.drawable.common_arrow_up, width = 16.dp2Px())
 
         dropMenu.show(chat_title_bar)
     }

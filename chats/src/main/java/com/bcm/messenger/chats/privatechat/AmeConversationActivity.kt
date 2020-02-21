@@ -419,7 +419,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
             }
         })
 
-        chat_title_bar.addOption(R.drawable.common_arrow_down)
+        chat_title_bar.addOption(R.drawable.common_arrow_down, width = 16.dp2Px())
 
 
         layout_container.addOnKeyboardShownListener(object : KeyboardAwareLinearLayout.OnKeyboardShownListener {
@@ -675,11 +675,11 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
         dropMenu.updateMenu(actionList)
         dropMenu.setOnDismissListener {
             chat_title_bar.removeOption(R.drawable.common_arrow_up)
-            chat_title_bar.addOption(R.drawable.common_arrow_down)
+            chat_title_bar.addOption(R.drawable.common_arrow_down, width = 16.dp2Px())
         }
 
         chat_title_bar.removeOption(R.drawable.common_arrow_down)
-        chat_title_bar.addOption(R.drawable.common_arrow_up)
+        chat_title_bar.addOption(R.drawable.common_arrow_up, width = 16.dp2Px())
         dropMenu.show(chat_title_bar)
     }
 
@@ -714,7 +714,7 @@ class AmeConversationActivity : AccountSwipeBaseActivity(), RecipientModifiedLis
                 BcmRouter.getInstance().get(ARouterConstants.Activity.REQUEST_FRIEND).putParcelable(ARouterConstants.PARAM.PARAM_ADDRESS,
                         mRecipient.address).startBcmActivity(accountContext, this)
             }
-            chat_title_bar.addOption(R.drawable.common_arrow_down)
+            chat_title_bar.addOption(R.drawable.common_arrow_down, width = 16.dp2Px())
         } else {
             chat_title_bar.removeOption(R.drawable.chats_add_friend_icon)
         }

@@ -9,7 +9,7 @@
         android:pathData="M22,4.25L22,4.25A17.75,17.75 0,0 1,39.75 22L39.75,22A17.75,17.75 0,0 1,22 39.75L22,39.75A17.75,17.75 0,0 1,4.25 22L4.25,22A17.75,17.75 0,0 1,22 4.25z"
         android:strokeWidth=".5"
         android:fillColor="#00000000"
-        android:strokeColor="#000000"
+        android:strokeColor="?attr/common_icon_color_light_grey"
         android:strokeAlpha="0.4"
         android:fillType="evenOdd"/>
   </group>
