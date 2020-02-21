@@ -222,10 +222,10 @@ class UserModuleImp : IUserModule
 
     override fun saveAccount(recipient: Recipient, newName: String?, newAvatar: String?) {
         AmeLoginLogic.getAccount(recipient.address.serialize())?.apply {
-            if (newName != null) {
+            if (newName?.isNotEmpty() == true) {
                 name = newName
             }
-            if (newAvatar != null) {
+            if (newAvatar?.isNotEmpty() == true) {
                 avatar = newAvatar
             }
             AmeLoginLogic.saveAccount(this)
@@ -234,17 +234,26 @@ class UserModuleImp : IUserModule
 
     override fun saveAccount(recipient: Recipient, newPrivacyProfile: PrivacyProfile) {
         AmeLoginLogic.getAccount(recipient.address.serialize())?.apply {
-            name = if (!newPrivacyProfile.name.isNullOrEmpty()) {
+            val name = if (!newPrivacyProfile.name.isNullOrEmpty()) {
                 newPrivacyProfile.name ?: ""
             } else {
                 recipient.profileName ?: ""
             }
-            avatar = if (!newPrivacyProfile.avatarHDUri.isNullOrEmpty()) {
+
+            if (name.isNotEmpty()) {
+                this.name = name
+            }
+
+            val avatar = if (!newPrivacyProfile.avatarHDUri.isNullOrEmpty()) {
                 newPrivacyProfile.avatarHDUri ?: ""
             } else if (!newPrivacyProfile.avatarLDUri.isNullOrEmpty()) {
                 newPrivacyProfile.avatarLDUri ?: ""
             } else {
                 ""
+            }
+
+            if (avatar.isNotEmpty()) {
+                this.avatar = avatar
             }
             AmeLoginLogic.saveAccount(this)
         }

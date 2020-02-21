@@ -95,7 +95,6 @@ class ChatRtcCallActivity : AccountSwipeBaseActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        //WebRtcCallService.clearWebRtcCallType()
     }
 
     override fun onDestroy() {

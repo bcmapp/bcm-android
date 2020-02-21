@@ -1332,6 +1332,7 @@ class BcmProfileLogic(val mAccountContext: AccountContext) {
             if (recipientSettings != null) {
                 return if (mAccountContext.uid == uid) {
                     mAccountContext.recipient.fillSettings(recipientSettings)
+                    fetchProfileWithNoQueue(mAccountContext.recipient){}
                     mAccountContext.recipient
                 } else {
                     Recipient.from(mAccountContext, uid, false)

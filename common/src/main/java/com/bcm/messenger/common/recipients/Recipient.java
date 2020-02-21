@@ -523,7 +523,12 @@ public class Recipient implements RecipientModifiedListener, NotGuard {
             this.blocked = settings.isBlocked();
             this.expireMessages = (int) settings.getExpiresTime();
             this.profileKey = settings.getProfileKeyByteArray();
-            this.profileName = settings.getProfileName();
+            if (TextUtils.isEmpty(settings.getProfileName()) && isLogin()) {
+                this.profileName = address.context().getName();
+            } else {
+                this.profileName = settings.getProfileName();
+            }
+
             this.profileAvatar = settings.getProfileAvatar();
             this.profileSharing = settings.isProfileSharing();
             this.localName = settings.getLocalName();
