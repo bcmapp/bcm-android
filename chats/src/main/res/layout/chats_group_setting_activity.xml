@@ -41,7 +41,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="40dp"
-                    android:drawableEnd="@drawable/common_arrow_right_icon"
                     android:ellipsize="end"
                     android:gravity="center"
                     android:maxWidth="300dp"

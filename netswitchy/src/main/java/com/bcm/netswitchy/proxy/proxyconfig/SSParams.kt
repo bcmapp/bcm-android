@@ -33,7 +33,7 @@ data class SSParams(
                     params.port = uri.port
                     return params
                 } else {
-                    val newUri = URI(SCHEME + ProxyParamsParser.base64DecodeToString(authInfoEncoded))
+                    val newUri = URI(SCHEME + "://" + ProxyParamsParser.base64DecodeToString(authInfoEncoded))
                     val userInfoParts = newUri.userInfo.split(':')
                     if (userInfoParts.size < 2) {
                         ALog.w(TAG, "uri ${uri} format is mistake")

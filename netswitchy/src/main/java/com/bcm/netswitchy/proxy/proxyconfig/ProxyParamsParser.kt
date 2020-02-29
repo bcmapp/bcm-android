@@ -18,6 +18,8 @@ object ProxyParamsParser {
                 return SSParams.parse(urix)
             } else if (urix.scheme == SSRParams.SCHEME) {
                 return SSRParams.parse(urix)
+            } else if(urix.scheme == Socks5Params.SCHEME){
+                return Socks5Params.parse(urix)
             } else {
                 ALog.w(TAG, "unsupport uri: $uri")
             }

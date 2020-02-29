@@ -6,6 +6,7 @@ import com.bcm.messenger.utility.logger.ALog
 import com.bcm.netswitchy.proxy.proxyconfig.OBFS4Params
 import com.bcm.netswitchy.proxy.proxyconfig.ProxyParams
 import com.bcm.netswitchy.proxy.support.*
+import com.bcm.ssrsystem.config.SSParams
 import java.lang.ref.WeakReference
 
 class ProxyRunner(private val maybeList: List<ProxyParams>) : IProxyListener {
@@ -66,8 +67,10 @@ class ProxyRunner(private val maybeList: List<ProxyParams>) : IProxyListener {
         ALog.i(TAG, "connectProxy")
         val proxy: IProxy = if (params is OBFS4Params) {
             OBFS4Proxy(params.name, AmeDispatcher.singleScheduler)
-        } else {
+        } else if(params is SSParams){
             SSRProxy(params.name, AmeDispatcher.singleScheduler)
+        } else {
+            Socks5Proxy(params.name, AmeDispatcher.singleScheduler)
         }
         this.tryingProxy = proxy
 

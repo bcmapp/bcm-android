@@ -41,20 +41,6 @@ class LaunchActivity : ThemeBaseActivity() {
         private val quickOp = QuickOpCheck(2000)
     }
 
-    override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(setLocale(newBase))
-    }
-
-    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
-        if (overrideConfiguration != null) {
-            val uiMode = overrideConfiguration.uiMode
-            overrideConfiguration.setTo(baseContext.resources.configuration)
-            overrideConfiguration.uiMode = uiMode
-        }
-        super.applyOverrideConfiguration(overrideConfiguration)
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (ThemeManager.isDarkTheme(this)) {

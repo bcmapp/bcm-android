@@ -467,6 +467,14 @@
     <string name="me_enter_pin_to_unlock">解锁</string>
     <string name="me_force_log_out_log_back_in">重新登录</string>
     <string name="me_import_account">导入账号</string>
+    <string name="me_setting_access_point_title">接入点</string>
+    <string name="me_setting_access_point_describe">配置您自己搭建的BCM服务器</string>
+    <string name="me_enable_proxy">激活代理</string>
+    <string name="me_no_proxy_found">没找到可用的代理</string>
+    <string name="me_no_access_point_found">未找到接入点,请添加</string>
+    <string name="me_change_access_point_tip">切换接入点后，您需要重启App才能生效</string>
+    <string name="me_enable_access_point">激活接入点</string>
+    <string name="me_access_point_configurations">接入点配置</string>
 
 
 </resources>

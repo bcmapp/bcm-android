@@ -100,4 +100,5 @@
     <string name="account_pin_clear_tip_major_content">PIN锁已升级为App锁，当前账号的PIN码已被自动设置为App PIN。</string>
     <string name="account_pin_clear_tip_major_ok">重新设置</string>
     <string name="account_pin_clear_tip_ok">设置</string>
+    <string name="app_access_point">接入点</string>
 </resources>

@@ -25,6 +25,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.common.utils.view.setRightDrawable
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.route.annotation.Route
@@ -273,14 +274,7 @@ class ChatUserPageActivity : AccountSwipeBaseActivity(), RecipientModifiedListen
         chat_user_img.setPhoto(recipient)
         chat_user_name.text = recipient.name
         if (!recipient.isLogin) {
-            val drawable = getDrawable(R.drawable.common_arrow_right_icon)
-            if (isBgLight) {
-                drawable?.setTint(getAttrColor(R.attr.common_black_color))
-                chat_user_name.setCompoundDrawables(null, null, drawable, null)
-            } else {
-                drawable?.setTint(getAttrColor(R.attr.common_white_color))
-                chat_user_name.setCompoundDrawables(null, null, drawable, null)
-            }
+            chat_user_name.setRightDrawable(R.drawable.common_arrow_right_icon, R.attr.common_white_color)
         }
         chat_user_title_bar.setCenterText(recipient.name)
 

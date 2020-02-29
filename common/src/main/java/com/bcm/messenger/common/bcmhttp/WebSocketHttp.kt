@@ -11,7 +11,7 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import java.util.concurrent.TimeUnit
 
-class WebSocketHttp(accountContext: AccountContext):BaseHttp() {
+class WebSocketHttp(accountContext: AccountContext):BcmBaseHttp() {
     init {
         val client  = IMHttp.baseHttpClient.newBuilder()
                 .addInterceptor(BcmAuthHeaderInterceptor(accountContext))

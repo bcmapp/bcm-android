@@ -51,13 +51,13 @@ class SPEditor(private val spName:String, private val mode:Int = Context.MODE_PR
     fun set(key:String, stringSet:MutableSet<String>) {
         val sp:SharedPreferences = AppContextHolder.APP_CONTEXT.getSharedPreferences(spName, mode)
         val editor = sp.edit()
-        editor.putStringSet(key, stringSet)
-        editor.apply()
+        editor.putStringSet(key, stringSet.takeIf { it.isNotEmpty() }).apply()
     }
 
     fun get(key:String, default:MutableSet<String>):MutableSet<String> {
         val sp:SharedPreferences = AppContextHolder.APP_CONTEXT.getSharedPreferences(spName, mode)
-        return sp.getStringSet(key, default)!!
+        val set = sp.getStringSet(key, default) ?: return mutableSetOf()
+        return LinkedHashSet(set)
     }
 
     fun remove(key:String) {

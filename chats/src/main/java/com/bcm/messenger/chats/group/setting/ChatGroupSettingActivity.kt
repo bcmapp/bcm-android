@@ -32,6 +32,7 @@ import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.*
+import com.bcm.messenger.common.utils.view.setRightDrawable
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.messenger.utility.StringAppearanceUtil
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
@@ -310,15 +311,12 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
 
     private fun updateGroupInfoViews() {
         group_control_name?.text = mGroupModel.groupName()
-        val drawable = getDrawable(R.drawable.common_arrow_right_icon)
         if (lightMode) {
             group_control_name.setTextColor(getAttrColor(R.attr.common_text_black_color))
-            drawable?.setTint(getAttrColor(R.attr.common_black_color))
-            group_control_name.setCompoundDrawables(null, null, drawable, null)
+            group_control_name.setRightDrawable(R.drawable.common_arrow_right_icon, R.attr.common_black_color)
         } else {
             group_control_name.setTextColor(getAttrColor(R.attr.common_text_white_color))
-            drawable?.setTint(getAttrColor(R.attr.common_white_color))
-            group_control_name.setCompoundDrawables(null, null, drawable, null)
+            group_control_name.setRightDrawable(R.drawable.common_arrow_right_icon, R.attr.common_white_color)
         }
         chats_group_setting_title.setCenterText(mGroupModel.groupName() ?: "")
         chats_group_control_avatar.setLoadCallback { bitmap ->
@@ -328,13 +326,11 @@ class ChatGroupSettingActivity : AccountSwipeBaseActivity(), AmeRecycleViewAdapt
                     if (it) {
                         window.setStatusBarLightMode()
                         group_control_name.setTextColor(getAttrColor(R.attr.common_text_black_color))
-                        drawable?.setTint(getAttrColor(R.attr.common_black_color))
-                        group_control_name.setCompoundDrawables(null, null, drawable, null)
+                        group_control_name.setRightDrawable(R.drawable.common_arrow_right_icon, R.attr.common_black_color)
                     } else if (!lightMode) {
                         chats_group_setting_title.setLeftIcon(R.drawable.common_arrow_back_icon, R.attr.common_white_color)
                         group_control_name.setTextColor(getAttrColor(R.attr.common_text_white_color))
-                        drawable?.setTint(getAttrColor(R.attr.common_white_color))
-                        group_control_name.setCompoundDrawables(null, null, drawable, null)
+                        group_control_name.setRightDrawable(R.drawable.common_arrow_right_icon, R.attr.common_white_color)
                     }
                 }
         }

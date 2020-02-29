@@ -1,6 +1,7 @@
 package com.bcm.netswitchy.proxy.support
 
 import android.annotation.SuppressLint
+import android.os.Build
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.messenger.utility.logger.ALog
 import com.bcm.netswitchy.HookSystem
@@ -52,6 +53,10 @@ class SSRProxy(private val name: String, private val scheduler: Scheduler) : IPr
 
     override fun start(params: ProxyParams): Boolean {
         ALog.i(TAG, "start")
+        if (Build.VERSION.SDK_INT >= 29) {
+            return false
+        }
+
         if (running) {
             stopProcesses()
             processList.clear()

@@ -50,6 +50,7 @@ object ARouterConstants {
          */
         const val APP_DEV_SETTING = PREFIX.APP + "/dev/setting"
         const val PROXY_SETTING = PREFIX.USER + "/proxy_setting"
+        const val ACCESS_POINT_SETTING = PREFIX.USER + "/access_point_setting"
 
         /**
          * launch activity

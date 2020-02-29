@@ -15,6 +15,7 @@
         app:right_text="@string/me_setting_proxy_action_add"/>
 
     <TextView
+        android:id="@+id/proxy_t1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -49,6 +50,7 @@
         app:showClearButton="false"/>
 
     <TextView
+        android:id="@+id/proxy_t2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -83,6 +85,7 @@
         app:showClearButton="false"/>
 
     <TextView
+        android:id="@+id/format_describe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -90,5 +93,5 @@
         android:layout_marginStart="15dp"
         android:textColor="?attr/common_text_third_color"
         android:textSize="10sp"
-        android:text="Shadowsocks (ss://…), ShadowsocksR (ssr://…) and OFBS4 (obfs4://…) URLs are supported."/>
+        android:text="Shadowsocks (ss://…), ShadowsocksR (ssr://…), OFBS4 (obfs4://…) and Socks5(socks5://…) URLs are supported."/>
 </LinearLayout>

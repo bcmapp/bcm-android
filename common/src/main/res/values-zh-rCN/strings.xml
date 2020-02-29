@@ -400,6 +400,7 @@
     <string name="common_save_fail">保存失败</string>
     <string name="common_next">下一步</string>
     <string name="common_set">设置</string>
+    <string name="common_edit">编辑</string>
 
 
 </resources>

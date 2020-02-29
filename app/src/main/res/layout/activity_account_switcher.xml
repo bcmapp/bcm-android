@@ -9,12 +9,11 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
     <Button
-        android:text="Env Setting"
+        android:text="@string/app_access_point"
         android:textColor="?attr/common_text_main_color"
         android:id="@+id/switcher_env_setting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:background="@drawable/common_item_ripple_transparent_bg" />
 
 </LinearLayout>

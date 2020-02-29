@@ -3,10 +3,7 @@ package com.bcm.messenger.common.bcmhttp.interceptor
 import com.bcm.messenger.common.bcmhttp.configure.IMServerUrl
 import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSFetcher
 import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSManager
-import com.bcm.messenger.common.bcmhttp.imserver.DevIMServerIterator
-import com.bcm.messenger.common.bcmhttp.imserver.DevMetricsServerIterator
-import com.bcm.messenger.common.bcmhttp.imserver.IMServerIterator
-import com.bcm.messenger.common.bcmhttp.imserver.IServerIterator
+import com.bcm.messenger.common.bcmhttp.imserver.*
 import com.bcm.messenger.common.provider.AMELogin
 import com.bcm.messenger.common.utils.AppUtil
 import com.bcm.messenger.utility.bcmhttp.utils.ServerCodeUtil
@@ -20,12 +17,19 @@ import java.util.concurrent.atomic.AtomicInteger
  * ip
  */
 class RedirectInterceptor(private val lbsType: String, private val defaultServer: IMServerUrl) : Interceptor {
+    companion object {
+        var accessPoint: AccessPointIMServerIterator? = null
+    }
     private var lbsFetchIndex = 0
     private var serverIterator: IServerIterator
     private var currentServer: IMServerUrl
     private val failedTimes = AtomicInteger(0)
 
     init {
+        if (AccessPointConfigure.isEnable && AccessPointConfigure.current.isNotEmpty()) {
+            accessPoint = AccessPointIMServerIterator(AccessPointConfigure.current)
+        }
+
         serverIterator = if (AppUtil.isReleaseBuild() || AppUtil.isLbsEnable()) {
             IMServerIterator(LBSManager.getServerList(lbsType), defaultServer)
         } else {
@@ -123,9 +127,15 @@ class RedirectInterceptor(private val lbsType: String, private val defaultServer
 
     fun getCurrentServer(): IMServerUrl {
         //，lbs
-        if (!serverIterator.isValid()) {
-            LBSManager.query(AMELogin.majorContext, lbsType, lbsFetchIndex, listener)
+        val accessPoint = RedirectInterceptor.accessPoint
+        if (accessPoint == null || !accessPoint.isValid()) {
+            if (!serverIterator.isValid()) {
+                LBSManager.query(AMELogin.majorContext, lbsType, lbsFetchIndex, listener)
+            }
+        } else {
+            return accessPoint.next()
         }
+
         return currentServer
     }
 

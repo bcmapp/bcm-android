@@ -12,8 +12,10 @@ import com.bcm.messenger.utility.storage.SPEditor
 import com.bcm.netswitchy.configure.AmeConfigure
 import com.bcm.netswitchy.proxy.proxyconfig.ProxyParams
 import com.bcm.netswitchy.proxy.proxyconfig.ProxyParamsParser
+import com.bcm.netswitchy.proxy.proxyconfig.Socks5Params
 import com.bcm.netswitchy.proxy.support.IConnectionChecker
 import com.bcm.netswitchy.proxy.support.IProxy
+import com.bcm.netswitchy.proxy.support.Socks5Proxy
 import com.bcm.ssrsystem.config.SSParams
 import com.bcm.ssrsystem.config.SSRParams
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -30,7 +32,7 @@ object ProxyManager : INetworkConnectionListener, ProxyRunner.IProxyRunResult, P
     private val officialList = ConcurrentHashMap<String, ProxyItem>()
     private val customList = ConcurrentHashMap<String, ProxyItem>()
 
-    internal var connectionChecker:IConnectionChecker? = null
+    internal var connectionChecker: IConnectionChecker? = null
 
     private var proxyRunner: ProxyRunner? = null
     private var proxyTester: ProxyTester? = null
@@ -41,9 +43,7 @@ object ProxyManager : INetworkConnectionListener, ProxyRunner.IProxyRunResult, P
     private var weakNotify = SafeWeakListeners<IProxyStateChanged>()
 
     init {
-        AmeDispatcher.io.dispatch {
-            loadProxy()
-        }
+        loadProxy()
         NetworkUtil.addListener(this)
     }
 
@@ -94,6 +94,7 @@ object ProxyManager : INetworkConnectionListener, ProxyRunner.IProxyRunResult, P
             proxy.params.name = when (proxy.params) {
                 is SSRParams -> "SSR"
                 is SSParams -> "SS"
+                is Socks5Params -> "SOCKS5"
                 else -> {
                     "OBFS4"
                 }
@@ -172,7 +173,7 @@ object ProxyManager : INetworkConnectionListener, ProxyRunner.IProxyRunResult, P
                 result(true)
             }
             true
-        }?:return
+        } ?: return
 
         checker.check(0, AmeDispatcher.ioScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -186,7 +187,7 @@ object ProxyManager : INetworkConnectionListener, ProxyRunner.IProxyRunResult, P
                 }
     }
 
-    fun startProxy() {
+    fun startProxy(proxyName: String) {
         ALog.i(TAG, "startProxy ready:${isReady()}")
         if (!isReady()) {
             weakNotify.forEach {
@@ -195,28 +196,49 @@ object ProxyManager : INetworkConnectionListener, ProxyRunner.IProxyRunResult, P
             return
         }
 
-        if (officialList.isEmpty() && customList.isEmpty()) {
+        val param = customList[proxyName]
+        if (null != param) {
+            weakNotify.forEach {
+                it.onProxyConnectStarted()
+            }
+
+            var runner = proxyRunner
+            if (null == runner) {
+                val list = listOf(param.params)
+                runner = ProxyRunner(list)
+                runner.setListener(this)
+                proxyRunner = runner
+            }
+
+            runner.start()
+        } else {
             weakNotify.forEach {
                 it.onProxyConnectFinished()
             }
-            return
         }
-
-        weakNotify.forEach {
-            it.onProxyConnectStarted()
-        }
-
-        var runner = proxyRunner
-        if (null == runner) {
-            val list = mutableListOf<ProxyParams>()
-            list.addAll(customList.map { it.value.params })
-            list.addAll(officialList.map { it.value.params })
-            runner = ProxyRunner(list)
-            runner.setListener(this)
-            proxyRunner = runner
-        }
-
-        runner.start()
+//        if (officialList.isEmpty() && customList.isEmpty()) {
+//            weakNotify.forEach {
+//                it.onProxyConnectFinished()
+//            }
+//            return
+//        }
+//
+//        weakNotify.forEach {
+//            it.onProxyConnectStarted()
+//        }
+//
+//        var runner = proxyRunner
+//        if (null == runner) {
+//            val list = mutableListOf<ProxyParams>()
+//            list.addAll(customList.map { it.value.params })
+//            list.addAll(officialList.map { it.value.params })
+//
+//            runner = ProxyRunner(list)
+//            runner.setListener(this)
+//            proxyRunner = runner
+//        }
+//
+//        runner.start()
     }
 
     fun stopProxy() {
@@ -275,8 +297,8 @@ object ProxyManager : INetworkConnectionListener, ProxyRunner.IProxyRunResult, P
     }
 
     fun getRunningProxyTitle(): String {
-        val proxy = proxyRunner?.runningProxy()?:return ""
-        val paramItem = officialList[proxy.name()]?: customList[proxy.name()]
+        val proxy = proxyRunner?.runningProxy() ?: return ""
+        val paramItem = officialList[proxy.name()] ?: customList[proxy.name()]
         if (null != paramItem) {
             val uri = Uri.parse(paramItem.content)
             return "${uri.scheme}_${paramItem.params.name}_${paramItem.params.host}:${paramItem.params.port}"
@@ -285,13 +307,13 @@ object ProxyManager : INetworkConnectionListener, ProxyRunner.IProxyRunResult, P
     }
 
     fun getRunningProxyName(): String {
-        val proxy = proxyRunner?.runningProxy()?:return ""
-        val paramItem = customList[proxy.name()]?:officialList[proxy.name()]
-        return paramItem?.params?.name?:""
+        val proxy = proxyRunner?.runningProxy() ?: return ""
+        val paramItem = customList[proxy.name()] ?: officialList[proxy.name()]
+        return paramItem?.params?.name ?: ""
     }
 
     fun getTestingProxyName(): String {
-        return proxyTester?.getTestingProxy()?.name()?:""
+        return proxyTester?.getTestingProxy()?.name() ?: ""
     }
 
     override fun onProxyTestFinished(succeedList: List<String>, failedList: List<String>) {
@@ -444,22 +466,22 @@ object ProxyManager : INetworkConnectionListener, ProxyRunner.IProxyRunResult, P
     }
 
     private fun loadProxy() {
-        val officialList = proxyEditor.get(PROXY_OFFICIAL, mutableSetOf())
-        val paramsList = officialList.mapNotNull {
-            val param = ProxyParamsParser.parse(it)
-            if (null != param) {
-                ProxyItem(param, it)
-            } else {
-                null
-            }
-        }
-
-        if (paramsList.isNotEmpty()) {
-            replaceOfficialProxy(paramsList)
-        }
+//        val officialList = proxyEditor.get(PROXY_OFFICIAL, mutableSetOf())
+//        val paramsList = officialList.mapNotNull {
+//            val param = ProxyParamsParser.parse(it)
+//            if (null != param) {
+//                ProxyItem(param, it)
+//            } else {
+//                null
+//            }
+//        }
+//
+//        if (paramsList.isNotEmpty()) {
+//            replaceOfficialProxy(paramsList)
+//        }
 
         val customStringList = proxyEditor.get(PROXY_CUSTOM, mutableSetOf())
-        customStringList.forEach {p ->
+        customStringList.forEach { p ->
             val it = p.trim('\n', '\r')
             var split = it.split('\t')
             if (split.size == 1) {

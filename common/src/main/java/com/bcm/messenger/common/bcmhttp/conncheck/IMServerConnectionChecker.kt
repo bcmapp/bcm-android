@@ -23,25 +23,26 @@ class IMServerConnectionChecker:IConnectionChecker {
         val url = BcmHttpApiHelper.getApi("/echo/$TEST_BODY")
 
         ALog.d("IMServerConnectionChecker", url)
-        return Observable.create<Boolean> { emit ->
-            IMHttp.get(AMELogin.majorContext).get()
-                    .url(url)
-                    .build()
-                    .writeTimeOut(1000)
-                    .readTimeOut(3000)
-                    .connTimeOut(10000)
-                    .enqueue(object : StringCallback() {
-                        override fun onError(call: Call?, e: Exception?, id: Long) {
-                            emit.onError(e?:Exception(""))
-                        }
-
-                        override fun onResponse(response: String?, id: Long) {
-                            emit.onNext(response == TEST_BODY)
-                            emit.onComplete()
-                        }
-                    })
-        }.delaySubscription(delay, TimeUnit.MILLISECONDS)
-                .subscribeOn(scheduler)
+//        return Observable.create<Boolean> { emit ->
+//            IMHttp.get(AMELogin.majorContext).get()
+//                    .url(url)
+//                    .build()
+//                    .writeTimeOut(1000)
+//                    .readTimeOut(3000)
+//                    .connTimeOut(10000)
+//                    .enqueue(object : StringCallback() {
+//                        override fun onError(call: Call?, e: Exception?, id: Long) {
+//                            emit.onError(e?:Exception(""))
+//                        }
+//
+//                        override fun onResponse(response: String?, id: Long) {
+//                            emit.onNext(response == TEST_BODY)
+//                            emit.onComplete()
+//                        }
+//                    })
+//        }.delaySubscription(delay, TimeUnit.MILLISECONDS)
+//                .subscribeOn(scheduler)
+        return Observable.just(true)
     }
 
 

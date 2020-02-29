@@ -70,12 +70,8 @@ class AccountSwitcherActivity : ThemeBaseActivity() {
             }
         })
 
-        if (!AppUtil.isReleaseBuild()) {
-            switcher_env_setting.visibility = View.VISIBLE
-        }
-
         switcher_env_setting.setOnClickListener {
-            BcmRouter.getInstance().get(ARouterConstants.Activity.APP_DEV_SETTING).navigation(this)
+            BcmRouter.getInstance().get(ARouterConstants.Activity.ACCESS_POINT_SETTING).navigation(this)
         }
     }
 }

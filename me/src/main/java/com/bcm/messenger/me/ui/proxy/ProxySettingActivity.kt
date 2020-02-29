@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcm.messenger.common.ARouterConstants
@@ -16,10 +17,11 @@ import com.bcm.messenger.common.ui.adapter.AmeRecycleViewAdapter
 import com.bcm.messenger.common.ui.adapter.ListDataSource
 import com.bcm.messenger.common.ui.popup.AmePopup
 import com.bcm.messenger.common.ui.popup.BcmPopupMenu
+import com.bcm.messenger.common.ui.popup.ToastUtil
 import com.bcm.messenger.common.ui.popup.bottompopup.AmeBottomPopup
 import com.bcm.messenger.common.utils.AppUtil
-import com.bcm.messenger.common.utils.getAttrColor
 import com.bcm.messenger.me.R
+import com.bcm.netswitchy.proxy.ProxyConfigure
 import com.bcm.messenger.utility.EncryptUtils
 import com.bcm.messenger.utility.QuickOpCheck
 import com.bcm.netswitchy.proxy.IProxyStateChanged
@@ -27,7 +29,6 @@ import com.bcm.netswitchy.proxy.ProxyItem
 import com.bcm.netswitchy.proxy.ProxyManager
 import com.bcm.route.annotation.Route
 import kotlinx.android.synthetic.main.me_activity_proxy.*
-import java.lang.StringBuilder
 
 @Route(routePath = ARouterConstants.Activity.PROXY_SETTING)
 class ProxySettingActivity : SwipeBaseActivity()
@@ -45,9 +46,9 @@ class ProxySettingActivity : SwipeBaseActivity()
 
         ProxyManager.setListener(this)
 
-        ProxyManager.refresh()
+//        ProxyManager.refresh()
 
-        proxy_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
+        function_title_bar.setListener(object : CommonTitleBar2.TitleBarClickListener() {
             override fun onClickLeft() {
                 finish()
             }
@@ -60,40 +61,28 @@ class ProxySettingActivity : SwipeBaseActivity()
             }
         })
 
-        proxy_setting_test.setOnClickListener {
-            if (QuickOpCheck.getDefault().isQuick) {
-                return@setOnClickListener
-            }
-
-            if (!ProxyManager.isTesting()) {
-                ProxyManager.startTester()
-            }
-        }
-
-
-        proxy_server_list.layoutManager = LinearLayoutManager(this)
+        server_list.layoutManager = LinearLayoutManager(this)
         val adapter = AmeRecycleViewAdapter(this, dataSource)
         adapter.setViewHolderDelegate(this)
         adapter.setHasStableIds(true)
-        proxy_server_list.adapter = adapter
+        server_list.adapter = adapter
 
         dataSource.updateDataSource(ProxyManager.getProxyList())
 
-        if (!AppUtil.isReleaseBuild()) {
-            proxy_test_run.visibility = View.VISIBLE
-            proxy_test_run.setSwitchEnable(false)
-
-            proxy_test_run.setSwitchStatus(ProxyManager.isProxyRunning())
-            proxy_test_run.setOnClickListener {
-                if (!ProxyManager.isProxyRunning()) {
-                    ProxyManager.startProxy()
-                } else {
-                    ProxyManager.stopProxy()
-                }
-                updateDevState()
+        function_enable.setSwitchStatus(ProxyConfigure.isEnable)
+        function_enable.setSwitchEnable(false)
+        function_enable.setOnClickListener {
+            if (!ProxyConfigure.isEnable && ProxyManager.getProxyList().isEmpty()) {
+                ToastUtil.show(this, getString(R.string.me_no_proxy_found))
+            }
+            ProxyConfigure.isEnable = !ProxyConfigure.isEnable
+            ProxyConfigure.checkProxy()
+            if (ProxyConfigure.isEnable) {
+                dataSource.refresh()
             }
             updateDevState()
         }
+        updateDevState()
     }
 
     override fun onDestroy() {
@@ -124,29 +113,7 @@ class ProxySettingActivity : SwipeBaseActivity()
     }
 
     private fun updateDevState() {
-        if (!AppUtil.isReleaseBuild()) {
-            proxy_running_state.visibility = View.VISIBLE
-
-            val stateBuilder = StringBuilder()
-
-            val runningProxy = ProxyManager.getRunningProxyTitle()
-            if (runningProxy.isNotEmpty()) {
-                stateBuilder.append("running proxy:$runningProxy\n")
-            }
-
-            val testingProxy = ProxyManager.getTestingProxyName()
-            if (testingProxy.isNotEmpty()) {
-                stateBuilder.append("testing proxy:$testingProxy\n")
-            }
-
-            if (testingProxy.isEmpty() && runningProxy.isEmpty()) {
-                stateBuilder.append("no state")
-            }
-
-            proxy_running_state.text = stateBuilder.toString()
-
-            proxy_test_run.setSwitchStatus(ProxyManager.isProxyRunning())
-        }
+        function_enable.setSwitchStatus(ProxyConfigure.isEnable)
     }
 
     override fun createViewHolder(adapter: AmeRecycleViewAdapter<ProxyItem>, inflater: LayoutInflater, parent: ViewGroup, viewType: Int): AmeRecycleViewAdapter.ViewHolder<ProxyItem> {
@@ -159,15 +126,18 @@ class ProxySettingActivity : SwipeBaseActivity()
         }
 
         val data = viewHolder.getData()?.params ?: return
-        startActivity(Intent(this@ProxySettingActivity, AddProxyActivity::class.java).apply {
-            putExtra(AddProxyActivity.EDIT_PROXY_NAME, data.name)
-        })
+        if (ProxyConfigure.current != data.name) {
+            ProxyConfigure.current = data.name
+            ProxyConfigure.checkProxy()
+            server_list.adapter?.notifyDataSetChanged()
+        }
     }
 
     override fun onViewLongClicked(adapter: AmeRecycleViewAdapter<ProxyItem>, viewHolder: AmeRecycleViewAdapter.ViewHolder<ProxyItem>): Boolean {
         val data = viewHolder.getData()?.params ?: return false
 
         val menuItems = listOf(
+                BcmPopupMenu.MenuItem(getString(R.string.common_edit)),
                 BcmPopupMenu.MenuItem(getString(R.string.me_note_item_delete))
         )
 
@@ -177,6 +147,11 @@ class ProxySettingActivity : SwipeBaseActivity()
                 .setSelectedCallback { index ->
                     when (index) {
                         0 -> {
+                            startActivity(Intent(this@ProxySettingActivity, AddProxyActivity::class.java).apply {
+                                putExtra(AddProxyActivity.EDIT_PROXY_NAME, data.name)
+                            })
+                        }
+                        1 -> {
                             AmePopup.bottom.newBuilder()
                                     .withTitle(getString(R.string.me_setting_proxy_pop_delete, data.name))
                                     .withPopItem(AmeBottomPopup.PopupItem(getString(R.string.me_note_item_delete), AmeBottomPopup.PopupItem.CLR_RED) {
@@ -193,7 +168,7 @@ class ProxySettingActivity : SwipeBaseActivity()
 
     private inner class ViewHolder(view: View) : AmeRecycleViewAdapter.ViewHolder<ProxyItem>(view) {
         private val name = view.findViewById<TextView>(R.id.proxy_name)
-        private val status = view.findViewById<TextView>(R.id.proxy_status)
+        private val check = view.findViewById<ImageView>(R.id.proxy_select)
         private val content = view.findViewById<TextView>(R.id.proxy_content)
         val lastTouchPoint = Point()
 
@@ -208,33 +183,12 @@ class ProxySettingActivity : SwipeBaseActivity()
 
         override fun setData(data: ProxyItem) {
             super.setData(data)
-            val sep = if (data.status == ProxyItem.Status.UNKNOWN) {
-                ""
-            } else {
-                "・"
-            }
-            val t = "${data.params.name}${sep}"
-            name.text = t
+            name.text = data.params.name
 
-            when (data.status) {
-                ProxyItem.Status.USABLE -> {
-                    status.text = name.context.getString(R.string.me_setting_proxy_item_usable)
-                    status.setTextColor(this@ProxySettingActivity.getAttrColor(R.attr.common_text_green_color))
-                    status.visibility = View.VISIBLE
-                }
-                ProxyItem.Status.UNUSABLE -> {
-                    status.text = name.context.getString(R.string.me_setting_proxy_item_unusable)
-                    status.setTextColor(this@ProxySettingActivity.getAttrColor(R.attr.common_text_warn_color))
-                    status.visibility = View.VISIBLE
-                }
-                ProxyItem.Status.TESTING -> {
-                    status.text = name.context.getString(R.string.me_setting_proxy_item_testing)
-                    status.setTextColor(this@ProxySettingActivity.getAttrColor(R.attr.common_text_warn_color))
-                    status.visibility = View.VISIBLE
-                }
-                else -> {
-                    status.visibility = View.GONE
-                }
+            if (data.params.name == ProxyConfigure.current) {
+                check.visibility = View.VISIBLE
+            } else {
+                check.visibility = View.GONE
             }
 
             content.text = data.content

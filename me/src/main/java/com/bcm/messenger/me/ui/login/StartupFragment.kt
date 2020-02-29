@@ -69,7 +69,7 @@ class StartupFragment : AbsRegistrationFragment() {
         }
 
         startup_dev.setOnClickListener {
-            BcmRouter.getInstance().get(ARouterConstants.Activity.APP_DEV_SETTING).navigation(context)
+            BcmRouter.getInstance().get(ARouterConstants.Activity.ACCESS_POINT_SETTING).navigation(context)
         }
     }
 
@@ -145,10 +145,6 @@ class StartupFragment : AbsRegistrationFragment() {
     private fun showButtonAnimation() {
         startup_create?.visibility = View.VISIBLE
         startup_scan?.visibility = View.VISIBLE
-
-        if (!AppUtil.isReleaseBuild()) {
-            startup_dev?.visibility = View.VISIBLE
-        }
 
         AnimatorSet().apply {
             duration = 500

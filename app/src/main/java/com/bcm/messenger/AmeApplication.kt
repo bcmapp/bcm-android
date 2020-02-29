@@ -12,6 +12,7 @@ import android.webkit.WebView
 import androidx.multidex.MultiDexApplication
 import com.bcm.messenger.utility.ScreenUtil
 import com.bcm.messenger.common.*
+import com.bcm.messenger.common.bcmhttp.BcmBaseHttp
 import com.bcm.messenger.common.bcmhttp.configure.lbs.LBSManager
 import com.bcm.messenger.common.bcmhttp.conncheck.IMServerConnectionChecker
 import com.bcm.messenger.common.bcmhttp.interceptor.BcmHeaderInterceptor
@@ -40,17 +41,21 @@ import com.bcm.messenger.utility.logger.AmeLogConfig
 import com.bcm.messenger.utility.network.NetworkUtil
 import com.bcm.messenger.utility.permission.PermissionUtil
 import com.bcm.messenger.utility.wifi.WiFiUtil
+import com.bcm.netswitchy.HookSystem
 import com.bcm.netswitchy.configure.AmeConfigure
+import com.bcm.netswitchy.proxy.ProxyConfigure
 import com.bcm.netswitchy.proxy.ProxyManager
 import com.bcm.route.api.BcmRouter
 import com.orhanobut.logger.Logger
 import com.squareup.leakcanary.LeakCanary
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.plugins.RxJavaPlugins
+import okhttp3.Dns
 import okhttp3.OkHttpClient
 import org.whispersystems.libsignal.logging.SignalProtocolLoggerProvider
 import java.io.File
 import java.io.IOException
+import java.net.InetAddress
 import java.net.SocketException
 
 
@@ -90,6 +95,7 @@ class AmeApplication : MultiDexApplication() {
         AmeProvider.get<IAFModule>(ARouterConstants.Provider.PROVIDER_AFLIB)?.onAppInit(this)
         AmeProvider.get<IUmengModule>(ARouterConstants.Provider.PROVIDER_UMENG)?.onAppInit(this)
 
+        ProxyConfigure.checkProxy()
         if (!AppUtil.isMainProcess()) {
             bindService()
 
@@ -191,10 +197,19 @@ class AmeApplication : MultiDexApplication() {
         val client = OkHttpClient.Builder()
                 .addInterceptor(NormalMetricsInterceptor())
                 .addInterceptor(BcmHeaderInterceptor())
+                .dns {
+                    ALog.i("BcmBaseHttp", "dns")
+                    if (ProxyConfigure.isRunning()) {
+                        val ip = HookSystem().lookupIpAddress(it)
+                        InetAddress.getAllByName(ip).toList()
+                    } else {
+                        Dns.SYSTEM.lookup(it)
+                    }
+                }
                 .build()
         AmeConfigure.setClient(client)
 
-        ProxyManager.refresh()
+        //ProxyManager.refresh()
 
         LBSManager.addMetricsListener(ReportConfigure)
         LBSManager.refresh(null)

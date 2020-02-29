@@ -393,5 +393,6 @@
     <string name="common_save_fail">सहेजना विफल</string>
     <string name="common_next">Next</string>
     <string name="common_set">Set</string>
+    <string name="common_edit">Edit</string>
 
 </resources>

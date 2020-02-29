@@ -21,6 +21,7 @@ import com.bcm.messenger.login.logic.AmeLoginLogic
 import com.bcm.messenger.me.BuildConfig
 import com.bcm.messenger.me.R
 import com.bcm.messenger.me.logic.AmePinLogic
+import com.bcm.messenger.me.ui.accesspoint.AccessPointSettingActivity
 import com.bcm.messenger.me.ui.feedback.AmeFeedbackActivity
 import com.bcm.messenger.me.ui.language.LanguageSelectActivity
 import com.bcm.messenger.me.ui.language.LanguageViewModel
@@ -186,6 +187,14 @@ class SettingActivity : AccountSwipeBaseActivity(), RecipientModifiedListener {
                 return@setOnClickListener
             }
             val intent = Intent(it.context, ProxySettingActivity::class.java)
+            startBcmActivity(intent)
+        }
+
+        setting_access_point.setOnClickListener {
+            if (QuickOpCheck.getDefault().isQuick) {
+                return@setOnClickListener
+            }
+            val intent = Intent(it.context, AccessPointSettingActivity::class.java)
             startBcmActivity(intent)
         }
 

@@ -43,8 +43,6 @@ import kotlinx.android.synthetic.main.me_fragment_verify_password.*
 class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
     private var uid: String? = null
 
-    private var tryingProxy = 0L
-
     companion object {
         private const val TAG = "LoginVerifyPinFragment"
         const val ACTION = "VERIFY_ACTION"
@@ -115,72 +113,10 @@ class LoginVerifyPinFragment : AbsRegistrationFragment(), IProxyStateChanged {
                             is AmeLoginUnknownException -> true
                             else -> false
                         }
-                        if (retry || failedByFunction) {
-                            tryingProxy = 0
-                            ViewUtils.fadeIn(verify_pin_error, 250)
-                            verify_pin_error.text = error
-                        } else {
-                            ViewUtils.fadeIn(verify_pin_tips, 250)
-                            verify_pin_tips.text = getString(R.string.me_proxy_connecing_to_server)
-                            tryProxy()
-                        }
+                        ViewUtils.fadeIn(verify_pin_error, 250)
+                        verify_pin_error.text = error
                     }
                 }
-            }
-        }
-    }
-
-    private fun tryProxy() {
-        if (tryingProxy > 0) {
-            ALog.i(TAG, "proxy trying")
-        } else {
-            ProxyManager.setListener(this)
-            tryingProxy = System.currentTimeMillis()
-            ProxyManager.checkConnectionState {
-                if (!it) {
-                    when {
-                        ProxyManager.isReady() -> ProxyManager.startProxy()
-                        else -> {
-                            ProxyManager.refresh()
-                            tryingProxy = 0
-                            AmePopup.tipLoading.dismiss()
-                            AmeAppLifecycle.failure(getString(R.string.login_login_failed), false)
-                        }
-                    }
-                } else {
-                    ALog.i(TAG, "network is working, ignore start proxy")
-                }
-            }
-        }
-    }
-
-    override fun onProxyConnecting(proxyName: String, isOfficial: Boolean) {
-        ALog.i(TAG, "onProxyConnectFinished")
-        val tip = if (isOfficial) {
-            getString(R.string.login_try_user_proxy_using_xxx, proxyName)
-        } else {
-            getString(R.string.login_try_official_proxy_using_xxx)
-        }
-
-        verify_pin_tips.text = tip
-    }
-
-    override fun onProxyConnectFinished() {
-        ALog.i(TAG, "onProxyConnectFinished")
-        val context = this.context
-        if (context != null && context is Activity) {
-            if (context.isFinishing || context.isDestroyed) {
-                return
-            }
-
-            ViewUtils.fadeOut(verify_pin_tips, 250)
-            if (ProxyManager.isProxyRunning()) {
-                decodeAndLogin(verify_pin_input_text.text.toString())
-            } else {
-                tryingProxy = 0
-                ViewUtils.fadeIn(verify_pin_error, 250)
-                verify_pin_error.text = getString(R.string.login_login_failed)
-                verify_pin_tips.text = ""
             }
         }
     }

@@ -400,5 +400,13 @@
     <string name="me_enter_pin_to_unlock">Enter PIN to Unlock</string>
     <string name="me_force_log_out_log_back_in">Log Back In</string>
     <string name="me_import_account">Import Account</string>
+    <string name="me_setting_access_point_title">Access Point</string>
+    <string name="me_setting_access_point_describe">Configure your own BCM server</string>
+    <string name="me_enable_proxy">Enable Proxy</string>
+    <string name="me_no_proxy_found">No Proxy Found</string>
+    <string name="me_no_access_point_found">No Access Point Found</string>
+    <string name="me_change_access_point_tip">After switching the access point, you need to restart the app to take effect</string>
+    <string name="me_enable_access_point">Enable Access Point</string>
+    <string name="me_access_point_configurations">ACCESS POINT CONFIGURATIONS</string>
 
 </resources>

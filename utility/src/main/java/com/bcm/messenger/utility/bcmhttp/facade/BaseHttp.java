@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bcm.messenger.utility.ClassHelper;
 import com.bcm.messenger.utility.bcmhttp.call.RequestCall;
 import com.bcm.messenger.utility.bcmhttp.call.callbuilder.bodyabsentbuilder.GetCallBuilder;
 import com.bcm.messenger.utility.bcmhttp.call.callbuilder.individualbodybuilder.FileCallBuilder;
@@ -54,6 +55,7 @@ public class BaseHttp {
     }
 
     public void setClient(OkHttpClient client) {
+        ALog.i("BaseHttp", "setClient ");
         if (!devMode) {
             this.client = client;
         } else {

@@ -3,10 +3,8 @@ package com.bcm.netswitchy.proxy
 import com.bcm.messenger.utility.dispatcher.AmeDispatcher
 import com.bcm.netswitchy.proxy.proxyconfig.OBFS4Params
 import com.bcm.netswitchy.proxy.proxyconfig.ProxyParams
-import com.bcm.netswitchy.proxy.support.IProxy
-import com.bcm.netswitchy.proxy.support.IProxyListener
-import com.bcm.netswitchy.proxy.support.OBFS4Proxy
-import com.bcm.netswitchy.proxy.support.SSRProxy
+import com.bcm.netswitchy.proxy.support.*
+import com.bcm.ssrsystem.config.SSParams
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -45,8 +43,10 @@ class ProxyTester(private val testList: List<ProxyParams>) : IProxyListener {
             val params = testList[testingIndex]
             val proxy: IProxy = if (params is OBFS4Params) {
                 OBFS4Proxy(params.name, AmeDispatcher.singleScheduler)
-            } else {
+            } else if(params is SSParams){
                 SSRProxy(params.name, AmeDispatcher.singleScheduler)
+            } else {
+                Socks5Proxy(params.name, AmeDispatcher.singleScheduler)
             }
             this.testingProxy = proxy
 

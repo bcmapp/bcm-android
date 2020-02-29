@@ -224,7 +224,13 @@ class LoginModuleImpl : ILoginModule
             }
 
             if (!anyConnecting) {
-                tryRunProxy()
+                if (AppForeground.foreground() && !ProxyManager.isTesting()) {
+                    AmeAppLifecycle.showProxyGuild {
+                        BcmRouter.getInstance().get(ARouterConstants.Activity.PROXY_SETTING)
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                .navigation()
+                    }
+                }
             }
 
             for (accountContext in loginList) {
@@ -240,7 +246,13 @@ class LoginModuleImpl : ILoginModule
                 delayCheckRunProxy?.dispose()
             }
             ConnectState.DISCONNECTED -> {
-                tryRunProxy()
+                if (AppForeground.foreground() && !ProxyManager.isTesting()) {
+                    AmeAppLifecycle.showProxyGuild {
+                        BcmRouter.getInstance().get(ARouterConstants.Activity.PROXY_SETTING)
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                .navigation()
+                    }
+                }
             }
             else -> {}
         }
@@ -264,56 +276,6 @@ class LoginModuleImpl : ILoginModule
             }
         } else if(!NetworkUtil.isConnected()) {
             networkType = NetworkUtil.NetType.NONE
-        }
-    }
-
-    private fun tryRunProxy() {
-        val provider = AmeModuleCenter.adhoc()
-        if (NetworkUtil.isConnected() && !provider.isAdHocMode()) {
-            if (AppForeground.foreground()) {
-                if (lastTryProxyTime > 0) {
-                    return
-                }
-
-                lastTryProxyTime = System.currentTimeMillis()
-                delayCheckRunProxy = AmeDispatcher.io.dispatch({
-                    if (AMELogin.isLogin) {
-                        when {
-                            ProxyManager.isReady() -> ProxyManager.startProxy()
-                            else -> ProxyManager.refresh()
-                        }
-                    } else {
-                        ALog.i(TAG, "network is working, ignore start proxy")
-                    }
-                }, 1000)
-            } else {
-                ALog.i(TAG, "tryRunProxy, app is in background")
-            }
-        } else {
-            ALog.i(TAG, "tryRunProxy network is shutdown")
-        }
-    }
-
-    override fun onProxyConnectFinished() {
-        val provider = AmeModuleCenter.adhoc()
-        if (!provider.isAdHocMode()) {
-            if (!ProxyManager.isProxyRunning()) {
-                if (!AMELogin.isLogin) {
-                    if (AppForeground.foreground() && !ProxyManager.isTesting()) {
-                        AmeAppLifecycle.showProxyGuild {
-                            BcmRouter.getInstance().get(ARouterConstants.Activity.PROXY_SETTING)
-                                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    .navigation()
-                        }
-                    }
-                }
-            } else {
-                LBSManager.refresh(AMELogin.majorContext)
-                val loginList = AmeLoginLogic.accountHistory.getAllLoginContext()
-                loginList.forEach {
-                    AmeModuleCenter.serverDaemon(it).checkConnection()
-                }
-            }
         }
     }
 

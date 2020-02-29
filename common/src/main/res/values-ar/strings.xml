@@ -414,5 +414,6 @@
     <string name="common_save_fail">فشل الحفظ</string>
     <string name="common_next">Next</string>
     <string name="common_set">Set</string>
+    <string name="common_edit">Edit</string>
 
 </resources>

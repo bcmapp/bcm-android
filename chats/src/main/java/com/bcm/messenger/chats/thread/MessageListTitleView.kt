@@ -145,10 +145,6 @@ class  MessageListTitleView : TextSwitcher, INetworkConnectionListener, IProxySt
     }
 
     override fun onProxyListChanged() {
-        val isOffline = getState() != CONNECTED
-        if (ProxyManager.hasCustomProxy() && !ProxyManager.isProxyRunning() && isOffline) {
-            ProxyManager.startProxy()
-        }
         update()
     }
 

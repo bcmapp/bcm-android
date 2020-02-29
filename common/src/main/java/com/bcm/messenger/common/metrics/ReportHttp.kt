@@ -1,6 +1,7 @@
 package com.bcm.messenger.common.metrics
 
 import com.bcm.messenger.common.AccountContext
+import com.bcm.messenger.common.bcmhttp.BcmBaseHttp
 import com.bcm.messenger.common.bcmhttp.configure.sslfactory.IMServerSSL
 import com.bcm.messenger.common.bcmhttp.interceptor.BcmAuthHeaderInterceptor
 import com.bcm.messenger.common.bcmhttp.interceptor.RedirectInterceptorHelper
@@ -17,7 +18,7 @@ import java.io.IOException
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
-class ReportHttp(metrics:IMetricsModule) : BaseHttp() {
+class ReportHttp(metrics:IMetricsModule) : BcmBaseHttp() {
     init {
         val sslFactory = IMServerSSL()
         val clientBuilder = OkHttpClient.Builder()

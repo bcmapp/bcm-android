@@ -109,6 +109,15 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.accesspoint.AccessPointSettingActivity"
+            android:launchMode="singleTask"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.accesspoint.AddAccessPointActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
         <activity android:name="com.bcm.messenger.me.fingerprint.BiometricVerifyActivity"
             android:launchMode="singleTask"
             android:theme="@style/CommonBcmTheme.Transparent" />

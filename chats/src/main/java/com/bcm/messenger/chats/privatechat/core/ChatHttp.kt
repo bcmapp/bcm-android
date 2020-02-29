@@ -49,12 +49,15 @@ object ChatHttp : AccountContextMap<ChatHttp.ChatHttpImpl> ({
 
     init {
         val sslFactory = IMServerSSL()
-        baseHttpClient = OkHttpClient.Builder()
-                .sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
-                .hostnameVerifier(BaseHttp.trustAllHostVerify())
+        val builder = OkHttpClient.Builder()
                 .readTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .connectTimeout(BaseHttp.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
-                .build()
+        if (RedirectInterceptor.accessPoint == null) {
+            builder.sslSocketFactory(sslFactory.getSSLFactory(), sslFactory.getTrustManager())
+                    .hostnameVerifier(BaseHttp.trustAllHostVerify())
+        }
+
+        baseHttpClient = builder.build()
     }
 
     class ChatHttpImpl(accountContext: AccountContext) : SyncHttpWrapper(BcmBaseHttp()) {
