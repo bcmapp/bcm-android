@@ -49,3 +49,25 @@ Setting up a development environment
 9. Default config options should be good enough.
 10. Project initialisation and build should proceed.
 
+
+About BCM Project
+-----------------
+├── **app** *Application entry module, responsible for the initialization of the basic services and capabilities of the app*<br/>
+├── **utility** *Application's basic tool library*<br/>
+├── **common** *Application's common function logic, implementation of common components*<br/>
+├── **chats** *Application chat and group chat interaction and function logic implementation*<br/>
+├── **contacts** *Address book interaction, function logic implementation, and user data management for applications*<br/>
+├── **login**  *Application login logic implementation*<br/>
+├── **me** *Interactive implementation of registe and login*<br/>
+├── **netswitchy** *Agent support implementation(eg:ss,ssr,obsf4,socks5)*<br/>
+├── **adhoc-client** *Networkless communication interaction and logic implementation*<br/>
+├── **umeng** *offline push module*<br/>
+├── **appsflyer**<br/>
+├── **wallet** *Wallet interaction and function implementation*<br/>
+├── **thirdpart**<br/>
+│   ├── **bitcoin** *bitcoin sdk*<br/>
+│   ├── **ethereum** *eth sdk*<br/>
+│   ├── **fcm_analytics_plugin** *disable fcm analytics*<br/>
+│   ├── **router** *Module function routing implementation*<br/>
+│   ├── **signal-protocol** *signal protocol sdk for private chat*<br/>
+
